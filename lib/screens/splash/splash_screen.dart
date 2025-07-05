@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../design_system/app_theme.dart';
+import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
 import '../../services/onboarding_service.dart';
 
@@ -356,7 +357,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
                 
-                // Progress bar at bottom
+                // Electrical loading indicator at bottom
                 Positioned(
                   bottom: 80,
                   left: 40,
@@ -374,29 +375,11 @@ class _SplashScreenState extends State<SplashScreen>
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 16),
-                        Container(
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: AppTheme.white.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                          child: FractionallySizedBox(
-                            alignment: Alignment.centerLeft,
-                            widthFactor: _progressAnimation.value,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: AppTheme.white,
-                                borderRadius: BorderRadius.circular(2),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppTheme.white.withOpacity(0.5),
-                                    blurRadius: 6,
-                                    spreadRadius: 1,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                        // Use electrical three-phase loader for splash screen
+                        JJElectricalLoader(
+                          width: 280,
+                          height: 50,
+                          duration: const Duration(milliseconds: 2000),
                         ),
                       ],
                     ),

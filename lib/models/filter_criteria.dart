@@ -29,6 +29,9 @@ class JobFilterCriteria {
   final String? durationPreference; // 'short-term', 'long-term', 'any'
   final List<String> companies;
   
+  // Electrical specific filters
+  final List<String> voltageLevels; // ['Low', 'Medium', 'High', 'Extra High']
+  
   // Sorting
   final JobSortOption sortBy;
   final bool sortDescending;
@@ -52,6 +55,7 @@ class JobFilterCriteria {
     this.hasPerDiem,
     this.durationPreference,
     this.companies = const [],
+    this.voltageLevels = const [],
     this.sortBy = JobSortOption.datePosted,
     this.sortDescending = true,
     this.searchQuery,
@@ -77,6 +81,7 @@ class JobFilterCriteria {
         hasPerDiem != null ||
         durationPreference != null ||
         companies.isNotEmpty ||
+        voltageLevels.isNotEmpty ||
         searchQuery != null;
   }
 
@@ -98,6 +103,7 @@ class JobFilterCriteria {
     if (hasPerDiem != null) count++;
     if (durationPreference != null) count++;
     if (companies.isNotEmpty) count++;
+    if (voltageLevels.isNotEmpty) count++;
     if (searchQuery != null) count++;
     return count;
   }
@@ -145,7 +151,7 @@ class JobFilterCriteria {
     
     // Apply per diem filter
     if (hasPerDiem != null) {
-      if (hasPerDiem) {
+      if (hasPerDiem == true) {
         query = query.where('per_diem', isNotEqualTo: '');
       }
     }
@@ -153,6 +159,11 @@ class JobFilterCriteria {
     // Apply company filters
     if (companies.isNotEmpty) {
       query = query.where('company', whereIn: companies);
+    }
+    
+    // Apply voltage level filters
+    if (voltageLevels.isNotEmpty) {
+      query = query.where('voltageLevel', whereIn: voltageLevels);
     }
     
     // Apply sorting
@@ -192,6 +203,7 @@ class JobFilterCriteria {
     bool? hasPerDiem,
     String? durationPreference,
     List<String>? companies,
+    List<String>? voltageLevels,
     JobSortOption? sortBy,
     bool? sortDescending,
     String? searchQuery,
@@ -212,6 +224,7 @@ class JobFilterCriteria {
       hasPerDiem: hasPerDiem ?? this.hasPerDiem,
       durationPreference: durationPreference ?? this.durationPreference,
       companies: companies ?? this.companies,
+      voltageLevels: voltageLevels ?? this.voltageLevels,
       sortBy: sortBy ?? this.sortBy,
       sortDescending: sortDescending ?? this.sortDescending,
       searchQuery: searchQuery ?? this.searchQuery,
@@ -245,6 +258,8 @@ class JobFilterCriteria {
         return copyWith(companies: []);
       case FilterType.search:
         return copyWith(searchQuery: null);
+      case FilterType.voltageLevel:
+        return copyWith(voltageLevels: []);
     }
   }
 
@@ -266,6 +281,7 @@ class JobFilterCriteria {
       'hasPerDiem': hasPerDiem,
       'durationPreference': durationPreference,
       'companies': companies,
+      'voltageLevels': voltageLevels,
       'sortBy': sortBy.index,
       'sortDescending': sortDescending,
       'searchQuery': searchQuery,
@@ -296,6 +312,7 @@ class JobFilterCriteria {
       hasPerDiem: json['hasPerDiem'],
       durationPreference: json['durationPreference'],
       companies: List<String>.from(json['companies'] ?? []),
+      voltageLevels: List<String>.from(json['voltageLevels'] ?? []),
       sortBy: JobSortOption.values[json['sortBy'] ?? 0],
       sortDescending: json['sortDescending'] ?? true,
       searchQuery: json['searchQuery'],
@@ -315,6 +332,7 @@ enum FilterType {
   duration,
   company,
   search,
+  voltageLevel,
 }
 
 /// Enum for job sorting options

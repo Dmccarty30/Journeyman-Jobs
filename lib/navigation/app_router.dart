@@ -21,6 +21,8 @@ import '../screens/help/help_support_screen.dart';
 import '../screens/resources/resources_screen.dart';
 import '../screens/training/training_certificates_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
+import '../screens/safety/electrical_safety_dashboard.dart';
+import '../screens/safety/incident_report_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -37,6 +39,8 @@ class AppRouter {
   static const String help = '/help';
   static const String resources = '/resources';
   static const String training = '/training';
+  static const String electricalSafetyDashboard = '/electrical-safety-dashboard';
+  static const String incidentReport = '/incident-report';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -124,6 +128,16 @@ class AppRouter {
         path: training,
         name: 'training',
         builder: (context, state) => const TrainingCertificatesScreen(),
+      ),
+      GoRoute(
+        path: electricalSafetyDashboard,
+        name: 'electrical-safety-dashboard',
+        builder: (context, state) => const ElectricalSafetyDashboard(),
+      ),
+      GoRoute(
+        path: incidentReport,
+        name: 'incident-report',
+        builder: (context, state) => const IncidentReportScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

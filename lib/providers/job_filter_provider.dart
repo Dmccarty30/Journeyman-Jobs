@@ -246,6 +246,15 @@ class JobFilterProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Update voltage level filter
+  void updateVoltageLevelsFilter(List<String> voltageLevels) {
+    _currentFilter = _currentFilter.copyWith(
+      voltageLevels: voltageLevels,
+    );
+    _saveFilter();
+    notifyListeners();
+  }
+
   /// Add a recent search
   void _addRecentSearch(String search) {
     // Remove if already exists

@@ -17,6 +17,10 @@ class _JobsScreenState extends State<JobsScreen> {
     'Journeyman Lineman',
     'Journeyman Electrician',
     'Journeyman Wireman',
+    'Low Voltage',
+    'Medium Voltage',
+    'High Voltage',
+    'Extra High Voltage',
     'Storm Work',
     'Transmission',
     'Distribution',
@@ -31,6 +35,8 @@ class _JobsScreenState extends State<JobsScreen> {
       location: 'Louisville, KY',
       payRate: '\$52.50/hr',
       type: 'Storm Work',
+      classification: 'Journeyman Lineman',
+      voltageLevel: 'High Voltage',
       description: 'Emergency restoration work following severe weather. Overtime available.',
       requirements: ['Valid CDL', 'Hot stick certified', 'Storm experience preferred'],
       benefits: ['Per diem \$85/day', 'Travel pay', 'Overtime'],
@@ -44,6 +50,8 @@ class _JobsScreenState extends State<JobsScreen> {
       location: 'Atlanta, GA',
       payRate: '\$48.75/hr',
       type: 'Industrial',
+      classification: 'Journeyman Electrician',
+      voltageLevel: 'Low Voltage',
       description: 'New data center construction. Long-term project with growth opportunities.',
       requirements: ['Industrial experience', 'Conduit bending', 'Blueprint reading'],
       benefits: ['Health insurance', 'Pension', 'Annuity'],
@@ -57,6 +65,8 @@ class _JobsScreenState extends State<JobsScreen> {
       location: 'Denver, CO',
       payRate: '\$54.20/hr',
       type: 'Transmission',
+      classification: 'Journeyman Wireman',
+      voltageLevel: 'Extra High Voltage',
       description: 'High voltage transmission line construction. Mountain work environment.',
       requirements: ['HV experience', 'Climbing certified', 'Physical fitness'],
       benefits: ['Altitude pay', 'Travel allowance', 'Medical'],
@@ -70,6 +80,8 @@ class _JobsScreenState extends State<JobsScreen> {
       location: 'Seattle, WA',
       payRate: '\$56.10/hr',
       type: 'Distribution',
+      classification: 'Journeyman Lineman',
+      voltageLevel: 'Medium Voltage',
       description: 'Distribution system maintenance and construction. Day shift available.',
       requirements: ['CDL Class A', 'Distribution experience', 'Pole climbing'],
       benefits: ['Full benefits', 'Overtime opportunities', 'Local work'],
@@ -82,7 +94,10 @@ class _JobsScreenState extends State<JobsScreen> {
     if (_selectedFilter == 'All') {
       return _sampleJobs;
     }
-    return _sampleJobs.where((job) => job.type == _selectedFilter || job.title.contains(_selectedFilter)).toList();
+    return _sampleJobs.where((job) =>
+      job.type == _selectedFilter ||
+      job.title.contains(_selectedFilter) ||
+      job.voltageLevel == _selectedFilter).toList();
   }
 
   @override
@@ -281,6 +296,8 @@ class Job {
   final String location;
   final String payRate;
   final String type;
+  final String classification;
+  final String? voltageLevel;
   final String description;
   final List<String> requirements;
   final List<String> benefits;
@@ -294,6 +311,8 @@ class Job {
     required this.location,
     required this.payRate,
     required this.type,
+    required this.classification,
+    this.voltageLevel,
     required this.description,
     required this.requirements,
     required this.benefits,
@@ -441,6 +460,41 @@ class JobCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (job.voltageLevel != null) ...[
+                      const SizedBox(width: AppTheme.spacingSm),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppTheme.spacingSm,
+                          vertical: AppTheme.spacingXs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: JobCard._getVoltageLevelColor(job.voltageLevel!).withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                          border: Border.all(
+                            color: JobCard._getVoltageLevelColor(job.voltageLevel!),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.bolt,
+                              size: 14,
+                              color: JobCard._getVoltageLevelColor(job.voltageLevel!),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              job.voltageLevel!,
+                              style: AppTheme.labelSmall.copyWith(
+                                color: JobCard._getVoltageLevelColor(job.voltageLevel!),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ],
                 ),
                 
@@ -487,6 +541,21 @@ class JobCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static Color _getVoltageLevelColor(String voltageLevel) {
+    switch (voltageLevel) {
+      case 'Low Voltage':
+        return Colors.green;
+      case 'Medium Voltage':
+        return Colors.orange;
+      case 'High Voltage':
+        return Colors.red;
+      case 'Extra High Voltage':
+        return Colors.deepPurple;
+      default:
+        return AppTheme.textSecondary;
+    }
   }
 
   void _showJobDetails(BuildContext context, Job job) {
@@ -595,6 +664,77 @@ class JobDetailsSheet extends StatelessWidget {
             ),
             
             const SizedBox(height: AppTheme.spacingLg),
+            
+            // Classification and voltage level
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingMd,
+                    vertical: AppTheme.spacingSm,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryNavy.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.build,
+                        size: 16,
+                        color: AppTheme.primaryNavy,
+                      ),
+                      const SizedBox(width: AppTheme.spacingSm),
+                      Text(
+                        job.classification,
+                        style: AppTheme.bodyMedium.copyWith(
+                          color: AppTheme.primaryNavy,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (job.voltageLevel != null) ...[
+                  const SizedBox(width: AppTheme.spacingSm),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacingMd,
+                      vertical: AppTheme.spacingSm,
+                    ),
+                    decoration: BoxDecoration(
+                      color: JobCard._getVoltageLevelColor(job.voltageLevel!).withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                      border: Border.all(
+                        color: JobCard._getVoltageLevelColor(job.voltageLevel!),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.bolt,
+                          size: 16,
+                          color: JobCard._getVoltageLevelColor(job.voltageLevel!),
+                        ),
+                        const SizedBox(width: AppTheme.spacingSm),
+                        Text(
+                          job.voltageLevel!,
+                          style: AppTheme.bodyMedium.copyWith(
+                            color: JobCard._getVoltageLevelColor(job.voltageLevel!),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            
+            const SizedBox(height: AppTheme.spacingMd),
             
             // Pay and location
             Row(

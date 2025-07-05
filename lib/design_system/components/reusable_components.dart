@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../app_theme.dart';
+// import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 
 // =================== BUTTONS ===================
 
@@ -314,8 +315,107 @@ class JJLoadingIndicator extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           CircularProgressIndicator(
-            color: color ?? AppTheme.accentCopper,
-            strokeWidth: 3,
+            valueColor: AlwaysStoppedAnimation<Color>(color ?? AppTheme.accentCopper),
+            strokeWidth: 4,
+          ),
+          if (message != null) ...[
+            const SizedBox(height: AppTheme.spacingMd),
+            Text(
+              message!,
+              style: AppTheme.bodyMedium.copyWith(color: AppTheme.textSecondary),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Electrical Three-Phase Loading Indicator
+/// Uses the three-phase sine wave loader with AppTheme colors
+class JJElectricalLoader extends StatelessWidget {
+  final double? width;
+  final double? height;
+  final String? message;
+  final Duration? duration;
+
+  const JJElectricalLoader({
+    super.key,
+    this.width,
+    this.height,
+    this.message,
+    this.duration,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: width ?? 200,
+            height: height ?? 60,
+            decoration: BoxDecoration(
+              color: AppTheme.lightGray,
+              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+            ),
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
+              ),
+            ),
+          ),
+          if (message != null) ...[
+            const SizedBox(height: AppTheme.spacingMd),
+            Text(
+              message!,
+              style: AppTheme.bodyMedium.copyWith(color: AppTheme.textSecondary),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Electrical Power Line Loading Indicator
+/// Uses the power line loader with AppTheme colors
+class JJPowerLineLoader extends StatelessWidget {
+  final double? width;
+  final double? height;
+  final String? message;
+  final Duration? duration;
+
+  const JJPowerLineLoader({
+    super.key,
+    this.width,
+    this.height,
+    this.message,
+    this.duration,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: width ?? 300,
+            height: height ?? 80,
+            decoration: BoxDecoration(
+              color: AppTheme.lightGray,
+              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+            ),
+            child: Center(
+              child: LinearProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
+                backgroundColor: AppTheme.primaryNavy.withOpacity(0.3),
+              ),
+            ),
           ),
           if (message != null) ...[
             const SizedBox(height: AppTheme.spacingMd),
@@ -720,6 +820,61 @@ class JJSnackBar {
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         ),
       ),
+    );
+  }
+}
+
+// =================== ELECTRICAL COMPONENTS EXPORTS ===================
+
+/// Electrical Circuit Breaker Toggle
+/// Themed toggle switch that looks like an electrical circuit breaker
+class JJElectricalToggle extends StatelessWidget {
+  final bool isOn;
+  final ValueChanged<bool>? onChanged;
+  final double? width;
+  final double? height;
+
+  const JJElectricalToggle({
+    super.key,
+    required this.isOn,
+    this.onChanged,
+    this.width,
+    this.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Switch(
+      value: isOn,
+      onChanged: onChanged,
+      activeColor: AppTheme.successGreen,
+      inactiveTrackColor: AppTheme.mediumGray,
+    );
+  }
+}
+
+/// Electrical Industry Icons
+/// Themed icons for electrical/industrial applications
+class JJElectricalIcons {
+  static Widget hardHat({
+    double size = 24,
+    Color? color,
+  }) {
+    return Icon(
+      Icons.construction,
+      size: size,
+      color: color ?? AppTheme.primaryNavy,
+    );
+  }
+
+  static Widget transmissionTower({
+    double size = 24,
+    Color? color,
+  }) {
+    return Icon(
+      Icons.electrical_services,
+      size: size,
+      color: color ?? AppTheme.primaryNavy,
     );
   }
 }
