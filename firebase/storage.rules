@@ -1,0 +1,42 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    function isImageFile() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    function isValidFileSize() {
+      return request.resource.size < 5 * 1024 * 1024; // 5MB limit
+    }
+    
+    // User profile photos
+    match /users/{userId}/profile/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId) && 
+                      isImageFile() && 
+                      isValidFileSize();
+      allow delete: if isOwner(userId);
+    }
+    
+    // Job-related images (if needed in future)
+    match /jobs/{jobId}/images/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admin
+    }
+    
+    // Company logos (if needed in future)
+    match /companies/{companyId}/logo/{fileName} {
+      allow read: if true; // Public
+      allow write: if false; // Only admin
+    }
+  }
+}

@@ -1,0 +1,725 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../app_theme.dart';
+
+// =================== BUTTONS ===================
+
+class JJPrimaryButton extends StatelessWidget {
+  final String text;
+  final VoidCallback? onPressed;
+  final IconData? icon;
+  final bool isLoading;
+  final bool isFullWidth;
+  final double? width;
+  final double? height;
+
+  const JJPrimaryButton({
+    super.key,
+    required this.text,
+    this.onPressed,
+    this.icon,
+    this.isLoading = false,
+    this.isFullWidth = false,
+    this.width,
+    this.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: isFullWidth ? double.infinity : width,
+      height: height ?? 56,
+      decoration: BoxDecoration(
+        gradient: AppTheme.buttonGradient,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [AppTheme.shadowSm],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isLoading ? null : onPressed,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingLg,
+              vertical: AppTheme.spacingMd,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isLoading)
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      color: AppTheme.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                else ...[
+                  if (icon != null) ...[
+                    Icon(
+                      icon,
+                      color: AppTheme.white,
+                      size: AppTheme.iconSm,
+                    ),
+                    const SizedBox(width: AppTheme.spacingSm),
+                  ],
+                  Expanded(
+                    child: Text(
+                      text,
+                      style: AppTheme.buttonMedium.copyWith(color: AppTheme.white),
+                      textAlign: TextAlign.center, // Center the text
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class JJSecondaryButton extends StatelessWidget {
+  final String text;
+  final VoidCallback? onPressed;
+  final IconData? icon;
+  final bool isLoading;
+  final bool isFullWidth;
+  final double? width;
+  final double? height;
+
+  const JJSecondaryButton({
+    super.key,
+    required this.text,
+    this.onPressed,
+    this.icon,
+    this.isLoading = false,
+    this.isFullWidth = false,
+    this.width,
+    this.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: isFullWidth ? double.infinity : width,
+      height: height ?? 56,
+      decoration: BoxDecoration(
+        border: Border.all(color: AppTheme.primaryNavy, width: 1.5),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        color: AppTheme.white,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isLoading ? null : onPressed,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingLg,
+              vertical: AppTheme.spacingMd,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isLoading)
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      color: AppTheme.primaryNavy,
+                      strokeWidth: 2,
+                    ),
+                  )
+                else ...[
+                  if (icon != null) ...[
+                    Icon(
+                      icon,
+                      color: AppTheme.primaryNavy,
+                      size: AppTheme.iconSm,
+                    ),
+                    const SizedBox(width: AppTheme.spacingSm),
+                  ],
+                  Expanded(
+                    child: Text(
+                      text,
+                      style: AppTheme.buttonMedium.copyWith(color: AppTheme.primaryNavy),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// =================== TEXT FIELDS ===================
+
+class JJTextField extends StatelessWidget {
+  final String label;
+  final String? hintText;
+  final TextEditingController? controller;
+  final bool obscureText;
+  final TextInputType? keyboardType;
+  final String? Function(String?)? validator;
+  final void Function(String)? onChanged;
+  final IconData? prefixIcon;
+  final IconData? suffixIcon;
+  final VoidCallback? onSuffixIconPressed;
+  final bool enabled;
+  final int? maxLines;
+  final List<TextInputFormatter>? inputFormatters;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final void Function(String)? onFieldSubmitted;
+
+  const JJTextField({
+    super.key,
+    required this.label,
+    this.hintText,
+    this.controller,
+    this.obscureText = false,
+    this.keyboardType,
+    this.validator,
+    this.onChanged,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.onSuffixIconPressed,
+    this.enabled = true,
+    this.maxLines = 1,
+    this.inputFormatters,
+    this.focusNode,
+    this.textInputAction,
+    this.onFieldSubmitted,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: AppTheme.labelMedium.copyWith(color: AppTheme.textSecondary),
+        ),
+        const SizedBox(height: AppTheme.spacingSm),
+        TextFormField(
+          controller: controller,
+          obscureText: obscureText,
+          keyboardType: keyboardType,
+          validator: validator,
+          onChanged: onChanged,
+          enabled: enabled,
+          maxLines: maxLines,
+          inputFormatters: inputFormatters,
+          focusNode: focusNode,
+          textInputAction: textInputAction,
+          onFieldSubmitted: onFieldSubmitted,
+          style: AppTheme.bodyMedium,
+          decoration: InputDecoration(
+            hintText: hintText,
+            prefixIcon: prefixIcon != null
+                ? Icon(prefixIcon, color: AppTheme.textLight)
+                : null,
+            suffixIcon: suffixIcon != null
+                ? IconButton(
+                    icon: Icon(suffixIcon, color: AppTheme.textLight),
+                    onPressed: onSuffixIconPressed,
+                  )
+                : null,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// =================== CARDS ===================
+
+class JJCard extends StatelessWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+  final EdgeInsets? padding;
+  final EdgeInsets? margin;
+  final Color? backgroundColor;
+  final double? elevation;
+  final BorderRadius? borderRadius;
+
+  const JJCard({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.padding,
+    this.margin,
+    this.backgroundColor,
+    this.elevation,
+    this.borderRadius,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: margin ?? const EdgeInsets.all(AppTheme.spacingSm),
+      decoration: BoxDecoration(
+        color: backgroundColor ?? AppTheme.white,
+        borderRadius: borderRadius ?? BorderRadius.circular(AppTheme.radiusLg),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: elevation ?? 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: borderRadius ?? BorderRadius.circular(AppTheme.radiusLg),
+          child: Container(
+            padding: padding ?? const EdgeInsets.all(AppTheme.spacingMd),
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// =================== LOADING INDICATORS ===================
+
+class JJLoadingIndicator extends StatelessWidget {
+  final String? message;
+  final Color? color;
+
+  const JJLoadingIndicator({
+    super.key,
+    this.message,
+    this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircularProgressIndicator(
+            color: color ?? AppTheme.accentCopper,
+            strokeWidth: 3,
+          ),
+          if (message != null) ...[
+            const SizedBox(height: AppTheme.spacingMd),
+            Text(
+              message!,
+              style: AppTheme.bodyMedium.copyWith(color: AppTheme.textSecondary),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// =================== PROGRESS INDICATOR ===================
+
+class JJProgressIndicator extends StatelessWidget {
+  final int currentStep;
+  final int totalSteps;
+  final Color? activeColor;
+  final Color? inactiveColor;
+
+  const JJProgressIndicator({
+    super.key,
+    required this.currentStep,
+    required this.totalSteps,
+    this.activeColor,
+    this.inactiveColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: List.generate(totalSteps, (index) {
+        final isActive = index < currentStep;
+        final isCurrent = index == currentStep - 1;
+        
+        return Expanded(
+          child: Container(
+            margin: EdgeInsets.only(
+              right: index < totalSteps - 1 ? AppTheme.spacingSm : 0,
+            ),
+            height: 4,
+            decoration: BoxDecoration(
+              color: isActive || isCurrent
+                  ? activeColor ?? AppTheme.accentCopper
+                  : inactiveColor ?? AppTheme.lightGray,
+              borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+}
+
+// =================== CHIPS ===================
+
+class JJChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback? onTap;
+  final IconData? icon;
+  final Color? selectedColor;
+  final Color? unselectedColor;
+
+  const JJChip({
+    super.key,
+    required this.label,
+    this.isSelected = false,
+    this.onTap,
+    this.icon,
+    this.selectedColor,
+    this.unselectedColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingMd,
+            vertical: AppTheme.spacingSm,
+          ),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? selectedColor ?? AppTheme.accentCopper
+                : unselectedColor ?? AppTheme.lightGray,
+            borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+            border: isSelected
+                ? null
+                : Border.all(color: AppTheme.mediumGray, width: 0.5),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) ...[
+                Icon(
+                  icon,
+                  size: AppTheme.iconXs,
+                  color: isSelected ? AppTheme.white : AppTheme.textSecondary,
+                ),
+                const SizedBox(width: AppTheme.spacingSm),
+              ],
+              Text(
+                label,
+                style: AppTheme.labelMedium.copyWith(
+                  color: isSelected ? AppTheme.white : AppTheme.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// =================== EMPTY STATE ===================
+
+class JJEmptyState extends StatelessWidget {
+  final String title;
+  final String? subtitle;
+  final IconData? icon;
+  final Widget? action;
+
+  const JJEmptyState({
+    super.key,
+    required this.title,
+    this.subtitle,
+    this.icon,
+    this.action,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppTheme.spacingXl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(
+                icon,
+                size: AppTheme.iconXxl + 16,
+                color: AppTheme.textLight,
+              ),
+              const SizedBox(height: AppTheme.spacingMd),
+            ],
+            Text(
+              title,
+              style: AppTheme.headlineSmall.copyWith(color: AppTheme.textPrimary),
+              textAlign: TextAlign.center,
+            ),
+            if (subtitle != null) ...[
+              const SizedBox(height: AppTheme.spacingSm),
+              Text(
+                subtitle!,
+                style: AppTheme.bodyMedium.copyWith(color: AppTheme.textSecondary),
+                textAlign: TextAlign.center,
+              ),
+            ],
+            if (action != null) ...[
+              const SizedBox(height: AppTheme.spacingLg),
+              action!,
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// =================== BOTTOM SHEET ===================
+
+class JJBottomSheet extends StatelessWidget {
+  final String title;
+  final Widget child;
+  final Widget? headerAction;
+  final double? initialChildSize;
+  final double? maxChildSize;
+  final double? minChildSize;
+
+  const JJBottomSheet({
+    super.key,
+    required this.title,
+    required this.child,
+    this.headerAction,
+    this.initialChildSize,
+    this.maxChildSize,
+    this.minChildSize,
+  });
+
+  static Future<T?> show<T>({
+    required BuildContext context,
+    required String title,
+    required Widget child,
+    Widget? headerAction,
+    double? initialChildSize,
+    double? maxChildSize,
+    double? minChildSize,
+  }) {
+    return showModalBottomSheet<T>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => JJBottomSheet(
+        title: title,
+        headerAction: headerAction,
+        initialChildSize: initialChildSize,
+        maxChildSize: maxChildSize,
+        minChildSize: minChildSize,
+        child: child,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: initialChildSize ?? 0.5,
+      maxChildSize: maxChildSize ?? 0.9,
+      minChildSize: minChildSize ?? 0.3,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: AppTheme.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(AppTheme.radiusXl),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Drag handle
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(top: AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  color: AppTheme.lightGray,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                ),
+              ),
+              
+              // Header
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: AppTheme.headlineSmall,
+                      ),
+                    ),
+                    if (headerAction != null) headerAction!,
+                  ],
+                ),
+              ),
+              
+              const Divider(height: 1),
+              
+              // Content
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.all(AppTheme.spacingMd),
+                  child: child,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// =================== SOCIAL SIGN IN BUTTON ===================
+
+class JJSocialSignInButton extends StatelessWidget {
+  final String text;
+  final Widget icon;
+  final VoidCallback? onPressed;
+  final bool isLoading;
+
+  const JJSocialSignInButton({
+    super.key,
+    required this.text,
+    required this.icon,
+    this.onPressed,
+    this.isLoading = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 56,
+      decoration: BoxDecoration(
+        border: Border.all(color: AppTheme.lightGray, width: 1.5),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        color: AppTheme.white,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isLoading ? null : onPressed,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (isLoading)
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      color: AppTheme.textSecondary,
+                      strokeWidth: 2,
+                    ),
+                  )
+                else ...[
+                  icon,
+                  const SizedBox(width: AppTheme.spacingMd),
+                  Text(
+                    text,
+                    style: AppTheme.buttonMedium.copyWith(color: AppTheme.textPrimary),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// =================== SNACKBAR HELPER ===================
+
+class JJSnackBar {
+  static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSuccess({
+    required BuildContext context,
+    required String message,
+    Duration duration = const Duration(seconds: 3),
+  }) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: AppTheme.white),
+            const SizedBox(width: AppTheme.spacingSm),
+            Expanded(
+              child: Text(
+                message,
+                style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: AppTheme.successGreen,
+        duration: duration,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        ),
+      ),
+    );
+  }
+
+  static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showError({
+    required BuildContext context,
+    required String message,
+    Duration duration = const Duration(seconds: 4),
+  }) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error, color: AppTheme.white),
+            const SizedBox(width: AppTheme.spacingSm),
+            Expanded(
+              child: Text(
+                message,
+                style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: AppTheme.errorRed,
+        duration: duration,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        ),
+      ),
+    );
+  }
+}

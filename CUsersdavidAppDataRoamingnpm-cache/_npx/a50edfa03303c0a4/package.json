@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@brightdata/mcp": "^2.3.1"
+  },
+  "_npx": {
+    "packages": [
+      "@brightdata/mcp"
+    ]
+  }
+}

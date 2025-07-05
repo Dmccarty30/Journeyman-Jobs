@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "1037879032120",
+    "project_id": "journeyman-jobs",
+    "storage_bucket": "journeyman-jobs.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037879032120:android:ca3d13b670a4ed5c2fe9cd",
+        "android_client_info": {
+          "package_name": "com.mccarty.journeymanjobs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1037879032120-ii6rdnhbac3getpdnjs66836sutup5on.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mccarty.journeymanjobs",
+            "certificate_hash": "3b980c997446fcfea6a20b00206e7813a408c793"
+          }
+        },
+        {
+          "client_id": "1037879032120-ip8jl59hsgirgvv6chvvsiein4k3hsrj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mccarty.journeymanjobs",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "1037879032120-c4ve2ctj5567h3dnpd5t4vg394egdf8c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6MMF8thO3UeHeA45tagHmYjbevbku-wU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1037879032120-c4ve2ctj5567h3dnpd5t4vg394egdf8c.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1037879032120-9q6qomf8lt1mraevspncg7u4t6gfes5j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mccarty.journeymanjobs"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

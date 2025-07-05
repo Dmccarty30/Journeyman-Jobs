@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "firecrawl-mcp": "^1.12.0"
+  },
+  "_npx": {
+    "packages": [
+      "firecrawl-mcp"
+    ]
+  }
+}

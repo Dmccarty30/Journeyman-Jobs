@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@modelcontextprotocol/server-brave-search": "^0.6.2"
+  },
+  "_npx": {
+    "packages": [
+      "@modelcontextprotocol/server-brave-search"
+    ]
+  }
+}

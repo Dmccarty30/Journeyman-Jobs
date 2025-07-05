@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    function isValidUser() {
+      return request.auth != null && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+    
+    // Jobs collection - read-only for authenticated users
+    match /jobs/{jobId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admin through Cloud Functions
+    }
+    
+    // Locals collection - read-only for all users (public information)
+    match /locals/{localId} {
+      allow read: if true;
+      allow write: if false; // Only admin through Cloud Functions
+    }
+    
+    // Users collection - users can only read/write their own data
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && 
+                       request.resource.data.keys().hasAll(['email', 'uid']) &&
+                       request.resource.data.uid == userId;
+      allow update: if isOwner(userId) &&
+                       request.resource.data.uid == resource.data.uid && // Can't change UID
+                       request.resource.data.email == resource.data.email; // Can't change email through direct write
+      allow delete: if false; // Users can't delete their account directly
+    }
+    
+    // Test collection - for development only
+    match /test/{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}
