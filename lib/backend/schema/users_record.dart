@@ -1,13 +1,8 @@
 import 'dart:async';
-
 import 'package:collection/collection.dart';
-
 import '/backend/schema/firestore_util.dart';
 import '/backend/schema/enums/enums.dart';
-import '/utils/lat_lng.dart';
-
 import 'index.dart';
-import '/utils/lat_lng.dart';
 
 class UsersRecord extends FirestoreRecord {
   UsersRecord._(

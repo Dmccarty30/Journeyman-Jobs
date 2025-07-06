@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@smithery/cli": "^1.2.13"
+  },
+  "_npx": {
+    "packages": [
+      "@smithery/cli@latest"
+    ]
+  }
+}
