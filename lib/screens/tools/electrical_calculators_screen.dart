@@ -482,7 +482,7 @@ class _ConduitFillCalculatorState extends State<_ConduitFillCalculator> {
       
       // Simplified conduit fill calculation
       // This is a basic example - real calculations are more complex
-      Map<String, int> maxWires = {
+      Map<String, Map<String, int>> maxWires = {
         '1/2': {'14': 9, '12': 7, '10': 5, '8': 2, '6': 1},
         '3/4': {'14': 16, '12': 13, '10': 9, '8': 5, '6': 3, '4': 1},
         '1': {'14': 26, '12': 22, '10': 16, '8': 9, '6': 6, '4': 4, '2': 3},

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_router/go_router.dart';
 import '../../design_system/app_theme.dart';
+import '../../design_system/components/reusable_components.dart';
+import '../../design_system/illustrations/electrical_illustrations.dart';
+import '../../navigation/app_router.dart';
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 import 'dart:math' as math;
 
@@ -50,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.notifications_outlined, color: AppTheme.white),
             onPressed: () {
-              // TODO: Implement notifications
+              context.push(AppRouter.notifications);
             },
           ),
         ],
@@ -291,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /
+  /*
   Widget _buildStatCard(String title, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -437,7 +441,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-  /
+  */
 
   Widget _buildElectricalActionCard(String title, IconData icon, VoidCallback onPressed) {
     return GestureDetector(
@@ -514,7 +518,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          'ClassificationText',
+                          isEmergency ? 'EMERGENCY' : 'STANDARD',
                           style: AppTheme.labelSmall.copyWith(
                             color: AppTheme.white,
                             fontSize: 9,
@@ -533,7 +537,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          'ClassificationText',
+                          'STANDARD',
                           style: AppTheme.labelSmall.copyWith(
                             color: AppTheme.white,
                             fontSize: 9,
@@ -711,8 +715,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final userClassification = userData['classification'] as String?;
     final preferredConstructionTypes = List<String>.from(userData['preferredConstructionTypes'] ?? []);
-    final preferredHours = userData['preferredHours'] as int? ?? 40;
-    final perDiemRequired = userData['perDiemRequired'] as bool? ?? false;
+    final preferredHours = _parseHours(userData['preferredHours']);
+    final perDiemRequired = _parseBool(userData['perDiemRequired']);
 
     // Create a list with sorting scores
     List<MapEntry<QueryDocumentSnapshot, int>> scoredJobs = jobs.map((job) {
@@ -731,12 +735,12 @@ class _HomeScreenState extends State<HomeScreen> {
       }
 
       // Priority 3: Hours match
-      final jobHours = jobData['hours'] as int? ?? 0;
+      final jobHours = _parseHours(jobData['hours']);
       final hoursDifference = (jobHours - preferredHours).abs();
       score += math.max(0, 50 - hoursDifference);
 
       // Priority 4: Per diem match
-      final jobHasPerDiem = jobData['perDiem'] as bool? ?? false;
+      final jobHasPerDiem = _parseBool(jobData['perDiem']);
       if (perDiemRequired && jobHasPerDiem) {
         score += 25;
       } else if (!perDiemRequired && !jobHasPerDiem) {
@@ -754,63 +758,58 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Show job details dialog
   void _showJobDetailsDialog(BuildContext context, Map<String, dynamic> jobData) {
-    showDialog(
+    JJElectricalDialog.show(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            jobData['company'] ?? 'Job Details',
-            style: AppTheme.headlineSmall,
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildDetailRow('Local', jobData['local']?.toString() ?? 'N/A'),
-                _buildDetailRow('Classification', jobData['classification'] ?? 'N/A'),
-                _buildDetailRow('Location', jobData['location'] ?? 'N/A'),
-                _buildDetailRow('Hours', '${jobData['hours'] ?? 'N/A'} hours/week'),
-                _buildDetailRow('Wage', jobData['wage'] != null ? '\$${jobData['wage']}/hr' : 'N/A'),
-                _buildDetailRow('Per Diem', jobData['perDiem'] == true ? 'Yes' : 'No'),
-                _buildDetailRow('Construction Type', jobData['constructionType'] ?? 'N/A'),
-                _buildDetailRow('Start Date', jobData['startDate'] ?? 'N/A'),
-                _buildDetailRow('Duration', jobData['duration'] ?? 'N/A'),
-                if (jobData['description'] != null) ...[
-                  const SizedBox(height: AppTheme.spacingMd),
-                  Text(
-                    'Description',
-                    style: AppTheme.bodyLarge.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spacingSm),
-                  Text(
-                    jobData['description'],
-                    style: AppTheme.bodyMedium,
-                  ),
-                ],
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // TODO: Implement apply functionality
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryNavy,
+      title: jobData['company'] ?? 'Job Details',
+      subtitle: 'Local ${jobData['local'] ?? 'N/A'} • ${jobData['classification'] ?? 'N/A'}',
+      illustration: ElectricalIllustration.jobSearch,
+      content: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildDetailRow('Local', jobData['local']?.toString() ?? 'N/A'),
+            _buildDetailRow('Classification', jobData['classification'] ?? 'N/A'),
+            _buildDetailRow('Location', jobData['location'] ?? 'N/A'),
+            _buildDetailRow('Hours', '${jobData['hours'] ?? 'N/A'} hours/week'),
+            _buildDetailRow('Wage', jobData['wage'] != null ? '\$${jobData['wage']}/hr' : 'N/A'),
+            _buildDetailRow('Per Diem', _parseBool(jobData['perDiem']) ? 'Yes' : 'No'),
+            _buildDetailRow('Construction Type', jobData['constructionType'] ?? 'N/A'),
+            _buildDetailRow('Start Date', jobData['startDate'] ?? 'N/A'),
+            _buildDetailRow('Duration', jobData['duration'] ?? 'N/A'),
+            if (jobData['description'] != null) ...[
+              const SizedBox(height: AppTheme.spacingMd),
+              Text(
+                'Description',
+                style: AppTheme.bodyLarge.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              child: const Text('Apply'),
-            ),
+              const SizedBox(height: AppTheme.spacingSm),
+              Text(
+                jobData['description'],
+                style: AppTheme.bodyMedium,
+              ),
+            ],
           ],
-        );
-      },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Close'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            _showApplicationDialog(context, jobData);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppTheme.primaryNavy,
+          ),
+          child: const Text('Apply'),
+        ),
+      ],
     );
   }
 
@@ -846,5 +845,102 @@ class _HomeScreenState extends State<HomeScreen> {
       return int.tryParse(hoursData) ?? 40;
     }
     return 40; // Default to 40 hours if data is null or unparseable
+  }
+
+  bool _parseBool(dynamic boolData) {
+    if (boolData is bool) {
+      return boolData;
+    } else if (boolData is String) {
+      return boolData.toLowerCase() == 'true' || boolData == '1';
+    } else if (boolData is int) {
+      return boolData == 1;
+    }
+    return false; // Default to false if data is null or unparseable
+  }
+
+  void _showApplicationDialog(BuildContext context, Map<String, dynamic> jobData) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Apply for Job',
+            style: AppTheme.headlineSmall.copyWith(
+              color: AppTheme.primaryNavy,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Are you sure you want to apply for this position?',
+                style: AppTheme.bodyMedium,
+              ),
+              const SizedBox(height: AppTheme.spacingMd),
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  color: AppTheme.lightGray.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      jobData['classification'] ?? 'Position',
+                      style: AppTheme.titleMedium.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      jobData['company'] ?? 'Company',
+                      style: AppTheme.bodyMedium.copyWith(
+                        color: AppTheme.textSecondary,
+                      ),
+                    ),
+                    Text(
+                      jobData['location'] ?? 'Location',
+                      style: AppTheme.bodyMedium.copyWith(
+                        color: AppTheme.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: AppTheme.textSecondary),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _submitJobApplication(jobData);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryNavy,
+                foregroundColor: AppTheme.white,
+              ),
+              child: const Text('Submit Application'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _submitJobApplication(Map<String, dynamic> jobData) {
+    // Here you would typically submit the application to your backend
+    // For now, we'll show a success message with electrical illustration
+    JJSnackBar.showSuccess(
+      context: context,
+      message: 'Application submitted successfully for ${jobData['classification'] ?? 'the position'}!',
+    );
   }
 }

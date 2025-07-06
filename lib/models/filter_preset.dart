@@ -121,16 +121,6 @@ class FilterPreset {
 class DefaultFilterPresets {
   static List<FilterPreset> get defaults => [
         FilterPreset.create(
-          name: 'High Paying Jobs',
-          description: 'Jobs with hourly wage above \$50',
-          criteria: const JobFilterCriteria(
-            minWage: 50.0,
-            sortBy: JobSortOption.wage,
-            sortDescending: true,
-          ),
-          icon: Icons.attach_money,
-        ),
-        FilterPreset.create(
           name: 'Local Jobs',
           description: 'Jobs within 25 miles',
           criteria: const JobFilterCriteria(

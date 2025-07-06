@@ -39,6 +39,17 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   final _preferredLocalsController = TextEditingController(text: 'Local 369, Local 77, Local 613');
   final _careerGoalsController = TextEditingController(text: 'Advance to foreman position, gain more storm restoration experience');
   
+  // Additional onboarding fields that were missing
+  bool _networkWithOthers = true;
+  bool _careerAdvancements = false;
+  bool _betterBenefits = true;
+  bool _higherPayRate = true;
+  bool _learnNewSkill = false;
+  bool _travelToNewLocation = true;
+  bool _findLongTermWork = false;
+  final _howHeardAboutUsController = TextEditingController(text: 'Referred by IBEW Local 369');
+  final _lookingToAccomplishController = TextEditingController(text: 'Find steady work with good benefits and advancement opportunities');
+  
   // Notification Settings
   bool _jobAlerts = true;
   bool _stormAlerts = true;
@@ -66,6 +77,11 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   ];
 
   final List<String> _hoursOptions = [
+    '40',
+    '40-50', 
+    '50-60',
+    '60-70',
+    '>70',
     '40+ hours',
     '50+ hours',
     '60+ hours',
@@ -74,6 +90,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   ];
 
   final List<String> _perDiemOptions = [
+    '100-150',
+    '150-200', 
+    '200+',
     'Yes, required',
     'Preferred but not required',
     'Not needed',
@@ -103,6 +122,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     _booksOnController.dispose();
     _preferredLocalsController.dispose();
     _careerGoalsController.dispose();
+    _howHeardAboutUsController.dispose();
+    _lookingToAccomplishController.dispose();
     super.dispose();
   }
 
@@ -130,6 +151,11 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
 
   void _saveProfile() {
     // TODO: Implement profile saving to backend
+    // This would save all the profile data including the new onboarding fields:
+    // - Job search goals (_networkWithOthers, _careerAdvancements, etc.)
+    // - Additional information (_howHeardAboutUsController, _lookingToAccomplishController)
+    // - All existing fields (personal info, professional info, preferences)
+    
     setState(() {
       _isEditing = false;
     });
@@ -283,7 +309,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
 
   Widget _buildPersonalTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      padding: EdgeInsets.fromLTRB(
+        AppTheme.spacingMd,
+        AppTheme.spacingMd,
+        AppTheme.spacingMd,
+        AppTheme.spacingMd + MediaQuery.of(context).padding.bottom + (_isEditing ? 80 : 0),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -401,7 +432,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
 
   Widget _buildProfessionalTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      padding: EdgeInsets.fromLTRB(
+        AppTheme.spacingMd,
+        AppTheme.spacingMd,
+        AppTheme.spacingMd,
+        AppTheme.spacingMd + MediaQuery.of(context).padding.bottom + (_isEditing ? 80 : 0),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -722,6 +758,140 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             prefixIcon: Icons.flag_outlined,
             maxLines: 3,
           ),
+
+          const SizedBox(height: AppTheme.spacingLg),
+
+          // Job Search Goals - from onboarding
+          Text(
+            'Job Search Goals',
+            style: AppTheme.headlineSmall.copyWith(
+              color: AppTheme.primaryNavy,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingSm),
+          Text(
+            'What are you looking for in your next opportunity?',
+            style: AppTheme.bodyMedium.copyWith(
+              color: AppTheme.textSecondary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+
+          // Job search goals checkboxes
+          if (_isEditing)
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
+              decoration: BoxDecoration(
+                color: AppTheme.offWhite,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                border: Border.all(color: AppTheme.lightGray),
+              ),
+              child: Column(
+                children: [
+                  CheckboxListTile(
+                    title: Text('Network with Others', style: AppTheme.bodyMedium),
+                    subtitle: Text('Connect with other electricians', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
+                    value: _networkWithOthers,
+                    activeColor: AppTheme.accentCopper,
+                    onChanged: (value) => setState(() => _networkWithOthers = value ?? false),
+                    dense: true,
+                  ),
+                  CheckboxListTile(
+                    title: Text('Career Advancement', style: AppTheme.bodyMedium),
+                    subtitle: Text('Seek leadership roles', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
+                    value: _careerAdvancements,
+                    activeColor: AppTheme.accentCopper,
+                    onChanged: (value) => setState(() => _careerAdvancements = value ?? false),
+                    dense: true,
+                  ),
+                  CheckboxListTile(
+                    title: Text('Better Benefits', style: AppTheme.bodyMedium),
+                    subtitle: Text('Improved benefit packages', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
+                    value: _betterBenefits,
+                    activeColor: AppTheme.accentCopper,
+                    onChanged: (value) => setState(() => _betterBenefits = value ?? false),
+                    dense: true,
+                  ),
+                  CheckboxListTile(
+                    title: Text('Higher Pay Rate', style: AppTheme.bodyMedium),
+                    subtitle: Text('Increase compensation', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
+                    value: _higherPayRate,
+                    activeColor: AppTheme.accentCopper,
+                    onChanged: (value) => setState(() => _higherPayRate = value ?? false),
+                    dense: true,
+                  ),
+                  CheckboxListTile(
+                    title: Text('Learn New Skills', style: AppTheme.bodyMedium),
+                    subtitle: Text('Gain new experience', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
+                    value: _learnNewSkill,
+                    activeColor: AppTheme.accentCopper,
+                    onChanged: (value) => setState(() => _learnNewSkill = value ?? false),
+                    dense: true,
+                  ),
+                  CheckboxListTile(
+                    title: Text('Travel to New Locations', style: AppTheme.bodyMedium),
+                    subtitle: Text('Work in different areas', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
+                    value: _travelToNewLocation,
+                    activeColor: AppTheme.accentCopper,
+                    onChanged: (value) => setState(() => _travelToNewLocation = value ?? false),
+                    dense: true,
+                  ),
+                  CheckboxListTile(
+                    title: Text('Find Long-term Work', style: AppTheme.bodyMedium),
+                    subtitle: Text('Secure stable employment', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
+                    value: _findLongTermWork,
+                    activeColor: AppTheme.accentCopper,
+                    onChanged: (value) => setState(() => _findLongTermWork = value ?? false),
+                    dense: true,
+                  ),
+                ],
+              ),
+            )
+          else
+            // Display selected goals when not editing
+            Wrap(
+              spacing: AppTheme.spacingSm,
+              runSpacing: AppTheme.spacingSm,
+              children: [
+                if (_networkWithOthers) _buildGoalChip('Network with Others'),
+                if (_careerAdvancements) _buildGoalChip('Career Advancement'),
+                if (_betterBenefits) _buildGoalChip('Better Benefits'),
+                if (_higherPayRate) _buildGoalChip('Higher Pay Rate'),
+                if (_learnNewSkill) _buildGoalChip('Learn New Skills'),
+                if (_travelToNewLocation) _buildGoalChip('Travel to New Locations'),
+                if (_findLongTermWork) _buildGoalChip('Find Long-term Work'),
+              ],
+            ),
+
+          const SizedBox(height: AppTheme.spacingLg),
+
+          // Additional feedback fields from onboarding
+          Text(
+            'Additional Information',
+            style: AppTheme.headlineSmall.copyWith(
+              color: AppTheme.primaryNavy,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+
+          JJTextField(
+            label: 'How did you hear about us?',
+            controller: _howHeardAboutUsController,
+            enabled: _isEditing,
+            prefixIcon: Icons.info_outline,
+            maxLines: 2,
+          ),
+
+          const SizedBox(height: AppTheme.spacingMd),
+
+          JJTextField(
+            label: 'What are you looking to accomplish?',
+            controller: _lookingToAccomplishController,
+            enabled: _isEditing,
+            prefixIcon: Icons.track_changes_outlined,
+            maxLines: 3,
+          ),
         ],
       ),
     );
@@ -729,7 +899,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
 
   Widget _buildSettingsTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      padding: EdgeInsets.fromLTRB(
+        AppTheme.spacingMd,
+        AppTheme.spacingMd,
+        AppTheme.spacingMd,
+        AppTheme.spacingMd + MediaQuery.of(context).padding.bottom + (_isEditing ? 80 : 0),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -942,6 +1117,27 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           style: AppTheme.bodyMedium.copyWith(
             color: AppTheme.textSecondary,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGoalChip(String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMd,
+        vertical: AppTheme.spacingSm,
+      ),
+      decoration: BoxDecoration(
+        color: AppTheme.accentCopper.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        border: Border.all(color: AppTheme.accentCopper.withOpacity(0.3)),
+      ),
+      child: Text(
+        label,
+        style: AppTheme.bodyMedium.copyWith(
+          color: AppTheme.accentCopper,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

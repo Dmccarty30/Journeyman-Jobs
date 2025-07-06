@@ -435,7 +435,7 @@ class _FirestoreQueryPopupState<T> extends State<FirestoreQueryPopup<T>> {
           subtitle: _searchQuery.isEmpty
               ? 'There are no items to display'
               : 'Try adjusting your search',
-          icon: Icons.search_off,
+          context: 'search', // Uses electrical search illustration
         ),
       );
     }
