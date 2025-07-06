@@ -127,9 +127,7 @@ class _MoreScreenState extends State<MoreScreen> {
                   icon: Icons.feedback_outlined,
                   title: 'Send Feedback',
                   subtitle: 'Help us improve the app',
-                  onTap: () {
-                    // TODO: Show feedback form
-                  },
+                  onTap: () => context.push(AppRouter.feedback),
                 ),
               ],
             ),

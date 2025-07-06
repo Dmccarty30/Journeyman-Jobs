@@ -147,6 +147,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         ),
+                        // Notifications button
+                        IconButton(
+                          onPressed: () => context.push(AppRouter.notifications),
+                          icon: Icon(
+                            Icons.notifications_outlined,
+                            color: AppTheme.primaryNavy,
+                            size: AppTheme.iconLg,
+                          ),
+                        ),
                       ],
                     );
                   },
@@ -165,60 +174,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: AppTheme.spacingMd),
 
-            // First row of electrical quick actions
-            Row(
-              children: [
-                Expanded(
-                  child: _buildElectricalActionCard(
-                    'Code Updates',
-                    Icons.update_outlined,
-                    () {
-                      // TODO: Navigate to code updates
-                    },
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: _buildElectricalActionCard(
-                    'Safety Checkin',
-                    Icons.security_outlined,
-                    () {
-                      // TODO: Navigate to safety checkin
-                    },
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: AppTheme.spacingMd),
-
-            // Second row of electrical quick actions
-            Row(
-              children: [
-                Expanded(
-                  child: _buildElectricalActionCard(
-                    'Report Hazard',
-                    Icons.warning_outlined,
-                    () {
-                      // TODO: Navigate to hazard reporting
-                    },
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: _buildElectricalActionCard(
-                    'PPE Suppliers',
-                    Icons.shield_outlined,
-                    () {
-                      // TODO: Navigate to PPE suppliers
-                    },
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: AppTheme.spacingMd),
-
             // Third row with electrical calc
             Row(
               children: [
@@ -227,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     'Electrical calc',
                     Icons.calculate_outlined,
                     () {
-                      // TODO: Navigate to electrical calculators
+                      context.push(AppRouter.electricalCalculators);
                     },
                   ),
                 ),
@@ -336,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /*
+  /
   Widget _buildStatCard(String title, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -482,7 +437,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-  */
+  /
 
   Widget _buildElectricalActionCard(String title, IconData icon, VoidCallback onPressed) {
     return GestureDetector(

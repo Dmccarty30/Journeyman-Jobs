@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../app_theme.dart';
-// import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
+import '../../electrical_components/electrical_components.dart';
 
 // =================== BUTTONS ===================
 
@@ -354,17 +354,16 @@ class JJElectricalLoader extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
+          SizedBox(
             width: width ?? 200,
             height: height ?? 60,
-            decoration: BoxDecoration(
-              color: AppTheme.lightGray,
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-            ),
-            child: Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
-              ),
+            child: ThreePhaseSineWaveLoader(
+              width: width ?? 200,
+              height: height ?? 60,
+              duration: duration ?? const Duration(seconds: 2),
+              primaryColor: AppTheme.accentCopper,
+              secondaryColor: AppTheme.primaryNavy,
+              tertiaryColor: AppTheme.successGreen,
             ),
           ),
           if (message != null) ...[
@@ -403,18 +402,15 @@ class JJPowerLineLoader extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
+          SizedBox(
             width: width ?? 300,
             height: height ?? 80,
-            decoration: BoxDecoration(
-              color: AppTheme.lightGray,
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-            ),
-            child: Center(
-              child: LinearProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
-                backgroundColor: AppTheme.primaryNavy.withOpacity(0.3),
-              ),
+            child: PowerLineLoader(
+              width: width ?? 300,
+              height: height ?? 80,
+              duration: duration ?? const Duration(seconds: 3),
+              primaryColor: AppTheme.accentCopper,
+              secondaryColor: AppTheme.primaryNavy,
             ),
           ),
           if (message != null) ...[
@@ -873,11 +869,13 @@ class JJElectricalToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Switch(
-      value: isOn,
+    return CircuitBreakerToggle(
+      isOn: isOn,
       onChanged: onChanged,
-      activeColor: AppTheme.successGreen,
-      inactiveTrackColor: AppTheme.mediumGray,
+      width: width ?? 80,
+      height: height ?? 40,
+      onColor: AppTheme.successGreen,
+      offColor: AppTheme.mediumGray,
     );
   }
 }
@@ -889,8 +887,7 @@ class JJElectricalIcons {
     double size = 24,
     Color? color,
   }) {
-    return Icon(
-      Icons.construction,
+    return HardHatIcon(
       size: size,
       color: color ?? AppTheme.primaryNavy,
     );
@@ -900,8 +897,7 @@ class JJElectricalIcons {
     double size = 24,
     Color? color,
   }) {
-    return Icon(
-      Icons.electrical_services,
+    return TransmissionTowerIcon(
       size: size,
       color: color ?? AppTheme.primaryNavy,
     );
