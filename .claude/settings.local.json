@@ -13,10 +13,12 @@
       "Bash(dart analyze:*)",
       "Bash(/mnt/c/flutter/flutter/bin/dart analyze:*)",
       "Bash(sed:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "mcp__think-mcp-server__think"
     ],
     "deny": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "brave-search",
     "search1api-crawler",
@@ -39,6 +41,5 @@
     "server-memory",
     "task-master-ai",
     "@21st-dev/magic"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

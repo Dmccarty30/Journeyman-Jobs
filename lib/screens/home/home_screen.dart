@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Welcome Back!',
+                    'Welcome Back, John!',
                     style: AppTheme.headlineMedium.copyWith(
                       color: AppTheme.primaryNavy,
                     ),
@@ -97,140 +97,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: AppTheme.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: AppTheme.spacingLg),
-                  JJPrimaryButton(
-                    text: 'Browse Jobs',
-                    icon: Icons.search,
-                    onPressed: () {
-                      // TODO: Navigate to jobs screen
-                    },
-                    isFullWidth: true,
-                  ),
                 ],
               ),
-            ),
-
-            const SizedBox(height: AppTheme.spacingLg),
-
-            // Safety Dashboard Section
-            Text(
-              'Daily Safety Check',
-              style: AppTheme.headlineSmall.copyWith(
-                color: AppTheme.primaryNavy,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingMd),
-            
-            _buildSafetyDashboard(),
-            
-            const SizedBox(height: AppTheme.spacingLg),
-
-            // Electrical Industry Stats section
-            Text(
-              'Electrical Industry Stats',
-              style: AppTheme.headlineSmall.copyWith(
-                color: AppTheme.primaryNavy,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingMd),
-            
-            // First row of electrical stats
-            Row(
-              children: [
-                Expanded(
-                  child: _buildElectricalStatCard(
-                    'Power Outages',
-                    '12',
-                    const Icon(Icons.electrical_services, size: 20),
-                    AppTheme.errorRed,
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: _buildElectricalStatCard(
-                    'Storm Jobs',
-                    '23',
-                    const Icon(Icons.flash_on_outlined, size: 20),
-                    AppTheme.warningYellow,
-                  ),
-                ),
-              ],
-            ),
-            
-            const SizedBox(height: AppTheme.spacingMd),
-            
-            // Second row of electrical stats
-            Row(
-              children: [
-                Expanded(
-                  child: _buildElectricalStatCard(
-                    'High Voltage',
-                    '89',
-                    const Icon(Icons.flash_on, size: 20),
-                    AppTheme.infoBlue,
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: _buildElectricalStatCard(
-                    'Code Updates',
-                    '3',
-                    const Icon(Icons.update_outlined, size: 20),
-                    AppTheme.successGreen,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: AppTheme.spacingLg),
-
-            // Recent job postings
-            Text(
-              'Recent Postings',
-              style: AppTheme.headlineSmall.copyWith(
-                color: AppTheme.primaryNavy,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingMd),
-
-            // Electrical job categories
-            _buildElectricalJobCard(
-              'Residential Electrical',
-              'Highpoint Electric',
-              'Boston, MA',
-              '\$42/hr',
-              'Local 103',
-              '120V/240V Service',
-              Icons.home_outlined,
-            ),
-            _buildElectricalJobCard(
-              'Storm Restoration',
-              'Emergency Power Solutions',
-              'Houston, TX',
-              '\$65/hr',
-              'Local 66',
-              'Emergency Work',
-              Icons.flash_on_outlined,
-              isEmergency: true,
-            ),
-            _buildElectricalJobCard(
-              'Commercial/Industrial',
-              'Metro Industrial Electric',
-              'Chicago, IL',
-              '\$48/hr',
-              'Local 134',
-              '480V+ Systems',
-              Icons.factory_outlined,
-            ),
-            _buildElectricalJobCard(
-              'Transmission/Distribution',
-              'Grid Solutions LLC',
-              'Phoenix, AZ',
-              '\$58/hr',
-              'Local 387',
-              'High Voltage',
-              Icons.electrical_services_outlined,
-              isHighVoltage: true,
             ),
 
             const SizedBox(height: AppTheme.spacingLg),
@@ -320,6 +188,112 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ],
+            ),
+
+            const SizedBox(height: AppTheme.spacingLg),
+
+            // Electrical Industry Stats section
+            Text(
+              'Electrical Industry Stats',
+              style: AppTheme.headlineSmall.copyWith(
+                color: AppTheme.primaryNavy,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+            
+            // First row of electrical stats
+            Row(
+              children: [
+                Expanded(
+                  child: _buildElectricalStatCard(
+                    'Power Outages',
+                    '12',
+                    const Icon(Icons.electrical_services, size: 20),
+                    AppTheme.errorRed,
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: _buildElectricalStatCard(
+                    'Storm Jobs',
+                    '23',
+                    const Icon(Icons.flash_on_outlined, size: 20),
+                    AppTheme.warningYellow,
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: AppTheme.spacingMd),
+            
+            // Second row of electrical stats
+            Row(
+              children: [
+                Expanded(
+                  child: _buildElectricalStatCard(
+                    'High Voltage',
+                    '89',
+                    const Icon(Icons.flash_on, size: 20),
+                    AppTheme.infoBlue,
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: _buildElectricalStatCard(
+                    'Code Updates',
+                    '3',
+                    const Icon(Icons.update_outlined, size: 20),
+                    AppTheme.successGreen,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: AppTheme.spacingLg),
+
+            // Suggested Jobs
+            Text(
+              'Suggested Jobs',
+              style: AppTheme.headlineSmall.copyWith(
+                color: AppTheme.primaryNavy,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+
+            // Suggested job cards with new design
+            _buildSuggestedJobCard(
+              'Residential Electrical',
+              'Local 103',
+              'Highpoint Electric',
+              'Boston, MA',
+              '\$42/hr',
+              'Per Diem: \$75/day',
+            ),
+            _buildSuggestedJobCard(
+              'Storm Restoration',
+              'Local 66',
+              'Emergency Power Solutions',
+              'Houston, TX',
+              '\$65/hr',
+              'Per Diem: \$100/day',
+              isEmergency: true,
+            ),
+            _buildSuggestedJobCard(
+              'Commercial/Industrial',
+              'Local 134',
+              'Metro Industrial Electric',
+              'Chicago, IL',
+              '\$48/hr',
+              'Per Diem: \$80/day',
+            ),
+            _buildSuggestedJobCard(
+              'Transmission/Distribution',
+              'Local 387',
+              'Grid Solutions LLC',
+              'Phoenix, AZ',
+              '\$58/hr',
+              'Per Diem: \$90/day',
+              isHighVoltage: true,
             ),
 
             const SizedBox(height: AppTheme.spacingXxl),
@@ -504,35 +478,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSafetyDashboard() {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        boxShadow: [AppTheme.shadowSm],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '$_safetyDaysCount days since the last incident',
-            style: AppTheme.titleMedium.copyWith(
-              color: AppTheme.primaryNavy,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: AppTheme.spacingSm),
-          Text(
-            'Safety Tip: $_todaysSafetyTip',
-            style: AppTheme.bodyMedium.copyWith(
-              color: AppTheme.textSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildElectricalStatCard(String title, String value, Widget icon, Color color) {
     return Container(
@@ -565,128 +510,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildElectricalJobCard(
-      String title,
-      String company,
-      String location,
-      String wage,
-      String local,
-      String description,
-      IconData icon, {
-        bool isEmergency = false,
-        bool isHighVoltage = false,
-      }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        boxShadow: [AppTheme.shadowSm],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          onTap: () {},
-          child: Padding(
-            padding: const EdgeInsets.all(AppTheme.spacingMd),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (isEmergency)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.spacingSm,
-                      vertical: AppTheme.spacingXs,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppTheme.errorRed,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                    ),
-                    child: Text(
-                      'Emergency',
-                      style: AppTheme.labelSmall.copyWith(
-                        color: AppTheme.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                if (isEmergency) const SizedBox(height: AppTheme.spacingSm),
-                Text(
-                  title,
-                  style: AppTheme.headlineSmall.copyWith(
-                    color: AppTheme.primaryNavy,
-                  ),
-                ),
-                Text(
-                  company,
-                  style: AppTheme.bodySmall.copyWith(
-                    color: AppTheme.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: AppTheme.spacingMd),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.location_on_outlined,
-                      size: AppTheme.iconSm,
-                      color: AppTheme.textLight,
-                    ),
-                    const SizedBox(width: AppTheme.spacingXs),
-                    Text(
-                      location,
-                      style: AppTheme.bodySmall.copyWith(
-                        color: AppTheme.textLight,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      wage,
-                      style: AppTheme.headlineMedium.copyWith(
-                        color: AppTheme.accentCopper,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppTheme.spacingSm),
-                Wrap(
-                  spacing: AppTheme.spacingSm,
-                  children: [
-                    Chip(
-                      label: Text(
-                        local,
-                        style: AppTheme.bodySmall.copyWith(
-                          color: AppTheme.textPrimary,
-                        ),
-                      ),
-                      backgroundColor: AppTheme.lightGray,
-                    ),
-                    Chip(
-                      label: Text(
-                        description,
-                        style: AppTheme.bodySmall.copyWith(
-                          color: AppTheme.textPrimary,
-                        ),
-                      ),
-                      backgroundColor: AppTheme.lightGray,
-                    ),
-                  ],
-                ),
-                if (isHighVoltage) const SizedBox(height: AppTheme.spacingXs),
-                if (isHighVoltage)
-                  Icon(
-                    icon,
-                    color: AppTheme.warningYellow,
-                    size: AppTheme.iconLg,
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildElectricalActionCard(String title, IconData icon, VoidCallback onPressed) {
     return GestureDetector(
@@ -750,6 +573,235 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSuggestedJobCard(
+    String classification,
+    String localNumber,
+    String company,
+    String location,
+    String wage,
+    String perDiem, {
+    bool isEmergency = false,
+    bool isHighVoltage = false,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [AppTheme.shadowSm],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Left column with classification and local number
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (isEmergency) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppTheme.spacingXs,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.errorRed,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'ClassificationText',
+                          style: AppTheme.labelSmall.copyWith(
+                            color: AppTheme.white,
+                            fontSize: 9,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                    ] else ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppTheme.spacingXs,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.accentCopper,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'ClassificationText',
+                          style: AppTheme.labelSmall.copyWith(
+                            color: AppTheme.white,
+                            fontSize: 9,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                    ],
+                    Text(
+                      classification,
+                      style: AppTheme.bodyMedium.copyWith(
+                        color: AppTheme.primaryNavy,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingXs),
+                    Text(
+                      localNumber,
+                      style: AppTheme.bodySmall.copyWith(
+                        color: AppTheme.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Right column with location and wage info
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          size: 12,
+                          color: AppTheme.textSecondary,
+                        ),
+                        const SizedBox(width: 2),
+                        Expanded(
+                          child: Text(
+                            location,
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.access_time,
+                          size: 12,
+                          color: AppTheme.textSecondary,
+                        ),
+                        const SizedBox(width: 2),
+                        Expanded(
+                          child: Text(
+                            'Posted 2h ago',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.schedule,
+                          size: 12,
+                          color: AppTheme.textSecondary,
+                        ),
+                        const SizedBox(width: 2),
+                        Expanded(
+                          child: Text(
+                            'Hours: 40hrs',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        const Text(
+                          '\$',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppTheme.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        Expanded(
+                          child: Text(
+                            perDiem,
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 36,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.warningYellow,
+                      foregroundColor: AppTheme.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    child: Text(
+                      'View Details',
+                      style: AppTheme.bodySmall.copyWith(
+                        color: AppTheme.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacingSm),
+              Expanded(
+                child: Container(
+                  height: 36,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryNavy,
+                      foregroundColor: AppTheme.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    child: Text(
+                      'Bid now',
+                      style: AppTheme.bodySmall.copyWith(
+                        color: AppTheme.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

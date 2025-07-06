@@ -526,7 +526,7 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
             ],
           ),
           const SizedBox(height: AppTheme.spacingSm),
-          const Text(
+          Text(
             '• Emergency Services: 911\n'
             '• Safety Manager: (555) 987-6543\n'
             '• Site Security: (555) 123-4567\n'
@@ -564,14 +564,14 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
     JJBottomSheet.show(
       context: context,
       title: 'Incident Reporting Guidelines',
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'What to Report:',
             style: AppTheme.titleMedium,
           ),
-          SizedBox(height: AppTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           Text(
             '• All electrical accidents and near misses\n'
             '• Equipment failures or malfunctions\n'
@@ -581,12 +581,12 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
             '• Lockout/tagout violations',
             style: AppTheme.bodyMedium,
           ),
-          SizedBox(height: AppTheme.spacingMd),
+          const SizedBox(height: AppTheme.spacingMd),
           Text(
             'Reporting Timeline:',
             style: AppTheme.titleMedium,
           ),
-          SizedBox(height: AppTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           Text(
             '• Immediate: Life-threatening incidents\n'
             '• Within 24 hours: All other incidents\n'

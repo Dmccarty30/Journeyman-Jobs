@@ -5,7 +5,25 @@ import 'dart:io';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  bool _isGoogleSignInInitialized = false;
+
+  // Initialize Google Sign-In
+  Future<void> _initializeGoogleSignIn() async {
+    try {
+      await _googleSignIn.initialize();
+      _isGoogleSignInInitialized = true;
+    } catch (e) {
+      print('Failed to initialize Google Sign-In: $e');
+    }
+  }
+
+  // Ensure Google Sign-In is initialized
+  Future<void> _ensureGoogleSignInInitialized() async {
+    if (!_isGoogleSignInInitialized) {
+      await _initializeGoogleSignIn();
+    }
+  }
 
   // Get current user
   User? get currentUser => _auth.currentUser;
@@ -48,24 +66,34 @@ class AuthService {
   // Google Sign In
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      // Ensure Google Sign-In is initialized
+      await _ensureGoogleSignInInitialized();
 
-      // If the user cancels the sign-in process
-      if (googleUser == null) return null;
+      // Check if authenticate is supported
+      if (!_googleSignIn.supportsAuthenticate()) {
+        throw UnsupportedError('Google Sign-In not supported on this platform');
+      }
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth = 
-          await googleUser.authentication;
+      // Trigger the authentication flow with v7 API
+      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate(
+        scopeHint: ['email'],
+      );
+
+      // Get authorization client for accessing tokens
+      final authClient = _googleSignIn.authorizationClient;
+      final authorization = await authClient.authorizationForScopes(['email']);
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+        accessToken: authorization?.accessToken,
+        idToken: googleUser.authentication.idToken,
       );
 
       // Once signed in, return the UserCredential
       return await _auth.signInWithCredential(credential);
+    } on GoogleSignInException catch (e) {
+      print('Google Sign-In error: ${e.code.name} - ${e.description}');
+      rethrow;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }

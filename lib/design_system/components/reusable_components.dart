@@ -822,6 +822,35 @@ class JJSnackBar {
       ),
     );
   }
+
+  static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showInfo({
+    required BuildContext context,
+    required String message,
+    Duration duration = const Duration(seconds: 3),
+  }) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.info, color: AppTheme.white),
+            const SizedBox(width: AppTheme.spacingSm),
+            Expanded(
+              child: Text(
+                message,
+                style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: AppTheme.primaryNavy,
+        duration: duration,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        ),
+      ),
+    );
+  }
 }
 
 // =================== ELECTRICAL COMPONENTS EXPORTS ===================

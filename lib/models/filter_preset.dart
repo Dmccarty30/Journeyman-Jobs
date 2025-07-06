@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'filter_criteria.dart';
 
 /// Model representing a saved filter preset
@@ -116,15 +117,12 @@ class FilterPreset {
   }
 }
 
-// Import for IconData
-import 'package:flutter/material.dart';
-
 /// Default filter presets
 class DefaultFilterPresets {
   static List<FilterPreset> get defaults => [
         FilterPreset.create(
           name: 'High Paying Jobs',
-          description: 'Jobs with hourly wage above $50',
+          description: 'Jobs with hourly wage above \$50',
           criteria: const JobFilterCriteria(
             minWage: 50.0,
             sortBy: JobSortOption.wage,

@@ -5,6 +5,7 @@ import '../../design_system/components/reusable_components.dart';
 import '../../models/safety_incident.dart';
 import '../../models/safety_reminder.dart';
 import '../../navigation/app_router.dart';
+import 'incident_report_screen.dart';
 
 class ElectricalSafetyDashboard extends StatefulWidget {
   const ElectricalSafetyDashboard({super.key});
@@ -229,9 +230,11 @@ class _ElectricalSafetyDashboardState extends State<ElectricalSafetyDashboard> {
         color: AppTheme.white,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         boxShadow: [AppTheme.shadowSm],
-        border: Border.left(
-          width: 4,
-          color: _getReminderPriorityColor(_todaysReminder.priority),
+        border: Border(
+          left: BorderSide(
+            width: 4,
+            color: _getReminderPriorityColor(_todaysReminder.priority),
+          ),
         ),
       ),
       child: Column(
@@ -504,9 +507,11 @@ class _ElectricalSafetyDashboardState extends State<ElectricalSafetyDashboard> {
         color: AppTheme.white,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         boxShadow: [AppTheme.shadowSm],
-        border: Border.left(
-          width: 3,
-          color: _getReminderPriorityColor(reminder.priority),
+        border: Border(
+          left: BorderSide(
+            width: 3,
+            color: _getReminderPriorityColor(reminder.priority),
+          ),
         ),
       ),
       child: Row(
@@ -644,7 +649,7 @@ class _ElectricalSafetyDashboardState extends State<ElectricalSafetyDashboard> {
       title: 'Safety Check-in',
       child: Column(
         children: [
-          const Text(
+          Text(
             'Complete your daily safety check-in:',
             style: AppTheme.bodyMedium,
           ),
@@ -685,29 +690,29 @@ class _ElectricalSafetyDashboardState extends State<ElectricalSafetyDashboard> {
     JJBottomSheet.show(
       context: context,
       title: 'PPE Inspection',
-      child: const Column(
+      child: Column(
         children: [
           Text(
             'Inspect the following PPE items before starting work:',
             style: AppTheme.bodyMedium,
           ),
-          SizedBox(height: AppTheme.spacingLg),
-          ListTile(
+          const SizedBox(height: AppTheme.spacingLg),
+          const ListTile(
             leading: Icon(Icons.visibility, color: AppTheme.infoBlue),
             title: Text('Safety Glasses'),
             subtitle: Text('Check for cracks, scratches, or damage'),
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.construction, color: AppTheme.warningYellow),
             title: Text('Hard Hat'),
             subtitle: Text('Inspect shell and suspension system'),
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.shield, color: AppTheme.errorRed),
             title: Text('Arc-rated Clothing'),
             subtitle: Text('Check for tears, burns, or contamination'),
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.pan_tool, color: AppTheme.successGreen),
             title: Text('Insulated Gloves'),
             subtitle: Text('Look for punctures or degradation'),
