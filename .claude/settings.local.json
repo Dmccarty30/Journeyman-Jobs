@@ -16,7 +16,10 @@
       "Bash(grep:*)",
       "mcp__think-mcp-server__think",
       "mcp__server-sequential-thinking__sequentialthinking",
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub:*)",
+      "Bash(flutter:*)",
+      "Bash(/mnt/c/flutter/flutter/bin/flutter:*)"
     ],
     "deny": []
   },

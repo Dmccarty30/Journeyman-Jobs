@@ -13,8 +13,8 @@ class UsersRecord extends FirestoreRecord {
   }
 
   void _initializeFields() {
-    _email = snapshotData['email'] as String?;
-    _displayName = snapshotData['display_name'] as String?;
+    _email = snapshotData?['email'] as String?;
+    _displayName = snapshotData?['display_name'] as String?;
     // Initialize other fields similarly as needed
   }
 

@@ -1,8 +1,6 @@
-import '/flutter_flow/flutter_flow_util.dart';
-import 'unions_widget.dart' show UnionsWidget;
 import 'package:flutter/material.dart';
 
-class UnionsModel extends FlutterFlowModel<UnionsWidget> {
+class UnionsModel {
   ///  State fields for stateful widgets in this page.
 
   // State field(s) for EmailLogin widget.

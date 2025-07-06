@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart';
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 import 'dart:math' as math;
 
@@ -14,19 +13,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final math.Random _random = math.Random();
-  final int _safetyDaysCount = 127; // This would come from a data source
-  final List<String> _safetyTips = [
-    'Always test circuits before working - never assume they are de-energized',
-    'Wear proper PPE including safety glasses, hard hat, and arc-rated clothing',
-    'Use proper lockout/tagout procedures before electrical work',
-    'Keep a safe distance from overhead power lines - maintain 10-foot clearance',
-    'Inspect tools and equipment before each use',
-    'Never work alone on electrical systems - use the buddy system',
-    'Know your electrical hazards: shock, arc flash, blast, and fire',
-  ];
-
-  String get _todaysSafetyTip => _safetyTips[_random.nextInt(_safetyTips.length)];
 
   @override
   Widget build(BuildContext context) {
@@ -319,7 +305,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         return Column(
                           children: sortedJobs.take(5).map((jobDoc) {
                             final jobData = jobDoc.data() as Map<String, dynamic>;
-
                             return GestureDetector(
                               onTap: () => _showJobDetailsDialog(context, jobData),
                               child: _buildSuggestedJobCard(
@@ -332,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 isEmergency: jobData['construction_type'] == 'Emergency' ||
                                     jobData['construction_type'] == 'Storm',
                                 isHighVoltage: jobData['classification']?.toString().toLowerCase().contains('transmission') ?? false,
-                                hours: jobData['hours'] ?? 40,
+                                hours: _parseHours(jobData['hours']),
                               ),
                             );
                           }).toList(),
@@ -351,6 +336,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /*
   Widget _buildStatCard(String title, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -381,7 +367,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+  */
 
+  /*
   Widget _buildJobCard(
     String title,
     String company,
@@ -494,70 +482,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  Widget _buildActionCard(String title, IconData icon, VoidCallback onTap) {
-    return JJCard(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              gradient: AppTheme.buttonGradient,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon,
-              color: AppTheme.white,
-              size: AppTheme.iconMd,
-            ),
-          ),
-          const SizedBox(height: AppTheme.spacingSm),
-          Text(
-            title,
-            style: AppTheme.labelMedium.copyWith(
-              color: AppTheme.primaryNavy,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-
-  Widget _buildElectricalStatCard(String title, String value, Widget icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        boxShadow: [AppTheme.shadowSm],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              icon,
-              const Spacer(),
-            ],
-          ),
-          const SizedBox(height: AppTheme.spacingSm),
-          Text(
-            value,
-            style: AppTheme.headlineMedium.copyWith(color: color),
-          ),
-          Text(
-            title,
-            style: AppTheme.labelMedium.copyWith(color: AppTheme.textSecondary),
-          ),
-        ],
-      ),
-    );
-  }
-
+  */
 
   Widget _buildElectricalActionCard(String title, IconData icon, VoidCallback onPressed) {
     return GestureDetector(
@@ -574,39 +499,6 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Icon(
               icon,
-              color: AppTheme.white,
-              size: AppTheme.iconLg,
-            ),
-            const SizedBox(height: AppTheme.spacingSm),
-            Text(
-              title,
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.white,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTransmissionActionCard(String title, VoidCallback onPressed) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        padding: const EdgeInsets.all(AppTheme.spacingMd),
-        decoration: BoxDecoration(
-          color: AppTheme.accentCopper,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          boxShadow: [AppTheme.shadowSm],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.electrical_services,
               color: AppTheme.white,
               size: AppTheme.iconLg,
             ),
@@ -804,7 +696,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             children: [
               Expanded(
-                child: Container(
+                child: SizedBox(
                   height: 36,
                   child: ElevatedButton(
                     onPressed: () {},
@@ -827,7 +719,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(width: AppTheme.spacingSm),
               Expanded(
-                child: Container(
+                child: SizedBox(
                   height: 36,
                   child: ElevatedButton(
                     onPressed: () {},
@@ -991,5 +883,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+  int _parseHours(dynamic hoursData) {
+    if (hoursData is int) {
+      return hoursData;
+    } else if (hoursData is String) {
+      return int.tryParse(hoursData) ?? 40;
+    }
+    return 40; // Default to 40 hours if data is null or unparseable
   }
 }
