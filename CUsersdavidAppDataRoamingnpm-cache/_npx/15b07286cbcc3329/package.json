@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@modelcontextprotocol/server-memory": "^2025.4.25"
+  },
+  "_npx": {
+    "packages": [
+      "@modelcontextprotocol/server-memory"
+    ]
+  }
+}

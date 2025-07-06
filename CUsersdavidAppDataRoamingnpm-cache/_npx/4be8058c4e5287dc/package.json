@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "search1api-mcp": "^0.1.8"
+  },
+  "_npx": {
+    "packages": [
+      "search1api-mcp"
+    ]
+  }
+}
