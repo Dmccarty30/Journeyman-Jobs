@@ -63,10 +63,13 @@ dependencies:
   # Utilities
   collection: ^1.18.0
   meta: ^1.15.0
+  from_css_color: ^2.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  test: ^1.24.0
+  mockito: ^5.4.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

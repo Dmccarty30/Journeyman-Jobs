@@ -348,9 +348,10 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                               ),
                               Text(
                                 job.localNumber?.toString() ?? 'N/A',
-                                style: AppTheme.bodyMedium.copyWith(
+                                style: AppTheme.bodyLarge.copyWith(
                                   color: AppTheme.primaryNavy,
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 18,
                                 ),
                               ),
                             ],
@@ -467,74 +468,20 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                 Row(
                   children: [
                     Expanded(
-                      child: Container(
-                        height: 36,
-                        child: ElevatedButton(
-                          onPressed: () => _showElectricalJobDetails(job),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.warningYellow,
-                            foregroundColor: AppTheme.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                            ),
-                            elevation: 2,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.visibility,
-                                size: 16,
-                                color: AppTheme.white,
-                              ),
-                              const SizedBox(width: AppTheme.spacingXs),
-                              Text(
-                                'View Details',
-                                style: AppTheme.bodySmall.copyWith(
-                                  color: AppTheme.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      child: JJSecondaryButton(
+                        text: 'View Details',
+                        icon: Icons.visibility,
+                        onPressed: () => _showElectricalJobDetails(job),
+                        height: 42,
                       ),
                     ),
                     const SizedBox(width: AppTheme.spacingMd),
                     Expanded(
-                      child: Container(
-                        height: 36,
-                        child: ElevatedButton(
-                          onPressed: () => _handleBidNow(job),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryNavy,
-                            foregroundColor: AppTheme.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                            ),
-                            elevation: 2,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.send,
-                                size: 16,
-                                color: AppTheme.white,
-                              ),
-                              const SizedBox(width: AppTheme.spacingXs),
-                              Text(
-                                'Bid Now',
-                                style: AppTheme.bodySmall.copyWith(
-                                  color: AppTheme.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      child: JJPrimaryButton(
+                        text: 'Bid Now',
+                        icon: Icons.send,
+                        onPressed: () => _handleBidNow(job),
+                        height: 42,
                       ),
                     ),
                   ],
@@ -569,9 +516,10 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                 ),
                 TextSpan(
                   text: value,
-                  style: AppTheme.bodySmall.copyWith(
+                  style: AppTheme.bodyMedium.copyWith(
                     color: AppTheme.textPrimary,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
               ],
@@ -583,10 +531,23 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
   }
 
   void _showElectricalJobDetails(Job job) {
-    // TODO: Implement electrical-themed job details modal
-    JJSnackBar.showInfo(
+    showModalBottomSheet(
       context: context,
-      message: 'Job details for ${job.classification}',
+      backgroundColor: AppTheme.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.radiusLg)),
+      ),
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.9,
+          maxChildSize: 0.9,
+          minChildSize: 0.5,
+          builder: (context, scrollController) {
+            return JobDetailsSheet(job: job, scrollController: scrollController);
+          },
+        );
+      },
     );
   }
 
@@ -816,4 +777,404 @@ class ElectricalCircuitPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class JobDetailsSheet extends StatelessWidget {
+  final Job job;
+  final ScrollController scrollController;
+
+  const JobDetailsSheet({
+    super.key,
+    required this.job,
+    required this.scrollController,
+  });
+
+  Color _getVoltageLevelColor(String? voltageLevel) {
+    if (voltageLevel == null) return AppTheme.textSecondary;
+    
+    switch (voltageLevel.toLowerCase()) {
+      case 'low voltage':
+        return AppTheme.successGreen;
+      case 'medium voltage':
+        return AppTheme.warningYellow;
+      case 'high voltage':
+        return Colors.deepOrange;
+      case 'extra high voltage':
+        return AppTheme.errorRed;
+      default:
+        return AppTheme.textSecondary;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final voltageColor = _getVoltageLevelColor(job.voltageLevel);
+    final isEmergency = job.classification?.toLowerCase().contains('storm') ?? false;
+
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingLg),
+      child: SingleChildScrollView(
+        controller: scrollController,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Handle
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.textLight,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: AppTheme.spacingLg),
+            
+            // Header
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (isEmergency)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacingMd,
+                            vertical: AppTheme.spacingSm,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppTheme.errorRed,
+                            borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.flash_on,
+                                size: 16,
+                                color: AppTheme.white,
+                              ),
+                              const SizedBox(width: AppTheme.spacingXs),
+                              Text(
+                                'EMERGENCY WORK',
+                                style: AppTheme.labelMedium.copyWith(
+                                  color: AppTheme.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (isEmergency) const SizedBox(height: AppTheme.spacingSm),
+                      Text(
+                        job.classification ?? 'Electrical Worker',
+                        style: AppTheme.displaySmall.copyWith(
+                          color: AppTheme.primaryNavy,
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacingXs),
+                      Row(
+                        children: [
+                          Text(
+                            'Local ',
+                            style: AppTheme.headlineSmall.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                          Text(
+                            job.localNumber?.toString() ?? 'N/A',
+                            style: AppTheme.headlineSmall.copyWith(
+                              color: AppTheme.accentCopper,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: AppTheme.spacingLg),
+            
+            // Voltage level indicator
+            if (job.voltageLevel != null)
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingMd,
+                  vertical: AppTheme.spacingSm,
+                ),
+                decoration: BoxDecoration(
+                  color: voltageColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  border: Border.all(color: voltageColor, width: 2),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.bolt,
+                      size: 20,
+                      color: voltageColor,
+                    ),
+                    const SizedBox(width: AppTheme.spacingSm),
+                    Text(
+                      job.voltageLevel!,
+                      style: AppTheme.titleMedium.copyWith(
+                        color: voltageColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            
+            const SizedBox(height: AppTheme.spacingLg),
+            
+            // Key information in cards
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingMd),
+                    decoration: BoxDecoration(
+                      color: AppTheme.successGreen.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Wage',
+                          style: AppTheme.labelMedium.copyWith(
+                            color: AppTheme.successGreen,
+                          ),
+                        ),
+                        Text(
+                          job.wage ?? 'Competitive',
+                          style: AppTheme.headlineMedium.copyWith(
+                            color: AppTheme.successGreen,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingMd),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentCopper.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Hours',
+                          style: AppTheme.labelMedium.copyWith(
+                            color: AppTheme.accentCopper,
+                          ),
+                        ),
+                        Text(
+                          job.hours ?? '40hrs',
+                          style: AppTheme.headlineMedium.copyWith(
+                            color: AppTheme.accentCopper,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: AppTheme.spacingLg),
+            
+            // Location and Company
+            Text(
+              'Job Details',
+              style: AppTheme.headlineSmall.copyWith(
+                color: AppTheme.primaryNavy,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+            
+            _buildDetailRow(Icons.location_on, 'Location', job.location),
+            const SizedBox(height: AppTheme.spacingSm),
+            _buildDetailRow(Icons.business, 'Company', job.company),
+            const SizedBox(height: AppTheme.spacingSm),
+            _buildDetailRow(Icons.access_time, 'Posted', job.datePosted ?? 'Recently'),
+            
+            if (job.perDiem != null) ..[
+              const SizedBox(height: AppTheme.spacingSm),
+              _buildDetailRow(Icons.card_giftcard, 'Per Diem', job.perDiem!),
+            ],
+            
+            if (job.description != null) ..[
+              const SizedBox(height: AppTheme.spacingLg),
+              Text(
+                'Description',
+                style: AppTheme.headlineSmall.copyWith(
+                  color: AppTheme.primaryNavy,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingMd),
+              Text(
+                job.description!,
+                style: AppTheme.bodyLarge.copyWith(
+                  color: AppTheme.textPrimary,
+                  height: 1.6,
+                ),
+              ),
+            ],
+            
+            if (job.typeOfWork != null) ..[
+              const SizedBox(height: AppTheme.spacingLg),
+              Text(
+                'Type of Work',
+                style: AppTheme.headlineSmall.copyWith(
+                  color: AppTheme.primaryNavy,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingMd),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingMd,
+                  vertical: AppTheme.spacingSm,
+                ),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryNavy.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                ),
+                child: Text(
+                  job.typeOfWork!,
+                  style: AppTheme.bodyMedium.copyWith(
+                    color: AppTheme.primaryNavy,
+                  ),
+                ),
+              ),
+            ],
+            
+            const SizedBox(height: AppTheme.spacingXl),
+            
+            // Safety information
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppTheme.spacingLg),
+              decoration: BoxDecoration(
+                color: AppTheme.infoBlue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                border: Border.all(color: AppTheme.infoBlue.withOpacity(0.3)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.safety_check,
+                        color: AppTheme.infoBlue,
+                        size: AppTheme.iconMd,
+                      ),
+                      const SizedBox(width: AppTheme.spacingSm),
+                      Text(
+                        'Safety Reminder',
+                        style: AppTheme.headlineSmall.copyWith(
+                          color: AppTheme.infoBlue,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+                  Text(
+                    'Always follow proper safety protocols and use appropriate PPE for electrical work.',
+                    style: AppTheme.bodyMedium.copyWith(
+                      color: AppTheme.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: AppTheme.spacingXl),
+            
+            // Action buttons
+            JJPrimaryButton(
+              text: 'Apply for This Job',
+              icon: Icons.send,
+              onPressed: () {
+                Navigator.pop(context);
+                JJSnackBar.showSuccess(
+                  context: context,
+                  message: 'Application submitted for ${job.classification}!',
+                );
+              },
+              isFullWidth: true,
+            ),
+            
+            const SizedBox(height: AppTheme.spacingMd),
+            
+            JJSecondaryButton(
+              text: 'Save for Later',
+              icon: Icons.bookmark_border,
+              onPressed: () {
+                JJSnackBar.showSuccess(
+                  context: context,
+                  message: 'Job saved to your favorites',
+                );
+              },
+              isFullWidth: true,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(IconData icon, String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          icon,
+          size: 20,
+          color: AppTheme.textSecondary,
+        ),
+        const SizedBox(width: AppTheme.spacingMd),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: AppTheme.labelMedium.copyWith(
+                  color: AppTheme.textSecondary,
+                ),
+              ),
+              Text(
+                value,
+                style: AppTheme.bodyLarge.copyWith(
+                  color: AppTheme.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }

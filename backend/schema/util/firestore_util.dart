@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '/backend/schema/util/schema_util.dart';
-import '/lib/utils/lat_lng.dart';
+import 'schema_util.dart';
+import '../../../lib/utils/lat_lng.dart';
 
 typedef RecordBuilder<T> = T Function(DocumentSnapshot snapshot);
 

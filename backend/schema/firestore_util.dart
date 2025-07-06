@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '/backend/schema/util/schema_util.dart';
-import '/lib/utils/lat_lng.dart';
+import 'util/schema_util.dart';
+import '../../lib/utils/lat_lng.dart';
 
 typedef RecordBuilder<T> = T Function(DocumentSnapshot snapshot);
 
@@ -110,7 +110,7 @@ extension GeoPointExtension on LatLng {
   GeoPoint toGeoPoint() => GeoPoint(latitude, longitude);
 }
 
-extension LatLngExtension on GeoPoint {
+extension FirestoreGeoPointExtension on GeoPoint {
   LatLng toLatLng() => LatLng(latitude, longitude);
 }
 

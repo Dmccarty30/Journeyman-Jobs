@@ -14,7 +14,7 @@ import '../screens/nav_bar_page.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/jobs/jobs_screen.dart';
 import '../screens/storm/storm_screen.dart';
-import '../screens/unions/unions_screen.dart';
+import '../screens/locals/locals_screen.dart';
 import '../screens/more/more_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/help/help_support_screen.dart';
@@ -33,7 +33,7 @@ class AppRouter {
   static const String home = '/home';
   static const String jobs = '/jobs';
   static const String storm = '/storm';
-  static const String unions = '/unions';
+  static const String locals = '/locals';
   static const String more = '/more';
   static const String profile = '/profile';
   static const String help = '/help';
@@ -96,9 +96,9 @@ class AppRouter {
             builder: (context, state) => const StormScreen(),
           ),
           GoRoute(
-            path: unions,
-            name: 'unions',
-            builder: (context, state) => const UnionsScreen(),
+            path: locals,
+            name: 'locals',
+            builder: (context, state) => const LocalsScreen(),
           ),
           GoRoute(
             path: more,
@@ -230,7 +230,7 @@ class AppRouter {
 
   /// Check if current route is in main navigation
   static bool isMainNavigationRoute(String location) {
-    return [home, jobs, storm, unions, more].contains(location);
+    return [home, jobs, storm, locals, more].contains(location);
   }
 
   /// Get the index of the current tab for bottom navigation
@@ -242,7 +242,7 @@ class AppRouter {
         return 1;
       case storm:
         return 2;
-      case unions:
+      case locals:
         return 3;
       case more:
         return 4;
@@ -261,7 +261,7 @@ class AppRouter {
       case 2:
         return storm;
       case 3:
-        return unions;
+        return locals;
       case 4:
         return more;
       default:

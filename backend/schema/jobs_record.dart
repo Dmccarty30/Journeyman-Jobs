@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 
 import 'package:collection/collection.dart';
 
-import '/backend/schema/util/firestore_util.dart';
+import 'util/firestore_util.dart';
 
 import 'index.dart';
 
