@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
-import 'package:journeyman_jobs/models/power_grid_status.dart';
+import '../../models/power_grid_status.dart';
+import '../../models/storm_event.dart';
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 
 class StormScreen extends StatefulWidget {
@@ -13,7 +14,7 @@ class StormScreen extends StatefulWidget {
 
 class _StormScreenState extends State<StormScreen> {
 
-  final List<PowerGridStatus> _powerGridStatuses = PowerGridMockData.generateMockData();
+  final List<PowerGridStatus> _powerGridStatuses = PowerGridMockData.getSampleData();
 
   List<Widget> _buildPowerGridStatusCards() {
     return _powerGridStatuses.map((status) {
@@ -48,37 +49,34 @@ class _StormScreenState extends State<StormScreen> {
             ),
             const SizedBox(height: AppTheme.spacingSm),
             Text(
-              'Load: ${status.loadPercentage}%, Affected Customers: ${status.affectedCustomers}',
+              'Load: ${status.loadPercentage.toStringAsFixed(1)}%, Affected Customers: ${status.affectedCustomers}',
               style: AppTheme.bodyMedium.copyWith(
                 color: AppTheme.textPrimary,
               ),
             ),
             Text(
-              'Voltage Level: ${status.voltageLevel.label}',
+              'Voltage Level: ${status.voltageLevel.toStringAsFixed(1)} kV',
               style: AppTheme.bodySmall.copyWith(
-                color: status.voltageLevel.color,
+                color: AppTheme.textSecondary,
               ),
             ),
             const SizedBox(height: AppTheme.spacingSm),
-            Wrap(
-              spacing: AppTheme.spacingSm,
-              children: status.activeHazards.map((hazard) {
-                return Chip(
-                  backgroundColor: hazard.severityColor,
-                  avatar: Icon(
-                    hazard.hazardIcon,
-                    size: 16,
-                    color: AppTheme.white
-                  ),
-                  label: Text(
-                    hazard.type.toString().split('.').last,
-                    style: AppTheme.bodySmall.copyWith(
-                      color: AppTheme.white,
+            if (status.activeHazards.isNotEmpty)
+              Wrap(
+                spacing: AppTheme.spacingSm,
+                children: status.activeHazards.map((hazard) {
+                  return Chip(
+                    backgroundColor: AppTheme.accentCopper.withOpacity(0.2),
+                    label: Text(
+                      hazard,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.accentCopper,
+                      ),
                     ),
-                  ),
-                );
-              }).toList(),
-            ),
+                  );
+                }).toList(),
+              ),
           ],
         ),
       );

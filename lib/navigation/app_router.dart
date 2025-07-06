@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../services/onboarding_service.dart';
 
 // Screens
 import '../screens/splash/splash_screen.dart';
@@ -21,14 +20,8 @@ import '../screens/more/support/help_support_screen.dart';
 import '../screens/more/support/resources_screen.dart';
 import '../screens/more/account/training_certificates_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
-import '../screens/safety/electrical_safety_dashboard.dart';
-import '../screens/safety/incident_report_screen.dart';
-import '../screens/safety/safety_checkin_screen.dart';
-import '../screens/safety/hazard_report_screen.dart';
 import '../screens/more/feedback/feedback_screen.dart';
-import '../screens/resources/ppe_suppliers_screen.dart';
 import '../screens/tools/electrical_calculators_screen.dart';
-import '../screens/jobs/job_application_screen.dart';
 import '../screens/notifications/notifications_screen.dart';
 
 class AppRouter {
@@ -46,14 +39,8 @@ class AppRouter {
   static const String help = '/help';
   static const String resources = '/resources';
   static const String training = '/training';
-  static const String electricalSafetyDashboard = '/electrical-safety-dashboard';
-  static const String incidentReport = '/incident-report';
-  static const String safetyCheckin = '/safety-checkin';
-  static const String hazardReport = '/hazard-report';
   static const String feedback = '/feedback';
-  static const String ppeSuppliers = '/ppe-suppliers';
   static const String electricalCalculators = '/electrical-calculators';
-  static const String jobApplication = '/job-application';
   static const String notifications = '/notifications';
 
   static final GoRouter router = GoRouter(
@@ -112,7 +99,7 @@ class AppRouter {
           GoRoute(
             path: locals,
             name: 'locals',
-            builder: (context, state) => const LocalsScreen(),
+            builder: (context, state) => const UnionsWidget(),
           ),
           GoRoute(
             path: more,
@@ -142,36 +129,11 @@ class AppRouter {
         path: training,
         name: 'training',
         builder: (context, state) => const TrainingCertificatesScreen(),
-      ),
-      GoRoute(
-        path: electricalSafetyDashboard,
-        name: 'electrical-safety-dashboard',
-        builder: (context, state) => const ElectricalSafetyDashboard(),
-      ),
-      GoRoute(
-        path: incidentReport,
-        name: 'incident-report',
-        builder: (context, state) => const IncidentReportScreen(),
-      ),
+      ), 
       GoRoute(
         path: feedback,
         name: 'feedback',
         builder: (context, state) => const FeedbackScreen(),
-      ),
-      GoRoute(
-        path: safetyCheckin,
-        name: 'safety-checkin',
-        builder: (context, state) => const SafetyCheckinScreen(),
-      ),
-      GoRoute(
-        path: hazardReport,
-        name: 'hazard-report',
-        builder: (context, state) => const HazardReportScreen(),
-      ),
-      GoRoute(
-        path: ppeSuppliers,
-        name: 'ppe-suppliers',
-        builder: (context, state) => const PPESuppliersScreen(),
       ),
       GoRoute(
         path: electricalCalculators,

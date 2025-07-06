@@ -272,17 +272,12 @@ class JJCard extends StatelessWidget {
     return Container(
       margin: margin ?? const EdgeInsets.all(AppTheme.spacingSm),
       decoration: BoxDecoration(
-        color: backgroundColor ?? AppTheme.white,
-        borderRadius: borderRadius ?? BorderRadius.circular(AppTheme.radiusLg),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: elevation ?? 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: borderRadius ?? BorderRadius.circular(AppTheme.radiusLg),
+          child: Container(
+            padding: padding ?? const EdgeInsets.all(AppTheme.spacingMd),
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
@@ -365,8 +360,8 @@ class JJElectricalLoader extends StatelessWidget {
               width: width ?? 200,
               height: height ?? 60,
               duration: duration ?? const Duration(seconds: 2),
-              pulseColor: AppTheme.accentCopper,
-              lineColor: AppTheme.primaryNavy,
+              primaryColor: AppTheme.accentCopper,
+              secondaryColor: AppTheme.primaryNavy,
               tertiaryColor: AppTheme.successGreen,
             ),
           ),
@@ -414,7 +409,7 @@ class JJPowerLineLoader extends StatelessWidget {
               height: height ?? 80,
               duration: duration ?? const Duration(seconds: 3),
               pulseColor: AppTheme.accentCopper,
-              secondaryColor: AppTheme.primaryNavy,
+              lineColor: AppTheme.primaryNavy,
             ),
           ),
           if (message != null) ...[
