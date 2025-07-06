@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '/backend/schema/util/schema_util.dart';
-import '/flutter_flow/flutter_flow_util.dart';
+import '/lib/utils/lat_lng.dart';
 
 typedef RecordBuilder<T> = T Function(DocumentSnapshot snapshot);
 
@@ -11,8 +11,8 @@ abstract class FirestoreRecord {
   DocumentReference reference;
 }
 
-abstract class FFFirebaseStruct extends BaseStruct {
-  FFFirebaseStruct(this.firestoreUtilData);
+abstract class FirebaseStruct extends BaseStruct {
+  FirebaseStruct(this.firestoreUtilData);
 
   /// Utility class for Firestore updates
   FirestoreUtilData firestoreUtilData = FirestoreUtilData();

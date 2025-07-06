@@ -14,7 +14,9 @@
       "Bash(/mnt/c/flutter/flutter/bin/dart analyze:*)",
       "Bash(sed:*)",
       "Bash(grep:*)",
-      "mcp__think-mcp-server__think"
+      "mcp__think-mcp-server__think",
+      "mcp__server-sequential-thinking__sequentialthinking",
+      "Bash(flutter analyze:*)"
     ],
     "deny": []
   },

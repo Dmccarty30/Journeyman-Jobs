@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:from_css_color/from_css_color.dart';
 
 import '/backend/schema/enums/enums.dart';
-import '/flutter_flow/flutter_flow_util.dart';
+import '/lib/utils/type_utils.dart';
+import '/lib/utils/enum_utils.dart';
+import '/lib/utils/collection_extensions.dart';
 
 export 'package:collection/collection.dart' show ListEquality;
 export 'package:flutter/material.dart' show Color, Colors;
 export 'package:from_css_color/from_css_color.dart';
-export '/backend/schema/enums/enums.dart' show FFEnumExtensions;
+export '/backend/schema/enums/enums.dart' show EnumExtensions;
 
 typedef StructBuilder<T> = T Function(Map<String, dynamic> data);
 
