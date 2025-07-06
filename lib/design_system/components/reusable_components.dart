@@ -272,12 +272,17 @@ class JJCard extends StatelessWidget {
     return Container(
       margin: margin ?? const EdgeInsets.all(AppTheme.spacingSm),
       decoration: BoxDecoration(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: borderRadius ?? BorderRadius.circular(AppTheme.radiusLg),
-          child: Container(
-            padding: padding ?? const EdgeInsets.all(AppTheme.spacingMd),
+        color: backgroundColor ?? AppTheme.white,
+        borderRadius: borderRadius ?? BorderRadius.circular(AppTheme.radiusLg),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: elevation ?? 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
