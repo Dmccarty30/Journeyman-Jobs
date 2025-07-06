@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart';
+import '../../../design_system/app_theme.dart';
+import '../../../design_system/components/reusable_components.dart';
 
 class ResourcesScreen extends StatefulWidget {
   const ResourcesScreen({super.key});

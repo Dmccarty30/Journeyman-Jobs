@@ -1,4 +1,4 @@
-import '/backend/backend.dart';
+import '../../backend/backend.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'locals_model.dart';

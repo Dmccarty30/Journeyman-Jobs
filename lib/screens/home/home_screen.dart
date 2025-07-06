@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
@@ -72,33 +74,98 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Welcome section
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                gradient: AppTheme.cardGradient,
-                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                boxShadow: [AppTheme.shadowMd],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Welcome Back, John!',
-                    style: AppTheme.headlineMedium.copyWith(
-                      color: AppTheme.primaryNavy,
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spacingSm),
-                  Text(
-                    'Ready to find your next opportunity?',
-                    style: AppTheme.bodyLarge.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
+            // Welcome section with user data
+            StreamBuilder<User?>(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, authSnapshot) {
+                if (!authSnapshot.hasData || authSnapshot.data == null) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome back!',
+                        style: AppTheme.headlineMedium.copyWith(
+                          color: AppTheme.primaryNavy,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacingSm),
+                      Text(
+                        'Guest User',
+                        style: AppTheme.bodyLarge.copyWith(
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                final user = authSnapshot.data!;
+                return StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(user.uid)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    String firstName = 'User';
+                    String lastName = '';
+                    String? photoUrl;
+
+                    if (snapshot.hasData && snapshot.data!.exists) {
+                      final userData = snapshot.data!.data() as Map<String, dynamic>?;
+                      if (userData != null) {
+                        firstName = userData['first_name'] ?? 'User';
+                        lastName = userData['last_name'] ?? '';
+                        photoUrl = userData['photo_url'];
+                      }
+                    }
+
+                    return Row(
+                      children: [
+                        // Avatar
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundColor: AppTheme.primaryNavy,
+                          backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+                          child: photoUrl == null
+                              ? Text(
+                                  firstName.isNotEmpty ? firstName[0].toUpperCase() : 'U',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              : null,
+                        ),
+                        const SizedBox(width: AppTheme.spacingMd),
+                        // Welcome text
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Welcome back!',
+                                style: AppTheme.headlineMedium.copyWith(
+                                  color: AppTheme.primaryNavy,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: AppTheme.spacingSm),
+                              Text(
+                                '$firstName $lastName'.trim(),
+                                style: AppTheme.bodyLarge.copyWith(
+                                  color: AppTheme.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
 
             const SizedBox(height: AppTheme.spacingLg),
@@ -120,25 +187,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     'Code Updates',
                     Icons.update_outlined,
                     () {
-                      // TODO: Navigate to NEC updates
+                      // TODO: Navigate to code updates
                     },
                   ),
                 ),
                 const SizedBox(width: AppTheme.spacingMd),
                 Expanded(
                   child: _buildElectricalActionCard(
-                    'Safety Check-in',
+                    'Safety Checkin',
                     Icons.security_outlined,
                     () {
-                      // TODO: Navigate to safety checklist
+                      // TODO: Navigate to safety checkin
                     },
                   ),
                 ),
               ],
             ),
-            
+
             const SizedBox(height: AppTheme.spacingMd),
-            
+
             // Second row of electrical quick actions
             Row(
               children: [
@@ -163,15 +230,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: AppTheme.spacingMd),
-            
-            // Third row of electrical quick actions
+
+            // Third row with electrical calc
             Row(
               children: [
                 Expanded(
                   child: _buildElectricalActionCard(
-                    'Electrical Calculators',
+                    'Electrical calc',
                     Icons.calculate_outlined,
                     () {
                       // TODO: Navigate to electrical calculators
@@ -180,71 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(width: AppTheme.spacingMd),
                 Expanded(
-                  child: _buildTransmissionActionCard(
-                    'Power Grid',
-                    () {
-                      // TODO: Navigate to transmission jobs
-                    },
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: AppTheme.spacingLg),
-
-            // Electrical Industry Stats section
-            Text(
-              'Electrical Industry Stats',
-              style: AppTheme.headlineSmall.copyWith(
-                color: AppTheme.primaryNavy,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingMd),
-            
-            // First row of electrical stats
-            Row(
-              children: [
-                Expanded(
-                  child: _buildElectricalStatCard(
-                    'Power Outages',
-                    '12',
-                    const Icon(Icons.electrical_services, size: 20),
-                    AppTheme.errorRed,
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: _buildElectricalStatCard(
-                    'Storm Jobs',
-                    '23',
-                    const Icon(Icons.flash_on_outlined, size: 20),
-                    AppTheme.warningYellow,
-                  ),
-                ),
-              ],
-            ),
-            
-            const SizedBox(height: AppTheme.spacingMd),
-            
-            // Second row of electrical stats
-            Row(
-              children: [
-                Expanded(
-                  child: _buildElectricalStatCard(
-                    'High Voltage',
-                    '89',
-                    const Icon(Icons.flash_on, size: 20),
-                    AppTheme.infoBlue,
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: _buildElectricalStatCard(
-                    'Code Updates',
-                    '3',
-                    const Icon(Icons.update_outlined, size: 20),
-                    AppTheme.successGreen,
-                  ),
+                  child: Container(), // Empty space to maintain grid layout
                 ),
               ],
             ),
@@ -260,40 +263,85 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: AppTheme.spacingMd),
 
-            // Suggested job cards with new design
-            _buildSuggestedJobCard(
-              'Residential Electrical',
-              'Local 103',
-              'Highpoint Electric',
-              'Boston, MA',
-              '\$42/hr',
-              'Per Diem: \$75/day',
-            ),
-            _buildSuggestedJobCard(
-              'Storm Restoration',
-              'Local 66',
-              'Emergency Power Solutions',
-              'Houston, TX',
-              '\$65/hr',
-              'Per Diem: \$100/day',
-              isEmergency: true,
-            ),
-            _buildSuggestedJobCard(
-              'Commercial/Industrial',
-              'Local 134',
-              'Metro Industrial Electric',
-              'Chicago, IL',
-              '\$48/hr',
-              'Per Diem: \$80/day',
-            ),
-            _buildSuggestedJobCard(
-              'Transmission/Distribution',
-              'Local 387',
-              'Grid Solutions LLC',
-              'Phoenix, AZ',
-              '\$58/hr',
-              'Per Diem: \$90/day',
-              isHighVoltage: true,
+            // Suggested job cards from Firestore
+            StreamBuilder<User?>(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, authSnapshot) {
+                final user = authSnapshot.data;
+
+                return StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('jobs')
+                      .limit(10) // Limit initial query
+                      .snapshots(),
+                  builder: (context, jobSnapshot) {
+                    if (jobSnapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (!jobSnapshot.hasData || jobSnapshot.data!.docs.isEmpty) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(AppTheme.spacingLg),
+                          child: Text(
+                            'No jobs available at the moment',
+                            style: AppTheme.bodyLarge.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+
+                    // Get user data for sorting
+                    return StreamBuilder<DocumentSnapshot>(
+                      stream: user != null
+                          ? FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.uid)
+                              .snapshots()
+                          : const Stream.empty(),
+                      builder: (context, userSnapshot) {
+                        Map<String, dynamic>? userData;
+                        if (userSnapshot.hasData && userSnapshot.data!.exists) {
+                          userData = userSnapshot.data!.data() as Map<String, dynamic>?;
+                        }
+
+                        // Sort jobs based on user preferences
+                        List<QueryDocumentSnapshot> sortedJobs = _sortJobsByUserPreferences(
+                          jobSnapshot.data!.docs,
+                          userData,
+                        );
+
+                        // Display sorted jobs
+                        return Column(
+                          children: sortedJobs.take(5).map((jobDoc) {
+                            final jobData = jobDoc.data() as Map<String, dynamic>;
+
+                            return GestureDetector(
+                              onTap: () => _showJobDetailsDialog(context, jobData),
+                              child: _buildSuggestedJobCard(
+                                jobData['classification'] ?? 'General Electrical',
+                                'Local ${jobData['local'] ?? 'N/A'}',
+                                jobData['company'] ?? 'Company Name',
+                                jobData['location'] ?? 'Location',
+                                '\$${jobData['wage'] ?? '0'}/hr',
+                                'Per Diem: \$${jobData['per_diem'] ?? '0'}/day',
+                                isEmergency: jobData['construction_type'] == 'Emergency' ||
+                                    jobData['construction_type'] == 'Storm',
+                                isHighVoltage: jobData['classification']?.toString().toLowerCase().contains('transmission') ?? false,
+                                hours: jobData['hours'] ?? 40,
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
             ),
 
             const SizedBox(height: AppTheme.spacingXxl),
@@ -586,6 +634,7 @@ class _HomeScreenState extends State<HomeScreen> {
     String perDiem, {
     bool isEmergency = false,
     bool isHighVoltage = false,
+    int hours = 40,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
@@ -717,7 +766,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(width: 2),
                         Expanded(
                           child: Text(
-                            'Hours: 40hrs',
+                            'Hours: ${hours}hrs',
                             style: AppTheme.bodySmall.copyWith(
                               color: AppTheme.textSecondary,
                             ),
@@ -800,6 +849,144 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Sort jobs based on user preferences
+  List<QueryDocumentSnapshot> _sortJobsByUserPreferences(
+    List<QueryDocumentSnapshot> jobs,
+    Map<String, dynamic>? userData,
+  ) {
+    if (userData == null) return jobs;
+
+    final userClassification = userData['classification'] as String?;
+    final preferredConstructionTypes = List<String>.from(userData['preferredConstructionTypes'] ?? []);
+    final preferredHours = userData['preferredHours'] as int? ?? 40;
+    final perDiemRequired = userData['perDiemRequired'] as bool? ?? false;
+
+    // Create a list with sorting scores
+    List<MapEntry<QueryDocumentSnapshot, int>> scoredJobs = jobs.map((job) {
+      final jobData = job.data() as Map<String, dynamic>;
+      int score = 0;
+
+      // Priority 1: Classification match (highest weight)
+      if (jobData['classification'] == userClassification) {
+        score += 1000;
+      }
+
+      // Priority 2: Construction type match
+      final jobConstructionType = jobData['constructionType'] as String?;
+      if (jobConstructionType != null && preferredConstructionTypes.contains(jobConstructionType)) {
+        score += 100;
+      }
+
+      // Priority 3: Hours match
+      final jobHours = jobData['hours'] as int? ?? 0;
+      final hoursDifference = (jobHours - preferredHours).abs();
+      score += math.max(0, 50 - hoursDifference);
+
+      // Priority 4: Per diem match
+      final jobHasPerDiem = jobData['perDiem'] as bool? ?? false;
+      if (perDiemRequired && jobHasPerDiem) {
+        score += 25;
+      } else if (!perDiemRequired && !jobHasPerDiem) {
+        score += 10;
+      }
+
+      return MapEntry(job, score);
+    }).toList();
+
+    // Sort by score (descending)
+    scoredJobs.sort((a, b) => b.value.compareTo(a.value));
+
+    return scoredJobs.map((e) => e.key).toList();
+  }
+
+  // Show job details dialog
+  void _showJobDetailsDialog(BuildContext context, Map<String, dynamic> jobData) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            jobData['company'] ?? 'Job Details',
+            style: AppTheme.headlineSmall,
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildDetailRow('Local', jobData['local']?.toString() ?? 'N/A'),
+                _buildDetailRow('Classification', jobData['classification'] ?? 'N/A'),
+                _buildDetailRow('Location', jobData['location'] ?? 'N/A'),
+                _buildDetailRow('Hours', '${jobData['hours'] ?? 'N/A'} hours/week'),
+                _buildDetailRow('Wage', jobData['wage'] != null ? '\$${jobData['wage']}/hr' : 'N/A'),
+                _buildDetailRow('Per Diem', jobData['perDiem'] == true ? 'Yes' : 'No'),
+                _buildDetailRow('Construction Type', jobData['constructionType'] ?? 'N/A'),
+                _buildDetailRow('Start Date', jobData['startDate'] ?? 'N/A'),
+                _buildDetailRow('Duration', jobData['duration'] ?? 'N/A'),
+                if (jobData['description'] != null) ...[
+                  const SizedBox(height: AppTheme.spacingMd),
+                  Text(
+                    'Description',
+                    style: AppTheme.bodyLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingSm),
+                  Text(
+                    jobData['description'],
+                    style: AppTheme.bodyMedium,
+                  ),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // TODO: Implement apply functionality
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryNavy,
+              ),
+              child: const Text('Apply'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingXs),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              '$label:',
+              style: AppTheme.bodyMedium.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: AppTheme.bodyMedium,
+            ),
           ),
         ],
       ),

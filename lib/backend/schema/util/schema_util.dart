@@ -3,15 +3,18 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:from_css_color/from_css_color.dart';
 
-import '/backend/schema/enums/enums.dart';
-import '/lib/utils/type_utils.dart';
-import '/lib/utils/enum_utils.dart';
-import '/lib/utils/collection_extensions.dart';
+import '../enums/enums.dart';
+import '../../../utils/type_utils.dart';
+import '../../../utils/enum_utils.dart';
+import '../../../utils/collection_extensions.dart';
+import '../../../utils/color_extensions.dart';
+import '../firestore_util.dart';
 
 export 'package:collection/collection.dart' show ListEquality;
 export 'package:flutter/material.dart' show Color, Colors;
 export 'package:from_css_color/from_css_color.dart';
-export '/backend/schema/enums/enums.dart' show EnumExtensions;
+export '../enums/enums.dart' show EnumExtensions;
+export '../../../utils/color_extensions.dart';
 
 typedef StructBuilder<T> = T Function(Map<String, dynamic> data);
 

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/job_model.dart';
-import '../../providers/job_filter_provider.dart';
-import '../../electrical_components/electrical_components.dart';
+
 
 class JobsScreen extends StatefulWidget {
   const JobsScreen({super.key});
@@ -22,6 +20,8 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
   late AnimationController _powerFlowController;
   late Animation<double> _powerFlowAnimation;
   String _selectedFilter = 'All Jobs';
+  String _searchQuery = '';
+  bool _showAdvancedFilters = false;
 
   // Electrical-themed filter categories
   final List<String> _electricalFilterCategories = [
@@ -29,16 +29,12 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
     'Journeyman Lineman',
     'Journeyman Electrician', 
     'Journeyman Wireman',
-    'Low Voltage',
-    'Medium Voltage',
-    'High Voltage',
-    'Extra High Voltage',
+
     'Transmission',
     'Distribution',
     'Substation',
     'Storm Work',
-    'Generation',
-    'Renewable Energy',
+
   ];
 
   @override
@@ -234,11 +230,6 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
 
   IconData _getFilterIcon(String filter) {
     switch (filter) {
-      case 'Low Voltage':
-      case 'Medium Voltage':
-      case 'High Voltage':
-      case 'Extra High Voltage':
-        return Icons.bolt;
       case 'Transmission':
         return Icons.electrical_services;
       case 'Distribution':
@@ -247,10 +238,6 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
         return Icons.electrical_services_outlined;
       case 'Storm Work':
         return Icons.flash_on;
-      case 'Generation':
-        return Icons.factory;
-      case 'Renewable Energy':
-        return Icons.wb_sunny;
       default:
         return Icons.work;
     }
@@ -258,19 +245,10 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
 
   Color _getVoltageLevelColor(String? voltageLevel) {
     if (voltageLevel == null) return AppTheme.textSecondary;
-    
-    switch (voltageLevel.toLowerCase()) {
-      case 'low voltage':
-        return AppTheme.successGreen;
-      case 'medium voltage':
-        return AppTheme.warningYellow;
-      case 'high voltage':
-        return Colors.deepOrange;
-      case 'extra high voltage':
-        return AppTheme.errorRed;
-      default:
-        return AppTheme.textSecondary;
-    }
+
+    // Since voltage levels are not standard classifications in the trade,
+    // we'll return a default color for all cases
+    return AppTheme.textSecondary;
   }
 
   Widget _buildElectricalJobCard(Job job) {
@@ -552,7 +530,145 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
   }
 
   void _handleBidNow(Job job) {
-    // TODO: Implement bid submission
+    _showBidSubmissionDialog(job);
+  }
+
+  void _showSearchDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Search Jobs',
+          style: AppTheme.headlineSmall.copyWith(
+            color: AppTheme.primaryNavy,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search by company, location, or classification...',
+                prefixIcon: Icon(Icons.search, color: AppTheme.primaryNavy),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  borderSide: BorderSide(color: AppTheme.accentCopper, width: 2),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _searchQuery = '';
+                _searchController.clear();
+              });
+              Navigator.pop(context);
+            },
+            child: Text('Clear', style: TextStyle(color: AppTheme.textSecondary)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryNavy,
+              foregroundColor: AppTheme.white,
+            ),
+            child: Text('Search'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showBidSubmissionDialog(Job job) {
+    final TextEditingController messageController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Submit Bid',
+          style: AppTheme.headlineSmall.copyWith(
+            color: AppTheme.primaryNavy,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Job: ${job.classification ?? 'Electrical Worker'}',
+              style: AppTheme.bodyLarge.copyWith(
+                fontWeight: FontWeight.w600,
+                color: AppTheme.primaryNavy,
+              ),
+            ),
+            Text(
+              'Company: ${job.company}',
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.textSecondary,
+              ),
+            ),
+            Text(
+              'Location: ${job.location}',
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.textSecondary,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+            TextField(
+              controller: messageController,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: 'Add a message (optional)...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  borderSide: BorderSide(color: AppTheme.accentCopper, width: 2),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _submitBid(job, messageController.text);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.accentCopper,
+              foregroundColor: AppTheme.white,
+            ),
+            child: Text('Submit Bid'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _submitBid(Job job, String message) {
+    // Here you would typically submit to your backend/Firestore
+    // For now, we'll just show a success message
     JJSnackBar.showSuccess(
       context: context,
       message: 'Bid submitted for ${job.classification}!',
@@ -625,13 +741,15 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
               IconButton(
                 icon: Icon(Icons.search, color: AppTheme.white),
                 onPressed: () {
-                  // TODO: Implement search functionality
+                  _showSearchDialog();
                 },
               ),
               IconButton(
                 icon: Icon(Icons.filter_alt, color: AppTheme.white),
                 onPressed: () {
-                  // TODO: Implement advanced filters
+                  setState(() {
+                    _showAdvancedFilters = !_showAdvancedFilters;
+                  });
                 },
               ),
             ],
@@ -658,6 +776,88 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                 ),
 
                 const SizedBox(height: AppTheme.spacingLg),
+
+                // Advanced filters section
+                if (_showAdvancedFilters) ...[
+                  Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingMd),
+                    decoration: BoxDecoration(
+                      color: AppTheme.lightGray.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      border: Border.all(color: AppTheme.accentCopper.withOpacity(0.3)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.tune,
+                              color: AppTheme.primaryNavy,
+                              size: 20,
+                            ),
+                            const SizedBox(width: AppTheme.spacingSm),
+                            Text(
+                              'Advanced Filters',
+                              style: AppTheme.titleMedium.copyWith(
+                                color: AppTheme.primaryNavy,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppTheme.spacingMd),
+                        Text(
+                          'Search Query: ${_searchQuery.isEmpty ? 'None' : _searchQuery}',
+                          style: AppTheme.bodyMedium.copyWith(
+                            color: AppTheme.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: AppTheme.spacingSm),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: _showSearchDialog,
+                                icon: Icon(Icons.search, size: 16),
+                                label: Text('Search Jobs'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppTheme.primaryNavy,
+                                  foregroundColor: AppTheme.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingMd,
+                                    vertical: AppTheme.spacingSm,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: AppTheme.spacingSm),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  _searchQuery = '';
+                                  _searchController.clear();
+                                  _selectedFilter = 'All Jobs';
+                                });
+                              },
+                              icon: Icon(Icons.clear, size: 16),
+                              label: Text('Clear All'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.textLight,
+                                foregroundColor: AppTheme.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppTheme.spacingMd,
+                                  vertical: AppTheme.spacingSm,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+                ],
 
                 // Jobs section header
                 Text(
@@ -719,14 +919,26 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                         return Job.fromJson(data);
                       }).toList();
 
-                      // Filter jobs based on selected category
-                      final filteredJobs = _selectedFilter == 'All Jobs' 
-                        ? jobs 
+                      // Filter jobs based on selected category and search query
+                      var filteredJobs = _selectedFilter == 'All Jobs'
+                        ? jobs
                         : jobs.where((job) {
                             return job.classification?.contains(_selectedFilter) == true ||
                                    job.voltageLevel == _selectedFilter ||
                                    job.typeOfWork?.contains(_selectedFilter) == true;
                           }).toList();
+
+                      // Apply search filter if search query exists
+                      if (_searchQuery.isNotEmpty) {
+                        filteredJobs = filteredJobs.where((job) {
+                          final query = _searchQuery.toLowerCase();
+                          return job.company.toLowerCase().contains(query) ||
+                                 job.location.toLowerCase().contains(query) ||
+                                 (job.classification?.toLowerCase().contains(query) ?? false) ||
+                                 (job.typeOfWork?.toLowerCase().contains(query) ?? false) ||
+                                 (job.voltageLevel?.toLowerCase().contains(query) ?? false);
+                        }).toList();
+                      }
 
                       if (filteredJobs.isEmpty) {
                         return Center(child: _buildElectricalEmptyState());
@@ -791,19 +1003,10 @@ class JobDetailsSheet extends StatelessWidget {
 
   Color _getVoltageLevelColor(String? voltageLevel) {
     if (voltageLevel == null) return AppTheme.textSecondary;
-    
-    switch (voltageLevel.toLowerCase()) {
-      case 'low voltage':
-        return AppTheme.successGreen;
-      case 'medium voltage':
-        return AppTheme.warningYellow;
-      case 'high voltage':
-        return Colors.deepOrange;
-      case 'extra high voltage':
-        return AppTheme.errorRed;
-      default:
-        return AppTheme.textSecondary;
-    }
+
+    // Since voltage levels are not standard classifications in the trade,
+    // we'll return a default color for all cases
+    return AppTheme.textSecondary;
   }
 
   @override
@@ -1017,13 +1220,13 @@ class JobDetailsSheet extends StatelessWidget {
             _buildDetailRow(Icons.business, 'Company', job.company),
             const SizedBox(height: AppTheme.spacingSm),
             _buildDetailRow(Icons.access_time, 'Posted', job.datePosted ?? 'Recently'),
-            
-            if (job.perDiem != null) ..[
+
+            if (job.perDiem != null) ...[
               const SizedBox(height: AppTheme.spacingSm),
               _buildDetailRow(Icons.card_giftcard, 'Per Diem', job.perDiem!),
             ],
             
-            if (job.description != null) ..[
+            if (job.jobDescription != null) ...[
               const SizedBox(height: AppTheme.spacingLg),
               Text(
                 'Description',
@@ -1033,7 +1236,7 @@ class JobDetailsSheet extends StatelessWidget {
               ),
               const SizedBox(height: AppTheme.spacingMd),
               Text(
-                job.description!,
+                job.jobDescription!,
                 style: AppTheme.bodyLarge.copyWith(
                   color: AppTheme.textPrimary,
                   height: 1.6,
@@ -1041,7 +1244,7 @@ class JobDetailsSheet extends StatelessWidget {
               ),
             ],
             
-            if (job.typeOfWork != null) ..[
+            if (job.typeOfWork != null) ...[
               const SizedBox(height: AppTheme.spacingLg),
               Text(
                 'Type of Work',

@@ -1,21 +1,24 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 
 import 'package:collection/collection.dart';
 
-import 'util/firestore_util.dart';
+import '/backend/schema/firestore_util.dart';
+import '/backend/schema/index.dart';
+import '/backend/schema/enums/enums.dart';
 
 import 'index.dart';
+import '/utils/lat_lng.dart';
 
 /// Represents a job posting record in the Firestore database.
-/// 
+///
 /// This class encapsulates all the information related to a job opportunity,
 /// including company details, location, wage information, job requirements,
 /// and scheduling details. It handles multiple field naming conventions to
 /// maintain compatibility with different data sources.
+
 class JobsRecord extends FirestoreRecord {
   JobsRecord._(
-    DocumentReference reference,
+    DocumentReference<Object?> reference,
     Map<String, dynamic> data,
   ) : super(reference, data) {
     _initializeFields();
@@ -209,50 +212,51 @@ class JobsRecord extends FirestoreRecord {
   /// and provides fallback values for fields that may have different names
   /// in different data sources.
   void _initializeFields() {
-    _local = _safeParseInt(snapshotData['local']);
-    _classification = snapshotData['classification'] as String?;
-    
+    final data = snapshotData ?? {};
+    _local = _safeParseInt(data['local']);
+    _classification = data['classification'] as String?;
+
     // Handle multiple field naming conventions for company
-    _company = snapshotData['company'] as String? ?? snapshotData['Company'] as String?;
-    
+    _company = data['company'] as String? ?? data['Company'] as String?;
+
     // Handle multiple field naming conventions for location
-    _location = snapshotData['location'] as String? ?? snapshotData['Location'] as String?;
-    
+    _location = data['location'] as String? ?? data['Location'] as String?;
+
     // Handle multiple field naming conventions for hours/shift
-    _hours = snapshotData['hours'] as String? ?? snapshotData['Shift'] as String?;
-    
+    _hours = data['hours'] as String? ?? data['Shift'] as String?;
+
     // Handle multiple field naming conventions for wage
-    _wage = snapshotData['wage'] as String?;
-    
-    _sub = snapshotData['sub'] as String?;
-    _jobClass = snapshotData['jobClass'] as String?;
-    _localNumber = _safeParseInt(snapshotData['localNumber']);
-    
+    _wage = data['wage'] as String?;
+
+    _sub = data['sub'] as String?;
+    _jobClass = data['jobClass'] as String?;
+    _localNumber = _safeParseInt(data['localNumber']);
+
     // Handle multiple field naming conventions for qualifications/notes
-    _qualifications = snapshotData['qualifications'] as String? ?? snapshotData['Notes'] as String?;
-    
-    _datePosted = snapshotData['date_posted'] as String?;
-    _jobDescription = snapshotData['job_description'] as String?;
-    _jobTitle = snapshotData['job_title'] as String?;
-    
+    _qualifications = data['qualifications'] as String? ?? data['Notes'] as String?;
+
+    _datePosted = data['date_posted'] as String?;
+    _jobDescription = data['job_description'] as String?;
+    _jobTitle = data['job_title'] as String?;
+
     // Handle multiple field naming conventions for per diem/benefits
-    _perDiem = snapshotData['per_diem'] as String? ?? snapshotData['Benefits'] as String?;
-    
-    _agreement = snapshotData['agreement'] as String?;
-    
+    _perDiem = data['per_diem'] as String? ?? data['Benefits'] as String?;
+
+    _agreement = data['agreement'] as String?;
+
     // Handle multiple field naming conventions for number of jobs
-    _numberOfJobs = snapshotData['numberOfJobs'] as String? ?? snapshotData['Men Needed'] as String?;
-    
-    _timestamp = snapshotData['timestamp'] as DateTime?;
-    _startDate = snapshotData['startDate'] as String?;
-    _startTime = snapshotData['startTime'] as String?;
-    _booksYourOn = _safeParseIntList(snapshotData['booksYourOn']);
-    
+    _numberOfJobs = data['numberOfJobs'] as String? ?? data['Men Needed'] as String?;
+
+    _timestamp = data['timestamp'] as DateTime?;
+    _startDate = data['startDate'] as String?;
+    _startTime = data['startTime'] as String?;
+    _booksYourOn = _safeParseIntList(data['booksYourOn']);
+
     // Handle multiple field naming conventions for type of work
-    _typeOfWork = snapshotData['typeOfWork'] as String? ?? snapshotData['Type of Work'] as String?;
-    
+    _typeOfWork = data['typeOfWork'] as String? ?? data['Type of Work'] as String?;
+
     // Handle multiple field naming conventions for duration
-    _duration = snapshotData['duration'] as String? ?? snapshotData['Duration'] as String?;
+    _duration = data['duration'] as String? ?? data['Duration'] as String?;
   }
 
   /// Safely parses an integer from various data types.
@@ -270,11 +274,8 @@ class JobsRecord extends FirestoreRecord {
       try {
         return int.parse(value);
       } catch (e) {
-        developer.log(
-          'Warning: Could not parse "$value" as int, defaulting to null',
-          name: 'JobsRecord._safeParseInt',
-          error: e,
-        );
+        // Log warning: Could not parse value as int
+        print('Warning: Could not parse "$value" as int, defaulting to null');
         return null;
       }
     }
@@ -335,6 +336,34 @@ class JobsRecord extends FirestoreRecord {
     DocumentReference reference,
   ) =>
       JobsRecord._(reference, mapFromFirestore(data));
+
+  @override
+  Map<String, dynamic> createData() {
+    return {
+      if (_local != null) 'local': _local,
+      if (_classification != null) 'classification': _classification,
+      if (_company != null) 'company': _company,
+      if (_location != null) 'location': _location,
+      if (_hours != null) 'hours': _hours,
+      if (_wage != null) 'wage': _wage,
+      if (_sub != null) 'sub': _sub,
+      if (_jobClass != null) 'jobClass': _jobClass,
+      if (_localNumber != null) 'localNumber': _localNumber,
+      if (_qualifications != null) 'qualifications': _qualifications,
+      if (_datePosted != null) 'date_posted': _datePosted,
+      if (_jobDescription != null) 'job_description': _jobDescription,
+      if (_jobTitle != null) 'job_title': _jobTitle,
+      if (_perDiem != null) 'per_diem': _perDiem,
+      if (_agreement != null) 'agreement': _agreement,
+      if (_numberOfJobs != null) 'numberOfJobs': _numberOfJobs,
+      if (_timestamp != null) 'timestamp': _timestamp,
+      if (_startDate != null) 'startDate': _startDate,
+      if (_startTime != null) 'startTime': _startTime,
+      if (_booksYourOn != null) 'booksYourOn': _booksYourOn,
+      if (_typeOfWork != null) 'typeOfWork': _typeOfWork,
+      if (_duration != null) 'duration': _duration,
+    }.withoutNulls;
+  }
 
   @override
   String toString() =>
@@ -423,7 +452,7 @@ Map<String, dynamic> createJobsRecordData({
       'timestamp': timestamp,
       'startDate': startDate,
       'startTime': startTime,
-    }.withoutNulls,
+    }
   );
 
   return firestoreData;

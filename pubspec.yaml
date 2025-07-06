@@ -48,6 +48,7 @@ dependencies:
   # State management and navigation
   provider: ^6.0.5
   go_router: ^16.0.0
+  rxdart: ^0.28.0
   
   # UI and utilities
   flutter_animate: ^4.2.0

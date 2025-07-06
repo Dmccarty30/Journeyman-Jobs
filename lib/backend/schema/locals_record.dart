@@ -1,9 +1,7 @@
 import 'dart:async';
-
 import 'package:collection/collection.dart';
-
-import '/backend/schema/util/firestore_util.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firestore_util.dart';
 import 'index.dart';
 
 class LocalsRecord extends FirestoreRecord {
@@ -100,23 +98,24 @@ class LocalsRecord extends FirestoreRecord {
   bool hasClassification() => _classification != null;
 
   void _initializeFields() {
-    _localUnion = snapshotData['local_union'] as String?;
-    _city = snapshotData['city'] as String?;
-    _state = snapshotData['state'] as String?;
-    _address = snapshotData['address'] as String?;
-    _phone = snapshotData['phone'] as String?;
-    _fax = snapshotData['fax'] as String?;
-    _email = snapshotData['email'] as String?;
-    _website = snapshotData['website'] as String?;
-    _businessManager = snapshotData['business_manager'] as String?;
-    _president = snapshotData['president'] as String?;
-    _financialSecretary = snapshotData['financial_secretary'] as String?;
-    _recordingSecretary = snapshotData['recording_secretary'] as String?;
-    _meetingSchedule = snapshotData['meeting_schedule'] as String?;
-    _initialSign = snapshotData['initial_sign'] as String?;
-    _reSign = snapshotData['re_sign'] as String?;
-    _reSignProcedure = snapshotData['re_sign_procedure'] as String?;
-    _classification = snapshotData['classification'] as String?;
+    final data = snapshotData ?? {};
+    _localUnion = data['local_union'] as String?;
+    _city = data['city'] as String?;
+    _state = data['state'] as String?;
+    _address = data['address'] as String?;
+    _phone = data['phone'] as String?;
+    _fax = data['fax'] as String?;
+    _email = data['email'] as String?;
+    _website = data['website'] as String?;
+    _businessManager = data['business_manager'] as String?;
+    _president = data['president'] as String?;
+    _financialSecretary = data['financial_secretary'] as String?;
+    _recordingSecretary = data['recording_secretary'] as String?;
+    _meetingSchedule = data['meeting_schedule'] as String?;
+    _initialSign = data['initial_sign'] as String?;
+    _reSign = data['re_sign'] as String?;
+    _reSignProcedure = data['re_sign_procedure'] as String?;
+    _classification = data['classification'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -138,6 +137,29 @@ class LocalsRecord extends FirestoreRecord {
     DocumentReference reference,
   ) =>
       LocalsRecord._(reference, mapFromFirestore(data));
+
+  @override
+  Map<String, dynamic> createData() {
+    return {
+      if (_localUnion != null) 'local_union': _localUnion,
+      if (_city != null) 'city': _city,
+      if (_state != null) 'state': _state,
+      if (_address != null) 'address': _address,
+      if (_phone != null) 'phone': _phone,
+      if (_fax != null) 'fax': _fax,
+      if (_email != null) 'email': _email,
+      if (_website != null) 'website': _website,
+      if (_businessManager != null) 'business_manager': _businessManager,
+      if (_president != null) 'president': _president,
+      if (_financialSecretary != null) 'financial_secretary': _financialSecretary,
+      if (_recordingSecretary != null) 'recording_secretary': _recordingSecretary,
+      if (_meetingSchedule != null) 'meeting_schedule': _meetingSchedule,
+      if (_initialSign != null) 'initial_sign': _initialSign,
+      if (_reSign != null) 're_sign': _reSign,
+      if (_reSignProcedure != null) 're_sign_procedure': _reSignProcedure,
+      if (_classification != null) 'classification': _classification,
+    }.withoutNulls;
+  }
 
   @override
   String toString() =>
@@ -190,7 +212,7 @@ Map<String, dynamic> createLocalsRecordData({
       're_sign': reSign,
       're_sign_procedure': reSignProcedure,
       'classification': classification,
-    }.withoutNulls,
+    }
   );
 
   return firestoreData;

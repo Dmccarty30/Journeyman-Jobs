@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 
-import '/backend/schema/util/firestore_util.dart';
+import '/backend/schema/firestore_util.dart';
 import '/backend/schema/enums/enums.dart';
+import '/utils/lat_lng.dart';
 
 import 'index.dart';
+import '/utils/lat_lng.dart';
 
 class UsersRecord extends FirestoreRecord {
   UsersRecord._(
@@ -13,6 +15,12 @@ class UsersRecord extends FirestoreRecord {
     Map<String, dynamic> data,
   ) : super(reference, data) {
     _initializeFields();
+  }
+
+  void _initializeFields() {
+    _email = snapshotData['email'] as String?;
+    _displayName = snapshotData['display_name'] as String?;
+    // Initialize other fields similarly as needed
   }
 
   // "email" field.
@@ -195,46 +203,7 @@ class UsersRecord extends FirestoreRecord {
   double get maxHourlyRate => _maxHourlyRate ?? 0.0;
   bool hasMaxHourlyRate() => _maxHourlyRate != null;
 
-  void _initializeFields() {
-    _email = snapshotData['email'] as String?;
-    _displayName = snapshotData['display_name'] as String?;
-    _photoUrl = snapshotData['photo_url'] as String?;
-    _uid = snapshotData['uid'] as String?;
-    _createdTime = snapshotData['created_time'] as DateTime?;
-    _phoneNumber = snapshotData['phone_number'] as String?;
-    _firstName = snapshotData['first_name'] as String?;
-    _lastName = snapshotData['last_name'] as String?;
-    _address1 = snapshotData['address1'] as String?;
-    _address2 = snapshotData['address2'] as String?;
-    _city = snapshotData['city'] as String?;
-    _state = snapshotData['state'] as String?;
-    _zipcode = castToType<int>(snapshotData['zipcode']);
-    _homeLocal = castToType<int>(snapshotData['home_local']);
-    _ticketNumber = castToType<int>(snapshotData['ticket_number']);
-    _isWorking = snapshotData['is_working'] as bool?;
-    _aiWidgetEnabled = snapshotData['ai_widget_enabled'] as bool?;
-    _classification = snapshotData['classification'] is Classification
-        ? snapshotData['classification']
-        : deserializeEnum<Classification>(snapshotData['classification']);
-    _networkWithOthers = snapshotData['networkWithOthers'] as bool?;
-    _careerAdvancements = snapshotData['careerAdvancements'] as bool?;
-    _betterBenefits = snapshotData['betterBenefits'] as bool?;
-    _higherPayRate = snapshotData['higherPayRate'] as bool?;
-    _learnNewSkill = snapshotData['learnNewSkill'] as bool?;
-    _travelToNewLocation = snapshotData['travelToNewLocation'] as bool?;
-    _findLongTermWork = snapshotData['findLongTermWork'] as bool?;
-    _onboardingStatus = snapshotData['onboardingStatus'] as String?;
-    _constructionTypes = (snapshotData['constructionTypes'] as List?)?.map((e) => e.toString()).toList();
-    _onBooks = snapshotData['on_books'] as String?;
-    _preferredLocal1 = snapshotData['preferred_local1'] as String?;
-    _preferredLocal2 = snapshotData['preferred_local2'] as String?;
-    _preferredLocal3 = snapshotData['preferred_local3'] as String?;
-    _careerGoals = snapshotData['careerGoals'] as String?;
-    _aboutUs = snapshotData['aboutUs'] as String?;
-    _lookingToAccomplish = snapshotData['lookingToAccomplish'] as String?;
-    _minHourlyRate = castToType<double>(snapshotData['min_hourly_rate']);
-    _maxHourlyRate = castToType<double>(snapshotData['max_hourly_rate']);
-  }
+
 
   static CollectionReference get collection =>
       FirebaseFirestore.instance.collection('users');
@@ -255,6 +224,48 @@ class UsersRecord extends FirestoreRecord {
     DocumentReference reference,
   ) =>
       UsersRecord._(reference, mapFromFirestore(data));
+
+  @override
+  Map<String, dynamic> createData() {
+    return {
+      if (_email != null) 'email': _email,
+      if (_displayName != null) 'display_name': _displayName,
+      if (_photoUrl != null) 'photo_url': _photoUrl,
+      if (_uid != null) 'uid': _uid,
+      if (_createdTime != null) 'created_time': _createdTime,
+      if (_phoneNumber != null) 'phone_number': _phoneNumber,
+      if (_firstName != null) 'first_name': _firstName,
+      if (_lastName != null) 'last_name': _lastName,
+      if (_address1 != null) 'address1': _address1,
+      if (_address2 != null) 'address2': _address2,
+      if (_city != null) 'city': _city,
+      if (_state != null) 'state': _state,
+      if (_zipcode != null) 'zipcode': _zipcode,
+      if (_homeLocal != null) 'home_local': _homeLocal,
+      if (_ticketNumber != null) 'ticket_number': _ticketNumber,
+      if (_isWorking != null) 'is_working': _isWorking,
+      if (_aiWidgetEnabled != null) 'ai_widget_enabled': _aiWidgetEnabled,
+      if (_classification != null) 'classification': serializeEnum(_classification),
+      if (_networkWithOthers != null) 'networkWithOthers': _networkWithOthers,
+      if (_careerAdvancements != null) 'careerAdvancements': _careerAdvancements,
+      if (_betterBenefits != null) 'betterBenefits': _betterBenefits,
+      if (_higherPayRate != null) 'higherPayRate': _higherPayRate,
+      if (_learnNewSkill != null) 'learnNewSkill': _learnNewSkill,
+      if (_travelToNewLocation != null) 'travelToNewLocation': _travelToNewLocation,
+      if (_findLongTermWork != null) 'findLongTermWork': _findLongTermWork,
+      if (_onboardingStatus != null) 'onboardingStatus': _onboardingStatus,
+      if (_constructionTypes != null) 'constructionTypes': _constructionTypes,
+      if (_onBooks != null) 'on_books': _onBooks,
+      if (_preferredLocal1 != null) 'preferred_local1': _preferredLocal1,
+      if (_preferredLocal2 != null) 'preferred_local2': _preferredLocal2,
+      if (_preferredLocal3 != null) 'preferred_local3': _preferredLocal3,
+      if (_careerGoals != null) 'careerGoals': _careerGoals,
+      if (_aboutUs != null) 'aboutUs': _aboutUs,
+      if (_lookingToAccomplish != null) 'lookingToAccomplish': _lookingToAccomplish,
+      if (_minHourlyRate != null) 'min_hourly_rate': _minHourlyRate,
+      if (_maxHourlyRate != null) 'max_hourly_rate': _maxHourlyRate,
+    }.withoutNulls;
+  }
 
   @override
   String toString() =>
