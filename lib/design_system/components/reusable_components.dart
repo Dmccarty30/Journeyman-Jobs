@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../app_theme.dart';
+import '../../electrical_components/electrical_components.dart';
+import '../illustrations/electrical_illustrations.dart';
 
 // =================== BUTTONS ===================
 
@@ -313,9 +315,107 @@ class JJLoadingIndicator extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CircularProgressIndicator(
+          ElectricalIllustrationWidget(
+            illustration: ElectricalIllustration.circuitBoard,
+            width: 60,
+            height: 60,
             color: color ?? AppTheme.accentCopper,
-            strokeWidth: 3,
+            animate: true,
+          ),
+          if (message != null) ...[
+            const SizedBox(height: AppTheme.spacingMd),
+            Text(
+              message!,
+              style: AppTheme.bodyMedium.copyWith(color: AppTheme.textSecondary),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Electrical Three-Phase Loading Indicator
+/// Uses the three-phase sine wave loader with AppTheme colors
+class JJElectricalLoader extends StatelessWidget {
+  final double? width;
+  final double? height;
+  final String? message;
+  final Duration? duration;
+
+  const JJElectricalLoader({
+    super.key,
+    this.width,
+    this.height,
+    this.message,
+    this.duration,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: width ?? 200,
+            height: height ?? 60,
+            child: ThreePhaseSineWaveLoader(
+              width: width ?? 200,
+              height: height ?? 60,
+              duration: duration ?? const Duration(seconds: 2),
+              pulseColor: AppTheme.accentCopper,
+              lineColor: AppTheme.primaryNavy,
+              tertiaryColor: AppTheme.successGreen,
+            ),
+          ),
+          if (message != null) ...[
+            const SizedBox(height: AppTheme.spacingMd),
+            Text(
+              message!,
+              style: AppTheme.bodyMedium.copyWith(color: AppTheme.textSecondary),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Electrical Power Line Loading Indicator
+/// Uses the power line loader with AppTheme colors
+class JJPowerLineLoader extends StatelessWidget {
+  final double? width;
+  final double? height;
+  final String? message;
+  final Duration? duration;
+
+  const JJPowerLineLoader({
+    super.key,
+    this.width,
+    this.height,
+    this.message,
+    this.duration,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: width ?? 300,
+            height: height ?? 80,
+            child: PowerLineLoader(
+              width: width ?? 300,
+              height: height ?? 80,
+              duration: duration ?? const Duration(seconds: 3),
+              pulseColor: AppTheme.accentCopper,
+              secondaryColor: AppTheme.primaryNavy,
+            ),
           ),
           if (message != null) ...[
             const SizedBox(height: AppTheme.spacingMd),
@@ -445,6 +545,8 @@ class JJEmptyState extends StatelessWidget {
   final String title;
   final String? subtitle;
   final IconData? icon;
+  final ElectricalIllustration? illustration;
+  final String? context;
   final Widget? action;
 
   const JJEmptyState({
@@ -452,18 +554,32 @@ class JJEmptyState extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.icon,
+    this.illustration,
+    this.context,
     this.action,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Determine which illustration to show
+    final displayIllustration = illustration ??
+        (this.context != null ? IllustrationHelper.getEmptyStateIllustration(this.context!) : null);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingXl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null) ...[
+            if (displayIllustration != null) ...[
+              ElectricalIllustrationWidget(
+                illustration: displayIllustration,
+                width: 120,
+                height: 120,
+                animate: true,
+              ),
+              const SizedBox(height: AppTheme.spacingMd),
+            ] else if (icon != null) ...[
               Icon(
                 icon,
                 size: AppTheme.iconXxl + 16,
@@ -674,7 +790,17 @@ class JJSnackBar {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle, color: AppTheme.white),
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: ElectricalIllustrationWidget(
+                illustration: ElectricalIllustration.success,
+                width: 24,
+                height: 24,
+                color: AppTheme.white,
+                animate: false,
+              ),
+            ),
             const SizedBox(width: AppTheme.spacingSm),
             Expanded(
               child: Text(
@@ -720,6 +846,191 @@ class JJSnackBar {
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         ),
       ),
+    );
+  }
+
+  static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showInfo({
+    required BuildContext context,
+    required String message,
+    Duration duration = const Duration(seconds: 3),
+  }) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.info, color: AppTheme.white),
+            const SizedBox(width: AppTheme.spacingSm),
+            Expanded(
+              child: Text(
+                message,
+                style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: AppTheme.primaryNavy,
+        duration: duration,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        ),
+      ),
+    );
+  }
+}
+
+// =================== ELECTRICAL COMPONENTS EXPORTS ===================
+
+/// Electrical Circuit Breaker Toggle
+/// Themed toggle switch that looks like an electrical circuit breaker
+class JJElectricalToggle extends StatelessWidget {
+  final bool isOn;
+  final ValueChanged<bool>? onChanged;
+  final double? width;
+  final double? height;
+
+  const JJElectricalToggle({
+    super.key,
+    required this.isOn,
+    this.onChanged,
+    this.width,
+    this.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CircuitBreakerToggle(
+      isOn: isOn,
+      onChanged: onChanged,
+      width: width ?? 80,
+      height: height ?? 40,
+      onColor: AppTheme.successGreen,
+      offColor: AppTheme.mediumGray,
+    );
+  }
+}
+
+/// Electrical Industry Icons
+/// Themed icons for electrical/industrial applications
+class JJElectricalIcons {
+  static Widget hardHat({
+    double size = 24,
+    Color? color,
+  }) {
+    return HardHatIcon(
+      size: size,
+      color: color ?? AppTheme.primaryNavy,
+    );
+  }
+
+  static Widget transmissionTower({
+    double size = 24,
+    Color? color,
+  }) {
+    return TransmissionTowerIcon(
+      size: size,
+      color: color ?? AppTheme.primaryNavy,
+    );
+  }
+}
+
+// =================== ELECTRICAL DIALOGS ===================
+
+class JJElectricalDialog extends StatelessWidget {
+  final String title;
+  final String? subtitle;
+  final ElectricalIllustration illustration;
+  final Color? illustrationColor;
+  final Widget? content;
+  final List<Widget>? actions;
+  final bool dismissible;
+
+  const JJElectricalDialog({
+    super.key,
+    required this.title,
+    this.subtitle,
+    required this.illustration,
+    this.illustrationColor,
+    this.content,
+    this.actions,
+    this.dismissible = true,
+  });
+
+  static Future<T?> show<T>({
+    required BuildContext context,
+    required String title,
+    String? subtitle,
+    required ElectricalIllustration illustration,
+    Color? illustrationColor,
+    Widget? content,
+    List<Widget>? actions,
+    bool dismissible = true,
+  }) {
+    return showDialog<T>(
+      context: context,
+      barrierDismissible: dismissible,
+      builder: (context) => JJElectricalDialog(
+        title: title,
+        subtitle: subtitle,
+        illustration: illustration,
+        illustrationColor: illustrationColor,
+        content: content,
+        actions: actions,
+        dismissible: dismissible,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: AppTheme.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+      ),
+      contentPadding: const EdgeInsets.all(AppTheme.spacingLg),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Electrical illustration
+          ElectricalIllustrationWidget(
+            illustration: illustration,
+            width: 80,
+            height: 80,
+            color: illustrationColor ?? AppTheme.accentCopper,
+            animate: true,
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+
+          // Title
+          Text(
+            title,
+            style: AppTheme.headlineSmall.copyWith(
+              color: AppTheme.primaryNavy,
+            ),
+            textAlign: TextAlign.center,
+          ),
+
+          // Subtitle
+          if (subtitle != null) ...[
+            const SizedBox(height: AppTheme.spacingSm),
+            Text(
+              subtitle!,
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+
+          // Content
+          if (content != null) ...[
+            const SizedBox(height: AppTheme.spacingMd),
+            content!,
+          ],
+        ],
+      ),
+      actions: actions,
     );
   }
 }

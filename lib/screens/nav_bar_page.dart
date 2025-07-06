@@ -79,7 +79,7 @@ class _NavBarPageState extends State<NavBarPage> {
             ),
             BottomNavigationBarItem(
               icon: _buildIcon(Icons.people_outline, Icons.people, 3),
-              label: 'Unions',
+              label: 'Locals',
             ),
             BottomNavigationBarItem(
               icon: _buildIcon(Icons.more_horiz_outlined, Icons.more_horiz, 4),

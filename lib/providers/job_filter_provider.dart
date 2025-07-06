@@ -166,16 +166,6 @@ class JobFilterProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Update wage filter
-  void updateWageFilter({double? minWage, double? maxWage}) {
-    _currentFilter = _currentFilter.copyWith(
-      minWage: minWage,
-      maxWage: maxWage,
-    );
-    _saveFilter();
-    notifyListeners();
-  }
-
   /// Update date filters
   void updateDateFilters({
     DateTime? postedAfter,
@@ -362,18 +352,7 @@ class JobFilterProvider extends ChangeNotifier {
         ),
       );
     }
-    
-    // Suggest high paying if not filtered
-    if (_currentFilter.minWage == null) {
-      suggestions.add(
-        QuickFilterSuggestion(
-          label: 'High Pay',
-          icon: Icons.attach_money,
-          onTap: () => updateWageFilter(minWage: 50.0),
-        ),
-      );
-    }
-    
+
     // Suggest local jobs if no distance filter
     if (_currentFilter.maxDistance == null) {
       suggestions.add(

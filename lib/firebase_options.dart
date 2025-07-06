@@ -59,7 +59,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyC6MMF8thO3UeHeA45tagHmYjbevbku-wU',
-    appId: '1:1037879032120:ios:YOUR_IOS_APP_ID',
+    appId: '1:1037879032120:ios:ca3d13b670a4ed5c2fe9cd',
     messagingSenderId: '1037879032120',
     projectId: 'journeyman-jobs',
     storageBucket: 'journeyman-jobs.firebasestorage.app',

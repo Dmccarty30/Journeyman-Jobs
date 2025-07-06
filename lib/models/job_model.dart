@@ -33,6 +33,7 @@ class Job {
   final List<int>? booksYourOn;
   final String? typeOfWork;
   final String? duration;
+  final String? voltageLevel; // New field for voltage categorization
 
   /// Constructor with required and optional parameters
   const Job({
@@ -60,6 +61,7 @@ class Job {
     this.booksYourOn,
     this.typeOfWork,
     this.duration,
+    this.voltageLevel,
   });
 
   /// Creates a copy of this Job with the given fields replaced with new values
@@ -88,6 +90,7 @@ class Job {
     List<int>? booksYourOn,
     String? typeOfWork,
     String? duration,
+    String? voltageLevel,
   }) {
     return Job(
       id: id ?? this.id,
@@ -114,6 +117,7 @@ class Job {
       booksYourOn: booksYourOn ?? this.booksYourOn,
       typeOfWork: typeOfWork ?? this.typeOfWork,
       duration: duration ?? this.duration,
+      voltageLevel: voltageLevel ?? this.voltageLevel,
     );
   }
 
@@ -191,6 +195,7 @@ class Job {
         booksYourOn: parseIntList(json['booksYourOn']),
         typeOfWork: json['typeOfWork']?.toString() ?? json['Type of Work']?.toString(),
         duration: json['duration']?.toString() ?? json['Duration']?.toString(),
+        voltageLevel: json['voltageLevel']?.toString() ?? json['voltage_level']?.toString(),
       );
     } catch (e) {
       throw FormatException('Failed to parse Job from JSON: $e');
@@ -252,6 +257,7 @@ class Job {
     addIfNotNull('booksYourOn', booksYourOn);
     addIfNotNull('typeOfWork', typeOfWork);
     addIfNotNull('duration', duration);
+    addIfNotNull('voltageLevel', voltageLevel);
 
     return data;
   }
@@ -311,7 +317,8 @@ class Job {
         other.startTime == startTime &&
         listEquals(other.booksYourOn, booksYourOn) &&
         other.typeOfWork == typeOfWork &&
-        other.duration == duration;
+        other.duration == duration &&
+        other.voltageLevel == voltageLevel;
   }
 
   @override
@@ -340,5 +347,6 @@ class Job {
         const ListEquality().hash(booksYourOn),
         typeOfWork,
         duration,
+        voltageLevel,
       ]);
 }

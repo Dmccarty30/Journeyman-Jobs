@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
+import 'package:journeyman_jobs/models/power_grid_status.dart';
+// import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 
 class StormScreen extends StatefulWidget {
   const StormScreen({super.key});
@@ -10,6 +12,78 @@ class StormScreen extends StatefulWidget {
 }
 
 class _StormScreenState extends State<StormScreen> {
+
+  final List<PowerGridStatus> _powerGridStatuses = PowerGridMockData.generateMockData();
+
+  List<Widget> _buildPowerGridStatusCards() {
+    return _powerGridStatuses.map((status) {
+      return Container(
+        margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+        decoration: BoxDecoration(
+          color: AppTheme.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          boxShadow: [AppTheme.shadowSm],
+        ),
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.power,
+                    color: status.stateColor, size: 30),
+                const SizedBox(width: AppTheme.spacingSm),
+                Text(
+                  status.gridName,
+                  style: AppTheme.headlineSmall
+                      .copyWith(color: AppTheme.primaryNavy),
+                ),
+                const Spacer(),
+                Text(
+                  status.stateLabel,
+                  style: AppTheme.bodySmall
+                      .copyWith(color: status.stateColor),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppTheme.spacingSm),
+            Text(
+              'Load: ${status.loadPercentage}%, Affected Customers: ${status.affectedCustomers}',
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.textPrimary,
+              ),
+            ),
+            Text(
+              'Voltage Level: ${status.voltageLevel.label}',
+              style: AppTheme.bodySmall.copyWith(
+                color: status.voltageLevel.color,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingSm),
+            Wrap(
+              spacing: AppTheme.spacingSm,
+              children: status.activeHazards.map((hazard) {
+                return Chip(
+                  backgroundColor: hazard.severityColor,
+                  avatar: Icon(
+                    hazard.hazardIcon,
+                    size: 16,
+                    color: AppTheme.white
+                  ),
+                  label: Text(
+                    hazard.type.toString().split('.').last,
+                    style: AppTheme.bodySmall.copyWith(
+                      color: AppTheme.white,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      );
+    }).toList();
+  }
   bool _notificationsEnabled = false;
   String _selectedRegion = 'All Regions';
   
@@ -282,7 +356,7 @@ class _StormScreenState extends State<StormScreen> {
               JJEmptyState(
                 title: 'No Active Storms',
                 subtitle: 'No storm restoration work available in the selected region.',
-                icon: Icons.wb_sunny,
+                context: 'jobs', // Uses electrical illustration instead of sun icon
               )
             else
               ..._filteredStorms.map((storm) => StormEventCard(storm: storm)),

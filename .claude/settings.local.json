@@ -13,10 +13,17 @@
       "Bash(dart analyze:*)",
       "Bash(/mnt/c/flutter/flutter/bin/dart analyze:*)",
       "Bash(sed:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "mcp__think-mcp-server__think",
+      "mcp__server-sequential-thinking__sequentialthinking",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub:*)",
+      "Bash(flutter:*)",
+      "Bash(/mnt/c/flutter/flutter/bin/flutter:*)"
     ],
     "deny": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "brave-search",
     "search1api-crawler",
@@ -39,6 +46,5 @@
     "server-memory",
     "task-master-ai",
     "@21st-dev/magic"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

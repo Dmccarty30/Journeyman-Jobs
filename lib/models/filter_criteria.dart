@@ -14,11 +14,7 @@ class JobFilterCriteria {
   // Job type filters
   final List<String> constructionTypes;
   final List<String> jobClasses;
-  
-  // Wage filters
-  final double? minWage;
-  final double? maxWage;
-  
+
   // Time filters
   final DateTime? postedAfter;
   final DateTime? startDateBefore;
@@ -28,7 +24,7 @@ class JobFilterCriteria {
   final bool? hasPerDiem;
   final String? durationPreference; // 'short-term', 'long-term', 'any'
   final List<String> companies;
-  
+
   // Sorting
   final JobSortOption sortBy;
   final bool sortDescending;
@@ -44,8 +40,6 @@ class JobFilterCriteria {
     this.localNumbers = const [],
     this.constructionTypes = const [],
     this.jobClasses = const [],
-    this.minWage,
-    this.maxWage,
     this.postedAfter,
     this.startDateBefore,
     this.startDateAfter,
@@ -69,8 +63,6 @@ class JobFilterCriteria {
         localNumbers.isNotEmpty ||
         constructionTypes.isNotEmpty ||
         jobClasses.isNotEmpty ||
-        minWage != null ||
-        maxWage != null ||
         postedAfter != null ||
         startDateBefore != null ||
         startDateAfter != null ||
@@ -90,8 +82,6 @@ class JobFilterCriteria {
     if (localNumbers.isNotEmpty) count++;
     if (constructionTypes.isNotEmpty) count++;
     if (jobClasses.isNotEmpty) count++;
-    if (minWage != null) count++;
-    if (maxWage != null) count++;
     if (postedAfter != null) count++;
     if (startDateBefore != null) count++;
     if (startDateAfter != null) count++;
@@ -118,18 +108,7 @@ class JobFilterCriteria {
     if (constructionTypes.isNotEmpty) {
       query = query.where('typeOfWork', whereIn: constructionTypes);
     }
-    
-    // Apply wage filters
-    if (minWage != null) {
-      // Note: This assumes wage is stored as a numeric value
-      // You might need to adjust based on your data structure
-      query = query.where('wage_numeric', isGreaterThanOrEqualTo: minWage);
-    }
-    
-    if (maxWage != null) {
-      query = query.where('wage_numeric', isLessThanOrEqualTo: maxWage);
-    }
-    
+
     // Apply date filters
     if (postedAfter != null) {
       query = query.where('timestamp', isGreaterThanOrEqualTo: postedAfter);
@@ -145,7 +124,7 @@ class JobFilterCriteria {
     
     // Apply per diem filter
     if (hasPerDiem != null) {
-      if (hasPerDiem) {
+      if (hasPerDiem == true) {
         query = query.where('per_diem', isNotEqualTo: '');
       }
     }
@@ -154,7 +133,7 @@ class JobFilterCriteria {
     if (companies.isNotEmpty) {
       query = query.where('company', whereIn: companies);
     }
-    
+
     // Apply sorting
     switch (sortBy) {
       case JobSortOption.datePosted:
@@ -184,8 +163,6 @@ class JobFilterCriteria {
     List<int>? localNumbers,
     List<String>? constructionTypes,
     List<String>? jobClasses,
-    double? minWage,
-    double? maxWage,
     DateTime? postedAfter,
     DateTime? startDateBefore,
     DateTime? startDateAfter,
@@ -204,8 +181,6 @@ class JobFilterCriteria {
       localNumbers: localNumbers ?? this.localNumbers,
       constructionTypes: constructionTypes ?? this.constructionTypes,
       jobClasses: jobClasses ?? this.jobClasses,
-      minWage: minWage ?? this.minWage,
-      maxWage: maxWage ?? this.maxWage,
       postedAfter: postedAfter ?? this.postedAfter,
       startDateBefore: startDateBefore ?? this.startDateBefore,
       startDateAfter: startDateAfter ?? this.startDateAfter,
@@ -229,8 +204,6 @@ class JobFilterCriteria {
         return copyWith(localNumbers: []);
       case FilterType.constructionType:
         return copyWith(constructionTypes: []);
-      case FilterType.wage:
-        return copyWith(minWage: null, maxWage: null);
       case FilterType.date:
         return copyWith(
           postedAfter: null,
@@ -258,8 +231,6 @@ class JobFilterCriteria {
       'localNumbers': localNumbers,
       'constructionTypes': constructionTypes,
       'jobClasses': jobClasses,
-      'minWage': minWage,
-      'maxWage': maxWage,
       'postedAfter': postedAfter?.toIso8601String(),
       'startDateBefore': startDateBefore?.toIso8601String(),
       'startDateAfter': startDateAfter?.toIso8601String(),
@@ -282,8 +253,6 @@ class JobFilterCriteria {
       localNumbers: List<int>.from(json['localNumbers'] ?? []),
       constructionTypes: List<String>.from(json['constructionTypes'] ?? []),
       jobClasses: List<String>.from(json['jobClasses'] ?? []),
-      minWage: json['minWage']?.toDouble(),
-      maxWage: json['maxWage']?.toDouble(),
       postedAfter: json['postedAfter'] != null
           ? DateTime.parse(json['postedAfter'])
           : null,
@@ -309,7 +278,6 @@ enum FilterType {
   classification,
   local,
   constructionType,
-  wage,
   date,
   perDiem,
   duration,
