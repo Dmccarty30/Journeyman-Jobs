@@ -38,14 +38,14 @@ class ElectricalRotationMeter extends StatefulWidget {
   final Duration duration;
 
   const ElectricalRotationMeter({
-    Key? key,
+    super.key,
     this.size = 120,
     this.needleColor,
     this.backgroundColor,
     this.arcColor,
     this.label,
     this.duration = const Duration(milliseconds: 3000),
-  }) : super(key: key);
+  });
 
   @override
   State<ElectricalRotationMeter> createState() => _ElectricalRotationMeterState();

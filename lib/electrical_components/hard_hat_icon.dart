@@ -26,11 +26,11 @@ class HardHatIcon extends StatelessWidget {
   final Color? accentColor;
 
   const HardHatIcon({
-    Key? key,
+    super.key,
     this.size = 48,
     this.color,
     this.accentColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

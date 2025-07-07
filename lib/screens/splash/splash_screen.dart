@@ -191,12 +191,14 @@ class _SplashScreenState extends State<SplashScreen>
     final onboardingService = OnboardingService();
     final isOnboardingComplete = await onboardingService.isOnboardingComplete();
 
-    if (isOnboardingComplete) {
-      // User authenticated and onboarding complete, go to home
-      context.go(AppRouter.home);
-    } else {
-      // User authenticated but onboarding not complete, go to onboarding
-      context.go(AppRouter.onboarding);
+    if (mounted) {
+      if (isOnboardingComplete) {
+        // User authenticated and onboarding complete, go to home
+        context.go(AppRouter.home);
+      } else {
+        // User authenticated but onboarding not complete, go to onboarding
+        context.go(AppRouter.onboarding);
+      }
     }
   }
 

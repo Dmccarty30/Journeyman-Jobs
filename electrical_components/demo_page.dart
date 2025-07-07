@@ -7,7 +7,7 @@ import 'electrical_components.dart';
 /// in a single interface, showing their animations, interactions,
 /// and visual design.
 class ElectricalComponentsDemo extends StatefulWidget {
-  const ElectricalComponentsDemo({Key? key}) : super(key: key);
+  const ElectricalComponentsDemo({super.key});
 
   @override
   State<ElectricalComponentsDemo> createState() => _ElectricalComponentsDemoState();

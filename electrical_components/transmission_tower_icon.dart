@@ -21,10 +21,10 @@ class TransmissionTowerIcon extends StatelessWidget {
   final Color? color;
 
   const TransmissionTowerIcon({
-    Key? key,
+    super.key,
     this.size = 48,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -140,7 +140,7 @@ class FirestoreService {
       // consider using a search service like Algolia
       final results = await localsCollection
           .where('localUnion', isGreaterThanOrEqualTo: searchTerm)
-          .where('localUnion', isLessThanOrEqualTo: searchTerm + '\uf8ff')
+          .where('localUnion', isLessThanOrEqualTo: '$searchTerm\uf8ff')
           .get();
       
       return results;

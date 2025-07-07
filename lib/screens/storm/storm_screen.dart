@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
-import '../../models/power_grid_status.dart';
+// import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 
 class StormScreen extends StatefulWidget {
@@ -13,9 +13,11 @@ class StormScreen extends StatefulWidget {
 
 class _StormScreenState extends State<StormScreen> {
 
-  final List<PowerGridStatus> _powerGridStatuses = PowerGridMockData.getSampleData();
+  // TODO: Use when power grid status cards are implemented
+  // final List<PowerGridStatus> _powerGridStatuses = PowerGridMockData.getSampleData();
 
-  List<Widget> _buildPowerGridStatusCards() {
+  // TODO: Implement power grid status cards when needed
+  /*List<Widget> _buildPowerGridStatusCards() {
     return _powerGridStatuses.map((status) {
       return Container(
         margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
@@ -80,7 +82,7 @@ class _StormScreenState extends State<StormScreen> {
         ),
       );
     }).toList();
-  }
+  }*/
   bool _notificationsEnabled = false;
   String _selectedRegion = 'All Regions';
   

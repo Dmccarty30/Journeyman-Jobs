@@ -396,10 +396,12 @@ class _MoreScreenState extends State<MoreScreen> {
               Navigator.pop(context);
               final onboardingService = OnboardingService();
               await onboardingService.resetOnboarding();
-              JJSnackBar.showSuccess(
-                context: context,
-                message: 'Onboarding status reset. Restart app to test.',
-              );
+              if (context.mounted) {
+                JJSnackBar.showSuccess(
+                  context: context,
+                  message: 'Onboarding status reset. Restart app to test.',
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.warningYellow,

@@ -15,9 +15,9 @@ import '/backend/schema/index.dart';
 
 class JobsRecord extends FirestoreRecord {
   JobsRecord._(
-    DocumentReference<Object?> reference,
-    Map<String, dynamic> data,
-  ) : super(reference, data) {
+    super.reference,
+    super.data,
+  ) {
     _initializeFields();
   }
 
@@ -406,7 +406,7 @@ class JobsRecord extends FirestoreRecord {
 /// - [startDate]: Job start date
 /// - [startTime]: Job start time
 /// 
-/// Returns a Map<String, dynamic> with non-null values ready for Firestore.
+/// Returns a Map&lt;String, dynamic&gt; with non-null values ready for Firestore.
 Map<String, dynamic> createJobsRecordData({
   int? local,
   String? classification,

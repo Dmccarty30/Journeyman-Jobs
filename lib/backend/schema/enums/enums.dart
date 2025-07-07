@@ -1,23 +1,23 @@
 import 'package:collection/collection.dart';
 
 enum Classification {
-  JourneymanLineman,
-  JourneymanWireman,
-  JourneymanElectrician,
-  JourneymanTreeTrimmer,
-  Operator,
-  
+  journeymanLineman,
+  journeymanWireman,
+  journeymanElectrician,
+  journeymanTreeTrimmer,
+  operator,
+
 }
 
 enum ConstructionTypes {
-  Distribution,
-  Transmission,
-  SubStation,
-  Residential,
-  Industrial,
-  Data_Center,
-  Commercial,
-  Underground,
+  distribution,
+  transmission,
+  subStation,
+  residential,
+  industrial,
+  dataCenter,
+  commercial,
+  underground,
 }
 
 extension EnumExtensions<T extends Enum> on T {
@@ -31,9 +31,9 @@ extension EnumListExtensions<T extends Enum> on Iterable<T> {
 
 T? deserializeEnum<T>(String? value) {
   switch (T) {
-    case (Classification):
+    case Classification _:
       return Classification.values.deserialize(value) as T?;
-    case (ConstructionTypes):
+    case ConstructionTypes _:
       return ConstructionTypes.values.deserialize(value) as T?;
     default:
       return null;

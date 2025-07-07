@@ -34,13 +34,13 @@ class PowerLineLoader extends StatefulWidget {
   final Duration duration;
 
   const PowerLineLoader({
-    Key? key,
+    super.key,
     this.width = 200,
     this.height = 60,
     this.lineColor,
     this.pulseColor,
     this.duration = const Duration(milliseconds: 1500),
-  }) : super(key: key);
+  });
 
   @override
   State<PowerLineLoader> createState() => _PowerLineLoaderState();

@@ -4,7 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
-import '../../backend/schema/enums.dart';
+// import '../../backend/schema/enums.dart'; // TODO: Uncomment when needed
 import '../../navigation/app_router.dart';
 import '../../services/onboarding_service.dart';
 
@@ -58,7 +58,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
   final _booksOnController = TextEditingController();
 
   // Step 3: Preferences and Feedback
-  Set<String> _selectedConstructionTypes = <String>{};
+  final Set<String> _selectedConstructionTypes = <String>{};
   String? _selectedHoursPerWeek;
   String? _selectedPerDiem;
   final _preferredLocalsController = TextEditingController();
@@ -184,7 +184,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
 
       // Convert classification string to enum value
       // Classification? classificationEnum;
-      if (_selectedClassification != null) {
+      /*if (_selectedClassification != null) {
         switch (_selectedClassification!) {
           case 'Journeyman Lineman':
             classificationEnum = Classification.JourneymanLineman;
@@ -202,7 +202,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
             classificationEnum = Classification.Operator;
             break;
         }
-      }
+      }*/
 
       // Create comprehensive user data map
       // TODO: Uncomment when FirestoreService is implemented
@@ -245,22 +245,26 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
       final onboardingService = OnboardingService();
       await onboardingService.markOnboardingComplete();
 
-      JJSnackBar.showSuccess(
-        context: context,
-        message: 'Profile setup complete! Welcome to Journeyman Jobs.',
-      );
-      
-      // Navigate to home after successful save
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) {
-          context.go(AppRouter.home);
-        }
-      });
+      if (mounted) {
+        JJSnackBar.showSuccess(
+          context: context,
+          message: 'Profile setup complete! Welcome to Journeyman Jobs.',
+        );
+
+        // Navigate to home after successful save
+        Future.delayed(const Duration(seconds: 2), () {
+          if (mounted) {
+            context.go(AppRouter.home);
+          }
+        });
+      }
     } catch (e) {
-      JJSnackBar.showError(
-        context: context,
-        message: 'Error saving profile. Please try again.',
-      );
+      if (mounted) {
+        JJSnackBar.showError(
+          context: context,
+          message: 'Error saving profile. Please try again.',
+        );
+      }
     }
   }
 

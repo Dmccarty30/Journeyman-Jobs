@@ -6,9 +6,9 @@ import 'index.dart';
 
 class LocalsRecord extends FirestoreRecord {
   LocalsRecord._(
-    DocumentReference reference,
-    Map<String, dynamic> data,
-  ) : super(reference, data) {
+    super.reference,
+    super.data,
+  ) {
     _initializeFields();
   }
 

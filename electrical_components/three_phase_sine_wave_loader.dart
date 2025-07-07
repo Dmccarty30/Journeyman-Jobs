@@ -38,14 +38,14 @@ class ThreePhaseSineWaveLoader extends StatefulWidget {
   final Duration duration;
 
   const ThreePhaseSineWaveLoader({
-    Key? key,
+    super.key,
     this.width = 200,
     this.height = 60,
     this.primaryColor,
     this.secondaryColor,
     this.tertiaryColor,
     this.duration = const Duration(milliseconds: 2000),
-  }) : super(key: key);
+  });
 
   @override
   State<ThreePhaseSineWaveLoader> createState() => _ThreePhaseSineWaveLoaderState();

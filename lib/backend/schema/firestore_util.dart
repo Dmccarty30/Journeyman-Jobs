@@ -17,13 +17,13 @@ T? castToType<T>(dynamic val) {
     return null;
   }
   switch (T) {
-    case int:
+    case const (int):
       return (val is int ? val : int.tryParse(val.toString())) as T?;
-    case double:
+    case const (double):
       return (val is double ? val : double.tryParse(val.toString())) as T?;
-    case String:
+    case const (String):
       return val.toString() as T;
-    case bool:
+    case const (bool):
       return (val is bool ? val : val.toString().toLowerCase() == 'true') as T?;
     default:
       return val as T?;

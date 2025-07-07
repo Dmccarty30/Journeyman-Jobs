@@ -45,7 +45,7 @@ class CircuitBreakerToggle extends StatefulWidget {
   final double height;
 
   const CircuitBreakerToggle({
-    Key? key,
+    super.key,
     required this.isOn,
     this.onChanged,
     this.onColor,
@@ -53,7 +53,7 @@ class CircuitBreakerToggle extends StatefulWidget {
     this.toggleColor,
     this.width = 80,
     this.height = 40,
-  }) : super(key: key);
+  });
 
   @override
   State<CircuitBreakerToggle> createState() => _CircuitBreakerToggleState();
