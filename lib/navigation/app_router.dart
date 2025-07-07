@@ -14,13 +14,13 @@ import '../screens/home/home_screen.dart';
 import '../screens/jobs/jobs_screen.dart';
 import '../screens/storm/storm_screen.dart';
 import '../screens/locals/locals_screen.dart';
-import '../screens/more/more_screen.dart';
-import '../screens/more/account/profile_screen.dart';
-import '../screens/more/support/help_support_screen.dart';
-import '../screens/more/support/resources_screen.dart';
-import '../screens/more/account/training_certificates_screen.dart';
+import '../screens/settings/settings_screen.dart';
+import '../screens/settings/account/profile_screen.dart';
+import '../screens/settings/support/help_support_screen.dart';
+import '../screens/settings/support/resources_screen.dart';
+import '../screens/settings/account/training_certificates_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
-import '../screens/more/feedback/feedback_screen.dart';
+import '../screens/settings/feedback/feedback_screen.dart';
 import '../screens/tools/electrical_calculators_screen.dart';
 import '../screens/notifications/notifications_screen.dart';
 
@@ -34,7 +34,7 @@ class AppRouter {
   static const String jobs = '/jobs';
   static const String storm = '/storm';
   static const String locals = '/locals';
-  static const String more = '/more';
+  static const String settings = '/settings';
   static const String profile = '/profile';
   static const String help = '/help';
   static const String resources = '/resources';
@@ -102,9 +102,9 @@ class AppRouter {
             builder: (context, state) => const LocalsWidget(),
           ),
           GoRoute(
-            path: more,
-            name: 'more',
-            builder: (context, state) => const MoreScreen(),
+            path: settings,
+            name: 'settings',
+            builder: (context, state) => const SettingsScreen(),
           ),
         ],
       ),
@@ -236,7 +236,7 @@ class AppRouter {
 
   /// Check if current route is in main navigation
   static bool isMainNavigationRoute(String location) {
-    return [home, jobs, storm, locals, more].contains(location);
+    return [home, jobs, storm, locals, settings].contains(location);
   }
 
   /// Get the index of the current tab for bottom navigation
@@ -250,7 +250,7 @@ class AppRouter {
         return 2;
       case locals:
         return 3;
-      case more:
+      case settings:
         return 4;
       default:
         return 0;
@@ -269,7 +269,7 @@ class AppRouter {
       case 3:
         return locals;
       case 4:
-        return more;
+        return settings;
       default:
         return home;
     }

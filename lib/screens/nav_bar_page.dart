@@ -82,8 +82,8 @@ class _NavBarPageState extends State<NavBarPage> {
               label: 'Locals',
             ),
             BottomNavigationBarItem(
-              icon: _buildIcon(Icons.more_horiz_outlined, Icons.more_horiz, 4),
-              label: 'More',
+              icon: _buildIcon(Icons.settings_outlined, Icons.settings, 4),
+              label: 'Settings',
             ),
           ],
         ),

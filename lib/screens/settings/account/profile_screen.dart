@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:super_tooltip/super_tooltip.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
 
@@ -13,6 +14,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isEditing = false;
+  SuperTooltip? _editTooltip;
+  bool _hasShownTooltip = false;
   
   // Personal Information Controllers
   final _firstNameController = TextEditingController(text: 'John');
@@ -100,10 +103,18 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _loadUserData();
+    
+    // Show tooltip after 1 second if not shown before
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted && !_hasShownTooltip && !_isEditing) {
+        _showEditTooltip();
+      }
+    });
   }
 
   @override
   void dispose() {
+    _editTooltip?.close();
     _tabController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
@@ -141,8 +152,65 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   }
 
   void _toggleEditing() {
+    _editTooltip?.close();
     setState(() {
       _isEditing = !_isEditing;
+      _hasShownTooltip = true; // Mark tooltip as shown when user starts editing
+    });
+  }
+  
+  void _showEditTooltip() {
+    if (_editTooltip != null || _hasShownTooltip) return;
+    
+    setState(() {
+      _editTooltip = SuperTooltip(
+        popupDirection: TooltipDirection.down,
+        arrowTipDistance: 15.0,
+        arrowBaseWidth: 15.0,
+        arrowLength: 10.0,
+        borderRadius: 8.0,
+        borderWidth: 2.0,
+        backgroundColor: AppTheme.primaryNavy,
+        borderColor: AppTheme.accentCopper,
+        content: Container(
+          constraints: const BoxConstraints(maxWidth: 200),
+          child: Text(
+            'Tap here to edit your profile settings and preferences',
+            style: AppTheme.bodyMedium.copyWith(
+              color: AppTheme.white,
+              fontWeight: FontWeight.w500,
+            ),
+            softWrap: true,
+          ),
+        ),
+        showCloseButton: false,
+        hasShadow: true,
+        shadowColor: AppTheme.primaryNavy.withOpacity(0.3),
+        shadowBlurRadius: 8.0,
+        dismissOnTapOutside: true,
+        onDismiss: () {
+          setState(() {
+            _hasShownTooltip = true;
+            _editTooltip = null;
+          });
+        },
+      );
+    });
+    
+    // Show the tooltip immediately
+    Future.microtask(() {
+      _editTooltip?.show(context);
+    });
+    
+    // Auto-dismiss after 5 seconds
+    Future.delayed(const Duration(seconds: 5), () {
+      _editTooltip?.close();
+      if (mounted) {
+        setState(() {
+          _hasShownTooltip = true;
+          _editTooltip = null;
+        });
+      }
     });
   }
 
@@ -194,9 +262,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               ),
             )
           else
-            IconButton(
-              icon: const Icon(Icons.edit, color: AppTheme.white),
-              onPressed: _toggleEditing,
+            SuperTooltipTarget(
+              tooltip: _editTooltip,
+              child: IconButton(
+                icon: const Icon(Icons.edit, color: AppTheme.white),
+                onPressed: _toggleEditing,
+              ),
             ),
         ],
       ),

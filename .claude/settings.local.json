@@ -40,11 +40,7 @@
     "@21st-dev/magic"
   ],
   "disabledMcpjsonServers": [
-    "brave-search",
-    "search1api-crawler",
-    "mcp-server-fetch",
     "server-memory",
-    "task-master-ai",
     "@21st-dev/magic"
   ]
 }
