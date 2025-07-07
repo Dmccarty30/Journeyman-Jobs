@@ -34,13 +34,13 @@ Welcome to the official Bright Data Model Context Protocol (MCP) server, enablin
 ## Table of Content
 - [🎬 Demo](#-demo)
 - [✨ Features](#-features)
+- [💡 Usage Examples](#-usage-examples)
 - [🚀 Quickstart with Claude Desktop](#-quickstart-with-claude-desktop)
 - [🔧 Available Tools](#-available-tools)
 - [⚠️ Security Best Practices](#%EF%B8%8F-security-best-practices)
 - [🔧 Account Setup](#-account-setup)
 - [🔌 Other MCP Clients](#-other-mcp-clients)
 - [🎮 Try Bright Data MCP Playgrounds](#-try-bright-data-mcp-playgrounds)
-- [💡 Usage Examples](#-usage-examples)
 - [⚠️ Troubleshooting](#%EF%B8%8F-troubleshooting)
 - [👨‍💻 Contributing](#-contributing)
 - [📞 Support](#-support)
@@ -61,19 +61,38 @@ For YouTube tutorials and demos: [Demo](https://github.com/brightdata-com/bright
 - **Real-time Web Access**: Access up-to-date information directly from the web
 - **Bypass Geo-restrictions**: Access content regardless of location constraints
 - **Web Unlocker**: Navigate websites with bot detection protection
-- **Browser Control**: Optional remote browser automation capabilities
+- **Browser Control**: Remote browser automation capabilities
 - **Seamless Integration**: Works with all MCP-compatible AI assistants
 
+## 💡 Usage Examples
+
+Some example queries that this MCP server will be able to help with:
+
+- "Google some movies that are releasing soon in [your area]"
+- "What's Tesla's current market cap?"
+- "What's the Wikipedia article of the day?"
+- "What's the 7-day weather forecast in [your location]?"
+- "Of the 3 highest paid tech CEOs, how long have their careers been?" 
+
 ## 🚀 Quickstart with Claude Desktop
-Through Claude Desktop Extension:
+### Through [Claude Desktop Extension](https://support.anthropic.com/en/articles/10949351-getting-started-with-model-context-protocol-mcp-on-claude-for-desktop#h_4819d0d1b4):
 
-**Download the Claude Desktop Extension : [Bright Data's MCP Extension](https://github.com/brightdata/brightdata-mcp/raw/refs/heads/main/brightdata-mcp-extension.dxt)**
+1. **Download** the Claude Desktop Extension:  
+   [📦 Bright Data's MCP Extension](https://github.com/brightdata/brightdata-mcp/raw/refs/heads/main/brightdata-mcp-extension.dxt)
 
-Through `claude_desktop_config.json`:
+2. **Open** Claude and go to:  
+   `Settings` → `Extensions`
+
+3. **Drag** the `.dtx` file from **Step 1** into the **dropping area**.
+
+4. **Enable** the service and **restart** Claude.
+5. Enjoy!
+
+### Through `claude_desktop_config.json`:
 
 1. Install `nodejs` to get the `npx` command (node.js module runner). Installation instructions can be found on the [node.js website](https://nodejs.org/en/download)
 
-2. Go to Claude > Settings > Developer > Edit Config > claude_desktop_config.json to include the following:
+2. Go to Claude > Settings > Developer > Edit Config > Edit "claude_desktop_config.json" to include the following:
 
 ```json
 {
@@ -83,14 +102,31 @@ Through `claude_desktop_config.json`:
       "args": ["@brightdata/mcp"],
       "env": {
         "API_TOKEN": "<insert-your-api-token-here>",
-        "WEB_UNLOCKER_ZONE": "<optional if you want to override the default mcp_unlocker zone name>",
-        "BROWSER_ZONE": "<optional browser zone name, defaults to mcp_browser>",
-        "RATE_LIMIT": "<optional rate limit format: limit/time+unit, e.g., 100/1h, 50/30m, 10/5s>"
       }
     }
   }
 }
 ```
+
+#### 🛸 Or for more advanced options: 
+
+```json
+{
+  "mcpServers": {
+    "Bright Data": {
+      "command": "npx",
+      "args": ["@brightdata/mcp"],
+      "env": {
+        "API_TOKEN": "<insert-your-api-token-here>",
+        "RATE_LIMIT": "<optional if you want to change rate limit format: limit/time+unit, e.g., 100/1h, 50/30m, 10/5s>",
+        "WEB_UNLOCKER_ZONE": "<optional if you want to override the web unlocker zone name - default is mcp_unlocker>",
+        "BROWSER_ZONE": "<optional if you want to override the browser zone name - defaults is mcp_browser>"
+      }
+    }
+  }
+}
+```
+
 ## 🔧 Available Tools
 
 [List of Available Tools](https://github.com/brightdata-com/brightdata-mcp/blob/main/assets/Tools.md)
@@ -106,44 +142,57 @@ Instead:
 
 1. Make sure you have an account on [brightdata.com](https://brightdata.com) (new users get free credit for testing, and pay as you go options are available)
 
-2. Get your API key from the [user settings page](https://brightdata.com/cp/setting/users)
+2. Get your API key from the [user settings page](https://brightdata.com/cp/setting/users), or from the welcome email you received
 
-3. (Optional) Create a custom Web Unlocker zone 
-   - By default, we create a Web Unlocker zone automatically using your API token
-   - For more control, you can create your own Web Unlocker zone in your [control panel](https://brightdata.com/cp/zones) and specify it with the `WEB_UNLOCKER_ZONE` environment variable
+####   Optional:
 
-4. (Optional) To enable browser control tools:
-   - By default, the MCP tries to fetch credentials of `mcp_browser` zone.
-   - If you don't have an `mcp_browser` zone, you can :
-     - Create a Browser API zone in your [control panel](https://brightdata.com/cp/zones) or use an existing one and specify its name using the `BROWSER_ZONE` environment variable
-    
-5. (Optional) Configure rate limiting:
+3. Configure rate limiting:
    - Set the `RATE_LIMIT` environment variable to control API usage
    - Format: `limit/time+unit` (e.g., `100/1h` for 100 calls per hour)
    - Supported time units: seconds (s), minutes (m), hours (h)
    - Examples: `RATE_LIMIT=100/1h`, `RATE_LIMIT=50/30m`, `RATE_LIMIT=10/5s`
    - Rate limiting is session-based (resets when server restarts)
 
-![Browser API Setup](https://github.com/user-attachments/assets/cb494aa8-d84d-4bb4-a509-8afb96872afe)
+4. Create a custom Web Unlocker zone 
+   - By default, we create a Web Unlocker zone automatically using your API token
+   - For more control, you can create your own Web Unlocker zone in your [control panel](https://brightdata.com/cp/zones) and specify it with the `WEB_UNLOCKER_ZONE` environment variable
+
+5. Create a custom  Browser API zone:
+   - By default, we create a Browser API zone automatically using your API token.
+   - For more control, you can create your own Browser API zone in your [control panel](https://brightdata.com/cp/zones) and specify it with the `BROWSER_ZONE` environment variable
 
 ## 🔌 Other MCP Clients
 
 To use this MCP server with other agent types, you should adapt the following to your specific software:
 
+- Before running the server, make sure the `API_TOKEN=<your-token>` environment variable is set
 - The full command to run the MCP server is `npx @brightdata/mcp`
-- The environment variable `API_TOKEN=<your-token>` must exist when running the server
-- (Optional) Set `BROWSER_ZONE=<zone-name>` to specify a custom Browser API zone name (defaults to `mcp_browser`)
 
-## 🔄 Breaking Changes
 
-### Browser Authentication Update
+#### 💻 macOS / Linux (bash/zsh)
 
-**BREAKING CHANGE:** The `BROWSER_AUTH` environment variable has been replaced with `BROWSER_ZONE`.
+```bash
+export API_TOKEN=your-token
+npx @brightdata/mcp
+```
 
-- **Before:** Users needed to provide `BROWSER_AUTH="user:pass"` from the Browser API zone
-- **Now:** Users only need to specify the browser zone name with `BROWSER_ZONE="zone_name"`
-- **Default:** If not specified, the system uses `mcp_browser` zone automatically
-- **Migration:** Replace `BROWSER_AUTH` with `BROWSER_ZONE` in your configuration and specify your Browser API zone name if `mcp_browser` doesn't exists
+#### 🪟 Windows (Command Prompt)
+
+```cmd
+set API_TOKEN=your-token
+npx @brightdata/mcp
+```
+
+#### 🪟 Windows (PowerShell)
+
+```powershell
+$env:API_TOKEN="your-token"
+npx @brightdata/mcp
+```
+
+> 💡 **Tip:** You can also use a `.env` file and a tool like [`dotenv`](https://www.npmjs.com/package/dotenv) to manage environment variables more easily during development.
+
+---
 
 ## 🔄 Changelog
 
@@ -157,17 +206,7 @@ Check out this playground on [Smithery](https://smithery.ai/server/@luminati-io/
 
 [![2025-05-06_10h44_20](https://github.com/user-attachments/assets/52517fa6-827d-4b28-b53d-f2020a13c3c4)](https://smithery.ai/server/@luminati-io/brightdata-mcp/tools)
 
-This platform provide an easy way to explore the capabilities of Bright Data MCP without any local setup. Just sign in and start experimenting with web data collection!
-
-## 💡 Usage Examples
-
-Some example queries that this MCP server will be able to help with:
-
-- "Google some movies that are releasing soon in [your area]"
-- "What's Tesla's current market cap?"
-- "What's the Wikipedia article of the day?"
-- "What's the 7-day weather forecast in [your location]?"
-- "Of the 3 highest paid tech CEOs, how long have their careers been?"
+This platform provides an easy way to explore the capabilities of Bright Data MCP without any local setup. Just sign in and start experimenting with web data collection!
 
 ## ⚠️ Troubleshooting
 

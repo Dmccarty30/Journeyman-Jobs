@@ -304,14 +304,7 @@ let scraping_browser_scroll_to = {
     },
 };
 
-let browser_credentials;
-try {
-    browser_credentials = process.env.API_TOKEN ?
-        await calculate_cdp_endpoint() : null;
-} catch(e){
-    browser_credentials = null;
-}
-export const tools = browser_credentials ? [
+export const tools = process.env.API_TOKEN ? [
     scraping_browser_navigate,
     scraping_browser_go_back,
     scraping_browser_go_forward,

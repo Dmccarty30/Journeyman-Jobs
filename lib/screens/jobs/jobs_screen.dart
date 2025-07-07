@@ -447,7 +447,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                   children: [
                     Expanded(
                       child: JJSecondaryButton(
-                        text: 'View Details',
+                        text: 'Details',
                         icon: Icons.visibility,
                         onPressed: () => _showElectricalJobDetails(job),
                         height: 42,
@@ -456,7 +456,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                     const SizedBox(width: AppTheme.spacingMd),
                     Expanded(
                       child: JJPrimaryButton(
-                        text: 'Bid Now',
+                        text: 'Apply',
                         icon: Icons.send,
                         onPressed: () => _handleBidNow(job),
                         height: 42,
@@ -494,10 +494,10 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                 ),
                 TextSpan(
                   text: value,
-                  style: AppTheme.bodyMedium.copyWith(
+                  style: AppTheme.bodySmall.copyWith(
                     color: AppTheme.textPrimary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
                   ),
                 ),
               ],
@@ -1225,11 +1225,78 @@ class JobDetailsSheet extends StatelessWidget {
               const SizedBox(height: AppTheme.spacingSm),
               _buildDetailRow(Icons.card_giftcard, 'Per Diem', job.perDiem!),
             ],
+
+            if (job.jobTitle != null) ...[
+              const SizedBox(height: AppTheme.spacingSm),
+              _buildDetailRow(Icons.work, 'Job Title', job.jobTitle!),
+            ],
+
+            if (job.sub != null) ...[
+              const SizedBox(height: AppTheme.spacingSm),
+              _buildDetailRow(Icons.business_center, 'Sub', job.sub!),
+            ],
+
+            if (job.jobClass != null) ...[
+              const SizedBox(height: AppTheme.spacingSm),
+              _buildDetailRow(Icons.category, 'Job Class', job.jobClass!),
+            ],
+
+            if (job.numberOfJobs != null) ...[
+              const SizedBox(height: AppTheme.spacingSm),
+              _buildDetailRow(Icons.people, 'Positions Available', job.numberOfJobs!),
+            ],
+
+            if (job.duration != null) ...[
+              const SizedBox(height: AppTheme.spacingSm),
+              _buildDetailRow(Icons.schedule, 'Duration', job.duration!),
+            ],
+
+            if (job.startDate != null) ...[
+              const SizedBox(height: AppTheme.spacingSm),
+              _buildDetailRow(Icons.calendar_today, 'Start Date', job.startDate!),
+            ],
+
+            if (job.startTime != null) ...[
+              const SizedBox(height: AppTheme.spacingSm),
+              _buildDetailRow(Icons.access_time, 'Start Time', job.startTime!),
+            ],
+
+            if (job.agreement != null) ...[
+              const SizedBox(height: AppTheme.spacingSm),
+              _buildDetailRow(Icons.handshake, 'Agreement', job.agreement!),
+            ],
             
+            if (job.qualifications != null) ...[
+              const SizedBox(height: AppTheme.spacingLg),
+              Text(
+                'Qualifications & Requirements',
+                style: AppTheme.headlineSmall.copyWith(
+                  color: AppTheme.primaryNavy,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingMd),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  color: AppTheme.warningYellow.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  border: Border.all(color: AppTheme.warningYellow.withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  job.qualifications!,
+                  style: AppTheme.bodyLarge.copyWith(
+                    color: AppTheme.textPrimary,
+                    height: 1.6,
+                  ),
+                ),
+              ),
+            ],
+
             if (job.jobDescription != null) ...[
               const SizedBox(height: AppTheme.spacingLg),
               Text(
-                'Description',
+                'Job Description',
                 style: AppTheme.headlineSmall.copyWith(
                   color: AppTheme.primaryNavy,
                 ),
@@ -1241,6 +1308,39 @@ class JobDetailsSheet extends StatelessWidget {
                   color: AppTheme.textPrimary,
                   height: 1.6,
                 ),
+              ),
+            ],
+
+            if (job.booksYourOn != null && job.booksYourOn!.isNotEmpty) ...[
+              const SizedBox(height: AppTheme.spacingLg),
+              Text(
+                'Books You\'re On',
+                style: AppTheme.headlineSmall.copyWith(
+                  color: AppTheme.primaryNavy,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingMd),
+              Wrap(
+                spacing: AppTheme.spacingSm,
+                runSpacing: AppTheme.spacingSm,
+                children: job.booksYourOn!.map((book) => Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingMd,
+                    vertical: AppTheme.spacingSm,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentCopper.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    border: Border.all(color: AppTheme.accentCopper.withValues(alpha: 0.3)),
+                  ),
+                  child: Text(
+                    'Book $book',
+                    style: AppTheme.bodyMedium.copyWith(
+                      color: AppTheme.accentCopper,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                )).toList(),
               ),
             ],
             
@@ -1270,9 +1370,32 @@ class JobDetailsSheet extends StatelessWidget {
                 ),
               ),
             ],
-            
+
+            // Additional Information Section
+            const SizedBox(height: AppTheme.spacingLg),
+            Text(
+              'Additional Information',
+              style: AppTheme.headlineSmall.copyWith(
+                color: AppTheme.primaryNavy,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+
+            if (job.local != null) ...[
+              _buildDetailRow(Icons.location_city, 'Local Union', job.local.toString()),
+              const SizedBox(height: AppTheme.spacingSm),
+            ],
+
+            if (job.timestamp != null) ...[
+              _buildDetailRow(Icons.schedule, 'Posted On',
+                '${job.timestamp!.day}/${job.timestamp!.month}/${job.timestamp!.year}'),
+              const SizedBox(height: AppTheme.spacingSm),
+            ],
+
+            _buildDetailRow(Icons.info, 'Job ID', job.id),
+
             const SizedBox(height: AppTheme.spacingXl),
-            
+
             // Safety information
             Container(
               width: double.infinity,
@@ -1316,7 +1439,7 @@ class JobDetailsSheet extends StatelessWidget {
             
             // Action buttons
             JJPrimaryButton(
-              text: 'Apply for This Job',
+              text: 'Apply Now',
               icon: Icons.send,
               onPressed: () {
                 Navigator.pop(context);

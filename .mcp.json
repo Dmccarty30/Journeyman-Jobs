@@ -1,0 +1,125 @@
+{
+  "mcpServers": {
+    "brave-search": {
+      "command": "/home/david/.nvm/versions/node/v22.14.0/bin/node",
+      "args": [
+        "/mnt/x/Cline/MCP/brave-search-server/build/index.js"
+      ],
+      "env": {
+        "BRAVE_SEARCH_API_KEY": "BSAYbBwe8YXBcFOibs-LlyE6NOZpOzD"
+      }
+    },
+    "search1api-crawler": {
+      "command": "/home/david/.nvm/versions/node/v22.14.0/bin/node",
+      "args": [
+        "/mnt/x/Cline/MCP/search1api-crawler/build/index.js"
+      ],
+      "env": {}
+    },
+    "Bright Data": {
+      "command": "/mnt/c/Users/david/Desktop/UI/npm-wrapper.sh",
+      "args": [
+        "-y",
+        "@brightdata/mcp"
+      ],
+      "env": {
+        "API_TOKEN": "b3eb2cca-6d1e-41a8-950c-65399c518794",
+        "WEB_UNLOCKER_ZONE": "mcp_unlocker",
+        "BROWSER_AUTH": "brd-customer-hl_482339a5-zone-mcp_unlocker"
+      }
+    },
+    "mcp-server-fetch": {
+      "command": "/home/david/.local/bin/uv",
+      "args": [
+        "tool",
+        "run",
+        "mcp-server-fetch"
+      ]
+    },
+    "Framelink Figma MCP": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "figma-developer-mcp",
+        "--figma-api-key=figd_xDJ3gNwBtU0GlOP0vvLe8Xb6xxVVdzB67iFZ10iL",
+        "--stdio"
+      ],
+      "env": {},
+      "working_directory": null,
+      "start_on_launch": true
+    },
+    "server-memory": {
+      "command": "/mnt/c/Users/david/Desktop/UI/npm-wrapper.sh",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "env": {
+        "MEMORY_FILE_PATH": "/mnt/c/Users/david/Desktop/UI/memory.db"
+      }
+    },
+    "firecrawl-mcp": {
+      "command": "/mnt/c/Users/david/Desktop/UI/npm-wrapper.sh",
+      "args": [
+        "-y",
+        "firecrawl-mcp"
+      ],
+      "env": {
+        "FIRECRAWL_API_KEY": "fc-c99dfdb07ed747a49d22fc4c1c6bbafc"
+      }
+    },
+    "task-master-ai": {
+      "command": "/mnt/c/Users/david/Desktop/UI/npm-wrapper.sh",
+      "args": [
+        "-y",
+        "task-master-ai"
+      ],
+      "env": {
+        "PERPLEXITY_API_KEY": "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",
+        "ANTHROPIC_API_KEY": "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",
+        "OPENAI_API_KEY": "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",
+        "GOOGLE_API_KEY": "AIzaSyAe7bb3l1oO32kXkU3u2ElVZbvJ7YZndVo",
+        "MISTRAL_API_KEY": "7wEeSRggnOQzxcXq4H7qD3MjId861XAZ",
+        "OPENROUTER_API_KEY": "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",
+        "XAI_API_KEY": "xai-QaXHssUUBlPdtoZhbwY9Ap8AFYOEFWKygipNvGu53ovPk3hYNmH8OeT2ZbmJ479UQa56o1N95ArArGGd"
+      }
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "think-mcp-server": {
+      "command": "/mnt/c/Users/david/Desktop/UI/npm-wrapper.sh",
+      "args": [
+        "-y",
+        "@smithery/cli@latest",
+        "run",
+        "@PhillipRt/think-mcp-server",
+        "--key",
+        "ced69534-0894-4d1e-b727-c826bc7ce45c"
+      ]
+    },
+    "mcp-server-deep-research": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-deep-research"
+      ]
+    },
+    "@21st-dev/magic": {
+      "command": "/mnt/c/Users/david/Desktop/UI/npm-wrapper.sh",
+      "args": [
+        "-y",
+        "@21st-dev/magic@latest"
+      ],
+      "env": {
+        "API_KEY": "754cfc699bd42499f043152c872af4cc39022bdbbf7e9db980cf2c038c09b029"
+      },
+      "start_on_launch": true
+    }
+  }
+}

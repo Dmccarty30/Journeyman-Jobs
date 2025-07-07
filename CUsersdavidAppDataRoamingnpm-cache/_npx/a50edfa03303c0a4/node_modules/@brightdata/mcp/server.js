@@ -9,6 +9,7 @@ const require = createRequire(import.meta.url);
 const package_json = require('./package.json');
 const api_token = process.env.API_TOKEN;
 const unlocker_zone = process.env.WEB_UNLOCKER_ZONE || 'mcp_unlocker';
+const browser_zone = process.env.BROWSER_ZONE || 'mcp_browser';
 
 function parse_rate_limit(rate_limit_str) {
     if (!rate_limit_str) 
@@ -64,6 +65,8 @@ async function ensure_required_zones(){
         });
         let zones = response.data || [];
         let has_unlocker_zone = zones.some(zone=>zone.name==unlocker_zone);
+        let has_browser_zone = zones.some(zone=>zone.name==browser_zone);
+        
         if (!has_unlocker_zone)
         {
             console.error(`Required zone "${unlocker_zone}" not found, `
@@ -84,6 +87,27 @@ async function ensure_required_zones(){
         }
         else
             console.error(`Required zone "${unlocker_zone}" already exists`);
+            
+        if (!has_browser_zone)
+        {
+            console.error(`Required zone "${browser_zone}" not found, `
+                +`creating it...`);
+            await axios({
+                url: 'https://api.brightdata.com/zone',
+                method: 'POST',
+                headers: {
+                    ...api_headers(),
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                    zone: {name: browser_zone, type: 'browser_api'},
+                    plan: {type: 'browser_api'},
+                },
+            });
+            console.error(`Zone "${browser_zone}" created successfully`);
+        }
+        else
+            console.error(`Required zone "${browser_zone}" already exists`);
     } catch(e){
         console.error('Error checking/creating zones:',
             e.response?.data||e.message);
