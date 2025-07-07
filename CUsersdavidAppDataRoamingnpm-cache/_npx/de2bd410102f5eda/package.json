@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@modelcontextprotocol/server-sequential-thinking": "^2025.7.1"
+  },
+  "_npx": {
+    "packages": [
+      "@modelcontextprotocol/server-sequential-thinking"
+    ]
+  }
+}
