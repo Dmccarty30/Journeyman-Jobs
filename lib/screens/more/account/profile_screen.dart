@@ -253,7 +253,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                       Text(
                         _homeLocalController.text,
                         style: AppTheme.bodyMedium.copyWith(
-                          color: AppTheme.white.withOpacity(0.8),
+                          color: AppTheme.white.withValues(alpha: 0.8),
                         ),
                       ),
                     ],
@@ -270,7 +270,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               controller: _tabController,
               indicatorColor: AppTheme.accentCopper,
               labelColor: AppTheme.white,
-              unselectedLabelColor: AppTheme.white.withOpacity(0.7),
+              unselectedLabelColor: AppTheme.white.withValues(alpha: 0.7),
               tabs: const [
                 Tab(text: 'Personal'),
                 Tab(text: 'Professional'),
@@ -644,7 +644,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     vertical: AppTheme.spacingSm,
                   ),
                   decoration: BoxDecoration(
-                    color: AppTheme.accentCopper.withOpacity(0.1),
+                    color: AppTheme.accentCopper.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                   ),
                   child: Text(
@@ -1129,9 +1129,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         vertical: AppTheme.spacingSm,
       ),
       decoration: BoxDecoration(
-        color: AppTheme.accentCopper.withOpacity(0.1),
+        color: AppTheme.accentCopper.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(color: AppTheme.accentCopper.withOpacity(0.3)),
+        border: Border.all(color: AppTheme.accentCopper.withValues(alpha: 0.3)),
       ),
       child: Text(
         label,

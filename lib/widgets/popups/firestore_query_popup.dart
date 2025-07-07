@@ -460,11 +460,11 @@ class _FirestoreQueryPopupState<T> extends State<FirestoreQueryPopup<T>> {
         return Container(
           decoration: BoxDecoration(
             color: isSelected
-                ? AppTheme.accentCopper.withOpacity(0.1)
+                ? AppTheme.accentCopper.withValues(alpha: 0.1)
                 : AppTheme.white,
             border: Border(
               bottom: BorderSide(
-                color: AppTheme.lightGray.withOpacity(0.5),
+                color: AppTheme.lightGray.withValues(alpha: 0.5),
               ),
             ),
           ),
@@ -517,7 +517,7 @@ class QueryPopupBuilders {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: AppTheme.primaryNavy.withOpacity(0.1),
+          color: AppTheme.primaryNavy.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         ),
         child: Center(
@@ -555,7 +555,7 @@ class QueryPopupBuilders {
   static Widget companyItemBuilder(BuildContext context, Map<String, dynamic> company) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: AppTheme.accentCopper.withOpacity(0.1),
+        backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.1),
         child: Text(
           company['name']?.substring(0, 1).toUpperCase() ?? 'C',
           style: AppTheme.titleMedium.copyWith(
@@ -582,7 +582,7 @@ class QueryPopupBuilders {
                 vertical: AppTheme.spacingXs,
               ),
               decoration: BoxDecoration(
-                color: AppTheme.successGreen.withOpacity(0.1),
+                color: AppTheme.successGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppTheme.radiusRound),
               ),
               child: Text(

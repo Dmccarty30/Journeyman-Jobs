@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 // Base class for all Firestore records
 abstract class FirestoreRecord {
@@ -10,8 +9,6 @@ abstract class FirestoreRecord {
   final Map<String, dynamic>? snapshotData;
 
   Map<String, dynamic> createData();
-
-  void _initializeFields();
 }
 
 // Utility functions

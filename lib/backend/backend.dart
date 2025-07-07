@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'schema/locals_record.dart';
 import 'schema/jobs_record.dart';
 import 'schema/users_record.dart';
@@ -70,7 +71,7 @@ Stream<List<T>> queryCollection<T>(
       .map(
         (d) => safeGet(
           () => recordFromSnapshot(d),
-          (e) => print('Error serializing doc ${d.reference.path}:\n$e'),
+          (e) => debugPrint('Error serializing doc ${d.reference.path}:\n$e'),
         ),
       )
       .where((d) => d != null)

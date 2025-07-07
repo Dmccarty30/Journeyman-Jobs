@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/locals_record.dart';
-import 'unions_model.dart';
-export 'unions_model.dart';
 
-class UnionsWidget extends StatefulWidget {
-  const UnionsWidget({super.key});
+class LocalsWidget extends StatefulWidget {
+  const LocalsWidget({super.key});
 
-  static String routeName = 'unions';
-  static String routePath = '/unions';
+  static String routeName = 'locals';
+  static String routePath = '/locals';
 
   @override
-  State<UnionsWidget> createState() => _UnionsWidgetState();
+  State<LocalsWidget> createState() => _LocalsWidgetState();
 }
 
-class _UnionsWidgetState extends State<UnionsWidget> {
+class _LocalsWidgetState extends State<LocalsWidget> {
   final TextEditingController _emailController = TextEditingController();
   final FocusNode _emailFocusNode = FocusNode();
   final List<LocalsRecord> _localsRecords = LocalsRecordMockData.getSampleData();
@@ -57,7 +55,7 @@ class _UnionsWidgetState extends State<UnionsWidget> {
         child: Column(
           children: [
             const Text(
-              'Find Your Local Union',
+              'Find Your IBEW Local',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -105,9 +103,9 @@ class _UnionsWidgetState extends State<UnionsWidget> {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: local.isActive 
-                                      ? AppTheme.successGreen.withOpacity(0.2)
-                                      : AppTheme.mediumGray.withOpacity(0.2),
+                                  color: local.isActive
+                                      ? AppTheme.successGreen.withValues(alpha: 0.2)
+                                      : AppTheme.mediumGray.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                                 ),
                                 child: Text(

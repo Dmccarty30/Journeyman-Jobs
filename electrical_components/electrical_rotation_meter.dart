@@ -192,7 +192,7 @@ class MeterPainter extends CustomPainter {
   void _drawNeedle(Canvas canvas, Offset center, double length, double angle) {
     // Draw needle shadow
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.2)
+      ..color = Colors.black.withValues(alpha: 0.2)
       ..strokeWidth = 6
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;

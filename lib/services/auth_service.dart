@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'dart:io';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -14,7 +14,7 @@ class AuthService {
       await _googleSignIn.initialize();
       _isGoogleSignInInitialized = true;
     } catch (e) {
-      print('Failed to initialize Google Sign-In: $e');
+      debugPrint('Failed to initialize Google Sign-In: $e');
     }
   }
 
@@ -92,7 +92,7 @@ class AuthService {
       // Once signed in, return the UserCredential
       return await _auth.signInWithCredential(credential);
     } on GoogleSignInException catch (e) {
-      print('Google Sign-In error: ${e.code.name} - ${e.description}');
+      debugPrint('Google Sign-In error: ${e.code.name} - ${e.description}');
       rethrow;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
@@ -162,7 +162,7 @@ class AuthService {
   // Update Email
   Future<void> updateEmail({required String newEmail}) async {
     try {
-      await currentUser?.updateEmail(newEmail);
+      await currentUser?.verifyBeforeUpdateEmail(newEmail);
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }

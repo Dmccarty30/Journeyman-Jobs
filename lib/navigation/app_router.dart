@@ -99,7 +99,7 @@ class AppRouter {
           GoRoute(
             path: locals,
             name: 'locals',
-            builder: (context, state) => const UnionsWidget(),
+            builder: (context, state) => const LocalsWidget(),
           ),
           GoRoute(
             path: more,

@@ -111,7 +111,7 @@ class _CircuitBreakerToggleState extends State<CircuitBreakerToggle>
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -172,7 +172,7 @@ class CircuitBreakerPainter extends CustomPainter {
     
     // Knob shadow
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.2)
+      ..color = Colors.black.withValues(alpha: 0.2)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
     canvas.drawCircle(
       Offset(knobX + 1, radius + 1), 
@@ -192,7 +192,7 @@ class CircuitBreakerPainter extends CustomPainter {
 
   void _drawElectricalSymbols(Canvas canvas, Size size, double progress) {
     final symbolPaint = Paint()
-      ..color = Colors.white.withOpacity(0.8)
+      ..color = Colors.white.withValues(alpha: 0.8)
       ..strokeWidth = 2.5
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -200,7 +200,7 @@ class CircuitBreakerPainter extends CustomPainter {
     // Draw "ON" symbol (line) - visible when ON or transitioning to ON
     if (progress > 0.3) {
       final onOpacity = ((progress - 0.3) / 0.7).clamp(0.0, 1.0);
-      symbolPaint.color = Colors.white.withOpacity(0.8 * onOpacity);
+      symbolPaint.color = Colors.white.withValues(alpha: 0.8 * onOpacity);
       
       // Vertical line symbol for ON
       canvas.drawLine(
@@ -213,7 +213,7 @@ class CircuitBreakerPainter extends CustomPainter {
     // Draw "OFF" symbol (circle) - visible when OFF or transitioning to OFF
     if (progress < 0.7) {
       final offOpacity = ((0.7 - progress) / 0.7).clamp(0.0, 1.0);
-      symbolPaint.color = Colors.white.withOpacity(0.8 * offOpacity);
+      symbolPaint.color = Colors.white.withValues(alpha: 0.8 * offOpacity);
       
       // Circle symbol for OFF
       canvas.drawCircle(

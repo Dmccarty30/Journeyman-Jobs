@@ -133,7 +133,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                         Container(
                           padding: const EdgeInsets.all(AppTheme.spacingSm),
                           decoration: BoxDecoration(
-                            color: AppTheme.accentCopper.withOpacity(0.1),
+                            color: AppTheme.accentCopper.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                           ),
                           child: JJElectricalIcons.hardHat(
@@ -296,7 +296,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
               // Help card
               JJCard(
-                backgroundColor: AppTheme.primaryNavy.withOpacity(0.05),
+                backgroundColor: AppTheme.primaryNavy.withValues(alpha: 0.05),
                 child: Column(
                   children: [
                     Row(

@@ -253,7 +253,7 @@ class _MoreScreenState extends State<MoreScreen> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppTheme.accentCopper.withOpacity(0.1),
+                  color: AppTheme.accentCopper.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 ),
                 child: Icon(

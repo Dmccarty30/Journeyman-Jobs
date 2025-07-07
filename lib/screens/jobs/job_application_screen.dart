@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart';
 
 class JobApplicationScreen extends StatelessWidget {
   const JobApplicationScreen({super.key});

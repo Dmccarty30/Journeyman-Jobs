@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:math';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 
@@ -79,7 +78,7 @@ class _ElectricalCalculatorsScreenState extends State<ElectricalCalculatorsScree
                     child: Container(
                       padding: const EdgeInsets.all(AppTheme.spacingMd),
                       decoration: BoxDecoration(
-                        color: isSelected ? AppTheme.accentCopper.withOpacity(0.1) : AppTheme.lightGray,
+                        color: isSelected ? AppTheme.accentCopper.withValues(alpha: 0.1) : AppTheme.lightGray,
                         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                         border: Border.all(
                           color: isSelected ? AppTheme.accentCopper : AppTheme.mediumGray,
@@ -319,11 +318,9 @@ class _WireSizeCalculatorState extends State<_WireSizeCalculator> {
   final _currentController = TextEditingController();
   final _distanceController = TextEditingController();
   String _selectedVoltage = '120';
-  String _selectedInsulation = 'THWN';
   String _result = '';
 
   final List<String> _voltages = ['120', '240', '277', '480'];
-  final List<String> _insulations = ['THWN', 'THHN', 'XHHW', 'USE'];
 
   // Simplified wire size table (AWG to ampacity)
   final Map<String, int> _wireAmps = {
@@ -344,7 +341,8 @@ class _WireSizeCalculatorState extends State<_WireSizeCalculator> {
   void _calculate() {
     try {
       double current = double.parse(_currentController.text);
-      double distance = double.parse(_distanceController.text);
+      // Distance for future voltage drop calculations
+      // double distance = double.parse(_distanceController.text);
       
       // Find minimum wire size for current capacity
       String? selectedWire;
@@ -366,7 +364,7 @@ class _WireSizeCalculatorState extends State<_WireSizeCalculator> {
       double maxVoltageDrop = double.parse(_selectedVoltage) * 0.03;
       
       setState(() {
-        _result = 'Recommended Wire Size: ${selectedWire} AWG\n';
+        _result = 'Recommended Wire Size: $selectedWire AWG\n';
         _result += 'Wire Capacity: ${_wireAmps[selectedWire]} A\n';
         _result += 'Max Voltage Drop: ${maxVoltageDrop.toStringAsFixed(1)} V\n';
         _result += '\nNote: This is a simplified calculation. ';

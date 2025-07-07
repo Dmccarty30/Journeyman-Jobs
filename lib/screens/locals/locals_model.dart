@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class UnionsModel extends ChangeNotifier {
-  // Placeholder model for unions screen
-  // This can be expanded with actual union data and functionality
+class LocalsModel extends ChangeNotifier {
+  // Model for IBEW locals screen
+  // This can be expanded with actual local data and functionality
   
-  List<String> _unions = [
+  final List<String> _locals = [
     'IBEW Local 1',
     'IBEW Local 3', 
     'IBEW Local 11',
@@ -12,15 +12,15 @@ class UnionsModel extends ChangeNotifier {
     'IBEW Local 58',
   ];
   
-  List<String> get unions => _unions;
+  List<String> get locals => _locals;
   
-  void addUnion(String union) {
-    _unions.add(union);
+  void addLocal(String local) {
+    _locals.add(local);
     notifyListeners();
   }
   
-  void removeUnion(String union) {
-    _unions.remove(union);
+  void removeLocal(String local) {
+    _locals.remove(local);
     notifyListeners();
   }
 }

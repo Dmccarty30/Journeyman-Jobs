@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -94,7 +93,7 @@ class _AuthScreenState extends State<AuthScreen>
     setState(() => _isSignUpLoading = true);
 
     try {
-      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _signUpEmailController.text.trim(),
         password: _signUpPasswordController.text,
       );

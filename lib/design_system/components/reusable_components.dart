@@ -276,7 +276,7 @@ class JJCard extends StatelessWidget {
         borderRadius: borderRadius ?? BorderRadius.circular(AppTheme.radiusLg),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: elevation ?? 4,
             offset: const Offset(0, 2),
           ),

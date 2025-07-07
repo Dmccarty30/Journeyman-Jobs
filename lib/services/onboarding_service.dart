@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingService {
@@ -26,7 +27,7 @@ class OnboardingService {
       await prefs.setBool(_onboardingCompleteKey, true);
     } catch (e) {
       // Log error but don't throw - onboarding completion is not critical for app function
-      print('Error marking onboarding complete: $e');
+      debugPrint('Error marking onboarding complete: $e');
     }
   }
 
@@ -36,7 +37,7 @@ class OnboardingService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_onboardingCompleteKey, false);
     } catch (e) {
-      print('Error resetting onboarding: $e');
+      debugPrint('Error resetting onboarding: $e');
     }
   }
 
@@ -46,7 +47,7 @@ class OnboardingService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_onboardingCompleteKey);
     } catch (e) {
-      print('Error clearing onboarding data: $e');
+      debugPrint('Error clearing onboarding data: $e');
     }
   }
 }

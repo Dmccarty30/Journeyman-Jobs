@@ -180,10 +180,10 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
   void _completeOnboarding() async {
     try {
       // TODO: Get current user ID from auth
-      final String userId = 'temp_user_id'; // This should come from auth service
-      
+      // final String userId = 'temp_user_id'; // This should come from auth service
+
       // Convert classification string to enum value
-      Classification? classificationEnum;
+      // Classification? classificationEnum;
       if (_selectedClassification != null) {
         switch (_selectedClassification!) {
           case 'Journeyman Lineman':
@@ -205,7 +205,8 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
       }
 
       // Create comprehensive user data map
-      final userData = {
+      // TODO: Uncomment when FirestoreService is implemented
+      /*final userData = {
         'first_name': _firstNameController.text,
         'last_name': _lastNameController.text,
         'phone_number': _phoneController.text,
@@ -235,7 +236,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
         'lookingToAccomplish': _lookingToAccomplishController.text.isEmpty ? null : _lookingToAccomplishController.text,
         'onboardingStatus': 'completed',
         'created_time': DateTime.now(),
-      };
+      };*/
 
       // TODO: Save to Firestore using FirestoreService
       // await FirestoreService().createUser(uid: userId, userData: userData);
@@ -347,7 +348,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
           color: AppTheme.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 4,
               offset: const Offset(0, -2),
             ),
@@ -675,7 +676,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
           Container(
             padding: const EdgeInsets.all(AppTheme.spacingSm),
             decoration: BoxDecoration(
-              color: AppTheme.accentCopper.withOpacity(0.1),
+              color: AppTheme.accentCopper.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(AppTheme.radiusSm),
             ),
             child: Row(

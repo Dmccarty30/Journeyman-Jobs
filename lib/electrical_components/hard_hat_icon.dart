@@ -67,7 +67,7 @@ class HardHatPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
       
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.1)
+      ..color = Colors.black.withValues(alpha: 0.1)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
 
     final center = Offset(size.width / 2, size.height / 2);
@@ -105,7 +105,7 @@ class HardHatPainter extends CustomPainter {
 
     // Draw inner highlight for depth
     final highlightPaint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
+      ..color = Colors.white.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill;
       
     final highlightPath = Path();
@@ -133,7 +133,7 @@ class HardHatPainter extends CustomPainter {
 
     // Draw ventilation holes
     final holePaint = Paint()
-      ..color = color.withOpacity(0.7)
+      ..color = color.withValues(alpha: 0.7)
       ..style = PaintingStyle.fill;
       
     for (int i = -2; i <= 2; i++) {

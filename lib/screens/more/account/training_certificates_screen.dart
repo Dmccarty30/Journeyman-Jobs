@@ -165,7 +165,7 @@ class _TrainingCertificatesScreenState extends State<TrainingCertificatesScreen>
           controller: _tabController,
           indicatorColor: AppTheme.accentCopper,
           labelColor: AppTheme.white,
-          unselectedLabelColor: AppTheme.white.withOpacity(0.7),
+          unselectedLabelColor: AppTheme.white.withValues(alpha: 0.7),
           tabs: const [
             Tab(text: 'Certificates'),
             Tab(text: 'Courses'),
@@ -266,9 +266,9 @@ class _TrainingCertificatesScreenState extends State<TrainingCertificatesScreen>
       child: Container(
         padding: const EdgeInsets.all(AppTheme.spacingSm),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [
@@ -308,9 +308,9 @@ class _TrainingCertificatesScreenState extends State<TrainingCertificatesScreen>
             width: double.infinity,
             padding: const EdgeInsets.all(AppTheme.spacingMd),
             decoration: BoxDecoration(
-              color: AppTheme.infoBlue.withOpacity(0.1),
+              color: AppTheme.infoBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              border: Border.all(color: AppTheme.infoBlue.withOpacity(0.3)),
+              border: Border.all(color: AppTheme.infoBlue.withValues(alpha: 0.3)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -543,7 +543,7 @@ class CertificateCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: _getStatusColor().withOpacity(0.1),
+                  color: _getStatusColor().withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 ),
                 child: Icon(
@@ -580,7 +580,7 @@ class CertificateCard extends StatelessWidget {
                             vertical: AppTheme.spacingXs,
                           ),
                           decoration: BoxDecoration(
-                            color: _getStatusColor().withOpacity(0.1),
+                            color: _getStatusColor().withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                           ),
                           child: Text(
@@ -750,7 +750,7 @@ class CourseCard extends StatelessWidget {
                         vertical: AppTheme.spacingXs,
                       ),
                       decoration: BoxDecoration(
-                        color: _getFormatColor().withOpacity(0.1),
+                        color: _getFormatColor().withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                       ),
                       child: Text(
@@ -946,7 +946,7 @@ class TrainingHistoryCard extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: record.certificateEarned ? AppTheme.successGreen.withOpacity(0.1) : AppTheme.infoBlue.withOpacity(0.1),
+              color: record.certificateEarned ? AppTheme.successGreen.withValues(alpha: 0.1) : AppTheme.infoBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(AppTheme.radiusSm),
             ),
             child: Icon(

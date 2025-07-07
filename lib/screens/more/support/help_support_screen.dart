@@ -150,7 +150,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> with SingleTicker
           controller: _tabController,
           indicatorColor: AppTheme.accentCopper,
           labelColor: AppTheme.white,
-          unselectedLabelColor: AppTheme.white.withOpacity(0.7),
+          unselectedLabelColor: AppTheme.white.withValues(alpha: 0.7),
           tabs: const [
             Tab(text: 'FAQ'),
             Tab(text: 'Contact'),
@@ -260,9 +260,9 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> with SingleTicker
             width: double.infinity,
             padding: const EdgeInsets.all(AppTheme.spacingLg),
             decoration: BoxDecoration(
-              color: AppTheme.warningYellow.withOpacity(0.1),
+              color: AppTheme.warningYellow.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              border: Border.all(color: AppTheme.warningYellow.withOpacity(0.3)),
+              border: Border.all(color: AppTheme.warningYellow.withValues(alpha: 0.3)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -463,7 +463,7 @@ class _FAQCardState extends State<FAQCard> {
                         vertical: AppTheme.spacingXs,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.accentCopper.withOpacity(0.1),
+                        color: AppTheme.accentCopper.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                       ),
                       child: Text(
@@ -537,7 +537,7 @@ class ContactCard extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: option.color.withOpacity(0.1),
+                    color: option.color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                   ),
                   child: Icon(
@@ -640,7 +640,7 @@ class GuideCard extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: AppTheme.accentCopper.withOpacity(0.1),
+                    color: AppTheme.accentCopper.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                   ),
                   child: Icon(

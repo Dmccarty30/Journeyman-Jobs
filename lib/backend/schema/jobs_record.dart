@@ -1,13 +1,10 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 
 import '/backend/schema/firestore_util.dart';
 import '/backend/schema/index.dart';
-import '/backend/schema/enums/enums.dart';
-
-import 'index.dart';
-import '/utils/lat_lng.dart';
 
 /// Represents a job posting record in the Firestore database.
 ///
@@ -275,7 +272,7 @@ class JobsRecord extends FirestoreRecord {
         return int.parse(value);
       } catch (e) {
         // Log warning: Could not parse value as int
-        print('Warning: Could not parse "$value" as int, defaulting to null');
+        debugPrint('Warning: Could not parse "$value" as int, defaulting to null');
         return null;
       }
     }

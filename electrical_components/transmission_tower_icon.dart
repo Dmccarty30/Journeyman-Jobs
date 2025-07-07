@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 /// Transmission Tower Icon
 /// 
@@ -165,7 +164,7 @@ class TransmissionTowerPainter extends CustomPainter {
     
     // Draw ground line
     final groundPaint = Paint()
-      ..color = color.withOpacity(0.3)
+      ..color = color.withValues(alpha: 0.3)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
       

@@ -111,7 +111,7 @@ class CircuitBoardPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(0.3)
+      ..color = color.withValues(alpha: 0.3)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
 
@@ -170,7 +170,7 @@ class LightBulbPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final fillPaint = Paint()
-      ..color = color.withOpacity(0.1)
+      ..color = color.withValues(alpha: 0.1)
       ..style = PaintingStyle.fill;
 
     // Draw bulb shape
@@ -216,7 +216,7 @@ class LightBulbPainter extends CustomPainter {
     
     // Draw light rays
     final rayPaint = Paint()
-      ..color = color.withOpacity(0.5)
+      ..color = color.withValues(alpha: 0.5)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     
@@ -315,7 +315,7 @@ class JobSearchPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final fillPaint = Paint()
-      ..color = color.withOpacity(0.1)
+      ..color = color.withValues(alpha: 0.1)
       ..style = PaintingStyle.fill;
 
     // Draw clipboard

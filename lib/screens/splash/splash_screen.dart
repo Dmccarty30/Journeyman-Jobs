@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../design_system/app_theme.dart';
@@ -24,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen>
   
   late Animation<double> _logoScaleAnimation;
   late Animation<double> _textOpacityAnimation;
-  late Animation<double> _progressAnimation;
+  // Progress animation removed as unused
   late Animation<Alignment> _topAlignmentAnimation;
   late Animation<Alignment> _bottomAlignmentAnimation;
 
@@ -78,14 +77,7 @@ class _SplashScreenState extends State<SplashScreen>
       curve: Curves.easeInOut,
     ));
 
-    // Progress animation
-    _progressAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _progressController,
-      curve: Curves.easeInOut,
-    ));
+    // Progress animation removed as unused
 
     // Gradient animation
     _topAlignmentAnimation = TweenSequence<Alignment>([
@@ -265,7 +257,7 @@ class _SplashScreenState extends State<SplashScreen>
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.white.withOpacity(0.5),
+                                color: AppTheme.white.withValues(alpha: 0.5),
                                 blurRadius: 30,
                                 spreadRadius: 10,
                               ),
@@ -314,7 +306,7 @@ class _SplashScreenState extends State<SplashScreen>
                                 fontWeight: FontWeight.w700,
                                 shadows: [
                                   Shadow(
-                                    color: Colors.black.withOpacity(0.3),
+                                    color: Colors.black.withValues(alpha: 0.3),
                                     offset: const Offset(0, 2),
                                     blurRadius: 4,
                                   ),
@@ -328,7 +320,7 @@ class _SplashScreenState extends State<SplashScreen>
                                 fontWeight: FontWeight.w600,
                                 shadows: [
                                   Shadow(
-                                    color: Colors.black.withOpacity(0.3),
+                                    color: Colors.black.withValues(alpha: 0.3),
                                     offset: const Offset(0, 2),
                                     blurRadius: 4,
                                   ),
@@ -339,11 +331,11 @@ class _SplashScreenState extends State<SplashScreen>
                             Text(
                               'Clearing the Books.',
                               style: AppTheme.bodyLarge.copyWith(
-                                color: AppTheme.white.withOpacity(0.9),
+                                color: AppTheme.white.withValues(alpha: 0.9),
                                 fontWeight: FontWeight.w500,
                                 shadows: [
                                   Shadow(
-                                    color: Colors.black.withOpacity(0.3),
+                                    color: Colors.black.withValues(alpha: 0.3),
                                     offset: const Offset(0, 1),
                                     blurRadius: 2,
                                   ),
@@ -369,7 +361,7 @@ class _SplashScreenState extends State<SplashScreen>
                         Text(
                           'Powering up your electrical career...',
                           style: AppTheme.bodySmall.copyWith(
-                            color: AppTheme.white.withOpacity(0.8),
+                            color: AppTheme.white.withValues(alpha: 0.8),
                             fontWeight: FontWeight.w500,
                           ),
                           textAlign: TextAlign.center,
@@ -399,7 +391,7 @@ class CircuitPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppTheme.white.withOpacity(0.05)
+      ..color = AppTheme.white.withValues(alpha: 0.05)
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
 

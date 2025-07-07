@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/power_grid_status.dart';
-import '../../models/storm_event.dart';
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 
 class StormScreen extends StatefulWidget {
@@ -66,7 +65,7 @@ class _StormScreenState extends State<StormScreen> {
                 spacing: AppTheme.spacingSm,
                 children: status.activeHazards.map((hazard) {
                   return Chip(
-                    backgroundColor: AppTheme.accentCopper.withOpacity(0.2),
+                    backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.2),
                     label: Text(
                       hazard,
                       style: const TextStyle(
@@ -366,9 +365,9 @@ class _StormScreenState extends State<StormScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(AppTheme.spacingLg),
               decoration: BoxDecoration(
-                color: AppTheme.infoBlue.withOpacity(0.1),
+                color: AppTheme.infoBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(color: AppTheme.infoBlue.withOpacity(0.3)),
+                border: Border.all(color: AppTheme.infoBlue.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -417,7 +416,7 @@ class _StormScreenState extends State<StormScreen> {
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         boxShadow: [AppTheme.shadowSm],
         border: Border.all(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -429,7 +428,7 @@ class _StormScreenState extends State<StormScreen> {
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingSm),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 ),
                 child: Icon(icon, color: color, size: AppTheme.iconMd),
@@ -611,7 +610,7 @@ class StormEventCard extends StatelessWidget {
                         vertical: AppTheme.spacingXs,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.successGreen.withOpacity(0.1),
+                        color: AppTheme.successGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                       ),
                       child: Text(
@@ -661,7 +660,7 @@ class StormEventCard extends StatelessWidget {
                         vertical: AppTheme.spacingXs,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.successGreen.withOpacity(0.1),
+                        color: AppTheme.successGreen.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                       ),
                       child: Text(
@@ -679,7 +678,7 @@ class StormEventCard extends StatelessWidget {
                         vertical: AppTheme.spacingXs,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.accentCopper.withOpacity(0.1),
+                        color: AppTheme.accentCopper.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                       ),
                       child: Text(
@@ -825,7 +824,7 @@ class StormDetailsSheet extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(AppTheme.spacingMd),
                     decoration: BoxDecoration(
-                      color: AppTheme.successGreen.withOpacity(0.1),
+                      color: AppTheme.successGreen.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                     ),
                     child: Column(
@@ -887,7 +886,7 @@ class StormDetailsSheet extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(AppTheme.spacingMd),
                     decoration: BoxDecoration(
-                      color: AppTheme.successGreen.withOpacity(0.1),
+                      color: AppTheme.successGreen.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                     ),
                     child: Column(
@@ -915,7 +914,7 @@ class StormDetailsSheet extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(AppTheme.spacingMd),
                     decoration: BoxDecoration(
-                      color: AppTheme.accentCopper.withOpacity(0.1),
+                      color: AppTheme.accentCopper.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                     ),
                     child: Column(
@@ -979,7 +978,7 @@ class StormDetailsSheet extends StatelessWidget {
                     vertical: AppTheme.spacingSm,
                   ),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryNavy.withOpacity(0.1),
+                    color: AppTheme.primaryNavy.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                   ),
                   child: Text(

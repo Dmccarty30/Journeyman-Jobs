@@ -149,7 +149,7 @@ class PowerLinePainter extends CustomPainter {
     
     // Draw pulse glow effect
     final glowPaint = Paint()
-      ..color = pulseColor.withOpacity(0.3)
+      ..color = pulseColor.withValues(alpha: 0.3)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
     canvas.drawCircle(Offset(pulseX, pulseY), 8, glowPaint);
     
@@ -240,7 +240,7 @@ class PowerLinePainter extends CustomPainter {
       
       // Fade sparks based on progress
       final sparkOpacity = 0.8 + 0.2 * math.sin(progress * math.pi * 8 + i);
-      sparkPaint.color = pulseColor.withOpacity(sparkOpacity);
+      sparkPaint.color = pulseColor.withValues(alpha: sparkOpacity);
       
       canvas.drawPath(sparkPath, sparkPaint);
     }

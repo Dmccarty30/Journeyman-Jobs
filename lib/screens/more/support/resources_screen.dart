@@ -227,7 +227,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> with SingleTickerProv
           controller: _tabController,
           indicatorColor: AppTheme.accentCopper,
           labelColor: AppTheme.white,
-          unselectedLabelColor: AppTheme.white.withOpacity(0.7),
+          unselectedLabelColor: AppTheme.white.withValues(alpha: 0.7),
           tabs: const [
             Tab(text: 'Documents'),
             Tab(text: 'Tools'),
@@ -408,7 +408,7 @@ class ResourceCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: item.color.withOpacity(0.1),
+                  color: item.color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 ),
                 child: Icon(
@@ -495,7 +495,7 @@ class ResourceCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: item.color.withOpacity(0.1),
+                color: item.color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppTheme.radiusSm),
               ),
               child: Icon(
@@ -529,9 +529,9 @@ class ResourceCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppTheme.spacingMd),
               decoration: BoxDecoration(
-                color: AppTheme.infoBlue.withOpacity(0.1),
+                color: AppTheme.infoBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                border: Border.all(color: AppTheme.infoBlue.withOpacity(0.3)),
+                border: Border.all(color: AppTheme.infoBlue.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [

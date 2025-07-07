@@ -230,7 +230,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
       child: JJCard(
-        backgroundColor: isRead ? AppTheme.white : AppTheme.accentCopper.withOpacity(0.05),
+        backgroundColor: isRead ? AppTheme.white : AppTheme.accentCopper.withValues(alpha: 0.05),
         onTap: () => _markAsRead(notificationId),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,7 +238,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             Container(
               padding: const EdgeInsets.all(AppTheme.spacingSm),
               decoration: BoxDecoration(
-                color: _getNotificationColor(type).withOpacity(0.1),
+                color: _getNotificationColor(type).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppTheme.radiusSm),
               ),
               child: Icon(
@@ -345,7 +345,7 @@ class NotificationService {
       });
     } catch (e) {
       // Handle error silently or log
-      print('Failed to create notification: $e');
+      debugPrint('Failed to create notification: $e');
     }
   }
 

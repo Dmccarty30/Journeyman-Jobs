@@ -250,12 +250,10 @@ class AppTheme {
         primary: primaryNavy,
         secondary: accentCopper,
         surface: white,
-        background: offWhite,
         error: errorRed,
         onPrimary: white,
         onSecondary: white,
         onSurface: textPrimary,
-        onBackground: textPrimary,
         onError: white,
       ),
       
@@ -334,10 +332,10 @@ class AppTheme {
       ),
       
       // Card Theme
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: white,
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusLg),
         ),

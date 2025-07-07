@@ -46,7 +46,7 @@ class _NavBarPageState extends State<NavBarPage> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, -2),
             ),
@@ -100,7 +100,7 @@ class _NavBarPageState extends State<NavBarPage> {
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: isSelected 
-            ? AppTheme.accentCopper.withOpacity(0.1)
+            ? AppTheme.accentCopper.withValues(alpha: 0.1)
             : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
       ),

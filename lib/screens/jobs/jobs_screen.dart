@@ -77,7 +77,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppTheme.accentCopper.withOpacity(0.3),
+                      color: AppTheme.accentCopper.withValues(alpha: 0.3),
                       width: 2,
                     ),
                   ),
@@ -90,7 +90,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        AppTheme.accentCopper.withOpacity(_powerFlowAnimation.value),
+                        AppTheme.accentCopper.withValues(alpha: _powerFlowAnimation.value),
                         Colors.transparent,
                       ],
                     ),
@@ -136,7 +136,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
               Icon(
                 Icons.electrical_services_outlined,
                 size: 60,
-                color: AppTheme.primaryNavy.withOpacity(0.3),
+                color: AppTheme.primaryNavy.withValues(alpha: 0.3),
               ),
               // Power off indicator
               Positioned(
@@ -263,7 +263,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
         boxShadow: [AppTheme.shadowMd],
         border: isEmergency 
           ? Border.all(color: AppTheme.errorRed, width: 2)
-          : Border.all(color: AppTheme.accentCopper.withOpacity(0.3), width: 1),
+          : Border.all(color: AppTheme.accentCopper.withValues(alpha: 0.3), width: 1),
       ),
       child: Material(
         color: Colors.transparent,
@@ -353,7 +353,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                           vertical: AppTheme.spacingXs,
                         ),
                         decoration: BoxDecoration(
-                          color: voltageColor.withOpacity(0.1),
+                          color: voltageColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                           border: Border.all(color: voltageColor, width: 1),
                         ),
@@ -696,7 +696,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                     end: Alignment.bottomRight,
                     colors: [
                       AppTheme.primaryNavy,
-                      AppTheme.primaryNavy.withOpacity(0.8),
+                      AppTheme.primaryNavy.withValues(alpha: 0.8),
                     ],
                   ),
                 ),
@@ -782,9 +782,9 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                   Container(
                     padding: const EdgeInsets.all(AppTheme.spacingMd),
                     decoration: BoxDecoration(
-                      color: AppTheme.lightGray.withOpacity(0.3),
+                      color: AppTheme.lightGray.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                      border: Border.all(color: AppTheme.accentCopper.withOpacity(0.3)),
+                      border: Border.all(color: AppTheme.accentCopper.withValues(alpha: 0.3)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -887,7 +887,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                               Icon(
                                 Icons.electrical_services_outlined,
                                 size: 64,
-                                color: AppTheme.errorRed.withOpacity(0.5),
+                                color: AppTheme.errorRed.withValues(alpha: 0.5),
                               ),
                               const SizedBox(height: AppTheme.spacingMd),
                               Text(
@@ -967,7 +967,7 @@ class ElectricalCircuitPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppTheme.accentCopper.withOpacity(0.1)
+      ..color = AppTheme.accentCopper.withValues(alpha: 0.1)
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 
@@ -1117,7 +1117,7 @@ class JobDetailsSheet extends StatelessWidget {
                   vertical: AppTheme.spacingSm,
                 ),
                 decoration: BoxDecoration(
-                  color: voltageColor.withOpacity(0.1),
+                  color: voltageColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                   border: Border.all(color: voltageColor, width: 2),
                 ),
@@ -1150,7 +1150,7 @@ class JobDetailsSheet extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(AppTheme.spacingMd),
                     decoration: BoxDecoration(
-                      color: AppTheme.successGreen.withOpacity(0.1),
+                      color: AppTheme.successGreen.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                     ),
                     child: Column(
@@ -1178,7 +1178,7 @@ class JobDetailsSheet extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(AppTheme.spacingMd),
                     decoration: BoxDecoration(
-                      color: AppTheme.accentCopper.withOpacity(0.1),
+                      color: AppTheme.accentCopper.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                     ),
                     child: Column(
@@ -1259,7 +1259,7 @@ class JobDetailsSheet extends StatelessWidget {
                   vertical: AppTheme.spacingSm,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryNavy.withOpacity(0.1),
+                  color: AppTheme.primaryNavy.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                 ),
                 child: Text(
@@ -1278,9 +1278,9 @@ class JobDetailsSheet extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(AppTheme.spacingLg),
               decoration: BoxDecoration(
-                color: AppTheme.infoBlue.withOpacity(0.1),
+                color: AppTheme.infoBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(color: AppTheme.infoBlue.withOpacity(0.3)),
+                border: Border.all(color: AppTheme.infoBlue.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
