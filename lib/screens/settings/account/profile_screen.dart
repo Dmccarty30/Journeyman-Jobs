@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:super_tooltip/super_tooltip.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
 
@@ -14,8 +14,9 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isEditing = false;
-  SuperTooltip? _editTooltip;
+  OverlayEntry? _overlayEntry;
   bool _hasShownTooltip = false;
+  final GlobalKey _editButtonKey = GlobalKey();
   
   // Personal Information Controllers
   final _firstNameController = TextEditingController(text: 'John');
@@ -114,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
 
   @override
   void dispose() {
-    _editTooltip?.close();
+    _overlayEntry?.remove();
     _tabController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
@@ -135,9 +136,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     super.dispose();
   }
 
-  void _loadUserData() {
+  void _loadUserData() async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
+    if (user == null) return;
+
+    try {
+      // Load from Firebase Auth first (basic info)
       _emailController.text = user.email ?? '';
       if (user.displayName != null) {
         final nameParts = user.displayName!.split(' ');
@@ -148,11 +152,77 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           }
         }
       }
+
+      // Load from Firestore (detailed profile data)
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data()!;
+        
+        setState(() {
+          // Personal Information
+          _firstNameController.text = data['first_name'] ?? _firstNameController.text;
+          _lastNameController.text = data['last_name'] ?? _lastNameController.text;
+          _phoneController.text = data['phone_number'] ?? '';
+          _address1Controller.text = data['address1'] ?? '';
+          _address2Controller.text = data['address2'] ?? '';
+          _cityController.text = data['city'] ?? '';
+          _stateController.text = data['state'] ?? '';
+          _zipcodeController.text = data['zipcode']?.toString() ?? '';
+          
+          // Professional Information
+          _homeLocalController.text = data['home_local'] ?? '';
+          _ticketNumberController.text = data['ticket_number']?.toString() ?? '';
+          _booksOnController.text = data['books_on'] ?? '';
+          _selectedClassification = data['classification'] ?? 'Journeyman Lineman';
+          _isWorking = data['is_working'] ?? false;
+          
+          // Job Preferences
+          if (data['constructionTypes'] != null) {
+            _selectedConstructionTypes.clear();
+            _selectedConstructionTypes.addAll(List<String>.from(data['constructionTypes']));
+          }
+          _selectedHoursPerWeek = data['hours_per_week'] ?? '40+ hours';
+          _selectedPerDiem = data['per_diem_requirement'] ?? 'Yes, required';
+          _preferredLocalsController.text = data['preferred_locals'] ?? '';
+          _careerGoalsController.text = data['careerGoals'] ?? '';
+          
+          // Job Search Goals
+          _networkWithOthers = data['networkWithOthers'] ?? false;
+          _careerAdvancements = data['careerAdvancements'] ?? false;
+          _betterBenefits = data['betterBenefits'] ?? false;
+          _higherPayRate = data['higherPayRate'] ?? false;
+          _learnNewSkill = data['learnNewSkill'] ?? false;
+          _travelToNewLocation = data['travelToNewLocation'] ?? false;
+          _findLongTermWork = data['findLongTermWork'] ?? false;
+          
+          // Additional Information
+          _howHeardAboutUsController.text = data['how_heard_about_us'] ?? '';
+          _lookingToAccomplishController.text = data['lookingToAccomplish'] ?? '';
+          
+          // Notification Settings
+          _jobAlerts = data['job_alerts'] ?? true;
+          _stormAlerts = data['storm_alerts'] ?? true;
+          _emailNotifications = data['email_notifications'] ?? true;
+          _pushNotifications = data['push_notifications'] ?? true;
+          _weeklyDigest = data['weekly_digest'] ?? false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        JJSnackBar.showError(
+          context: context,
+          message: 'Error loading profile data: ${e.toString()}',
+        );
+      }
     }
   }
 
   void _toggleEditing() {
-    _editTooltip?.close();
+    _hideTooltip();
     setState(() {
       _isEditing = !_isEditing;
       _hasShownTooltip = true; // Mark tooltip as shown when user starts editing
@@ -160,81 +230,202 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   }
   
   void _showEditTooltip() {
-    if (_editTooltip != null || _hasShownTooltip) return;
+    if (_overlayEntry != null || _hasShownTooltip) return;
     
-    setState(() {
-      _editTooltip = SuperTooltip(
-        popupDirection: TooltipDirection.down,
-        arrowTipDistance: 15.0,
-        arrowBaseWidth: 15.0,
-        arrowLength: 10.0,
-        borderRadius: 8.0,
-        borderWidth: 2.0,
-        backgroundColor: AppTheme.primaryNavy,
-        borderColor: AppTheme.accentCopper,
-        content: Container(
-          constraints: const BoxConstraints(maxWidth: 200),
-          child: Text(
-            'Tap here to edit your profile settings and preferences',
-            style: AppTheme.bodyMedium.copyWith(
-              color: AppTheme.white,
-              fontWeight: FontWeight.w500,
+    final renderBox = _editButtonKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+    
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+    final screenWidth = MediaQuery.of(context).size.width;
+    
+    // Calculate tooltip width and position
+    const tooltipWidth = 200.0;
+    const padding = 16.0;
+    
+    // Position tooltip to the left of the button, ensuring it stays on screen
+    final buttonCenterX = offset.dx + (size.width / 2);
+    final idealLeft = buttonCenterX - tooltipWidth + 40; // Shift left significantly
+    final finalLeft = (idealLeft < padding) ? padding : idealLeft;
+    
+    // Make sure tooltip doesn't go off the right edge either
+    final maxLeft = screenWidth - tooltipWidth - padding;
+    final adjustedLeft = (finalLeft > maxLeft) ? maxLeft : finalLeft;
+    
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Stack(
+        children: [
+          // Main tooltip
+          Positioned(
+            left: adjustedLeft,
+            top: offset.dy + size.height + 8, // Position below the button
+            child: Material(
+              color: Colors.transparent,
+              child: GestureDetector(
+                onTap: _hideTooltip,
+                child: Container(
+                  width: tooltipWidth,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryNavy,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppTheme.accentCopper, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.primaryNavy.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Tap here to edit your profile settings and preferences',
+                        style: AppTheme.bodyMedium.copyWith(
+                          color: AppTheme.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            softWrap: true,
           ),
-        ),
-        showCloseButton: false,
-        hasShadow: true,
-        shadowColor: AppTheme.primaryNavy.withOpacity(0.3),
-        shadowBlurRadius: 8.0,
-        dismissOnTapOutside: true,
-        onDismiss: () {
-          setState(() {
-            _hasShownTooltip = true;
-            _editTooltip = null;
-          });
-        },
-      );
-    });
+          // Arrow pointing up to the edit button
+          Positioned(
+            left: buttonCenterX - 8, // Center arrow on button
+            top: offset.dy + size.height - 2, // Position at top of tooltip
+            child: CustomPaint(
+              size: const Size(16, 10),
+              painter: ArrowPainter(AppTheme.accentCopper),
+            ),
+          ),
+        ],
+      ),
+    );
     
-    // Show the tooltip immediately
-    Future.microtask(() {
-      _editTooltip?.show(context);
-    });
+    Overlay.of(context).insert(_overlayEntry!);
     
     // Auto-dismiss after 5 seconds
     Future.delayed(const Duration(seconds: 5), () {
-      _editTooltip?.close();
-      if (mounted) {
-        setState(() {
-          _hasShownTooltip = true;
-          _editTooltip = null;
-        });
-      }
+      _hideTooltip();
+    });
+  }
+  
+  void _hideTooltip() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    setState(() {
+      _hasShownTooltip = true;
     });
   }
 
-  void _saveProfile() {
-    // TODO: Implement profile saving to backend
-    // This would save all the profile data including the new onboarding fields:
-    // - Job search goals (_networkWithOthers, _careerAdvancements, etc.)
-    // - Additional information (_howHeardAboutUsController, _lookingToAccomplishController)
-    // - All existing fields (personal info, professional info, preferences)
-    
-    setState(() {
-      _isEditing = false;
-    });
-    JJSnackBar.showSuccess(
-      context: context,
-      message: 'Profile updated successfully!',
-    );
+  void _saveProfile() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      JJSnackBar.showError(
+        context: context,
+        message: 'User not authenticated',
+      );
+      return;
+    }
+
+    try {
+      // Show loading indicator
+      setState(() {
+        _isEditing = false;
+      });
+
+      // Prepare data for Firestore
+      final profileData = {
+        // Personal Information
+        'first_name': _firstNameController.text.trim(),
+        'last_name': _lastNameController.text.trim(),
+        'phone_number': _phoneController.text.trim(),
+        'address1': _address1Controller.text.trim(),
+        'address2': _address2Controller.text.trim().isEmpty ? null : _address2Controller.text.trim(),
+        'city': _cityController.text.trim(),
+        'state': _stateController.text.trim(),
+        'zipcode': int.tryParse(_zipcodeController.text.trim()),
+        
+        // Professional Information
+        'home_local': _homeLocalController.text.trim().isNotEmpty ? _homeLocalController.text.trim() : null,
+        'ticket_number': int.tryParse(_ticketNumberController.text.trim()),
+        'books_on': _booksOnController.text.trim().isEmpty ? null : _booksOnController.text.trim(),
+        'classification': _selectedClassification,
+        'is_working': _isWorking,
+        
+        // Job Preferences
+        'constructionTypes': _selectedConstructionTypes.toList(),
+        'hours_per_week': _selectedHoursPerWeek,
+        'per_diem_requirement': _selectedPerDiem,
+        'preferred_locals': _preferredLocalsController.text.trim().isEmpty ? null : _preferredLocalsController.text.trim(),
+        'careerGoals': _careerGoalsController.text.trim().isEmpty ? null : _careerGoalsController.text.trim(),
+        
+        // Job Search Goals
+        'networkWithOthers': _networkWithOthers,
+        'careerAdvancements': _careerAdvancements,
+        'betterBenefits': _betterBenefits,
+        'higherPayRate': _higherPayRate,
+        'learnNewSkill': _learnNewSkill,
+        'travelToNewLocation': _travelToNewLocation,
+        'findLongTermWork': _findLongTermWork,
+        
+        // Additional Information
+        'how_heard_about_us': _howHeardAboutUsController.text.trim().isEmpty ? null : _howHeardAboutUsController.text.trim(),
+        'lookingToAccomplish': _lookingToAccomplishController.text.trim().isEmpty ? null : _lookingToAccomplishController.text.trim(),
+        
+        // Notification Settings
+        'job_alerts': _jobAlerts,
+        'storm_alerts': _stormAlerts,
+        'email_notifications': _emailNotifications,
+        'push_notifications': _pushNotifications,
+        'weekly_digest': _weeklyDigest,
+        
+        // Metadata
+        'updated_time': FieldValue.serverTimestamp(),
+      };
+
+      // Save to Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .set(profileData, SetOptions(merge: true));
+
+      // Update Firebase Auth display name if needed
+      final newDisplayName = '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}';
+      if (user.displayName != newDisplayName) {
+        await user.updateDisplayName(newDisplayName);
+      }
+
+      if (mounted) {
+        JJSnackBar.showSuccess(
+          context: context,
+          message: 'Profile updated successfully!',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isEditing = true; // Re-enable editing on error
+        });
+        JJSnackBar.showError(
+          context: context,
+          message: 'Error saving profile: ${e.toString()}',
+        );
+      }
+    }
   }
 
   void _cancelEditing() {
     setState(() {
       _isEditing = false;
     });
-    _loadUserData(); // Reset to original values
+    _loadUserData(); // Reset to original values from Firestore
   }
 
   @override
@@ -262,12 +453,10 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               ),
             )
           else
-            SuperTooltipTarget(
-              tooltip: _editTooltip,
-              child: IconButton(
-                icon: const Icon(Icons.edit, color: AppTheme.white),
-                onPressed: _toggleEditing,
-              ),
+            IconButton(
+              key: _editButtonKey,
+              icon: const Icon(Icons.edit, color: AppTheme.white),
+              onPressed: _toggleEditing,
             ),
         ],
       ),
@@ -318,10 +507,23 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                         ),
                       ),
                       const SizedBox(height: AppTheme.spacingXs),
-                      Text(
-                        _homeLocalController.text,
-                        style: AppTheme.bodyMedium.copyWith(
-                          color: AppTheme.white.withValues(alpha: 0.8),
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Home Local ',
+                              style: AppTheme.bodyMedium.copyWith(
+                                color: AppTheme.white.withValues(alpha: 0.8),
+                              ),
+                            ),
+                            TextSpan(
+                              text: _homeLocalController.text.isNotEmpty ? _homeLocalController.text : '---',
+                              style: AppTheme.bodyMedium.copyWith(
+                                color: AppTheme.accentCopper,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -695,6 +897,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                   },
                   backgroundColor: AppTheme.lightGray,
                   selectedColor: AppTheme.accentCopper,
+                  side: isSelected 
+                    ? BorderSide(color: AppTheme.primaryNavy, width: 2)
+                    : null,
                   labelStyle: TextStyle(
                     color: isSelected ? AppTheme.white : AppTheme.textPrimary,
                   ),
@@ -1271,4 +1476,28 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
       },
     );
   }
+}
+
+class ArrowPainter extends CustomPainter {
+  final Color color;
+  
+  ArrowPainter(this.color);
+  
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    
+    final path = Path();
+    path.moveTo(size.width / 2, 0); // Top center (point of arrow)
+    path.lineTo(0, size.height); // Bottom left
+    path.lineTo(size.width, size.height); // Bottom right
+    path.close();
+    
+    canvas.drawPath(path, paint);
+  }
+  
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

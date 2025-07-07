@@ -19,7 +19,9 @@
       "Bash(flutter analyze:*)",
       "Bash(flutter pub:*)",
       "Bash(flutter:*)",
-      "Bash(/mnt/c/flutter/flutter/bin/flutter:*)"
+      "Bash(/mnt/c/flutter/flutter/bin/flutter:*)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__firecrawl-mcp__firecrawl_search"
     ],
     "deny": []
   },

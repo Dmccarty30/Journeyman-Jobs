@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
+import 'calculators/voltage_drop_calculator.dart';
+import 'calculators/conduit_fill_calculator.dart';
+import 'calculators/load_calculator.dart';
+import 'calculators/wire_size_chart.dart';
 
 class ResourcesScreen extends StatefulWidget {
   const ResourcesScreen({super.key});
@@ -480,8 +484,37 @@ class ResourceCard extends StatelessWidget {
         }
         break;
       case ResourceType.tool:
-        _showToolDialog(context, item);
+        _navigateToTool(context, item);
         break;
+    }
+  }
+
+  void _navigateToTool(BuildContext context, ResourceItem item) {
+    Widget? toolScreen;
+    
+    switch (item.action) {
+      case 'voltage_drop_calc':
+        toolScreen = const VoltageDropCalculator();
+        break;
+      case 'conduit_fill_calc':
+        toolScreen = const ConduitFillCalculator();
+        break;
+      case 'load_calc':
+        toolScreen = const LoadCalculator();
+        break;
+      case 'wire_chart':
+        toolScreen = const WireSizeChart();
+        break;
+      default:
+        _showToolDialog(context, item);
+        return;
+    }
+    
+    if (toolScreen != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => toolScreen!),
+      );
     }
   }
 
