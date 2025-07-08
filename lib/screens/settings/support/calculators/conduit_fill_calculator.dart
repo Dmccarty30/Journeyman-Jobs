@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../design_system/app_theme.dart';
-import '../../../../design_system/components/reusable_components.dart';
 import 'electrical_constants.dart';
 import 'calculation_helpers.dart';
 
@@ -16,7 +15,6 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
   ConduitType _conduitType = ConduitType.emt;
   List<ConductorEntry> _conductors = [ConductorEntry()];
   ConduitFillResult? _result;
-  bool _isCalculating = false;
 
   void _addConductor() {
     setState(() {
@@ -55,7 +53,6 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     }
 
     setState(() {
-      _isCalculating = true;
     });
 
     // Simulate brief calculation delay for UX
@@ -69,7 +66,6 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
       if (mounted) {
         setState(() {
           _result = result;
-          _isCalculating = false;
         });
       }
     });
@@ -376,48 +372,58 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
         ),
         const SizedBox(height: AppTheme.spacingSm),
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            IconButton(
-              onPressed: conductor.quantity > 1 ? () {
-                setState(() {
-                  conductor.quantity--;
-                });
-                _calculateConduitFill();
-              } : null,
-              icon: const Icon(Icons.remove),
-              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-              padding: EdgeInsets.zero,
-              style: IconButton.styleFrom(
-                backgroundColor: AppTheme.lightGray,
-                foregroundColor: AppTheme.textSecondary,
+            SizedBox(
+              width: 28,
+              height: 28,
+              child: IconButton(
+                onPressed: conductor.quantity > 1 ? () {
+                  setState(() {
+                    conductor.quantity--;
+                  });
+                  _calculateConduitFill();
+                } : null,
+                icon: const Icon(Icons.remove, size: 16),
+                padding: EdgeInsets.zero,
+                style: IconButton.styleFrom(
+                  backgroundColor: AppTheme.lightGray,
+                  foregroundColor: AppTheme.textSecondary,
+                ),
               ),
             ),
             Expanded(
               child: Container(
                 alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppTheme.spacingSm,
+                  horizontal: 4,
+                ),
                 child: Text(
                   '${conductor.quantity}',
-                  style: AppTheme.bodyMedium.copyWith(
+                  style: AppTheme.bodySmall.copyWith(
                     color: AppTheme.textPrimary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
             ),
-            IconButton(
-              onPressed: conductor.quantity < 50 ? () {
-                setState(() {
-                  conductor.quantity++;
-                });
-                _calculateConduitFill();
-              } : null,
-              icon: const Icon(Icons.add),
-              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-              padding: EdgeInsets.zero,
-              style: IconButton.styleFrom(
-                backgroundColor: AppTheme.accentCopper,
-                foregroundColor: AppTheme.white,
+            SizedBox(
+              width: 28,
+              height: 28,
+              child: IconButton(
+                onPressed: conductor.quantity < 50 ? () {
+                  setState(() {
+                    conductor.quantity++;
+                  });
+                  _calculateConduitFill();
+                } : null,
+                icon: const Icon(Icons.add, size: 16),
+                padding: EdgeInsets.zero,
+                style: IconButton.styleFrom(
+                  backgroundColor: AppTheme.accentCopper,
+                  foregroundColor: AppTheme.white,
+                ),
               ),
             ),
           ],

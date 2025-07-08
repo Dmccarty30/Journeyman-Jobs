@@ -510,13 +510,11 @@ class ResourceCard extends StatelessWidget {
         return;
     }
     
-    if (toolScreen != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => toolScreen!),
-      );
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => toolScreen!),
+    );
     }
-  }
 
   void _showToolDialog(BuildContext context, ResourceItem item) {
     showDialog(

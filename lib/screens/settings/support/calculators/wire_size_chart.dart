@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../design_system/app_theme.dart';
-import '../../../../design_system/components/reusable_components.dart';
 import 'electrical_constants.dart';
 
 class WireSizeChart extends StatefulWidget {

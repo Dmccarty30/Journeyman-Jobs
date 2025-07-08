@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../design_system/app_theme.dart';
 import '../../../../design_system/components/reusable_components.dart';
-import 'electrical_constants.dart';
 import 'calculation_helpers.dart';
 
 class LoadCalculator extends StatefulWidget {
@@ -22,7 +21,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
   int _smallApplianceCircuits = 2;
   bool _hasLaundryCircuit = true;
   int _systemVoltage = 240;
-  List<ApplianceEntry> _appliances = [];
+  final List<ApplianceEntry> _appliances = [];
   
   LoadCalculationResult? _result;
   bool _isCalculating = false;
@@ -282,11 +281,11 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
           const SizedBox(height: AppTheme.spacingMd),
           
           // Square footage
-          JJTextFormField(
+          JJTextField(
             controller: _squareFootageController,
             label: 'Dwelling Square Footage',
             keyboardType: TextInputType.number,
-            helperText: 'General lighting @ 3 VA per sq ft (NEC 220.12)',
+            hintText: 'General lighting @ 3 VA per sq ft (NEC 220.12)',
             onChanged: (value) {
               if (value.isNotEmpty && double.tryParse(value) != null) {
                 _calculateLoad();
@@ -538,11 +537,11 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
           ),
           const SizedBox(height: AppTheme.spacingMd),
           
-          JJTextFormField(
+          JJTextField(
             controller: _hvacLoadController,
             label: 'HVAC Load (VA)',
             keyboardType: TextInputType.number,
-            helperText: 'Air conditioning, heat pump, or heating load - use larger of heating or cooling',
+            hintText: 'Air conditioning, heat pump, or heating load - use larger of heating or cooling',
             onChanged: (value) {
               if (_squareFootageController.text.isNotEmpty) {
                 _calculateLoad();

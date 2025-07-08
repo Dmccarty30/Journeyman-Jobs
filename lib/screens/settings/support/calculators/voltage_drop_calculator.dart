@@ -212,7 +212,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
           const SizedBox(height: AppTheme.spacingMd),
           
           // Current Input
-          JJTextFormField(
+          JJTextField(
             controller: _currentController,
             label: 'Current (Amperes)',
             keyboardType: TextInputType.number,
@@ -240,7 +240,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
           const SizedBox(height: AppTheme.spacingMd),
           
           // Length Input
-          JJTextFormField(
+          JJTextField(
             controller: _lengthController,
             label: 'Length (Feet)',
             keyboardType: TextInputType.number,
