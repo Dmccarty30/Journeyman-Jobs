@@ -27,7 +27,8 @@
       "TodoRead",
       "TodoWrite",
       "WebSearch",
-      "Agent"
+      "Agent",
+      "Task"
     ],
     "deny": []
   },
