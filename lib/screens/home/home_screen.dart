@@ -796,7 +796,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            }
+          },
           child: const Text('Close'),
         ),
         ElevatedButton(

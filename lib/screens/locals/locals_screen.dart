@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
+import '../../design_system/illustrations/electrical_illustrations.dart';
 import '../../models/locals_record.dart';
 
 class LocalsWidget extends StatefulWidget {
@@ -344,7 +345,11 @@ class _LocalsWidgetState extends State<LocalsWidget> {
       child: JJCard(
         child: InkWell(
           onTap: () => _showLocalDetails(local),
-          child: Padding(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: AppTheme.cardGradient,
+              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+            ),
             padding: const EdgeInsets.all(16),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -398,13 +403,13 @@ class _LocalsWidgetState extends State<LocalsWidget> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.blue.withValues(alpha: 0.1),  // Replaced with a valid alternative
+                            color: AppTheme.accentCopper.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             local.classification!,
                             style: AppTheme.labelSmall.copyWith(
-                              color: Colors.blue,  // Replaced undefined getter
+                              color: AppTheme.accentCopper,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -472,7 +477,7 @@ class _LocalsWidgetState extends State<LocalsWidget> {
                               child: Text(
                                 local.website!,
                                 style: AppTheme.bodySmall.copyWith(
-                                  color: Colors.blue,  // Replaced undefined getter
+                                  color: AppTheme.accentCopper,
                                   decoration: TextDecoration.underline,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -481,23 +486,7 @@ class _LocalsWidgetState extends State<LocalsWidget> {
                           ],
                         ),
                       ],
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.people,
-                            size: 16,
-                            color: AppTheme.textLight,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${local.memberCount} members',
-                            style: AppTheme.labelSmall.copyWith(
-                              color: AppTheme.textLight,
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Members row removed per requirements
                     ],
                   ),
                 ),
@@ -513,80 +502,33 @@ class _LocalsWidgetState extends State<LocalsWidget> {
     return const Center(
       child: Padding(
         padding: EdgeInsets.all(20),
-        child: CircularProgressIndicator(
-          color: Colors.blue,  // Replaced with a valid color
+        child: JJElectricalLoader(
+          width: 100,
+          height: 30,
+          message: 'Loading locals...',
         ),
       ),
     );
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(40),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.search_off,
-              size: 80,
-              color: AppTheme.textLight.withValues(alpha: 0.5),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No locals found',
-              style: AppTheme.headlineMedium.copyWith(
-                color: AppTheme.textSecondary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Try adjusting your search',
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textLight,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return const JJEmptyState(
+      title: 'No locals found',
+      subtitle: 'Try adjusting your search',
+      illustration: ElectricalIllustration.noResults,
+      context: 'search',
     );
   }
 
   Widget _buildErrorState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(40),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 80,
-              color: AppTheme.errorRed,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Error loading locals',
-              style: AppTheme.headlineMedium.copyWith(
-                color: AppTheme.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _errorMessage ?? 'An unexpected error occurred',
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textSecondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            JJPrimaryButton(
-              text: 'Retry',
-              onPressed: _loadInitialData,
-              icon: Icons.refresh,
-            ),
-          ],
-        ),
+    return JJEmptyState(
+      title: 'Error loading locals',
+      subtitle: _errorMessage ?? 'An unexpected error occurred',
+      illustration: ElectricalIllustration.maintenance,
+      action: JJPrimaryButton(
+        text: 'Retry',
+        onPressed: _loadInitialData,
+        icon: Icons.refresh,
       ),
     );
   }
@@ -594,17 +536,17 @@ class _LocalsWidgetState extends State<LocalsWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,  // Replaced undefined getter
+      backgroundColor: AppTheme.offWhite,
       appBar: AppBar(
         title: const Text('IBEW Locals'),
-        backgroundColor: Colors.grey[200]!,  // Replaced undefined getter
-        foregroundColor: AppTheme.textPrimary,
+        backgroundColor: AppTheme.primaryNavy,
+        foregroundColor: AppTheme.white,
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
             height: 1,
-            color: Colors.grey,  // Replaced undefined getter
+            color: AppTheme.lightGray,
           ),
         ),
       ),
@@ -692,7 +634,7 @@ class LocalDetailsSheet extends StatelessWidget {
                     child: Text(
                       value,
                       style: AppTheme.bodyMedium.copyWith(
-                        color: isClickable ? Colors.blue : AppTheme.textPrimary,  // Replaced undefined getter
+                        color: isClickable ? AppTheme.accentCopper : AppTheme.textPrimary,
                         decoration: isClickable ? TextDecoration.underline : null,
                       ),
                     ),
@@ -702,7 +644,7 @@ class LocalDetailsSheet extends StatelessWidget {
                     Icon(
                       icon,
                       size: 20,
-                      color: Colors.blue,  // Replaced undefined getter
+                      color: AppTheme.accentCopper,
                     ),
                   ],
                 ],
@@ -732,9 +674,9 @@ class LocalDetailsSheet extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.grey[200]!,  // Replaced undefined getter
+            color: AppTheme.lightGray,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey),  // Replaced with a valid color
+            border: Border.all(color: AppTheme.mediumGray),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -780,7 +722,7 @@ class LocalDetailsSheet extends StatelessWidget {
       builder: (context, scrollController) {
         return Container(
           decoration: const BoxDecoration(
-            color: Colors.white,  // Replaced undefined getter
+            color: AppTheme.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Column(
@@ -791,7 +733,7 @@ class LocalDetailsSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey,  // Replaced with a valid color
+                  color: AppTheme.lightGray,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -806,6 +748,14 @@ class LocalDetailsSheet extends StatelessWidget {
                       // Header
                       Row(
                         children: [
+                          // Add electrical illustration
+                          ElectricalIllustrationWidget(
+                            illustration: ElectricalIllustration.ibewLogo,
+                            width: 60,
+                            height: 60,
+                            animate: true,
+                          ),
+                          const SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

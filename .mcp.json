@@ -36,6 +36,18 @@
         "mcp-server-fetch"
       ]
     },
+    "universal_mcp": {
+      "command": "X:\\miniconda\\Scripts\\uvx.EXE",
+      "args": [
+          "universal_mcp@latest",
+          "run"
+      ],
+      "env": {
+          "AGENTR_API_KEY": "sk_0e4dcdc3-3fb3-4290-850e-6190f1c54501",
+          "UV_PATH": "X:\\miniconda\\Scripts",
+          "URL": "https://mcp.agentr.dev/sk_0e4dcdc3-3fb3-4290-850e-6190f1c54501/sse"
+      }
+    },
     "Framelink Figma MCP": {
       "command": "cmd",
       "args": [
