@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -97,6 +98,15 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     'Yes, required',
     'Preferred but not required',
     'Not needed',
+  ];
+
+  final List<String> _usStates = [
+    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY',
+    'DC',
   ];
 
   @override
@@ -428,6 +438,11 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     _loadUserData(); // Reset to original values from Firestore
   }
 
+  // Method to check if keyboard is visible by checking the bottom viewInsets
+  bool _isKeyboardVisible() {
+    return MediaQuery.of(context).viewInsets.bottom > 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -583,7 +598,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         AppTheme.spacingMd,
         AppTheme.spacingMd,
         AppTheme.spacingMd,
-        AppTheme.spacingMd + MediaQuery.of(context).padding.bottom + (_isEditing ? 80 : 0),
+        AppTheme.spacingMd + MediaQuery.of(context).padding.bottom + (_isEditing && !_isKeyboardVisible() ? 80 : 0),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -678,11 +693,40 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               ),
               const SizedBox(width: AppTheme.spacingMd),
               Expanded(
-                child: JJTextField(
-                  label: 'State',
-                  controller: _stateController,
-                  enabled: _isEditing,
-                ),
+                child: _isEditing
+                    ? Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppTheme.lightGray),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        ),
+                        child: DropdownButtonFormField<String>(
+                          value: _stateController.text.isNotEmpty ? _stateController.text : null,
+                          decoration: const InputDecoration(
+                            labelText: 'State',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: AppTheme.spacingMd,
+                              vertical: AppTheme.spacingMd,
+                            ),
+                          ),
+                          items: _usStates.map((state) {
+                            return DropdownMenuItem(
+                              value: state,
+                              child: Text(state),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _stateController.text = value ?? '';
+                            });
+                          },
+                        ),
+                      )
+                    : JJTextField(
+                        label: 'State',
+                        controller: _stateController,
+                        enabled: false,
+                      ),
               ),
               const SizedBox(width: AppTheme.spacingMd),
               Expanded(
@@ -706,7 +750,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         AppTheme.spacingMd,
         AppTheme.spacingMd,
         AppTheme.spacingMd,
-        AppTheme.spacingMd + MediaQuery.of(context).padding.bottom + (_isEditing ? 80 : 0),
+        AppTheme.spacingMd + MediaQuery.of(context).padding.bottom + (_isEditing && !_isKeyboardVisible() ? 80 : 0),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1176,7 +1220,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         AppTheme.spacingMd,
         AppTheme.spacingMd,
         AppTheme.spacingMd,
-        AppTheme.spacingMd + MediaQuery.of(context).padding.bottom + (_isEditing ? 80 : 0),
+        AppTheme.spacingMd + MediaQuery.of(context).padding.bottom + (_isEditing && !_isKeyboardVisible() ? 80 : 0),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

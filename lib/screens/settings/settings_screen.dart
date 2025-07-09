@@ -5,6 +5,7 @@ import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
 import '../../services/onboarding_service.dart';
+import '../../examples/electrical_toast_example.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -128,6 +129,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: 'Send Feedback',
                   subtitle: 'Help us improve the app',
                   onTap: () => context.push(AppRouter.feedback),
+                ),
+                _MenuOption(
+                  icon: Icons.flash_on,
+                  title: 'Toast Examples',
+                  subtitle: 'View electrical toast components',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ElectricalToastExample(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

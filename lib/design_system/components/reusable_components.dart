@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../app_theme.dart';
 import '../../electrical_components/electrical_components.dart';
 import '../illustrations/electrical_illustrations.dart';
+import 'jj_electrical_toast.dart';
 
 // =================== BUTTONS ===================
 
@@ -779,6 +780,7 @@ class JJSocialSignInButton extends StatelessWidget {
 }
 
 // =================== SNACKBAR HELPER ===================
+// NOTE: Consider using JJElectricalToast for better electrical theming and animations
 
 class JJSnackBar {
   static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSuccess({
@@ -1034,3 +1036,13 @@ class JJElectricalDialog extends StatelessWidget {
     );
   }
 }
+
+// =================== ELECTRICAL TOAST COMPONENT ===================
+
+/// JJElectricalToast is available via import
+/// Preferred over JJSnackBar for better electrical theming and animations
+/// 
+/// Usage:
+/// JJElectricalToast.showSuccess(context: context, message: 'Job application sent!');
+/// JJElectricalToast.showError(context: context, message: 'Connection failed');
+/// JJElectricalToast.showPower(context: context, message: 'Power restored!');

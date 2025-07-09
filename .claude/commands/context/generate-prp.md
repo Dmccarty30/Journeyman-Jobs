@@ -26,7 +26,7 @@ The AI agent only gets the context you are appending to the PRP and training dat
 
 ## PRP Generation
 
-Using PRPs/templates/prp_base.md as template:
+Using docs/prp_base.md as template:
 
 ### Critical Context to Include and pass to the AI agent as part of the PRP
 
@@ -59,7 +59,7 @@ uv run pytest tests/ -v
 
 ## Output
 
-Save as: `PRPs/{feature-name}.md`
+Save as: `docs/prps/{feature-name}.md`
 
 ## Quality Checklist
 
