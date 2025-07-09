@@ -49,7 +49,7 @@
       }
     },
     "Framelink Figma MCP": {
-      "command": "cmd",
+      "command": "/mnt/c/Users/david/Desktop/UI/figma-mcp-wrapper.sh",
       "args": [
         "/c",
         "npx",
