@@ -1,7 +1,9 @@
 # 🎨 Electrical Illustrations Implementation Guide
 
 ## 📍 **Current Status**
+
 Your electrical illustrations system is ready for implementation with:
+
 - ✅ **36 illustration types** defined
 - ✅ **4 working painters** (CircuitBoard, LightBulb, NoResults, JobSearch)
 - ✅ **Animation support** with flutter_animate
@@ -13,6 +15,7 @@ Your electrical illustrations system is ready for implementation with:
 ### **1. Empty States (IMPLEMENTED)**
 
 **Updated JJEmptyState Usage:**
+
 ```dart
 // Automatic context-based illustration
 JJEmptyState(
@@ -30,12 +33,14 @@ JJEmptyState(
 ```
 
 **Current Usage Locations:**
+
 - `lib/screens/storm/storm_screen.dart:356` - Storm events
 - `lib/widgets/popups/firestore_query_popup.dart:431` - Search results
 
 ### **2. Loading States**
 
 **Replace Current Loading Indicators:**
+
 ```dart
 // Instead of CircularProgressIndicator
 ElectricalIllustrationWidget(
@@ -56,6 +61,7 @@ ElectricalIllustrationWidget(
 ### **3. Onboarding Screens**
 
 **Perfect for User Journey:**
+
 ```dart
 // Welcome screen
 ElectricalIllustrationWidget(
@@ -82,6 +88,7 @@ ElectricalIllustrationWidget(
 ### **4. Success/Error States**
 
 **Application Confirmations:**
+
 ```dart
 // Job application success
 ElectricalIllustrationWidget(
@@ -103,6 +110,7 @@ ElectricalIllustrationWidget(
 ### **5. Feature Highlights**
 
 **Home Screen Sections:**
+
 ```dart
 // Power grid status
 ElectricalIllustrationWidget(
@@ -122,6 +130,7 @@ ElectricalIllustrationWidget(
 ## 🎯 **Specific Implementation Examples**
 
 ### **Example 1: Update Storm Screen Empty State**
+
 ```dart
 // In lib/screens/storm/storm_screen.dart:356
 JJEmptyState(
@@ -132,6 +141,7 @@ JJEmptyState(
 ```
 
 ### **Example 2: Job Search Results**
+
 ```dart
 // In lib/widgets/popups/firestore_query_popup.dart:431
 JJEmptyState(
@@ -142,6 +152,7 @@ JJEmptyState(
 ```
 
 ### **Example 3: Home Screen Loading**
+
 ```dart
 // In lib/screens/home/home_screen.dart (suggested jobs section)
 if (jobSnapshot.connectionState == ConnectionState.waiting) {
@@ -159,7 +170,9 @@ if (jobSnapshot.connectionState == ConnectionState.waiting) {
 ## 🔧 **Next Steps to Complete Implementation**
 
 ### **1. Add Missing Painters**
+
 Currently only 4 painters are implemented. Add painters for:
+
 - `electricianAtWork`
 - `linemanClimbing`
 - `teamMeeting`
@@ -177,14 +190,18 @@ Currently only 4 painters are implemented. Add painters for:
 - `certification`
 
 ### **2. Update Existing Usage**
+
 Replace current icon usage in:
+
 - Loading states
 - Empty states
 - Error states
 - Success confirmations
 
 ### **3. Add to Onboarding**
+
 Implement in user onboarding flow for:
+
 - Welcome screens
 - Feature introductions
 - Safety information
@@ -193,12 +210,14 @@ Implement in user onboarding flow for:
 ## 📱 **Usage Patterns**
 
 ### **Size Guidelines**
+
 - **Large illustrations**: 200x200 (onboarding, major empty states)
 - **Medium illustrations**: 120x120 (standard empty states)
 - **Small illustrations**: 60x60 (feature highlights, status indicators)
 - **Icon size**: 40x40 (inline with text)
 
 ### **Color Guidelines**
+
 - **Primary actions**: `AppTheme.accentCopper`
 - **Secondary elements**: `AppTheme.primaryNavy`
 - **Success states**: `AppTheme.successGreen`
@@ -207,6 +226,7 @@ Implement in user onboarding flow for:
 - **Neutral states**: `AppTheme.textLight`
 
 ### **Animation Guidelines**
+
 - **Enable animations** for major state changes
 - **Disable animations** for frequently updated content
 - **Use default duration** (800ms) for most cases
@@ -215,6 +235,7 @@ Implement in user onboarding flow for:
 ## 🎨 **Design Integration**
 
 Your electrical illustrations perfectly complement:
+
 - **Figma design system** (WtOP7smXixh4jnUJjpLHL9)
 - **Electrical components library**
 - **AppTheme color palette**

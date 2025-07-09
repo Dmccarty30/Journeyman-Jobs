@@ -27,12 +27,14 @@ class AppTheme {
   static const Color successGreen = Color(0xFF38A169);
   static const Color warningYellow = Color(0xFFD69E2E);
   static const Color errorRed = Color(0xFFE53E3E);
+  static const Color error = Color(0xFFE53E3E); // Alias for errorRed
   static const Color infoBlue = Color(0xFF3182CE);
   
   // Text Colors
   static const Color textPrimary = Color(0xFF1A202C);
   static const Color textSecondary = Color(0xFF4A5568);
   static const Color textLight = Color(0xFF718096);
+  static const Color textDark = Color(0xFF1A202C); // Same as textPrimary
   static const Color textOnDark = Color(0xFFFFFFFF);
   
   // =================== GRADIENTS ===================

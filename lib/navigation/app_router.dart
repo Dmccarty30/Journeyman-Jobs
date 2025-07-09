@@ -99,7 +99,7 @@ class AppRouter {
           GoRoute(
             path: locals,
             name: 'locals',
-            builder: (context, state) => const LocalsWidget(),
+            builder: (context, state) => const LocalsScreen(),
           ),
           GoRoute(
             path: settings,

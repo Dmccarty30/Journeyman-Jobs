@@ -14,14 +14,20 @@
       "Bash(/mnt/c/flutter/flutter/bin/dart analyze:*)",
       "Bash(sed:*)",
       "Bash(grep:*)",
-      "mcp__think-mcp-server__think",
-      "mcp__server-sequential-thinking__sequentialthinking",
       "Bash(flutter analyze:*)",
       "Bash(flutter pub:*)",
       "Bash(flutter:*)",
       "Bash(/mnt/c/flutter/flutter/bin/flutter:*)",
+      "mcp__think-mcp-server__think",
+      "mcp__server-sequential-thinking__sequentialthinking",
       "mcp__sequential-thinking__sequentialthinking",
-      "mcp__firecrawl-mcp__firecrawl_search"
+      "mcp__firecrawl-mcp__firecrawl_search",
+      "WebFetch(domain:docs.anthropic.com)",
+      "MultiEdit",
+      "TodoRead",
+      "TodoWrite",
+      "WebSearch",
+      "Agent"
     ],
     "deny": []
   },

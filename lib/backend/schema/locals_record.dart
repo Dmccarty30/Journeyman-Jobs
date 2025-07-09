@@ -97,6 +97,9 @@ class LocalsRecord extends FirestoreRecord {
   String get classification => _classification ?? '';
   bool hasClassification() => _classification != null;
 
+  // Raw data getter for accessing all Firestore data
+  Map<String, dynamic>? get rawData => snapshotData;
+
   void _initializeFields() {
     final data = snapshotData ?? {};
     _localUnion = data['local_union'] as String?;
