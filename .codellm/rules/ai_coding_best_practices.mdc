@@ -1,0 +1,136 @@
+---
+description: AI Coding Best Practices
+globs: *.dart, *.json, *.md
+alwaysApply: true
+---
+
+# AI Coding Best Practices Rule
+
+
+## Core Directive
+
+
+**NEVER write code in isolation. Always understand the full codebase context and analyze all potential interactions before implementing any new function.**
+
+
+## Pre-Implementation Protocol
+
+
+### 1. Codebase Analysis
+
+
+- **Read entire project structure** - Understand architecture patterns
+- **Identify existing functions** - Find similar implementations
+- **Map dependencies** - Trace all imports and connections
+- **Review naming conventions** - Follow established patterns
+- **Check design patterns** - Maintain architectural consistency
+
+
+### 2. Impact Assessment
+
+
+- **Data flow analysis** - How will new function affect existing data paths
+- **State management** - Consider global/local state implications
+- **Performance impact** - Evaluate computational and memory costs
+- **Security considerations** - Assess potential vulnerabilities
+- **Breaking changes** - Identify functions that might be affected
+
+
+### 3. Integration Planning
+
+
+- **API compatibility** - Ensure new function fits existing interfaces
+- **Error handling** - Follow established error patterns
+- **Testing strategy** - Plan unit/integration test coverage
+- **Documentation needs** - Maintain code documentation standards
+- **Rollback plan** - Consider reversal if issues arise
+
+
+## Implementation Rules
+
+
+### Before Writing ANY Code
+
+
+1. **Scan codebase** using available MCP tools
+2. **Map function relationships** and dependencies
+3. **Identify potential conflicts** with existing code
+4. **Plan integration points** and interfaces
+5. **Consider edge cases** and error scenarios
+
+
+### During Implementation
+
+
+- **Follow existing patterns** - Don't reinvent established approaches
+- **Maintain consistency** - Use same naming, structure, style
+- **Add comprehensive comments** - Explain complex logic
+- **Include error handling** - Match existing error patterns
+- **Write defensively** - Validate inputs and handle failures
+
+
+### After Implementation
+
+
+- **Test thoroughly** - Unit, integration, and edge cases
+- **Update documentation** - Keep all docs current
+- **Review dependencies** - Ensure no breaking changes
+- **Monitor performance** - Verify no degradation
+- **Plan maintenance** - Consider future modification needs
+
+
+## Key Principles
+
+
+### Context First
+
+
+*"Understand before you build"* - Never code without full context
+
+
+### Impact Awareness  
+
+
+*"Every function touches something"* - Consider all downstream effects
+
+
+### Pattern Preservation
+
+
+*"When in Rome, code as Romans do"* - Maintain existing conventions
+
+
+### Defensive Programming
+
+
+*"Plan for failure"* - Handle edge cases and errors gracefully
+
+
+## Quality Gates
+
+
+Before marking any code complete:
+
+
+- ✅ **Codebase analysis** performed
+- ✅ **Integration points** identified  
+- ✅ **Breaking changes** assessed
+- ✅ **Error handling** implemented
+- ✅ **Testing strategy** planned
+- ✅ **Documentation** updated
+- ✅ **Performance** validated
+
+
+## Anti-Patterns to Avoid
+
+
+- 🚫 Writing functions without understanding existing codebase
+- 🚫 Ignoring established naming conventions
+- 🚫 Creating duplicate functionality
+- 🚫 Breaking existing interfaces
+- 🚫 Implementing without error handling
+- 🚫 Skipping integration testing
+- 🚫 Forgetting documentation updates
+
+
+*Remember: Good AI coding is not about writing code fast - it's about writing code that fits perfectly into the existing ecosystem.*
