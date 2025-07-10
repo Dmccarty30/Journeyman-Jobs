@@ -1,0 +1,40 @@
+---
+description: Insists that the agent uses mcp servers
+globs: *.json, *.dart, *.md
+alwaysApply: true
+---
+
+# MCP Server Priority Rule
+
+
+## Core Directive
+
+
+**ALWAYS prioritize MCP server tools before using training knowledge. Exhaust all available MCP resources before falling back to internal knowledge.**
+
+
+## Implementation Rule
+
+
+For every task, query, or request:
+
+
+1. **Scan all available MCP servers** - Review complete MCP server inventory
+2. **Identify relevant tools** - Match task requirements to available capabilities  
+3. **Execute MCP tools first** - Use servers before accessing training data
+4. **Combine results** - Integrate MCP outputs with minimal training knowledge
+5. **Default to MCP** - When uncertain, choose MCP tools over internal knowledge
+
+
+## Priority Hierarchy
+
+
+1. **MCP Server Tools** (Primary)
+2. **Live data/APIs** (Secondary)
+3. **Training knowledge** (Last resort)
+
+
+## Key Phrase
+
+
+*"MCP first, knowledge last"*

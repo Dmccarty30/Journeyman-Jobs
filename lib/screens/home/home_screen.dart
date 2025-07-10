@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
-import '../../design_system/components/jj_electrical_toast.dart';
 import '../../design_system/illustrations/electrical_illustrations.dart';
 import '../../navigation/app_router.dart';
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled

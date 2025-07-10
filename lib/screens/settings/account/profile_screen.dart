@@ -180,7 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           _address1Controller.text = data['address1'] ?? '';
           _address2Controller.text = data['address2'] ?? '';
           _cityController.text = data['city'] ?? '';
-          _stateController.text = data['state'] ?? '';
+          _stateController.text = (data['state'] as String?)?.toUpperCase() ?? '';
           _zipcodeController.text = data['zipcode']?.toString() ?? '';
           
           // Professional Information
@@ -576,8 +576,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             ),
           ),
 
-          // Save button (when editing)
-          if (_isEditing)
+          // Save button (when editing and keyboard is not visible)
+          if (_isEditing && !_isKeyboardVisible())
             Container(
               padding: const EdgeInsets.all(AppTheme.spacingMd),
               child: JJPrimaryButton(
@@ -591,7 +591,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
       ),
     );
   }
-
+ 
   Widget _buildPersonalTab() {
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
@@ -700,7 +700,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                         ),
                         child: DropdownButtonFormField<String>(
-                          value: _stateController.text.isNotEmpty ? _stateController.text : null,
+                          value: _stateController.text.isNotEmpty && _usStates.contains(_stateController.text.toUpperCase())
+                              ? _stateController.text.toUpperCase()
+                              : null,
                           decoration: const InputDecoration(
                             labelText: 'State',
                             border: InputBorder.none,
