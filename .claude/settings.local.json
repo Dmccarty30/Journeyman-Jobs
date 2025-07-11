@@ -28,7 +28,8 @@
       "TodoWrite",
       "WebSearch",
       "Agent",
-      "Task"
+      "Task",
+      "Bash(rm:*)"
     ],
     "deny": []
   },
