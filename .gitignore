@@ -51,3 +51,9 @@ app.*.map.json
 .env.staging
 *.env
 .mcp.json.backup
+.mcp.json
+.API_KEY_ROTATION_REQUIRED
+# npm cache (should never be in project)
+# npm cache (should never be in project)
+# npm cache (should never be in project)
+# npm cache (should never be in project)

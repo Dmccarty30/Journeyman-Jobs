@@ -141,9 +141,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   icon: Icons.notifications_outlined,
                   title: 'Notifications',
                   subtitle: 'Manage notification preferences',
-                  onTap: () {
-                    // TODO: Show notification settings
-                  },
+                  onTap: () => context.push(AppRouter.notificationSettings),
                 ),
                 _MenuOption(
                   icon: Icons.security_outlined,
