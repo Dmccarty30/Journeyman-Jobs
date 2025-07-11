@@ -8,16 +8,13 @@ class NotificationPreferencesModel {
   
   /// Notification category preferences
   final bool jobAlertsEnabled;
-  final bool safetyAlertsEnabled;
   final bool unionUpdatesEnabled;
-  final bool applicationUpdatesEnabled;
   final bool systemNotificationsEnabled;
   final bool stormWorkEnabled;
   
   /// Reminder preferences
   final bool jobRemindersEnabled;
   final bool unionRemindersEnabled;
-  final bool safetyRemindersEnabled;
   
   /// Sound and vibration preferences
   final bool soundEnabled;
@@ -47,14 +44,11 @@ class NotificationPreferencesModel {
     this.fcmToken,
     this.tokenUpdatedAt,
     this.jobAlertsEnabled = true,
-    this.safetyAlertsEnabled = true,
     this.unionUpdatesEnabled = true,
-    this.applicationUpdatesEnabled = true,
     this.systemNotificationsEnabled = true,
     this.stormWorkEnabled = true,
     this.jobRemindersEnabled = true,
     this.unionRemindersEnabled = true,
-    this.safetyRemindersEnabled = true,
     this.soundEnabled = true,
     this.vibrationEnabled = true,
     this.quietHoursEnabled = false,
@@ -73,14 +67,11 @@ class NotificationPreferencesModel {
       fcmToken: data['fcmToken'] as String?,
       tokenUpdatedAt: data['tokenUpdatedAt']?.toDate(),
       jobAlertsEnabled: data['jobAlertsEnabled'] ?? true,
-      safetyAlertsEnabled: data['safetyAlertsEnabled'] ?? true,
       unionUpdatesEnabled: data['unionUpdatesEnabled'] ?? true,
-      applicationUpdatesEnabled: data['applicationUpdatesEnabled'] ?? true,
       systemNotificationsEnabled: data['systemNotificationsEnabled'] ?? true,
       stormWorkEnabled: data['stormWorkEnabled'] ?? true,
       jobRemindersEnabled: data['jobRemindersEnabled'] ?? true,
       unionRemindersEnabled: data['unionRemindersEnabled'] ?? true,
-      safetyRemindersEnabled: data['safetyRemindersEnabled'] ?? true,
       soundEnabled: data['soundEnabled'] ?? true,
       vibrationEnabled: data['vibrationEnabled'] ?? true,
       quietHoursEnabled: data['quietHoursEnabled'] ?? false,
@@ -100,14 +91,11 @@ class NotificationPreferencesModel {
       if (fcmToken != null) 'fcmToken': fcmToken,
       if (tokenUpdatedAt != null) 'tokenUpdatedAt': tokenUpdatedAt,
       'jobAlertsEnabled': jobAlertsEnabled,
-      'safetyAlertsEnabled': safetyAlertsEnabled,
       'unionUpdatesEnabled': unionUpdatesEnabled,
-      'applicationUpdatesEnabled': applicationUpdatesEnabled,
       'systemNotificationsEnabled': systemNotificationsEnabled,
       'stormWorkEnabled': stormWorkEnabled,
       'jobRemindersEnabled': jobRemindersEnabled,
       'unionRemindersEnabled': unionRemindersEnabled,
-      'safetyRemindersEnabled': safetyRemindersEnabled,
       'soundEnabled': soundEnabled,
       'vibrationEnabled': vibrationEnabled,
       'quietHoursEnabled': quietHoursEnabled,
@@ -126,14 +114,11 @@ class NotificationPreferencesModel {
     String? fcmToken,
     DateTime? tokenUpdatedAt,
     bool? jobAlertsEnabled,
-    bool? safetyAlertsEnabled,
     bool? unionUpdatesEnabled,
-    bool? applicationUpdatesEnabled,
     bool? systemNotificationsEnabled,
     bool? stormWorkEnabled,
     bool? jobRemindersEnabled,
     bool? unionRemindersEnabled,
-    bool? safetyRemindersEnabled,
     bool? soundEnabled,
     bool? vibrationEnabled,
     bool? quietHoursEnabled,
@@ -149,14 +134,11 @@ class NotificationPreferencesModel {
       fcmToken: fcmToken ?? this.fcmToken,
       tokenUpdatedAt: tokenUpdatedAt ?? this.tokenUpdatedAt,
       jobAlertsEnabled: jobAlertsEnabled ?? this.jobAlertsEnabled,
-      safetyAlertsEnabled: safetyAlertsEnabled ?? this.safetyAlertsEnabled,
       unionUpdatesEnabled: unionUpdatesEnabled ?? this.unionUpdatesEnabled,
-      applicationUpdatesEnabled: applicationUpdatesEnabled ?? this.applicationUpdatesEnabled,
       systemNotificationsEnabled: systemNotificationsEnabled ?? this.systemNotificationsEnabled,
       stormWorkEnabled: stormWorkEnabled ?? this.stormWorkEnabled,
       jobRemindersEnabled: jobRemindersEnabled ?? this.jobRemindersEnabled,
       unionRemindersEnabled: unionRemindersEnabled ?? this.unionRemindersEnabled,
-      safetyRemindersEnabled: safetyRemindersEnabled ?? this.safetyRemindersEnabled,
       soundEnabled: soundEnabled ?? this.soundEnabled,
       vibrationEnabled: vibrationEnabled ?? this.vibrationEnabled,
       quietHoursEnabled: quietHoursEnabled ?? this.quietHoursEnabled,

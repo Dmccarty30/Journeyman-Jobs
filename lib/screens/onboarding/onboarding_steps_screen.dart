@@ -7,6 +7,8 @@ import '../../design_system/components/reusable_components.dart';
 // import '../../backend/schema/enums.dart'; // TODO: Uncomment when needed
 import '../../navigation/app_router.dart';
 import '../../services/onboarding_service.dart';
+import '../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
+import '../../electrical_components/jj_circuit_breaker_switch.dart';
 
 class OnboardingStepsScreen extends StatefulWidget {
   const OnboardingStepsScreen({super.key});
@@ -642,7 +644,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
               color: AppTheme.offWhite,
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
-            child: SwitchListTile(
+            child: JJCircuitBreakerSwitchListTile(
               title: Text(
                 'Currently Working',
                 style: AppTheme.titleMedium,
@@ -652,12 +654,13 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
                 style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary),
               ),
               value: _isWorking,
-              activeColor: AppTheme.accentCopper,
               onChanged: (value) {
                 setState(() {
                   _isWorking = value;
                 });
               },
+              size: JJCircuitBreakerSize.small,
+              showElectricalEffects: true,
             ),
           ),
           

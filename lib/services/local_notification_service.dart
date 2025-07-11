@@ -4,12 +4,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 /// Service for handling local/scheduled notifications
 class LocalNotificationService {
-  static final FlutterLocalNotificationsPlugin _notifications = 
+  static final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
-  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   
   static bool _isInitialized = false;
@@ -83,81 +83,6 @@ class LocalNotificationService {
     }
   }
 
-  /// Schedule a job application deadline reminder
-  static Future<void> scheduleJobDeadlineReminder({
-    required String jobId,
-    required String jobTitle,
-    required String company,
-    required DateTime deadline,
-    int hoursBeforeDeadline = 24,
-  }) async {
-    try {
-      final user = _auth.currentUser;
-      if (user == null) return;
-
-      // Check if notifications are enabled for this type
-      if (!await _areJobRemindersEnabled()) return;
-
-      final reminderTime = deadline.subtract(Duration(hours: hoursBeforeDeadline));
-      
-      // Don't schedule if the reminder time is in the past
-      if (reminderTime.isBefore(DateTime.now())) return;
-
-      // Check quiet hours
-      if (await _isInQuietHours(reminderTime)) {
-        // Adjust to after quiet hours
-        final adjustedTime = await _adjustForQuietHours(reminderTime);
-        if (adjustedTime != null) {
-          reminderTime = adjustedTime;
-        } else {
-          return; // Skip if can't adjust
-        }
-      }
-
-      const androidDetails = AndroidNotificationDetails(
-        'job_reminders',
-        'Job Application Reminders',
-        channelDescription: 'Reminders for job application deadlines',
-        importance: Importance.high,
-        priority: Priority.high,
-        icon: '@mipmap/ic_launcher',
-        color: Color(0xFFB45309), // AppTheme.accentCopper
-        ticker: 'Job application deadline approaching',
-      );
-
-      const iosDetails = DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-        categoryIdentifier: 'JOB_REMINDER',
-      );
-
-      const details = NotificationDetails(
-        android: androidDetails,
-        iOS: iosDetails,
-      );
-
-      final payload = jsonEncode({
-        'type': 'job_deadline',
-        'jobId': jobId,
-        'actionUrl': '/jobs',
-      });
-
-      await _notifications.schedule(
-        jobId.hashCode,
-        'Job Application Deadline',
-        'Your application for $jobTitle at $company is due in $hoursBeforeDeadline hours',
-        reminderTime,
-        details,
-        payload: payload,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      );
-
-      debugPrint('Job deadline reminder scheduled for $jobTitle');
-    } catch (e) {
-      debugPrint('Error scheduling job deadline reminder: $e');
-    }
-  }
 
   /// Schedule union meeting reminder
   static Future<void> scheduleUnionMeetingReminder({
@@ -173,7 +98,7 @@ class LocalNotificationService {
 
       if (!await _areUnionRemindersEnabled()) return;
 
-      final reminderTime = meetingTime.subtract(Duration(hours: hoursBeforeMeeting));
+      DateTime reminderTime = meetingTime.subtract(Duration(hours: hoursBeforeMeeting));
       
       if (reminderTime.isBefore(DateTime.now())) return;
 
@@ -216,14 +141,15 @@ class LocalNotificationService {
         'actionUrl': '/locals',
       });
 
-      await _notifications.schedule(
+      await _notifications.zonedSchedule(
         meetingId.hashCode,
         'IBEW Local $localNumber Meeting',
         '$meetingTitle starts in $hoursBeforeMeeting hours',
-        reminderTime,
+        tz.TZDateTime.from(reminderTime, tz.local),
         details,
-        payload: payload,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time,
+        payload: payload,
       );
 
       debugPrint('Union meeting reminder scheduled');
@@ -232,67 +158,6 @@ class LocalNotificationService {
     }
   }
 
-  /// Schedule safety training reminder
-  static Future<void> scheduleSafetyTrainingReminder({
-    required String trainingId,
-    required String trainingName,
-    required DateTime expiryDate,
-    int daysBeforeExpiry = 30,
-  }) async {
-    try {
-      final user = _auth.currentUser;
-      if (user == null) return;
-
-      if (!await _areSafetyRemindersEnabled()) return;
-
-      final reminderTime = expiryDate.subtract(Duration(days: daysBeforeExpiry));
-      
-      if (reminderTime.isBefore(DateTime.now())) return;
-
-      const androidDetails = AndroidNotificationDetails(
-        'safety_reminders',
-        'Safety Reminders',
-        channelDescription: 'Safety training and certification reminders',
-        importance: Importance.max,
-        priority: Priority.high,
-        icon: '@mipmap/ic_launcher',
-        color: Color(0xFFDC2626), // AppTheme.errorRed
-        ticker: 'Safety certification expiring',
-      );
-
-      const iosDetails = DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-        categoryIdentifier: 'SAFETY_REMINDER',
-      );
-
-      const details = NotificationDetails(
-        android: androidDetails,
-        iOS: iosDetails,
-      );
-
-      final payload = jsonEncode({
-        'type': 'safety_training',
-        'trainingId': trainingId,
-        'actionUrl': '/training',
-      });
-
-      await _notifications.schedule(
-        trainingId.hashCode,
-        'Safety Certification Expiring',
-        'Your $trainingName certification expires in $daysBeforeExpiry days',
-        reminderTime,
-        details,
-        payload: payload,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      );
-
-      debugPrint('Safety training reminder scheduled');
-    } catch (e) {
-      debugPrint('Error scheduling safety training reminder: $e');
-    }
-  }
 
   /// Cancel a scheduled notification
   static Future<void> cancelNotification(int id) async {
@@ -344,22 +209,10 @@ class LocalNotificationService {
     debugPrint('Notification action: ${data['type']}');
   }
 
-  /// Check if job reminders are enabled
-  static Future<bool> _areJobRemindersEnabled() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('job_reminders_enabled') ?? true;
-  }
-
   /// Check if union reminders are enabled
   static Future<bool> _areUnionRemindersEnabled() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool('union_reminders_enabled') ?? true;
-  }
-
-  /// Check if safety reminders are enabled
-  static Future<bool> _areSafetyRemindersEnabled() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('safety_reminders_enabled') ?? true;
   }
 
   /// Check if time is within quiet hours
@@ -403,5 +256,148 @@ class LocalNotificationService {
     }
     
     return adjustedTime;
+  }
+  
+  /// Schedule job deadline reminder
+  static Future<void> scheduleJobDeadlineReminder({
+    required String jobId,
+    required String jobTitle,
+    required String company,
+    required DateTime deadline,
+    int hoursBeforeDeadline = 24,
+  }) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return;
+
+      DateTime reminderTime = deadline.subtract(Duration(hours: hoursBeforeDeadline));
+      
+      if (reminderTime.isBefore(DateTime.now())) return;
+
+      // Check quiet hours
+      if (await _isInQuietHours(reminderTime)) {
+        final adjustedTime = await _adjustForQuietHours(reminderTime);
+        if (adjustedTime != null) {
+          reminderTime = adjustedTime;
+        } else {
+          return;
+        }
+      }
+
+      const androidDetails = AndroidNotificationDetails(
+        'job_reminders',
+        'Job Application Reminders',
+        channelDescription: 'Reminders for job application deadlines',
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+        color: Color(0xFF1A202C),
+        ticker: 'Job deadline reminder',
+      );
+
+      const iosDetails = DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+        categoryIdentifier: 'JOB_REMINDER',
+      );
+
+      const details = NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+      );
+
+      final payload = jsonEncode({
+        'type': 'job_deadline',
+        'jobId': jobId,
+        'actionUrl': '/jobs',
+      });
+
+      await _notifications.zonedSchedule(
+        jobId.hashCode,
+        'Job Application Deadline',
+        'Deadline for $jobTitle at $company is in $hoursBeforeDeadline hours',
+        tz.TZDateTime.from(reminderTime, tz.local),
+        details,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time,
+        payload: payload,
+      );
+
+      debugPrint('Job deadline reminder scheduled');
+    } catch (e) {
+      debugPrint('Error scheduling job deadline reminder: $e');
+    }
+  }
+  
+  /// Schedule safety training reminder
+  static Future<void> scheduleSafetyTrainingReminder({
+    required String trainingId,
+    required String trainingName,
+    required DateTime expiryDate,
+    int daysBeforeExpiry = 30,
+  }) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return;
+
+      DateTime reminderTime = expiryDate.subtract(Duration(days: daysBeforeExpiry));
+      
+      if (reminderTime.isBefore(DateTime.now())) return;
+
+      // Check quiet hours
+      if (await _isInQuietHours(reminderTime)) {
+        final adjustedTime = await _adjustForQuietHours(reminderTime);
+        if (adjustedTime != null) {
+          reminderTime = adjustedTime;
+        } else {
+          return;
+        }
+      }
+
+      const androidDetails = AndroidNotificationDetails(
+        'safety_reminders',
+        'Safety Reminders',
+        channelDescription: 'Safety training and certification reminders',
+        importance: Importance.max,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+        color: Color(0xFF1A202C),
+        ticker: 'Safety training reminder',
+      );
+
+      const iosDetails = DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+        categoryIdentifier: 'SAFETY_REMINDER',
+      );
+
+      const details = NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+      );
+
+      final payload = jsonEncode({
+        'type': 'safety_training',
+        'trainingId': trainingId,
+        'actionUrl': '/profile',
+      });
+
+      await _notifications.zonedSchedule(
+        trainingId.hashCode,
+        '🔺 Safety Training Expiry',
+        '$trainingName expires in $daysBeforeExpiry days',
+        tz.TZDateTime.from(reminderTime, tz.local),
+        details,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time,
+        payload: payload,
+      );
+
+      debugPrint('Safety training reminder scheduled');
+    } catch (e) {
+      debugPrint('Error scheduling safety training reminder: $e');
+    }
   }
 }

@@ -7,9 +7,11 @@ This comprehensive guide outlines the complete implementation of a notification 
 ## Overview of Required Screens
 
 ### 1. **Permission Request Screen**
+
 **Purpose**: Request notification permissions from users (mandatory on iOS, Android 13+, and web)
 
 **Components**:
+
 - Welcome message explaining why notifications are needed
 - Visual representation of notification benefits
 - "Enable Notifications" primary CTA button
@@ -17,6 +19,7 @@ This comprehensive guide outlines the complete implementation of a notification 
 - Permission status indicator
 
 **Key Functions**:
+
 ```dart
 - requestNotificationPermission()
 - checkPermissionStatus()
@@ -25,9 +28,11 @@ This comprehensive guide outlines the complete implementation of a notification 
 ```
 
 ### 2. **Notification Settings Screen**
+
 **Purpose**: Allow users to customize their notification preferences
 
 **Components**:
+
 - Master toggle for all notifications
 - Category-specific toggles (e.g., Updates, Promotions, Messages)
 - Sound preference selector
@@ -37,6 +42,7 @@ This comprehensive guide outlines the complete implementation of a notification 
 - Channel settings (Android)
 
 **Key Functions**:
+
 ```dart
 - loadUserPreferences()
 - saveNotificationSettings()
@@ -46,9 +52,11 @@ This comprehensive guide outlines the complete implementation of a notification 
 ```
 
 ### 3. **Notification History Screen**
+
 **Purpose**: Display past notifications and their status
 
 **Components**:
+
 - List of received notifications
 - Read/unread status indicators
 - Timestamp for each notification
@@ -56,6 +64,7 @@ This comprehensive guide outlines the complete implementation of a notification 
 - Filter options (by date, type, read status)
 
 **Key Functions**:
+
 ```dart
 - fetchNotificationHistory()
 - markAsRead()
@@ -65,9 +74,11 @@ This comprehensive guide outlines the complete implementation of a notification 
 ```
 
 ### 4. **Notification Detail Screen**
+
 **Purpose**: Show full notification content when tapped from history
 
 **Components**:
+
 - Full notification title
 - Complete message body
 - Associated images/media
@@ -75,6 +86,7 @@ This comprehensive guide outlines the complete implementation of a notification 
 - Deep link navigation
 
 **Key Functions**:
+
 ```dart
 - loadNotificationDetails()
 - handleNotificationActions()
@@ -83,9 +95,11 @@ This comprehensive guide outlines the complete implementation of a notification 
 ```
 
 ### 5. **Debug/Testing Screen** (Development Only)
+
 **Purpose**: Test notification functionality during development
 
 **Components**:
+
 - Send test notification button
 - FCM token display
 - Token copy button
@@ -94,6 +108,7 @@ This comprehensive guide outlines the complete implementation of a notification 
 - Error log viewer
 
 **Key Functions**:
+
 ```dart
 - sendTestNotification()
 - displayFCMToken()
@@ -276,6 +291,7 @@ Future<void> _handleForegroundMessage(RemoteMessage message) async {
 ### Android Configuration
 
 1. **AndroidManifest.xml** modifications:
+
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Permissions -->
@@ -313,6 +329,7 @@ Future<void> _handleForegroundMessage(RemoteMessage message) async {
 ```
 
 2. **build.gradle** modifications:
+
 ```gradle
 dependencies {
     implementation 'com.google.firebase:firebase-messaging:23.1.0'
@@ -323,6 +340,7 @@ dependencies {
 ### iOS Configuration
 
 1. **Info.plist** additions:
+
 ```xml
 <key>UIBackgroundModes</key>
 <array>
@@ -335,12 +353,14 @@ dependencies {
 ```
 
 2. **Xcode Capabilities**:
+
 - Push Notifications ✓
 - Background Modes ✓
   - Remote notifications ✓
   - Background fetch ✓
 
 3. **AppDelegate.swift** modifications:
+
 ```swift
 import UIKit
 import Flutter
@@ -368,7 +388,8 @@ import FirebaseMessaging
 
 ### Permission Types by Platform
 
-#### iOS Permissions:
+#### iOS Permissions
+
 - **Alert**: Display notifications on screen
 - **Badge**: Show app icon badges
 - **Sound**: Play notification sounds
@@ -376,13 +397,15 @@ import FirebaseMessaging
 - **Provisional**: Deliver quietly (iOS 12+)
 - **Announcement**: Siri announcement of notifications
 
-#### Android Permissions:
+#### Android Permissions
+
 - **POST_NOTIFICATIONS**: Required for Android 13+ (API 33)
 - **Channel-specific permissions**: Set per notification channel
 
 ### Best Practices for Permission Requests
 
 1. **Pre-Permission Screen**:
+
 ```dart
 class NotificationPermissionScreen extends StatelessWidget {
   @override
@@ -418,6 +441,7 @@ class NotificationPermissionScreen extends StatelessWidget {
 ```
 
 2. **Handle Permission Denial**:
+
 ```dart
 Future<void> _handlePermissionDenial() async {
   // Store user preference
@@ -645,6 +669,7 @@ class NotificationTestHelper {
 ## Implementation Checklist
 
 ### Phase 1: Setup and Configuration
+
 - [ ] Add Firebase to Flutter project
 - [ ] Configure Android manifest and build files
 - [ ] Configure iOS capabilities and certificates
@@ -652,6 +677,7 @@ class NotificationTestHelper {
 - [ ] Initialize Firebase in main.dart
 
 ### Phase 2: Core Implementation
+
 - [ ] Create NotificationService singleton
 - [ ] Implement permission request flow
 - [ ] Set up FCM token management
@@ -659,6 +685,7 @@ class NotificationTestHelper {
 - [ ] Create notification channels (Android)
 
 ### Phase 3: UI Implementation
+
 - [ ] Build permission request screen
 - [ ] Create notification settings screen
 - [ ] Implement notification history
@@ -666,6 +693,7 @@ class NotificationTestHelper {
 - [ ] Create debug/test screen
 
 ### Phase 4: Advanced Features
+
 - [ ] Implement deep linking
 - [ ] Add notification scheduling
 - [ ] Set up analytics tracking
@@ -673,6 +701,7 @@ class NotificationTestHelper {
 - [ ] Implement quiet hours
 
 ### Phase 5: Testing and Optimization
+
 - [ ] Test on physical devices
 - [ ] Verify background handling
 - [ ] Test token refresh scenarios

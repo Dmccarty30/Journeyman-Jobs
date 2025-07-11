@@ -4,6 +4,7 @@ import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../services/notification_permission_service.dart';
 import '../../services/fcm_service.dart';
+import '../../electrical_components/jj_circuit_breaker_switch.dart';
 
 class NotificationSettingsScreen extends StatefulWidget {
   const NotificationSettingsScreen({super.key});
@@ -20,16 +21,12 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
   
   // Notification categories
   bool _jobAlertsEnabled = true;
-  bool _safetyAlertsEnabled = true;
   bool _unionUpdatesEnabled = true;
-  bool _applicationUpdatesEnabled = true;
   bool _systemNotificationsEnabled = true;
   bool _stormWorkEnabled = true;
   
   // Reminder settings
-  bool _jobRemindersEnabled = true;
   bool _unionRemindersEnabled = true;
-  bool _safetyRemindersEnabled = true;
   
   // Sound and vibration
   bool _soundEnabled = true;
@@ -57,16 +54,12 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       setState(() {
         // Notification categories
         _jobAlertsEnabled = prefs.getBool('job_alerts_enabled') ?? true;
-        _safetyAlertsEnabled = prefs.getBool('safety_alerts_enabled') ?? true;
         _unionUpdatesEnabled = prefs.getBool('union_updates_enabled') ?? true;
-        _applicationUpdatesEnabled = prefs.getBool('application_updates_enabled') ?? true;
         _systemNotificationsEnabled = prefs.getBool('system_notifications_enabled') ?? true;
         _stormWorkEnabled = prefs.getBool('storm_work_enabled') ?? true;
         
         // Reminder settings
-        _jobRemindersEnabled = prefs.getBool('job_reminders_enabled') ?? true;
         _unionRemindersEnabled = prefs.getBool('union_reminders_enabled') ?? true;
-        _safetyRemindersEnabled = prefs.getBool('safety_reminders_enabled') ?? true;
         
         // Sound and vibration
         _soundEnabled = prefs.getBool('sound_enabled') ?? true;
@@ -161,7 +154,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           ],
         ),
         content: Text(
-          'You\'ll miss important job alerts, safety updates, and application deadlines. Are you sure?',
+          'You\'ll miss important job alerts and union updates. Are you sure?',
           style: AppTheme.bodyMedium.copyWith(
             color: AppTheme.textPrimary,
           ),
@@ -269,10 +262,6 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               _buildNotificationCategoriesSection(),
               const SizedBox(height: AppTheme.spacingLg),
 
-              // Reminder settings
-              _buildReminderSection(),
-              const SizedBox(height: AppTheme.spacingLg),
-
               // Sound and vibration
               _buildSoundSection(),
               const SizedBox(height: AppTheme.spacingLg),
@@ -325,7 +314,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                     const SizedBox(height: AppTheme.spacingXs),
                     Text(
                       _notificationsEnabled
-                          ? 'Get instant job alerts and safety updates'
+                          ? 'Get instant job alerts and union updates'
                           : 'Enable to receive important notifications',
                       style: AppTheme.bodySmall.copyWith(
                         color: AppTheme.textSecondary,
@@ -334,11 +323,11 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                   ],
                 ),
               ),
-              Switch.adaptive(
+              JJCircuitBreakerSwitch(
                 value: _notificationsEnabled,
                 onChanged: _handleMasterToggle,
-                activeColor: AppTheme.successGreen,
-                inactiveThumbColor: AppTheme.textSecondary,
+                size: JJCircuitBreakerSize.small,
+                showElectricalEffects: true,
               ),
             ],
           ),
@@ -382,16 +371,6 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           },
         ),
         _buildToggleItem(
-          icon: Icons.security,
-          title: 'Safety Alerts',
-          subtitle: 'Important safety updates and reminders',
-          value: _safetyAlertsEnabled,
-          onChanged: (value) {
-            setState(() => _safetyAlertsEnabled = value);
-            _savePreference('safety_alerts_enabled', value);
-          },
-        ),
-        _buildToggleItem(
           icon: Icons.people_outline,
           title: 'Union Updates',
           subtitle: 'News and updates from your local',
@@ -402,13 +381,13 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           },
         ),
         _buildToggleItem(
-          icon: Icons.assignment,
-          title: 'Application Updates',
-          subtitle: 'Status changes on your job applications',
-          value: _applicationUpdatesEnabled,
+          icon: Icons.event,
+          title: 'Union Meeting Reminders',
+          subtitle: 'Remind me about upcoming union meetings',
+          value: _unionRemindersEnabled,
           onChanged: (value) {
-            setState(() => _applicationUpdatesEnabled = value);
-            _savePreference('application_updates_enabled', value);
+            setState(() => _unionRemindersEnabled = value);
+            _savePreference('union_reminders_enabled', value);
           },
         ),
         _buildToggleItem(
@@ -425,43 +404,6 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     );
   }
 
-  Widget _buildReminderSection() {
-    return _buildSection(
-      'Reminders',
-      [
-        _buildToggleItem(
-          icon: Icons.schedule,
-          title: 'Application Deadlines',
-          subtitle: 'Remind me before job application deadlines',
-          value: _jobRemindersEnabled,
-          onChanged: (value) {
-            setState(() => _jobRemindersEnabled = value);
-            _savePreference('job_reminders_enabled', value);
-          },
-        ),
-        _buildToggleItem(
-          icon: Icons.event,
-          title: 'Union Meetings',
-          subtitle: 'Remind me about upcoming union meetings',
-          value: _unionRemindersEnabled,
-          onChanged: (value) {
-            setState(() => _unionRemindersEnabled = value);
-            _savePreference('union_reminders_enabled', value);
-          },
-        ),
-        _buildToggleItem(
-          icon: Icons.verified_user,
-          title: 'Safety Training',
-          subtitle: 'Remind me when certifications need renewal',
-          value: _safetyRemindersEnabled,
-          onChanged: (value) {
-            setState(() => _safetyRemindersEnabled = value);
-            _savePreference('safety_reminders_enabled', value);
-          },
-        ),
-      ],
-    );
-  }
 
   Widget _buildSoundSection() {
     return _buildSection(
@@ -604,10 +546,11 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               ],
             ),
           ),
-          Switch.adaptive(
+          JJCircuitBreakerSwitch(
             value: value,
             onChanged: onChanged,
-            activeColor: AppTheme.accentCopper,
+            size: JJCircuitBreakerSize.small,
+            showElectricalEffects: true,
           ),
         ],
       ),

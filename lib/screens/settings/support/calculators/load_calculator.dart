@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../design_system/app_theme.dart';
 import '../../../../design_system/components/reusable_components.dart';
+import '../../../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
+import '../../../../electrical_components/jj_circuit_breaker_switch.dart';
 import 'calculation_helpers.dart';
 
 class LoadCalculator extends StatefulWidget {
@@ -313,7 +315,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
           const SizedBox(height: AppTheme.spacingMd),
           
           // Laundry circuit
-          SwitchListTile(
+          JJCircuitBreakerSwitchListTile(
             title: Text(
               'Laundry Circuit',
               style: AppTheme.bodyMedium.copyWith(
@@ -336,7 +338,8 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
                 _calculateLoad();
               }
             },
-            activeColor: AppTheme.accentCopper,
+            size: JJCircuitBreakerSize.small,
+            showElectricalEffects: true,
           ),
         ],
       ),

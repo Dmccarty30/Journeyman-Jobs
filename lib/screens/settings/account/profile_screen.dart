@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
+import '../../../electrical_components/jj_circuit_breaker_switch.dart';
+import '../../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -851,14 +853,15 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     ),
                   ),
                   const Spacer(),
-                  Switch(
+                  JJCircuitBreakerSwitch(
                     value: _isWorking,
                     onChanged: (value) {
                       setState(() {
                         _isWorking = value;
                       });
                     },
-                    activeColor: AppTheme.successGreen,
+                    size: JJCircuitBreakerSize.small,
+                    showElectricalEffects: true,
                   ),
                 ],
               ),
@@ -1350,7 +1353,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         boxShadow: [AppTheme.shadowSm],
       ),
-      child: SwitchListTile(
+      child: JJCircuitBreakerSwitchListTile(
         title: Text(
           title,
           style: AppTheme.bodyLarge.copyWith(
@@ -1367,7 +1370,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         secondary: Icon(icon, color: AppTheme.accentCopper),
         value: value,
         onChanged: onChanged,
-        activeColor: AppTheme.successGreen,
+        size: JJCircuitBreakerSize.small,
+        showElectricalEffects: true,
       ),
     );
   }
