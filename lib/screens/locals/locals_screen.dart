@@ -6,7 +6,7 @@ import '/design_system/app_theme.dart';
 import 'dart:io' show Platform;
 
 class LocalsScreen extends StatefulWidget {
-  const LocalsScreen({Key? key}) : super(key: key);
+  const LocalsScreen({super.key});
 
   @override
   State<LocalsScreen> createState() => _LocalsScreenState();
@@ -40,11 +40,11 @@ class _LocalsScreenState extends State<LocalsScreen> {
               decoration: InputDecoration(
                 hintText: 'Search by local number, city, or state...',
                 hintStyle: AppTheme.bodyMedium.copyWith(
-                  color: AppTheme.white.withOpacity(0.7)
+                  color: AppTheme.white.withAlpha(179)
                 ),
                 prefixIcon: const Icon(Icons.search, color: AppTheme.white),
                 filled: true,
-                fillColor: AppTheme.white.withOpacity(0.1),
+                fillColor: AppTheme.white.withAlpha(26),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                   borderSide: BorderSide.none,
@@ -189,10 +189,10 @@ class LocalCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const LocalCard({
-    Key? key,
+    super.key,
     required this.local,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -420,18 +420,15 @@ class LocalCard extends StatelessWidget {
 class LocalDetailsDialog extends StatelessWidget {
   final LocalsRecord local;
 
-  const LocalDetailsDialog({
-    Key? key,
-    required this.local,
-  }) : super(key: key);
+  const LocalDetailsDialog({super.key, required this.local});
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
       ),
-      child: Container(
+      content: Container(
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.8,
         ),

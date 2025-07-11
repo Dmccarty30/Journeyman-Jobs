@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -241,27 +240,27 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   
   void _showEditTooltip() {
     if (_overlayEntry != null || _hasShownTooltip) return;
-    
+
     final renderBox = _editButtonKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox == null) return;
-    
+
     final offset = renderBox.localToGlobal(Offset.zero);
     final size = renderBox.size;
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     // Calculate tooltip width and position
     const tooltipWidth = 200.0;
     const padding = 16.0;
-    
+
     // Position tooltip to the left of the button, ensuring it stays on screen
     final buttonCenterX = offset.dx + (size.width / 2);
     final idealLeft = buttonCenterX - tooltipWidth + 40; // Shift left significantly
     final finalLeft = (idealLeft < padding) ? padding : idealLeft;
-    
+
     // Make sure tooltip doesn't go off the right edge either
     final maxLeft = screenWidth - tooltipWidth - padding;
     final adjustedLeft = (finalLeft > maxLeft) ? maxLeft : finalLeft;
-    
+
     _overlayEntry = OverlayEntry(
       builder: (context) => Stack(
         children: [
@@ -282,7 +281,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     border: Border.all(color: AppTheme.accentCopper, width: 2),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primaryNavy.withOpacity(0.3),
+                        color: AppTheme.primaryNavy.withAlpha(51),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -317,9 +316,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         ],
       ),
     );
-    
+
     Overlay.of(context).insert(_overlayEntry!);
-    
+
     // Auto-dismiss after 5 seconds
     Future.delayed(const Duration(seconds: 5), () {
       _hideTooltip();
