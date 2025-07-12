@@ -205,22 +205,23 @@ class NotificationPermissionService {
   /// Handle initial permission request flow
   static Future<bool> handleInitialPermissionFlow(BuildContext context) async {
     final currentStatus = await checkPermissionStatus();
-    
+    if (!context.mounted) return false;
+
     switch (currentStatus) {
       case PermissionStatus.granted:
         return true;
-        
+
       case PermissionStatus.denied:
         return await showPermissionDialog(context);
-        
+
       case PermissionStatus.permanentlyDenied:
         await showSettingsDialog(context);
         return false;
-        
+
       case PermissionStatus.restricted:
         await showSettingsDialog(context);
         return false;
-        
+
       default:
         return await showPermissionDialog(context);
     }

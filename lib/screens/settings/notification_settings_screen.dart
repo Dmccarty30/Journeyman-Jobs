@@ -104,10 +104,12 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     if (enabled && !_notificationsEnabled) {
       // Request permissions
       final granted = await NotificationPermissionService.handleInitialPermissionFlow(context);
+      if (!mounted) return;
+
       setState(() {
         _notificationsEnabled = granted;
       });
-      
+
       if (granted) {
         JJSnackBar.showSuccess(
           context: context,
@@ -117,6 +119,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     } else if (!enabled) {
       // Show confirmation dialog
       final confirmed = await _showDisableConfirmationDialog();
+      if (!mounted) return;
+
       if (confirmed) {
         setState(() {
           _notificationsEnabled = false;

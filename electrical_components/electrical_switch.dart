@@ -57,12 +57,12 @@ class ElectricalSwitch extends StatelessWidget {
   final Color? inactiveColor;
 
   const ElectricalSwitch({
-    Key? key,
+    super.key,
     required this.value,
     this.onChanged,
     this.activeColor,
     this.inactiveColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +72,7 @@ class ElectricalSwitch extends StatelessWidget {
 
     return GestureDetector(
       onTap: onChanged != null ? () => onChanged!(!value) : null,
-      child: Container(
+      child: SizedBox(
         width: 60,
         height: 30,
         child: CustomPaint(

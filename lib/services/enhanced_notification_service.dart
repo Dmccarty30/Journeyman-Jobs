@@ -75,7 +75,7 @@ class EnhancedNotificationService {
         body: body,
         type: isStormWork ? 'storm' : 'jobs',
         additionalData: {
-          'jobId': job.id ?? '',
+          'jobId': job.id,
           'company': job.company,
           'location': job.location,
           'isStormWork': isStormWork.toString(),

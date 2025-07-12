@@ -245,7 +245,7 @@ class LocalCard extends StatelessWidget {
                       vertical: AppTheme.spacingXs,
                     ),
                     decoration: BoxDecoration(
-                      color: AppTheme.accentCopper.withOpacity(0.1),
+                      color: AppTheme.accentCopper.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppTheme.radiusRound),
                     ),
                     child: Icon(

@@ -221,7 +221,7 @@ class _JJCircuitBreakerSwitchState extends State<JJCircuitBreakerSwitch>
           _sparkController,
         ]),
         builder: (context, child) {
-          return Container(
+          return SizedBox(
             width: widget.size.width,
             height: widget.size.height,
             child: CustomPaint(
@@ -270,7 +270,6 @@ class _CircuitBreakerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint();
-    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
     
     // Draw circuit breaker housing
     _drawHousing(canvas, size, paint);
@@ -418,7 +417,6 @@ class _CircuitBreakerPainter extends CustomPainter {
     
     // Switch handle position
     final handleHeight = size.height * 0.15;
-    final trackCenter = switchTrackRect.center;
     final handleTop = size.height * 0.3;
     final handleBottom = size.height * 0.55;
     

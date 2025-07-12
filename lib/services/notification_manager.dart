@@ -28,9 +28,11 @@ class NotificationManager {
       // Initialize FCM service
       await FCMService.initialize(appContext);
       debugPrint('✓ FCM Service initialized');
-      
+
       // Check and request permissions if needed
-      await _handleInitialPermissions(appContext);
+      if (appContext.mounted) {
+        await _handleInitialPermissions(appContext);
+      }
       
       _isInitialized = true;
       debugPrint('✓ Notification Manager fully initialized');
