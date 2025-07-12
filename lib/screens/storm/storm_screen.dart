@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
+import '../../models/storm_event.dart';
 // import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 
@@ -453,67 +454,15 @@ class _StormScreenState extends State<StormScreen> {
   }
 }
 
-class StormEvent {
-  final String id;
-  final String name;
-  final String region;
-  final String severity;
-  final List<String> affectedUtilities;
-  final String estimatedDuration;
-  final int openPositions;
-  final String payRate;
-  final String perDiem;
-  final String status;
-  final String description;
-  final DateTime deploymentDate;
-
-  StormEvent({
-    required this.id,
-    required this.name,
-    required this.region,
-    required this.severity,
-    required this.affectedUtilities,
-    required this.estimatedDuration,
-    required this.openPositions,
-    required this.payRate,
-    required this.perDiem,
-    required this.status,
-    required this.description,
-    required this.deploymentDate,
-  });
-}
 
 class StormEventCard extends StatelessWidget {
   final StormEvent storm;
 
   const StormEventCard({super.key, required this.storm});
 
-  Color get _severityColor {
-    switch (storm.severity.toLowerCase()) {
-      case 'critical':
-        return AppTheme.errorRed;
-      case 'high':
-        return AppTheme.warningYellow;
-      case 'moderate':
-        return AppTheme.accentCopper;
-      default:
-        return AppTheme.infoBlue;
-    }
-  }
+  Color get _severityColor => storm.severityColor;
 
-  String get _timeUntilDeployment {
-    final now = DateTime.now();
-    final difference = storm.deploymentDate.difference(now);
-    
-    if (difference.isNegative) {
-      final days = difference.abs().inDays;
-      return 'Started ${days}d ago';
-    } else if (difference.inHours < 24) {
-      return 'Deploying in ${difference.inHours}h';
-    } else {
-      return 'Deploying in ${difference.inDays}d';
-    }
-  }
+  String get _timeUntilDeployment => storm.deploymentTimeString;
 
   @override
   Widget build(BuildContext context) {
@@ -732,18 +681,7 @@ class StormDetailsSheet extends StatelessWidget {
     required this.scrollController,
   });
 
-  Color get _severityColor {
-    switch (storm.severity.toLowerCase()) {
-      case 'critical':
-        return AppTheme.errorRed;
-      case 'high':
-        return AppTheme.warningYellow;
-      case 'moderate':
-        return AppTheme.accentCopper;
-      default:
-        return AppTheme.infoBlue;
-    }
-  }
+  Color get _severityColor => storm.severityColor;
 
   @override
   Widget build(BuildContext context) {

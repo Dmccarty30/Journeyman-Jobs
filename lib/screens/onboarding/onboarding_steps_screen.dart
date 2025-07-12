@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
-// import '../../backend/schema/enums.dart'; // TODO: Uncomment when needed
+import '../../models/user_model.dart';
 import '../../navigation/app_router.dart';
 import '../../services/onboarding_service.dart';
+import '../../services/firestore_service.dart';
 import '../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
 
@@ -80,24 +82,9 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
   final _lookingToAccomplishFocus = FocusNode();
 
   // Data options
-  final List<String> _classifications = [
-    'Journeyman Lineman',
-    'Journeyman Electrician',
-    'Journeyman Wireman',
-    'Journeyman Tree Trimmer',
-    'Operator',
-  ];
+  final List<String> _classifications = Classification.all;
 
-  final List<String> _constructionTypes = [
-    'Distribution',
-    'Transmission',
-    'SubStation',
-    'Residential',
-    'Industrial',
-    'Data Center',
-    'Commercial',
-    'Underground',
-  ];
+  final List<String> _constructionTypes = ConstructionType.all;
 
   final List<String> _usStates = [
     'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
@@ -181,69 +168,55 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
 
   void _completeOnboarding() async {
     try {
-      // TODO: Get current user ID from auth
-      // final String userId = 'temp_user_id'; // This should come from auth service
+      // Get current user from Firebase Auth
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('No authenticated user found');
+      }
 
-      // Convert classification string to enum value
-      // Classification? classificationEnum;
-      /*if (_selectedClassification != null) {
-        switch (_selectedClassification!) {
-          case 'Journeyman Lineman':
-            classificationEnum = Classification.JourneymanLineman;
-            break;
-          case 'Journeyman Electrician':
-            classificationEnum = Classification.JourneymanElectrician;
-            break;
-          case 'Journeyman Wireman':
-            classificationEnum = Classification.JourneymanWireman;
-            break;
-          case 'Journeyman Tree Trimmer':
-            classificationEnum = Classification.JourneymanTreeTrimmer;
-            break;
-          case 'Operator':
-            classificationEnum = Classification.Operator;
-            break;
-        }
-      }*/
+      // Create user model from form data
+      final userModel = UserModel(
+        uid: user.uid,
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        phoneNumber: _phoneController.text.trim(),
+        email: user.email ?? '',
+        address1: _address1Controller.text.trim(),
+        address2: _address2Controller.text.trim().isEmpty ? null : _address2Controller.text.trim(),
+        city: _cityController.text.trim(),
+        state: _stateController.text.trim(),
+        zipcode: _zipcodeController.text.trim(),
+        homeLocal: _homeLocalController.text.trim(),
+        ticketNumber: _ticketNumberController.text.trim(),
+        classification: _selectedClassification ?? '',
+        isWorking: _isWorking,
+        booksOn: _booksOnController.text.trim().isEmpty ? null : _booksOnController.text.trim(),
+        constructionTypes: _selectedConstructionTypes.toList(),
+        hoursPerWeek: _selectedHoursPerWeek,
+        perDiemRequirement: _selectedPerDiem,
+        preferredLocals: _preferredLocalsController.text.trim().isEmpty ? null : _preferredLocalsController.text.trim(),
+        networkWithOthers: _networkWithOthers,
+        careerAdvancements: _careerAdvancements,
+        betterBenefits: _betterBenefits,
+        higherPayRate: _higherPayRate,
+        learnNewSkill: _learnNewSkill,
+        travelToNewLocation: _travelToNewLocation,
+        findLongTermWork: _findLongTermWork,
+        careerGoals: _careerGoalsController.text.trim().isEmpty ? null : _careerGoalsController.text.trim(),
+        howHeardAboutUs: _howHeardAboutUsController.text.trim().isEmpty ? null : _howHeardAboutUsController.text.trim(),
+        lookingToAccomplish: _lookingToAccomplishController.text.trim().isEmpty ? null : _lookingToAccomplishController.text.trim(),
+        onboardingStatus: OnboardingStatus.completed,
+        createdTime: DateTime.now(),
+      );
 
-      // Create comprehensive user data map
-      // TODO: Uncomment when FirestoreService is implemented
-      /*final userData = {
-        'first_name': _firstNameController.text,
-        'last_name': _lastNameController.text,
-        'phone_number': _phoneController.text,
-        'address1': _address1Controller.text,
-        'address2': _address2Controller.text.isEmpty ? null : _address2Controller.text,
-        'city': _cityController.text,
-        'state': _stateController.text,
-        'zipcode': int.tryParse(_zipcodeController.text),
-        'home_local': int.tryParse(_homeLocalController.text),
-        'ticket_number': int.tryParse(_ticketNumberController.text),
-        'classification': classificationEnum?.serialize(),
-        'is_working': _isWorking,
-        'books_on': _booksOnController.text.isEmpty ? null : _booksOnController.text,
-        'constructionTypes': _selectedConstructionTypes.toList(),
-        'hours_per_week': _selectedHoursPerWeek,
-        'per_diem_requirement': _selectedPerDiem,
-        'preferred_locals': _preferredLocalsController.text.isEmpty ? null : _preferredLocalsController.text,
-        'networkWithOthers': _networkWithOthers,
-        'careerAdvancements': _careerAdvancements,
-        'betterBenefits': _betterBenefits,
-        'higherPayRate': _higherPayRate,
-        'learnNewSkill': _learnNewSkill,
-        'travelToNewLocation': _travelToNewLocation,
-        'findLongTermWork': _findLongTermWork,
-        'careerGoals': _careerGoalsController.text.isEmpty ? null : _careerGoalsController.text,
-        'how_heard_about_us': _howHeardAboutUsController.text.isEmpty ? null : _howHeardAboutUsController.text,
-        'lookingToAccomplish': _lookingToAccomplishController.text.isEmpty ? null : _lookingToAccomplishController.text,
-        'onboardingStatus': 'completed',
-        'created_time': DateTime.now(),
-      };*/
+      // Save to Firestore
+      final firestoreService = FirestoreService();
+      await firestoreService.createUser(
+        uid: user.uid,
+        userData: userModel.toJson(),
+      );
 
-      // TODO: Save to Firestore using FirestoreService
-      // await FirestoreService().createUser(uid: userId, userData: userData);
-
-      // Mark onboarding as complete
+      // Mark onboarding as complete in local storage
       final onboardingService = OnboardingService();
       await onboardingService.markOnboardingComplete();
 
@@ -261,6 +234,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
         });
       }
     } catch (e) {
+      debugPrint('Error completing onboarding: $e');
       if (mounted) {
         JJSnackBar.showError(
           context: context,
