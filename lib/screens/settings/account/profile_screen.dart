@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
 import '../../../electrical_components/jj_circuit_breaker_switch.dart';
 import '../../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
+import '../../../services/avatar_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -19,6 +22,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   OverlayEntry? _overlayEntry;
   bool _hasShownTooltip = false;
   final GlobalKey _editButtonKey = GlobalKey();
+  String? _avatarUrl;
+  bool _isUploadingAvatar = false;
   
   // Personal Information Controllers
   final _firstNameController = TextEditingController(text: 'John');
@@ -174,6 +179,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         final data = doc.data()!;
         
         setState(() {
+          // Avatar
+          _avatarUrl = data['avatar_url'] ?? user.photoURL;
+          
           // Personal Information
           _firstNameController.text = data['first_name'] ?? _firstNameController.text;
           _lastNameController.text = data['last_name'] ?? _lastNameController.text;
@@ -439,6 +447,193 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     _loadUserData(); // Reset to original values from Firestore
   }
 
+  Future<void> _handleAvatarTap() async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryNavy.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      color: AppTheme.primaryNavy,
+                    ),
+                  ),
+                  title: const Text(
+                    'Take Photo',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.primaryNavy,
+                    ),
+                  ),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await _uploadAvatar(ImageSource.camera);
+                  },
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryNavy.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.photo_library,
+                      color: AppTheme.primaryNavy,
+                    ),
+                  ),
+                  title: const Text(
+                    'Choose from Gallery',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.primaryNavy,
+                    ),
+                  ),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await _uploadAvatar(ImageSource.gallery);
+                  },
+                ),
+                if (_avatarUrl != null) ...[
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                    ),
+                    title: const Text(
+                      'Remove Photo',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.red,
+                      ),
+                    ),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      await _removeAvatar();
+                    },
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _uploadAvatar(ImageSource source) async {
+    if (!mounted) return;
+    
+    setState(() {
+      _isUploadingAvatar = true;
+    });
+
+    try {
+      final avatarService = AvatarService();
+      final imageUrl = await avatarService.uploadAvatar(source);
+      
+      if (imageUrl != null && mounted) {
+        setState(() {
+          _avatarUrl = imageUrl;
+          _isUploadingAvatar = false;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Photo updated successfully'),
+            backgroundColor: AppTheme.successGreen,
+          ),
+        );
+      } else {
+        setState(() {
+          _isUploadingAvatar = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isUploadingAvatar = false;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to upload photo: ${e.toString()}'),
+            backgroundColor: AppTheme.errorRed,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _removeAvatar() async {
+    if (!mounted) return;
+    
+    setState(() {
+      _isUploadingAvatar = true;
+    });
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({'avatar_url': FieldValue.delete()});
+        
+        if (mounted) {
+          setState(() {
+            _avatarUrl = null;
+            _isUploadingAvatar = false;
+          });
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Photo removed successfully'),
+              backgroundColor: AppTheme.successGreen,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isUploadingAvatar = false;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to remove photo: ${e.toString()}'),
+            backgroundColor: AppTheme.errorRed,
+          ),
+        );
+      }
+    }
+  }
+
   // Method to check if keyboard is visible by checking the bottom viewInsets
   bool _isKeyboardVisible() {
     return MediaQuery.of(context).viewInsets.bottom > 0;
@@ -489,18 +684,83 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             ),
             child: Row(
               children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: AppTheme.accentCopper,
-                    shape: BoxShape.circle,
-                    boxShadow: [AppTheme.shadowMd],
-                  ),
-                  child: const Icon(
-                    Icons.person,
-                    size: 40,
-                    color: AppTheme.white,
+                GestureDetector(
+                  onTap: _isEditing ? _handleAvatarTap : null,
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: AppTheme.accentCopper,
+                          shape: BoxShape.circle,
+                          boxShadow: [AppTheme.shadowMd],
+                        ),
+                        child: ClipOval(
+                          child: _avatarUrl != null
+                              ? CachedNetworkImage(
+                                  imageUrl: _avatarUrl!,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(
+                                    color: AppTheme.accentCopper,
+                                    child: const Center(
+                                      child: CircularProgressIndicator(
+                                        color: AppTheme.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) => const Icon(
+                                    Icons.person,
+                                    size: 40,
+                                    color: AppTheme.white,
+                                  ),
+                                )
+                              : const Icon(
+                                  Icons.person,
+                                  size: 40,
+                                  color: AppTheme.white,
+                                ),
+                        ),
+                      ),
+                      if (_isEditing)
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            width: 28,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryNavy,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppTheme.white,
+                                width: 2,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt,
+                              size: 16,
+                              color: AppTheme.white,
+                            ),
+                          ),
+                        ),
+                      if (_isUploadingAvatar)
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppTheme.black.withOpacity(0.5),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                color: AppTheme.white,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
                 const SizedBox(width: AppTheme.spacingMd),
@@ -579,13 +839,16 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
 
           // Save button (when editing and keyboard is not visible)
           if (_isEditing && !_isKeyboardVisible())
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingMd),
-              child: JJPrimaryButton(
-                text: 'Save Changes',
-                icon: Icons.save,
-                onPressed: _saveProfile,
-                isFullWidth: true,
+            SafeArea(
+              top: false,
+              child: Container(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                child: JJPrimaryButton(
+                  text: 'Save Changes',
+                  icon: Icons.save,
+                  onPressed: _saveProfile,
+                  isFullWidth: true,
+                ),
               ),
             ),
         ],
@@ -704,6 +967,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                           value: _stateController.text.isNotEmpty && _usStates.contains(_stateController.text.toUpperCase())
                               ? _stateController.text.toUpperCase()
                               : null,
+                          isExpanded: true,  // Add this to prevent overflow
                           decoration: const InputDecoration(
                             labelText: 'State',
                             border: InputBorder.none,
@@ -715,7 +979,10 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                           items: _usStates.map((state) {
                             return DropdownMenuItem(
                               value: state,
-                              child: Text(state),
+                              child: Text(
+                                state,
+                                overflow: TextOverflow.ellipsis,  // Add overflow handling
+                              ),
                             );
                           }).toList(),
                           onChanged: (value) {

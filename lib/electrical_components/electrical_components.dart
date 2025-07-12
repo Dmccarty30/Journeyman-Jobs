@@ -15,8 +15,6 @@ export 'jj_circuit_breaker_switch.dart';
 export 'jj_circuit_breaker_switch_list_tile.dart';
 export 'circuit_breaker_toggle.dart';
 
-// Legacy Components (deprecated - use JJ circuit breaker switches instead)
-export 'electrical_switch.dart';
 
 // Static Icons
 export 'hard_hat_icon.dart';

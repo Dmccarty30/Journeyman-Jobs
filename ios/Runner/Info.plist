@@ -56,5 +56,13 @@
 	<!-- Permission descriptions -->
 	<key>NSUserNotificationAlertStyle</key>
 	<string>alert</string>
+	
+	<!-- Image Picker permissions -->
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to take photos for your profile picture</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs photo library access to select photos for your profile picture</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs microphone access to record videos</string>
 </dict>
 </plist>

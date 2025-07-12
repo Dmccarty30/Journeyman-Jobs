@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
@@ -14,6 +15,48 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  String? _ticketNumber;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        
+        if (doc.exists && mounted) {
+          setState(() {
+            _ticketNumber = doc.data()?['ticket_number']?.toString();
+            _isLoading = false;
+          });
+        } else if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -40,6 +83,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               decoration: BoxDecoration(
                 gradient: AppTheme.cardGradient,
                 borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(
+                  color: AppTheme.accentCopper,
+                  width: 2.0,
+                ),
                 boxShadow: [AppTheme.shadowMd],
               ),
               child: Column(
@@ -66,12 +113,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppTheme.spacingSm),
-                  Text(
-                    'IBEW Member',
-                    style: AppTheme.bodyMedium.copyWith(
-                      color: AppTheme.textSecondary,
+                  if (_isLoading)
+                    const SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ),
+                    )
+                  else
+                    Text(
+                      _ticketNumber != null ? 'Ticket #$_ticketNumber' : 'IBEW Member',
+                      style: AppTheme.bodyMedium.copyWith(
+                        color: AppTheme.textSecondary,
+                      ),
                     ),
-                  ),
                   const SizedBox(height: AppTheme.spacingLg),
                   JJPrimaryButton(
                     text: 'Edit Profile',
@@ -171,6 +227,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               decoration: BoxDecoration(
                 color: AppTheme.white,
                 borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(
+                  color: AppTheme.accentCopper,
+                  width: 2.0,
+                ),
                 boxShadow: [AppTheme.shadowSm],
               ),
               child: Column(
@@ -211,6 +271,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           decoration: BoxDecoration(
             color: AppTheme.white,
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+            border: Border.all(
+              color: AppTheme.accentCopper,
+              width: 2.0,
+            ),
             boxShadow: [AppTheme.shadowSm],
           ),
           child: Column(

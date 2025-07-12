@@ -34,7 +34,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> with SingleTicker
     FAQItem(
       category: 'Jobs',
       question: 'What does "Books On" mean in my profile?',
-      answer: '"Books On" refers to which book you\'re signed on with your local. Book 1 is for inside wiremen, Book 2 for linemen, etc. This helps match you with appropriate job opportunities.',
+      answer: '"Books on" refers to what books are you on what out of work books have you already signed in you\'re actively on SO that we know what locals and what jobs to present to you ahead of others so that we\'re not showing you jobs that you aren\'t able to bid for.',
     ),
     FAQItem(
       category: 'Jobs',
