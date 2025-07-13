@@ -222,7 +222,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
               selectedColor: AppTheme.accentCopper.withValues(alpha: 0.2),
               checkmarkColor: AppTheme.accentCopper,
               side: _conduitType == type 
-                  ? const BorderSide(color: AppTheme.accentCopper, width: 2)
+                  ? const BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthThick)
                   : null,
             )).toList(),
           ),
@@ -697,7 +697,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-              borderSide: const BorderSide(color: AppTheme.accentCopper, width: 2),
+              borderSide: const BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthThick),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: AppTheme.spacingMd,

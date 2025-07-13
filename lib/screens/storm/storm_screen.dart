@@ -472,7 +472,7 @@ class StormEventCard extends StatelessWidget {
         color: AppTheme.white,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         boxShadow: [AppTheme.shadowSm],
-        border: Border.all(color: _severityColor, width: 2),
+        border: Border.all(color: _severityColor, width: AppTheme.borderWidthThick),
       ),
       child: Material(
         color: Colors.transparent,

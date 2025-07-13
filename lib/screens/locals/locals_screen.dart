@@ -203,7 +203,7 @@ class LocalCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         side: const BorderSide(
           color: AppTheme.accentCopper,
-          width: 1.0,
+          width: AppTheme.borderWidthThin,
         ),
       ),
       child: InkWell(

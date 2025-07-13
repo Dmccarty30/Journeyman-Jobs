@@ -594,7 +594,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
               selectedColor: AppTheme.accentCopper.withValues(alpha: 0.2),
               checkmarkColor: AppTheme.accentCopper,
               side: _systemVoltage == voltage 
-                  ? const BorderSide(color: AppTheme.accentCopper, width: 2)
+                  ? const BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthThick)
                   : null,
             )).toList(),
           ),

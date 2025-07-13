@@ -10,7 +10,6 @@
 
 ## 🧱 Code Structure & Modularity
 
-- **Never create a file longer than 500 lines.** If approaching this limit, refactor into smaller widgets or helper files.
 - **Follow Flutter's feature-based architecture**:
 
   ```tree

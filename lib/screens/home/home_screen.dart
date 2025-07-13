@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../design_system/illustrations/electrical_illustrations.dart';
 import '../../navigation/app_router.dart';
+import '../../providers/home_provider.dart';
+import '../../backend/schema/jobs_record.dart';
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 import 'dart:math' as math;
 
@@ -64,11 +67,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Welcome section with user data
-            StreamBuilder<User?>(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, authSnapshot) {
-                if (!authSnapshot.hasData || authSnapshot.data == null) {
+            // Welcome section with user data - Using Provider pattern
+            Consumer<HomeProvider>(
+              builder: (context, homeProvider, child) {
+                if (!homeProvider.isAuthenticated) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -90,79 +92,61 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
 
-                final user = authSnapshot.data!;
-                return StreamBuilder<DocumentSnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(user.uid)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    String firstName = 'User';
-                    String lastName = '';
-                    String? photoUrl;
+                final displayName = homeProvider.getUserDisplayName();
+                final photoUrl = homeProvider.getUserPhotoUrl();
+                final userInitial = homeProvider.getUserInitial();
 
-                    if (snapshot.hasData && snapshot.data!.exists) {
-                      final userData = snapshot.data!.data() as Map<String, dynamic>?;
-                      if (userData != null) {
-                        firstName = userData['first_name'] ?? 'User';
-                        lastName = userData['last_name'] ?? '';
-                        photoUrl = userData['photo_url'];
-                      }
-                    }
-
-                    return Row(
-                      children: [
-                        // Avatar
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundColor: AppTheme.primaryNavy,
-                          backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
-                          child: photoUrl == null
-                              ? Text(
-                                  firstName.isNotEmpty ? firstName[0].toUpperCase() : 'U',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              : null,
-                        ),
-                        const SizedBox(width: AppTheme.spacingMd),
-                        // Welcome text
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Welcome back!',
-                                style: AppTheme.headlineMedium.copyWith(
-                                  color: AppTheme.primaryNavy,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                return Row(
+                  children: [
+                    // Avatar
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: AppTheme.primaryNavy,
+                      backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+                      child: photoUrl == null
+                          ? Text(
+                              userInitial,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
                               ),
-                              const SizedBox(height: AppTheme.spacingSm),
-                              Text(
-                                '$firstName $lastName'.trim(),
-                                style: AppTheme.bodyLarge.copyWith(
-                                  color: AppTheme.textSecondary,
-                                ),
-                              ),
-                            ],
+                            )
+                          : null,
+                    ),
+                    const SizedBox(width: AppTheme.spacingMd),
+                    // Welcome text
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Welcome back!',
+                            style: AppTheme.headlineMedium.copyWith(
+                              color: AppTheme.primaryNavy,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        // Notifications button
-                        IconButton(
-                          onPressed: () => context.push(AppRouter.notifications),
-                          icon: Icon(
-                            Icons.notifications_outlined,
-                            color: AppTheme.primaryNavy,
-                            size: AppTheme.iconLg,
+                          const SizedBox(height: AppTheme.spacingSm),
+                          Text(
+                            displayName,
+                            style: AppTheme.bodyLarge.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
+                        ],
+                      ),
+                    ),
+                    // Notifications button
+                    IconButton(
+                      onPressed: () => context.push(AppRouter.notifications),
+                      icon: Icon(
+                        Icons.notifications_outlined,
+                        color: AppTheme.primaryNavy,
+                        size: AppTheme.iconLg,
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
@@ -208,82 +192,73 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: AppTheme.spacingMd),
 
-            // Suggested job cards from Firestore
-            StreamBuilder<User?>(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, authSnapshot) {
-                final user = authSnapshot.data;
+            // Suggested job cards from Provider
+            Consumer<HomeProvider>(
+              builder: (context, homeProvider, child) {
+                if (homeProvider.isLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
+                    ),
+                  );
+                }
 
-                return StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('jobs')
-                      .limit(10) // Limit initial query
-                      .snapshots(),
-                  builder: (context, jobSnapshot) {
-                    if (jobSnapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-
-                    if (!jobSnapshot.hasData || jobSnapshot.data!.docs.isEmpty) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(AppTheme.spacingLg),
-                          child: Text(
-                            'No jobs available at the moment',
+                if (homeProvider.error != null) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppTheme.spacingLg),
+                      child: Column(
+                        children: [
+                          Text(
+                            'Error loading jobs',
                             style: AppTheme.bodyLarge.copyWith(
-                              color: AppTheme.textSecondary,
+                              color: AppTheme.errorRed,
                             ),
                           ),
+                          const SizedBox(height: AppTheme.spacingSm),
+                          ElevatedButton(
+                            onPressed: () => homeProvider.refreshJobs(),
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                if (homeProvider.jobs.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppTheme.spacingLg),
+                      child: Text(
+                        'No jobs available at the moment',
+                        style: AppTheme.bodyLarge.copyWith(
+                          color: AppTheme.textSecondary,
                         ),
-                      );
-                    }
+                      ),
+                    ),
+                  );
+                }
 
-                    // Get user data for sorting
-                    return StreamBuilder<DocumentSnapshot>(
-                      stream: user != null
-                          ? FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(user.uid)
-                              .snapshots()
-                          : const Stream.empty(),
-                      builder: (context, userSnapshot) {
-                        Map<String, dynamic>? userData;
-                        if (userSnapshot.hasData && userSnapshot.data!.exists) {
-                          userData = userSnapshot.data!.data() as Map<String, dynamic>?;
-                        }
-
-                        // Sort jobs based on user preferences
-                        List<QueryDocumentSnapshot> sortedJobs = _sortJobsByUserPreferences(
-                          jobSnapshot.data!.docs,
-                          userData,
-                        );
-
-                        // Display sorted jobs
-                        return Column(
-                          children: sortedJobs.take(5).map((jobDoc) {
-                            final jobData = jobDoc.data() as Map<String, dynamic>;
-                            return GestureDetector(
-                              onTap: () => _showJobDetailsDialog(context, jobData),
-                              child: _buildSuggestedJobCard(
-                                jobData['classification'] ?? 'General Electrical',
-                                'Local ${jobData['local'] ?? 'N/A'}',
-                                jobData['company'] ?? 'Company Name',
-                                jobData['location'] ?? 'Location',
-                                '\$${jobData['wage'] ?? '0'}/hr',
-                                'Per Diem: \$${jobData['per_diem'] ?? '0'}/day',
-                                isEmergency: jobData['construction_type'] == 'Emergency' ||
-                                    jobData['construction_type'] == 'Storm',
-                                isHighVoltage: jobData['classification']?.toString().toLowerCase().contains('transmission') ?? false,
-                                hours: _parseHours(jobData['hours']),
-                              ),
-                            );
-                          }).toList(),
-                        );
-                      },
+                // Display jobs (limited to 5 for home screen)
+                return Column(
+                  children: homeProvider.jobs.take(5).map((job) {
+                    return GestureDetector(
+                      onTap: () => _showJobDetailsDialog(context, job),
+                      child: _buildSuggestedJobCard(
+                        job.classification.isNotEmpty ? job.classification : 'General Electrical',
+                        'Local ${job.local > 0 ? job.local.toString() : 'N/A'}',
+                        job.company.isNotEmpty ? job.company : 'Company Name',
+                        job.location.isNotEmpty ? job.location : 'Location',
+                        job.wage.isNotEmpty ? '\$${job.wage}/hr' : '\$0/hr',
+                        job.perDiem.isNotEmpty ? 'Per Diem: \$${job.perDiem}/day' : 'Per Diem: \$0/day',
+                        isEmergency: job.typeOfWork.toLowerCase().contains('emergency') ||
+                            job.typeOfWork.toLowerCase().contains('storm'),
+                        isHighVoltage: job.classification.toLowerCase().contains('transmission'),
+                        hours: _parseHours(job.hours),
+                      ),
                     );
-                  },
+                  }).toList(),
                 );
               },
             ),

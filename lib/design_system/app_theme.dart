@@ -23,6 +23,12 @@ class AppTheme {
   // Border Colors
   static const Color borderLight = lightGray;
   
+  // =================== BORDER WIDTHS ===================
+  
+  static const double borderWidthThin = 1.0;
+  static const double borderWidthMedium = 1.5;
+  static const double borderWidthThick = 2.0;
+  
   // Status Colors
   static const Color successGreen = Color(0xFF38A169);
   static const Color warningYellow = Color(0xFFD69E2E);
@@ -286,7 +292,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: primaryNavy,
-          side: const BorderSide(color: primaryNavy, width: 1.5),
+          side: const BorderSide(color: primaryNavy, width: borderWidthMedium),
           padding: const EdgeInsets.symmetric(horizontal: spacingLg, vertical: spacingMd),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusMd),
@@ -318,7 +324,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: accentCopper, width: 2),
+          borderSide: const BorderSide(color: accentCopper, width: borderWidthThick),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
@@ -326,7 +332,7 @@ class AppTheme {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: errorRed, width: 2),
+          borderSide: const BorderSide(color: errorRed, width: borderWidthThick),
         ),
         labelStyle: bodyMedium.copyWith(color: textSecondary),
         hintStyle: bodyMedium.copyWith(color: textLight),

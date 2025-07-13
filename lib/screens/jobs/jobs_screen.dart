@@ -200,8 +200,8 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
           color: isSelected ? null : AppTheme.lightGray,
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
           border: isSelected 
-            ? Border.all(color: AppTheme.accentCopper, width: 1)
-            : Border.all(color: AppTheme.lightGray, width: 1),
+            ? Border.all(color: AppTheme.accentCopper, width: AppTheme.borderWidthThin)
+            : Border.all(color: AppTheme.lightGray, width: AppTheme.borderWidthThin),
           boxShadow: isSelected ? [AppTheme.shadowSm] : null,
         ),
         child: Row(
@@ -262,8 +262,8 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         boxShadow: [AppTheme.shadowMd],
         border: isEmergency 
-          ? Border.all(color: AppTheme.errorRed, width: 2)
-          : Border.all(color: AppTheme.accentCopper.withValues(alpha: 0.3), width: 1),
+          ? Border.all(color: AppTheme.errorRed, width: AppTheme.borderWidthThick)
+          : Border.all(color: AppTheme.accentCopper.withValues(alpha: 0.3), width: AppTheme.borderWidthThin),
       ),
       child: Material(
         color: Colors.transparent,
@@ -355,7 +355,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                         decoration: BoxDecoration(
                           color: voltageColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                          border: Border.all(color: voltageColor, width: 1),
+                          border: Border.all(color: voltageColor, width: AppTheme.borderWidthThin),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -556,7 +556,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  borderSide: BorderSide(color: AppTheme.accentCopper, width: 2),
+                  borderSide: BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthThick),
                 ),
               ),
               onChanged: (value) {
@@ -639,7 +639,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  borderSide: BorderSide(color: AppTheme.accentCopper, width: 2),
+                  borderSide: BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthThick),
                 ),
               ),
             ),
@@ -1119,7 +1119,7 @@ class JobDetailsSheet extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: voltageColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  border: Border.all(color: voltageColor, width: 2),
+                  border: Border.all(color: voltageColor, width: AppTheme.borderWidthThick),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

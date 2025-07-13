@@ -2,6 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  
+  // Performance optimization constants
+  static const int DEFAULT_PAGE_SIZE = 20;
+  static const int MAX_PAGE_SIZE = 100;
 
   // Get Firestore instance
   FirebaseFirestore get firestore => _firestore;
@@ -88,10 +92,15 @@ class FirestoreService {
 
   // Job Operations
   Stream<QuerySnapshot> getJobs({
-    int? limit,
+    int limit = DEFAULT_PAGE_SIZE,
     DocumentSnapshot? startAfter,
     Map<String, dynamic>? filters,
   }) {
+    // Enforce pagination limits for performance
+    if (limit > MAX_PAGE_SIZE) {
+      limit = MAX_PAGE_SIZE;
+    }
+    
     Query query = jobsCollection.orderBy('timestamp', descending: true);
 
     // Apply filters
@@ -110,9 +119,8 @@ class FirestoreService {
       }
     }
 
-    if (limit != null) {
-      query = query.limit(limit);
-    }
+    // Always enforce pagination
+    query = query.limit(limit);
 
     if (startAfter != null) {
       query = query.startAfterDocument(startAfter);
@@ -130,20 +138,58 @@ class FirestoreService {
   }
 
   // Local Union Operations
-  Stream<QuerySnapshot> getLocals() {
-    return localsCollection.orderBy('localUnion').snapshots();
+  Stream<QuerySnapshot> getLocals({
+    int limit = DEFAULT_PAGE_SIZE,
+    DocumentSnapshot? startAfter,
+    String? state,
+  }) {
+    // Enforce pagination limits for performance
+    if (limit > MAX_PAGE_SIZE) {
+      limit = MAX_PAGE_SIZE;
+    }
+    
+    Query query = localsCollection.orderBy('localUnion');
+    
+    // Apply geographic filtering if provided
+    if (state != null && state.isNotEmpty) {
+      query = query.where('state', isEqualTo: state);
+    }
+    
+    // Always enforce pagination
+    query = query.limit(limit);
+    
+    if (startAfter != null) {
+      query = query.startAfterDocument(startAfter);
+    }
+    
+    return query.snapshots();
   }
 
-  Future<QuerySnapshot> searchLocals(String searchTerm) async {
+  Future<QuerySnapshot> searchLocals(
+    String searchTerm, {
+    int limit = DEFAULT_PAGE_SIZE,
+    String? state,
+  }) async {
     try {
-      // Note: This is a basic search. For more advanced search,
-      // consider using a search service like Algolia
-      final results = await localsCollection
-          .where('localUnion', isGreaterThanOrEqualTo: searchTerm)
-          .where('localUnion', isLessThanOrEqualTo: '$searchTerm\uf8ff')
-          .get();
+      // Enforce pagination limits for performance
+      if (limit > MAX_PAGE_SIZE) {
+        limit = MAX_PAGE_SIZE;
+      }
       
-      return results;
+      Query query = localsCollection;
+      
+      // Apply geographic filtering first (most selective)
+      if (state != null && state.isNotEmpty) {
+        query = query.where('state', isEqualTo: state);
+      }
+      
+      // Apply search filter
+      query = query
+          .where('localUnion', isGreaterThanOrEqualTo: searchTerm.toLowerCase())
+          .where('localUnion', isLessThanOrEqualTo: '${searchTerm.toLowerCase()}\uf8ff')
+          .limit(limit);
+      
+      return await query.get();
     } catch (e) {
       throw Exception('Error searching locals: $e');
     }

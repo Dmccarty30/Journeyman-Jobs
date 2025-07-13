@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 import 'design_system/app_theme.dart';
 import 'navigation/app_router.dart';
@@ -13,6 +14,12 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
   }
+  
+  // Enable Firestore offline persistence for better user experience
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+    cacheSizeBytes: 100 * 1024 * 1024, // 100MB cache
+  );
   
   runApp(const MyApp());
 }

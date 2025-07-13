@@ -288,7 +288,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                   decoration: BoxDecoration(
                     color: AppTheme.primaryNavy,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppTheme.accentCopper, width: 2),
+                    border: Border.all(color: AppTheme.accentCopper, width: AppTheme.borderWidthThick),
                     boxShadow: [
                       BoxShadow(
                         color: AppTheme.primaryNavy.withAlpha(51),
@@ -1213,7 +1213,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                   backgroundColor: AppTheme.lightGray,
                   selectedColor: AppTheme.accentCopper,
                   side: isSelected 
-                    ? BorderSide(color: AppTheme.primaryNavy, width: 2)
+                    ? BorderSide(color: AppTheme.primaryNavy, width: AppTheme.borderWidthThick)
                     : null,
                   labelStyle: TextStyle(
                     color: isSelected ? AppTheme.white : AppTheme.textPrimary,

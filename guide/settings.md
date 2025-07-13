@@ -11,6 +11,7 @@
 
 * Some where we need to add the ability to change the user's picture icon avatar so that they can upload a photo or choose a photo from their gallery
 * We need to implement the safe space for the bottom of the screen because when I'm in edit mode half of the save change button is covered up by my Android navigation bar This system navigation bar.
+* The save changes button needs to be stationary and stay visible above the Android navigation bar in edit mode
 
 ### Profile Screen
 

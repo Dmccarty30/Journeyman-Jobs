@@ -424,7 +424,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-              borderSide: const BorderSide(color: AppTheme.accentCopper, width: 2),
+              borderSide: const BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthThick),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: AppTheme.spacingMd,

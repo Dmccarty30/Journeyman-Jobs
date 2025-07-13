@@ -85,7 +85,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 borderRadius: BorderRadius.circular(AppTheme.radiusLg),
                 border: Border.all(
                   color: AppTheme.accentCopper,
-                  width: 2.0,
+                  width: AppTheme.borderWidthThin,
                 ),
                 boxShadow: [AppTheme.shadowMd],
               ),
@@ -229,7 +229,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 borderRadius: BorderRadius.circular(AppTheme.radiusLg),
                 border: Border.all(
                   color: AppTheme.accentCopper,
-                  width: 2.0,
+                  width: AppTheme.borderWidthThin,
                 ),
                 boxShadow: [AppTheme.shadowSm],
               ),
@@ -273,7 +273,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
               color: AppTheme.accentCopper,
-              width: 2.0,
+              width: AppTheme.borderWidthThin,
             ),
             boxShadow: [AppTheme.shadowSm],
           ),
