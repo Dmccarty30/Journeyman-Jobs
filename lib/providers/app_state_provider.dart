@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/job_model.dart';
-import '../models/local_model.dart';
 import '../models/user_model.dart';
 import '../models/filter_criteria.dart';
+import '../models/locals_record.dart';
 import '../services/auth_service.dart';
 import '../services/resilient_firestore_service.dart';
 import '../services/connectivity_service.dart';
@@ -28,7 +28,7 @@ class AppStateProvider extends ChangeNotifier {
   User? _user;
   UserModel? _userProfile;
   List<Job> _jobs = [];
-  List<Local> _locals = [];
+  List<LocalsRecord> _locals = [];
   JobFilterCriteria _activeFilter = JobFilterCriteria.empty();
   
   // UI state
@@ -56,7 +56,7 @@ class AppStateProvider extends ChangeNotifier {
   User? get user => _user;
   UserModel? get userProfile => _userProfile;
   List<Job> get jobs => _jobs;
-  List<Local> get locals => _locals;
+  List<LocalsRecord> get locals => _locals;
   JobFilterCriteria get activeFilter => _activeFilter;
   
   // Loading state getters
@@ -208,7 +208,7 @@ class AppStateProvider extends ChangeNotifier {
       );
       
       final newJobs = snapshot.docs
-          .map((doc) => Job.fromFirestore(doc))
+          .map((doc) => Job.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>))
           .toList();
       
       if (isRefresh) {
@@ -261,10 +261,10 @@ class AppStateProvider extends ChangeNotifier {
         state: userState,
         startAfter: _lastLocalDocument,
         limit: 50,
-      );
+      ).first;
       
       final newLocals = snapshot.docs
-          .map((doc) => Local.fromFirestore(doc))
+          .map((doc) => LocalsRecord.fromFirestore(doc))
           .toList();
       
       if (isRefresh) {
@@ -336,10 +336,6 @@ class AppStateProvider extends ChangeNotifier {
 
   /// Refresh stale data when connectivity is restored
   Future<void> _refreshStaleData() async {
-    // Define staleness threshold (e.g., 15 minutes)
-    const staleThreshold = Duration(minutes: 15);
-    final now = DateTime.now();
-    
     // Check if data is stale and refresh if needed
     bool needsRefresh = false;
     
@@ -393,7 +389,7 @@ class AppStateProvider extends ChangeNotifier {
     notifyListeners();
     
     try {
-      await _authService.signInWithEmailAndPassword(email, password);
+      await _authService.signInWithEmailAndPassword(email: email, password: password);
       return true;
     } catch (e) {
       _authError = e.toString();
@@ -411,7 +407,7 @@ class AppStateProvider extends ChangeNotifier {
     notifyListeners();
     
     try {
-      await _authService.signUpWithEmailAndPassword(email, password);
+      await _authService.signUpWithEmailAndPassword(email: email, password: password);
       return true;
     } catch (e) {
       _authError = e.toString();

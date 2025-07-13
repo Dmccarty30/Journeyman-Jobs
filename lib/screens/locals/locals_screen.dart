@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '/backend/schema/locals_record.dart';
+import '/models/locals_record.dart';
 import '/design_system/app_theme.dart';
-import '/services/resilient_firestore_service.dart';
+import '/providers/app_state_provider.dart';
 import 'dart:io' show Platform;
 
 class LocalsScreen extends StatefulWidget {
@@ -15,20 +15,17 @@ class LocalsScreen extends StatefulWidget {
 
 class _LocalsScreenState extends State<LocalsScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final ResilientFirestoreService _firestoreService = ResilientFirestoreService();
   final ScrollController _scrollController = ScrollController();
   
   String _searchQuery = '';
-  List<LocalsRecord> _locals = [];
-  bool _isLoading = false;
-  bool _hasMore = true;
-  DocumentSnapshot? _lastDocument;
   String? _selectedState;
 
   @override
   void initState() {
     super.initState();
-    _loadInitialLocals();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppStateProvider>().refreshLocals();
+    });
     _scrollController.addListener(_onScroll);
   }
 
@@ -40,110 +37,15 @@ class _LocalsScreenState extends State<LocalsScreen> {
   }
 
   void _onScroll() {
+    final appStateProvider = context.read<AppStateProvider>();
     if (_scrollController.position.pixels >= 
         _scrollController.position.maxScrollExtent * 0.8 && 
-        !_isLoading && 
-        _hasMore) {
-      _loadMoreLocals();
+        !appStateProvider.isLoadingLocals && 
+        appStateProvider.hasMoreLocals) {
+      appStateProvider.loadMoreLocals();
     }
   }
 
-  Future<void> _loadInitialLocals() async {
-    setState(() {
-      _isLoading = true;
-      _locals.clear();
-      _lastDocument = null;
-      _hasMore = true;
-    });
-
-    try {
-      final snapshot = await _firestoreService.getLocals(
-        limit: 50,
-        state: _selectedState,
-      ).first;
-      
-      _locals = snapshot.docs.map((doc) => LocalsRecord.fromSnapshot(doc)).toList();
-      _lastDocument = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
-      _hasMore = snapshot.docs.length == 50;
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading locals: $e')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  Future<void> _loadMoreLocals() async {
-    if (_isLoading || !_hasMore) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final snapshot = await _firestoreService.getLocals(
-        limit: 50,
-        startAfter: _lastDocument,
-        state: _selectedState,
-      ).first;
-      
-      final newLocals = snapshot.docs.map((doc) => LocalsRecord.fromSnapshot(doc)).toList();
-      
-      setState(() {
-        _locals.addAll(newLocals);
-        _lastDocument = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
-        _hasMore = snapshot.docs.length == 50;
-      });
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading more locals: $e')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  Future<void> _searchLocals() async {
-    if (_searchQuery.isEmpty) {
-      _loadInitialLocals();
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-      _locals.clear();
-    });
-
-    try {
-      final results = await _firestoreService.searchLocals(
-        _searchQuery,
-        limit: 50,
-        state: _selectedState,
-      );
-      
-      setState(() {
-        _locals = results.docs.map((doc) => LocalsRecord.fromSnapshot(doc)).toList();
-        _hasMore = false; // Search doesn't support pagination yet
-      });
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error searching locals: $e')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -188,16 +90,8 @@ class _LocalsScreenState extends State<LocalsScreen> {
                 setState(() {
                   _searchQuery = value.toLowerCase();
                 });
-                // Debounce search after 500ms
-                if (_searchQuery.isNotEmpty) {
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    if (_searchQuery == value.toLowerCase() && mounted) {
-                      _searchLocals();
-                    }
-                  });
-                } else {
-                  _loadInitialLocals();
-                }
+                // Note: Search functionality would need to be implemented in AppStateProvider
+                // For now, we'll handle search on the UI side in the Consumer
               },
             ),
           ),
@@ -229,22 +123,26 @@ class _LocalsScreenState extends State<LocalsScreen> {
                 setState(() {
                   _selectedState = value;
                 });
-                _loadInitialLocals();
+                context.read<AppStateProvider>().refreshLocals();
               },
             ),
           ),
           const SizedBox(height: AppTheme.spacingSm),
           // Locals list
           Expanded(
-            child: _buildLocalsList(),
+            child: Consumer<AppStateProvider>(
+              builder: (context, appStateProvider, child) {
+                return _buildLocalsList(appStateProvider);
+              },
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLocalsList() {
-    if (_isLoading && _locals.isEmpty) {
+  Widget _buildLocalsList(AppStateProvider appStateProvider) {
+    if (appStateProvider.isLoadingLocals && appStateProvider.locals.isEmpty) {
       return const Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
@@ -252,7 +150,53 @@ class _LocalsScreenState extends State<LocalsScreen> {
       );
     }
 
-    if (_locals.isEmpty) {
+    if (appStateProvider.localsError != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: AppTheme.iconXxl,
+              color: AppTheme.errorRed,
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+            Text(
+              'Error loading locals',
+              style: AppTheme.headlineSmall.copyWith(
+                color: AppTheme.errorRed
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingSm),
+            Text(
+              appStateProvider.localsError!,
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.textSecondary
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+            ElevatedButton(
+              onPressed: () => appStateProvider.refreshLocals(),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Filter locals based on search query
+    List<LocalsRecord> filteredLocals = appStateProvider.locals;
+    if (_searchQuery.isNotEmpty) {
+      filteredLocals = appStateProvider.locals.where((local) {
+        return local.localUnion.toLowerCase().contains(_searchQuery) ||
+               local.city.toLowerCase().contains(_searchQuery) ||
+               local.state.toLowerCase().contains(_searchQuery) ||
+               (local.classification?.toLowerCase().contains(_searchQuery) ?? false);
+      }).toList();
+    }
+
+    if (filteredLocals.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -288,21 +232,26 @@ class _LocalsScreenState extends State<LocalsScreen> {
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.all(AppTheme.spacingMd),
-      itemCount: _locals.length + (_hasMore ? 1 : 0),
+      itemCount: filteredLocals.length + (appStateProvider.hasMoreLocals ? 1 : 0),
       itemBuilder: (context, index) {
-        if (index == _locals.length) {
+        if (index == filteredLocals.length) {
           // Loading indicator at the bottom
-          return const Center(
+          return Center(
             child: Padding(
-              padding: EdgeInsets.all(AppTheme.spacingMd),
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
-              ),
+              padding: const EdgeInsets.all(AppTheme.spacingMd),
+              child: appStateProvider.isLoadingLocals
+                  ? const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
+                    )
+                  : ElevatedButton(
+                      onPressed: () => appStateProvider.loadMoreLocals(),
+                      child: const Text('Load More'),
+                    ),
             ),
           );
         }
 
-        final local = _locals[index];
+        final local = filteredLocals[index];
         return LocalCard(
           local: local,
           onTap: () => _showLocalDetails(context, local),
@@ -396,25 +345,25 @@ class LocalCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (local.address.isNotEmpty) ...[
+                  if (local.address?.isNotEmpty == true) ...[
                     _buildInfoRow(
                       context,
                       'Address',
-                      local.address,
+                      local.address!,
                       Icons.location_on_outlined,
                       canTap: true,
-                      onTap: () => _launchMaps(local.address, local.city, local.state),
+                      onTap: () => _launchMaps(local.address!, local.city, local.state),
                     ),
                     const SizedBox(height: AppTheme.spacingSm),
                   ],
-                  if (local.phone.isNotEmpty) ...[
+                  if (local.phone?.isNotEmpty == true) ...[
                     _buildInfoRow(
                       context,
                       'Phone',
-                      local.phone,
+                      local.phone!,
                       Icons.phone_outlined,
                       canTap: true,
-                      onTap: () => _launchPhone(local.phone),
+                      onTap: () => _launchPhone(local.phone!),
                     ),
                     const SizedBox(height: AppTheme.spacingSm),
                   ],
@@ -429,21 +378,21 @@ class LocalCard extends StatelessWidget {
                     ),
                     const SizedBox(height: AppTheme.spacingSm),
                   ],
-                  if (local.website.isNotEmpty) ...[
+                  if (local.website?.isNotEmpty == true) ...[
                     _buildInfoRow(
                       context,
                       'Website',
-                      local.website,
+                      local.website!,
                       Icons.language_outlined,
                       canTap: true,
-                      onTap: () => _launchWebsite(local.website),
+                      onTap: () => _launchWebsite(local.website!),
                     ),
                     const SizedBox(height: AppTheme.spacingSm),
                   ],
                   _buildInfoRow(
                     context,
                     'Classification',
-                    local.classification,
+                    local.classification ?? 'Unknown',
                     Icons.work_outline,
                   ),
                 ],
@@ -608,14 +557,14 @@ class LocalDetailsDialog extends StatelessWidget {
                 ),
                 const SizedBox(height: AppTheme.spacingLg),
                 // Details
-                _buildDetailRow('Classification', local.classification),
-                _buildDetailRow('Address', local.address),
-                _buildDetailRow('Phone', local.phone),
+                _buildDetailRow('Classification', local.classification ?? 'Unknown'),
+                _buildDetailRow('Address', local.address ?? 'Not specified'),
+                _buildDetailRow('Phone', local.phone ?? 'Not specified'),
                 _buildDetailRow('Email', local.email),
-                _buildDetailRow('Website', local.website),
+                _buildDetailRow('Website', local.website ?? 'Not specified'),
                 const SizedBox(height: AppTheme.spacingLg),
                 // Additional Information
-                if (local.rawData != null && local.rawData!.isNotEmpty) ...[
+                if (local.data?.isNotEmpty == true) ...[
                   Text(
                     'Additional Information',
                     style: AppTheme.headlineSmall.copyWith(
@@ -633,7 +582,7 @@ class LocalDetailsDialog extends StatelessWidget {
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: local.rawData!.entries.map((entry) {
+                      children: local.data!.entries.map((entry) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                             vertical: AppTheme.spacingXs,

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
-import 'package:collection/collection.dart';
 
 /// Model class representing a Job posting
 /// Matches the backend JobsRecord schema

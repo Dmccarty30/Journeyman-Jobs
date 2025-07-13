@@ -4,8 +4,8 @@ class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   
   // Performance optimization constants
-  static const int DEFAULT_PAGE_SIZE = 20;
-  static const int MAX_PAGE_SIZE = 100;
+  static const int defaultPageSize = 20;
+  static const int maxPageSize = 100;
 
   // Get Firestore instance
   FirebaseFirestore get firestore => _firestore;
@@ -92,13 +92,13 @@ class FirestoreService {
 
   // Job Operations
   Stream<QuerySnapshot> getJobs({
-    int limit = DEFAULT_PAGE_SIZE,
+    int limit = defaultPageSize,
     DocumentSnapshot? startAfter,
     Map<String, dynamic>? filters,
   }) {
     // Enforce pagination limits for performance
-    if (limit > MAX_PAGE_SIZE) {
-      limit = MAX_PAGE_SIZE;
+    if (limit > maxPageSize) {
+      limit = maxPageSize;
     }
     
     Query query = jobsCollection.orderBy('timestamp', descending: true);
@@ -139,13 +139,13 @@ class FirestoreService {
 
   // Local Union Operations
   Stream<QuerySnapshot> getLocals({
-    int limit = DEFAULT_PAGE_SIZE,
+    int limit = defaultPageSize,
     DocumentSnapshot? startAfter,
     String? state,
   }) {
     // Enforce pagination limits for performance
-    if (limit > MAX_PAGE_SIZE) {
-      limit = MAX_PAGE_SIZE;
+    if (limit > maxPageSize) {
+      limit = maxPageSize;
     }
     
     Query query = localsCollection.orderBy('localUnion');
@@ -167,13 +167,13 @@ class FirestoreService {
 
   Future<QuerySnapshot> searchLocals(
     String searchTerm, {
-    int limit = DEFAULT_PAGE_SIZE,
+    int limit = defaultPageSize,
     String? state,
   }) async {
     try {
       // Enforce pagination limits for performance
-      if (limit > MAX_PAGE_SIZE) {
-        limit = MAX_PAGE_SIZE;
+      if (limit > maxPageSize) {
+        limit = maxPageSize;
       }
       
       Query query = localsCollection;

@@ -128,7 +128,7 @@ class AvatarService {
           initAspectRatio: CropAspectRatioPreset.square,
           lockAspectRatio: true,
           hideBottomControls: false,
-          dimmedLayerColor: Colors.black.withOpacity(0.8),
+          dimmedLayerColor: Colors.black.withValues(alpha: 0.8),
           activeControlsWidgetColor: const Color(0xFFB45309), // AppTheme.accentCopper
         ),
         IOSUiSettings(

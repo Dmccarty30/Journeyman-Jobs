@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Service for caching frequently accessed data
 /// 
@@ -13,32 +12,49 @@ class CacheService {
   factory CacheService() => _instance;
   CacheService._internal();
 
-  // In-memory cache
+  // In-memory cache with LRU tracking
   final Map<String, CacheEntry> _memoryCache = {};
+  final List<String> _accessOrder = []; // LRU tracking
+  
+  // Statistics
+  int _hitCount = 0;
+  int _missCount = 0;
+  int _evictionCount = 0;
+  DateTime? _lastCleanup;
   
   // Cache configuration
-  static const Duration DEFAULT_TTL = Duration(minutes: 30);
-  static const Duration USER_DATA_TTL = Duration(hours: 2);
-  static const Duration LOCALS_TTL = Duration(days: 1);
-  static const Duration JOBS_TTL = Duration(minutes: 15);
-  static const int MAX_MEMORY_ENTRIES = 500;
+  static const Duration defaultTtl = Duration(minutes: 30);
+  static const Duration userDataTtl = Duration(hours: 2);
+  static const Duration localsTtl = Duration(days: 1);
+  static const Duration jobsTtl = Duration(minutes: 15);
+  static const int maxMemoryEntries = 100; // Reduced for better performance
+  static const int maxPersistentEntries = 500;
   
   // Cache keys
-  static const String USER_DATA_PREFIX = 'user_data_';
-  static const String LOCALS_PREFIX = 'locals_';
-  static const String JOBS_PREFIX = 'jobs_';
-  static const String POPULAR_JOBS_KEY = 'popular_jobs';
-  static const String USER_PREFERENCES_PREFIX = 'user_prefs_';
+  static const String userDataPrefix = 'user_data_';
+  static const String localsPrefix = 'locals_';
+  static const String jobsPrefix = 'jobs_';
+  static const String popularJobsKey = 'popular_jobs';
+  static const String userPreferencesPrefix = 'user_prefs_';
   
   /// Get data from cache (memory first, then persistent)
   Future<T?> get<T>(String key, {T Function(Map<String, dynamic>)? fromJson}) async {
+    // Periodic cleanup to remove expired entries
+    _performPeriodicCleanup();
+    
     // Check memory cache first
     final memoryEntry = _memoryCache[key];
     if (memoryEntry != null && !memoryEntry.isExpired) {
+      _hitCount++;
+      _updateAccessOrder(key); // Update LRU tracking
+      
       if (kDebugMode) {
         print('Cache HIT (memory): $key');
       }
       return memoryEntry.data as T?;
+    } else if (memoryEntry != null && memoryEntry.isExpired) {
+      // Remove expired entry from memory
+      _removeFromMemoryCache(key);
     }
     
     // Check persistent cache
@@ -60,8 +76,9 @@ class CacheService {
             result = data as T?;
           }
           
-          // Update memory cache
+          // Update memory cache with LRU enforcement
           _setMemoryCache(key, result, ttl);
+          _hitCount++;
           
           if (kDebugMode) {
             print('Cache HIT (persistent): $key');
@@ -81,6 +98,8 @@ class CacheService {
       }
     }
     
+    _missCount++;
+    
     if (kDebugMode) {
       print('Cache MISS: $key');
     }
@@ -94,9 +113,9 @@ class CacheService {
     Duration? ttl,
     bool persistentOnly = false,
   }) async {
-    ttl ??= DEFAULT_TTL;
+    ttl ??= defaultTtl;
     
-    // Set in memory cache
+    // Set in memory cache with LRU enforcement
     if (!persistentOnly) {
       _setMemoryCache(key, data, ttl);
     }
@@ -123,7 +142,7 @@ class CacheService {
   
   /// Remove data from cache
   Future<void> remove(String key) async {
-    _memoryCache.remove(key);
+    _removeFromMemoryCache(key);
     
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -142,15 +161,19 @@ class CacheService {
   /// Clear all cache data
   Future<void> clear() async {
     _memoryCache.clear();
+    _accessOrder.clear();
+    _hitCount = 0;
+    _missCount = 0;
+    _evictionCount = 0;
     
     try {
       final prefs = await SharedPreferences.getInstance();
       final keys = prefs.getKeys().where((key) => 
-        key.startsWith(USER_DATA_PREFIX) ||
-        key.startsWith(LOCALS_PREFIX) ||
-        key.startsWith(JOBS_PREFIX) ||
-        key.startsWith(USER_PREFERENCES_PREFIX) ||
-        key == POPULAR_JOBS_KEY
+        key.startsWith(userDataPrefix) ||
+        key.startsWith(localsPrefix) ||
+        key.startsWith(jobsPrefix) ||
+        key.startsWith(userPreferencesPrefix) ||
+        key == popularJobsKey
       ).toList();
       
       for (final key in keys) {
@@ -183,11 +206,11 @@ class CacheService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final keys = prefs.getKeys().where((key) => 
-        key.startsWith(USER_DATA_PREFIX) ||
-        key.startsWith(LOCALS_PREFIX) ||
-        key.startsWith(JOBS_PREFIX) ||
-        key.startsWith(USER_PREFERENCES_PREFIX) ||
-        key == POPULAR_JOBS_KEY
+        key.startsWith(userDataPrefix) ||
+        key.startsWith(localsPrefix) ||
+        key.startsWith(jobsPrefix) ||
+        key.startsWith(userPreferencesPrefix) ||
+        key == popularJobsKey
       ).toList();
       
       int expiredCount = 0;
@@ -223,12 +246,9 @@ class CacheService {
   
   /// Set data in memory cache with LRU eviction
   void _setMemoryCache<T>(String key, T data, Duration ttl) {
-    // Remove oldest entries if cache is full
-    if (_memoryCache.length >= MAX_MEMORY_ENTRIES) {
-      final oldestKey = _memoryCache.entries
-          .reduce((a, b) => a.value.createdAt.isBefore(b.value.createdAt) ? a : b)
-          .key;
-      _memoryCache.remove(oldestKey);
+    // Enforce LRU eviction if cache is full
+    while (_memoryCache.length >= maxMemoryEntries) {
+      _evictLeastRecentlyUsed();
     }
     
     _memoryCache[key] = CacheEntry(
@@ -236,6 +256,62 @@ class CacheService {
       createdAt: DateTime.now(),
       ttl: ttl,
     );
+    
+    _updateAccessOrder(key);
+  }
+  
+  /// Update LRU access order
+  void _updateAccessOrder(String key) {
+    _accessOrder.remove(key); // Remove if exists
+    _accessOrder.add(key); // Add to end (most recent)
+  }
+  
+  /// Remove from memory cache and update access order
+  void _removeFromMemoryCache(String key) {
+    _memoryCache.remove(key);
+    _accessOrder.remove(key);
+  }
+  
+  /// Evict least recently used entry
+  void _evictLeastRecentlyUsed() {
+    if (_accessOrder.isEmpty) return;
+    
+    final lruKey = _accessOrder.first;
+    _memoryCache.remove(lruKey);
+    _accessOrder.removeAt(0);
+    _evictionCount++;
+    
+    if (kDebugMode) {
+      print('Cache LRU EVICTED: $lruKey');
+    }
+  }
+  
+  /// Perform periodic cleanup of expired entries
+  void _performPeriodicCleanup() {
+    final now = DateTime.now();
+    _lastCleanup ??= now;
+    
+    // Run cleanup every 5 minutes
+    if (now.difference(_lastCleanup!) > const Duration(minutes: 5)) {
+      _cleanupExpiredMemoryEntries();
+      _lastCleanup = now;
+    }
+  }
+  
+  /// Clean up expired entries from memory cache
+  void _cleanupExpiredMemoryEntries() {
+    final expiredKeys = _memoryCache.entries
+        .where((entry) => entry.value.isExpired)
+        .map((entry) => entry.key)
+        .toList();
+    
+    for (final key in expiredKeys) {
+      _removeFromMemoryCache(key);
+    }
+    
+    if (kDebugMode && expiredKeys.isNotEmpty) {
+      print('Cache AUTO-CLEANUP: ${expiredKeys.length} expired entries removed');
+    }
   }
   
   /// Get cache statistics
@@ -244,12 +320,20 @@ class CacheService {
     final expiredMemoryEntries = _memoryCache.values
         .where((entry) => entry.isExpired)
         .length;
+    final totalRequests = _hitCount + _missCount;
+    final hitRate = totalRequests > 0 ? (_hitCount / totalRequests * 100) : 0.0;
     
     return {
       'memoryEntries': memoryEntries,
       'expiredMemoryEntries': expiredMemoryEntries,
-      'maxMemoryEntries': MAX_MEMORY_ENTRIES,
-      'memoryUsagePercent': (memoryEntries / MAX_MEMORY_ENTRIES * 100).round(),
+      'maxMemoryEntries': maxMemoryEntries,
+      'memoryUsagePercent': (memoryEntries / maxMemoryEntries * 100).round(),
+      'hitCount': _hitCount,
+      'missCount': _missCount,
+      'evictionCount': _evictionCount,
+      'hitRate': hitRate.toStringAsFixed(1),
+      'lastCleanup': _lastCleanup?.toIso8601String(),
+      'accessOrderLength': _accessOrder.length,
     };
   }
   
@@ -257,42 +341,42 @@ class CacheService {
   
   /// Cache user data
   Future<void> cacheUserData(String uid, Map<String, dynamic> userData) {
-    return set('${USER_DATA_PREFIX}$uid', userData, ttl: USER_DATA_TTL);
+    return set('$userDataPrefix$uid', userData, ttl: userDataTtl);
   }
   
   /// Get cached user data
   Future<Map<String, dynamic>?> getCachedUserData(String uid) {
-    return get<Map<String, dynamic>>('${USER_DATA_PREFIX}$uid');
+    return get<Map<String, dynamic>>('$userDataPrefix$uid');
   }
   
   /// Cache locals data
   Future<void> cacheLocals(List<Map<String, dynamic>> locals) {
-    return set('${LOCALS_PREFIX}all', locals, ttl: LOCALS_TTL);
+    return set('${localsPrefix}all', locals, ttl: localsTtl);
   }
   
   /// Get cached locals
   Future<List<Map<String, dynamic>>?> getCachedLocals() {
-    return get<List<Map<String, dynamic>>>('${LOCALS_PREFIX}all');
+    return get<List<Map<String, dynamic>>>('${localsPrefix}all');
   }
   
   /// Cache popular jobs
   Future<void> cachePopularJobs(List<Map<String, dynamic>> jobs) {
-    return set(POPULAR_JOBS_KEY, jobs, ttl: JOBS_TTL);
+    return set(popularJobsKey, jobs, ttl: jobsTtl);
   }
   
   /// Get cached popular jobs
   Future<List<Map<String, dynamic>>?> getCachedPopularJobs() {
-    return get<List<Map<String, dynamic>>>(POPULAR_JOBS_KEY);
+    return get<List<Map<String, dynamic>>>(popularJobsKey);
   }
   
   /// Cache user preferences
   Future<void> cacheUserPreferences(String uid, Map<String, dynamic> preferences) {
-    return set('${USER_PREFERENCES_PREFIX}$uid', preferences, ttl: USER_DATA_TTL);
+    return set('$userPreferencesPrefix$uid', preferences, ttl: userDataTtl);
   }
   
   /// Get cached user preferences
   Future<Map<String, dynamic>?> getCachedUserPreferences(String uid) {
-    return get<Map<String, dynamic>>('${USER_PREFERENCES_PREFIX}$uid');
+    return get<Map<String, dynamic>>('$userPreferencesPrefix$uid');
   }
 }
 

@@ -15,10 +15,10 @@ import '../models/user_model.dart';
 /// - Intelligent caching for frequently accessed data
 class ResilientFirestoreService extends FirestoreService {
   final CacheService _cacheService = CacheService();
-  static const int MAX_RETRIES = 3;
-  static const Duration INITIAL_RETRY_DELAY = Duration(seconds: 1);
-  static const Duration MAX_RETRY_DELAY = Duration(seconds: 10);
-  static const Duration CIRCUIT_BREAKER_TIMEOUT = Duration(minutes: 5);
+  static const int maxRetries = 3;
+  static const Duration initialRetryDelay = Duration(seconds: 1);
+  static const Duration maxRetryDelay = Duration(seconds: 10);
+  static const Duration circuitBreakerTimeout = Duration(minutes: 5);
   
   // Circuit breaker state
   bool _circuitOpen = false;
@@ -27,7 +27,7 @@ class ResilientFirestoreService extends FirestoreService {
   
   @override
   Stream<QuerySnapshot> getJobs({
-    int limit = DEFAULT_PAGE_SIZE,
+    int limit = FirestoreService.defaultPageSize,
     DocumentSnapshot? startAfter,
     Map<String, dynamic>? filters,
   }) {
@@ -43,7 +43,7 @@ class ResilientFirestoreService extends FirestoreService {
 
   @override
   Stream<QuerySnapshot> getLocals({
-    int limit = DEFAULT_PAGE_SIZE,
+    int limit = FirestoreService.defaultPageSize,
     DocumentSnapshot? startAfter,
     String? state,
   }) {
@@ -60,7 +60,7 @@ class ResilientFirestoreService extends FirestoreService {
   @override
   Future<QuerySnapshot> searchLocals(
     String searchTerm, {
-    int limit = DEFAULT_PAGE_SIZE,
+    int limit = FirestoreService.defaultPageSize,
     String? state,
   }) {
     return _executeWithRetryFuture(
@@ -103,7 +103,7 @@ class ResilientFirestoreService extends FirestoreService {
     );
     
     // Invalidate user cache after update
-    await _cacheService.remove('${CacheService.USER_DATA_PREFIX}$uid');
+    await _cacheService.remove('${CacheService.userDataPrefix}$uid');
     
     return result;
   }
@@ -148,7 +148,7 @@ class ResilientFirestoreService extends FirestoreService {
   Future<QuerySnapshot> getJobsWithFilter({
     required JobFilterCriteria filter,
     DocumentSnapshot? startAfter,
-    int limit = DEFAULT_PAGE_SIZE,
+    int limit = FirestoreService.defaultPageSize,
   }) async {
     return _executeWithRetryFuture(
       () async {
@@ -206,23 +206,20 @@ class ResilientFirestoreService extends FirestoreService {
         // Sorting
         switch (filter.sortBy) {
           case JobSortOption.datePosted:
-            query = query.orderBy('timestamp', 
-                descending: filter.sortDescending ?? true);
+            query = query.orderBy('timestamp',
+                descending: filter.sortDescending);
             break;
           case JobSortOption.startDate:
-            query = query.orderBy('startDate', 
-                descending: filter.sortDescending ?? false);
+            query = query.orderBy('startDate',
+                descending: filter.sortDescending);
             break;
           case JobSortOption.wage:
-            query = query.orderBy('wage', 
-                descending: filter.sortDescending ?? true);
+            query = query.orderBy('wage',
+                descending: filter.sortDescending);
             break;
-          case JobSortOption.local:
-            query = query.orderBy('local', 
-                descending: filter.sortDescending ?? false);
-            break;
-          case null:
-            // Default sort by timestamp
+          case JobSortOption.distance:
+            // Distance sorting would require location-based queries
+            // For now, default to timestamp sorting
             query = query.orderBy('timestamp', descending: true);
             break;
         }
@@ -276,11 +273,11 @@ class ResilientFirestoreService extends FirestoreService {
       _onSuccess();
       return result;
     } catch (error) {
-      if (_isRetryableError(error) && retryCount < MAX_RETRIES) {
+      if (_isRetryableError(error) && retryCount < maxRetries) {
         final delay = _calculateRetryDelay(retryCount);
         
         if (kDebugMode) {
-          print('$operationName failed (attempt ${retryCount + 1}/$MAX_RETRIES), retrying in ${delay.inMilliseconds}ms: $error');
+          print('$operationName failed (attempt ${retryCount + 1}/$maxRetries), retrying in ${delay.inMilliseconds}ms: $error');
         }
         
         await Future.delayed(delay);
@@ -310,11 +307,11 @@ class ResilientFirestoreService extends FirestoreService {
     }
 
     return operation().handleError((error) {
-      if (_isRetryableError(error) && retryCount < MAX_RETRIES) {
+      if (_isRetryableError(error) && retryCount < maxRetries) {
         final delay = _calculateRetryDelay(retryCount);
         
         if (kDebugMode) {
-          print('$operationName stream failed (attempt ${retryCount + 1}/$MAX_RETRIES), retrying in ${delay.inMilliseconds}ms: $error');
+          print('$operationName stream failed (attempt ${retryCount + 1}/$maxRetries), retrying in ${delay.inMilliseconds}ms: $error');
         }
         
         return Future.delayed(delay).then((_) {
@@ -336,7 +333,7 @@ class ResilientFirestoreService extends FirestoreService {
     if (!_circuitOpen) return false;
     
     if (_circuitOpenTime != null && 
-        DateTime.now().difference(_circuitOpenTime!) > CIRCUIT_BREAKER_TIMEOUT) {
+        DateTime.now().difference(_circuitOpenTime!) > circuitBreakerTimeout) {
       _resetCircuitBreaker();
       return false;
     }
@@ -362,7 +359,7 @@ class ResilientFirestoreService extends FirestoreService {
       _circuitOpenTime = DateTime.now();
       
       if (kDebugMode) {
-        print('Circuit breaker opened due to ${_failureCount} consecutive failures');
+        print('Circuit breaker opened due to $_failureCount consecutive failures');
       }
     }
   }
@@ -415,9 +412,9 @@ class ResilientFirestoreService extends FirestoreService {
 
   /// Calculate retry delay with exponential backoff and jitter
   Duration _calculateRetryDelay(int retryCount) {
-    final exponentialDelay = INITIAL_RETRY_DELAY * pow(2, retryCount);
+    final exponentialDelay = initialRetryDelay * pow(2, retryCount);
     final cappedDelay = Duration(
-      milliseconds: min(exponentialDelay.inMilliseconds, MAX_RETRY_DELAY.inMilliseconds),
+      milliseconds: min(exponentialDelay.inMilliseconds, maxRetryDelay.inMilliseconds),
     );
     
     // Add jitter to prevent thundering herd
@@ -451,7 +448,7 @@ class ResilientFirestoreService extends FirestoreService {
       'openSince': _circuitOpenTime?.toIso8601String(),
       'failureCount': _failureCount,
       'timeUntilReset': _circuitOpen && _circuitOpenTime != null
-          ? CIRCUIT_BREAKER_TIMEOUT.inSeconds - 
+          ? circuitBreakerTimeout.inSeconds - 
             DateTime.now().difference(_circuitOpenTime!).inSeconds
           : null,
     };
@@ -465,10 +462,10 @@ class ResilientFirestoreService extends FirestoreService {
   /// Get retry statistics for monitoring
   Map<String, dynamic> getRetryStatistics() {
     return {
-      'maxRetries': MAX_RETRIES,
-      'initialRetryDelay': INITIAL_RETRY_DELAY.inMilliseconds,
-      'maxRetryDelay': MAX_RETRY_DELAY.inMilliseconds,
-      'circuitBreakerTimeout': CIRCUIT_BREAKER_TIMEOUT.inMinutes,
+      'maxRetries': maxRetries,
+      'initialRetryDelay': initialRetryDelay.inMilliseconds,
+      'maxRetryDelay': maxRetryDelay.inMilliseconds,
+      'circuitBreakerTimeout': circuitBreakerTimeout.inMinutes,
     };
   }
 

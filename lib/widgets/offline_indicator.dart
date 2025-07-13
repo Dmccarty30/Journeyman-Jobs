@@ -350,8 +350,7 @@ class OfflineIndicator extends StatelessWidget {
   void _dismissIndicator(BuildContext context) {
     final connectivity = context.read<ConnectivityService>();
     // Reset the wasOffline flag to hide the indicator
-    connectivity._wasOffline = false;
-    connectivity.notifyListeners();
+    connectivity.resetOfflineFlag();
   }
 }
 
@@ -400,11 +399,3 @@ class CompactOfflineIndicator extends StatelessWidget {
   }
 }
 
-/// Utility extension to access private field
-extension ConnectivityServiceOfflineExtension on ConnectivityService {
-  // Helper to reset wasOffline status (accessed via extension)
-  void resetOfflineStatus() {
-    // This would normally be handled internally by the service
-    notifyListeners();
-  }
-}

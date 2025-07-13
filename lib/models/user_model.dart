@@ -14,6 +14,9 @@ class UserModel {
   final String phoneNumber;
   final String email;
   
+  /// Profile Information
+  final String? photoUrl;
+  
   /// Address Information
   final String address1;
   final String? address2;
@@ -59,6 +62,7 @@ class UserModel {
     required this.lastName,
     required this.phoneNumber,
     required this.email,
+    this.photoUrl,
     required this.address1,
     this.address2,
     required this.city,
@@ -91,6 +95,9 @@ class UserModel {
   /// Get full name
   String get fullName => '$firstName $lastName';
 
+  /// Get display name (alias for fullName)
+  String get displayName => fullName;
+
   /// Get formatted address
   String get fullAddress {
     final address = address2?.isNotEmpty == true 
@@ -110,6 +117,7 @@ class UserModel {
       'lastName': lastName,
       'phoneNumber': phoneNumber,
       'email': email,
+      'photoUrl': photoUrl,
       'address1': address1,
       'address2': address2,
       'city': city,
@@ -148,6 +156,7 @@ class UserModel {
       lastName: json['lastName'] as String,
       phoneNumber: json['phoneNumber'] as String,
       email: json['email'] as String,
+      photoUrl: json['photoUrl'] as String?,
       address1: json['address1'] as String,
       address2: json['address2'] as String?,
       city: json['city'] as String,
@@ -196,6 +205,7 @@ class UserModel {
     String? lastName,
     String? phoneNumber,
     String? email,
+    String? photoUrl,
     String? address1,
     String? address2,
     String? city,
@@ -230,6 +240,7 @@ class UserModel {
       lastName: lastName ?? this.lastName,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       email: email ?? this.email,
+      photoUrl: photoUrl ?? this.photoUrl,
       address1: address1 ?? this.address1,
       address2: address2 ?? this.address2,
       city: city ?? this.city,

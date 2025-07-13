@@ -113,7 +113,6 @@ class ConnectivityService extends ChangeNotifier {
         _connectionType = 'Other';
         break;
       case ConnectivityResult.none:
-      default:
         _connectionType = 'Offline';
         break;
     }
@@ -130,7 +129,7 @@ class ConnectivityService extends ChangeNotifier {
       // Came back online
       _lastOnlineTime = DateTime.now();
       if (kDebugMode) {
-        print('ConnectivityService: Connection restored (${_connectionType})');
+        print('ConnectivityService: Connection restored ($_connectionType)');
       }
     }
     
@@ -206,6 +205,12 @@ class ConnectivityService extends ChangeNotifier {
       'shouldSyncData': shouldSyncData(),
       'shouldDownloadLargeContent': shouldDownloadLargeContent(),
     };
+  }
+  
+  /// Reset the wasOffline flag (useful for dismissing offline indicators)
+  void resetOfflineFlag() {
+    _wasOffline = false;
+    notifyListeners();
   }
   
   @override

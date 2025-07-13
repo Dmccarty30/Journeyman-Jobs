@@ -1,10 +1,3 @@
-/// Electrical Components Library for Journeyman Jobs
-/// 
-/// A comprehensive collection of electrical-themed Flutter components
-/// including loading indicators, interactive switches, and icons.
-/// 
-/// Designed specifically for IBEW electrical workers and applications.
-
 // Loading Components
 export 'three_phase_sine_wave_loader.dart';
 export 'power_line_loader.dart';

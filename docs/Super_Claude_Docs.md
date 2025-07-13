@@ -11,6 +11,7 @@ SuperClaude is a sophisticated AI assistant framework with 18 commands, 4 MCP se
 ## **🔧 Core System Components**
 
 ### **1. Main Configuration Files**
+
 - **`.claude/settings.local.json`** - Basic Claude permissions and settings
 - **`.claude/shared/superclaude-core.yml`** - Core philosophy, standards, and workflows  
 - **`.claude/shared/superclaude-mcp.yml`** - MCP server integration details
@@ -18,6 +19,7 @@ SuperClaude is a sophisticated AI assistant framework with 18 commands, 4 MCP se
 - **`.claude/shared/superclaude-personas.yml`** - 9 specialized personas
 
 ### **2. Command Architecture**
+
 - **18 Core Commands** with intelligent workflows
 - **Universal Flag System** with inheritance patterns
 - **Task Management** with two-tier architecture
@@ -28,6 +30,7 @@ SuperClaude is a sophisticated AI assistant framework with 18 commands, 4 MCP se
 ## **🎭 Personas: When & Where to Use**
 
 ### **Development Personas**
+
 ```yaml
 --persona-frontend: "UI/UX focus, accessibility, React/Vue components"
   When: Building user interfaces, design systems, accessibility work
@@ -43,6 +46,7 @@ SuperClaude is a sophisticated AI assistant framework with 18 commands, 4 MCP se
 ```
 
 ### **Quality Personas**
+
 ```yaml
 --persona-analyzer: "Root cause analysis, evidence-based investigation"
   When: Debugging complex issues, investigating problems
@@ -62,6 +66,7 @@ SuperClaude is a sophisticated AI assistant framework with 18 commands, 4 MCP se
 ```
 
 ### **Improvement Personas**
+
 ```yaml
 --persona-refactorer: "Code quality, technical debt, maintainability"
   When: Cleaning up code, reducing technical debt
@@ -77,6 +82,7 @@ SuperClaude is a sophisticated AI assistant framework with 18 commands, 4 MCP se
 ## **🔌 MCP Servers: Capabilities & Usage**
 
 ### **Context7 (Library Documentation)**
+
 ```yaml
 Purpose: "Official library documentation & examples"
 When_to_Use:
@@ -95,6 +101,7 @@ Token_Cost: "Low-Medium"
 ```
 
 ### **Sequential (Complex Analysis)**
+
 ```yaml
 Purpose: "Multi-step problem solving & architectural thinking"
 When_to_Use:
@@ -113,6 +120,7 @@ Token_Cost: "Medium-High"
 ```
 
 ### **Magic (UI Components)**
+
 ```yaml
 Purpose: "UI component generation & design system integration"
 When_to_Use:
@@ -131,6 +139,7 @@ Token_Cost: "Medium"
 ```
 
 ### **Puppeteer (Browser Automation)**
+
 ```yaml
 Purpose: "E2E testing, performance validation, browser automation"
 When_to_Use:
@@ -153,6 +162,7 @@ Token_Cost: "Low (action-based)"
 ## **⚡ Key Commands & When to Use**
 
 ### **Analysis Commands**
+
 ```yaml
 /analyze: "Comprehensive codebase analysis"
   Flags: --code --arch --security --performance --c7 --seq
@@ -168,6 +178,7 @@ Token_Cost: "Low (action-based)"
 ```
 
 ### **Development Commands**
+
 ```yaml
 /build: "Feature implementation & project creation"
   Flags: --init --feature --react --api --magic --tdd
@@ -183,6 +194,7 @@ Token_Cost: "Low (action-based)"
 ```
 
 ### **Quality Commands**  
+
 ```yaml
 /improve: "Code quality & performance optimization"
   Flags: --quality --performance --security --iterate
@@ -194,6 +206,7 @@ Token_Cost: "Low (action-based)"
 ```
 
 ### **Operations Commands**
+
 ```yaml
 /deploy: "Production deployment & operations"
   Flags: --env --validate --monitor --checkpoint
@@ -209,6 +222,7 @@ Token_Cost: "Low (action-based)"
 ## **🎛 Universal Flags: Always Available**
 
 ### **Planning & Execution**
+
 ```yaml
 --plan: "Show execution plan before running"
 --dry-run: "Preview changes without execution"
@@ -217,6 +231,7 @@ Token_Cost: "Low (action-based)"
 ```
 
 ### **Thinking Modes**
+
 ```yaml
 --think: "Multi-file analysis (4K tokens)"
 --think-hard: "Deep architectural analysis (10K tokens)"  
@@ -224,6 +239,7 @@ Token_Cost: "Low (action-based)"
 ```
 
 ### **Compression & Performance**
+
 ```yaml
 --uc: "UltraCompressed mode (~70% token reduction)"
 --profile: "Detailed performance profiling"
@@ -231,6 +247,7 @@ Token_Cost: "Low (action-based)"
 ```
 
 ### **MCP Control**
+
 ```yaml
 --c7: "Enable Context7 documentation lookup"
 --seq: "Enable Sequential complex analysis"
@@ -245,6 +262,7 @@ Token_Cost: "Low (action-based)"
 ## **📋 Task Management System**
 
 ### **Two-Tier Architecture**
+
 ```yaml
 Level_1_Tasks: "High-level features (./claudedocs/tasks/)"
   Purpose: "Session persistence, git branching, requirement tracking"
@@ -256,6 +274,7 @@ Level_2_Todos: "Immediate actionable steps (TodoWrite/TodoRead)"
 ```
 
 ### **Auto-Trigger Rules**
+
 ```yaml
 Complex_Operations: "3+ steps → Auto-trigger TodoList"
 High_Risk: "Database changes, deployments → REQUIRE todos"
@@ -268,12 +287,14 @@ Multi_File: "6+ files → AUTO-TRIGGER for coordination"
 ## **🔒 Security Configuration**
 
 ### **OWASP Top 10 Integration**
+
 - **A01-A10 Coverage** with automated detection patterns
 - **CVE Scanning** for known vulnerabilities  
 - **Dependency Security** with license compliance
 - **Configuration Security** including hardcoded secrets detection
 
 ### **Security Command Usage**
+
 ```yaml
 /scan --security --owasp: "Full OWASP Top 10 scan"
 /analyze --security --seq: "Deep security analysis"  
@@ -285,6 +306,7 @@ Multi_File: "6+ files → AUTO-TRIGGER for coordination"
 ## **⚡ Performance Optimization**
 
 ### **UltraCompressed Mode**
+
 ```yaml
 Activation: "--uc flag | 'compress' keywords | Auto at >75% context"
 Benefits: "~70% token reduction | Faster responses | Cost efficiency"
@@ -292,6 +314,7 @@ Use_When: "Large codebases | Long sessions | Token budget constraints"
 ```
 
 ### **MCP Caching**
+
 ```yaml
 Context7: "1 hour TTL | Library documentation"
 Sequential: "Session duration | Analysis results"  
@@ -304,12 +327,14 @@ Parallel_Execution: "Independent MCP calls run simultaneously"
 ## **🚀 Quick Start Workflows**
 
 ### **New Project Setup**
+
 ```bash
 /build --init --feature --react --magic --c7
 # Creates React project with Magic components and Context7 documentation
 ```
 
 ### **Security Audit**
+
 ```bash
 /scan --security --owasp --deps --strict
 /analyze --security --seq
@@ -317,6 +342,7 @@ Parallel_Execution: "Independent MCP calls run simultaneously"
 ```
 
 ### **Performance Investigation**
+
 ```bash
 /analyze --performance --pup --profile
 /troubleshoot --seq --evidence  
@@ -324,6 +350,7 @@ Parallel_Execution: "Independent MCP calls run simultaneously"
 ```
 
 ### **Feature Development**
+
 ```bash
 /analyze --code --c7
 /design --api --seq
@@ -336,16 +363,19 @@ Parallel_Execution: "Independent MCP calls run simultaneously"
 ## **📊 Best Practices**
 
 ### **Evidence-Based Development**
+
 - **Required Language**: "may|could|potentially|typically|measured|documented"
 - **Prohibited Language**: "best|optimal|faster|secure|better|always|never"
 - **Research Standards**: Context7 for external libraries, official sources required
 
 ### **Quality Standards**  
+
 - **Git Safety**: Status→branch→fetch→pull workflow
 - **Testing**: TDD patterns, comprehensive coverage
 - **Security**: Zero tolerance for vulnerabilities
 
 ### **Performance Guidelines**
+
 - **Simple→Sonnet | Complex→Sonnet-4 | Critical→Opus-4**
 - **Native tools > MCP for simple tasks**
 - **Parallel execution for independent operations**
@@ -371,6 +401,7 @@ Parallel_Execution: "Independent MCP calls run simultaneously"
 ## **🔍 Advanced Configuration Details**
 
 ### **Core Philosophy**
+
 ```yaml
 Philosophy: "Code>docs | Simple→complex | Security→evidence→quality"
 Communication: "Format | Symbols: →|&|:|» | Structured>prose"
@@ -379,6 +410,7 @@ Stack: "React|TS|Vite + Node|Express|PostgreSQL + Git|ESLint|Jest"
 ```
 
 ### **Evidence-Based Standards**
+
 ```yaml
 Prohibited_Language: "best|optimal|faster|secure|better|improved|enhanced|always|never|guaranteed"
 Required_Language: "may|could|potentially|typically|often|sometimes|measured|documented"
@@ -387,6 +419,7 @@ Citations: "Official documentation required | Version compatibility verified | S
 ```
 
 ### **Token Economy & Optimization**
+
 ```yaml
 Model_Selection: "Simple→sonnet | Complex→sonnet-4 | Critical→opus-4"
 Optimization_Targets: "Efficiency | Evidence-based responses | Structured deliverables"
@@ -395,6 +428,7 @@ Symbols: "→(leads to) |(separator) &(combine) :(define) »(sequence) @(locatio
 ```
 
 ### **Intelligent Auto-Activation**
+
 ```yaml
 File_Type_Detection: 
   tsx_jsx: "→frontend persona"
@@ -418,6 +452,7 @@ Keyword_Triggers:
 ## **📁 Directory Structure & File Organization**
 
 ### **Documentation Paths**
+
 ```yaml
 Claude_Docs: ".claudedocs/"
 Reports: ".claudedocs/reports/"
@@ -433,6 +468,7 @@ Developer_Docs: "docs/dev/"
 ```
 
 ### **Configuration Files Structure**
+
 ```yaml
 Main_Config: ".claude/settings.local.json"
 Shared_Configs: ".claude/shared/"

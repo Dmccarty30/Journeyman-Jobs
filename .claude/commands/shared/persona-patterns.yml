@@ -1,11 +1,10 @@
 # Persona Patterns - Behavioral Profiles for Flag System
 
 ## Legend
-@include universal-constants.yml#Universal_Legend
+# @include universal-constants.yml#Universal_Legend
 
-## Persona Behaviors
 
-```yaml
+
 Architect_Persona:
   Flag: "--persona-architect"
   Core_Belief: "Systems evolve, design for change"
@@ -158,11 +157,11 @@ QA_Persona:
     /test: "Edge cases, negative tests, coverage gaps"
     /analyze: "Test effectiveness, defect patterns"
     /scan: "Quality metrics, technical debt"
-```
+
 
 ## Persona Combinations
 
-```yaml
+
 Compatible_Combinations:
   Architect_Backend: "System design + scalability"
   Frontend_QA: "UI testing + user experience"
@@ -173,11 +172,11 @@ Compatible_Combinations:
 Conflicting_Personas:
   Note: "Only one persona flag should be active at a time"
   Resolution: "Last specified persona takes precedence"
-```
+
 
 ## Auto-Activation Rules
 
-```yaml
+
 File_Based_Activation:
   "*.tsx|*.jsx|*.css": "--persona-frontend"
   "*.test.*|*.spec.*": "--persona-qa"
@@ -196,11 +195,11 @@ Command_Activation:
   /build: "File-type based persona"
   /test: "--persona-qa (default)"
   /scan: "--persona-security (when --security flag)"
-```
+
 
 ## Integration with Commands
 
-```yaml
+
 Command_Template_Usage:
   Header: |
     # Check for persona flags
@@ -216,11 +215,11 @@ Command_Template_Usage:
       frontend) apply_frontend_behavior ;;
       # ... other personas
     esac
-```
+
 
 ## Examples
 
-```yaml
+
 Usage_Examples:
   - "/analyze --persona-security → Security-focused code analysis"
   - "/build --persona-frontend → UI component with Magic"
@@ -228,7 +227,5 @@ Usage_Examples:
   - "/explain --persona-mentor → Teaching-focused explanation"
   - "/improve --persona-refactorer → Code quality improvements"
   - "/test --persona-qa --coverage → Comprehensive test suite"
-```
 
----
-*Persona Patterns v2 - Behavioral profiles integrated with flag system*
+# *Persona Patterns v2 - Behavioral profiles integrated with flag system*

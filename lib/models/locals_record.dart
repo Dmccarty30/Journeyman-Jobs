@@ -40,6 +40,25 @@ class LocalsRecord {
     this.rawData,
   });
 
+  // Getter aliases for compatibility with backend schema expectations
+  String get localUnion => localNumber;
+  String? get phone => contactPhone;
+  String get email => contactEmail;
+  
+  // Extract city and state from location string
+  String get city {
+    final parts = location.split(', ');
+    return parts.isNotEmpty ? parts[0] : '';
+  }
+  
+  String get state {
+    final parts = location.split(', ');
+    return parts.length > 1 ? parts[1] : '';
+  }
+  
+  // Alias for rawData
+  Map<String, dynamic>? get data => rawData;
+
   factory LocalsRecord.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return LocalsRecord(

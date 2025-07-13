@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../design_system/app_theme.dart';
 import '../design_system/components/job_card.dart';
 import '../models/job_model.dart';
-import '../providers/jobs_provider.dart';
+import '../providers/app_state_provider.dart';
 import '../services/connectivity_service.dart';
 
 /// High-performance virtual scrolling job list with infinite loading
@@ -68,8 +68,6 @@ class _VirtualJobListState extends State<VirtualJobList> with AutomaticKeepAlive
   bool _isLoadingMore = false;
   
   // Performance optimization - estimated item heights
-  static const double _estimatedItemHeight = 200.0;
-  static const double _halfItemHeight = 160.0;
   static const double _loadMoreHeight = 80.0;
   
   @override
@@ -150,8 +148,6 @@ class _VirtualJobListState extends State<VirtualJobList> with AutomaticKeepAlive
   /// Build the main job list with virtual scrolling
   Widget _buildJobList() {
     final itemCount = widget.jobs.length + (widget.hasMore ? 1 : 0);
-    final estimatedHeight = widget.itemHeight ?? 
-        (widget.variant == JobCardVariant.half ? _halfItemHeight : _estimatedItemHeight);
     
     return CustomScrollView(
       controller: _scrollController,
@@ -426,8 +422,8 @@ class _VirtualJobListState extends State<VirtualJobList> with AutomaticKeepAlive
 
   /// Refresh job list
   void _refreshJobs() {
-    final jobsProvider = context.read<JobsProvider>();
-    jobsProvider.refreshJobs();
+    final appStateProvider = context.read<AppStateProvider>();
+    appStateProvider.refreshJobs();
   }
 }
 

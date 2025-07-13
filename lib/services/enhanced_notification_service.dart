@@ -64,8 +64,8 @@ class EnhancedNotificationService {
       }
 
       // Add wage information if available
-      if (job.wage != null && job.wage!.isNotEmpty) {
-        body += ' - ${job.wage}';
+      if (job.wage != null) {
+        body += ' - \$${job.wage}';
       }
 
       // Send push notification
@@ -206,13 +206,9 @@ class EnhancedNotificationService {
       // Check wage preference
       final minWage = userData['minHourlyRate'] as double?;
       if (minWage != null && job.wage != null) {
-        // Try to parse wage string to compare
-        final wageMatch = RegExp(r'[\d.]+').firstMatch(job.wage!);
-        if (wageMatch != null) {
-          final jobWage = double.tryParse(wageMatch.group(0)!);
-          if (jobWage != null && jobWage < minWage) {
-            return false;
-          }
+        // Compare wage directly (job.wage is already a double)
+        if (job.wage! < minWage) {
+          return false;
         }
       }
 

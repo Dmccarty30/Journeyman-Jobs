@@ -465,7 +465,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                   leading: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryNavy.withOpacity(0.1),
+                      color: AppTheme.primaryNavy.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
@@ -490,7 +490,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                   leading: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryNavy.withOpacity(0.1),
+                      color: AppTheme.primaryNavy.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
@@ -516,7 +516,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
+                        color: Colors.red.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(
@@ -749,7 +749,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                         Positioned.fill(
                           child: Container(
                             decoration: BoxDecoration(
-                              color: AppTheme.black.withOpacity(0.5),
+                              color: AppTheme.black.withValues(alpha: 0.5),
                               shape: BoxShape.circle,
                             ),
                             child: const Center(

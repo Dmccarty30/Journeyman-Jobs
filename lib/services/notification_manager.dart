@@ -26,8 +26,10 @@ class NotificationManager {
       debugPrint('✓ Local Notification Service initialized');
       
       // Initialize FCM service
-      await FCMService.initialize(appContext);
-      debugPrint('✓ FCM Service initialized');
+      if (appContext.mounted) {
+        await FCMService.initialize(appContext);
+        debugPrint('✓ FCM Service initialized');
+      }
 
       // Check and request permissions if needed
       if (appContext.mounted) {
