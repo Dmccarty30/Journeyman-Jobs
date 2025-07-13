@@ -41,6 +41,8 @@ dependencies:
   cloud_firestore: ^5.6.11
   firebase_storage: ^12.4.9
   firebase_messaging: ^15.1.4
+  firebase_analytics: ^11.3.3
+  firebase_performance: ^0.10.0+8
   
   # Notifications
   flutter_local_notifications: ^19.3.0

@@ -1,7 +1,17 @@
 {
   "permissions": {
     "allow": [
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(flutter packages pub run:*)",
+      "Bash(Dart:*)",
+      "Agent",
+      "MultiEdit",
+      "WebFetch",
+      "WebSearch",
+      "Task",
+      "Bash(dart run:*)",
+      "Bash(flutter test:*)"
     ],
     "deny": []
   }

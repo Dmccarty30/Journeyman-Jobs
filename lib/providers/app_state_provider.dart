@@ -9,6 +9,8 @@ import '../models/locals_record.dart';
 import '../services/auth_service.dart';
 import '../services/resilient_firestore_service.dart';
 import '../services/connectivity_service.dart';
+import '../utils/memory_management.dart';
+import '../utils/concurrent_operations.dart';
 
 /// Consolidated app state provider that manages all core application state
 /// 
@@ -23,13 +25,18 @@ class AppStateProvider extends ChangeNotifier {
   final AuthService _authService;
   final ResilientFirestoreService _firestoreService;
   final ConnectivityService _connectivityService;
+  final ConcurrentOperationManager _operationManager = ConcurrentOperationManager();
 
   // Core state
   User? _user;
   UserModel? _userProfile;
-  List<Job> _jobs = [];
-  List<LocalsRecord> _locals = [];
+  final BoundedJobList _boundedJobList = BoundedJobList();
+  final LocalsLRUCache _localsCache = LocalsLRUCache();
+  final VirtualJobListState _virtualJobList = VirtualJobListState();
   JobFilterCriteria _activeFilter = JobFilterCriteria.empty();
+  
+  // Memory monitoring
+  Timer? _memoryMonitorTimer;
   
   // UI state
   bool _isLoadingAuth = false;
@@ -55,8 +62,8 @@ class AppStateProvider extends ChangeNotifier {
   // Getters for state
   User? get user => _user;
   UserModel? get userProfile => _userProfile;
-  List<Job> get jobs => _jobs;
-  List<LocalsRecord> get locals => _locals;
+  List<Job> get jobs => _boundedJobList.jobs;
+  List<LocalsRecord> get locals => _localsCache.allLocals;
   JobFilterCriteria get activeFilter => _activeFilter;
   
   // Loading state getters
@@ -84,6 +91,7 @@ class AppStateProvider extends ChangeNotifier {
   
   AppStateProvider(this._authService, this._firestoreService, this._connectivityService) {
     _initializeListeners();
+    _startMemoryMonitoring();
   }
 
   /// Initialize all data listeners and subscriptions
@@ -193,7 +201,7 @@ class AppStateProvider extends ChangeNotifier {
     if (isRefresh) {
       _lastJobDocument = null;
       _hasMoreJobs = true;
-      _jobs.clear();
+      _boundedJobList.clear();
     }
     
     _isLoadingJobs = true;
@@ -212,16 +220,16 @@ class AppStateProvider extends ChangeNotifier {
           .toList();
       
       if (isRefresh) {
-        _jobs = newJobs;
+        _boundedJobList.replaceJobs(newJobs);
       } else {
-        _jobs.addAll(newJobs);
+        _boundedJobList.addJobs(newJobs);
       }
       
       _lastJobDocument = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
       _hasMoreJobs = snapshot.docs.length == 20; // Has more if we got a full page
       
       if (kDebugMode) {
-        print('AppStateProvider: Loaded ${newJobs.length} jobs (total: ${_jobs.length})');
+        print('AppStateProvider: Loaded ${newJobs.length} jobs (total: ${_boundedJobList.length})');
       }
     } catch (e) {
       _jobsError = e.toString();
@@ -246,7 +254,7 @@ class AppStateProvider extends ChangeNotifier {
     if (isRefresh) {
       _lastLocalDocument = null;
       _hasMoreLocals = true;
-      _locals.clear();
+      _localsCache.clear();
     }
     
     _isLoadingLocals = true;
@@ -267,17 +275,16 @@ class AppStateProvider extends ChangeNotifier {
           .map((doc) => LocalsRecord.fromFirestore(doc))
           .toList();
       
-      if (isRefresh) {
-        _locals = newLocals;
-      } else {
-        _locals.addAll(newLocals);
+      // Add locals to LRU cache
+      for (final local in newLocals) {
+        _localsCache.put(local.localNumber, local);
       }
       
       _lastLocalDocument = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
       _hasMoreLocals = snapshot.docs.length == 50; // Has more if we got a full page
       
       if (kDebugMode) {
-        print('AppStateProvider: Loaded ${newLocals.length} locals (total: ${_locals.length})');
+        print('AppStateProvider: Loaded ${newLocals.length} locals (cached: ${_localsCache.size})');
       }
     } catch (e) {
       _localsError = e.toString();
@@ -357,8 +364,9 @@ class AppStateProvider extends ChangeNotifier {
   /// Clear all user data (on logout)
   void _clearUserData() {
     _userProfile = null;
-    _jobs.clear();
-    _locals.clear();
+    _boundedJobList.clear();
+    _localsCache.clear();
+    _virtualJobList.clear();
     _activeFilter = JobFilterCriteria.empty();
     
     // Clear pagination state
@@ -384,81 +392,147 @@ class AppStateProvider extends ChangeNotifier {
 
   /// Sign in with email and password
   Future<bool> signInWithEmailAndPassword(String email, String password) async {
-    _isLoadingAuth = true;
-    _authError = null;
-    notifyListeners();
-    
-    try {
-      await _authService.signInWithEmailAndPassword(email: email, password: password);
-      return true;
-    } catch (e) {
-      _authError = e.toString();
-      return false;
-    } finally {
-      _isLoadingAuth = false;
-      notifyListeners();
-    }
+    return _operationManager.queueOperation<bool>(
+      type: OperationType.signIn,
+      parameters: {'email': email, 'password': password},
+      operation: () async {
+        final transactionId = await _operationManager.startTransaction({
+          'isLoadingAuth': _isLoadingAuth,
+          'authError': _authError,
+        });
+
+        try {
+          _operationManager.addTransactionChange(transactionId, 'isLoadingAuth', true);
+          _operationManager.addTransactionChange(transactionId, 'authError', null);
+          
+          final finalState = await _operationManager.commitTransaction(transactionId);
+          _isLoadingAuth = finalState['isLoadingAuth'];
+          _authError = finalState['authError'];
+          notifyListeners();
+
+          await _authService.signInWithEmailAndPassword(email: email, password: password);
+          return true;
+        } catch (e) {
+          await _operationManager.rollbackTransaction(transactionId);
+          _authError = e.toString();
+          _isLoadingAuth = false;
+          notifyListeners();
+          return false;
+        }
+      },
+    );
   }
 
   /// Sign up with email and password
   Future<bool> signUpWithEmailAndPassword(String email, String password) async {
-    _isLoadingAuth = true;
-    _authError = null;
-    notifyListeners();
-    
-    try {
-      await _authService.signUpWithEmailAndPassword(email: email, password: password);
-      return true;
-    } catch (e) {
-      _authError = e.toString();
-      return false;
-    } finally {
-      _isLoadingAuth = false;
-      notifyListeners();
-    }
+    return _operationManager.queueOperation<bool>(
+      type: OperationType.signIn, // Use signIn type as it's similar operation
+      parameters: {'email': email, 'password': password, 'isSignUp': true},
+      operation: () async {
+        final transactionId = await _operationManager.startTransaction({
+          'isLoadingAuth': _isLoadingAuth,
+          'authError': _authError,
+        });
+
+        try {
+          _operationManager.addTransactionChange(transactionId, 'isLoadingAuth', true);
+          _operationManager.addTransactionChange(transactionId, 'authError', null);
+          
+          final finalState = await _operationManager.commitTransaction(transactionId);
+          _isLoadingAuth = finalState['isLoadingAuth'];
+          _authError = finalState['authError'];
+          notifyListeners();
+
+          await _authService.signUpWithEmailAndPassword(email: email, password: password);
+          return true;
+        } catch (e) {
+          await _operationManager.rollbackTransaction(transactionId);
+          _authError = e.toString();
+          _isLoadingAuth = false;
+          notifyListeners();
+          return false;
+        }
+      },
+    );
   }
 
   /// Sign out
   Future<void> signOut() async {
-    _isLoadingAuth = true;
-    notifyListeners();
-    
-    try {
-      await _authService.signOut();
-    } catch (e) {
-      _authError = e.toString();
-    } finally {
-      _isLoadingAuth = false;
-      notifyListeners();
-    }
+    await _operationManager.queueOperation<void>(
+      type: OperationType.signOut,
+      operation: () async {
+        final transactionId = await _operationManager.startTransaction({
+          'isLoadingAuth': _isLoadingAuth,
+          'authError': _authError,
+        });
+
+        try {
+          _operationManager.addTransactionChange(transactionId, 'isLoadingAuth', true);
+          _operationManager.addTransactionChange(transactionId, 'authError', null);
+          
+          final finalState = await _operationManager.commitTransaction(transactionId);
+          _isLoadingAuth = finalState['isLoadingAuth'];
+          _authError = finalState['authError'];
+          notifyListeners();
+
+          await _authService.signOut();
+          _isLoadingAuth = false;
+          notifyListeners();
+        } catch (e) {
+          await _operationManager.rollbackTransaction(transactionId);
+          _authError = e.toString();
+          _isLoadingAuth = false;
+          notifyListeners();
+        }
+      },
+    );
   }
 
   /// Update user profile
   Future<bool> updateUserProfile(UserModel updatedProfile) async {
     if (_user == null) return false;
     
-    _isLoadingUserProfile = true;
-    _userProfileError = null;
-    notifyListeners();
-    
-    try {
-      await _firestoreService.updateUserProfile(_user!.uid, updatedProfile);
-      _userProfile = updatedProfile;
-      
-      // Refresh jobs and locals as preferences may have changed
-      await Future.wait([
-        _loadUserJobs(isRefresh: true),
-        _loadUserLocals(isRefresh: true),
-      ]);
-      
-      return true;
-    } catch (e) {
-      _userProfileError = e.toString();
-      return false;
-    } finally {
-      _isLoadingUserProfile = false;
-      notifyListeners();
-    }
+    return _operationManager.queueOperation<bool>(
+      type: OperationType.updateUserProfile,
+      parameters: {'profile': updatedProfile.toJson()},
+      operation: () async {
+        final transactionId = await _operationManager.startTransaction({
+          'isLoadingUserProfile': _isLoadingUserProfile,
+          'userProfileError': _userProfileError,
+          'userProfile': _userProfile,
+        });
+
+        try {
+          _operationManager.addTransactionChange(transactionId, 'isLoadingUserProfile', true);
+          _operationManager.addTransactionChange(transactionId, 'userProfileError', null);
+          
+          await _firestoreService.updateUserProfile(_user!.uid, updatedProfile);
+          
+          _operationManager.addTransactionChange(transactionId, 'userProfile', updatedProfile);
+          _operationManager.addTransactionChange(transactionId, 'isLoadingUserProfile', false);
+          
+          final finalState = await _operationManager.commitTransaction(transactionId);
+          _isLoadingUserProfile = finalState['isLoadingUserProfile'];
+          _userProfileError = finalState['userProfileError'];
+          _userProfile = finalState['userProfile'];
+          notifyListeners();
+          
+          // Refresh jobs and locals as preferences may have changed
+          await Future.wait([
+            _loadUserJobs(isRefresh: true),
+            _loadUserLocals(isRefresh: true),
+          ]);
+          
+          return true;
+        } catch (e) {
+          await _operationManager.rollbackTransaction(transactionId);
+          _userProfileError = e.toString();
+          _isLoadingUserProfile = false;
+          notifyListeners();
+          return false;
+        }
+      },
+    );
   }
 
   /// Get app state summary for debugging
@@ -466,24 +540,103 @@ class AppStateProvider extends ChangeNotifier {
     return {
       'isAuthenticated': isAuthenticated,
       'hasProfile': hasProfile,
-      'jobsCount': _jobs.length,
-      'localsCount': _locals.length,
+      'jobsCount': _boundedJobList.length,
+      'localsCount': _localsCache.size,
       'isLoading': isLoading,
       'hasError': hasError,
       'isOnline': isOnline,
       'subscriptionsCount': _subscriptions.length,
       'activeFilter': _activeFilter.toJson(),
+      'memoryStats': getMemoryStats(),
     };
+  }
+
+  /// Start memory monitoring
+  void _startMemoryMonitoring() {
+    _memoryMonitorTimer = Timer.periodic(MemoryMonitor.monitoringInterval, (_) {
+      _performMemoryCheck();
+    });
+  }
+
+  /// Perform memory check and cleanup if needed
+  void _performMemoryCheck() {
+    if (MemoryMonitor.shouldPerformCleanup(
+      jobList: _boundedJobList,
+      localsCache: _localsCache,
+      virtualList: _virtualJobList,
+    )) {
+      MemoryMonitor.performCleanup(
+        jobList: _boundedJobList,
+        localsCache: _localsCache,
+        virtualList: _virtualJobList,
+      );
+      
+      if (kDebugMode) {
+        print('AppStateProvider: Memory cleanup performed');
+        print('Memory stats: ${getMemoryStats()}');
+      }
+    }
+  }
+
+  /// Get current memory statistics
+  Map<String, dynamic> getMemoryStats() {
+    return MemoryMonitor.getMemoryStats(
+      jobList: _boundedJobList,
+      localsCache: _localsCache,
+      virtualList: _virtualJobList,
+    );
+  }
+
+  /// Search locals by name (leverages LRU cache)
+  List<LocalsRecord> searchLocalsByName(String query) {
+    return _localsCache.searchByName(query);
+  }
+
+  /// Get locals by state (leverages LRU cache)
+  List<LocalsRecord> getLocalsByState(String state) {
+    return _localsCache.getLocalsByState(state);
+  }
+
+  /// Get specific local by number (leverages LRU cache)
+  LocalsRecord? getLocal(String localNumber) {
+    return _localsCache.get(localNumber);
+  }
+
+  /// Get virtual list visible jobs
+  List<Job> getVirtualJobs() {
+    return _virtualJobList.visibleJobs;
+  }
+
+  /// Update virtual list viewport
+  void updateVirtualJobViewport(int startIndex) {
+    _virtualJobList.updateJobs(_boundedJobList.jobs, startIndex);
+    notifyListeners();
+  }
+
+  /// Get operation statistics
+  Map<String, dynamic> getOperationStats() {
+    return _operationManager.getOperationStats();
   }
 
   /// Cleanup subscriptions and resources
   @override
   void dispose() {
+    // Cancel memory monitoring timer
+    _memoryMonitorTimer?.cancel();
+    
+    // Dispose operation manager
+    _operationManager.dispose();
+    
     // Cancel all subscriptions
     for (final subscription in _subscriptions.values) {
       subscription.cancel();
     }
     _subscriptions.clear();
+    
+    // Clear memory-managed structures
+    _boundedJobList.clear();
+    _localsCache.clear();
+    _virtualJobList.clear();
     
     if (kDebugMode) {
       print('AppStateProvider: Disposed with cleanup of ${_subscriptions.length} subscriptions');
