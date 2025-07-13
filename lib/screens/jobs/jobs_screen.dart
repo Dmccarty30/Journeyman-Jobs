@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/job_model.dart';
+import '../../providers/jobs_provider.dart';
+import '../../backend/schema/jobs_record.dart';
 
 
 class JobsScreen extends StatefulWidget {
@@ -188,6 +191,8 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
         setState(() {
           _selectedFilter = filter;
         });
+        // Update the provider filter
+        context.read<JobsProvider>().filterByClassification(filter);
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -419,13 +424,13 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                           _buildJobDetailRow(
                             Icons.schedule,
                             'Hours:',
-                            job.hours ?? '40hrs',
+                            job.hours != null ? '${job.hours!}hrs' : '40hrs',
                           ),
                           const SizedBox(height: AppTheme.spacingXs),
                           _buildJobDetailRow(
                             Icons.attach_money,
                             'Wage:',
-                            job.wage ?? 'Competitive',
+                            job.wage != null ? '\$${job.wage!.toStringAsFixed(2)}/hr' : 'Competitive',
                           ),
                           const SizedBox(height: AppTheme.spacingXs),
                           if (job.perDiem != null)
@@ -563,6 +568,8 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                 setState(() {
                   _searchQuery = value;
                 });
+                // Update the provider search
+                context.read<JobsProvider>().searchJobs(value);
               },
             ),
           ],
@@ -574,6 +581,8 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                 _searchQuery = '';
                 _searchController.clear();
               });
+              // Clear the provider search
+              context.read<JobsProvider>().clearFilters();
               Navigator.pop(context);
             },
             child: Text('Clear', style: TextStyle(color: AppTheme.textSecondary)),
@@ -839,6 +848,8 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                                   _searchController.clear();
                                   _selectedFilter = 'All Jobs';
                                 });
+                                // Clear all provider filters
+                                context.read<JobsProvider>().clearFilters();
                               },
                               icon: Icon(Icons.clear, size: 16),
                               label: Text('Clear All'),
@@ -870,16 +881,15 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
 
                 const SizedBox(height: AppTheme.spacingMd),
 
-                // Jobs list with StreamBuilder
+                // Jobs list with Provider
                 Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance.collection('jobs').snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
+                  child: Consumer<JobsProvider>(
+                    builder: (context, jobsProvider, child) {
+                      if (jobsProvider.isLoading && jobsProvider.jobs.isEmpty) {
                         return Center(child: _buildElectricalLoadingIndicator());
                       }
 
-                      if (snapshot.hasError) {
+                      if (jobsProvider.error != null) {
                         return Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -903,20 +913,48 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                                   color: AppTheme.textSecondary,
                                 ),
                               ),
+                              const SizedBox(height: AppTheme.spacingMd),
+                              ElevatedButton(
+                                onPressed: () => jobsProvider.refreshJobs(),
+                                child: const Text('Retry'),
+                              ),
                             ],
                           ),
                         );
                       }
 
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      if (jobsProvider.jobs.isEmpty) {
                         return Center(child: _buildElectricalEmptyState());
                       }
 
-                      // Convert Firestore documents to Job objects
-                      final jobs = snapshot.data!.docs.map((doc) {
-                        final data = doc.data() as Map<String, dynamic>;
-                        data['id'] = doc.id;
-                        return Job.fromJson(data);
+                      // Convert JobsRecord to Job objects for compatibility
+                      final jobs = jobsProvider.jobs.map((jobRecord) {
+                        return Job(
+                          id: jobRecord.reference.id,
+                          reference: jobRecord.reference,
+                          local: jobRecord.local,
+                          classification: jobRecord.classification,
+                          company: jobRecord.company,
+                          location: jobRecord.location,
+                          hours: jobRecord.hours,
+                          wage: jobRecord.wage,
+                          sub: jobRecord.sub,
+                          jobClass: jobRecord.jobClass,
+                          localNumber: jobRecord.localNumber,
+                          qualifications: jobRecord.qualifications,
+                          datePosted: jobRecord.datePosted,
+                          jobDescription: jobRecord.jobDescription,
+                          jobTitle: jobRecord.jobTitle,
+                          perDiem: jobRecord.perDiem,
+                          agreement: jobRecord.agreement,
+                          numberOfJobs: jobRecord.numberOfJobs,
+                          timestamp: jobRecord.timestamp,
+                          startDate: jobRecord.startDate,
+                          startTime: jobRecord.startTime,
+                          booksYourOn: jobRecord.booksYourOn,
+                          typeOfWork: jobRecord.typeOfWork,
+                          duration: jobRecord.duration,
+                        );
                       }).toList();
 
                       // Filter jobs based on selected category and search query
@@ -945,8 +983,21 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                       }
 
                       return ListView.builder(
-                        itemCount: filteredJobs.length,
+                        itemCount: filteredJobs.length + (jobsProvider.hasMore ? 1 : 0),
                         itemBuilder: (context, index) {
+                          if (index == filteredJobs.length) {
+                            // Load more indicator
+                            return Container(
+                              padding: const EdgeInsets.all(AppTheme.spacingLg),
+                              alignment: Alignment.center,
+                              child: jobsProvider.isLoading
+                                  ? _buildElectricalLoadingIndicator()
+                                  : ElevatedButton(
+                                      onPressed: () => jobsProvider.loadMoreJobs(),
+                                      child: const Text('Load More Jobs'),
+                                    ),
+                            );
+                          }
                           return _buildElectricalJobCard(filteredJobs[index]);
                         },
                       );
@@ -1163,7 +1214,7 @@ class JobDetailsSheet extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          job.wage ?? 'Competitive',
+                          job.wage != null ? '\$${job.wage!.toStringAsFixed(2)}/hr' : 'Competitive',
                           style: AppTheme.headlineMedium.copyWith(
                             color: AppTheme.successGreen,
                             fontWeight: FontWeight.bold,
@@ -1191,7 +1242,7 @@ class JobDetailsSheet extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          job.hours ?? '40hrs',
+                          job.hours != null ? '${job.hours!}hrs' : '40hrs',
                           style: AppTheme.headlineMedium.copyWith(
                             color: AppTheme.accentCopper,
                             fontWeight: FontWeight.bold,

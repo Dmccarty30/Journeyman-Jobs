@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 import 'dart:convert';
 import '../models/filter_criteria.dart';
 import '../models/filter_preset.dart';
 
-/// Provider for managing job filters and presets with persistence
+/// Provider for managing job filters and presets with persistence and debouncing
 class JobFilterProvider extends ChangeNotifier {
   static const String _filterKey = 'current_job_filter';
   static const String _presetsKey = 'filter_presets';
   static const String _recentSearchesKey = 'recent_searches';
+  static const Duration _debounceDuration = Duration(milliseconds: 300);
   
   JobFilterCriteria _currentFilter = JobFilterCriteria.empty();
   List<FilterPreset> _presets = [];
   List<String> _recentSearches = [];
   bool _isLoading = false;
+  Timer? _debounceTimer;
 
   JobFilterCriteria get currentFilter => _currentFilter;
   List<FilterPreset> get presets => _presets;
@@ -40,7 +43,7 @@ class JobFilterProvider extends ChangeNotifier {
   /// Load filters and presets from storage
   Future<void> _loadFromStorage() async {
     _isLoading = true;
-    notifyListeners();
+    _notifyImmediately(); // Immediate for loading state
 
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -68,7 +71,7 @@ class JobFilterProvider extends ChangeNotifier {
       debugPrint('Error loading filters: $e');
     } finally {
       _isLoading = false;
-      notifyListeners();
+      _notifyImmediately(); // Immediate for loading completion
     }
   }
 
@@ -103,28 +106,42 @@ class JobFilterProvider extends ChangeNotifier {
     }
   }
 
-  /// Update the current filter
-  void updateFilter(JobFilterCriteria newFilter) {
-    _currentFilter = newFilter;
-    _saveFilter();
+  /// Debounce notifications to prevent rapid-fire query triggers
+  void _debounceNotification() {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(_debounceDuration, () {
+      notifyListeners();
+    });
+  }
+
+  /// Immediate notification (bypasses debouncing for critical updates)
+  void _notifyImmediately() {
+    _debounceTimer?.cancel();
     notifyListeners();
   }
 
-  /// Clear all filters
+  /// Update the current filter (debounced for smooth UX)
+  void updateFilter(JobFilterCriteria newFilter) {
+    _currentFilter = newFilter;
+    _saveFilter(); // Save immediately for persistence
+    _debounceNotification(); // Debounce UI updates
+  }
+
+  /// Clear all filters (immediate notification for deliberate action)
   void clearAllFilters() {
     _currentFilter = JobFilterCriteria.empty();
     _saveFilter();
-    notifyListeners();
+    _notifyImmediately();
   }
 
-  /// Clear a specific filter type
+  /// Clear a specific filter type (immediate notification for deliberate action)
   void clearFilterType(FilterType filterType) {
     _currentFilter = _currentFilter.clearFilter(filterType);
     _saveFilter();
-    notifyListeners();
+    _notifyImmediately();
   }
 
-  /// Update location filter
+  /// Update location filter (debounced for smooth distance slider)
   void updateLocationFilter({
     String? city,
     String? state,
@@ -136,37 +153,37 @@ class JobFilterProvider extends ChangeNotifier {
       maxDistance: maxDistance,
     );
     _saveFilter();
-    notifyListeners();
+    _debounceNotification(); // Debounce for smooth slider interaction
   }
 
-  /// Update classification filter
+  /// Update classification filter (immediate for deliberate selection)
   void updateClassificationFilter(List<String> classifications) {
     _currentFilter = _currentFilter.copyWith(
       classifications: classifications,
     );
     _saveFilter();
-    notifyListeners();
+    _notifyImmediately(); // Immediate for checkbox selections
   }
 
-  /// Update local numbers filter
+  /// Update local numbers filter (immediate for deliberate selection)
   void updateLocalNumbersFilter(List<int> localNumbers) {
     _currentFilter = _currentFilter.copyWith(
       localNumbers: localNumbers,
     );
     _saveFilter();
-    notifyListeners();
+    _notifyImmediately(); // Immediate for multi-select
   }
 
-  /// Update construction types filter
+  /// Update construction types filter (immediate for deliberate selection)
   void updateConstructionTypesFilter(List<String> constructionTypes) {
     _currentFilter = _currentFilter.copyWith(
       constructionTypes: constructionTypes,
     );
     _saveFilter();
-    notifyListeners();
+    _notifyImmediately(); // Immediate for checkbox selections
   }
 
-  /// Update date filters
+  /// Update date filters (debounced for smooth date picker interaction)
   void updateDateFilters({
     DateTime? postedAfter,
     DateTime? startDateBefore,
@@ -178,37 +195,37 @@ class JobFilterProvider extends ChangeNotifier {
       startDateAfter: startDateAfter,
     );
     _saveFilter();
-    notifyListeners();
+    _debounceNotification(); // Debounce for date picker interactions
   }
 
-  /// Update per diem filter
+  /// Update per diem filter (immediate for toggle action)
   void updatePerDiemFilter(bool? hasPerDiem) {
     _currentFilter = _currentFilter.copyWith(
       hasPerDiem: hasPerDiem,
     );
     _saveFilter();
-    notifyListeners();
+    _notifyImmediately(); // Immediate for toggle switches
   }
 
-  /// Update duration preference
+  /// Update duration preference (immediate for dropdown selection)
   void updateDurationPreference(String? preference) {
     _currentFilter = _currentFilter.copyWith(
       durationPreference: preference,
     );
     _saveFilter();
-    notifyListeners();
+    _notifyImmediately(); // Immediate for dropdown selections
   }
 
-  /// Update company filter
+  /// Update company filter (immediate for deliberate selection)
   void updateCompanyFilter(List<String> companies) {
     _currentFilter = _currentFilter.copyWith(
       companies: companies,
     );
     _saveFilter();
-    notifyListeners();
+    _notifyImmediately(); // Immediate for multi-select
   }
 
-  /// Update sort options
+  /// Update sort options (debounced for rapid sort changes)
   void updateSortOptions({
     JobSortOption? sortBy,
     bool? sortDescending,
@@ -218,22 +235,28 @@ class JobFilterProvider extends ChangeNotifier {
       sortDescending: sortDescending,
     );
     _saveFilter();
-    notifyListeners();
+    _debounceNotification(); // Debounce for rapid sort changes
   }
 
-  /// Update search query
+  /// Update search query (debounced for smooth typing experience)
   void updateSearchQuery(String? query) {
     _currentFilter = _currentFilter.copyWith(
       searchQuery: query,
     );
     _saveFilter();
     
-    // Add to recent searches if not empty
+    // Add to recent searches if not empty (but only on final submission)
     if (query != null && query.isNotEmpty) {
-      _addRecentSearch(query);
+      // Only add to recent searches after debounce period to avoid spam
+      _debounceTimer?.cancel();
+      _debounceTimer = Timer(_debounceDuration, () {
+        _addRecentSearch(query);
+        notifyListeners();
+      });
+    } else {
+      // For empty queries, notify immediately
+      _notifyImmediately();
     }
-    
-    notifyListeners();
   }
 
   /// Add a recent search
@@ -252,14 +275,14 @@ class JobFilterProvider extends ChangeNotifier {
     _saveRecentSearches();
   }
 
-  /// Clear recent searches
+  /// Clear recent searches (immediate for deliberate action)
   void clearRecentSearches() {
     _recentSearches.clear();
     _saveRecentSearches();
-    notifyListeners();
+    _notifyImmediately(); // Immediate for clear action
   }
 
-  /// Save current filter as preset
+  /// Save current filter as preset (immediate for deliberate action)
   Future<void> saveAsPreset(String name, {String? description, IconData? icon}) async {
     final preset = FilterPreset.create(
       name: name,
@@ -270,10 +293,10 @@ class JobFilterProvider extends ChangeNotifier {
     
     _presets.add(preset);
     await _savePresets();
-    notifyListeners();
+    _notifyImmediately(); // Immediate for preset creation
   }
 
-  /// Apply a preset
+  /// Apply a preset (immediate for deliberate action)
   void applyPreset(String presetId) {
     final preset = _presets.firstWhere(
       (p) => p.id == presetId,
@@ -289,10 +312,10 @@ class JobFilterProvider extends ChangeNotifier {
     
     _saveFilter();
     _savePresets();
-    notifyListeners();
+    _notifyImmediately(); // Immediate for preset application
   }
 
-  /// Update a preset
+  /// Update a preset (immediate for deliberate action)
   Future<void> updatePreset(
     String presetId, {
     String? name,
@@ -311,31 +334,31 @@ class JobFilterProvider extends ChangeNotifier {
     );
     
     await _savePresets();
-    notifyListeners();
+    _notifyImmediately(); // Immediate for preset update
   }
 
-  /// Delete a preset
+  /// Delete a preset (immediate for deliberate action)
   Future<void> deletePreset(String presetId) async {
     _presets.removeWhere((p) => p.id == presetId);
     await _savePresets();
-    notifyListeners();
+    _notifyImmediately(); // Immediate for preset deletion
   }
 
-  /// Toggle preset pinned status
+  /// Toggle preset pinned status (immediate for deliberate action)
   Future<void> togglePresetPinned(String presetId) async {
     final index = _presets.indexWhere((p) => p.id == presetId);
     if (index == -1) throw Exception('Preset not found');
     
     _presets[index] = _presets[index].togglePinned();
     await _savePresets();
-    notifyListeners();
+    _notifyImmediately(); // Immediate for pin toggle
   }
 
-  /// Reset to default presets
+  /// Reset to default presets (immediate for deliberate action)
   Future<void> resetToDefaultPresets() async {
     _presets = DefaultFilterPresets.defaults;
     await _savePresets();
-    notifyListeners();
+    _notifyImmediately(); // Immediate for reset action
   }
 
   /// Get quick filter suggestions based on user data
@@ -389,6 +412,13 @@ class JobFilterProvider extends ChangeNotifier {
     }
     
     return suggestions;
+  }
+
+  /// Cleanup resources when provider is disposed
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
   }
 }
 

@@ -73,6 +73,7 @@ dependencies:
   url_launcher: ^6.2.4
   font_awesome_flutter: ^10.8.0
   timezone: ^0.10.1
+  connectivity_plus: ^6.0.3
   
   # Image handling
   image_picker: ^1.0.7

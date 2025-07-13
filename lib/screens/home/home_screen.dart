@@ -250,12 +250,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         'Local ${job.local > 0 ? job.local.toString() : 'N/A'}',
                         job.company.isNotEmpty ? job.company : 'Company Name',
                         job.location.isNotEmpty ? job.location : 'Location',
-                        job.wage.isNotEmpty ? '\$${job.wage}/hr' : '\$0/hr',
+                        job.wage != null && job.wage! > 0 ? '\$${job.wage!.toStringAsFixed(2)}/hr' : '\$0/hr',
                         job.perDiem.isNotEmpty ? 'Per Diem: \$${job.perDiem}/day' : 'Per Diem: \$0/day',
                         isEmergency: job.typeOfWork.toLowerCase().contains('emergency') ||
                             job.typeOfWork.toLowerCase().contains('storm'),
                         isHighVoltage: job.classification.toLowerCase().contains('transmission'),
-                        hours: _parseHours(job.hours),
+                        hours: job.hours ?? 40,
                       ),
                     );
                   }).toList(),

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../services/firestore_service.dart';
+import '../services/resilient_firestore_service.dart';
 import '../backend/schema/jobs_record.dart';
 
 /// Consolidated state management for the home screen
@@ -11,7 +11,7 @@ import '../backend/schema/jobs_record.dart';
 /// efficiently using a single state management pattern to avoid the 
 /// triple-nested StreamBuilder anti-pattern.
 class HomeProvider extends ChangeNotifier {
-  final FirestoreService _firestoreService = FirestoreService();
+  final ResilientFirestoreService _firestoreService = ResilientFirestoreService();
   
   // State variables
   User? _user;
@@ -128,7 +128,7 @@ class HomeProvider extends ChangeNotifier {
       }
       
       // Priority 3: Hours match
-      final jobHours = _parseHours(job.hours);
+      final jobHours = job.hours;
       final hoursDifference = (jobHours - preferredHours).abs();
       score += (50 - hoursDifference).clamp(0, 50);
       

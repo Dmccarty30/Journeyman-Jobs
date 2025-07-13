@@ -1,0 +1,564 @@
+import 'dart:async';
+import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'firestore_service.dart';
+import 'cache_service.dart';
+import '../models/filter_criteria.dart';
+import '../models/user_model.dart';
+
+/// A resilient wrapper around FirestoreService that provides:
+/// - Automatic retry logic for transient failures
+/// - Exponential backoff for retry delays
+/// - Proper error handling and classification
+/// - Circuit breaker pattern for persistent failures
+/// - Intelligent caching for frequently accessed data
+class ResilientFirestoreService extends FirestoreService {
+  final CacheService _cacheService = CacheService();
+  static const int MAX_RETRIES = 3;
+  static const Duration INITIAL_RETRY_DELAY = Duration(seconds: 1);
+  static const Duration MAX_RETRY_DELAY = Duration(seconds: 10);
+  static const Duration CIRCUIT_BREAKER_TIMEOUT = Duration(minutes: 5);
+  
+  // Circuit breaker state
+  bool _circuitOpen = false;
+  DateTime? _circuitOpenTime;
+  int _failureCount = 0;
+  
+  @override
+  Stream<QuerySnapshot> getJobs({
+    int limit = DEFAULT_PAGE_SIZE,
+    DocumentSnapshot? startAfter,
+    Map<String, dynamic>? filters,
+  }) {
+    return _executeWithRetryStream(
+      () => super.getJobs(
+        limit: limit,
+        startAfter: startAfter,
+        filters: filters,
+      ),
+      operationName: 'getJobs',
+    );
+  }
+
+  @override
+  Stream<QuerySnapshot> getLocals({
+    int limit = DEFAULT_PAGE_SIZE,
+    DocumentSnapshot? startAfter,
+    String? state,
+  }) {
+    return _executeWithRetryStream(
+      () => super.getLocals(
+        limit: limit,
+        startAfter: startAfter,
+        state: state,
+      ),
+      operationName: 'getLocals',
+    );
+  }
+
+  @override
+  Future<QuerySnapshot> searchLocals(
+    String searchTerm, {
+    int limit = DEFAULT_PAGE_SIZE,
+    String? state,
+  }) {
+    return _executeWithRetryFuture(
+      () => super.searchLocals(
+        searchTerm,
+        limit: limit,
+        state: state,
+      ),
+      operationName: 'searchLocals',
+    );
+  }
+
+  @override
+  Future<DocumentSnapshot> getUser(String uid) {
+    return _executeWithRetryFuture(
+      () => super.getUser(uid),
+      operationName: 'getUser',
+    );
+  }
+
+  @override
+  Future<void> createUser({
+    required String uid,
+    required Map<String, dynamic> userData,
+  }) {
+    return _executeWithRetryFuture(
+      () => super.createUser(uid: uid, userData: userData),
+      operationName: 'createUser',
+    );
+  }
+
+  @override
+  Future<void> updateUser({
+    required String uid,
+    required Map<String, dynamic> data,
+  }) async {
+    final result = await _executeWithRetryFuture(
+      () => super.updateUser(uid: uid, data: data),
+      operationName: 'updateUser',
+    );
+    
+    // Invalidate user cache after update
+    await _cacheService.remove('${CacheService.USER_DATA_PREFIX}$uid');
+    
+    return result;
+  }
+
+  @override
+  Stream<DocumentSnapshot> getUserStream(String uid) {
+    return _executeWithRetryStream(
+      () => super.getUserStream(uid),
+      operationName: 'getUserStream',
+    );
+  }
+
+  /// Get user data with caching
+  Future<Map<String, dynamic>?> getCachedUserData(String uid) async {
+    // Try to get from cache first
+    final cachedData = await _cacheService.getCachedUserData(uid);
+    if (cachedData != null) {
+      return cachedData;
+    }
+
+    // If not in cache, fetch from Firestore
+    try {
+      final doc = await getUser(uid);
+      if (doc.exists) {
+        final userData = doc.data() as Map<String, dynamic>?;
+        if (userData != null) {
+          // Cache for future use
+          await _cacheService.cacheUserData(uid, userData);
+          return userData;
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching user data for caching: $e');
+      }
+    }
+
+    return null;
+  }
+
+  /// Get jobs with advanced filtering capabilities
+  Future<QuerySnapshot> getJobsWithFilter({
+    required JobFilterCriteria filter,
+    DocumentSnapshot? startAfter,
+    int limit = DEFAULT_PAGE_SIZE,
+  }) async {
+    return _executeWithRetryFuture(
+      () async {
+        Query query = FirebaseFirestore.instance.collection('jobs');
+        
+        // Apply filters based on criteria
+        if (filter.classifications.isNotEmpty) {
+          query = query.where('classification', whereIn: filter.classifications);
+        }
+        
+        if (filter.localNumbers.isNotEmpty) {
+          query = query.where('local', whereIn: filter.localNumbers);
+        }
+        
+        if (filter.constructionTypes.isNotEmpty) {
+          query = query.where('constructionType', whereIn: filter.constructionTypes);
+        }
+        
+        if (filter.companies.isNotEmpty) {
+          query = query.where('company', whereIn: filter.companies);
+        }
+        
+        if (filter.hasPerDiem != null) {
+          query = query.where('hasPerDiem', isEqualTo: filter.hasPerDiem);
+        }
+        
+        if (filter.state != null) {
+          query = query.where('state', isEqualTo: filter.state);
+        }
+        
+        if (filter.city != null) {
+          query = query.where('city', isEqualTo: filter.city);
+        }
+        
+        // Date filters
+        if (filter.postedAfter != null) {
+          query = query.where('timestamp', isGreaterThan: filter.postedAfter);
+        }
+        
+        if (filter.startDateAfter != null) {
+          query = query.where('startDate', isGreaterThan: filter.startDateAfter);
+        }
+        
+        if (filter.startDateBefore != null) {
+          query = query.where('startDate', isLessThan: filter.startDateBefore);
+        }
+        
+        // Search query (basic text search on job title and description)
+        if (filter.searchQuery != null && filter.searchQuery!.isNotEmpty) {
+          final searchTerm = filter.searchQuery!.toLowerCase();
+          query = query
+              .where('searchTerms', arrayContains: searchTerm);
+        }
+        
+        // Sorting
+        switch (filter.sortBy) {
+          case JobSortOption.datePosted:
+            query = query.orderBy('timestamp', 
+                descending: filter.sortDescending ?? true);
+            break;
+          case JobSortOption.startDate:
+            query = query.orderBy('startDate', 
+                descending: filter.sortDescending ?? false);
+            break;
+          case JobSortOption.wage:
+            query = query.orderBy('wage', 
+                descending: filter.sortDescending ?? true);
+            break;
+          case JobSortOption.local:
+            query = query.orderBy('local', 
+                descending: filter.sortDescending ?? false);
+            break;
+          case null:
+            // Default sort by timestamp
+            query = query.orderBy('timestamp', descending: true);
+            break;
+        }
+        
+        // Pagination
+        if (startAfter != null) {
+          query = query.startAfterDocument(startAfter);
+        }
+        
+        query = query.limit(limit);
+        
+        return await query.get();
+      },
+      operationName: 'getJobsWithFilter',
+    );
+  }
+
+  /// Get user profile document (alias for getUser with better semantics)
+  Future<DocumentSnapshot?> getUserProfile(String uid) async {
+    try {
+      final doc = await getUser(uid);
+      return doc.exists ? doc : null;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error getting user profile: $e');
+      }
+      return null;
+    }
+  }
+
+  /// Update user profile with UserModel
+  Future<void> updateUserProfile(String uid, UserModel userModel) async {
+    return updateUser(uid: uid, data: userModel.toJson());
+  }
+
+  /// Execute a Future operation with retry logic
+  Future<T> _executeWithRetryFuture<T>(
+    Future<T> Function() operation, {
+    required String operationName,
+    int retryCount = 0,
+  }) async {
+    if (_isCircuitOpen()) {
+      throw FirestoreException(
+        'Service temporarily unavailable (circuit breaker open)',
+        'circuit-breaker-open',
+      );
+    }
+
+    try {
+      final result = await operation();
+      _onSuccess();
+      return result;
+    } catch (error) {
+      if (_isRetryableError(error) && retryCount < MAX_RETRIES) {
+        final delay = _calculateRetryDelay(retryCount);
+        
+        if (kDebugMode) {
+          print('$operationName failed (attempt ${retryCount + 1}/$MAX_RETRIES), retrying in ${delay.inMilliseconds}ms: $error');
+        }
+        
+        await Future.delayed(delay);
+        return _executeWithRetryFuture(
+          operation,
+          operationName: operationName,
+          retryCount: retryCount + 1,
+        );
+      } else {
+        _onFailure();
+        throw _wrapError(error, operationName);
+      }
+    }
+  }
+
+  /// Execute a Stream operation with retry logic
+  Stream<T> _executeWithRetryStream<T>(
+    Stream<T> Function() operation, {
+    required String operationName,
+    int retryCount = 0,
+  }) {
+    if (_isCircuitOpen()) {
+      return Stream.error(FirestoreException(
+        'Service temporarily unavailable (circuit breaker open)',
+        'circuit-breaker-open',
+      ));
+    }
+
+    return operation().handleError((error) {
+      if (_isRetryableError(error) && retryCount < MAX_RETRIES) {
+        final delay = _calculateRetryDelay(retryCount);
+        
+        if (kDebugMode) {
+          print('$operationName stream failed (attempt ${retryCount + 1}/$MAX_RETRIES), retrying in ${delay.inMilliseconds}ms: $error');
+        }
+        
+        return Future.delayed(delay).then((_) {
+          return _executeWithRetryStream(
+            operation,
+            operationName: operationName,
+            retryCount: retryCount + 1,
+          );
+        });
+      } else {
+        _onFailure();
+        throw _wrapError(error, operationName);
+      }
+    });
+  }
+
+  /// Check if the circuit breaker is open
+  bool _isCircuitOpen() {
+    if (!_circuitOpen) return false;
+    
+    if (_circuitOpenTime != null && 
+        DateTime.now().difference(_circuitOpenTime!) > CIRCUIT_BREAKER_TIMEOUT) {
+      _resetCircuitBreaker();
+      return false;
+    }
+    
+    return true;
+  }
+
+  /// Handle successful operation
+  void _onSuccess() {
+    if (_circuitOpen) {
+      _resetCircuitBreaker();
+    }
+    _failureCount = 0;
+  }
+
+  /// Handle failed operation
+  void _onFailure() {
+    _failureCount++;
+    
+    // Open circuit breaker after 5 consecutive failures
+    if (_failureCount >= 5) {
+      _circuitOpen = true;
+      _circuitOpenTime = DateTime.now();
+      
+      if (kDebugMode) {
+        print('Circuit breaker opened due to ${_failureCount} consecutive failures');
+      }
+    }
+  }
+
+  /// Reset circuit breaker to closed state
+  void _resetCircuitBreaker() {
+    _circuitOpen = false;
+    _circuitOpenTime = null;
+    _failureCount = 0;
+    
+    if (kDebugMode) {
+      print('Circuit breaker reset to closed state');
+    }
+  }
+
+  /// Check if an error is retryable
+  bool _isRetryableError(dynamic error) {
+    if (error is FirebaseException) {
+      switch (error.code) {
+        case 'unavailable':
+        case 'deadline-exceeded':
+        case 'internal':
+        case 'cancelled':
+        case 'resource-exhausted':
+        case 'aborted':
+          return true;
+        case 'permission-denied':
+        case 'not-found':
+        case 'already-exists':
+        case 'failed-precondition':
+        case 'out-of-range':
+        case 'unimplemented':
+        case 'data-loss':
+        case 'unauthenticated':
+          return false;
+        default:
+          return false;
+      }
+    }
+    
+    // Network-related errors are generally retryable
+    if (error is TimeoutException || 
+        error.toString().contains('network') ||
+        error.toString().contains('connection')) {
+      return true;
+    }
+    
+    return false;
+  }
+
+  /// Calculate retry delay with exponential backoff and jitter
+  Duration _calculateRetryDelay(int retryCount) {
+    final exponentialDelay = INITIAL_RETRY_DELAY * pow(2, retryCount);
+    final cappedDelay = Duration(
+      milliseconds: min(exponentialDelay.inMilliseconds, MAX_RETRY_DELAY.inMilliseconds),
+    );
+    
+    // Add jitter to prevent thundering herd
+    final jitter = Random().nextDouble() * 0.1; // ±10% jitter
+    final jitterMs = (cappedDelay.inMilliseconds * jitter).round();
+    
+    return Duration(milliseconds: cappedDelay.inMilliseconds + jitterMs);
+  }
+
+  /// Wrap errors with additional context
+  Exception _wrapError(dynamic error, String operationName) {
+    if (error is FirebaseException) {
+      return FirestoreException(
+        'Firestore operation "$operationName" failed: ${error.message}',
+        error.code,
+        originalError: error,
+      );
+    }
+    
+    return FirestoreException(
+      'Operation "$operationName" failed: $error',
+      'unknown-error',
+      originalError: error,
+    );
+  }
+
+  /// Get circuit breaker status for monitoring
+  Map<String, dynamic> getCircuitBreakerStatus() {
+    return {
+      'isOpen': _circuitOpen,
+      'openSince': _circuitOpenTime?.toIso8601String(),
+      'failureCount': _failureCount,
+      'timeUntilReset': _circuitOpen && _circuitOpenTime != null
+          ? CIRCUIT_BREAKER_TIMEOUT.inSeconds - 
+            DateTime.now().difference(_circuitOpenTime!).inSeconds
+          : null,
+    };
+  }
+
+  /// Manually reset circuit breaker (for testing/admin purposes)
+  void resetCircuitBreaker() {
+    _resetCircuitBreaker();
+  }
+
+  /// Get retry statistics for monitoring
+  Map<String, dynamic> getRetryStatistics() {
+    return {
+      'maxRetries': MAX_RETRIES,
+      'initialRetryDelay': INITIAL_RETRY_DELAY.inMilliseconds,
+      'maxRetryDelay': MAX_RETRY_DELAY.inMilliseconds,
+      'circuitBreakerTimeout': CIRCUIT_BREAKER_TIMEOUT.inMinutes,
+    };
+  }
+
+  /// Get popular jobs with caching
+  Future<List<Map<String, dynamic>>> getCachedPopularJobs() async {
+    // Try to get from cache first
+    final cachedJobs = await _cacheService.getCachedPopularJobs();
+    if (cachedJobs != null) {
+      return cachedJobs;
+    }
+
+    // If not in cache, fetch from Firestore
+    try {
+      final snapshot = await getJobs(limit: 10).first;
+      final jobs = snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
+        return data;
+      }).toList();
+
+      // Cache for future use
+      await _cacheService.cachePopularJobs(jobs);
+      return jobs;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching popular jobs for caching: $e');
+      }
+      return [];
+    }
+  }
+
+  /// Get locals with caching
+  Future<List<Map<String, dynamic>>> getCachedLocals() async {
+    // Try to get from cache first
+    final cachedLocals = await _cacheService.getCachedLocals();
+    if (cachedLocals != null) {
+      return cachedLocals;
+    }
+
+    // If not in cache, fetch from Firestore
+    try {
+      final snapshot = await getLocals(limit: 100).first;
+      final locals = snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
+        return data;
+      }).toList();
+
+      // Cache for future use (locals don't change often)
+      await _cacheService.cacheLocals(locals);
+      return locals;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching locals for caching: $e');
+      }
+      return [];
+    }
+  }
+
+  /// Clear all caches
+  Future<void> clearCache() async {
+    await _cacheService.clear();
+  }
+
+  /// Get cache statistics
+  Map<String, dynamic> getCacheStats() {
+    return _cacheService.getStats();
+  }
+}
+
+/// Custom exception class for Firestore operations
+class FirestoreException implements Exception {
+  final String message;
+  final String code;
+  final dynamic originalError;
+
+  const FirestoreException(
+    this.message,
+    this.code, {
+    this.originalError,
+  });
+
+  @override
+  String toString() => 'FirestoreException: $message (code: $code)';
+}
+
+/// Extension to add resilience methods to any FirestoreService
+extension FirestoreServiceResilience on FirestoreService {
+  /// Create a resilient wrapper around this service
+  ResilientFirestoreService withResilience() {
+    return ResilientFirestoreService();
+  }
+}

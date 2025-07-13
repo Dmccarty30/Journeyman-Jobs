@@ -151,7 +151,7 @@ class JobCard extends StatelessWidget {
                   color: AppTheme.accentCopper,
                 ),
                 Text(
-                  job.wage!,
+                  '\$${job.wage!.toStringAsFixed(2)}/hr',
                   style: AppTheme.bodySmall.copyWith(
                     color: AppTheme.accentCopper,
                     fontWeight: FontWeight.w600,
@@ -173,7 +173,7 @@ class JobCard extends StatelessWidget {
                 ),
                 const SizedBox(width: AppTheme.spacingXs),
                 Text(
-                  job.hours!,
+                  '${job.hours!} hrs',
                   style: AppTheme.bodySmall.copyWith(
                     color: AppTheme.textSecondary,
                   ),
@@ -289,7 +289,7 @@ class JobCard extends StatelessWidget {
                   child: _buildDetailItem(
                     icon: Icons.attach_money,
                     label: 'Wage',
-                    value: job.wage!,
+                    value: '\$${job.wage!.toStringAsFixed(2)}/hr',
                     isHighlighted: true,
                   ),
                 ),
@@ -298,7 +298,7 @@ class JobCard extends StatelessWidget {
                   child: _buildDetailItem(
                     icon: Icons.schedule,
                     label: 'Hours',
-                    value: job.hours!,
+                    value: '${job.hours!} hrs',
                   ),
                 ),
             ],

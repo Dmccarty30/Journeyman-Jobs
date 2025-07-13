@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '/backend/schema/locals_record.dart';
 import '/design_system/app_theme.dart';
+import '/services/resilient_firestore_service.dart';
 import 'dart:io' show Platform;
 
 class LocalsScreen extends StatefulWidget {
@@ -14,12 +15,134 @@ class LocalsScreen extends StatefulWidget {
 
 class _LocalsScreenState extends State<LocalsScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final ResilientFirestoreService _firestoreService = ResilientFirestoreService();
+  final ScrollController _scrollController = ScrollController();
+  
   String _searchQuery = '';
+  List<LocalsRecord> _locals = [];
+  bool _isLoading = false;
+  bool _hasMore = true;
+  DocumentSnapshot? _lastDocument;
+  String? _selectedState;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInitialLocals();
+    _scrollController.addListener(_onScroll);
+  }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= 
+        _scrollController.position.maxScrollExtent * 0.8 && 
+        !_isLoading && 
+        _hasMore) {
+      _loadMoreLocals();
+    }
+  }
+
+  Future<void> _loadInitialLocals() async {
+    setState(() {
+      _isLoading = true;
+      _locals.clear();
+      _lastDocument = null;
+      _hasMore = true;
+    });
+
+    try {
+      final snapshot = await _firestoreService.getLocals(
+        limit: 50,
+        state: _selectedState,
+      ).first;
+      
+      _locals = snapshot.docs.map((doc) => LocalsRecord.fromSnapshot(doc)).toList();
+      _lastDocument = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
+      _hasMore = snapshot.docs.length == 50;
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading locals: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _loadMoreLocals() async {
+    if (_isLoading || !_hasMore) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final snapshot = await _firestoreService.getLocals(
+        limit: 50,
+        startAfter: _lastDocument,
+        state: _selectedState,
+      ).first;
+      
+      final newLocals = snapshot.docs.map((doc) => LocalsRecord.fromSnapshot(doc)).toList();
+      
+      setState(() {
+        _locals.addAll(newLocals);
+        _lastDocument = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
+        _hasMore = snapshot.docs.length == 50;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading more locals: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _searchLocals() async {
+    if (_searchQuery.isEmpty) {
+      _loadInitialLocals();
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _locals.clear();
+    });
+
+    try {
+      final results = await _firestoreService.searchLocals(
+        _searchQuery,
+        limit: 50,
+        state: _selectedState,
+      );
+      
+      setState(() {
+        _locals = results.docs.map((doc) => LocalsRecord.fromSnapshot(doc)).toList();
+        _hasMore = false; // Search doesn't support pagination yet
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error searching locals: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
@@ -65,114 +188,126 @@ class _LocalsScreenState extends State<LocalsScreen> {
                 setState(() {
                   _searchQuery = value.toLowerCase();
                 });
+                // Debounce search after 500ms
+                if (_searchQuery.isNotEmpty) {
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    if (_searchQuery == value.toLowerCase() && mounted) {
+                      _searchLocals();
+                    }
+                  });
+                } else {
+                  _loadInitialLocals();
+                }
               },
             ),
           ),
         ),
       ),
-      body: StreamBuilder<List<LocalsRecord>>(
-        stream: FirebaseFirestore.instance
-            .collection('locals')
-            .orderBy('local_union')
-            .snapshots()
-            .map((snapshot) => snapshot.docs
-                .map((doc) => LocalsRecord.fromSnapshot(doc))
-                .where((local) {
-                  if (_searchQuery.isEmpty) return true;
-                  return local.localUnion.toLowerCase().contains(_searchQuery) ||
-                      local.city.toLowerCase().contains(_searchQuery) ||
-                      local.state.toLowerCase().contains(_searchQuery) ||
-                      local.classification.toLowerCase().contains(_searchQuery);
-                })
-                .toList()),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  AppTheme.accentCopper
+      body: Column(
+        children: [
+          // State filter dropdown
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+            child: DropdownButton<String>(
+              value: _selectedState,
+              hint: const Text('Filter by State'),
+              isExpanded: true,
+              items: [
+                const DropdownMenuItem<String>(
+                  value: null,
+                  child: Text('All States'),
+                ),
+                // Common states - you can expand this list
+                ...['CA', 'TX', 'NY', 'FL', 'PA', 'IL', 'OH', 'GA', 'NC', 'MI']
+                    .map((state) => DropdownMenuItem<String>(
+                          value: state,
+                          child: Text(state),
+                        )),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _selectedState = value;
+                });
+                _loadInitialLocals();
+              },
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingSm),
+          // Locals list
+          Expanded(
+            child: _buildLocalsList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocalsList() {
+    if (_isLoading && _locals.isEmpty) {
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
+        ),
+      );
+    }
+
+    if (_locals.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.location_city,
+              size: AppTheme.iconXxl,
+              color: AppTheme.mediumGray,
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+            Text(
+              _searchQuery.isEmpty 
+                  ? 'No locals found' 
+                  : 'No results found',
+              style: AppTheme.headlineSmall.copyWith(
+                color: AppTheme.textLight
+              ),
+            ),
+            if (_searchQuery.isNotEmpty) ...[
+              const SizedBox(height: AppTheme.spacingSm),
+              Text(
+                'Try adjusting your search',
+                style: AppTheme.bodyMedium.copyWith(
+                  color: AppTheme.textLight
                 ),
               ),
-            );
-          }
+            ],
+          ],
+        ),
+      );
+    }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: AppTheme.iconXxl,
-                    color: AppTheme.error,
-                  ),
-                  const SizedBox(height: AppTheme.spacingMd),
-                  Text(
-                    'Error loading locals',
-                    style: AppTheme.headlineSmall.copyWith(
-                      color: AppTheme.error
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spacingSm),
-                  Text(
-                    'Please try again later',
-                    style: AppTheme.bodyMedium.copyWith(
-                      color: AppTheme.textLight
-                    ),
-                  ),
-                ],
+    return ListView.builder(
+      controller: _scrollController,
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      itemCount: _locals.length + (_hasMore ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index == _locals.length) {
+          // Loading indicator at the bottom
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(AppTheme.spacingMd),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
               ),
-            );
-          }
-
-          final locals = snapshot.data ?? [];
-
-          if (locals.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.location_city,
-                    size: AppTheme.iconXxl,
-                    color: AppTheme.mediumGray,
-                  ),
-                  const SizedBox(height: AppTheme.spacingMd),
-                  Text(
-                    _searchQuery.isEmpty 
-                        ? 'No locals found' 
-                        : 'No results found',
-                    style: AppTheme.headlineSmall.copyWith(
-                      color: AppTheme.textLight
-                    ),
-                  ),
-                  if (_searchQuery.isNotEmpty) ...[
-                    const SizedBox(height: AppTheme.spacingSm),
-                    Text(
-                      'Try adjusting your search',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.textLight
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(AppTheme.spacingMd),
-            itemCount: locals.length,
-            itemBuilder: (context, index) {
-              final local = locals[index];
-              return LocalCard(
-                local: local,
-                onTap: () => _showLocalDetails(context, local),
-              );
-            },
+            ),
           );
-        },
-      ),
+        }
+
+        final local = _locals[index];
+        return LocalCard(
+          local: local,
+          onTap: () => _showLocalDetails(context, local),
+        );
+      },
     );
   }
 

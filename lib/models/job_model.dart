@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
+import 'package:collection/collection.dart';
 
 /// Model class representing a Job posting
 /// Matches the backend JobsRecord schema
@@ -14,8 +15,8 @@ class Job {
   final String? classification;
   final String company;
   final String location;
-  final String? hours;
-  final String? wage;
+  final int? hours;
+  final double? wage;
   final String? sub;
   final String? jobClass;
   final int? localNumber;
@@ -71,8 +72,8 @@ class Job {
     String? classification,
     String? company,
     String? location,
-    String? hours,
-    String? wage,
+    int? hours,
+    double? wage,
     String? sub,
     String? jobClass,
     int? localNumber,
@@ -157,6 +158,23 @@ class Job {
       return null;
     }
 
+    // Helper function to safely parse doubles
+    double? parseDouble(dynamic value) {
+      if (value == null) return null;
+      if (value is double) return value;
+      if (value is int) return value.toDouble();
+      if (value is String) {
+        // Remove common currency symbols and formatting
+        String cleanValue = value
+            .replaceAll(RegExp(r'[\$,]'), '')
+            .replaceAll('/hr', '')
+            .replaceAll('/hour', '')
+            .trim();
+        return double.tryParse(cleanValue);
+      }
+      return null;
+    }
+
 
 
     // Helper function to parse list of integers
@@ -176,8 +194,8 @@ class Job {
         classification: json['classification']?.toString(),
         company: json['company']?.toString() ?? json['Company']?.toString() ?? '',
         location: json['location']?.toString() ?? json['Location']?.toString() ?? '',
-        hours: json['hours']?.toString() ?? json['Shift']?.toString(),
-        wage: json['wage']?.toString(),
+        hours: parseInt(json['hours']) ?? parseInt(json['Shift']),
+        wage: parseDouble(json['wage']),
         sub: json['sub']?.toString(),
         jobClass: json['jobClass']?.toString(),
         localNumber: parseInt(json['localNumber']),

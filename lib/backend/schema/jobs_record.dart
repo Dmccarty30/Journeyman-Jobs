@@ -56,17 +56,17 @@ class JobsRecord extends FirestoreRecord {
   /// The working hours or shift information for this job.
   /// 
   /// This field supports multiple naming conventions ('hours' or 'Shift').
-  /// May include daily hours, shift times, or schedule details. Defaults to empty string if not specified.
-  String? _hours;
-  String get hours => _hours ?? '';
+  /// Represents the number of hours per week or shift length. Defaults to 40 if not specified.
+  int? _hours;
+  int get hours => _hours ?? 40;
   bool hasHours() => _hours != null;
 
   /// The wage or salary information for this position.
   /// 
-  /// Typically includes hourly rate, salary range, or compensation details.
-  /// Format may vary (e.g., "$25/hr", "$50,000/year"). Defaults to empty string if not specified.
-  String? _wage;
-  String get wage => _wage ?? '';
+  /// Hourly rate in dollars. Numeric representation for easy filtering and sorting.
+  /// Defaults to 0.0 if not specified.
+  double? _wage;
+  double get wage => _wage ?? 0.0;
   bool hasWage() => _wage != null;
 
   /// The subcontractor or subsidiary information.
@@ -220,10 +220,10 @@ class JobsRecord extends FirestoreRecord {
     _location = data['location'] as String? ?? data['Location'] as String?;
 
     // Handle multiple field naming conventions for hours/shift
-    _hours = data['hours'] as String? ?? data['Shift'] as String?;
+    _hours = _safeParseInt(data['hours']) ?? _safeParseInt(data['Shift']);
 
     // Handle multiple field naming conventions for wage
-    _wage = data['wage'] as String?;
+    _wage = _safeParseDouble(data['wage']);
 
     _sub = data['sub'] as String?;
     _jobClass = data['jobClass'] as String?;
@@ -273,6 +273,35 @@ class JobsRecord extends FirestoreRecord {
       } catch (e) {
         // Log warning: Could not parse value as int
         debugPrint('Warning: Could not parse "$value" as int, defaulting to null');
+        return null;
+      }
+    }
+    return null;
+  }
+
+  /// Safely parses a double from various data types.
+  /// 
+  /// Handles conversion from double, int, and String types.
+  /// Returns null if the value cannot be parsed or is null.
+  /// Logs a warning if string parsing fails.
+  /// 
+  /// [value] The dynamic value to parse as a double.
+  double? _safeParseDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) {
+      try {
+        // Remove common currency symbols and formatting
+        String cleanValue = value
+            .replaceAll(RegExp(r'[\$,]'), '')
+            .replaceAll('/hr', '')
+            .replaceAll('/hour', '')
+            .trim();
+        return double.parse(cleanValue);
+      } catch (e) {
+        // Log warning: Could not parse value as double
+        debugPrint('Warning: Could not parse "$value" as double, defaulting to null');
         return null;
       }
     }
@@ -412,8 +441,8 @@ Map<String, dynamic> createJobsRecordData({
   String? classification,
   String? company,
   String? location,
-  String? hours,
-  String? wage,
+  int? hours,
+  double? wage,
   String? sub,
   String? jobClass,
   int? localNumber,
