@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
+import '../../design_system/components/job_card.dart';
 import '../../models/job_model.dart';
 import '../../providers/app_state_provider.dart';
+import '../../widgets/virtual_job_list.dart';
+import '../../widgets/optimized_selector_widgets.dart';
 
 
 class JobsScreen extends StatefulWidget {
@@ -882,15 +885,15 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
 
                 const SizedBox(height: AppTheme.spacingMd),
 
-                // Jobs list with Provider
+                // Jobs list with optimized selector widgets
                 Expanded(
-                  child: Consumer<AppStateProvider>(
-                    builder: (context, appStateProvider, child) {
-                      if (appStateProvider.isLoadingJobs && appStateProvider.jobs.isEmpty) {
+                  child: JobsListStateSelector(
+                    builder: (context, jobsState, child) {
+                      if (jobsState.isLoading && jobsState.jobs.isEmpty) {
                         return Center(child: _buildElectricalLoadingIndicator());
                       }
 
-                      if (appStateProvider.jobsError != null) {
+                      if (jobsState.error != null) {
                         return Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -916,7 +919,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                               ),
                               const SizedBox(height: AppTheme.spacingMd),
                               ElevatedButton(
-                                onPressed: () => appStateProvider.refreshJobs(),
+                                onPressed: () => context.read<AppStateProvider>().refreshJobs(),
                                 child: const Text('Retry'),
                               ),
                             ],
@@ -924,17 +927,14 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                         );
                       }
 
-                      if (appStateProvider.jobs.isEmpty) {
+                      if (jobsState.jobs.isEmpty) {
                         return Center(child: _buildElectricalEmptyState());
                       }
 
-                      // AppStateProvider returns Job objects directly
-                      final jobs = appStateProvider.jobs;
-
                       // Filter jobs based on selected category and search query
                       var filteredJobs = _selectedFilter == 'All Jobs'
-                        ? jobs
-                        : jobs.where((job) {
+                        ? jobsState.jobs
+                        : jobsState.jobs.where((job) {
                             return job.classification?.contains(_selectedFilter) == true ||
                                    job.voltageLevel == _selectedFilter ||
                                    job.typeOfWork?.contains(_selectedFilter) == true;
@@ -956,24 +956,15 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                         return Center(child: _buildElectricalEmptyState());
                       }
 
-                      return ListView.builder(
-                        itemCount: filteredJobs.length + (appStateProvider.hasMoreJobs ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index == filteredJobs.length) {
-                            // Load more indicator
-                            return Container(
-                              padding: const EdgeInsets.all(AppTheme.spacingLg),
-                              alignment: Alignment.center,
-                              child: appStateProvider.isLoadingJobs
-                                  ? _buildElectricalLoadingIndicator()
-                                  : ElevatedButton(
-                                      onPressed: () => appStateProvider.loadMoreJobs(),
-                                      child: const Text('Load More Jobs'),
-                                    ),
-                            );
-                          }
-                          return _buildElectricalJobCard(filteredJobs[index]);
-                        },
+                      // Use VirtualJobList for better performance
+                      return VirtualJobList(
+                        jobs: filteredJobs,
+                        isLoading: jobsState.isLoading,
+                        hasMore: jobsState.hasMore,
+                        error: jobsState.error,
+                        variant: JobCardVariant.full,
+                        onLoadMore: () => context.read<AppStateProvider>().loadMoreJobs(),
+                        showOfflineIndicators: true,
                       );
                     },
                   ),

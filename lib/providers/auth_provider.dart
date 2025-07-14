@@ -1,317 +1,346 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
-import '../services/firestore_service.dart';
+import '../utils/concurrent_operations.dart';
 
+/// Provider responsible for authentication state management
+/// 
+/// Features:
+/// - User authentication state tracking
+/// - Sign in/out operations with loading states
+/// - Error handling and recovery
+/// - Concurrent operation management
+/// - Performance monitoring
 class AuthProvider extends ChangeNotifier {
-  final AuthService _authService = AuthService();
-  final FirestoreService _firestoreService = FirestoreService();
-  
+  final AuthService _authService;
+  final ConcurrentOperationManager _operationManager = ConcurrentOperationManager();
+
+  // Authentication state
   User? _user;
-  bool _isLoading = false;
-  String? _error;
-  bool _isInitialized = false;
+  bool _isLoadingAuth = false;
+  String? _authError;
   
+  // Subscription management
+  StreamSubscription<User?>? _authSubscription;
+  
+  // Performance metrics
+  DateTime? _lastSignInTime;
+  Duration? _lastSignInDuration;
+  int _signInAttempts = 0;
+  int _successfulSignIns = 0;
+
   // Getters
   User? get user => _user;
-  bool get isLoading => _isLoading;
-  String? get error => _error;
+  bool get isLoadingAuth => _isLoadingAuth;
+  String? get authError => _authError;
   bool get isAuthenticated => _user != null;
-  bool get isInitialized => _isInitialized;
-  String? get userId => _user?.uid;
   
-  // Constructor
-  AuthProvider() {
-    _init();
+  // Performance getters
+  Duration? get lastSignInDuration => _lastSignInDuration;
+  double get signInSuccessRate => _signInAttempts > 0 ? _successfulSignIns / _signInAttempts : 0.0;
+
+  AuthProvider(this._authService) {
+    _initializeAuthListener();
   }
-  
-  // Initialize auth state listener
-  void _init() {
-    _authService.authStateChanges.listen((User? user) {
-      _user = user;
-      _isInitialized = true;
-      notifyListeners();
-    });
-  }
-  
-  // Sign up with email and password
-  Future<bool> signUpWithEmailAndPassword({
-    required String email,
-    required String password,
-    required String firstName,
-    required String lastName,
-  }) async {
-    _setLoading(true);
-    _clearError();
+
+  /// Initialize authentication state listener
+  void _initializeAuthListener() {
+    _authSubscription = _authService.authStateChanges.listen(
+      _handleAuthStateChange,
+      onError: _handleAuthError,
+    );
     
-    try {
-      final credential = await _authService.signUpWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      
-      if (credential?.user != null) {
-        // Create user profile in Firestore
-        await _createUserProfile(
-          userId: credential!.user!.uid,
-          email: email,
-          firstName: firstName,
-          lastName: lastName,
-        );
-        
-        // Update display name
-        await credential.user!.updateDisplayName('$firstName $lastName');
-        
-        _user = credential.user;
-        notifyListeners();
-        return true;
-      }
-      
-      return false;
-    } catch (e) {
-      _setError(e.toString());
-      return false;
-    } finally {
-      _setLoading(false);
+    if (kDebugMode) {
+      print('AuthProvider: Initialized authentication listener');
     }
   }
-  
-  // Sign in with email and password
-  Future<bool> signInWithEmailAndPassword({
-    required String email,
-    required String password,
-  }) async {
-    _setLoading(true);
-    _clearError();
+
+  /// Handle authentication state changes
+  void _handleAuthStateChange(User? user) {
+    final wasAuthenticated = _user != null;
+    _user = user;
+    _authError = null;
     
-    try {
-      final credential = await _authService.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      
-      if (credential?.user != null) {
-        _user = credential!.user;
-        notifyListeners();
-        return true;
-      }
-      
-      return false;
-    } catch (e) {
-      _setError(e.toString());
-      return false;
-    } finally {
-      _setLoading(false);
+    if (kDebugMode) {
+      print('AuthProvider: Auth state changed - User: ${user?.uid}');
     }
-  }
-  
-  // Sign in with Google
-  Future<bool> signInWithGoogle() async {
-    _setLoading(true);
-    _clearError();
     
-    try {
-      final credential = await _authService.signInWithGoogle();
-      
-      if (credential?.user != null) {
-        _user = credential!.user;
-        
-        // Check if user profile exists, if not create one
-        await _ensureUserProfile(credential.user!);
-        
-        notifyListeners();
-        return true;
-      }
-      
-      return false;
-    } catch (e) {
-      _setError(e.toString());
-      return false;
-    } finally {
-      _setLoading(false);
+    // Track performance metrics
+    if (user != null && !wasAuthenticated) {
+      _successfulSignIns++;
+      _lastSignInTime = DateTime.now();
     }
-  }
-  
-  // Sign in with Apple
-  Future<bool> signInWithApple() async {
-    _setLoading(true);
-    _clearError();
     
-    try {
-      final credential = await _authService.signInWithApple();
-      
-      if (credential?.user != null) {
-        _user = credential!.user;
-        
-        // Check if user profile exists, if not create one
-        await _ensureUserProfile(credential.user!);
-        
-        notifyListeners();
-        return true;
-      }
-      
-      return false;
-    } catch (e) {
-      _setError(e.toString());
-      return false;
-    } finally {
-      _setLoading(false);
-    }
-  }
-  
-  // Send password reset email
-  Future<bool> sendPasswordResetEmail({required String email}) async {
-    _setLoading(true);
-    _clearError();
-    
-    try {
-      await _authService.sendPasswordResetEmail(email: email);
-      return true;
-    } catch (e) {
-      _setError(e.toString());
-      return false;
-    } finally {
-      _setLoading(false);
-    }
-  }
-  
-  // Sign out
-  Future<void> signOut() async {
-    _setLoading(true);
-    _clearError();
-    
-    try {
-      await _authService.signOut();
-      _user = null;
-      notifyListeners();
-    } catch (e) {
-      _setError(e.toString());
-    } finally {
-      _setLoading(false);
-    }
-  }
-  
-  // Delete account
-  Future<bool> deleteAccount() async {
-    _setLoading(true);
-    _clearError();
-    
-    try {
-      final userId = _user?.uid;
-      
-      if (userId != null) {
-        // Delete user data from Firestore first
-        await _firestoreService.deleteUserData(userId);
-      }
-      
-      // Delete Firebase Auth account
-      await _authService.deleteAccount();
-      
-      _user = null;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _setError(e.toString());
-      return false;
-    } finally {
-      _setLoading(false);
-    }
-  }
-  
-  // Update email
-  Future<bool> updateEmail({required String newEmail}) async {
-    _setLoading(true);
-    _clearError();
-    
-    try {
-      await _authService.updateEmail(newEmail: newEmail);
-      
-      // Update email in Firestore
-      if (_user != null) {
-        await _firestoreService.updateUserEmail(_user!.uid, newEmail);
-      }
-      
-      return true;
-    } catch (e) {
-      _setError(e.toString());
-      return false;
-    } finally {
-      _setLoading(false);
-    }
-  }
-  
-  // Update password
-  Future<bool> updatePassword({required String newPassword}) async {
-    _setLoading(true);
-    _clearError();
-    
-    try {
-      await _authService.updatePassword(newPassword: newPassword);
-      return true;
-    } catch (e) {
-      _setError(e.toString());
-      return false;
-    } finally {
-      _setLoading(false);
-    }
-  }
-  
-  // Clear error
-  void clearError() {
-    _clearError();
     notifyListeners();
   }
-  
-  // Private helper methods
-  void _setLoading(bool loading) {
-    _isLoading = loading;
+
+  /// Handle authentication errors
+  void _handleAuthError(dynamic error) {
+    _authError = error.toString();
+    _isLoadingAuth = false;
+    
+    if (kDebugMode) {
+      print('AuthProvider: Auth error - $error');
+    }
+    
     notifyListeners();
   }
-  
-  void _setError(String error) {
-    _error = error;
-    notifyListeners();
-  }
-  
-  void _clearError() {
-    _error = null;
-  }
-  
-  // Create user profile in Firestore
-  Future<void> _createUserProfile({
-    required String userId,
-    required String email,
-    required String firstName,
-    required String lastName,
-  }) async {
-    await _firestoreService.createUserProfile(
-      userId: userId,
-      data: {
-        'email': email,
-        'firstName': firstName,
-        'lastName': lastName,
-        'createdTime': DateTime.now(),
-        'onboardingStatus': 'not_started',
+
+  /// Sign in with email and password
+  ///
+  /// Authenticates a user using their email and password credentials.
+  /// Uses transaction-based state management to ensure atomic updates.
+  ///
+  /// **Parameters:**
+  /// - [email]: User's email address (must be valid email format)
+  /// - [password]: User's password (minimum length enforced by Firebase)
+  ///
+  /// **Returns:**
+  /// - `true` if sign-in was successful
+  /// - `false` if sign-in failed
+  ///
+  /// **Performance Tracking:**
+  /// - Records sign-in attempts and success rate
+  /// - Measures sign-in duration for performance monitoring
+  /// - Updates performance metrics accessible via [signInSuccessRate]
+  ///
+  /// **State Updates:**
+  /// - Sets [isLoadingAuth] to `true` during operation
+  /// - Clears [authError] on successful authentication
+  /// - Updates [user] with authenticated user data
+  ///
+  /// **Example:**
+  /// ```dart
+  /// final success = await authProvider.signInWithEmailAndPassword(
+  ///   'user@example.com',
+  ///   'securePassword123'
+  /// );
+  /// if (success) {
+  ///   print('User signed in: ${authProvider.user?.email}');
+  /// } else {
+  ///   print('Sign-in failed: ${authProvider.authError}');
+  /// }
+  /// ```
+  ///
+  /// **Throws:**
+  /// - May throw authentication exceptions that are handled internally
+  ///   and exposed via [authError]
+  Future<bool> signInWithEmailAndPassword(String email, String password) async {
+    return _operationManager.queueOperation<bool>(
+      type: OperationType.signIn,
+      parameters: {'email': email, 'password': password},
+      operation: () async {
+        final startTime = DateTime.now();
+        _signInAttempts++;
+        
+        final transactionId = await _operationManager.startTransaction({
+          'isLoadingAuth': _isLoadingAuth,
+          'authError': _authError,
+        });
+
+        try {
+          _operationManager.addTransactionChange(transactionId, 'isLoadingAuth', true);
+          _operationManager.addTransactionChange(transactionId, 'authError', null);
+          
+          final finalState = await _operationManager.commitTransaction(transactionId);
+          _isLoadingAuth = finalState['isLoadingAuth'];
+          _authError = finalState['authError'];
+          notifyListeners();
+
+          await _authService.signInWithEmailAndPassword(email: email, password: password);
+          
+          // Calculate sign-in duration
+          _lastSignInDuration = DateTime.now().difference(startTime);
+          
+          if (kDebugMode) {
+            print('AuthProvider: Sign-in successful in ${_lastSignInDuration?.inMilliseconds}ms');
+          }
+          
+          return true;
+        } catch (e) {
+          await _operationManager.rollbackTransaction(transactionId);
+          _authError = e.toString();
+          _isLoadingAuth = false;
+          
+          if (kDebugMode) {
+            print('AuthProvider: Sign-in failed - $e');
+          }
+          
+          notifyListeners();
+          return false;
+        }
       },
     );
   }
-  
-  // Ensure user profile exists (for social login)
-  Future<void> _ensureUserProfile(User user) async {
-    final profileExists = await _firestoreService.userProfileExists(user.uid);
-    
-    if (!profileExists) {
-      // Extract names from display name
-      final names = user.displayName?.split(' ') ?? [];
-      final firstName = names.isNotEmpty ? names.first : '';
-      final lastName = names.length > 1 ? names.sublist(1).join(' ') : '';
+
+  /// Sign up with email and password
+  ///
+  /// Creates a new user account using email and password credentials.
+  /// Uses the same transaction-based state management as sign-in for consistency.
+  ///
+  /// **Parameters:**
+  /// - [email]: User's email address (must be unique and valid format)
+  /// - [password]: User's password (must meet Firebase security requirements)
+  ///
+  /// **Returns:**
+  /// - `true` if account creation was successful
+  /// - `false` if sign-up failed
+  ///
+  /// **Performance Tracking:**
+  /// - Records sign-up attempts under sign-in metrics for unified tracking
+  /// - Measures account creation duration
+  /// - Updates success rate statistics
+  ///
+  /// **State Updates:**
+  /// - Sets [isLoadingAuth] to `true` during operation
+  /// - Clears [authError] on successful account creation
+  /// - Automatically signs in the user upon successful registration
+  ///
+  /// **Example:**
+  /// ```dart
+  /// final success = await authProvider.signUpWithEmailAndPassword(
+  ///   'newuser@example.com',
+  ///   'strongPassword123!'
+  /// );
+  /// if (success) {
+  ///   print('Account created and user signed in');
+  /// } else {
+  ///   print('Sign-up failed: ${authProvider.authError}');
+  /// }
+  /// ```
+  Future<bool> signUpWithEmailAndPassword(String email, String password) async {
+    return _operationManager.queueOperation<bool>(
+      type: OperationType.signIn, // Use signIn type as it's similar operation
+      parameters: {'email': email, 'password': password, 'isSignUp': true},
+      operation: () async {
+        final startTime = DateTime.now();
+        _signInAttempts++;
+        
+        final transactionId = await _operationManager.startTransaction({
+          'isLoadingAuth': _isLoadingAuth,
+          'authError': _authError,
+        });
+
+        try {
+          _operationManager.addTransactionChange(transactionId, 'isLoadingAuth', true);
+          _operationManager.addTransactionChange(transactionId, 'authError', null);
+          
+          final finalState = await _operationManager.commitTransaction(transactionId);
+          _isLoadingAuth = finalState['isLoadingAuth'];
+          _authError = finalState['authError'];
+          notifyListeners();
+
+          await _authService.signUpWithEmailAndPassword(email: email, password: password);
+          
+          // Calculate sign-up duration
+          _lastSignInDuration = DateTime.now().difference(startTime);
+          
+          if (kDebugMode) {
+            print('AuthProvider: Sign-up successful in ${_lastSignInDuration?.inMilliseconds}ms');
+          }
+          
+          return true;
+        } catch (e) {
+          await _operationManager.rollbackTransaction(transactionId);
+          _authError = e.toString();
+          _isLoadingAuth = false;
+          
+          if (kDebugMode) {
+            print('AuthProvider: Sign-up failed - $e');
+          }
+          
+          notifyListeners();
+          return false;
+        }
+      },
+    );
+  }
+
+  /// Sign out current user
+  Future<void> signOut() async {
+    try {
+      await _authService.signOut();
       
-      await _createUserProfile(
-        userId: user.uid,
-        email: user.email ?? '',
-        firstName: firstName,
-        lastName: lastName,
-      );
+      if (kDebugMode) {
+        print('AuthProvider: User signed out successfully');
+      }
+    } catch (e) {
+      _authError = e.toString();
+      
+      if (kDebugMode) {
+        print('AuthProvider: Error signing out - $e');
+      }
+      
+      notifyListeners();
     }
+  }
+
+  /// Reset authentication error
+  void clearAuthError() {
+    if (_authError != null) {
+      _authError = null;
+      notifyListeners();
+    }
+  }
+
+  /// Get authentication performance metrics
+  Map<String, dynamic> getPerformanceMetrics() {
+    return {
+      'signInAttempts': _signInAttempts,
+      'successfulSignIns': _successfulSignIns,
+      'signInSuccessRate': signInSuccessRate,
+      'lastSignInDuration': _lastSignInDuration?.inMilliseconds,
+      'lastSignInTime': _lastSignInTime?.toIso8601String(),
+      'isCurrentlyLoading': _isLoadingAuth,
+      'hasActiveError': _authError != null,
+      'operationStats': _operationManager.getOperationStats(),
+    };
+  }
+
+  /// Get current authentication state summary
+  Map<String, dynamic> getStateSnapshot() {
+    return {
+      'isAuthenticated': isAuthenticated,
+      'userId': _user?.uid,
+      'userEmail': _user?.email,
+      'isLoading': _isLoadingAuth,
+      'hasError': _authError != null,
+      'errorMessage': _authError,
+      'lastUpdate': DateTime.now().toIso8601String(),
+    };
+  }
+
+  /// Refresh current user data
+  Future<void> refreshUser() async {
+    if (_user != null) {
+      try {
+        await _user!.reload();
+        // The auth state listener will handle the update
+        
+        if (kDebugMode) {
+          print('AuthProvider: User data refreshed');
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('AuthProvider: Error refreshing user data - $e');
+        }
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    // Cancel authentication subscription
+    _authSubscription?.cancel();
+    
+    // Dispose operation manager
+    _operationManager.dispose();
+    
+    if (kDebugMode) {
+      print('AuthProvider: Disposed with ${getPerformanceMetrics()}');
+    }
+    
+    super.dispose();
   }
 }

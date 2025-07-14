@@ -163,7 +163,7 @@ class _VirtualJobListState extends State<VirtualJobList> with AutomaticKeepAlive
                     padding: const EdgeInsets.all(12),
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: AppTheme.warningYellow.withValues(alpha: 0.1),
+                      color: AppTheme.warningYellow.withOpacity(0.1),
                       border: Border.all(color: AppTheme.warningYellow),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -423,7 +423,7 @@ class _VirtualJobListState extends State<VirtualJobList> with AutomaticKeepAlive
   /// Refresh job list
   void _refreshJobs() {
     final appStateProvider = context.read<AppStateProvider>();
-    appStateProvider.refreshJobs();
+    appStateProvider.loadJobs(isRefresh: true);
   }
 }
 

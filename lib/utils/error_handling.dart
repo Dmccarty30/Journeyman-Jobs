@@ -1,404 +1,480 @@
-import 'dart:developer' as developer;
+import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Error severity levels for classification
-enum ErrorSeverity {
-  low,
-  medium,
-  high,
-  critical,
-}
+/// Standardized error handling patterns for the Journeyman Jobs application
+/// 
+/// This utility provides consistent error handling, logging, and recovery
+/// mechanisms across all application components to improve maintainability
+/// and user experience.
+/// 
+/// ## Error Classification:
+/// 
+/// **NetworkError**: Connectivity and API-related failures
+/// **AuthenticationError**: User authentication and authorization issues  
+/// **ValidationError**: Data validation and input format problems
+/// **StorageError**: Local storage and persistence failures
+/// **UnknownError**: Unexpected or unclassified errors
+/// 
+/// ## Features:
+/// 
+/// - Consistent error classification and messaging
+/// - Automatic error recovery strategies
+/// - Structured logging for debugging
+/// - User-friendly error messages
+/// - Performance metrics for error tracking
+/// 
+/// ## Usage Examples:
+/// 
+/// **Basic Error Handling:**
+/// ```dart
+/// try {
+///   await riskyOperation();
+/// } catch (error) {
+///   final standardError = ErrorHandler.handleError(
+///     error, 
+///     context: 'Loading jobs data',
+///     operation: 'loadJobs'
+///   );
+///   
+///   // Display user-friendly message
+///   showErrorMessage(standardError.userMessage);
+/// }
+/// ```
+/// 
+/// **With Recovery Strategy:**
+/// ```dart
+/// final result = await ErrorHandler.executeWithRetry(
+///   operation: () => apiCall(),
+///   maxRetries: 3,
+///   context: 'API fetch',
+/// );
+/// ```
 
-/// Error categories for better organization
-enum ErrorCategory {
-  authentication,
+/// Enumeration of standardized error types
+enum ErrorType {
   network,
-  database,
-  ui,
-  memory,
-  concurrency,
-  business,
+  authentication,
+  validation,
+  storage,
+  permission,
+  timeout,
   unknown,
 }
 
-/// Sanitized error data structure
-class SanitizedError {
-  final String id;
+/// Standardized error class with consistent properties
+class StandardError {
+  final ErrorType type;
+  final String code;
   final String message;
-  final ErrorSeverity severity;
-  final ErrorCategory category;
-  final String stackTrace;
-  final Map<String, dynamic> context;
+  final String userMessage;
+  final String context;
   final DateTime timestamp;
-  final String? userId;
-  final String? sessionId;
+  final StackTrace? stackTrace;
+  final Map<String, dynamic> metadata;
+  final bool isRecoverable;
+  final int retryCount;
 
-  SanitizedError({
-    required this.id,
+  const StandardError({
+    required this.type,
+    required this.code,
     required this.message,
-    required this.severity,
-    required this.category,
-    required this.stackTrace,
+    required this.userMessage,
     required this.context,
     required this.timestamp,
-    this.userId,
-    this.sessionId,
+    this.stackTrace,
+    this.metadata = const {},
+    this.isRecoverable = false,
+    this.retryCount = 0,
   });
 
+  /// Create a copy with updated properties
+  StandardError copyWith({
+    ErrorType? type,
+    String? code,
+    String? message,
+    String? userMessage,
+    String? context,
+    DateTime? timestamp,
+    StackTrace? stackTrace,
+    Map<String, dynamic>? metadata,
+    bool? isRecoverable,
+    int? retryCount,
+  }) {
+    return StandardError(
+      type: type ?? this.type,
+      code: code ?? this.code,
+      message: message ?? this.message,
+      userMessage: userMessage ?? this.userMessage,
+      context: context ?? this.context,
+      timestamp: timestamp ?? this.timestamp,
+      stackTrace: stackTrace ?? this.stackTrace,
+      metadata: metadata ?? this.metadata,
+      isRecoverable: isRecoverable ?? this.isRecoverable,
+      retryCount: retryCount ?? this.retryCount,
+    );
+  }
+
+  /// Convert to JSON for logging
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'type': type.name,
+      'code': code,
       'message': message,
-      'severity': severity.name,
-      'category': category.name,
-      'stackTrace': stackTrace,
+      'userMessage': userMessage,
       'context': context,
       'timestamp': timestamp.toIso8601String(),
-      'userId': userId,
-      'sessionId': sessionId,
+      'metadata': metadata,
+      'isRecoverable': isRecoverable,
+      'retryCount': retryCount,
     };
   }
 
   @override
-  String toString() => 'SanitizedError(id: $id, severity: ${severity.name}, category: ${category.name})';
+  String toString() {
+    return 'StandardError(type: $type, code: $code, context: $context, message: $message)';
+  }
 }
 
-/// Comprehensive error sanitization and handling service
-class ErrorSanitizationService {
-  static const List<String> _sensitiveKeys = [
-    'password',
-    'token',
-    'key',
-    'secret',
-    'apikey',
-    'auth',
-    'credential',
-    'ssn',
-    'social_security',
-    'credit_card',
-    'phone',
-    'email',
-    'address',
-    'zip',
-    'postal',
-  ];
+/// Recovery strategy enumeration
+enum RecoveryStrategy {
+  retry,
+  fallback,
+  ignore,
+  escalate,
+  cache,
+}
 
-  static const List<String> _sensitivePatterns = [
-    r'\b\d{3}-\d{2}-\d{4}\b', // SSN
-    r'\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b', // Credit card
-    r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', // Email
-    r'\b\d{3}[\s-]?\d{3}[\s-]?\d{4}\b', // Phone
-    r'AIza[0-9A-Za-z_-]{35}', // Google API key
-    r'sk_[a-zA-Z0-9]{24}', // Stripe secret key
-    r'pk_[a-zA-Z0-9]{24}', // Stripe public key
-  ];
+/// Central error handling utility
+class ErrorHandler {
+  static final Map<String, int> _errorCounts = {};
+  static final Map<String, DateTime> _lastErrorTimes = {};
+  static const int maxRetryAttempts = 3;
+  static const Duration retryDelay = Duration(seconds: 2);
 
-  static int _errorCounter = 0;
-  static String? _currentUserId;
-  static String? _currentSessionId;
-
-  /// Set current user context
-  static void setUserContext(String? userId, String? sessionId) {
-    _currentUserId = userId;
-    _currentSessionId = sessionId;
-  }
-
-  /// Sanitize and process an error
-  static SanitizedError sanitizeError(
+  /// Handle and standardize any error
+  static StandardError handleError(
     dynamic error, {
-    StackTrace? stackTrace,
-    Map<String, dynamic>? context,
-    ErrorSeverity? severity,
-    ErrorCategory? category,
+    required String context,
+    String? operation,
+    Map<String, dynamic>? metadata,
   }) {
-    final errorId = _generateErrorId();
-    final sanitizedMessage = _sanitizeMessage(error.toString());
-    final sanitizedStackTrace = _sanitizeStackTrace(stackTrace?.toString() ?? '');
-    final sanitizedContext = _sanitizeContext(context ?? {});
-    final detectedCategory = category ?? _categorizeError(error);
-    final detectedSeverity = severity ?? _determineSeverity(error, detectedCategory);
+    final timestamp = DateTime.now();
+    final errorKey = '$context:${error.runtimeType}';
+    
+    // Track error frequency
+    _errorCounts[errorKey] = (_errorCounts[errorKey] ?? 0) + 1;
+    _lastErrorTimes[errorKey] = timestamp;
 
-    return SanitizedError(
-      id: errorId,
-      message: sanitizedMessage,
-      severity: detectedSeverity,
-      category: detectedCategory,
-      stackTrace: sanitizedStackTrace,
-      context: sanitizedContext,
-      timestamp: DateTime.now(),
-      userId: _currentUserId,
-      sessionId: _currentSessionId,
-    );
+    // Classify and handle specific error types
+    if (error is FirebaseAuthException) {
+      return _handleFirebaseAuthError(error, context, operation, metadata, timestamp);
+    } else if (error is FirebaseException) {
+      return _handleFirebaseError(error, context, operation, metadata, timestamp);
+    } else if (error is TimeoutException) {
+      return _handleTimeoutError(error, context, operation, metadata, timestamp);
+    } else if (error is FormatException) {
+      return _handleValidationError(error, context, operation, metadata, timestamp);
+    } else {
+      return _handleUnknownError(error, context, operation, metadata, timestamp);
+    }
   }
 
-  /// Report error to logging and crash reporting services
-  static Future<void> reportError(
-    dynamic error, {
-    StackTrace? stackTrace,
-    Map<String, dynamic>? context,
-    ErrorSeverity? severity,
-    ErrorCategory? category,
-    bool fatal = false,
+  /// Execute operation with automatic retry logic
+  static Future<T> executeWithRetry<T>(
+    Future<T> Function() operation, {
+    int maxRetries = maxRetryAttempts,
+    Duration delay = retryDelay,
+    String context = 'Unknown operation',
+    bool Function(dynamic error)? shouldRetry,
   }) async {
-    final sanitizedError = sanitizeError(
-      error,
-      stackTrace: stackTrace,
-      context: context,
-      severity: severity,
-      category: category,
-    );
+    int attempts = 0;
+    
+    while (attempts <= maxRetries) {
+      try {
+        return await operation();
+      } catch (error) {
+        attempts++;
+        
+        final standardError = handleError(
+          error,
+          context: context,
+          metadata: {'attempt': attempts, 'maxRetries': maxRetries},
+        );
 
-    // Log to console in debug mode
-    if (kDebugMode) {
-      developer.log(
-        'Error ${sanitizedError.id}: ${sanitizedError.message}',
-        name: 'ErrorHandler',
-        error: sanitizedError.message,
-        stackTrace: stackTrace,
-        level: _getSeverityLevel(sanitizedError.severity),
-      );
-    }
+        // Check if we should retry
+        final canRetry = shouldRetry?.call(error) ?? standardError.isRecoverable;
+        
+        if (attempts > maxRetries || !canRetry) {
+          if (kDebugMode) {
+            print('ErrorHandler: Operation failed after $attempts attempts - $standardError');
+          }
+          rethrow;
+        }
 
-    // TODO: In production, integrate with Firebase Crashlytics
-    // For now, store locally for offline analysis
-    await _storeErrorLocally(sanitizedError);
-  }
-
-  /// Handle and report Flutter framework errors
-  static void handleFlutterError(FlutterErrorDetails details) {
-    reportError(
-      details.exception,
-      stackTrace: details.stack,
-      context: {
-        'library': details.library,
-        'context': details.context?.toString(),
-        'information': details.informationCollector?.call().map((e) => e.toString()).toList(),
-      },
-      category: ErrorCategory.ui,
-      severity: details.silent ? ErrorSeverity.low : ErrorSeverity.medium,
-    );
-  }
-
-  /// Handle platform dispatcher errors
-  static bool handlePlatformError(Object error, StackTrace stackTrace) {
-    reportError(
-      error,
-      stackTrace: stackTrace,
-      category: ErrorCategory.unknown,
-      severity: ErrorSeverity.high,
-      fatal: true,
-    );
-    return true; // Continue execution
-  }
-
-  /// Sanitize error message by removing sensitive information
-  static String _sanitizeMessage(String message) {
-    String sanitized = message;
-
-    // Remove sensitive patterns
-    for (final pattern in _sensitivePatterns) {
-      sanitized = sanitized.replaceAll(RegExp(pattern), '[REDACTED]');
-    }
-
-    // Remove file paths and personal directories
-    sanitized = sanitized.replaceAll(RegExp(r'/Users/[^/]+'), '/Users/[USER]');
-    sanitized = sanitized.replaceAll(RegExp(r'C:\\Users\\[^\\]+'), 'C:\\Users\\[USER]');
-
-    return sanitized;
-  }
-
-  /// Sanitize stack trace
-  static String _sanitizeStackTrace(String stackTrace) {
-    if (stackTrace.isEmpty) return '';
-
-    String sanitized = stackTrace;
-
-    // Remove file paths
-    sanitized = sanitized.replaceAll(RegExp(r'/Users/[^/]+'), '/Users/[USER]');
-    sanitized = sanitized.replaceAll(RegExp(r'C:\\Users\\[^\\]+'), 'C:\\Users\\[USER]');
-
-    // Limit stack trace length for storage efficiency
-    final lines = sanitized.split('\n');
-    if (lines.length > 20) {
-      return '${lines.take(20).join('\n')}\n... (truncated)';
-    }
-
-    return sanitized;
-  }
-
-  /// Sanitize context data
-  static Map<String, dynamic> _sanitizeContext(Map<String, dynamic> context) {
-    final Map<String, dynamic> sanitized = {};
-
-    for (final entry in context.entries) {
-      final key = entry.key.toLowerCase();
-      final value = entry.value;
-
-      // Check if key contains sensitive information
-      if (_sensitiveKeys.any((sensitive) => key.contains(sensitive))) {
-        sanitized[entry.key] = '[REDACTED]';
-        continue;
-      }
-
-      // Sanitize string values
-      if (value is String) {
-        sanitized[entry.key] = _sanitizeMessage(value);
-      } else if (value is Map) {
-        sanitized[entry.key] = _sanitizeContext(Map<String, dynamic>.from(value));
-      } else if (value is List) {
-        sanitized[entry.key] = value.map((item) {
-          if (item is String) return _sanitizeMessage(item);
-          if (item is Map) return _sanitizeContext(Map<String, dynamic>.from(item));
-          return item;
-        }).toList();
-      } else {
-        sanitized[entry.key] = value;
+        // Wait before retry
+        if (attempts <= maxRetries) {
+          await Future.delayed(delay * attempts);
+          
+          if (kDebugMode) {
+            print('ErrorHandler: Retrying operation (attempt $attempts/$maxRetries) - $context');
+          }
+        }
       }
     }
-
-    return sanitized;
+    
+    throw Exception('Maximum retry attempts exceeded');
   }
 
-  /// Categorize error based on type and message
-  static ErrorCategory _categorizeError(dynamic error) {
-    final errorString = error.toString().toLowerCase();
-
-    if (errorString.contains('auth') || errorString.contains('login') || errorString.contains('signin')) {
-      return ErrorCategory.authentication;
-    }
-    if (errorString.contains('network') || errorString.contains('socket') || errorString.contains('connection')) {
-      return ErrorCategory.network;
-    }
-    if (errorString.contains('firestore') || errorString.contains('database') || errorString.contains('firebase')) {
-      return ErrorCategory.database;
-    }
-    if (errorString.contains('widget') || errorString.contains('render') || errorString.contains('layout')) {
-      return ErrorCategory.ui;
-    }
-    if (errorString.contains('memory') || errorString.contains('outofmemory')) {
-      return ErrorCategory.memory;
-    }
-    if (errorString.contains('concurrent') || errorString.contains('deadlock') || errorString.contains('race')) {
-      return ErrorCategory.concurrency;
-    }
-    if (errorString.contains('business') || errorString.contains('validation')) {
-      return ErrorCategory.business;
-    }
-
-    return ErrorCategory.unknown;
-  }
-
-  /// Determine error severity
-  static ErrorSeverity _determineSeverity(dynamic error, ErrorCategory category) {
-    final errorString = error.toString().toLowerCase();
-
-    // Critical errors
-    if (errorString.contains('outofmemory') || 
-        errorString.contains('stackoverflow') ||
-        errorString.contains('segmentation') ||
-        category == ErrorCategory.memory) {
-      return ErrorSeverity.critical;
-    }
-
-    // High severity errors
-    if (errorString.contains('crash') ||
-        errorString.contains('fatal') ||
-        category == ErrorCategory.authentication ||
-        category == ErrorCategory.concurrency) {
-      return ErrorSeverity.high;
-    }
-
-    // Medium severity errors
-    if (category == ErrorCategory.network ||
-        category == ErrorCategory.database ||
-        errorString.contains('timeout')) {
-      return ErrorSeverity.medium;
-    }
-
-    // Default to low for UI and business logic errors
-    return ErrorSeverity.low;
-  }
-
-  /// Generate unique error ID
-  static String _generateErrorId() {
-    _errorCounter++;
-    return 'ERR_${DateTime.now().millisecondsSinceEpoch}_$_errorCounter';
-  }
-
-  /// Get log level for severity
-  static int _getSeverityLevel(ErrorSeverity severity) {
-    switch (severity) {
-      case ErrorSeverity.low:
-        return 700; // INFO
-      case ErrorSeverity.medium:
-        return 900; // WARNING
-      case ErrorSeverity.high:
-        return 1000; // SEVERE
-      case ErrorSeverity.critical:
-        return 1200; // SHOUT
-    }
-  }
-
-  /// Store error locally for offline analysis
-  static Future<void> _storeErrorLocally(SanitizedError error) async {
-    // In a real implementation, this would store to local database
-    // For now, we'll just ensure the error is processed
-    if (kDebugMode) {
-      print('Local error storage: ${error.id} (${error.severity.name})');
-    }
-  }
-
-  /// Get error statistics
+  /// Get error statistics for monitoring
   static Map<String, dynamic> getErrorStats() {
+    final now = DateTime.now();
+    final recentErrors = <String, int>{};
+    
+    for (final entry in _errorCounts.entries) {
+      final lastError = _lastErrorTimes[entry.key];
+      if (lastError != null && now.difference(lastError).inMinutes < 60) {
+        recentErrors[entry.key] = entry.value;
+      }
+    }
+
     return {
-      'totalErrors': _errorCounter,
-      'currentUser': _currentUserId,
-      'currentSession': _currentSessionId,
-      'timestamp': DateTime.now().toIso8601String(),
+      'totalErrorTypes': _errorCounts.length,
+      'recentErrors': recentErrors,
+      'mostFrequentError': _getMostFrequentError(),
+      'errorRate': _calculateErrorRate(),
     };
   }
-}
 
-/// Global error handler setup
-class GlobalErrorHandler {
-  static bool _initialized = false;
+  /// Handle Firebase Auth errors
+  static StandardError _handleFirebaseAuthError(
+    FirebaseAuthException error,
+    String context,
+    String? operation,
+    Map<String, dynamic>? metadata,
+    DateTime timestamp,
+  ) {
+    String userMessage;
+    bool isRecoverable = false;
 
-  /// Initialize global error handling
-  static void initialize() {
-    if (_initialized) return;
-
-    // Handle Flutter framework errors
-    FlutterError.onError = ErrorSanitizationService.handleFlutterError;
-
-    // Handle platform dispatcher errors
-    PlatformDispatcher.instance.onError = ErrorSanitizationService.handlePlatformError;
-
-    _initialized = true;
+    switch (error.code) {
+      case 'user-not-found':
+        userMessage = 'No account found with this email address.';
+        break;
+      case 'wrong-password':
+        userMessage = 'Incorrect password. Please try again.';
+        isRecoverable = true;
+        break;
+      case 'email-already-in-use':
+        userMessage = 'An account already exists with this email address.';
+        break;
+      case 'weak-password':
+        userMessage = 'Password is too weak. Please choose a stronger password.';
+        isRecoverable = true;
+        break;
+      case 'invalid-email':
+        userMessage = 'Please enter a valid email address.';
+        isRecoverable = true;
+        break;
+      case 'network-request-failed':
+        userMessage = 'Network error. Please check your connection and try again.';
+        isRecoverable = true;
+        break;
+      default:
+        userMessage = 'Authentication failed. Please try again.';
+        isRecoverable = true;
+    }
 
     if (kDebugMode) {
-      print('GlobalErrorHandler: Initialized');
+      print('ErrorHandler: Firebase Auth Error - ${error.code}: ${error.message}');
     }
-  }
 
-  /// Report a handled error
-  static Future<void> reportError(
-    dynamic error, {
-    StackTrace? stackTrace,
-    Map<String, dynamic>? context,
-    ErrorSeverity? severity,
-    ErrorCategory? category,
-  }) async {
-    await ErrorSanitizationService.reportError(
-      error,
-      stackTrace: stackTrace,
+    return StandardError(
+      type: ErrorType.authentication,
+      code: error.code,
+      message: error.message ?? 'Authentication error',
+      userMessage: userMessage,
       context: context,
-      severity: severity,
-      category: category,
+      timestamp: timestamp,
+      stackTrace: error.stackTrace,
+      metadata: {
+        'operation': operation,
+        'errorCode': error.code,
+        ...?metadata,
+      },
+      isRecoverable: isRecoverable,
     );
   }
 
-  /// Set user context for error reporting
-  static void setUserContext(String? userId, String? sessionId) {
-    ErrorSanitizationService.setUserContext(userId, sessionId);
+  /// Handle Firebase Firestore errors
+  static StandardError _handleFirebaseError(
+    FirebaseException error,
+    String context,
+    String? operation,
+    Map<String, dynamic>? metadata,
+    DateTime timestamp,
+  ) {
+    String userMessage;
+    bool isRecoverable = false;
+    ErrorType type = ErrorType.network;
+
+    switch (error.code) {
+      case 'permission-denied':
+        userMessage = 'Access denied. Please check your permissions.';
+        type = ErrorType.permission;
+        break;
+      case 'unavailable':
+        userMessage = 'Service temporarily unavailable. Please try again later.';
+        isRecoverable = true;
+        break;
+      case 'deadline-exceeded':
+        userMessage = 'Request timed out. Please try again.';
+        isRecoverable = true;
+        type = ErrorType.timeout;
+        break;
+      case 'resource-exhausted':
+        userMessage = 'Too many requests. Please wait a moment and try again.';
+        isRecoverable = true;
+        break;
+      default:
+        userMessage = 'Unable to load data. Please try again.';
+        isRecoverable = true;
+    }
+
+    if (kDebugMode) {
+      print('ErrorHandler: Firebase Error - ${error.code}: ${error.message}');
+    }
+
+    return StandardError(
+      type: type,
+      code: error.code,
+      message: error.message ?? 'Firebase error',
+      userMessage: userMessage,
+      context: context,
+      timestamp: timestamp,
+      stackTrace: error.stackTrace,
+      metadata: {
+        'operation': operation,
+        'errorCode': error.code,
+        ...?metadata,
+      },
+      isRecoverable: isRecoverable,
+    );
+  }
+
+  /// Handle timeout errors
+  static StandardError _handleTimeoutError(
+    TimeoutException error,
+    String context,
+    String? operation,
+    Map<String, dynamic>? metadata,
+    DateTime timestamp,
+  ) {
+    if (kDebugMode) {
+      print('ErrorHandler: Timeout Error - ${error.message}');
+    }
+
+    return StandardError(
+      type: ErrorType.timeout,
+      code: 'timeout',
+      message: error.message ?? 'Operation timed out',
+      userMessage: 'Request timed out. Please check your connection and try again.',
+      context: context,
+      timestamp: timestamp,
+      metadata: {
+        'operation': operation,
+        'duration': error.duration?.inMilliseconds,
+        ...?metadata,
+      },
+      isRecoverable: true,
+    );
+  }
+
+  /// Handle validation errors
+  static StandardError _handleValidationError(
+    FormatException error,
+    String context,
+    String? operation,
+    Map<String, dynamic>? metadata,
+    DateTime timestamp,
+  ) {
+    if (kDebugMode) {
+      print('ErrorHandler: Validation Error - ${error.message}');
+    }
+
+    return StandardError(
+      type: ErrorType.validation,
+      code: 'format_error',
+      message: error.message,
+      userMessage: 'Invalid data format. Please check your input and try again.',
+      context: context,
+      timestamp: timestamp,
+      metadata: {
+        'operation': operation,
+        'source': error.source,
+        'offset': error.offset,
+        ...?metadata,
+      },
+      isRecoverable: true,
+    );
+  }
+
+  /// Handle unknown errors
+  static StandardError _handleUnknownError(
+    dynamic error,
+    String context,
+    String? operation,
+    Map<String, dynamic>? metadata,
+    DateTime timestamp,
+  ) {
+    if (kDebugMode) {
+      print('ErrorHandler: Unknown Error - $error');
+    }
+
+    return StandardError(
+      type: ErrorType.unknown,
+      code: 'unknown_error',
+      message: error.toString(),
+      userMessage: 'An unexpected error occurred. Please try again.',
+      context: context,
+      timestamp: timestamp,
+      stackTrace: StackTrace.current,
+      metadata: {
+        'operation': operation,
+        'errorType': error.runtimeType.toString(),
+        ...?metadata,
+      },
+      isRecoverable: true,
+    );
+  }
+
+  /// Get most frequent error type
+  static String? _getMostFrequentError() {
+    if (_errorCounts.isEmpty) return null;
+    
+    return _errorCounts.entries
+        .reduce((a, b) => a.value > b.value ? a : b)
+        .key;
+  }
+
+  /// Calculate error rate
+  static double _calculateErrorRate() {
+    final now = DateTime.now();
+    int recentErrors = 0;
+    
+    for (final errorTime in _lastErrorTimes.values) {
+      if (now.difference(errorTime).inMinutes < 60) {
+        recentErrors++;
+      }
+    }
+    
+    return recentErrors / 60.0; // Errors per minute
+  }
+
+  /// Clear error statistics
+  static void clearStats() {
+    _errorCounts.clear();
+    _lastErrorTimes.clear();
   }
 }
