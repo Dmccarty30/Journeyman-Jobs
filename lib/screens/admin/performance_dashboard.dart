@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../services/performance_monitoring_service.dart';
 import '../../services/analytics_service.dart';
 import '../../design_system/app_theme.dart';
 
@@ -12,7 +11,7 @@ class PerformanceDashboard extends StatefulWidget {
   State<PerformanceDashboard> createState() => _PerformanceDashboardState();
 }
 
-class _PerformanceDashboardState extends State<PerformanceDashboard> {
+class _PerformanceDashboardState extends State<PerformanceDashboard> with SingleTickerProviderStateMixin {
   Map<String, dynamic> _performanceMetrics = {};
   Map<String, dynamic> _userBehaviorMetrics = {};
   Map<String, dynamic> _costAnalysis = {};
@@ -21,10 +20,19 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
   bool _isLoading = true;
   String? _error;
   int _selectedTabIndex = 0;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 4, vsync: this, initialIndex: _selectedTabIndex);
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        setState(() {
+          _selectedTabIndex = _tabController.index;
+        });
+      }
+    });
     _checkAdminAccess();
     _loadAllMetrics();
   }
@@ -92,7 +100,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
           ),
         ],
         bottom: TabBar(
-          controller: TabController(length: 4, vsync: Scaffold.of(context)),
+          controller: _tabController,
           onTap: (index) => setState(() => _selectedTabIndex = index),
           labelColor: AppTheme.white,
           unselectedLabelColor: AppTheme.white.withOpacity(0.7),
@@ -142,7 +150,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
     }
 
     return TabBarView(
-      controller: TabController(length: 4, vsync: Scaffold.of(context)),
+      controller: _tabController,
       children: [
         _buildOverviewTab(),
         _buildPerformanceTab(),
@@ -698,5 +706,11 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> {
         Text(value, style: AppTheme.titleLarge.copyWith(color: color)),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 }

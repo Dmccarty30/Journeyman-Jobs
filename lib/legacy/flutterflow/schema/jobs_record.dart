@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
-import '/backend/schema/firestore_util.dart';
-import '/backend/schema/index.dart';
+import 'firestore_util.dart';
+import 'index.dart';
 
 /// Represents a job posting record in the Firestore database.
 ///

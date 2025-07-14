@@ -48,7 +48,7 @@
 
 ---
 
-**Mermaid Diagram: High-Level Migration Workflow**
+- **Mermaid Diagram: High-Level Migration Workflow**
 
 ```mermaid
 flowchart TD

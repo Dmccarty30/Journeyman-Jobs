@@ -5,7 +5,7 @@ import '../../design_system/app_theme.dart';
 import '../../navigation/app_router.dart';
 import '../../providers/app_state_provider.dart';
 import '../../models/job_model.dart';
-import '../../backend/schema/jobs_record.dart';
+import '../../legacy/flutterflow/schema/jobs_record.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

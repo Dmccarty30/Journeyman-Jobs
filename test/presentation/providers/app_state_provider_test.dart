@@ -9,8 +9,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 
-import '../../test_utils/test_helpers.dart';
-import '../../test_utils/test_helpers.mocks.dart';
+import '../../helpers/test_helpers.dart';
+import '../../fixtures/mock_data.dart';
 
 void main() {
   late AppStateProvider appStateProvider;
@@ -147,8 +147,8 @@ void main() {
     test('should load jobs successfully', () async {
       // Arrange
       final jobsData = [
-        TestFixtures.createJobData(id: 'job1'),
-        TestFixtures.createJobData(id: 'job2'),
+        MockData.createJob(id: 'job1').toJson(),
+        MockData.createJob(id: 'job2').toJson(),
       ];
 
       final mockQuerySnapshot = MockQuerySnapshot();
