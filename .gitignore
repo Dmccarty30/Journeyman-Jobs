@@ -57,3 +57,6 @@ app.*.map.json
 # npm cache (should never be in project)
 # npm cache (should never be in project)
 # npm cache (should never be in project)
+
+# npm cache (should never be in project)
+C:\\Users\\david\\AppData\\Roaming\\npm-cache/
