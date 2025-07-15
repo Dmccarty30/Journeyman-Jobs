@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
-import '../../design_system/components/job_card.dart';
 import '../../models/job_model.dart';
 import '../../providers/app_state_provider.dart';
-import '../../widgets/virtual_job_list.dart';
 import '../../widgets/optimized_selector_widgets.dart';
 
 
@@ -192,9 +190,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
         setState(() {
           _selectedFilter = filter;
         });
-        // Update the provider filter
-        // Note: You'll need to implement filtering in AppStateProvider if needed
-        // For now, just trigger a refresh
+        // Trigger a refresh with the new filter
         context.read<AppStateProvider>().refreshJobs();
       },
       child: AnimatedContainer(
@@ -572,8 +568,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                   _searchQuery = value;
                 });
                 // Update the provider search
-                // Note: Search functionality would need to be implemented in AppStateProvider
-                // For now, we'll handle search locally
+                // Handle search locally for now
               },
             ),
           ],
@@ -585,7 +580,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                 _searchQuery = '';
                 _searchController.clear();
               });
-              // Clear the provider search
+              // Refresh jobs
               context.read<AppStateProvider>().refreshJobs();
               Navigator.pop(context);
             },
@@ -852,7 +847,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                                   _searchController.clear();
                                   _selectedFilter = 'All Jobs';
                                 });
-                                // Clear all provider filters
+                                // Clear all filters and refresh
                                 context.read<AppStateProvider>().refreshJobs();
                               },
                               icon: Icon(Icons.clear, size: 16),
@@ -956,15 +951,31 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                         return Center(child: _buildElectricalEmptyState());
                       }
 
-                      // Use VirtualJobList for better performance
-                      return VirtualJobList(
-                        jobs: filteredJobs,
-                        isLoading: jobsState.isLoading,
-                        hasMore: jobsState.hasMore,
-                        error: jobsState.error,
-                        variant: JobCardVariant.full,
-                        onLoadMore: () => context.read<AppStateProvider>().loadMoreJobs(),
-                        showOfflineIndicators: true,
+                      // Use ListView.builder for job list
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(AppTheme.spacingMd),
+                        itemCount: filteredJobs.length + (jobsState.hasMore ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == filteredJobs.length) {
+                            // Loading indicator at the bottom
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                                child: jobsState.isLoading
+                                    ? const CircularProgressIndicator(
+                                        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
+                                      )
+                                    : ElevatedButton(
+                                        onPressed: () => context.read<AppStateProvider>().loadMoreJobs(),
+                                        child: const Text('Load More'),
+                                      ),
+                              ),
+                            );
+                          }
+
+                          final job = filteredJobs[index];
+                          return _buildElectricalJobCard(job);
+                        },
                       );
                     },
                   ),

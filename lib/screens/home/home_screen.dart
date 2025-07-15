@@ -96,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
 
                   final displayName = appStateProvider.userProfile?.displayName ?? appStateProvider.user?.displayName ?? 'User';
-                  final photoUrl = appStateProvider.userProfile?.photoUrl ?? appStateProvider.user?.photoURL;
+                  final photoUrl = appStateProvider.user?.photoURL;
                   final userInitial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
 
                   return Row(

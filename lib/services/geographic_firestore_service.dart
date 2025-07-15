@@ -2,9 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../models/locals_record.dart';
-import '../models/job_model.dart';
 import 'resilient_firestore_service.dart';
-import 'cache_service.dart';
 
 /// Geographic data sharding service for optimized regional queries
 /// 
@@ -14,7 +12,6 @@ import 'cache_service.dart';
 /// - Automatic region detection from state codes
 /// - Regional subcollection architecture for better scalability
 class GeographicFirestoreService extends ResilientFirestoreService {
-  final CacheService _cacheService = CacheService();
   
   // US regions for data sharding - optimized for electrical industry coverage
   static const Map<String, List<String>> REGIONS = {
@@ -36,8 +33,6 @@ class GeographicFirestoreService extends ResilientFirestoreService {
   };
   
   // Cache keys for regional data
-  static const String _regionalCachePrefix = 'regional_';
-  static const Duration _regionalCacheTTL = Duration(hours: 6);
   
   /// Get locals with geographic optimization
   @override

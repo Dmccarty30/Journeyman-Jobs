@@ -1,7 +1,6 @@
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
-import '../models/job_model.dart';
 
 /// Service for monitoring and tracking performance metrics across the app
 class PerformanceMonitoringService {

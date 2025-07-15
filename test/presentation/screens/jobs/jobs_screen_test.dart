@@ -4,7 +4,7 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:provider/provider.dart';
 import 'package:journeyman_jobs/screens/jobs/jobs_screen.dart';
-import 'package:journeyman_jobs/providers/jobs_provider.dart';
+import 'package:journeyman_jobs/providers/app_state_provider.dart';
 import 'package:journeyman_jobs/providers/job_filter_provider.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
 import 'package:journeyman_jobs/models/filter_criteria.dart';
@@ -13,7 +13,7 @@ import '../../../fixtures/test_constants.dart';
 import '../../../helpers/widget_test_helpers.dart';
 
 // Generate mocks
-@GenerateMocks([JobsProvider, JobFilterProvider])
+@GenerateMocks([AppStateProvider, JobFilterProvider])
 import 'jobs_screen_test.mocks.dart';
 
 void main() {

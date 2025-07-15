@@ -2,7 +2,6 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../models/job_model.dart';
-import '../models/locals_record.dart';
 
 /// Service for tracking and analyzing user behavior patterns
 /// Provides insights for data-driven optimization and personalization

@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:from_css_color/from_css_color.dart';
 
-import '../../utils/enum_utils.dart';
-import 'firestore_util.dart' hide deserializeEnum;
+import '../../../utils/enum_utils.dart' as enum_utils;
+import 'firestore_util.dart';
 
 export 'package:flutter/material.dart' show Color, Colors;
 export 'package:from_css_color/from_css_color.dart';
-export 'enums/enums.dart';
-export '../../utils/color_extensions.dart';
+export '../../../domain/enums/enums.dart';
+export '../../../utils/color_extensions.dart';
 
 typedef StructBuilder<T> = T Function(Map<String, dynamic> data);
 
@@ -33,7 +33,7 @@ List<T>? getEnumList<T>(
   List<dynamic>? data,
   List<T> enumValues,
 ) =>
-    data?.map((e) => deserializeEnum<T>(e, enumValues))
+    data?.map((e) => enum_utils.deserializeEnum<T>(e, enumValues))
         .where((e) => e != null)
         .cast<T>()
         .toList();

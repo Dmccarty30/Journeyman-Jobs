@@ -1,13 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import '../models/job_model.dart';
 import '../models/locals_record.dart';
 import 'connectivity_service.dart';
-import 'cache_service.dart';
 
 /// Offline data availability duration
 const Duration kOfflineDataRetention = Duration(hours: 24);
@@ -96,7 +93,6 @@ class OfflineDataService {
   static const String _pendingChangesKey = 'pending_changes';
 
   final ConnectivityService _connectivityService;
-  final CacheService _cacheService;
   
   SharedPreferences? _prefs;
   Timer? _syncTimer;
@@ -118,7 +114,7 @@ class OfflineDataService {
   DateTime? _lastSyncTime;
   int _pendingChangesCount = 0;
 
-  OfflineDataService(this._connectivityService, this._cacheService);
+  OfflineDataService(this._connectivityService);
 
   /// Initialize the offline data service
   Future<void> initialize() async {

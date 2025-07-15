@@ -1,11 +1,9 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 /// Service for handling analytics data aggregation and reporting
 class AnalyticsService {
   static final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
-  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   /// Get aggregated performance metrics for dashboard
   static Future<Map<String, dynamic>> getPerformanceMetrics() async {

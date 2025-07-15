@@ -53,6 +53,16 @@ class TestAuthService extends Mock implements AuthService {
 }
 
 class TestResilientFirestoreService extends Mock implements ResilientFirestoreService {
+  @override
+  Future<QuerySnapshot> searchLocals(String searchQuery, {int limit = 20, DocumentSnapshot? startAfter, String? state}) async {
+    return await _firestore
+        .collection('locals')
+        .where('name', isGreaterThanOrEqualTo: searchQuery)
+        .where('name', isLessThan: searchQuery + '\uf8ff')
+        .limit(limit)
+        .get();
+  }
+}
   final FakeFirebaseFirestore _firestore = FakeFirebaseFirestore();
 
   @override
@@ -100,7 +110,7 @@ class TestResilientFirestoreService extends Mock implements ResilientFirestoreSe
   }
 
   @override
-  Future<QuerySnapshot> searchLocals(
+  Future<QuerySnapshot> searchLocals(String searchQuery, {int limit = 20, DocumentSnapshot? startAfter}) async {
     String searchQuery, {
     int limit = 20,
   }) async {
@@ -132,6 +142,28 @@ class TestResilientFirestoreService extends Mock implements ResilientFirestoreSe
 }
 
 class TestConnectivityService extends Mock implements ConnectivityService {
+  bool _isConnected = true;
+  final StreamController<bool> _connectivityController = StreamController<bool>.broadcast();
+
+  @override
+  bool get isConnected => _isConnected;
+
+  @override
+  Stream<bool> get connectivityStream => _connectivityController.stream;
+
+  void setConnected(bool connected) {
+    _isConnected = connected;
+    _connectivityController.add(connected);
+  }
+
+  @override
+  void dispose() {
+    _connectivityController.close();
+  }
+
+  @override
+  bool get hasListeners => _connectivityController.hasListener;
+}
   bool _isConnected = true;
   final StreamController<bool> _connectivityController = StreamController<bool>.broadcast();
 

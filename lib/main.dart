@@ -50,10 +50,9 @@ class MyApp extends StatelessWidget {
           create: (context) => AppStateProvider(
             context.read<AuthService>(),
             context.read<ResilientFirestoreService>(),
-            context.read<ConnectivityService>(),
           ),
           update: (context, authService, firestoreService, connectivityService, previous) =>
-              previous ?? AppStateProvider(authService, firestoreService, connectivityService),
+              previous ?? AppStateProvider(authService, firestoreService),
         ),
       ],
       child: MaterialApp.router(

@@ -14,15 +14,15 @@ import '../../fixtures/mock_data.dart';
 
 void main() {
   late AppStateProvider appStateProvider;
-  late MockAuthService mockAuthService;
-  late MockResilientFirestoreService mockFirestoreService;
-  late MockConnectivityService mockConnectivityService;
+  late TestAuthService mockAuthService;
+  late TestResilientFirestoreService mockFirestoreService;
+  late TestConnectivityService mockConnectivityService;
   late FakeFirebaseFirestore fakeFirestore;
 
   setUp(() {
-    mockAuthService = MockAuthService();
-    mockFirestoreService = MockResilientFirestoreService();
-    mockConnectivityService = MockConnectivityService();
+    mockAuthService = TestAuthService();
+    mockFirestoreService = TestResilientFirestoreService();
+    mockConnectivityService = TestConnectivityService();
     fakeFirestore = FakeFirebaseFirestore();
 
     // Setup default mock behaviors

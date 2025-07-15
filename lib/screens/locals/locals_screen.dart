@@ -90,8 +90,7 @@ class _LocalsScreenState extends State<LocalsScreen> {
                 setState(() {
                   _searchQuery = value.toLowerCase();
                 });
-                // Note: Search functionality would need to be implemented in AppStateProvider
-                // For now, we'll handle search on the UI side in the Consumer
+                // Handle search on the UI side for now
               },
             ),
           ),

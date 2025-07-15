@@ -252,11 +252,11 @@ class SearchOptimizedFirestoreService extends ResilientFirestoreService {
   String _getFieldValue(LocalsRecord local, String field) {
     switch (field) {
       case 'localUnion':
-        return local.localUnion ?? '';
+        return local.localUnion;
       case 'city':
-        return local.city ?? '';
+        return local.city;
       case 'state':
-        return local.state ?? '';
+        return local.state;
       case 'searchTerms':
         // Build search terms from available fields
         return [

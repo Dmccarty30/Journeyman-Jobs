@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import '../models/job_model.dart';
 import '../models/filter_criteria.dart';
@@ -275,8 +274,8 @@ class FilterPerformanceEngine {
       criteria.maxDistance?.toString() ?? '',
       criteria.hasPerDiem?.toString() ?? '',
       criteria.postedAfter?.toIso8601String() ?? '',
-      criteria.sortBy?.toString() ?? '',
-      criteria.sortDescending?.toString() ?? '',
+      criteria.sortBy.toString(),
+      criteria.sortDescending.toString(),
     ];
     
     return keyParts.join('|').hashCode.toString();

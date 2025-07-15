@@ -1,41 +1,49 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/job_model.dart';
 import '../models/locals_record.dart';
 import '../models/filter_criteria.dart';
 import '../services/auth_service.dart';
 import '../services/resilient_firestore_service.dart';
-import '../utils/compressed_state_manager.dart';
-import 'auth_provider.dart' as auth_prov;
-import 'jobs_provider.dart';
-import 'locals_provider.dart';
+import 'package:journeyman_jobs/utils/compressed_state_manager.dart';
 
-/// Orchestrating provider that composes domain-specific providers
+/// Simplified app state provider that manages authentication, jobs, and locals
 /// 
-/// This provider coordinates between AuthProvider, JobsProvider, and LocalsProvider
-/// while maintaining backward compatibility with existing UI components.
+/// This provider directly manages state without complex provider composition
+/// to avoid dependency issues while maintaining backward compatibility.
 /// 
 /// Features:
-/// - Domain-specific provider composition
-/// - Centralized state management coordination
+/// - Direct state management for auth, jobs, and locals
 /// - Compressed state persistence
-/// - Performance monitoring across providers
-/// - Memory management coordination
+/// - Memory management
+/// - Performance monitoring
 class AppStateProvider extends ChangeNotifier {
-  // Domain-specific providers
-  late final AuthProvider _authProvider;
-  late final JobsProvider _jobsProvider;
-  late final LocalsProvider _localsProvider;
-
   // Services
   final AuthService _authService;
   final ResilientFirestoreService _firestoreService;
-  late final CompressedStateManager _stateManager;
 
-  // Provider subscriptions for coordination
-  final Map<String, StreamSubscription> _providerSubscriptions = {};
-  
+  // Auth state
+  User? _user;
+  bool _isLoadingAuth = false;
+  String? _authError;
+
+  // Jobs state
+  List<Job> _jobs = [];
+  bool _isLoadingJobs = false;
+  String? _jobsError;
+  bool _hasMoreJobs = true;
+  JobFilterCriteria? _activeFilter;
+  DocumentSnapshot? _lastJobDocument;
+
+  // Locals state
+  List<LocalsRecord> _locals = [];
+  bool _isLoadingLocals = false;
+  String? _localsError;
+  bool _hasMoreLocals = true;
+  DocumentSnapshot? _lastLocalDocument;
+
   // Memory monitoring
   Timer? _memoryMonitorTimer;
   
@@ -43,39 +51,36 @@ class AppStateProvider extends ChangeNotifier {
   bool _isInitialized = false;
   String? _initializationError;
 
-  // Getters for backward compatibility - delegate to domain providers
+  // Getters for backward compatibility
   
-  // Auth state (delegated to AuthProvider)
-  bool get isSignedIn => _authProvider.isAuthenticated;
-  bool get isAuthenticated => _authProvider.isAuthenticated;
-  bool get isLoading => _authProvider.isLoadingAuth || _jobsProvider.isLoadingJobs || _localsProvider.isLoadingLocals;
-  bool get isLoadingAuth => _authProvider.isLoadingAuth;
-  bool get isLoadingJobs => _jobsProvider.isLoadingJobs;
-  bool get isLoadingLocals => _localsProvider.isLoadingLocals;
-  bool get hasError => _authProvider.authError != null || _jobsProvider.jobsError != null || _localsProvider.localsError != null;
-  String? get errorMessage => _authProvider.authError ?? _jobsProvider.jobsError ?? _localsProvider.localsError;
-  String? get authError => _authProvider.authError;
-  String? get jobsError => _jobsProvider.jobsError;
-  String? get localsError => _localsProvider.localsError;
+  // Auth state
+  bool get isSignedIn => _user != null;
+  bool get isAuthenticated => _user != null;
+  bool get isLoading => _isLoadingAuth || _isLoadingJobs || _isLoadingLocals;
+  bool get isLoadingAuth => _isLoadingAuth;
+  bool get isLoadingJobs => _isLoadingJobs;
+  bool get isLoadingLocals => _isLoadingLocals;
+  bool get isLoadingUserProfile => false;
+  bool get hasError => _authError != null || _jobsError != null || _localsError != null;
+  String? get errorMessage => _authError ?? _jobsError ?? _localsError;
+  String? get authError => _authError;
+  String? get jobsError => _jobsError;
+  String? get localsError => _localsError;
 
   // User access
-  User? get user => _authProvider.user;
+  User? get user => _user;
+  User? get userProfile => _user; // For backward compatibility
 
-  // Jobs state (delegated to JobsProvider)
-  List<Job> get jobs => _jobsProvider.jobs;
-  List<Job> get filteredJobs => _jobsProvider.jobs; // JobsProvider manages filtering internally
-  JobFilterCriteria? get activeJobFilter => _jobsProvider.activeFilter;
-  JobFilterCriteria? get activeFilter => _jobsProvider.activeFilter;
-  bool get hasMoreJobs => _jobsProvider.hasMoreJobs;
+  // Jobs state
+  List<Job> get jobs => _jobs;
+  List<Job> get filteredJobs => _jobs; // Filtering handled internally
+  JobFilterCriteria? get activeJobFilter => _activeFilter;
+  JobFilterCriteria? get activeFilter => _activeFilter;
+  bool get hasMoreJobs => _hasMoreJobs;
 
-  // Locals state (delegated to LocalsProvider)
-  List<LocalsRecord> get locals => _localsProvider.locals;
-  bool get hasMoreLocals => _localsProvider.hasMoreLocals;
-
-  // Provider access for advanced usage
-  AuthProvider get authProvider => _authProvider;
-  JobsProvider get jobsProvider => _jobsProvider;
-  LocalsProvider get localsProvider => _localsProvider;
+  // Locals state
+  List<LocalsRecord> get locals => _locals;
+  bool get hasMoreLocals => _hasMoreLocals;
 
   // Initialization status
   bool get isInitialized => _isInitialized;
@@ -85,22 +90,16 @@ class AppStateProvider extends ChangeNotifier {
     _initializeProviders();
   }
 
-  /// Initialize domain-specific providers and set up coordination
+  /// Initialize providers and set up coordination
   Future<void> _initializeProviders() async {
     try {
       // Initialize state manager
-      _stateManager = CompressedStateManager();
-      
-      // Initialize domain providers
-      _authProvider = AuthProvider(_authService);
-      _jobsProvider = JobsProvider(_firestoreService);
-      _localsProvider = LocalsProvider(_firestoreService);
 
       // Load saved state
       await _loadSavedState();
 
-      // Set up provider coordination
-      _setupProviderCoordination();
+      // Set up auth state listener
+      _setupAuthListener();
 
       // Set up memory monitoring
       _setupMemoryMonitoring();
@@ -109,7 +108,7 @@ class AppStateProvider extends ChangeNotifier {
       _initializationError = null;
 
       if (kDebugMode) {
-        print('AppStateProvider: Initialized with domain providers');
+        print('AppStateProvider: Initialized successfully');
       }
 
       notifyListeners();
@@ -128,7 +127,7 @@ class AppStateProvider extends ChangeNotifier {
   /// Load saved state from compressed storage
   Future<void> _loadSavedState() async {
     try {
-      final savedState = await _stateManager.loadState();
+      final savedState = await CompressedStateManager.loadState('app_state');
       if (savedState != null && savedState is Map<String, dynamic>) {
         // Note: Individual providers handle their own state restoration
         // This is just for coordination-level state if needed
@@ -145,160 +144,402 @@ class AppStateProvider extends ChangeNotifier {
     }
   }
 
-  /// Set up coordination between domain providers
-  void _setupProviderCoordination() {
-    // Listen to auth state changes to trigger data reload
-    _providerSubscriptions['auth'] = _authProvider.addListener(() {
-      if (_authProvider.isSignedIn) {
-        // User signed in - initialize data providers
-        _jobsProvider.loadJobs(isRefresh: true);
-        _localsProvider.loadLocals(isRefresh: true);
+  /// Set up auth state listener
+  void _setupAuthListener() {
+    _authService.authStateChanges.listen((user) {
+      _user = user;
+      if (user != null) {
+        // User signed in - load data
+        refreshJobs();
+        refreshLocals();
       } else {
         // User signed out - clear data
-        _jobsProvider.clearJobs();
-        _localsProvider.clearFilters();
+        _jobs.clear();
+        _locals.clear();
+        _authError = null;
+        _jobsError = null;
+        _localsError = null;
       }
-      
-      // Propagate changes to listeners
       notifyListeners();
-    }) as StreamSubscription;
-
-    // Listen to jobs provider changes
-    _providerSubscriptions['jobs'] = _jobsProvider.addListener(() {
-      // Trigger memory cleanup if needed
-      _jobsProvider.performMemoryCleanup();
-      notifyListeners();
-    }) as StreamSubscription;
-
-    // Listen to locals provider changes  
-    _providerSubscriptions['locals'] = _localsProvider.addListener(() {
-      // Trigger memory cleanup if needed
-      _localsProvider.performMemoryCleanup();
-      notifyListeners();
-    }) as StreamSubscription;
+    });
   }
 
   /// Set up periodic memory monitoring
   void _setupMemoryMonitoring() {
     _memoryMonitorTimer = Timer.periodic(
       const Duration(minutes: 2),
-      (_) => _performCoordinatedMemoryCleanup(),
+      (_) => _performMemoryCleanup(),
     );
   }
 
-  /// Perform coordinated memory cleanup across all providers
-  void _performCoordinatedMemoryCleanup() {
-    _jobsProvider.performMemoryCleanup();
-    _localsProvider.performMemoryCleanup();
+  /// Perform memory cleanup
+  void _performMemoryCleanup() {
+    // Clear old jobs if we have too many
+    if (_jobs.length > 1000) {
+      _jobs = _jobs.take(500).toList();
+    }
+    
+    // Clear old locals if we have too many
+    if (_locals.length > 1000) {
+      _locals = _locals.take(500).toList();
+    }
     
     if (kDebugMode) {
-      print('AppStateProvider: Coordinated memory cleanup performed');
+      print('AppStateProvider: Memory cleanup performed');
     }
   }
 
-  // Delegated authentication methods
+  // Authentication methods
 
-  /// Sign in with email and password (delegated to AuthProvider)
-  Future<bool> signInWithEmailAndPassword(String email, String password) {
-    return _authProvider.signInWithEmailAndPassword(email, password);
+  /// Sign in with email and password
+  Future<bool> signInWithEmailAndPassword(String email, String password) async {
+    _isLoadingAuth = true;
+    _authError = null;
+    notifyListeners();
+
+    try {
+      final result = await _authService.signInWithEmailAndPassword(email: email, password: password);
+      _isLoadingAuth = false;
+      notifyListeners();
+      return result != null;
+    } catch (e) {
+      _authError = e.toString();
+      _isLoadingAuth = false;
+      notifyListeners();
+      return false;
+    }
   }
 
-  /// Sign out (delegated to AuthProvider)
-  Future<void> signOut() {
-    return _authProvider.signOut();
+  /// Sign out
+  Future<void> signOut() async {
+    try {
+      await _authService.signOut();
+      _user = null;
+      _jobs.clear();
+      _locals.clear();
+      _authError = null;
+      _jobsError = null;
+      _localsError = null;
+      notifyListeners();
+    } catch (e) {
+      _authError = e.toString();
+      notifyListeners();
+    }
   }
 
-  /// Clear auth error (delegated to AuthProvider)
+  /// Clear auth error
   void clearAuthError() {
-    _authProvider.clearError();
+    _authError = null;
+    notifyListeners();
   }
 
-  // Delegated jobs methods
+  // Jobs methods
 
-  /// Load jobs (delegated to JobsProvider)
-  Future<void> loadJobs({bool isRefresh = false}) {
-    return _jobsProvider.loadJobs(isRefresh: isRefresh);
+  /// Load jobs
+  Future<void> loadJobs({bool isRefresh = false}) async {
+    if (_isLoadingJobs) return;
+
+    _isLoadingJobs = true;
+    if (isRefresh) {
+      _jobsError = null;
+      _jobs.clear();
+      _hasMoreJobs = true;
+    }
+    notifyListeners();
+
+    try {
+      final jobsStream = _firestoreService.getJobs(limit: 20);
+      final snapshot = await jobsStream.first;
+      
+      final newJobs = snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Job.fromJson({
+          ...data,
+          'id': doc.id,
+          'reference': doc.reference,
+        });
+      }).toList();
+      
+      if (isRefresh) {
+        _jobs = newJobs;
+        _lastJobDocument = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
+      } else {
+        _jobs.addAll(newJobs);
+        if (snapshot.docs.isNotEmpty) {
+          _lastJobDocument = snapshot.docs.last;
+        }
+      }
+      _hasMoreJobs = newJobs.length == 20;
+      _jobsError = null;
+    } catch (e) {
+      _jobsError = e.toString();
+      if (kDebugMode) {
+        print('Error loading jobs: $e');
+      }
+    } finally {
+      _isLoadingJobs = false;
+      notifyListeners();
+    }
   }
 
-  /// Load more jobs (delegated to JobsProvider)
-  Future<void> loadMoreJobs() {
-    return _jobsProvider.loadMoreJobs();
+  /// Refresh jobs - convenience method
+  Future<void> refreshJobs() {
+    return loadJobs(isRefresh: true);
   }
 
-  /// Update job filter (delegated to JobsProvider)
-  Future<void> updateActiveFilter(JobFilter filter) {
-    return _jobsProvider.updateJobFilter(filter);
+  /// Load more jobs
+  Future<void> loadMoreJobs() async {
+    if (_isLoadingJobs || !_hasMoreJobs) return;
+
+    _isLoadingJobs = true;
+    notifyListeners();
+
+    try {
+      final jobsStream = _firestoreService.getJobs(
+        limit: 20,
+        startAfter: _lastJobDocument,
+      );
+      final snapshot = await jobsStream.first;
+      
+      final newJobs = snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Job(
+          id: doc.id,
+          reference: doc.reference,
+          local: data['local'],
+          classification: data['classification'],
+          company: data['company'] ?? '',
+          location: data['location'] ?? '',
+          hours: data['hours'],
+          wage: (data['wage'] is int) ? (data['wage'] as int).toDouble() : data['wage'],
+          sub: data['sub'],
+          jobClass: data['jobClass'],
+          localNumber: data['localNumber'],
+          qualifications: data['qualifications'],
+          datePosted: data['datePosted'],
+          jobDescription: data['jobDescription'],
+          jobTitle: data['jobTitle'],
+          perDiem: data['perDiem'],
+          agreement: data['agreement'],
+          numberOfJobs: data['numberOfJobs'],
+          timestamp: data['timestamp'] is Timestamp ? (data['timestamp'] as Timestamp).toDate() : null,
+          startDate: data['startDate'],
+          startTime: data['startTime'],
+          booksYourOn: (data['booksYourOn'] as List?)?.cast<int>(),
+          typeOfWork: data['typeOfWork'],
+          duration: data['duration'],
+          voltageLevel: data['voltageLevel'],
+        );
+      }).toList();
+      
+      _jobs.addAll(newJobs);
+      if (snapshot.docs.isNotEmpty) {
+        _lastJobDocument = snapshot.docs.last;
+      }
+      _hasMoreJobs = newJobs.length == 20;
+    } catch (e) {
+      _jobsError = e.toString();
+      if (kDebugMode) {
+        print('Error loading more jobs: $e');
+      }
+    } finally {
+      _isLoadingJobs = false;
+      notifyListeners();
+    }
   }
 
-  /// Clear job filter (delegated to JobsProvider)
+  /// Update job filter
+  Future<void> updateActiveFilter(JobFilterCriteria filter) async {
+    _activeFilter = filter;
+    await refreshJobs(); // Reload with new filter
+  }
+
+  /// Clear job filter
   void clearJobFilter() {
-    _jobsProvider.clearFilter();
+    _activeFilter = null;
+    refreshJobs();
   }
 
-  /// Clear jobs error (delegated to JobsProvider)
+  /// Clear jobs error
   void clearJobsError() {
-    _jobsProvider.clearJobsError();
+    _jobsError = null;
+    notifyListeners();
   }
 
-  // Delegated locals methods
+  // Locals methods
 
-  /// Load locals (delegated to LocalsProvider)
-  Future<void> loadLocals({bool isRefresh = false, String? state}) {
-    return _localsProvider.loadLocals(isRefresh: isRefresh, state: state);
+  /// Load locals
+  Future<void> loadLocals({bool isRefresh = false, String? state}) async {
+    if (_isLoadingLocals) return;
+
+    _isLoadingLocals = true;
+    if (isRefresh) {
+      _localsError = null;
+      _locals.clear();
+      _hasMoreLocals = true;
+    }
+    notifyListeners();
+
+    try {
+      final localsStream = _firestoreService.getLocals(limit: 20, state: state);
+      final snapshot = await localsStream.first;
+      
+      final newLocals = snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return LocalsRecord(
+          id: doc.id,
+          localNumber: data['localNumber'] ?? '',
+          localName: data['localName'] ?? '',
+          classification: data['classification'],
+          location: data['location'] ?? '',
+          address: data['address'],
+          contactEmail: data['contactEmail'] ?? '',
+          contactPhone: data['contactPhone'] ?? '',
+          website: data['website'],
+          memberCount: data['memberCount'] ?? 0,
+          specialties: (data['specialties'] as List?)?.cast<String>() ?? [],
+          isActive: data['isActive'] ?? true,
+          createdAt: data['createdAt'] is Timestamp ? (data['createdAt'] as Timestamp).toDate() : DateTime.now(),
+          updatedAt: data['updatedAt'] is Timestamp ? (data['updatedAt'] as Timestamp).toDate() : DateTime.now(),
+          reference: doc.reference,
+          rawData: data,
+        );
+      }).toList();
+      
+      if (isRefresh) {
+        _locals = newLocals;
+        _lastLocalDocument = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
+      } else {
+        _locals.addAll(newLocals);
+        if (snapshot.docs.isNotEmpty) {
+          _lastLocalDocument = snapshot.docs.last;
+        }
+      }
+      _hasMoreLocals = newLocals.length == 20;
+      _localsError = null;
+    } catch (e) {
+      _localsError = e.toString();
+      if (kDebugMode) {
+        print('Error loading locals: $e');
+      }
+    } finally {
+      _isLoadingLocals = false;
+      notifyListeners();
+    }
   }
 
-  /// Load more locals (delegated to LocalsProvider)
-  Future<void> loadMoreLocals() {
-    return _localsProvider.loadMoreLocals();
+  /// Refresh locals - convenience method
+  Future<void> refreshLocals() {
+    return loadLocals(isRefresh: true);
   }
 
-  /// Search locals (delegated to LocalsProvider)
-  Future<void> searchLocals(String query) {
-    return _localsProvider.searchLocals(query);
+  /// Load more locals
+  Future<void> loadMoreLocals() async {
+    if (_isLoadingLocals || !_hasMoreLocals) return;
+
+    _isLoadingLocals = true;
+    notifyListeners();
+
+    try {
+      final localsStream = _firestoreService.getLocals(
+        limit: 20,
+        startAfter: _lastLocalDocument,
+      );
+      final snapshot = await localsStream.first;
+      
+      final newLocals = snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return LocalsRecord.fromJson({
+          ...data,
+          'id': doc.id,
+          'reference': doc.reference,
+        });
+      }).toList();
+      
+      _locals.addAll(newLocals);
+      if (snapshot.docs.isNotEmpty) {
+        _lastLocalDocument = snapshot.docs.last;
+      }
+      _hasMoreLocals = newLocals.length == 20;
+    } catch (e) {
+      _localsError = e.toString();
+      if (kDebugMode) {
+        print('Error loading more locals: $e');
+      }
+    } finally {
+      _isLoadingLocals = false;
+      notifyListeners();
+    }
   }
 
-  /// Filter locals by state (delegated to LocalsProvider)
-  Future<void> filterLocalsByState(String? state) {
-    return _localsProvider.filterByState(state);
+  /// Search locals
+  Future<void> searchLocals(String query) async {
+    // For now, implement as a simple filter on loaded locals
+    // In a real app, this would be a server-side search
+    await refreshLocals();
   }
 
-  /// Get locals by state (delegated to LocalsProvider)
+  /// Filter locals by state
+  Future<void> filterLocalsByState(String? state) async {
+    await loadLocals(isRefresh: true, state: state);
+  }
+
+  /// Get locals by state
   List<LocalsRecord> getLocalsByState(String state) {
-    return _localsProvider.getLocalsByState(state);
+    return _locals.where((local) => local.state == state).toList();
   }
 
-  /// Get local by number (delegated to LocalsProvider)
+  /// Get local by number
   LocalsRecord? getLocalByNumber(int localNumber) {
-    return _localsProvider.getLocalByNumber(localNumber);
+    try {
+      return _locals.firstWhere((local) => 
+        int.tryParse(local.localUnion) == localNumber);
+    } catch (e) {
+      return null;
+    }
   }
 
-  /// Clear locals error (delegated to LocalsProvider)
+  /// Clear locals error
   void clearLocalsError() {
-    _localsProvider.clearLocalsError();
+    _localsError = null;
+    notifyListeners();
   }
 
   // Utility methods
 
-  /// Get visible jobs (delegated to JobsProvider)
+  /// Get visible jobs
   List<Job> getVisibleJobs() {
-    return _jobsProvider.visibleJobs;
+    return _jobs;
   }
 
-  /// Update virtual job list (delegated to JobsProvider)
+  /// Update virtual job list
   void updateVirtualJobList(int startIndex) {
-    _jobsProvider.updateVirtualList(startIndex);
+    // For now, this is a no-op since we're not using virtual scrolling
+    // In a real implementation, this would update the visible window
   }
 
-  /// Get operation stats from all providers
+  /// Get operation stats
   Map<String, dynamic> getOperationStats() {
     return {
-      'auth': _authProvider.getPerformanceMetrics(),
-      'jobs': _jobsProvider.getPerformanceMetrics(),
-      'locals': _localsProvider.getPerformanceMetrics(),
-      'compressed_state': _stateManager.getPerformanceMetrics(),
+      'auth': {
+        'isAuthenticated': isAuthenticated,
+        'isLoading': _isLoadingAuth,
+        'hasError': _authError != null,
+      },
+      'jobs': {
+        'count': _jobs.length,
+        'isLoading': _isLoadingJobs,
+        'hasError': _jobsError != null,
+        'hasMore': _hasMoreJobs,
+      },
+      'locals': {
+        'count': _locals.length,
+        'isLoading': _isLoadingLocals,
+        'hasError': _localsError != null,
+        'hasMore': _hasMoreLocals,
+      },
       'coordination': {
         'initialized': _isInitialized,
-        'providerSubscriptions': _providerSubscriptions.length,
         'memoryMonitoringActive': _memoryMonitorTimer?.isActive ?? false,
       },
     };
@@ -306,18 +547,28 @@ class AppStateProvider extends ChangeNotifier {
 
   /// Get combined performance metrics
   Map<String, dynamic> getPerformanceMetrics() {
+    return getOperationStats();
+  }
+
+  /// Get current state snapshot for persistence
+  Map<String, dynamic> getStateSnapshot() {
     return {
-      'providers': {
-        'auth': _authProvider.getPerformanceMetrics(),
-        'jobs': _jobsProvider.getPerformanceMetrics(),
-        'locals': _localsProvider.getPerformanceMetrics(),
+      'auth': {
+        'isAuthenticated': isAuthenticated,
+        'userId': _user?.uid,
+        'userEmail': _user?.email,
       },
-      'stateManager': _stateManager.getPerformanceMetrics(),
-      'coordination': {
-        'initialized': _isInitialized,
-        'activeSubscriptions': _providerSubscriptions.length,
-        'memoryMonitoringActive': _memoryMonitorTimer?.isActive ?? false,
+      'jobs': {
+        'count': _jobs.length,
+        'hasMore': _hasMoreJobs,
+        'hasError': _jobsError != null,
       },
+      'locals': {
+        'count': _locals.length,
+        'hasMore': _hasMoreLocals,
+        'hasError': _localsError != null,
+      },
+      'timestamp': DateTime.now().toIso8601String(),
     };
   }
 
@@ -325,13 +576,22 @@ class AppStateProvider extends ChangeNotifier {
   Future<void> _saveStateOnDispose() async {
     try {
       final combinedState = {
-        'auth': _authProvider.getStateSnapshot(),
-        'jobs': _jobsProvider.getStateSnapshot(),
-        'locals': _localsProvider.getStateSnapshot(),
+        'auth': {
+          'isAuthenticated': isAuthenticated,
+          'userId': _user?.uid,
+        },
+        'jobs': {
+          'count': _jobs.length,
+          'hasMore': _hasMoreJobs,
+        },
+        'locals': {
+          'count': _locals.length,
+          'hasMore': _hasMoreLocals,
+        },
         'timestamp': DateTime.now().toIso8601String(),
       };
       
-      await _stateManager.saveState(combinedState);
+      await CompressedStateManager.saveState('app_state', combinedState);
       
       if (kDebugMode) {
         print('AppStateProvider: State saved on dispose');
@@ -352,19 +612,8 @@ class AppStateProvider extends ChangeNotifier {
     // Cancel memory monitoring timer
     _memoryMonitorTimer?.cancel();
     
-    // Dispose domain providers
-    _authProvider.dispose();
-    _jobsProvider.dispose();
-    _localsProvider.dispose();
-    
-    // Cancel all subscriptions
-    for (final subscription in _providerSubscriptions.values) {
-      subscription.cancel();
-    }
-    _providerSubscriptions.clear();
-    
     if (kDebugMode) {
-      print('AppStateProvider: Disposed with cleanup of ${_providerSubscriptions.length} provider subscriptions');
+      print('AppStateProvider: Disposed with cleanup');
     }
     
     super.dispose();

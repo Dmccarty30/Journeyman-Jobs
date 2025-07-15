@@ -4,14 +4,14 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:provider/provider.dart';
 import 'package:journeyman_jobs/screens/locals/locals_screen.dart';
-import 'package:journeyman_jobs/providers/locals_provider.dart';
+import 'package:journeyman_jobs/providers/app_state_provider.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
 import '../../../fixtures/mock_data.dart';
 import '../../../fixtures/test_constants.dart';
 import '../../../helpers/widget_test_helpers.dart';
 
 // Generate mocks
-@GenerateMocks([LocalsProvider])
+@GenerateMocks([AppStateProvider])
 import 'locals_screen_test.mocks.dart';
 
 void main() {
