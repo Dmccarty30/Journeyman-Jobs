@@ -148,7 +148,17 @@ class FirestoreService {
       limit = maxPageSize;
     }
     
-    Query query = localsCollection.orderBy('local_union');
+    if (kDebugMode) {
+      print('🔍 FirestoreService.getLocals called:');
+      print('  - Collection: locals');
+      print('  - Limit: $limit');
+      print('  - State filter: ${state ?? "none"}');
+      print('  - Start after: ${startAfter != null ? "yes" : "no"}');
+    }
+    
+    // Temporarily remove orderBy to test if documents load
+    // Query query = localsCollection.orderBy('local_union');
+    Query query = localsCollection;
     
     // Apply geographic filtering if provided
     if (state != null && state.isNotEmpty) {
@@ -160,6 +170,10 @@ class FirestoreService {
     
     if (startAfter != null) {
       query = query.startAfterDocument(startAfter);
+    }
+    
+    if (kDebugMode) {
+      print('📡 Executing query on locals collection...');
     }
     
     return query.snapshots();

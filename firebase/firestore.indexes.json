@@ -115,11 +115,21 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
+          "fieldPath": "local_union",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "locals",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
           "fieldPath": "state",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "localUnion",
+          "fieldPath": "local_union",
           "order": "ASCENDING"
         }
       ]
