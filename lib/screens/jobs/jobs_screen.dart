@@ -5,6 +5,7 @@ import '../../design_system/components/reusable_components.dart';
 import '../../models/job_model.dart';
 import '../../providers/app_state_provider.dart';
 import '../../widgets/optimized_selector_widgets.dart';
+import '../../utils/job_formatting.dart';
 
 
 class JobsScreen extends StatefulWidget {
@@ -329,22 +330,23 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                                 ),
                               ),
                               Text(
-                                job.localNumber?.toString() ?? 'N/A',
-                                style: AppTheme.bodyLarge.copyWith(
+                                job.localNumber?.toString() ?? job.local?.toString() ?? 'N/A',
+                                style: AppTheme.titleMedium.copyWith(
                                   color: AppTheme.primaryNavy,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18,
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: AppTheme.spacingXs),
                           Text(
-                            job.classification ?? 'Electrical Worker',
-                            style: AppTheme.titleMedium.copyWith(
+                            JobFormatting.formatJobTitle(job.jobTitle ?? job.classification ?? 'Electrical Worker'),
+                            style: AppTheme.bodyMedium.copyWith(
                               color: AppTheme.primaryNavy,
                               fontWeight: FontWeight.w600,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -403,7 +405,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                           _buildJobDetailRow(
                             Icons.location_on,
                             'Location:',
-                            job.location,
+                            JobFormatting.formatLocation(job.location),
                           ),
                           const SizedBox(height: AppTheme.spacingXs),
                           _buildJobDetailRow(
@@ -423,13 +425,13 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                           _buildJobDetailRow(
                             Icons.schedule,
                             'Hours:',
-                            job.hours != null ? '${job.hours!}hrs' : '40hrs',
+                            JobFormatting.formatHours(job.hours ?? '40'),
                           ),
                           const SizedBox(height: AppTheme.spacingXs),
                           _buildJobDetailRow(
                             Icons.attach_money,
                             'Wage:',
-                            job.wage != null ? '\$${job.wage!.toStringAsFixed(2)}/hr' : 'Competitive',
+                            job.wage != null ? JobFormatting.formatWage(job.wage) : 'Competitive',
                           ),
                           const SizedBox(height: AppTheme.spacingXs),
                           if (job.perDiem != null)
