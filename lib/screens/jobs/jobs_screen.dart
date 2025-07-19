@@ -340,7 +340,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                           ),
                           const SizedBox(height: AppTheme.spacingXs),
                           Text(
-                            JobFormatting.formatJobTitle(job.jobTitle ?? job.classification ?? 'Electrical Worker'),
+                            JobFormatting.formatJobTitle(job.jobTitle ?? job.jobClass ?? job.classification ?? 'Electrical Worker'),
                             style: AppTheme.bodyMedium.copyWith(
                               color: AppTheme.primaryNavy,
                               fontWeight: FontWeight.w600,
@@ -425,7 +425,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                           _buildJobDetailRow(
                             Icons.schedule,
                             'Hours:',
-                            JobFormatting.formatHours(job.hours ?? '40'),
+                            job.hours != null ? JobFormatting.formatHours(job.hours) : '40hrs',
                           ),
                           const SizedBox(height: AppTheme.spacingXs),
                           _buildJobDetailRow(
@@ -445,6 +445,65 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                     ),
                   ],
                 ),
+
+                // Add certifications if hours field contains them
+                if (job.hours != null && job.hours is String && (job.hours as String).contains(',')) ...[
+                  const SizedBox(height: AppTheme.spacingMd),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacingSm,
+                      vertical: AppTheme.spacingXs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.warningYellow.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.verified_user,
+                          size: 14,
+                          color: AppTheme.warningYellow,
+                        ),
+                        const SizedBox(width: AppTheme.spacingXs),
+                        Expanded(
+                          child: Text(
+                            'Requires: ${job.hours}',
+                            style: AppTheme.labelSmall.copyWith(
+                              color: AppTheme.textPrimary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+
+                // Add start date if available
+                if (job.startDate != null) ...[
+                  const SizedBox(height: AppTheme.spacingXs),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_today,
+                        size: 14,
+                        color: AppTheme.textSecondary,
+                      ),
+                      const SizedBox(width: AppTheme.spacingXs),
+                      Text(
+                        'Start: ${job.startDate}',
+                        style: AppTheme.labelSmall.copyWith(
+                          color: AppTheme.textSecondary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
 
                 const SizedBox(height: AppTheme.spacingMd),
 
@@ -1103,7 +1162,7 @@ class JobDetailsSheet extends StatelessWidget {
                         ),
                       if (isEmergency) const SizedBox(height: AppTheme.spacingSm),
                       Text(
-                        job.classification ?? 'Electrical Worker',
+                        JobFormatting.formatJobTitle(job.jobTitle ?? job.jobClass ?? job.classification ?? 'Electrical Worker'),
                         style: AppTheme.displaySmall.copyWith(
                           color: AppTheme.primaryNavy,
                         ),
@@ -1220,7 +1279,10 @@ class JobDetailsSheet extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          job.hours != null ? '${job.hours!}hrs' : '40hrs',
+                          job.hours != null ? 
+                            (job.hours is int ? '${job.hours}hrs' : 
+                             job.hours is String && !(job.hours as String).contains(',') ? '${job.hours}hrs' : 
+                             '40hrs') : '40hrs',
                           style: AppTheme.headlineMedium.copyWith(
                             color: AppTheme.accentCopper,
                             fontWeight: FontWeight.bold,
@@ -1295,7 +1357,7 @@ class JobDetailsSheet extends StatelessWidget {
               _buildDetailRow(Icons.handshake, 'Agreement', job.agreement!),
             ],
             
-            if (job.qualifications != null) ...[
+            if (job.qualifications != null || (job.hours != null && job.hours is String && (job.hours as String).contains(','))) ...[
               const SizedBox(height: AppTheme.spacingLg),
               Text(
                 'Qualifications & Requirements',
@@ -1313,7 +1375,8 @@ class JobDetailsSheet extends StatelessWidget {
                   border: Border.all(color: AppTheme.warningYellow.withValues(alpha: 0.3)),
                 ),
                 child: Text(
-                  job.qualifications!,
+                  job.qualifications ?? 
+                  (job.hours != null && job.hours is String && (job.hours as String).contains(',') ? job.hours.toString() : ''),
                   style: AppTheme.bodyLarge.copyWith(
                     color: AppTheme.textPrimary,
                     height: 1.6,

@@ -6,6 +6,7 @@ import '../../navigation/app_router.dart';
 import '../../providers/app_state_provider.dart';
 import '../../models/job_model.dart';
 import '../../legacy/flutterflow/schema/jobs_record.dart';
+import '../../utils/job_formatting.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -366,15 +367,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      jobModel.classification ?? 'General Electrical',
+                      JobFormatting.formatJobTitle(jobModel.jobTitle ?? jobModel.jobClass ?? jobModel.classification ?? 'General Electrical'),
                       style: AppTheme.bodyMedium.copyWith(
                         color: AppTheme.primaryNavy,
                         fontWeight: FontWeight.bold,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Local ${jobModel.local ?? 'N/A'}',
+                      'Local ${jobModel.local ?? jobModel.localNumber ?? 'N/A'}',
                       style: AppTheme.bodySmall.copyWith(
                         color: AppTheme.textSecondary,
                       ),
@@ -424,7 +427,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              jobModel.location,
+                              JobFormatting.formatLocation(jobModel.location),
                               style: AppTheme.bodySmall.copyWith(
                                 color: AppTheme.textSecondary,
                               ),
@@ -440,7 +443,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      jobModel.wage != null ? '\$${jobModel.wage}/hr' : '\$0/hr',
+                      jobModel.wage != null ? JobFormatting.formatWage(jobModel.wage) : 'Competitive',
                       style: AppTheme.bodyMedium.copyWith(
                         color: AppTheme.primaryNavy,
                         fontWeight: FontWeight.bold,
@@ -459,6 +462,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
+            if (jobModel.startDate != null) ...[
+              const SizedBox(height: AppTheme.spacingXs),
+              Row(
+                children: [
+                  Icon(
+                    Icons.calendar_today,
+                    size: 12,
+                    color: AppTheme.textSecondary,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Start: ${jobModel.startDate}',
+                    style: AppTheme.labelSmall.copyWith(
+                      color: AppTheme.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
