@@ -386,30 +386,7 @@ class AppStateProvider extends ChangeNotifier {
       final snapshot = await localsStream.first;
       
       final newLocals = snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        // Map Firestore fields to LocalsRecord fields
-        final city = data['city'] ?? '';
-        final state = data['state'] ?? '';
-        final location = city.isNotEmpty && state.isNotEmpty ? '$city, $state' : '';
-        
-        return LocalsRecord(
-          id: doc.id,
-          localNumber: data['local_union'] ?? doc.id, // Use local_union from Firestore
-          localName: data['local_name'] ?? 'IBEW Local ${data['local_union'] ?? doc.id}', // Generate name if not present
-          classification: data['classification'],
-          location: location,
-          address: data['address'],
-          contactEmail: data['email'] ?? '', // Use email from Firestore
-          contactPhone: data['phone'] ?? '', // Use phone from Firestore
-          website: data['website'],
-          memberCount: data['member_count'] ?? 0,
-          specialties: (data['specialties'] as List?)?.cast<String>() ?? [],
-          isActive: data['is_active'] ?? true,
-          createdAt: data['created_at'] is Timestamp ? (data['created_at'] as Timestamp).toDate() : DateTime.now(),
-          updatedAt: data['updated_at'] is Timestamp ? (data['updated_at'] as Timestamp).toDate() : DateTime.now(),
-          reference: doc.reference,
-          rawData: data,
-        );
+        return LocalsRecord.fromFirestore(doc);
       }).toList();
       
       if (isRefresh) {
@@ -454,30 +431,7 @@ class AppStateProvider extends ChangeNotifier {
       final snapshot = await localsStream.first;
       
       final newLocals = snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        // Map Firestore fields to LocalsRecord fields
-        final city = data['city'] ?? '';
-        final state = data['state'] ?? '';
-        final location = city.isNotEmpty && state.isNotEmpty ? '$city, $state' : '';
-        
-        return LocalsRecord(
-          id: doc.id,
-          localNumber: data['local_union'] ?? doc.id, // Use local_union from Firestore
-          localName: data['local_name'] ?? 'IBEW Local ${data['local_union'] ?? doc.id}', // Generate name if not present
-          classification: data['classification'],
-          location: location,
-          address: data['address'],
-          contactEmail: data['email'] ?? '', // Use email from Firestore
-          contactPhone: data['phone'] ?? '', // Use phone from Firestore
-          website: data['website'],
-          memberCount: data['member_count'] ?? 0,
-          specialties: (data['specialties'] as List?)?.cast<String>() ?? [],
-          isActive: data['is_active'] ?? true,
-          createdAt: data['created_at'] is Timestamp ? (data['created_at'] as Timestamp).toDate() : DateTime.now(),
-          updatedAt: data['updated_at'] is Timestamp ? (data['updated_at'] as Timestamp).toDate() : DateTime.now(),
-          reference: doc.reference,
-          rawData: data,
-        );
+        return LocalsRecord.fromFirestore(doc);
       }).toList();
       
       _locals.addAll(newLocals);
