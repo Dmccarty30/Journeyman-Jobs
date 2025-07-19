@@ -186,30 +186,56 @@ class Job {
     }
 
     try {
+      // Extract job title from ID if needed (format: "1249-Journeyman_Lineman-Company")
+      String? extractedJobTitle = json['job_title']?.toString();
+      String? extractedClassification = json['classification']?.toString();
+      
+      if (extractedJobTitle == null && json['id'] != null) {
+        // Try to extract from ID
+        final idParts = json['id'].toString().split('-');
+        if (idParts.length >= 2) {
+          extractedJobTitle = idParts[1]; // e.g., "Journeyman_Lineman"
+        }
+      }
+      
+      // Handle hours field which might contain certifications
+      dynamic hoursValue = json['hours'];
+      int? hoursInt;
+      String? certifications;
+      
+      if (hoursValue != null) {
+        // Check if it's a certification string like "CDL, fa/cpr"
+        if (hoursValue is String && hoursValue.contains(',')) {
+          certifications = hoursValue;
+        } else {
+          hoursInt = parseInt(hoursValue);
+        }
+      }
+      
       return Job(
         id: json['id']?.toString() ?? '',
         reference: json['reference'] as DocumentReference?,
-        local: parseInt(json['local']),
-        classification: json['classification']?.toString(),
-        company: json['company']?.toString() ?? json['Company']?.toString() ?? '',
+        local: parseInt(json['local']) ?? parseInt(json['localNumber']),
+        classification: extractedClassification ?? json['jobClass']?.toString(),
+        company: json['company']?.toString() ?? json['employer']?.toString() ?? '',
         location: json['location']?.toString() ?? json['Location']?.toString() ?? '',
-        hours: parseInt(json['hours']) ?? parseInt(json['Shift']),
-        wage: parseDouble(json['wage']),
+        hours: hoursInt ?? parseInt(json['Shift']),
+        wage: parseDouble(json['wage']) ?? parseDouble(json['hourlyWage']),
         sub: json['sub']?.toString(),
-        jobClass: json['jobClass']?.toString(),
-        localNumber: parseInt(json['localNumber']),
-        qualifications: json['qualifications']?.toString() ?? json['Notes']?.toString(),
-        datePosted: json['date_posted']?.toString(),
-        jobDescription: json['job_description']?.toString(),
-        jobTitle: json['job_title']?.toString(),
-        perDiem: json['per_diem']?.toString() ?? json['Benefits']?.toString(),
+        jobClass: json['jobClass']?.toString() ?? certifications,
+        localNumber: parseInt(json['localNumber']) ?? parseInt(json['local']),
+        qualifications: json['qualifications']?.toString() ?? json['certifications']?.toString() ?? certifications,
+        datePosted: json['date_posted']?.toString() ?? json['datePosted']?.toString(),
+        jobDescription: json['description']?.toString() ?? json['job_description']?.toString(),
+        jobTitle: extractedJobTitle ?? json['title']?.toString(),
+        perDiem: json['per_diem']?.toString() ?? json['perDiem']?.toString() ?? json['Benefits']?.toString(),
         agreement: json['agreement']?.toString(),
-        numberOfJobs: json['numberOfJobs']?.toString() ?? json['Men Needed']?.toString(),
+        numberOfJobs: json['numberOfJobs']?.toString() ?? json['positionsAvailable']?.toString() ?? json['Men Needed']?.toString(),
         timestamp: json['timestamp'] != null ? parseDateTime(json['timestamp']) : null,
-        startDate: json['startDate']?.toString(),
+        startDate: json['startDate']?.toString() ?? json['requestDate']?.toString(),
         startTime: json['startTime']?.toString(),
         booksYourOn: parseIntList(json['booksYourOn']),
-        typeOfWork: json['typeOfWork']?.toString() ?? json['Type of Work']?.toString(),
+        typeOfWork: json['work_type']?.toString() ?? json['typeOfWork']?.toString() ?? json['Type of Work']?.toString(),
         duration: json['duration']?.toString() ?? json['Duration']?.toString(),
         voltageLevel: json['voltageLevel']?.toString() ?? json['voltage_level']?.toString(),
       );

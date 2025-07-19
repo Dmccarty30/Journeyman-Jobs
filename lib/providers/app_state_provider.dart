@@ -8,6 +8,7 @@ import '../models/filter_criteria.dart';
 import '../services/auth_service.dart';
 import '../services/resilient_firestore_service.dart';
 import 'package:journeyman_jobs/utils/compressed_state_manager.dart';
+import '../utils/error_sanitizer.dart';
 
 /// Simplified app state provider that manages authentication, jobs, and locals
 /// 
@@ -113,7 +114,7 @@ class AppStateProvider extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      _initializationError = e.toString();
+      _initializationError = ErrorSanitizer.sanitizeError(e);
       _isInitialized = false;
 
       if (kDebugMode) {
@@ -203,7 +204,7 @@ class AppStateProvider extends ChangeNotifier {
       notifyListeners();
       return result != null;
     } catch (e) {
-      _authError = e.toString();
+      _authError = ErrorSanitizer.sanitizeError(e);
       _isLoadingAuth = false;
       notifyListeners();
       return false;
@@ -222,7 +223,7 @@ class AppStateProvider extends ChangeNotifier {
       _localsError = null;
       notifyListeners();
     } catch (e) {
-      _authError = e.toString();
+      _authError = ErrorSanitizer.sanitizeError(e);
       notifyListeners();
     }
   }
@@ -272,7 +273,7 @@ class AppStateProvider extends ChangeNotifier {
       _hasMoreJobs = newJobs.length == 20;
       _jobsError = null;
     } catch (e) {
-      _jobsError = e.toString();
+      _jobsError = ErrorSanitizer.sanitizeError(e);
       if (kDebugMode) {
         print('Error loading jobs: $e');
       }
@@ -338,7 +339,7 @@ class AppStateProvider extends ChangeNotifier {
       }
       _hasMoreJobs = newJobs.length == 20;
     } catch (e) {
-      _jobsError = e.toString();
+      _jobsError = ErrorSanitizer.sanitizeError(e);
       if (kDebugMode) {
         print('Error loading more jobs: $e');
       }
@@ -386,21 +387,26 @@ class AppStateProvider extends ChangeNotifier {
       
       final newLocals = snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
+        // Map Firestore fields to LocalsRecord fields
+        final city = data['city'] ?? '';
+        final state = data['state'] ?? '';
+        final location = city.isNotEmpty && state.isNotEmpty ? '$city, $state' : '';
+        
         return LocalsRecord(
           id: doc.id,
-          localNumber: data['localNumber'] ?? '',
-          localName: data['localName'] ?? '',
+          localNumber: data['local_union'] ?? doc.id, // Use local_union from Firestore
+          localName: data['local_name'] ?? 'IBEW Local ${data['local_union'] ?? doc.id}', // Generate name if not present
           classification: data['classification'],
-          location: data['location'] ?? '',
+          location: location,
           address: data['address'],
-          contactEmail: data['contactEmail'] ?? '',
-          contactPhone: data['contactPhone'] ?? '',
+          contactEmail: data['email'] ?? '', // Use email from Firestore
+          contactPhone: data['phone'] ?? '', // Use phone from Firestore
           website: data['website'],
-          memberCount: data['memberCount'] ?? 0,
+          memberCount: data['member_count'] ?? 0,
           specialties: (data['specialties'] as List?)?.cast<String>() ?? [],
-          isActive: data['isActive'] ?? true,
-          createdAt: data['createdAt'] is Timestamp ? (data['createdAt'] as Timestamp).toDate() : DateTime.now(),
-          updatedAt: data['updatedAt'] is Timestamp ? (data['updatedAt'] as Timestamp).toDate() : DateTime.now(),
+          isActive: data['is_active'] ?? true,
+          createdAt: data['created_at'] is Timestamp ? (data['created_at'] as Timestamp).toDate() : DateTime.now(),
+          updatedAt: data['updated_at'] is Timestamp ? (data['updated_at'] as Timestamp).toDate() : DateTime.now(),
           reference: doc.reference,
           rawData: data,
         );
@@ -418,7 +424,7 @@ class AppStateProvider extends ChangeNotifier {
       _hasMoreLocals = newLocals.length == 20;
       _localsError = null;
     } catch (e) {
-      _localsError = e.toString();
+      _localsError = ErrorSanitizer.sanitizeError(e);
       if (kDebugMode) {
         print('Error loading locals: $e');
       }
@@ -449,11 +455,29 @@ class AppStateProvider extends ChangeNotifier {
       
       final newLocals = snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-        return LocalsRecord.fromJson({
-          ...data,
-          'id': doc.id,
-          'reference': doc.reference,
-        });
+        // Map Firestore fields to LocalsRecord fields
+        final city = data['city'] ?? '';
+        final state = data['state'] ?? '';
+        final location = city.isNotEmpty && state.isNotEmpty ? '$city, $state' : '';
+        
+        return LocalsRecord(
+          id: doc.id,
+          localNumber: data['local_union'] ?? doc.id, // Use local_union from Firestore
+          localName: data['local_name'] ?? 'IBEW Local ${data['local_union'] ?? doc.id}', // Generate name if not present
+          classification: data['classification'],
+          location: location,
+          address: data['address'],
+          contactEmail: data['email'] ?? '', // Use email from Firestore
+          contactPhone: data['phone'] ?? '', // Use phone from Firestore
+          website: data['website'],
+          memberCount: data['member_count'] ?? 0,
+          specialties: (data['specialties'] as List?)?.cast<String>() ?? [],
+          isActive: data['is_active'] ?? true,
+          createdAt: data['created_at'] is Timestamp ? (data['created_at'] as Timestamp).toDate() : DateTime.now(),
+          updatedAt: data['updated_at'] is Timestamp ? (data['updated_at'] as Timestamp).toDate() : DateTime.now(),
+          reference: doc.reference,
+          rawData: data,
+        );
       }).toList();
       
       _locals.addAll(newLocals);
@@ -462,7 +486,7 @@ class AppStateProvider extends ChangeNotifier {
       }
       _hasMoreLocals = newLocals.length == 20;
     } catch (e) {
-      _localsError = e.toString();
+      _localsError = ErrorSanitizer.sanitizeError(e);
       if (kDebugMode) {
         print('Error loading more locals: $e');
       }

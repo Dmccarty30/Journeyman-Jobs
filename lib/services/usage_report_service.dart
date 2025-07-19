@@ -67,9 +67,9 @@ class UsageReportService {
 
       return report;
       
-    } catch (e) {
-      debugPrint('Failed to generate weekly report: $e');
-      return _getEmptyReport('weekly', e.toString());
+    } catch (e, stackTrace) {
+      debugPrint('Failed to generate weekly report: $e\n$stackTrace');
+      return _getEmptyReport('weekly', 'Failed to generate weekly report');
     }
   }
 
@@ -114,9 +114,9 @@ class UsageReportService {
 
       return report;
       
-    } catch (e) {
-      debugPrint('Failed to generate monthly report: $e');
-      return _getEmptyReport('monthly', e.toString());
+    } catch (e, stackTrace) {
+      debugPrint('Failed to generate monthly report: $e\n$stackTrace');
+      return _getEmptyReport('monthly', 'Failed to generate monthly report');
     }
   }
 
@@ -157,9 +157,9 @@ class UsageReportService {
 
       return costReport;
       
-    } catch (e) {
-      debugPrint('Failed to generate cost analysis: $e');
-      return {'error': e.toString(), 'type': 'cost_analysis'};
+    } catch (e, stackTrace) {
+      debugPrint('Failed to generate cost analysis: $e\n$stackTrace');
+      return {'error': 'Failed to generate cost analysis', 'type': 'cost_analysis'};
     }
   }
 
@@ -201,9 +201,9 @@ class UsageReportService {
 
       return performanceReport;
       
-    } catch (e) {
-      debugPrint('Failed to generate performance report: $e');
-      return {'error': e.toString(), 'type': 'performance'};
+    } catch (e, stackTrace) {
+      debugPrint('Failed to generate performance report: $e\n$stackTrace');
+      return {'error': 'Failed to generate performance report', 'type': 'performance'};
     }
   }
 

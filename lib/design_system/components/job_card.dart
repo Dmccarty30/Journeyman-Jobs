@@ -116,7 +116,32 @@ class JobCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           
-          const SizedBox(height: AppTheme.spacingSm),
+          // Company info
+          if (job.company.isNotEmpty) ...[            
+            const SizedBox(height: AppTheme.spacingXs),
+            Row(
+              children: [
+                Icon(
+                  Icons.business_outlined,
+                  size: AppTheme.iconXs,
+                  color: AppTheme.textSecondary,
+                ),
+                const SizedBox(width: AppTheme.spacingXs),
+                Expanded(
+                  child: Text(
+                    'Company: ${job.company}',
+                    style: AppTheme.labelSmall.copyWith(
+                      color: AppTheme.textSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ],
+          
+          const SizedBox(height: AppTheme.spacingXs),
           
           // Location with icon
           Row(
@@ -129,8 +154,8 @@ class JobCard extends StatelessWidget {
               const SizedBox(width: AppTheme.spacingXs),
               Expanded(
                 child: Text(
-                  job.location,
-                  style: AppTheme.bodySmall.copyWith(
+                  'Location: ${JobFormatting.formatLocation(job.location)}',
+                  style: AppTheme.labelSmall.copyWith(
                     color: AppTheme.textSecondary,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -250,10 +275,10 @@ class JobCard extends StatelessWidget {
           // Job title or classification
           if (job.jobTitle != null || job.classification != null)
             Text(
-              job.jobTitle ?? job.classification ?? '',
-              style: AppTheme.titleLarge.copyWith(
+              JobFormatting.formatJobTitle(job.jobTitle ?? job.classification ?? ''),
+              style: AppTheme.titleMedium.copyWith(
                 color: AppTheme.textPrimary,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
           
