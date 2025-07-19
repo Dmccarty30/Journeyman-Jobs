@@ -25,6 +25,7 @@ class SearchAnalyticsService {
   
   // Analytics configuration
   static const int maxHistoryEntries = 1000;
+  static const int maxTrendEntries = 500;  // Limit trend cache size
   static const Duration metricsRetentionPeriod = Duration(days: 30);
   
   // In-memory cache for performance
@@ -187,6 +188,21 @@ class SearchAnalyticsService {
     if (_searchTrends.containsKey(normalizedQuery)) {
       _searchTrends[normalizedQuery]!.addEvent(event);
     } else {
+      // Enforce cache size limit
+      if (_searchTrends.length >= maxTrendEntries) {
+        // Remove oldest entries (LRU-style eviction)
+        final entriesToRemove = _searchTrends.length - maxTrendEntries + 1;
+        final sortedKeys = _searchTrends.entries
+            .toList()
+            .map((e) => MapEntry(e.key, e.value.lastUpdated))
+            .toList()
+          ..sort((a, b) => a.value.compareTo(b.value));
+        
+        for (int i = 0; i < entriesToRemove && i < sortedKeys.length; i++) {
+          _searchTrends.remove(sortedKeys[i].key);
+        }
+      }
+      
       _searchTrends[normalizedQuery] = SearchTrendData(normalizedQuery)..addEvent(event);
     }
   }
@@ -488,6 +504,7 @@ class SearchTrendData {
   double avgResultCount = 0.0;
   DateTime firstSearchTime = DateTime.now();
   DateTime lastSearchTime = DateTime.now();
+  DateTime lastUpdated = DateTime.now();  // Track last update for LRU eviction
   
   SearchTrendData(this.query);
   
@@ -496,6 +513,7 @@ class SearchTrendData {
     avgResponseTime = ((avgResponseTime * (searchCount - 1)) + event.responseTime.inMilliseconds) / searchCount;
     avgResultCount = ((avgResultCount * (searchCount - 1)) + event.resultCount) / searchCount;
     lastSearchTime = event.timestamp;
+    lastUpdated = DateTime.now();  // Update access time for LRU
     
     if (searchCount == 1) {
       firstSearchTime = event.timestamp;

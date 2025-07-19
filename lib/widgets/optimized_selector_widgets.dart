@@ -148,7 +148,7 @@ class AuthState {
       isAuthenticated.hashCode ^
       isLoading.hashCode ^
       error.hashCode ^
-      user!.uid.hashCode;
+      (user?.uid.hashCode ?? 0);
 }
 
 /// Optimized selector widget for auth state

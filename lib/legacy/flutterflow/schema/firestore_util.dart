@@ -18,15 +18,24 @@ T? castToType<T>(dynamic val) {
   }
   switch (T) {
     case const (int):
-      return (val is int ? val : int.tryParse(val.toString())) as T?;
+      if (val is int) return val as T;
+      final parsed = int.tryParse(val.toString());
+      return parsed == null ? null : parsed as T;
     case const (double):
-      return (val is double ? val : double.tryParse(val.toString())) as T?;
+      if (val is double) return val as T;
+      final parsed = double.tryParse(val.toString());
+      return parsed == null ? null : parsed as T;
     case const (String):
       return val.toString() as T;
     case const (bool):
-      return (val is bool ? val : val.toString().toLowerCase() == 'true') as T?;
+      if (val is bool) return val as T;
+      return (val.toString().toLowerCase() == 'true') as T;
     default:
-      return val as T?;
+      try {
+        return val as T?;
+      } catch (_) {
+        return null;
+      }
   }
 }
 

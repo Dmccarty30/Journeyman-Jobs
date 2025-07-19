@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
+import '../../utils/error_sanitizer.dart';
 
 /// Generic query popup that can query any Firestore collection
 class FirestoreQueryPopup<T> extends StatefulWidget {
@@ -241,7 +242,7 @@ class _FirestoreQueryPopupState<T> extends State<FirestoreQueryPopup<T>> {
       if (mounted) {
         JJSnackBar.showError(
           context: context,
-          message: 'Failed to load data: ${e.toString()}',
+          message: ErrorSanitizer.sanitizeError(e),
         );
       }
     } finally {
@@ -283,7 +284,7 @@ class _FirestoreQueryPopupState<T> extends State<FirestoreQueryPopup<T>> {
       if (mounted) {
         JJSnackBar.showError(
           context: context,
-          message: 'Failed to load more data: ${e.toString()}',
+          message: ErrorSanitizer.sanitizeError(e),
         );
       }
     } finally {

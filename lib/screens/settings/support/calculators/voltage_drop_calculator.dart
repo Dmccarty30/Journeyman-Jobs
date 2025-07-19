@@ -31,8 +31,8 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
     super.dispose();
   }
 
-  void _calculateVoltageDrop() {
-    if (!_formKey.currentState!.validate() || _selectedWireSize == null) {
+  Future<void> _calculateVoltageDrop() async {
+    if (_formKey.currentState?.validate() != true || _selectedWireSize == null) {
       return;
     }
 
@@ -41,23 +41,23 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
     });
 
     // Simulate brief calculation delay for UX
-    Future.delayed(const Duration(milliseconds: 300), () {
-      final result = ElectricalCalculations.calculateVoltageDrop(
-        wireSize: _selectedWireSize!,
-        current: double.parse(_currentController.text),
-        length: double.parse(_lengthController.text),
-        systemVoltage: _systemVoltage,
-        material: _conductorMaterial,
-        circuitType: _circuitType,
-      );
+    await Future.delayed(const Duration(milliseconds: 300));
+    
+    final result = ElectricalCalculations.calculateVoltageDrop(
+      wireSize: _selectedWireSize!,
+      current: double.parse(_currentController.text),
+      length: double.parse(_lengthController.text),
+      systemVoltage: _systemVoltage,
+      material: _conductorMaterial,
+      circuitType: _circuitType,
+    );
 
-      if (mounted) {
-        setState(() {
-          _result = result;
-          _isCalculating = false;
-        });
-      }
-    });
+    if (mounted) {
+      setState(() {
+        _result = result;
+        _isCalculating = false;
+      });
+    }
   }
 
   void _clearCalculation() {
@@ -202,7 +202,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
               setState(() {
                 _selectedWireSize = value;
               });
-              if (_formKey.currentState!.validate() && 
+              if (_formKey.currentState?.validate() == true && 
                   _currentController.text.isNotEmpty && 
                   _lengthController.text.isNotEmpty) {
                 _calculateVoltageDrop();
@@ -230,7 +230,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
               return null;
             },
             onChanged: (value) {
-              if (_formKey.currentState!.validate() && 
+              if (_formKey.currentState?.validate() == true && 
                   _selectedWireSize != null && 
                   _lengthController.text.isNotEmpty) {
                 _calculateVoltageDrop();
@@ -258,7 +258,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
               return null;
             },
             onChanged: (value) {
-              if (_formKey.currentState!.validate() && 
+              if (_formKey.currentState?.validate() == true && 
                   _selectedWireSize != null && 
                   _currentController.text.isNotEmpty) {
                 _calculateVoltageDrop();
@@ -279,7 +279,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
               setState(() {
                 _systemVoltage = value!;
               });
-              if (_formKey.currentState!.validate() && 
+              if (_formKey.currentState?.validate() == true && 
                   _selectedWireSize != null && 
                   _currentController.text.isNotEmpty && 
                   _lengthController.text.isNotEmpty) {
@@ -309,7 +309,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
                     setState(() {
                       _conductorMaterial = value!;
                     });
-                    if (_formKey.currentState!.validate() && 
+                    if (_formKey.currentState?.validate() == true && 
                         _selectedWireSize != null && 
                         _currentController.text.isNotEmpty && 
                         _lengthController.text.isNotEmpty) {
@@ -328,7 +328,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
                     setState(() {
                       _conductorMaterial = value!;
                     });
-                    if (_formKey.currentState!.validate() && 
+                    if (_formKey.currentState?.validate() == true && 
                         _selectedWireSize != null && 
                         _currentController.text.isNotEmpty && 
                         _lengthController.text.isNotEmpty) {
@@ -361,7 +361,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
                     setState(() {
                       _circuitType = value!;
                     });
-                    if (_formKey.currentState!.validate() && 
+                    if (_formKey.currentState?.validate() == true && 
                         _selectedWireSize != null && 
                         _currentController.text.isNotEmpty && 
                         _lengthController.text.isNotEmpty) {
@@ -380,7 +380,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
                     setState(() {
                       _circuitType = value!;
                     });
-                    if (_formKey.currentState!.validate() && 
+                    if (_formKey.currentState?.validate() == true && 
                         _selectedWireSize != null && 
                         _currentController.text.isNotEmpty && 
                         _lengthController.text.isNotEmpty) {

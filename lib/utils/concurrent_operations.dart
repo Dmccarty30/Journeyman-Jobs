@@ -343,9 +343,18 @@ class ConcurrentOperationManager {
 
   /// Acquire a resource lock
   Future<void> acquireResourceLock(String resource) async {
-    if (_resourceLocks.containsKey(resource)) {
+    // Use local reference to avoid race condition
+    final existingLock = _resourceLocks[resource];
+    if (existingLock != null) {
       // Wait for existing lock to be released
-      await _resourceLocks[resource]!.future.timeout(lockTimeout);
+      try {
+        await existingLock.future.timeout(lockTimeout);
+      } on TimeoutException {
+        if (kDebugMode) {
+          print('ConcurrentOperationManager: Lock timeout for resource: $resource');
+        }
+        throw Exception('Resource lock timeout for: $resource');
+      }
     }
 
     _resourceLocks[resource] = Completer<void>();

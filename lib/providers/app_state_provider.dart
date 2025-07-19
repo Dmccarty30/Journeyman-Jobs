@@ -8,6 +8,7 @@ import '../models/filter_criteria.dart';
 import '../services/auth_service.dart';
 import '../services/resilient_firestore_service.dart';
 import 'package:journeyman_jobs/utils/compressed_state_manager.dart';
+import '../utils/error_sanitizer.dart';
 
 /// Simplified app state provider that manages authentication, jobs, and locals
 /// 
@@ -113,7 +114,7 @@ class AppStateProvider extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      _initializationError = e.toString();
+      _initializationError = ErrorSanitizer.sanitizeError(e);
       _isInitialized = false;
 
       if (kDebugMode) {
@@ -203,7 +204,7 @@ class AppStateProvider extends ChangeNotifier {
       notifyListeners();
       return result != null;
     } catch (e) {
-      _authError = e.toString();
+      _authError = ErrorSanitizer.sanitizeError(e);
       _isLoadingAuth = false;
       notifyListeners();
       return false;
@@ -222,7 +223,7 @@ class AppStateProvider extends ChangeNotifier {
       _localsError = null;
       notifyListeners();
     } catch (e) {
-      _authError = e.toString();
+      _authError = ErrorSanitizer.sanitizeError(e);
       notifyListeners();
     }
   }
@@ -272,7 +273,7 @@ class AppStateProvider extends ChangeNotifier {
       _hasMoreJobs = newJobs.length == 20;
       _jobsError = null;
     } catch (e) {
-      _jobsError = e.toString();
+      _jobsError = ErrorSanitizer.sanitizeError(e);
       if (kDebugMode) {
         print('Error loading jobs: $e');
       }
@@ -338,7 +339,7 @@ class AppStateProvider extends ChangeNotifier {
       }
       _hasMoreJobs = newJobs.length == 20;
     } catch (e) {
-      _jobsError = e.toString();
+      _jobsError = ErrorSanitizer.sanitizeError(e);
       if (kDebugMode) {
         print('Error loading more jobs: $e');
       }
@@ -418,7 +419,7 @@ class AppStateProvider extends ChangeNotifier {
       _hasMoreLocals = newLocals.length == 20;
       _localsError = null;
     } catch (e) {
-      _localsError = e.toString();
+      _localsError = ErrorSanitizer.sanitizeError(e);
       if (kDebugMode) {
         print('Error loading locals: $e');
       }
@@ -462,7 +463,7 @@ class AppStateProvider extends ChangeNotifier {
       }
       _hasMoreLocals = newLocals.length == 20;
     } catch (e) {
-      _localsError = e.toString();
+      _localsError = ErrorSanitizer.sanitizeError(e);
       if (kDebugMode) {
         print('Error loading more locals: $e');
       }
