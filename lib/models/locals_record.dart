@@ -42,7 +42,7 @@ class LocalsRecord {
 
   // Getter aliases for compatibility with backend schema expectations
   String get localUnion => localNumber;
-  String? get phone => contactPhone;
+  String get phone => contactPhone;
   String get email => contactEmail;
   
   // Extract city and state from location string
@@ -61,15 +61,21 @@ class LocalsRecord {
 
   factory LocalsRecord.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    
+    // Build location from city and state
+    final city = data['city'] ?? '';
+    final state = data['state'] ?? '';
+    final location = city.isNotEmpty && state.isNotEmpty ? '$city, $state' : '';
+    
     return LocalsRecord(
       id: doc.id,
-      localNumber: data['localNumber'] ?? '',
-      localName: data['localName'] ?? '',
+      localNumber: data['local_union']?.toString() ?? '',
+      localName: data['local_name'] ?? 'IBEW Local ${data['local_union'] ?? ''}',
       classification: data['classification'],
-      location: data['location'] ?? '',
+      location: location,
       address: data['address'],
-      contactEmail: data['contactEmail'] ?? '',
-      contactPhone: data['contactPhone'] ?? '',
+      contactEmail: data['email'] ?? '',
+      contactPhone: data['phone'] ?? '',
       website: data['website'],
       memberCount: data['memberCount'] ?? 0,
       specialties: List<String>.from(data['specialties'] ?? []),

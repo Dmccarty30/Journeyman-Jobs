@@ -355,14 +355,14 @@ class LocalCard extends StatelessWidget {
                     ),
                     const SizedBox(height: AppTheme.spacingSm),
                   ],
-                  if (local.phone?.isNotEmpty == true) ...[
+                  if (local.phone.isNotEmpty) ...[
                     _buildInfoRow(
                       context,
                       'Phone',
-                      local.phone!,
+                      local.phone,
                       Icons.phone_outlined,
                       canTap: true,
-                      onTap: () => _launchPhone(local.phone!),
+                      onTap: () => _launchPhone(local.phone),
                     ),
                     const SizedBox(height: AppTheme.spacingSm),
                   ],
@@ -558,7 +558,7 @@ class LocalDetailsDialog extends StatelessWidget {
                 // Details
                 _buildDetailRow('Classification', local.classification ?? 'Unknown'),
                 _buildDetailRow('Address', local.address ?? 'Not specified'),
-                _buildDetailRow('Phone', local.phone ?? 'Not specified'),
+                _buildDetailRow('Phone', local.phone.isNotEmpty ? local.phone : 'Not specified'),
                 _buildDetailRow('Email', local.email),
                 _buildDetailRow('Website', local.website ?? 'Not specified'),
                 const SizedBox(height: AppTheme.spacingLg),

@@ -148,7 +148,7 @@ class FirestoreService {
       limit = maxPageSize;
     }
     
-    Query query = localsCollection.orderBy('localUnion');
+    Query query = localsCollection.orderBy('local_union');
     
     // Apply geographic filtering if provided
     if (state != null && state.isNotEmpty) {
@@ -185,8 +185,8 @@ class FirestoreService {
       
       // Apply search filter
       query = query
-          .where('localUnion', isGreaterThanOrEqualTo: searchTerm.toLowerCase())
-          .where('localUnion', isLessThanOrEqualTo: '${searchTerm.toLowerCase()}\uf8ff')
+          .where('local_union', isGreaterThanOrEqualTo: searchTerm.toLowerCase())
+          .where('local_union', isLessThanOrEqualTo: '${searchTerm.toLowerCase()}\uf8ff')
           .limit(limit);
       
       return await query.get();
