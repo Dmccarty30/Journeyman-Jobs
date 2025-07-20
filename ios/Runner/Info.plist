@@ -64,5 +64,13 @@
 	<string>This app needs photo library access to select photos for your profile picture</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs microphone access to record videos</string>
+	
+	<!-- Location permissions for weather radar -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs location access to show your location on the weather radar and find storm work opportunities near you</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs location access to track severe weather in your area and notify you of nearby storm work opportunities</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs location access to track severe weather in your area and notify you of nearby storm work opportunities</string>
 </dict>
 </plist>

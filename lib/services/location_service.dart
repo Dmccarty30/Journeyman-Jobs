@@ -2,94 +2,13 @@ import 'dart:async';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart' as permission;
 import '../models/job_model.dart';
 import '../models/locals_record.dart';
 import 'geographic_firestore_service.dart';
 import 'cache_service.dart';
 
-/// Mock location permission enum (fallback for geolocator)
-enum LocationPermission {
-  denied,
-  deniedForever,
-  whileInUse,
-  always,
-  disabled,
-}
-
-/// Mock location accuracy enum (fallback for geolocator)
-enum LocationAccuracy {
-  lowest,
-  low,
-  medium,
-  high,
-  best,
-  bestForNavigation,
-  reduced,
-  balanced,
-}
-
-/// Mock position class (fallback for geolocator)
-class Position {
-  final double latitude;
-  final double longitude;
-  final DateTime timestamp;
-  final double accuracy;
-  final double altitude;
-  final double heading;
-  final double speed;
-  final double speedAccuracy;
-  final double altitudeAccuracy;
-  final double headingAccuracy;
-
-  Position({
-    required this.latitude,
-    required this.longitude,
-    required this.timestamp,
-    required this.accuracy,
-    required this.altitude,
-    required this.heading,
-    required this.speed,
-    required this.speedAccuracy,
-    required this.altitudeAccuracy,
-    required this.headingAccuracy,
-  });
-}
-
-/// Mock geolocator service (fallback)
-class _MockGeolocator {
-  static Future<bool> isLocationServiceEnabled() async {
-    // Mock implementation - in real app would check actual location services
-    return true;
-  }
-  
-  static Future<LocationPermission> checkPermission() async {
-    // Mock implementation - in real app would check actual permissions
-    return LocationPermission.whileInUse;
-  }
-  
-  static Future<LocationPermission> requestPermission() async {
-    // Mock implementation - in real app would request actual permissions
-    return LocationPermission.whileInUse;
-  }
-  
-  static Future<Position> getCurrentPosition({
-    Duration? timeLimit,
-  }) async {
-    // Mock implementation - return approximate US center coordinates
-    return Position(
-      latitude: 39.8283,
-      longitude: -98.5795,
-      timestamp: DateTime.now(),
-      accuracy: 100.0,
-      altitude: 0.0,
-      heading: 0.0,
-      speed: 0.0,
-      speedAccuracy: 0.0,
-      altitudeAccuracy: 0.0,
-      headingAccuracy: 0.0,
-    );
-  }
-}
 
 /// Location-based service for job matching and geographic queries
 /// 
@@ -238,8 +157,9 @@ class LocationService {
         return _lastKnownPosition; // Return cached if available
       }
       
-      // Get current position
-      final position = await _MockGeolocator.getCurrentPosition(
+      // Get current position with high accuracy for weather tracking
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
         timeLimit: const Duration(seconds: 10),
       );
       
@@ -391,18 +311,44 @@ class LocationService {
     }
     
     // Check if location services are enabled
-    bool serviceEnabled = await _MockGeolocator.isLocationServiceEnabled();
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       _cachedPermissionStatus = LocationPermission.disabled;
+      
+      // Prompt user to enable location services
+      if (kDebugMode) {
+        print('Location services are disabled. Please enable them.');
+      }
+      
+      // Optionally open location settings
+      // await Geolocator.openLocationSettings();
+      
       return LocationPermission.disabled;
     }
     
     // Check current permission
-    LocationPermission permission = await _MockGeolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
     
     // Request permission if needed
     if (permission == LocationPermission.denied) {
-      permission = await _MockGeolocator.requestPermission();
+      permission = await Geolocator.requestPermission();
+      
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, handle appropriately
+        if (kDebugMode) {
+          print('Location permissions denied by user');
+        }
+      }
+    }
+    
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately
+      if (kDebugMode) {
+        print('Location permissions permanently denied. User must enable in settings.');
+      }
+      
+      // Optionally open app settings
+      // await permission.openAppSettings();
     }
     
     // Cache the result
@@ -730,6 +676,128 @@ class LocationService {
     
     await _cacheService.remove(_lastLocationKey);
     await _cacheService.remove(_locationPermissionKey);
+  }
+  
+  /// Request location permission specifically for weather radar
+  /// Returns detailed permission status for UI feedback
+  Future<Map<String, dynamic>> requestLocationForRadar() async {
+    try {
+      // First check if location services are enabled
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        return {
+          'permitted': false,
+          'status': 'disabled',
+          'message': 'Location services are disabled. Please enable them in settings.',
+          'canRetry': true,
+        };
+      }
+      
+      // Check current permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      
+      // Handle different permission states
+      switch (permission) {
+        case LocationPermission.denied:
+          // Request permission
+          permission = await Geolocator.requestPermission();
+          if (permission == LocationPermission.denied) {
+            return {
+              'permitted': false,
+              'status': 'denied',
+              'message': 'Location permission denied. Radar will show default location.',
+              'canRetry': true,
+            };
+          }
+          break;
+          
+        case LocationPermission.deniedForever:
+          return {
+            'permitted': false,
+            'status': 'deniedForever',
+            'message': 'Location permission permanently denied. Enable in Settings > Privacy > Location Services.',
+            'canRetry': false,
+          };
+          
+        case LocationPermission.unableToDetermine:
+          return {
+            'permitted': false,
+            'status': 'unable',
+            'message': 'Unable to determine location permission status.',
+            'canRetry': true,
+          };
+          
+        default:
+          // whileInUse or always - permission granted
+          break;
+      }
+      
+      // If we get here, permission is granted
+      _cachedPermissionStatus = permission;
+      
+      // Try to get current location
+      try {
+        final position = await getCurrentLocation(forceRefresh: true);
+        if (position != null) {
+          return {
+            'permitted': true,
+            'status': 'granted',
+            'message': 'Location permission granted',
+            'latitude': position.latitude,
+            'longitude': position.longitude,
+            'accuracy': position.accuracy,
+          };
+        } else {
+          return {
+            'permitted': true,
+            'status': 'granted_no_location',
+            'message': 'Permission granted but unable to get current location',
+            'canRetry': true,
+          };
+        }
+      } catch (e) {
+        return {
+          'permitted': true,
+          'status': 'granted_error',
+          'message': 'Permission granted but error getting location: $e',
+          'canRetry': true,
+        };
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error requesting location for radar: $e');
+      }
+      return {
+        'permitted': false,
+        'status': 'error',
+        'message': 'Error checking location permissions: $e',
+        'canRetry': true,
+      };
+    }
+  }
+  
+  /// Open location settings for the user
+  Future<bool> openLocationSettings() async {
+    try {
+      return await Geolocator.openLocationSettings();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error opening location settings: $e');
+      }
+      return false;
+    }
+  }
+  
+  /// Open app settings for permission management
+  Future<bool> openAppSettings() async {
+    try {
+      return await permission.openAppSettings();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error opening app settings: $e');
+      }
+      return false;
+    }
   }
 }
 

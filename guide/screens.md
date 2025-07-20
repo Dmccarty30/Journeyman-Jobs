@@ -17,7 +17,7 @@ The Journeyman Jobs app is designed for IBEW (International Brotherhood of Elect
 
 **Home Screen**: Dashboard with personalized job suggestions, entry point after authentication
 **Jobs Screen**: Comprehensive job listings with filtering and searching capabilities
-**Storm Screen**: Dedicated to emergency/storm restoration work opportunities (high-priority jobs)
+**Storm Screen**: Dedicated to emergency/storm restoration work opportunities (high-priority jobs) with integrated NOAA weather radar for real-time storm tracking
 **Unions Screen**: Directory of IBEW locals with contact information and details for union halls
 **More/Settings Screen**: App configuration options and entry point to additional features
 
@@ -59,6 +59,15 @@ Personal details (name, address)
 Professional information (ticket number, classification)
 Job preferences (travel range, construction type)
 Career goals and preferences
+
+6. Weather Radar Integration (NEW)
+Interactive NOAA weather radar on Storm Screen:
+Real-time precipitation tracking from 200+ NOAA radar stations
+National Weather Service alerts and warnings
+Hurricane tracking from National Hurricane Center
+Location-based severe weather notifications
+Safety protocols integrated with weather conditions
+Offline caching for radar data during storms
 
 `Navigation Structure`
 

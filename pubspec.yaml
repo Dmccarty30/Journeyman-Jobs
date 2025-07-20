@@ -80,6 +80,12 @@ dependencies:
   # Image handling
   image_picker: ^1.0.7
   image_cropper: ^9.1.0
+  
+  # Map and weather radar
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  dio: ^5.7.0
+  geolocator: ^13.0.2
 
 dev_dependencies:
   flutter_test:
