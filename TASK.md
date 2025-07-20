@@ -17,6 +17,15 @@
   - Built NoaaRadarMap widget with alert display capabilities
   - Updated StormScreen to use NOAA data with alert details dialog
 
+- [x] Update project documentation - Completed: 2025-07-20
+  - Updated README.md with comprehensive project information
+  - Created plan.md with architecture and implementation phases
+  - Enhanced CLAUDE.md with weather integration guidelines
+  - Updated guide/screens.md with weather radar feature
+  - Updated PRD with NOAA weather integration details
+  - Created CHANGELOG.md for version tracking
+  - Created docs/WEATHER_API.md for weather service documentation
+
 ## In Progress
 
 ## Discovered During Work

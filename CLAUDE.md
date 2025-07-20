@@ -194,6 +194,11 @@
 - **Bid System**: Users can bid on jobs through the app
 - **Storm Work**: Emergency restoration jobs get priority highlighting
 - **Union Directory**: 797+ IBEW locals with contact integration
+- **Weather Integration**: 
+  - NOAA radar and alerts for storm tracking
+  - National Hurricane Center data
+  - Storm Prediction Center outlooks
+  - Location-based weather warnings
 - **Classification Filtering**:
   - Inside Wireman
   - Journeyman Lineman
@@ -207,9 +212,28 @@
   - Utility
   - Maintenance
 
+## 🌦️ Weather Integration Guidelines
+
+- **NOAA Services**: Use official government weather data (no API keys needed)
+  - National Weather Service API: `api.weather.gov`
+  - NOAA Radar: `radar.weather.gov`
+  - Hurricane Center: `nhc.noaa.gov`
+- **Location Permissions**: Always request gracefully with clear explanations
+- **Weather Alerts**: Filter for events relevant to electrical work
+- **Safety First**: Integrate weather warnings with worker safety protocols
+- **Caching**: Cache weather data for offline access during storms
+
+## 📍 Location Services
+
+- **Permission Handling**: Use `geolocator` package with proper fallbacks
+- **Privacy**: Only use location for weather and job matching
+- **Accuracy**: High accuracy for weather radar, balanced for job search
+- **Background**: No background location tracking without explicit consent
+
 ## 🔐 Security & Privacy
 
 - **Protect PII**: Never log personal information (ticket numbers, SSN)
 - **Secure API Keys**: Use environment variables for sensitive data
 - **Firebase Rules**: Ensure proper read/write permissions
 - **Union Data**: Some local information may be member-only
+- **Location Data**: Never store or transmit without encryption

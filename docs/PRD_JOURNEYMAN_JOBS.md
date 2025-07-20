@@ -201,7 +201,13 @@ To empower IBEW Journeymen with the most comprehensive, user-friendly job discov
 
 #### Storm Work Dashboard
 
-- **Weather Integration**: Real-time weather data and forecasts
+- **NOAA Weather Integration**: Interactive radar with real-time precipitation tracking
+  - Official NOAA/NWS radar imagery from 200+ stations
+  - National Weather Service alerts and warnings
+  - Hurricane tracking from National Hurricane Center
+  - Storm Prediction Center severe weather outlooks
+- **Location-Based Weather Alerts**: Automatic severe weather notifications
+- **Safety Protocols**: Weather-integrated safety recommendations
 - **Crew Availability**: Indicate availability for emergency deployment
 - **Equipment Tracking**: Manage personal equipment and certifications
 - **Travel Coordination**: Carpooling and accommodation assistance
