@@ -249,10 +249,15 @@ class FCMService {
             _appContext!.go(AppRouter.notifications);
             break;
           case 'applications':
-            _appContext!.go(AppRouter.notifications);
+            _appContext!.go(AppRouter.profile);
             break;
           case 'storm':
             _appContext!.go(AppRouter.storm);
+            break;
+          case 'union':
+          case 'union_updates':
+          case 'union_reminders':
+            _appContext!.go(AppRouter.locals);
             break;
           default:
             _appContext!.go(AppRouter.notifications);
