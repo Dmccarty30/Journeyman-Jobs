@@ -82,7 +82,7 @@ Preferences (construction type, travel preferences)
 Onboarding status
 Jobs Collection - Stores job listings scraped from union portals:
 Job details (title, description, location)
-Requirements (classification, skills)
+Requirements (classification, construction type)
 Timing information (start date, duration)
 Contact details
 Locals Collection - Stores information about IBEW local unions:
