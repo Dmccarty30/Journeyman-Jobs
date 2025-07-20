@@ -199,7 +199,7 @@
   - Journeyman Lineman
   - Tree Trimmer
   - Equipment Operator
-  - Low Voltage Technician
+  - Inside Journeyman Electrician 
 - **Construction Types**:
   - Commercial
   - Industrial
