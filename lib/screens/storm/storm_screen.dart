@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/storm_event.dart';
-import '../../widgets/weather/interactive_radar_map.dart';
+import '../../widgets/weather/noaa_radar_map.dart';
 import '../../services/location_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
@@ -506,9 +506,20 @@ class _StormScreenState extends State<StormScreen> {
                   size: 20,
                 ),
                 const SizedBox(width: AppTheme.spacingSm),
-                Text(
-                  'Live Weather Radar',
-                  style: AppTheme.headlineMedium.copyWith(color: AppTheme.white),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'NOAA Weather Radar',
+                      style: AppTheme.headlineMedium.copyWith(color: AppTheme.white),
+                    ),
+                    Text(
+                      'Official US Government Data',
+                      style: AppTheme.bodySmall.copyWith(
+                        color: AppTheme.textLight.withOpacity(0.8),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -519,14 +530,15 @@ class _StormScreenState extends State<StormScreen> {
               ),
             ],
           ),
-          body: InteractiveRadarMap(
+          body: NoaaRadarMap(
             initialLatitude: lat,
             initialLongitude: lon,
             initialZoom: 8.0,
-            showControls: true,
-            animateRadar: true,
-            onLocationTap: (location) {
-              // Could show storm events near tapped location
+            showAlerts: true,
+            showHurricanes: true,
+            onAlertTap: (alert) {
+              // Show alert details and affected storm work
+              _showAlertDetails(context, alert);
             },
           ),
         ),
@@ -542,32 +554,89 @@ class _StormScreenState extends State<StormScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Weather Radar Guide'),
+        title: Row(
+          children: [
+            Icon(
+              FontAwesomeIcons.satelliteDish,
+              color: AppTheme.accentCopper,
+              size: 20,
+            ),
+            const SizedBox(width: AppTheme.spacingSm),
+            Text('NOAA Radar Guide'),
+          ],
+        ),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoRow(Colors.green, 'Light precipitation'),
-              _buildInfoRow(Colors.yellow, 'Moderate precipitation'),
-              _buildInfoRow(Colors.orange, 'Heavy precipitation'),
-              _buildInfoRow(Colors.red, 'Severe weather'),
+              Text(
+                'Official NOAA/NWS Radar Data',
+                style: AppTheme.headlineSmall.copyWith(
+                  color: AppTheme.primaryNavy,
+                ),
+              ),
               const SizedBox(height: AppTheme.spacingMd),
               Text(
-                'Controls:',
-                style: AppTheme.headlineSmall,
+                'Precipitation Intensity:',
+                style: AppTheme.bodyMedium.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: AppTheme.spacingSm),
-              Text('\u2022 Pinch to zoom in/out'),
-              Text('\u2022 Drag to pan around'),
-              Text('\u2022 Use slider to adjust radar opacity'),
-              Text('\u2022 Tap play button for animation'),
+              _buildInfoRow(Colors.green, 'Light rain (< 0.1"/hr)'),
+              _buildInfoRow(Colors.yellow, 'Moderate rain (0.1-0.3"/hr)'),
+              _buildInfoRow(Colors.orange, 'Heavy rain (0.3-2.0"/hr)'),
+              _buildInfoRow(Colors.red, 'Extreme rain (> 2.0"/hr)'),
+              _buildInfoRow(Color(0xFFD8006D), 'Severe/Hail possible'),
               const SizedBox(height: AppTheme.spacingMd),
               Text(
-                'Note: Radar data updates every 5 minutes',
-                style: AppTheme.bodySmall.copyWith(
-                  color: AppTheme.textMuted,
-                  fontStyle: FontStyle.italic,
+                'Alert Severity Levels:',
+                style: AppTheme.bodyMedium.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingSm),
+              _buildInfoRow(Color(0xFFD8006D), 'Extreme - Take Action!'),
+              _buildInfoRow(AppTheme.errorRed, 'Severe - Prepare Now'),
+              _buildInfoRow(AppTheme.warningYellow, 'Moderate - Be Ready'),
+              _buildInfoRow(Colors.orange, 'Minor - Stay Informed'),
+              const SizedBox(height: AppTheme.spacingMd),
+              Text(
+                'Radar Products:',
+                style: AppTheme.bodyMedium.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingSm),
+              Text('\u2022 Base Reflectivity - Precipitation intensity'),
+              Text('\u2022 Base Velocity - Storm rotation detection'),
+              Text('\u2022 Storm Total - Accumulated rainfall'),
+              Text('\u2022 Composite - Full atmosphere scan'),
+              const SizedBox(height: AppTheme.spacingMd),
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingSm),
+                decoration: BoxDecoration(
+                  color: AppTheme.infoBlue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      color: AppTheme.infoBlue,
+                      size: 16,
+                    ),
+                    const SizedBox(width: AppTheme.spacingSm),
+                    Expanded(
+                      child: Text(
+                        'NOAA radar updates every 4-10 minutes',
+                        style: AppTheme.bodySmall.copyWith(
+                          color: AppTheme.infoBlue,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -581,6 +650,217 @@ class _StormScreenState extends State<StormScreen> {
         ],
       ),
     );
+  }
+  
+  void _showAlertDetails(BuildContext context, dynamic alert) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.white,
+        title: Container(
+          padding: const EdgeInsets.all(AppTheme.spacingMd),
+          decoration: BoxDecoration(
+            color: _getAlertColorForSeverity(alert.severity),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                FontAwesomeIcons.triangleExclamation,
+                color: Colors.white,
+                size: 24,
+              ),
+              const SizedBox(width: AppTheme.spacingSm),
+              Expanded(
+                child: Text(
+                  alert.event,
+                  style: AppTheme.headlineSmall.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingSm,
+                  vertical: AppTheme.spacingXs,
+                ),
+                decoration: BoxDecoration(
+                  color: _getAlertColorForSeverity(alert.severity).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                ),
+                child: Text(
+                  '${alert.severity} - ${alert.urgency}',
+                  style: AppTheme.labelSmall.copyWith(
+                    color: _getAlertColorForSeverity(alert.severity),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingMd),
+              Text(
+                alert.headline,
+                style: AppTheme.headlineSmall.copyWith(
+                  color: AppTheme.primaryNavy,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingMd),
+              Text(
+                'Description:',
+                style: AppTheme.bodyMedium.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingSm),
+              Text(
+                alert.description,
+                style: AppTheme.bodyMedium.copyWith(
+                  color: AppTheme.textPrimary,
+                ),
+              ),
+              if (alert.instruction != null && alert.instruction.isNotEmpty) ...[
+                const SizedBox(height: AppTheme.spacingMd),
+                Text(
+                  'Instructions:',
+                  style: AppTheme.bodyMedium.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingSm),
+                Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingSm),
+                  decoration: BoxDecoration(
+                    color: AppTheme.warningYellow.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                    border: Border.all(
+                      color: AppTheme.warningYellow.withOpacity(0.3),
+                    ),
+                  ),
+                  child: Text(
+                    alert.instruction,
+                    style: AppTheme.bodyMedium.copyWith(
+                      color: AppTheme.textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+              const SizedBox(height: AppTheme.spacingMd),
+              Row(
+                children: [
+                  Icon(
+                    Icons.access_time,
+                    size: 16,
+                    color: AppTheme.textSecondary,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Expires: ${_formatAlertTime(alert.expires)}',
+                    style: AppTheme.bodySmall.copyWith(
+                      color: AppTheme.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppTheme.spacingLg),
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  color: AppTheme.infoBlue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  border: Border.all(
+                    color: AppTheme.infoBlue.withOpacity(0.3),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          FontAwesomeIcons.hardHat,
+                          color: AppTheme.infoBlue,
+                          size: 16,
+                        ),
+                        const SizedBox(width: AppTheme.spacingSm),
+                        Text(
+                          'Storm Work Safety',
+                          style: AppTheme.headlineSmall.copyWith(
+                            color: AppTheme.infoBlue,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppTheme.spacingSm),
+                    Text(
+                      'This alert may affect power restoration work. Always follow safety protocols and check with supervisors before deployment.',
+                      style: AppTheme.bodyMedium.copyWith(
+                        color: AppTheme.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Close'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+              // Could navigate to relevant storm work opportunities
+            },
+            icon: Icon(FontAwesomeIcons.bolt),
+            label: Text('View Storm Work'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.accentCopper,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Color _getAlertColorForSeverity(String severity) {
+    switch (severity) {
+      case 'Extreme':
+        return Color(0xFFD8006D);
+      case 'Severe':
+        return AppTheme.errorRed;
+      case 'Moderate':
+        return AppTheme.warningYellow;
+      case 'Minor':
+        return Colors.orange;
+      default:
+        return AppTheme.infoBlue;
+    }
+  }
+  
+  String _formatAlertTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = dateTime.difference(now);
+    
+    if (difference.inHours.abs() < 24) {
+      if (difference.isNegative) {
+        return '${difference.inHours.abs()} hours ago';
+      } else {
+        return 'in ${difference.inHours} hours';
+      }
+    }
+    
+    return '${dateTime.month}/${dateTime.day} at ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
   
   Widget _buildInfoRow(Color color, String label) {
