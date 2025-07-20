@@ -58,6 +58,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _loadSettings();
+    
+    // Check for tab query parameter
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final uri = Uri.tryParse(GoRouter.of(context).routeInformationProvider.value.uri.toString());
+      if (uri != null) {
+        final tab = uri.queryParameters['tab'];
+        if (tab == 'settings') {
+          _tabController.animateTo(1);
+        }
+      }
+    });
   }
   
   @override

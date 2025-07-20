@@ -24,6 +24,7 @@ import '../screens/settings/feedback/feedback_screen.dart';
 import '../screens/tools/electrical_calculators_screen.dart';
 import '../screens/notifications/notifications_screen.dart';
 import '../screens/settings/notification_settings_screen.dart';
+import '../screens/settings/app_settings_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -44,6 +45,7 @@ class AppRouter {
   static const String electricalCalculators = '/electrical-calculators';
   static const String notifications = '/notifications';
   static const String notificationSettings = '/notification-settings';
+  static const String appSettings = '/settings/app';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -151,6 +153,11 @@ class AppRouter {
         path: notificationSettings,
         name: 'notification-settings',
         builder: (context, state) => const NotificationSettingsScreen(),
+      ),
+      GoRoute(
+        path: appSettings,
+        name: 'app-settings',
+        builder: (context, state) => const AppSettingsScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

@@ -3,11 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:go_router/go_router.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
 import '../../../electrical_components/jj_circuit_breaker_switch.dart';
 import '../../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
 import '../../../services/avatar_service.dart';
+import '../../../navigation/app_router.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -60,13 +62,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   bool _findLongTermWork = false;
   final _howHeardAboutUsController = TextEditingController(text: 'Referred by IBEW Local 369');
   final _lookingToAccomplishController = TextEditingController(text: 'Find steady work with good benefits and advancement opportunities');
-  
-  // Notification Settings
-  bool _jobAlerts = true;
-  bool _stormAlerts = true;
-  bool _emailNotifications = true;
-  bool _pushNotifications = true;
-  bool _weeklyDigest = false;
 
   final List<String> _classifications = [
     'Journeyman Lineman',
@@ -112,7 +107,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
     'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
     'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY',
-    'DC',
   ];
 
   @override
@@ -120,18 +114,11 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _loadUserData();
-    
-    // Show tooltip after 1 second if not shown before
-    Future.delayed(const Duration(seconds: 1), () {
-      if (mounted && !_hasShownTooltip && !_isEditing) {
-        _showEditTooltip();
-      }
-    });
   }
 
   @override
   void dispose() {
-    _overlayEntry?.remove();
+    _hideTooltip();
     _tabController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
@@ -152,64 +139,53 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     super.dispose();
   }
 
-  void _loadUserData() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+  bool _isKeyboardVisible() {
+    return MediaQuery.of(context).viewInsets.bottom > 0;
+  }
 
+  Future<void> _loadUserData() async {
     try {
-      // Load from Firebase Auth first (basic info)
-      _emailController.text = user.email ?? '';
-      if (user.displayName != null) {
-        final nameParts = user.displayName!.split(' ');
-        if (nameParts.isNotEmpty) {
-          _firstNameController.text = nameParts.first;
-          if (nameParts.length > 1) {
-            _lastNameController.text = nameParts.skip(1).join(' ');
-          }
-        }
-      }
-
-      // Load from Firestore (detailed profile data)
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-
-      if (doc.exists) {
-        final data = doc.data()!;
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
         
-        setState(() {
-          // Avatar
-          _avatarUrl = data['avatar_url'] ?? user.photoURL;
+        if (doc.exists) {
+          final data = doc.data()!;
           
           // Personal Information
-          _firstNameController.text = data['first_name'] ?? _firstNameController.text;
-          _lastNameController.text = data['last_name'] ?? _lastNameController.text;
-          _phoneController.text = data['phone_number'] ?? '';
+          _firstNameController.text = data['first_name'] ?? '';
+          _lastNameController.text = data['last_name'] ?? '';
+          _emailController.text = user.email ?? '';
+          _phoneController.text = data['phone'] ?? '';
           _address1Controller.text = data['address1'] ?? '';
           _address2Controller.text = data['address2'] ?? '';
           _cityController.text = data['city'] ?? '';
-          _stateController.text = (data['state'] as String?)?.toUpperCase() ?? '';
-          _zipcodeController.text = data['zipcode']?.toString() ?? '';
+          _stateController.text = data['state'] ?? '';
+          _zipcodeController.text = data['zipcode'] ?? '';
+          _avatarUrl = data['avatarUrl'];
           
           // Professional Information
           _homeLocalController.text = data['home_local'] ?? '';
-          _ticketNumberController.text = data['ticket_number']?.toString() ?? '';
+          _ticketNumberController.text = data['ticket_number'] ?? '';
           _booksOnController.text = data['books_on'] ?? '';
           _selectedClassification = data['classification'] ?? 'Journeyman Lineman';
-          _isWorking = data['is_working'] ?? false;
+          _isWorking = data['is_working'] ?? true;
           
           // Job Preferences
-          if (data['constructionTypes'] != null) {
+          final constructionTypes = List<String>.from(data['construction_types'] ?? []);
+          if (constructionTypes.isNotEmpty) {
             _selectedConstructionTypes.clear();
-            _selectedConstructionTypes.addAll(List<String>.from(data['constructionTypes']));
+            _selectedConstructionTypes.addAll(constructionTypes);
           }
-          _selectedHoursPerWeek = data['hours_per_week'] ?? '40+ hours';
-          _selectedPerDiem = data['per_diem_requirement'] ?? 'Yes, required';
+          _selectedHoursPerWeek = data['hours_per_week'] ?? 'Open to overtime';
+          _selectedPerDiem = data['per_diem'] ?? 'Yes, required';
           _preferredLocalsController.text = data['preferred_locals'] ?? '';
-          _careerGoalsController.text = data['careerGoals'] ?? '';
+          _careerGoalsController.text = data['career_goals'] ?? '';
           
-          // Job Search Goals
+          // Goals
           _networkWithOthers = data['networkWithOthers'] ?? false;
           _careerAdvancements = data['careerAdvancements'] ?? false;
           _betterBenefits = data['betterBenefits'] ?? false;
@@ -221,13 +197,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           // Additional Information
           _howHeardAboutUsController.text = data['how_heard_about_us'] ?? '';
           _lookingToAccomplishController.text = data['lookingToAccomplish'] ?? '';
-          
-          // Notification Settings
-          _jobAlerts = data['job_alerts'] ?? true;
-          _stormAlerts = data['storm_alerts'] ?? true;
-          _emailNotifications = data['email_notifications'] ?? true;
-          _pushNotifications = data['push_notifications'] ?? true;
-          _weeklyDigest = data['weekly_digest'] ?? false;
         });
       }
     } catch (e) {
@@ -261,12 +230,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     // Calculate tooltip width and position
     const tooltipWidth = 200.0;
     const padding = 16.0;
-
+    
     // Position tooltip to the left of the button, ensuring it stays on screen
     final buttonCenterX = offset.dx + (size.width / 2);
     final idealLeft = buttonCenterX - tooltipWidth + 40; // Shift left significantly
     final finalLeft = (idealLeft < padding) ? padding : idealLeft;
-
+    
     // Make sure tooltip doesn't go off the right edge either
     final maxLeft = screenWidth - tooltipWidth - padding;
     final adjustedLeft = (finalLeft > maxLeft) ? maxLeft : finalLeft;
@@ -274,53 +243,57 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     _overlayEntry = OverlayEntry(
       builder: (context) => Stack(
         children: [
-          // Main tooltip
-          Positioned(
-            left: adjustedLeft,
-            top: offset.dy + size.height + 8, // Position below the button
-            child: Material(
+          // Tap to dismiss
+          GestureDetector(
+            onTap: _hideTooltip,
+            behavior: HitTestBehavior.translucent,
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
               color: Colors.transparent,
-              child: GestureDetector(
-                onTap: _hideTooltip,
-                child: Container(
-                  width: tooltipWidth,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryNavy,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppTheme.accentCopper, width: AppTheme.borderWidthThick),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.primaryNavy.withAlpha(51),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Tap here to edit your profile settings and preferences',
-                        style: AppTheme.bodyMedium.copyWith(
-                          color: AppTheme.white,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ),
           ),
-          // Arrow pointing up to the edit button
+          // Tooltip
           Positioned(
-            left: buttonCenterX - 8, // Center arrow on button
-            top: offset.dy + size.height - 2, // Position at top of tooltip
-            child: CustomPaint(
-              size: const Size(16, 10),
-              painter: ArrowPainter(AppTheme.accentCopper),
+            top: offset.dy + size.height + 8,
+            left: adjustedLeft,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                width: tooltipWidth,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryNavy,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Arrow pointing up
+                    Transform.translate(
+                      offset: Offset(buttonCenterX - adjustedLeft - 8, -20),
+                      child: CustomPaint(
+                        size: const Size(16, 10),
+                        painter: ArrowPainter(AppTheme.primaryNavy),
+                      ),
+                    ),
+                    Text(
+                      '💡 Tip: Edit your profile to help us match you with the best job opportunities!',
+                      style: AppTheme.bodySmall.copyWith(
+                        color: AppTheme.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
@@ -328,64 +301,66 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
 
     Overlay.of(context).insert(_overlayEntry!);
-
-    // Auto-dismiss after 5 seconds
-    Future.delayed(const Duration(seconds: 5), () {
-      _hideTooltip();
-    });
   }
-  
+
   void _hideTooltip() {
     _overlayEntry?.remove();
     _overlayEntry = null;
-    setState(() {
-      _hasShownTooltip = true;
-    });
   }
 
-  void _saveProfile() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      JJSnackBar.showError(
-        context: context,
-        message: 'User not authenticated',
-      );
-      return;
-    }
-
+  Future<void> _saveProfile() async {
     try {
-      // Show loading indicator
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      // Disable editing mode immediately to prevent double-saves
       setState(() {
         _isEditing = false;
       });
+
+      // Basic validation
+      if (_firstNameController.text.trim().isEmpty || 
+          _lastNameController.text.trim().isEmpty) {
+        JJSnackBar.showError(
+          context: context,
+          message: 'Please enter your first and last name',
+        );
+        setState(() {
+          _isEditing = true; // Re-enable editing on validation error
+        });
+        return;
+      }
+
+      // Show loading
+      JJLoader.show(context);
 
       // Prepare data for Firestore
       final profileData = {
         // Personal Information
         'first_name': _firstNameController.text.trim(),
         'last_name': _lastNameController.text.trim(),
-        'phone_number': _phoneController.text.trim(),
-        'address1': _address1Controller.text.trim(),
+        'phone': _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
+        'address1': _address1Controller.text.trim().isEmpty ? null : _address1Controller.text.trim(),
         'address2': _address2Controller.text.trim().isEmpty ? null : _address2Controller.text.trim(),
-        'city': _cityController.text.trim(),
-        'state': _stateController.text.trim(),
-        'zipcode': int.tryParse(_zipcodeController.text.trim()),
+        'city': _cityController.text.trim().isEmpty ? null : _cityController.text.trim(),
+        'state': _stateController.text.trim().isEmpty ? null : _stateController.text.trim(),
+        'zipcode': _zipcodeController.text.trim().isEmpty ? null : _zipcodeController.text.trim(),
         
         // Professional Information
-        'home_local': _homeLocalController.text.trim().isNotEmpty ? _homeLocalController.text.trim() : null,
-        'ticket_number': int.tryParse(_ticketNumberController.text.trim()),
+        'home_local': _homeLocalController.text.trim().isEmpty ? null : _homeLocalController.text.trim(),
+        'ticket_number': _ticketNumberController.text.trim().isEmpty ? null : _ticketNumberController.text.trim(),
         'books_on': _booksOnController.text.trim().isEmpty ? null : _booksOnController.text.trim(),
         'classification': _selectedClassification,
         'is_working': _isWorking,
         
         // Job Preferences
-        'constructionTypes': _selectedConstructionTypes.toList(),
+        'construction_types': _selectedConstructionTypes.toList(),
         'hours_per_week': _selectedHoursPerWeek,
-        'per_diem_requirement': _selectedPerDiem,
+        'per_diem': _selectedPerDiem,
         'preferred_locals': _preferredLocalsController.text.trim().isEmpty ? null : _preferredLocalsController.text.trim(),
-        'careerGoals': _careerGoalsController.text.trim().isEmpty ? null : _careerGoalsController.text.trim(),
+        'career_goals': _careerGoalsController.text.trim().isEmpty ? null : _careerGoalsController.text.trim(),
         
-        // Job Search Goals
+        // Goals
         'networkWithOthers': _networkWithOthers,
         'careerAdvancements': _careerAdvancements,
         'betterBenefits': _betterBenefits,
@@ -397,13 +372,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         // Additional Information
         'how_heard_about_us': _howHeardAboutUsController.text.trim().isEmpty ? null : _howHeardAboutUsController.text.trim(),
         'lookingToAccomplish': _lookingToAccomplishController.text.trim().isEmpty ? null : _lookingToAccomplishController.text.trim(),
-        
-        // Notification Settings
-        'job_alerts': _jobAlerts,
-        'storm_alerts': _stormAlerts,
-        'email_notifications': _emailNotifications,
-        'push_notifications': _pushNotifications,
-        'weekly_digest': _weeklyDigest,
         
         // Metadata
         'updated_time': FieldValue.serverTimestamp(),
@@ -450,288 +418,238 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   Future<void> _handleAvatarTap() async {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryNavy.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.camera_alt,
-                      color: AppTheme.primaryNavy,
-                    ),
-                  ),
-                  title: const Text(
-                    'Take Photo',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.primaryNavy,
-                    ),
-                  ),
-                  onTap: () async {
-                    Navigator.pop(context);
-                    await _uploadAvatar(ImageSource.camera);
-                  },
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryNavy.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.photo_library,
-                      color: AppTheme.primaryNavy,
-                    ),
-                  ),
-                  title: const Text(
-                    'Choose from Gallery',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.primaryNavy,
-                    ),
-                  ),
-                  onTap: () async {
-                    Navigator.pop(context);
-                    await _uploadAvatar(ImageSource.gallery);
-                  },
-                ),
-                if (_avatarUrl != null) ...[
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                      ),
-                    ),
-                    title: const Text(
-                      'Remove Photo',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.red,
-                      ),
-                    ),
-                    onTap: () async {
-                      Navigator.pop(context);
-                      await _removeAvatar();
-                    },
-                  ),
-                ],
-              ],
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Choose from Gallery'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
             ),
-          ),
-        );
-      },
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Take a Photo'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            if (_avatarUrl != null)
+              ListTile(
+                leading: const Icon(Icons.delete, color: AppTheme.errorRed),
+                title: const Text('Remove Photo', style: TextStyle(color: AppTheme.errorRed)),
+                onTap: () {
+                  Navigator.pop(context);
+                  _removeAvatar();
+                },
+              ),
+          ],
+        ),
+      ),
     );
   }
 
-  Future<void> _uploadAvatar(ImageSource source) async {
-    if (!mounted) return;
+  Future<void> _pickImage(ImageSource source) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: source);
     
-    setState(() {
-      _isUploadingAvatar = true;
-    });
-
-    try {
-      final avatarService = AvatarService();
-      final imageUrl = await avatarService.uploadAvatar(source);
+    if (image != null) {
+      setState(() {
+        _isUploadingAvatar = true;
+      });
       
-      if (imageUrl != null && mounted) {
-        setState(() {
-          _avatarUrl = imageUrl;
-          _isUploadingAvatar = false;
-        });
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Photo updated successfully'),
-            backgroundColor: AppTheme.successGreen,
-          ),
-        );
-      } else {
-        setState(() {
-          _isUploadingAvatar = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
+      try {
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          final avatarUrl = await AvatarService.uploadAvatar(user.uid, image.path);
+          
+          setState(() {
+            _avatarUrl = avatarUrl;
+            _isUploadingAvatar = false;
+          });
+          
+          JJSnackBar.showSuccess(
+            context: context,
+            message: 'Profile photo updated successfully!',
+          );
+        }
+      } catch (e) {
         setState(() {
           _isUploadingAvatar = false;
         });
         
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to upload photo: ${e.toString()}'),
-            backgroundColor: AppTheme.errorRed,
-          ),
+        JJSnackBar.showError(
+          context: context,
+          message: 'Failed to upload photo: ${e.toString()}',
         );
       }
     }
   }
 
   Future<void> _removeAvatar() async {
-    if (!mounted) return;
-    
-    setState(() {
-      _isUploadingAvatar = true;
-    });
-
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .update({'avatar_url': FieldValue.delete()});
+        await AvatarService.deleteAvatar(user.uid);
         
-        if (mounted) {
-          setState(() {
-            _avatarUrl = null;
-            _isUploadingAvatar = false;
-          });
-          
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Photo removed successfully'),
-              backgroundColor: AppTheme.successGreen,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
         setState(() {
-          _isUploadingAvatar = false;
+          _avatarUrl = null;
         });
         
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to remove photo: ${e.toString()}'),
-            backgroundColor: AppTheme.errorRed,
-          ),
+        JJSnackBar.showSuccess(
+          context: context,
+          message: 'Profile photo removed',
         );
       }
+    } catch (e) {
+      JJSnackBar.showError(
+        context: context,
+        message: 'Failed to remove photo: ${e.toString()}',
+      );
     }
   }
 
-  // Method to check if keyboard is visible by checking the bottom viewInsets
-  bool _isKeyboardVisible() {
-    return MediaQuery.of(context).viewInsets.bottom > 0;
+  void _showDeleteAccountDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        ),
+        title: Row(
+          children: [
+            Icon(
+              Icons.warning,
+              color: AppTheme.errorRed,
+              size: AppTheme.iconMd,
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
+            Text(
+              'Delete Account?',
+              style: AppTheme.headlineSmall.copyWith(
+                color: AppTheme.primaryNavy,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'This action cannot be undone. All your data will be permanently deleted.',
+          style: AppTheme.bodyMedium.copyWith(
+            color: AppTheme.textPrimary,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              'Cancel',
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.textSecondary,
+              ),
+            ),
+          ),
+          JJPrimaryButton(
+            text: 'Delete',
+            onPressed: () {
+              Navigator.of(context).pop();
+              JJSnackBar.showSuccess(
+                context: context,
+                message: 'Account deletion feature coming soon',
+              );
+            },
+            width: 100,
+            backgroundColor: AppTheme.errorRed,
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    
     return Scaffold(
-      backgroundColor: AppTheme.offWhite,
+      backgroundColor: AppTheme.lightGray,
       appBar: AppBar(
         backgroundColor: AppTheme.primaryNavy,
         elevation: 0,
         title: Text(
-          'Profile',
-          style: AppTheme.headlineMedium.copyWith(color: AppTheme.white),
+          'My Profile',
+          style: AppTheme.headlineSmall.copyWith(
+            color: AppTheme.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppTheme.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+        iconTheme: const IconThemeData(color: AppTheme.white),
         actions: [
-          if (_isEditing)
-            TextButton(
-              onPressed: _cancelEditing,
-              child: Text(
-                'Cancel',
-                style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
-              ),
-            )
-          else
-            IconButton(
-              key: _editButtonKey,
-              icon: const Icon(Icons.edit, color: AppTheme.white),
-              onPressed: _toggleEditing,
-            ),
+          IconButton(
+            key: _editButtonKey,
+            icon: Icon(_isEditing ? Icons.close : Icons.edit),
+            onPressed: _isEditing ? _cancelEditing : _toggleEditing,
+            color: AppTheme.white,
+          ),
         ],
       ),
       body: Column(
         children: [
-          // Profile header
+          // Profile header with avatar
           Container(
-            color: AppTheme.primaryNavy,
-            padding: const EdgeInsets.fromLTRB(
-              AppTheme.spacingLg,
-              0,
-              AppTheme.spacingLg,
-              AppTheme.spacingLg,
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryNavy,
+              boxShadow: [AppTheme.shadowMd],
             ),
             child: Row(
               children: [
+                // Avatar
                 GestureDetector(
                   onTap: _isEditing ? _handleAvatarTap : null,
                   child: Stack(
                     children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: AppTheme.accentCopper,
-                          shape: BoxShape.circle,
-                          boxShadow: [AppTheme.shadowMd],
-                        ),
-                        child: ClipOval(
-                          child: _avatarUrl != null
-                              ? CachedNetworkImage(
-                                  imageUrl: _avatarUrl!,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Container(
-                                    color: AppTheme.accentCopper,
-                                    child: const Center(
-                                      child: CircularProgressIndicator(
-                                        color: AppTheme.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    ),
-                                  ),
-                                  errorWidget: (context, url, error) => const Icon(
-                                    Icons.person,
-                                    size: 40,
-                                    color: AppTheme.white,
-                                  ),
-                                )
-                              : const Icon(
-                                  Icons.person,
-                                  size: 40,
-                                  color: AppTheme.white,
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundColor: AppTheme.lightGray,
+                        backgroundImage: _avatarUrl != null
+                            ? CachedNetworkImageProvider(_avatarUrl!)
+                            : null,
+                        child: _avatarUrl == null
+                            ? Text(
+                                '${_firstNameController.text.isNotEmpty ? _firstNameController.text[0].toUpperCase() : ''}${_lastNameController.text.isNotEmpty ? _lastNameController.text[0].toUpperCase() : ''}',
+                                style: AppTheme.headlineMedium.copyWith(
+                                  color: AppTheme.primaryNavy,
                                 ),
-                        ),
+                              )
+                            : null,
                       ),
+                      if (_isUploadingAvatar)
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                color: AppTheme.white,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                        ),
                       if (_isEditing)
                         Positioned(
                           bottom: 0,
                           right: 0,
                           child: Container(
-                            width: 28,
-                            height: 28,
+                            padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: AppTheme.primaryNavy,
+                              color: AppTheme.accentCopper,
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: AppTheme.white,
@@ -745,31 +663,17 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                             ),
                           ),
                         ),
-                      if (_isUploadingAvatar)
-                        Positioned.fill(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: AppTheme.black.withValues(alpha: 0.5),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Center(
-                              child: CircularProgressIndicator(
-                                color: AppTheme.white,
-                                strokeWidth: 2,
-                              ),
-                            ),
-                          ),
-                        ),
                     ],
                   ),
                 ),
                 const SizedBox(width: AppTheme.spacingMd),
+                // User info
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${_firstNameController.text} ${_lastNameController.text}',
+                        user?.displayName ?? '${_firstNameController.text} ${_lastNameController.text}',
                         style: AppTheme.headlineMedium.copyWith(
                           color: AppTheme.white,
                           fontWeight: FontWeight.bold,
@@ -777,39 +681,27 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                       ),
                       const SizedBox(height: AppTheme.spacingXs),
                       Text(
-                        _selectedClassification,
-                        style: AppTheme.bodyLarge.copyWith(
-                          color: AppTheme.accentCopper,
+                        user?.email ?? _emailController.text,
+                        style: AppTheme.bodyMedium.copyWith(
+                          color: AppTheme.white.withValues(alpha: 0.8),
                         ),
                       ),
-                      const SizedBox(height: AppTheme.spacingXs),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: 'Home Local ',
-                              style: AppTheme.bodyMedium.copyWith(
-                                color: AppTheme.white.withValues(alpha: 0.8),
-                              ),
-                            ),
-                            TextSpan(
-                              text: _homeLocalController.text.isNotEmpty ? _homeLocalController.text : '---',
-                              style: AppTheme.bodyMedium.copyWith(
-                                color: AppTheme.accentCopper,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                      if (_homeLocalController.text.isNotEmpty) ...[
+                        const SizedBox(height: AppTheme.spacingXs),
+                        Text(
+                          _homeLocalController.text,
+                          style: AppTheme.bodySmall.copyWith(
+                            color: AppTheme.accentCopper,
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
               ],
             ),
           ),
-
-          // Tab bar
+          // Tabs
           Container(
             color: AppTheme.primaryNavy,
             child: TabBar(
@@ -824,7 +716,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               ],
             ),
           ),
-
           // Tab content
           Expanded(
             child: TabBarView(
@@ -836,7 +727,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               ],
             ),
           ),
-
           // Save button (when editing and keyboard is not visible)
           if (_isEditing && !_isKeyboardVisible())
             SafeArea(
@@ -874,7 +764,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             ),
           ),
           const SizedBox(height: AppTheme.spacingMd),
-
           // Name fields
           Row(
             children: [
@@ -896,9 +785,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               ),
             ],
           ),
-
           const SizedBox(height: AppTheme.spacingMd),
-
           // Contact information
           JJTextField(
             label: 'Email',
@@ -907,9 +794,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             prefixIcon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
           ),
-
           const SizedBox(height: AppTheme.spacingMd),
-
           JJTextField(
             label: 'Phone Number',
             controller: _phoneController,
@@ -917,9 +802,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             prefixIcon: Icons.phone_outlined,
             keyboardType: TextInputType.phone,
           ),
-
           const SizedBox(height: AppTheme.spacingLg),
-
           Text(
             'Address',
             style: AppTheme.headlineSmall.copyWith(
@@ -927,24 +810,19 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             ),
           ),
           const SizedBox(height: AppTheme.spacingMd),
-
           JJTextField(
             label: 'Street Address',
             controller: _address1Controller,
             enabled: _isEditing,
             prefixIcon: Icons.home_outlined,
           ),
-
           const SizedBox(height: AppTheme.spacingMd),
-
           JJTextField(
-            label: 'Apartment, suite, etc. (optional)',
+            label: 'Apartment, suite, etc.',
             controller: _address2Controller,
             enabled: _isEditing,
           ),
-
           const SizedBox(height: AppTheme.spacingMd),
-
           Row(
             children: [
               Expanded(
@@ -956,58 +834,86 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                 ),
               ),
               const SizedBox(width: AppTheme.spacingMd),
-              Expanded(
-                child: _isEditing
-                    ? Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppTheme.lightGray),
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                        ),
-                        child: DropdownButtonFormField<String>(
-                          value: _stateController.text.isNotEmpty && _usStates.contains(_stateController.text.toUpperCase())
-                              ? _stateController.text.toUpperCase()
-                              : null,
-                          isExpanded: true,  // Add this to prevent overflow
-                          decoration: const InputDecoration(
-                            labelText: 'State',
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: AppTheme.spacingMd,
-                              vertical: AppTheme.spacingMd,
-                            ),
-                          ),
-                          items: _usStates.map((state) {
-                            return DropdownMenuItem(
-                              value: state,
-                              child: Text(
-                                state,
-                                overflow: TextOverflow.ellipsis,  // Add overflow handling
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _stateController.text = value ?? '';
-                            });
-                          },
-                        ),
-                      )
-                    : JJTextField(
-                        label: 'State',
-                        controller: _stateController,
-                        enabled: false,
-                      ),
-              ),
-              const SizedBox(width: AppTheme.spacingMd),
-              Expanded(
-                child: JJTextField(
-                  label: 'ZIP Code',
-                  controller: _zipcodeController,
-                  enabled: _isEditing,
-                  keyboardType: TextInputType.number,
+              SizedBox(
+                width: 100,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppTheme.lightGray),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  ),
+                  child: DropdownButtonFormField<String>(
+                    value: _stateController.text.isEmpty ? null : _stateController.text,
+                    decoration: InputDecoration(
+                      labelText: 'State',
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                      enabled: _isEditing,
+                    ),
+                    items: _usStates.map((state) {
+                      return DropdownMenuItem(
+                        value: state,
+                        child: Text(state),
+                      );
+                    }).toList(),
+                    onChanged: _isEditing
+                        ? (value) => setState(() => _stateController.text = value ?? '')
+                        : null,
+                  ),
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+          JJTextField(
+            label: 'ZIP Code',
+            controller: _zipcodeController,
+            enabled: _isEditing,
+            keyboardType: TextInputType.number,
+          ),
+          const SizedBox(height: AppTheme.spacingLg),
+          Text(
+            'What brings you to Journeyman Jobs?',
+            style: AppTheme.headlineSmall.copyWith(
+              color: AppTheme.primaryNavy,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+          _buildGoalChip('Network with Others', _networkWithOthers, 
+            (value) => setState(() => _networkWithOthers = value)),
+          _buildGoalChip('Career Advancements', _careerAdvancements,
+            (value) => setState(() => _careerAdvancements = value)),
+          _buildGoalChip('Better Benefits', _betterBenefits,
+            (value) => setState(() => _betterBenefits = value)),
+          _buildGoalChip('Higher Pay Rate', _higherPayRate,
+            (value) => setState(() => _higherPayRate = value)),
+          _buildGoalChip('Learn New Skill', _learnNewSkill,
+            (value) => setState(() => _learnNewSkill = value)),
+          _buildGoalChip('Travel to New Location', _travelToNewLocation,
+            (value) => setState(() => _travelToNewLocation = value)),
+          _buildGoalChip('Find Long Term Work', _findLongTermWork,
+            (value) => setState(() => _findLongTermWork = value)),
+          const SizedBox(height: AppTheme.spacingLg),
+          Text(
+            'Additional Information',
+            style: AppTheme.headlineSmall.copyWith(
+              color: AppTheme.primaryNavy,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+          JJTextField(
+            label: 'How did you hear about us?',
+            controller: _howHeardAboutUsController,
+            enabled: _isEditing,
+            prefixIcon: Icons.campaign_outlined,
+            maxLines: 2,
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+          JJTextField(
+            label: 'What are you looking to accomplish?',
+            controller: _lookingToAccomplishController,
+            enabled: _isEditing,
+            prefixIcon: Icons.track_changes_outlined,
+            maxLines: 3,
           ),
         ],
       ),
@@ -1026,154 +932,62 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'IBEW Information',
+            'Professional Information',
             style: AppTheme.headlineSmall.copyWith(
               color: AppTheme.primaryNavy,
             ),
           ),
           const SizedBox(height: AppTheme.spacingMd),
-
           JJTextField(
             label: 'Home Local',
             controller: _homeLocalController,
             enabled: _isEditing,
-            prefixIcon: Icons.business_outlined,
+            prefixIcon: Icons.location_city_outlined,
+            hint: 'e.g., IBEW Local 369',
           ),
-
           const SizedBox(height: AppTheme.spacingMd),
-
           JJTextField(
             label: 'Ticket Number',
             controller: _ticketNumberController,
             enabled: _isEditing,
             prefixIcon: Icons.badge_outlined,
           ),
-
           const SizedBox(height: AppTheme.spacingMd),
-
-          // Classification dropdown
-          if (_isEditing)
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: AppTheme.lightGray),
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              ),
-              child: DropdownButtonFormField<String>(
-                value: _selectedClassification,
-                decoration: const InputDecoration(
-                  labelText: 'Classification',
-                  prefixIcon: Icon(Icons.work_outline),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingMd,
-                    vertical: AppTheme.spacingMd,
-                  ),
-                ),
-                items: _classifications.map((classification) {
-                  return DropdownMenuItem(
-                    value: classification,
-                    child: Text(classification),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedClassification = value!;
-                  });
-                },
-              ),
-            )
-          else
-            JJTextField(
-              label: 'Classification',
-              controller: TextEditingController(text: _selectedClassification),
-              enabled: false,
-              prefixIcon: Icons.work_outline,
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: AppTheme.lightGray),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
-
+            child: DropdownButtonFormField<String>(
+              value: _selectedClassification,
+              decoration: const InputDecoration(
+                labelText: 'Classification',
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                prefixIcon: Icon(Icons.work_outline),
+              ),
+              items: _classifications.map((classification) {
+                return DropdownMenuItem(
+                  value: classification,
+                  child: Text(classification),
+                );
+              }).toList(),
+              onChanged: _isEditing
+                  ? (value) => setState(() => _selectedClassification = value!)
+                  : null,
+            ),
+          ),
           const SizedBox(height: AppTheme.spacingMd),
-
+          _buildStatusToggle(),
+          const SizedBox(height: AppTheme.spacingMd),
           JJTextField(
             label: 'Books On',
             controller: _booksOnController,
             enabled: _isEditing,
             prefixIcon: Icons.menu_book_outlined,
+            hint: 'e.g., Book 1, Book 2',
           ),
-
-          const SizedBox(height: AppTheme.spacingMd),
-
-          // Working status
-          if (_isEditing)
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingMd),
-              decoration: BoxDecoration(
-                border: Border.all(color: AppTheme.lightGray),
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.work_outline, color: AppTheme.textSecondary),
-                  const SizedBox(width: AppTheme.spacingMd),
-                  Text(
-                    'Currently Working:',
-                    style: AppTheme.bodyMedium.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
-                  ),
-                  const Spacer(),
-                  JJCircuitBreakerSwitch(
-                    value: _isWorking,
-                    onChanged: (value) {
-                      setState(() {
-                        _isWorking = value;
-                      });
-                    },
-                    size: JJCircuitBreakerSize.small,
-                    showElectricalEffects: true,
-                  ),
-                ],
-              ),
-            )
-          else
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingMd),
-              decoration: BoxDecoration(
-                border: Border.all(color: AppTheme.lightGray),
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.work_outline, color: AppTheme.textSecondary),
-                  const SizedBox(width: AppTheme.spacingMd),
-                  Text(
-                    'Currently Working:',
-                    style: AppTheme.bodyMedium.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
-                  ),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.spacingSm,
-                      vertical: AppTheme.spacingXs,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _isWorking ? AppTheme.successGreen : AppTheme.errorRed,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                    ),
-                    child: Text(
-                      _isWorking ? 'Yes' : 'No',
-                      style: AppTheme.labelSmall.copyWith(
-                        color: AppTheme.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
           const SizedBox(height: AppTheme.spacingLg),
-
           Text(
             'Job Preferences',
             style: AppTheme.headlineSmall.copyWith(
@@ -1181,17 +995,17 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             ),
           ),
           const SizedBox(height: AppTheme.spacingMd),
-
-          // Construction types
+          
+          // Construction types with electrical icons
           Text(
-            'Preferred Construction Types:',
-            style: AppTheme.bodyMedium.copyWith(
+            'Construction Types',
+            style: AppTheme.titleMedium.copyWith(
               color: AppTheme.textSecondary,
-              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: AppTheme.spacingSm),
-
+          
+          // Show chips in edit mode, static display otherwise
           if (_isEditing)
             Wrap(
               spacing: AppTheme.spacingSm,
@@ -1257,13 +1071,10 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               child: DropdownButtonFormField<String>(
                 value: _selectedHoursPerWeek,
                 decoration: const InputDecoration(
-                  labelText: 'Preferred Hours per Week',
-                  prefixIcon: Icon(Icons.schedule),
+                  labelText: 'Hours per Week',
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingMd,
-                    vertical: AppTheme.spacingMd,
-                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                  prefixIcon: Icon(Icons.schedule),
                 ),
                 items: _hoursOptions.map((hours) {
                   return DropdownMenuItem(
@@ -1271,24 +1082,15 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     child: Text(hours),
                   );
                 }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedHoursPerWeek = value!;
-                  });
-                },
+                onChanged: (value) => setState(() => _selectedHoursPerWeek = value!),
               ),
             )
           else
-            JJTextField(
-              label: 'Preferred Hours per Week',
-              controller: TextEditingController(text: _selectedHoursPerWeek),
-              enabled: false,
-              prefixIcon: Icons.schedule,
-            ),
+            _buildReadOnlyField('Hours per Week', _selectedHoursPerWeek, Icons.schedule),
 
           const SizedBox(height: AppTheme.spacingMd),
 
-          // Per diem preference
+          // Per diem
           if (_isEditing)
             Container(
               decoration: BoxDecoration(
@@ -1298,186 +1100,38 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               child: DropdownButtonFormField<String>(
                 value: _selectedPerDiem,
                 decoration: const InputDecoration(
-                  labelText: 'Per Diem Preference',
-                  prefixIcon: Icon(Icons.hotel),
+                  labelText: 'Per Diem',
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingMd,
-                    vertical: AppTheme.spacingMd,
-                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                  prefixIcon: Icon(Icons.attach_money),
                 ),
-                items: _perDiemOptions.map((option) {
+                items: _perDiemOptions.map((perDiem) {
                   return DropdownMenuItem(
-                    value: option,
-                    child: Text(option),
+                    value: perDiem,
+                    child: Text(perDiem),
                   );
                 }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedPerDiem = value!;
-                  });
-                },
+                onChanged: (value) => setState(() => _selectedPerDiem = value!),
               ),
             )
           else
-            JJTextField(
-              label: 'Per Diem Preference',
-              controller: TextEditingController(text: _selectedPerDiem),
-              enabled: false,
-              prefixIcon: Icons.hotel,
-            ),
+            _buildReadOnlyField('Per Diem', _selectedPerDiem, Icons.attach_money),
 
           const SizedBox(height: AppTheme.spacingMd),
-
           JJTextField(
             label: 'Preferred Locals',
             controller: _preferredLocalsController,
             enabled: _isEditing,
-            prefixIcon: Icons.location_on_outlined,
+            prefixIcon: Icons.star_outline,
+            hint: 'e.g., Local 369, Local 77',
             maxLines: 2,
           ),
-
           const SizedBox(height: AppTheme.spacingMd),
-
           JJTextField(
             label: 'Career Goals',
             controller: _careerGoalsController,
             enabled: _isEditing,
-            prefixIcon: Icons.flag_outlined,
-            maxLines: 3,
-          ),
-
-          const SizedBox(height: AppTheme.spacingLg),
-
-          // Job Search Goals - from onboarding
-          Text(
-            'Job Search Goals',
-            style: AppTheme.headlineSmall.copyWith(
-              color: AppTheme.primaryNavy,
-            ),
-          ),
-          const SizedBox(height: AppTheme.spacingSm),
-          Text(
-            'What are you looking for in your next opportunity?',
-            style: AppTheme.bodyMedium.copyWith(
-              color: AppTheme.textSecondary,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: AppTheme.spacingMd),
-
-          // Job search goals checkboxes
-          if (_isEditing)
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingSm),
-              decoration: BoxDecoration(
-                color: AppTheme.offWhite,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(color: AppTheme.lightGray),
-              ),
-              child: Column(
-                children: [
-                  CheckboxListTile(
-                    title: Text('Network with Others', style: AppTheme.bodyMedium),
-                    subtitle: Text('Connect with other electricians', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
-                    value: _networkWithOthers,
-                    activeColor: AppTheme.accentCopper,
-                    onChanged: (value) => setState(() => _networkWithOthers = value ?? false),
-                    dense: true,
-                  ),
-                  CheckboxListTile(
-                    title: Text('Career Advancement', style: AppTheme.bodyMedium),
-                    subtitle: Text('Seek leadership roles', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
-                    value: _careerAdvancements,
-                    activeColor: AppTheme.accentCopper,
-                    onChanged: (value) => setState(() => _careerAdvancements = value ?? false),
-                    dense: true,
-                  ),
-                  CheckboxListTile(
-                    title: Text('Better Benefits', style: AppTheme.bodyMedium),
-                    subtitle: Text('Improved benefit packages', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
-                    value: _betterBenefits,
-                    activeColor: AppTheme.accentCopper,
-                    onChanged: (value) => setState(() => _betterBenefits = value ?? false),
-                    dense: true,
-                  ),
-                  CheckboxListTile(
-                    title: Text('Higher Pay Rate', style: AppTheme.bodyMedium),
-                    subtitle: Text('Increase compensation', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
-                    value: _higherPayRate,
-                    activeColor: AppTheme.accentCopper,
-                    onChanged: (value) => setState(() => _higherPayRate = value ?? false),
-                    dense: true,
-                  ),
-                  CheckboxListTile(
-                    title: Text('Learn New Skills', style: AppTheme.bodyMedium),
-                    subtitle: Text('Gain new experience', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
-                    value: _learnNewSkill,
-                    activeColor: AppTheme.accentCopper,
-                    onChanged: (value) => setState(() => _learnNewSkill = value ?? false),
-                    dense: true,
-                  ),
-                  CheckboxListTile(
-                    title: Text('Travel to New Locations', style: AppTheme.bodyMedium),
-                    subtitle: Text('Work in different areas', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
-                    value: _travelToNewLocation,
-                    activeColor: AppTheme.accentCopper,
-                    onChanged: (value) => setState(() => _travelToNewLocation = value ?? false),
-                    dense: true,
-                  ),
-                  CheckboxListTile(
-                    title: Text('Find Long-term Work', style: AppTheme.bodyMedium),
-                    subtitle: Text('Secure stable employment', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
-                    value: _findLongTermWork,
-                    activeColor: AppTheme.accentCopper,
-                    onChanged: (value) => setState(() => _findLongTermWork = value ?? false),
-                    dense: true,
-                  ),
-                ],
-              ),
-            )
-          else
-            // Display selected goals when not editing
-            Wrap(
-              spacing: AppTheme.spacingSm,
-              runSpacing: AppTheme.spacingSm,
-              children: [
-                if (_networkWithOthers) _buildGoalChip('Network with Others'),
-                if (_careerAdvancements) _buildGoalChip('Career Advancement'),
-                if (_betterBenefits) _buildGoalChip('Better Benefits'),
-                if (_higherPayRate) _buildGoalChip('Higher Pay Rate'),
-                if (_learnNewSkill) _buildGoalChip('Learn New Skills'),
-                if (_travelToNewLocation) _buildGoalChip('Travel to New Locations'),
-                if (_findLongTermWork) _buildGoalChip('Find Long-term Work'),
-              ],
-            ),
-
-          const SizedBox(height: AppTheme.spacingLg),
-
-          // Additional feedback fields from onboarding
-          Text(
-            'Additional Information',
-            style: AppTheme.headlineSmall.copyWith(
-              color: AppTheme.primaryNavy,
-            ),
-          ),
-          const SizedBox(height: AppTheme.spacingMd),
-
-          JJTextField(
-            label: 'How did you hear about us?',
-            controller: _howHeardAboutUsController,
-            enabled: _isEditing,
-            prefixIcon: Icons.info_outline,
-            maxLines: 2,
-          ),
-
-          const SizedBox(height: AppTheme.spacingMd),
-
-          JJTextField(
-            label: 'What are you looking to accomplish?',
-            controller: _lookingToAccomplishController,
-            enabled: _isEditing,
-            prefixIcon: Icons.track_changes_outlined,
+            prefixIcon: Icons.trending_up,
             maxLines: 3,
           ),
         ],
@@ -1497,55 +1151,40 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Notification Preferences',
+            'Settings & Preferences',
             style: AppTheme.headlineSmall.copyWith(
               color: AppTheme.primaryNavy,
             ),
           ),
           const SizedBox(height: AppTheme.spacingMd),
-
-          _buildSettingsTile(
-            'Job Alerts',
-            'Get notified about new job opportunities',
-            Icons.work_outline,
-            _jobAlerts,
-            (value) => setState(() => _jobAlerts = value),
+          
+          // Quick Settings Navigation
+          _buildNavigationTile(
+            'App Settings',
+            'Appearance, language, units, and more',
+            Icons.settings,
+            () {
+              context.push('/settings/app');
+            },
           ),
-
-          _buildSettingsTile(
-            'Storm Work Alerts',
-            'Emergency storm restoration notifications',
-            Icons.flash_on,
-            _stormAlerts,
-            (value) => setState(() => _stormAlerts = value),
-          ),
-
-          _buildSettingsTile(
-            'Email Notifications',
-            'Receive notifications via email',
-            Icons.email_outlined,
-            _emailNotifications,
-            (value) => setState(() => _emailNotifications = value),
-          ),
-
-          _buildSettingsTile(
-            'Push Notifications',
-            'Receive push notifications on your device',
+          _buildNavigationTile(
+            'Notification Settings',
+            'Manage alerts and notification preferences',
             Icons.notifications_outlined,
-            _pushNotifications,
-            (value) => setState(() => _pushNotifications = value),
+            () {
+              context.go('${AppRouter.notifications}?tab=settings');
+            },
           ),
-
-          _buildSettingsTile(
-            'Weekly Digest',
-            'Summary of job opportunities each week',
-            Icons.summarize_outlined,
-            _weeklyDigest,
-            (value) => setState(() => _weeklyDigest = value),
+          _buildNavigationTile(
+            'Privacy & Security',
+            'Manage your privacy and security settings',
+            Icons.security,
+            () {
+              context.push('/settings/app');
+            },
           ),
-
+          
           const SizedBox(height: AppTheme.spacingLg),
-
           Text(
             'Account Actions',
             style: AppTheme.headlineSmall.copyWith(
@@ -1553,7 +1192,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             ),
           ),
           const SizedBox(height: AppTheme.spacingMd),
-
           _buildActionTile(
             'Change Password',
             'Update your account password',
@@ -1565,7 +1203,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               );
             },
           ),
-
           _buildActionTile(
             'Download My Data',
             'Download a copy of your profile data',
@@ -1577,7 +1214,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               );
             },
           ),
-
           _buildActionTile(
             'Delete Account',
             'Permanently delete your account',
@@ -1587,9 +1223,39 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             },
             isDestructive: true,
           ),
-
           const SizedBox(height: AppTheme.spacingLg),
-
+          Text(
+            'Support & About',
+            style: AppTheme.headlineSmall.copyWith(
+              color: AppTheme.primaryNavy,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+          _buildNavigationTile(
+            'Help & Support',
+            'Get help or contact support',
+            Icons.help_outline,
+            () {
+              // Navigate to help
+            },
+          ),
+          _buildNavigationTile(
+            'Terms of Service',
+            'View terms and conditions',
+            Icons.description,
+            () {
+              // Navigate to terms
+            },
+          ),
+          _buildNavigationTile(
+            'Privacy Policy',
+            'View privacy policy',
+            Icons.privacy_tip,
+            () {
+              // Navigate to privacy
+            },
+          ),
+          const SizedBox(height: AppTheme.spacingLg),
           Text(
             'App Information',
             style: AppTheme.headlineSmall.copyWith(
@@ -1597,7 +1263,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             ),
           ),
           const SizedBox(height: AppTheme.spacingMd),
-
           _buildInfoTile('Version', '1.0.0'),
           _buildInfoTile('Build', '2024.1'),
           _buildInfoTile('Last Updated', 'Today'),
@@ -1606,12 +1271,11 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildSettingsTile(
+  Widget _buildNavigationTile(
     String title,
     String subtitle,
     IconData icon,
-    bool value,
-    Function(bool) onChanged,
+    VoidCallback onTap,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
@@ -1620,7 +1284,19 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         boxShadow: [AppTheme.shadowSm],
       ),
-      child: JJCircuitBreakerSwitchListTile(
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(AppTheme.spacingSm),
+          decoration: BoxDecoration(
+            color: AppTheme.accentCopper.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+          ),
+          child: Icon(
+            icon,
+            color: AppTheme.accentCopper,
+            size: AppTheme.iconMd,
+          ),
+        ),
         title: Text(
           title,
           style: AppTheme.bodyLarge.copyWith(
@@ -1634,11 +1310,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             color: AppTheme.textSecondary,
           ),
         ),
-        secondary: Icon(icon, color: AppTheme.accentCopper),
-        value: value,
-        onChanged: onChanged,
-        size: JJCircuitBreakerSize.small,
-        showElectricalEffects: true,
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: AppTheme.textLight,
+        ),
+        onTap: onTap,
       ),
     );
   }
@@ -1687,113 +1364,142 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
 
   Widget _buildInfoTile(String title, String value) {
     return Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        boxShadow: [AppTheme.shadowSm],
-      ),
-      child: ListTile(
-        title: Text(
-          title,
-          style: AppTheme.bodyLarge.copyWith(
-            color: AppTheme.textPrimary,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        trailing: Text(
-          value,
-          style: AppTheme.bodyMedium.copyWith(
-            color: AppTheme.textSecondary,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGoalChip(String label) {
-    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingSm),
       padding: const EdgeInsets.symmetric(
         horizontal: AppTheme.spacingMd,
         vertical: AppTheme.spacingSm,
       ),
       decoration: BoxDecoration(
-        color: AppTheme.accentCopper.withValues(alpha: 0.1),
+        color: AppTheme.white,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(color: AppTheme.accentCopper.withValues(alpha: 0.3)),
       ),
-      child: Text(
-        label,
-        style: AppTheme.bodyMedium.copyWith(
-          color: AppTheme.accentCopper,
-          fontWeight: FontWeight.w500,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: AppTheme.bodyMedium.copyWith(
+              color: AppTheme.textSecondary,
+            ),
+          ),
+          Text(
+            value,
+            style: AppTheme.bodyMedium.copyWith(
+              color: AppTheme.textPrimary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGoalChip(String label, bool isSelected, Function(bool) onSelected) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+      child: FilterChip(
+        label: Text(label),
+        selected: isSelected,
+        onSelected: _isEditing ? onSelected : null,
+        backgroundColor: AppTheme.lightGray,
+        selectedColor: AppTheme.accentCopper,
+        side: isSelected 
+            ? BorderSide(color: AppTheme.primaryNavy, width: AppTheme.borderWidthThick)
+            : null,
+        labelStyle: TextStyle(
+          color: isSelected ? AppTheme.white : AppTheme.textPrimary,
         ),
       ),
     );
   }
 
-  void _showDeleteAccountDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: AppTheme.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+  Widget _buildStatusToggle() {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [AppTheme.shadowSm],
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.work_history,
+            color: AppTheme.accentCopper,
           ),
-          title: Row(
-            children: [
-              Icon(
-                Icons.warning,
-                color: AppTheme.errorRed,
-                size: AppTheme.iconMd,
-              ),
-              const SizedBox(width: AppTheme.spacingSm),
-              Text(
-                'Delete Account',
-                style: AppTheme.headlineSmall.copyWith(
-                  color: AppTheme.errorRed,
+          const SizedBox(width: AppTheme.spacingMd),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Employment Status',
+                  style: AppTheme.titleMedium.copyWith(
+                    color: AppTheme.primaryNavy,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          content: Text(
-            'Are you sure you want to permanently delete your account? This action cannot be undone and all your data will be lost.',
-            style: AppTheme.bodyMedium.copyWith(
-              color: AppTheme.textPrimary,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                'Cancel',
-                style: AppTheme.bodyMedium.copyWith(
-                  color: AppTheme.textSecondary,
+                const SizedBox(height: AppTheme.spacingXs),
+                Text(
+                  _isWorking ? 'Currently Working' : 'On the Books',
+                  style: AppTheme.bodySmall.copyWith(
+                    color: _isWorking ? AppTheme.successGreen : AppTheme.accentCopper,
+                  ),
                 ),
-              ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                JJSnackBar.showError(
-                  context: context,
-                  message: 'Account deletion feature coming soon',
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.errorRed,
-                foregroundColor: AppTheme.white,
-              ),
-              child: const Text('Delete'),
+          ),
+          JJCircuitBreakerSwitch(
+            value: _isWorking,
+            onChanged: _isEditing
+                ? (value) => setState(() => _isWorking = value)
+                : null,
+            size: JJCircuitBreakerSize.small,
+            showElectricalEffects: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReadOnlyField(String label, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        border: Border.all(color: AppTheme.lightGray),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: AppTheme.textSecondary),
+          const SizedBox(width: AppTheme.spacingMd),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: AppTheme.bodySmall.copyWith(
+                    color: AppTheme.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: AppTheme.spacingXs),
+                Text(
+                  value,
+                  style: AppTheme.bodyMedium.copyWith(
+                    color: AppTheme.textPrimary,
+                  ),
+                ),
+              ],
             ),
-          ],
-        );
-      },
+          ),
+        ],
+      ),
     );
   }
 }
 
+// Arrow painter for tooltip
 class ArrowPainter extends CustomPainter {
   final Color color;
   
