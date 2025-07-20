@@ -4,6 +4,8 @@ import '../../design_system/components/reusable_components.dart';
 import '../../models/storm_event.dart';
 import '../../widgets/weather/noaa_radar_map.dart';
 import '../../services/location_service.dart';
+import '../../services/power_outage_service.dart';
+import '../../widgets/storm/power_outage_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
@@ -90,6 +92,11 @@ class _StormScreenState extends State<StormScreen> {
   bool _notificationsEnabled = false;
   String _selectedRegion = 'All Regions';
   
+  // Power outage tracking
+  final PowerOutageService _powerOutageService = PowerOutageService();
+  List<PowerOutageState> _powerOutages = [];
+  bool _isLoadingOutages = true;
+  
   final List<String> _regions = [
     'All Regions',
     'Southeast',
@@ -151,6 +158,37 @@ class _StormScreenState extends State<StormScreen> {
       return _activeStorms;
     }
     return _activeStorms.where((storm) => storm.region == _selectedRegion).toList();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPowerOutages();
+  }
+
+  @override
+  void dispose() {
+    _powerOutageService.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadPowerOutages() async {
+    try {
+      await _powerOutageService.initialize();
+      final outages = await _powerOutageService.getPowerOutages();
+      if (mounted) {
+        setState(() {
+          _powerOutages = outages;
+          _isLoadingOutages = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingOutages = false;
+        });
+      }
+    }
   }
 
   @override
@@ -311,6 +349,34 @@ class _StormScreenState extends State<StormScreen> {
             ),
 
             const SizedBox(height: AppTheme.spacingLg),
+
+            // Power outage section
+            if (_powerOutages.isNotEmpty) ...[
+              PowerOutageSummary(outages: _powerOutages),
+              const SizedBox(height: AppTheme.spacingLg),
+              
+              Text(
+                'Major Power Outages by State',
+                style: AppTheme.headlineSmall.copyWith(
+                  color: AppTheme.primaryNavy,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingMd),
+              
+              if (_isLoadingOutages)
+                Center(
+                  child: CircularProgressIndicator(
+                    color: AppTheme.accentCopper,
+                  ),
+                )
+              else
+                ..._powerOutages.map((outage) => PowerOutageCard(
+                  outageData: outage,
+                  onTap: () => _showOutageDetails(context, outage),
+                )),
+              
+              const SizedBox(height: AppTheme.spacingLg),
+            ],
 
             // Region filter
             Row(
@@ -880,6 +946,217 @@ class _StormScreenState extends State<StormScreen> {
           Text(label),
         ],
       ),
+    );
+  }
+
+  void _showOutageDetails(BuildContext context, PowerOutageState outage) {
+    final percentage = _powerOutageService.getOutagePercentage(outage);
+    final severity = _powerOutageService.getOutageSeverity(outage);
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppTheme.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppTheme.radiusLg),
+        ),
+      ),
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.only(
+            left: AppTheme.spacingLg,
+            right: AppTheme.spacingLg,
+            top: AppTheme.spacingLg,
+            bottom: MediaQuery.of(context).viewInsets.bottom + AppTheme.spacingLg,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppTheme.textLight,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingLg),
+              
+              // Header
+              Row(
+                children: [
+                  Icon(
+                    FontAwesomeIcons.bolt,
+                    color: AppTheme.errorRed,
+                    size: 32,
+                  ),
+                  const SizedBox(width: AppTheme.spacingMd),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          outage.stateName,
+                          style: AppTheme.headlineMedium.copyWith(
+                            color: AppTheme.primaryNavy,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Power Outage Emergency',
+                          style: AppTheme.bodyMedium.copyWith(
+                            color: AppTheme.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: AppTheme.spacingLg),
+              
+              // Stats grid
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(AppTheme.spacingMd),
+                      decoration: BoxDecoration(
+                        color: AppTheme.errorRed.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            _powerOutageService.formatOutageCount(outage.outageCount),
+                            style: AppTheme.displaySmall.copyWith(
+                              color: AppTheme.errorRed,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Without Power',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppTheme.spacingMd),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(AppTheme.spacingMd),
+                      decoration: BoxDecoration(
+                        color: AppTheme.warningYellow.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            '${percentage.toStringAsFixed(1)}%',
+                            style: AppTheme.displaySmall.copyWith(
+                              color: AppTheme.warningYellow,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Affected',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: AppTheme.spacingLg),
+              
+              // Info section
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  color: AppTheme.infoBlue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  border: Border.all(
+                    color: AppTheme.infoBlue.withOpacity(0.3),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          FontAwesomeIcons.circleInfo,
+                          color: AppTheme.infoBlue,
+                          size: 16,
+                        ),
+                        const SizedBox(width: AppTheme.spacingSm),
+                        Text(
+                          'Storm Work Opportunity',
+                          style: AppTheme.headlineSmall.copyWith(
+                            color: AppTheme.infoBlue,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppTheme.spacingSm),
+                    Text(
+                      'This state has significant power outages requiring immediate restoration crews. '
+                      'Contact local IBEW unions in ${outage.stateName} for deployment opportunities.',
+                      style: AppTheme.bodyMedium.copyWith(
+                        color: AppTheme.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: AppTheme.spacingLg),
+              
+              // Action buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: JJSecondaryButton(
+                      text: 'View Jobs',
+                      icon: FontAwesomeIcons.briefcase,
+                      onPressed: () {
+                        Navigator.pop(context);
+                        // Navigate to jobs filtered by state
+                      },
+                      isFullWidth: true,
+                    ),
+                  ),
+                  const SizedBox(width: AppTheme.spacingMd),
+                  Expanded(
+                    child: JJPrimaryButton(
+                      text: 'View Unions',
+                      icon: FontAwesomeIcons.users,
+                      onPressed: () {
+                        Navigator.pop(context);
+                        // Navigate to unions filtered by state
+                      },
+                      isFullWidth: true,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
