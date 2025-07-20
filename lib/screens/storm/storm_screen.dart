@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/storm_event.dart';
+import '../../widgets/weather/interactive_radar_map.dart';
+import '../../services/location_service.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 
@@ -238,6 +241,14 @@ class _StormScreenState extends State<StormScreen> {
                       color: AppTheme.white,
                     ),
                   ),
+                  const SizedBox(height: AppTheme.spacingMd),
+                  JJPrimaryButton(
+                    text: 'View Live Weather Radar',
+                    icon: FontAwesomeIcons.cloudBolt,
+                    onPressed: () => _showWeatherRadar(context),
+                    isFullWidth: false,
+                    variant: JJButtonVariant.primary,
+                  ),
                 ],
               ),
             ),
@@ -407,6 +418,187 @@ class _StormScreenState extends State<StormScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showWeatherRadar(BuildContext context) async {
+    // Check location permission first
+    final locationService = LocationService();
+    final permissionResult = await locationService.requestLocationForRadar();
+    
+    if (!context.mounted) return;
+    
+    // Show permission status if needed
+    if (!permissionResult['permitted']) {
+      final canRetry = permissionResult['canRetry'] ?? false;
+      final status = permissionResult['status'];
+      
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Row(
+            children: [
+              Icon(
+                FontAwesomeIcons.locationCrosshairs,
+                color: AppTheme.warningYellow,
+              ),
+              const SizedBox(width: AppTheme.spacingSm),
+              Text('Location Permission Needed'),
+            ],
+          ),
+          content: Text(
+            permissionResult['message'] ?? 'Location permission is required to center the radar on your location.',
+            style: AppTheme.bodyMedium,
+          ),
+          actions: [
+            if (status == 'deniedForever')
+              TextButton(
+                onPressed: () async {
+                  await locationService.openAppSettings();
+                  Navigator.pop(context);
+                },
+                child: Text('Open Settings'),
+              ),
+            if (canRetry)
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showWeatherRadar(context); // Retry
+                },
+                child: Text('Retry'),
+              ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _showRadarWithoutLocation(context);
+              },
+              child: Text('Continue Without Location'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+    
+    // Permission granted, show radar with user location
+    _showRadarWithLocation(
+      context,
+      permissionResult['latitude'] ?? 39.8283,
+      permissionResult['longitude'] ?? -98.5795,
+    );
+  }
+  
+  void _showRadarWithLocation(BuildContext context, double lat, double lon) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          backgroundColor: AppTheme.primaryNavy,
+          appBar: AppBar(
+            backgroundColor: AppTheme.primaryNavy,
+            elevation: 0,
+            title: Row(
+              children: [
+                Icon(
+                  FontAwesomeIcons.cloudBolt,
+                  color: AppTheme.accentCopper,
+                  size: 20,
+                ),
+                const SizedBox(width: AppTheme.spacingSm),
+                Text(
+                  'Live Weather Radar',
+                  style: AppTheme.headlineMedium.copyWith(color: AppTheme.white),
+                ),
+              ],
+            ),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.info_outline, color: AppTheme.white),
+                onPressed: () => _showRadarInfo(context),
+              ),
+            ],
+          ),
+          body: InteractiveRadarMap(
+            initialLatitude: lat,
+            initialLongitude: lon,
+            initialZoom: 8.0,
+            showControls: true,
+            animateRadar: true,
+            onLocationTap: (location) {
+              // Could show storm events near tapped location
+            },
+          ),
+        ),
+      ),
+    );
+  }
+  
+  void _showRadarWithoutLocation(BuildContext context) {
+    _showRadarWithLocation(context, 39.8283, -98.5795); // US center
+  }
+  
+  void _showRadarInfo(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Weather Radar Guide'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInfoRow(Colors.green, 'Light precipitation'),
+              _buildInfoRow(Colors.yellow, 'Moderate precipitation'),
+              _buildInfoRow(Colors.orange, 'Heavy precipitation'),
+              _buildInfoRow(Colors.red, 'Severe weather'),
+              const SizedBox(height: AppTheme.spacingMd),
+              Text(
+                'Controls:',
+                style: AppTheme.headlineSmall,
+              ),
+              const SizedBox(height: AppTheme.spacingSm),
+              Text('\u2022 Pinch to zoom in/out'),
+              Text('\u2022 Drag to pan around'),
+              Text('\u2022 Use slider to adjust radar opacity'),
+              Text('\u2022 Tap play button for animation'),
+              const SizedBox(height: AppTheme.spacingMd),
+              Text(
+                'Note: Radar data updates every 5 minutes',
+                style: AppTheme.bodySmall.copyWith(
+                  color: AppTheme.textMuted,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Got it'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildInfoRow(Color color, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          const SizedBox(width: AppTheme.spacingSm),
+          Text(label),
+        ],
       ),
     );
   }
