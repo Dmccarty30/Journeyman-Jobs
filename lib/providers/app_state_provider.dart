@@ -373,6 +373,10 @@ class AppStateProvider extends ChangeNotifier {
   Future<void> loadLocals({bool isRefresh = false, String? state}) async {
     if (_isLoadingLocals) return;
 
+    if (kDebugMode) {
+      print('🔍 loadLocals called - isRefresh: $isRefresh, state: $state, isLoading: $_isLoadingLocals');
+    }
+
     _isLoadingLocals = true;
     if (isRefresh) {
       _localsError = null;
@@ -381,9 +385,25 @@ class AppStateProvider extends ChangeNotifier {
     }
     notifyListeners();
 
+    if (kDebugMode) {
+      print('🔄 Starting locals load - current count: ${_locals.length}');
+    }
+
     try {
+      if (kDebugMode) {
+        print('📡 Calling Firestore getLocals...');
+      }
       final localsStream = _firestoreService.getLocals(limit: 20, state: state);
       final snapshot = await localsStream.first;
+      
+      if (kDebugMode) {
+        print('📄 Got snapshot with ${snapshot.docs.length} documents');
+        if (snapshot.docs.isNotEmpty) {
+          final firstDoc = snapshot.docs.first.data() as Map<String, dynamic>;
+          print('🔍 First document fields: ${firstDoc.keys.toList()}');
+          print('🔍 First document data: $firstDoc');
+        }
+      }
       
       final newLocals = snapshot.docs.map((doc) {
         return LocalsRecord.fromFirestore(doc);
