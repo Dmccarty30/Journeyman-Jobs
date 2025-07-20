@@ -7,6 +7,7 @@ import '../../providers/app_state_provider.dart';
 import '../../models/job_model.dart';
 import '../../legacy/flutterflow/schema/jobs_record.dart';
 import '../../utils/job_formatting.dart';
+import '../../widgets/notification_badge.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -57,9 +58,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined, color: AppTheme.white),
-            onPressed: () {
+          NotificationBadge(
+            iconColor: AppTheme.white,
+            showPopupOnTap: false,
+            onTap: () {
               context.push(AppRouter.notifications);
             },
           ),
@@ -139,13 +141,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ),
-                      IconButton(
-                        onPressed: () => context.push(AppRouter.notifications),
-                        icon: Icon(
-                          Icons.notifications_outlined,
-                          color: AppTheme.primaryNavy,
-                          size: AppTheme.iconLg,
-                        ),
+                      NotificationBadge(
+                        iconColor: AppTheme.primaryNavy,
+                        iconSize: AppTheme.iconLg,
+                        showPopupOnTap: false,
+                        onTap: () => context.push(AppRouter.notifications),
                       ),
                     ],
                   );

@@ -36,9 +36,9 @@ class JJCircuitBreakerSwitch extends StatefulWidget {
 
 /// Size variants for the circuit breaker switch
 enum JJCircuitBreakerSize {
-  small(width: 54, height: 72, fontSize: 7),
-  medium(width: 72, height: 90, fontSize: 9),
-  large(width: 90, height: 108, fontSize: 11);
+  small(width: 46, height: 61, fontSize: 6),
+  medium(width: 61, height: 77, fontSize: 8),
+  large(width: 77, height: 92, fontSize: 9);
 
   const JJCircuitBreakerSize({
     required this.width,

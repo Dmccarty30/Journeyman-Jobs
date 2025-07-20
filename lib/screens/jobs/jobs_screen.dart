@@ -6,6 +6,9 @@ import '../../models/job_model.dart';
 import '../../providers/app_state_provider.dart';
 import '../../widgets/optimized_selector_widgets.dart';
 import '../../utils/job_formatting.dart';
+import '../../widgets/notification_badge.dart';
+import 'package:go_router/go_router.dart';
+import '../../navigation/app_router.dart';
 
 
 class JobsScreen extends StatefulWidget {
@@ -819,6 +822,13 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                   setState(() {
                     _showAdvancedFilters = !_showAdvancedFilters;
                   });
+                },
+              ),
+              NotificationBadge(
+                iconColor: AppTheme.white,
+                showPopupOnTap: false,
+                onTap: () {
+                  context.push(AppRouter.notifications);
                 },
               ),
             ],

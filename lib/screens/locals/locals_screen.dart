@@ -5,6 +5,9 @@ import '/models/locals_record.dart';
 import '/design_system/app_theme.dart';
 import '/providers/app_state_provider.dart';
 import 'dart:io' show Platform;
+import '../../widgets/notification_badge.dart';
+import 'package:go_router/go_router.dart';
+import '../../navigation/app_router.dart';
 
 class LocalsScreen extends StatefulWidget {
   const LocalsScreen({super.key});
@@ -55,6 +58,15 @@ class _LocalsScreenState extends State<LocalsScreen> {
         title: const Text('IBEW Locals Directory'),
         backgroundColor: AppTheme.primaryNavy,
         elevation: 0,
+        actions: [
+          NotificationBadge(
+            iconColor: AppTheme.white,
+            showPopupOnTap: false,
+            onTap: () {
+              context.push(AppRouter.notifications);
+            },
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(80),
           child: Container(
