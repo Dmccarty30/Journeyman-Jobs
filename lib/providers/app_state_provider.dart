@@ -409,11 +409,41 @@ class AppStateProvider extends ChangeNotifier {
         return LocalsRecord.fromFirestore(doc);
       }).toList();
       
+      // Sort locals numerically by local union number
+      newLocals.sort((a, b) {
+        // Try to parse local union numbers as integers for proper numeric sorting
+        final aNum = int.tryParse(a.localUnion.replaceAll(RegExp(r'[^0-9]'), ''));
+        final bNum = int.tryParse(b.localUnion.replaceAll(RegExp(r'[^0-9]'), ''));
+        
+        // If both can be parsed as numbers, sort numerically
+        if (aNum != null && bNum != null) {
+          return aNum.compareTo(bNum);
+        }
+        // If one is numeric and the other isn't, numeric comes first
+        if (aNum != null) return -1;
+        if (bNum != null) return 1;
+        // If neither is numeric, sort alphabetically
+        return a.localUnion.compareTo(b.localUnion);
+      });
+      
       if (isRefresh) {
         _locals = newLocals;
         _lastLocalDocument = snapshot.docs.isNotEmpty ? snapshot.docs.last : null;
       } else {
         _locals.addAll(newLocals);
+        // Resort the entire list after adding new locals
+        _locals.sort((a, b) {
+          final aNum = int.tryParse(a.localUnion.replaceAll(RegExp(r'[^0-9]'), ''));
+          final bNum = int.tryParse(b.localUnion.replaceAll(RegExp(r'[^0-9]'), ''));
+          
+          if (aNum != null && bNum != null) {
+            return aNum.compareTo(bNum);
+          }
+          if (aNum != null) return -1;
+          if (bNum != null) return 1;
+          return a.localUnion.compareTo(b.localUnion);
+        });
+        
         if (snapshot.docs.isNotEmpty) {
           _lastLocalDocument = snapshot.docs.last;
         }
@@ -455,6 +485,24 @@ class AppStateProvider extends ChangeNotifier {
       }).toList();
       
       _locals.addAll(newLocals);
+      
+      // Resort the entire list after adding more locals to maintain numeric order
+      _locals.sort((a, b) {
+        // Try to parse local union numbers as integers for proper numeric sorting
+        final aNum = int.tryParse(a.localUnion.replaceAll(RegExp(r'[^0-9]'), ''));
+        final bNum = int.tryParse(b.localUnion.replaceAll(RegExp(r'[^0-9]'), ''));
+        
+        // If both can be parsed as numbers, sort numerically
+        if (aNum != null && bNum != null) {
+          return aNum.compareTo(bNum);
+        }
+        // If one is numeric and the other isn't, numeric comes first
+        if (aNum != null) return -1;
+        if (bNum != null) return 1;
+        // If neither is numeric, sort alphabetically
+        return a.localUnion.compareTo(b.localUnion);
+      });
+      
       if (snapshot.docs.isNotEmpty) {
         _lastLocalDocument = snapshot.docs.last;
       }
