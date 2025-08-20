@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
 import '../../navigation/app_router.dart';
-import '../../providers/app_state_provider.dart';
+import '../../providers/riverpod/app_state_riverpod_provider.dart';
 import '../../models/job_model.dart';
 import '../../legacy/flutterflow/schema/jobs_record.dart';
 import '../../utils/job_formatting.dart';
 import '../../widgets/notification_badge.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AppStateProvider>().refreshJobs();
+      ref.read(appStateNotifierProvider.notifier).refreshJobs();
     });
   }
 
@@ -68,15 +68,16 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => context.read<AppStateProvider>().refreshJobs(),
+        onRefresh: () => ref.read(appStateNotifierProvider.notifier).refreshJobs(),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppTheme.spacingMd),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Consumer<AppStateProvider>(
-                builder: (context, appStateProvider, child) {
-                  if (!appStateProvider.isAuthenticated) {
+              Consumer(
+                builder: (context, ref, child) {
+                  final appState = ref.watch(appStateNotifierProvider);
+                  if (!appState.isAuthenticated) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -98,8 +99,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }
 
-                  final displayName = appStateProvider.userProfile?.displayName ?? appStateProvider.user?.displayName ?? 'User';
-                  final photoUrl = appStateProvider.user?.photoURL;
+                  final displayName = appState.userProfile?.displayName ?? appState.user?.displayName ?? 'User';
+                  final photoUrl = appState.user?.photoURL;
                   final userInitial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
 
                   return Row(
@@ -213,9 +214,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: AppTheme.spacingMd),
 
-              Consumer<AppStateProvider>(
-                builder: (context, appStateProvider, child) {
-                  if (appStateProvider.isLoadingJobs) {
+              Consumer(
+                builder: (context, ref, child) {
+                  final appState = ref.watch(appStateNotifierProvider);
+                  if (appState.isLoadingJobs) {
                     return const Center(
                       child: Padding(
                         padding: EdgeInsets.all(AppTheme.spacingLg),
@@ -226,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }
 
-                  if (appStateProvider.jobsError != null) {
+                  if (appState.jobsError != null) {
                     return Center(
                       child: Padding(
                         padding: const EdgeInsets.all(AppTheme.spacingLg),
@@ -240,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             const SizedBox(height: AppTheme.spacingSm),
                             ElevatedButton(
-                              onPressed: () => appStateProvider.refreshJobs(),
+                              onPressed: () => ref.read(appStateNotifierProvider.notifier).refreshJobs(),
                               child: const Text('Retry'),
                             ),
                           ],
@@ -249,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }
 
-                  if (appStateProvider.jobs.isEmpty) {
+                  if (appState.jobs.isEmpty) {
                     return Center(
                       child: Padding(
                         padding: const EdgeInsets.all(AppTheme.spacingLg),
@@ -269,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             const SizedBox(height: AppTheme.spacingSm),
                             TextButton(
-                              onPressed: () => appStateProvider.refreshJobs(),
+                              onPressed: () => ref.read(appStateNotifierProvider.notifier).refreshJobs(),
                               child: Text(
                                 'Refresh',
                                 style: AppTheme.bodyMedium.copyWith(
@@ -284,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
 
                   return Column(
-                    children: appStateProvider.jobs.take(5).map((job) {
+                    children: appState.jobs.take(5).map((job) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: AppTheme.spacingMd),
                         child: _buildSuggestedJobCard(

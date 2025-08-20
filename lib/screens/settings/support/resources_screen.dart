@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
 import 'calculators/voltage_drop_calculator.dart';
@@ -130,6 +131,15 @@ class _ResourcesScreenState extends State<ResourcesScreen> with SingleTickerProv
       icon: Icons.emoji_symbols,
       color: AppTheme.infoBlue,
       action: 'symbols_ref',
+    ),
+    ResourceItem(
+      category: 'Reference',
+      title: 'Transformer Banks',
+      description: 'Interactive transformer bank configurations and connections',
+      type: ResourceType.tool,
+      icon: Icons.electrical_services,
+      color: AppTheme.accentCopper,
+      action: 'transformer_banks',
     ),
   ];
 
@@ -505,6 +515,9 @@ class ResourceCard extends StatelessWidget {
       case 'wire_chart':
         toolScreen = const WireSizeChart();
         break;
+      case 'transformer_banks':
+        context.go('/tools/transformer-reference');
+        return;
       default:
         _showToolDialog(context, item);
         return;

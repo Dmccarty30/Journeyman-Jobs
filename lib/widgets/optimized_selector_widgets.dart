@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/app_state_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/riverpod/app_state_riverpod_provider.dart';
 import '../models/job_model.dart';
 
 /// State class for jobs list to optimize rebuilds
@@ -36,7 +36,7 @@ class JobsListState {
 }
 
 /// Optimized selector widget for jobs list state
-class JobsListStateSelector extends StatelessWidget {
+class JobsListStateSelector extends ConsumerWidget {
   final Widget Function(BuildContext context, JobsListState jobsState, Widget? child) builder;
   final Widget? child;
 
@@ -47,17 +47,15 @@ class JobsListStateSelector extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Selector<AppStateProvider, JobsListState>(
-      selector: (context, provider) => JobsListState(
-        jobs: provider.jobs,
-        isLoading: provider.isLoadingJobs,
-        error: provider.jobsError,
-        hasMore: provider.hasMoreJobs,
-      ),
-      builder: builder,
-      child: child,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appState = ref.watch(appStateNotifierProvider);
+    final jobsState = JobsListState(
+      jobs: appState.jobs,
+      isLoading: appState.isLoadingJobs,
+      error: appState.jobsError,
+      hasMore: appState.hasMoreJobs,
     );
+    return builder(context, jobsState, child);
   }
 }
 
@@ -94,7 +92,7 @@ class LocalsListState {
 }
 
 /// Optimized selector widget for locals list state
-class LocalsListStateSelector extends StatelessWidget {
+class LocalsListStateSelector extends ConsumerWidget {
   final Widget Function(BuildContext context, LocalsListState localsState, Widget? child) builder;
   final Widget? child;
 
@@ -105,17 +103,15 @@ class LocalsListStateSelector extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Selector<AppStateProvider, LocalsListState>(
-      selector: (context, provider) => LocalsListState(
-        locals: provider.locals,
-        isLoading: provider.isLoadingLocals,
-        error: provider.localsError,
-        hasMore: provider.hasMoreLocals,
-      ),
-      builder: builder,
-      child: child,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appState = ref.watch(appStateNotifierProvider);
+    final localsState = LocalsListState(
+      locals: appState.locals,
+      isLoading: appState.isLoadingLocals,
+      error: appState.localsError,
+      hasMore: appState.hasMoreLocals,
     );
+    return builder(context, localsState, child);
   }
 }
 
@@ -152,7 +148,7 @@ class AuthState {
 }
 
 /// Optimized selector widget for auth state
-class AuthStateSelector extends StatelessWidget {
+class AuthStateSelector extends ConsumerWidget {
   final Widget Function(BuildContext context, AuthState authState, Widget? child) builder;
   final Widget? child;
 
@@ -163,17 +159,15 @@ class AuthStateSelector extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Selector<AppStateProvider, AuthState>(
-      selector: (context, provider) => AuthState(
-        isAuthenticated: provider.isAuthenticated,
-        isLoading: provider.isLoadingAuth,
-        error: provider.authError,
-        user: provider.user,
-      ),
-      builder: builder,
-      child: child,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appState = ref.watch(appStateNotifierProvider);
+    final authState = AuthState(
+      isAuthenticated: appState.isAuthenticated,
+      isLoading: appState.isLoadingAuth,
+      error: appState.authError,
+      user: appState.user,
     );
+    return builder(context, authState, child);
   }
 }
 
@@ -206,7 +200,7 @@ class CombinedAppState {
 }
 
 /// Optimized selector widget for combined app state
-class CombinedAppStateSelector extends StatelessWidget {
+class CombinedAppStateSelector extends ConsumerWidget {
   final Widget Function(BuildContext context, CombinedAppState appState, Widget? child) builder;
   final Widget? child;
 
@@ -217,30 +211,28 @@ class CombinedAppStateSelector extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Selector<AppStateProvider, CombinedAppState>(
-      selector: (context, provider) => CombinedAppState(
-        authState: AuthState(
-          isAuthenticated: provider.isAuthenticated,
-          isLoading: provider.isLoadingAuth,
-          error: provider.authError,
-          user: provider.user,
-        ),
-        jobsState: JobsListState(
-          jobs: provider.jobs,
-          isLoading: provider.isLoadingJobs,
-          error: provider.jobsError,
-          hasMore: provider.hasMoreJobs,
-        ),
-        localsState: LocalsListState(
-          locals: provider.locals,
-          isLoading: provider.isLoadingLocals,
-          error: provider.localsError,
-          hasMore: provider.hasMoreLocals,
-        ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appState = ref.watch(appStateNotifierProvider);
+    final combinedState = CombinedAppState(
+      authState: AuthState(
+        isAuthenticated: appState.isAuthenticated,
+        isLoading: appState.isLoadingAuth,
+        error: appState.authError,
+        user: appState.user,
       ),
-      builder: builder,
-      child: child,
+      jobsState: JobsListState(
+        jobs: appState.jobs,
+        isLoading: appState.isLoadingJobs,
+        error: appState.jobsError,
+        hasMore: appState.hasMoreJobs,
+      ),
+      localsState: LocalsListState(
+        locals: appState.locals,
+        isLoading: appState.isLoadingLocals,
+        error: appState.localsError,
+        hasMore: appState.hasMoreLocals,
+      ),
     );
+    return builder(context, combinedState, child);
   }
 }

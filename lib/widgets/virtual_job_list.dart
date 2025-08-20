@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../design_system/app_theme.dart';
 import '../design_system/components/job_card.dart';
 import '../models/job_model.dart';
-import '../providers/app_state_provider.dart';
+import '../providers/riverpod/app_state_riverpod_provider.dart';
 import '../services/connectivity_service.dart';
 
 /// High-performance virtual scrolling job list with infinite loading
 /// 
 /// Optimized for large datasets with efficient memory management,
 /// smooth scrolling, and automatic load-more functionality.
-class VirtualJobList extends StatefulWidget {
+class VirtualJobList extends ConsumerStatefulWidget {
   /// List of jobs to display
   final List<Job> jobs;
   
@@ -60,10 +60,10 @@ class VirtualJobList extends StatefulWidget {
   });
 
   @override
-  State<VirtualJobList> createState() => _VirtualJobListState();
+  ConsumerState<VirtualJobList> createState() => _VirtualJobListState();
 }
 
-class _VirtualJobListState extends State<VirtualJobList> with AutomaticKeepAliveClientMixin {
+class _VirtualJobListState extends ConsumerState<VirtualJobList> with AutomaticKeepAliveClientMixin {
   late ScrollController _scrollController;
   bool _isLoadingMore = false;
   
@@ -155,8 +155,9 @@ class _VirtualJobListState extends State<VirtualJobList> with AutomaticKeepAlive
       slivers: [
         // Offline indicator at top if needed
         if (widget.showOfflineIndicators)
-          Consumer<ConnectivityService>(
-            builder: (context, connectivity, child) {
+          Consumer(
+            builder: (context, ref, child) {
+              final connectivity = ref.watch(connectivityServiceProvider);
               if (connectivity.isOffline) {
                 return SliverToBoxAdapter(
                   child: Container(
@@ -422,8 +423,7 @@ class _VirtualJobListState extends State<VirtualJobList> with AutomaticKeepAlive
 
   /// Refresh job list
   void _refreshJobs() {
-    final appStateProvider = context.read<AppStateProvider>();
-    appStateProvider.loadJobs(isRefresh: true);
+    ref.read(appStateNotifierProvider.notifier).loadJobs(isRefresh: true);
   }
 }
 

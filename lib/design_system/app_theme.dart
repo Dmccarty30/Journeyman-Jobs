@@ -343,7 +343,7 @@ class AppTheme {
       cardTheme: CardThemeData(
         color: white,
         elevation: 2,
-        shadowColor: Colors.black.withValues(alpha: 0.1),
+        shadowColor: Colors.black.withOpacity(0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusLg),
         ),
@@ -412,6 +412,142 @@ class AppTheme {
       ),
       
       // FloatingActionButton Theme
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: accentCopper,
+        foregroundColor: white,
+        elevation: 4,
+      ),
+    );
+  }
+
+  static ThemeData get darkTheme {
+    final base = ThemeData.dark(useMaterial3: true);
+    return base.copyWith(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primaryNavy,
+        brightness: Brightness.dark,
+        primary: primaryNavy,
+        secondary: accentCopper,
+        surface: secondaryNavy,
+        background: primaryNavy,
+        error: errorRed,
+        onPrimary: white,
+        onSecondary: white,
+        onSurface: textOnDark,
+        onError: white,
+      ),
+
+      appBarTheme: AppBarTheme(
+        backgroundColor: primaryNavy,
+        foregroundColor: white,
+        elevation: 0,
+        centerTitle: true,
+        titleTextStyle: headlineMedium.copyWith(color: white),
+        iconTheme: const IconThemeData(color: white),
+      ),
+
+      scaffoldBackgroundColor: primaryNavy,
+
+      cardTheme: CardThemeData(
+        color: secondaryNavy,
+        elevation: 2,
+        shadowColor: Colors.black.withOpacity(0.3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radiusLg),
+        ),
+        margin: const EdgeInsets.all(spacingSm),
+      ),
+
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: secondaryNavy,
+        contentPadding: const EdgeInsets.all(spacingMd),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radiusMd),
+          borderSide: const BorderSide(color: darkGray),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radiusMd),
+          borderSide: const BorderSide(color: darkGray),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radiusMd),
+          borderSide: const BorderSide(color: accentCopper, width: borderWidthThick),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radiusMd),
+          borderSide: const BorderSide(color: errorRed),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radiusMd),
+          borderSide: const BorderSide(color: errorRed, width: borderWidthThick),
+        ),
+        labelStyle: bodyMedium.copyWith(color: textOnDark),
+        hintStyle: bodyMedium.copyWith(color: textLight),
+        errorStyle: bodySmall.copyWith(color: errorRed),
+      ),
+
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: accentCopper,
+          foregroundColor: white,
+          padding: const EdgeInsets.symmetric(horizontal: spacingLg, vertical: spacingMd),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radiusMd),
+          ),
+          textStyle: buttonMedium,
+          elevation: 2,
+        ),
+      ),
+
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: white,
+          side: const BorderSide(color: lightGray, width: borderWidthMedium),
+          padding: const EdgeInsets.symmetric(horizontal: spacingLg, vertical: spacingMd),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radiusMd),
+          ),
+          textStyle: buttonMedium,
+        ),
+      ),
+
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: accentCopper,
+          padding: const EdgeInsets.symmetric(horizontal: spacingMd, vertical: spacingSm),
+          textStyle: buttonMedium,
+        ),
+      ),
+
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: primaryNavy,
+        selectedItemColor: accentCopper,
+        unselectedItemColor: mediumGray,
+        selectedLabelStyle: labelSmall,
+        unselectedLabelStyle: labelSmall,
+        type: BottomNavigationBarType.fixed,
+        elevation: 8,
+      ),
+
+      textTheme: TextTheme(
+        displayLarge: displayLarge.copyWith(color: white),
+        displayMedium: displayMedium.copyWith(color: white),
+        displaySmall: displaySmall.copyWith(color: white),
+        headlineLarge: headlineLarge.copyWith(color: white),
+        headlineMedium: headlineMedium.copyWith(color: white),
+        headlineSmall: headlineSmall.copyWith(color: white),
+        titleLarge: titleLarge.copyWith(color: white),
+        titleMedium: titleMedium.copyWith(color: white),
+        titleSmall: titleSmall.copyWith(color: white),
+        bodyLarge: bodyLarge.copyWith(color: textOnDark),
+        bodyMedium: bodyMedium.copyWith(color: textOnDark),
+        bodySmall: bodySmall.copyWith(color: textOnDark),
+        labelLarge: labelLarge.copyWith(color: textOnDark),
+        labelMedium: labelMedium.copyWith(color: textOnDark),
+        labelSmall: labelSmall.copyWith(color: textOnDark),
+      ),
+
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: accentCopper,
         foregroundColor: white,

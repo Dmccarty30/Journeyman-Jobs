@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '/models/locals_record.dart';
 import '/design_system/app_theme.dart';
-import '/providers/app_state_provider.dart';
+import '/providers/riverpod/app_state_riverpod_provider.dart';
 import 'dart:io' show Platform;
 import '../../widgets/notification_badge.dart';
 import 'package:go_router/go_router.dart';
 import '../../navigation/app_router.dart';
 
-class LocalsScreen extends StatefulWidget {
+class LocalsScreen extends ConsumerStatefulWidget {
   const LocalsScreen({super.key});
 
   @override
-  State<LocalsScreen> createState() => _LocalsScreenState();
+  ConsumerState<LocalsScreen> createState() => _LocalsScreenState();
 }
 
-class _LocalsScreenState extends State<LocalsScreen> {
+class _LocalsScreenState extends ConsumerState<LocalsScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   
@@ -27,7 +27,7 @@ class _LocalsScreenState extends State<LocalsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AppStateProvider>().refreshLocals();
+      ref.read(appStateNotifierProvider.notifier).refreshLocals();
     });
     _scrollController.addListener(_onScroll);
   }
@@ -40,12 +40,12 @@ class _LocalsScreenState extends State<LocalsScreen> {
   }
 
   void _onScroll() {
-    final appStateProvider = context.read<AppStateProvider>();
+    final appState = ref.read(appStateNotifierProvider);
     if (_scrollController.position.pixels >= 
         _scrollController.position.maxScrollExtent * 0.8 && 
-        !appStateProvider.isLoadingLocals && 
-        appStateProvider.hasMoreLocals) {
-      appStateProvider.loadMoreLocals();
+        !appState.isLoadingLocals && 
+        appState.hasMoreLocals) {
+      ref.read(appStateNotifierProvider.notifier).loadMoreLocals();
     }
   }
 
@@ -134,16 +134,17 @@ class _LocalsScreenState extends State<LocalsScreen> {
                 setState(() {
                   _selectedState = value;
                 });
-                context.read<AppStateProvider>().refreshLocals();
+                ref.read(appStateNotifierProvider.notifier).refreshLocals();
               },
             ),
           ),
           const SizedBox(height: AppTheme.spacingSm),
           // Locals list
           Expanded(
-            child: Consumer<AppStateProvider>(
-              builder: (context, appStateProvider, child) {
-                return _buildLocalsList(appStateProvider);
+            child: Consumer(
+              builder: (context, ref, child) {
+                final appState = ref.watch(appStateNotifierProvider);
+                return _buildLocalsList(appState);
               },
             ),
           ),
@@ -152,8 +153,8 @@ class _LocalsScreenState extends State<LocalsScreen> {
     );
   }
 
-  Widget _buildLocalsList(AppStateProvider appStateProvider) {
-    if (appStateProvider.isLoadingLocals && appStateProvider.locals.isEmpty) {
+  Widget _buildLocalsList(appState) {
+    if (appState.isLoadingLocals && appState.locals.isEmpty) {
       return const Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
@@ -161,7 +162,7 @@ class _LocalsScreenState extends State<LocalsScreen> {
       );
     }
 
-    if (appStateProvider.localsError != null) {
+    if (appState.localsError != null) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -180,7 +181,7 @@ class _LocalsScreenState extends State<LocalsScreen> {
             ),
             const SizedBox(height: AppTheme.spacingSm),
             Text(
-              appStateProvider.localsError!,
+              appState.localsError!,
               style: AppTheme.bodyMedium.copyWith(
                 color: AppTheme.textSecondary
               ),
@@ -188,7 +189,7 @@ class _LocalsScreenState extends State<LocalsScreen> {
             ),
             const SizedBox(height: AppTheme.spacingMd),
             ElevatedButton(
-              onPressed: () => appStateProvider.refreshLocals(),
+              onPressed: () => ref.read(appStateNotifierProvider.notifier).refreshLocals(),
               child: const Text('Retry'),
             ),
           ],
@@ -197,9 +198,9 @@ class _LocalsScreenState extends State<LocalsScreen> {
     }
 
     // Filter locals based on search query
-    List<LocalsRecord> filteredLocals = appStateProvider.locals;
+    List<LocalsRecord> filteredLocals = appState.locals;
     if (_searchQuery.isNotEmpty) {
-      filteredLocals = appStateProvider.locals.where((local) {
+      filteredLocals = appState.locals.where((local) {
         return local.localUnion.toLowerCase().contains(_searchQuery) ||
                local.city.toLowerCase().contains(_searchQuery) ||
                local.state.toLowerCase().contains(_searchQuery) ||
@@ -243,19 +244,19 @@ class _LocalsScreenState extends State<LocalsScreen> {
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.all(AppTheme.spacingMd),
-      itemCount: filteredLocals.length + (appStateProvider.hasMoreLocals ? 1 : 0),
+      itemCount: filteredLocals.length + (appState.hasMoreLocals ? 1 : 0),
       itemBuilder: (context, index) {
         if (index == filteredLocals.length) {
           // Loading indicator at the bottom
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(AppTheme.spacingMd),
-              child: appStateProvider.isLoadingLocals
+              child: appState.isLoadingLocals
                   ? const CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
                     )
                   : ElevatedButton(
-                      onPressed: () => appStateProvider.loadMoreLocals(),
+                      onPressed: () => ref.read(appStateNotifierProvider.notifier).loadMoreLocals(),
                       child: const Text('Load More'),
                     ),
             ),

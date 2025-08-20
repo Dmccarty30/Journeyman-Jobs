@@ -22,6 +22,10 @@ import '../screens/settings/account/training_certificates_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
 import '../screens/settings/feedback/feedback_screen.dart';
 import '../screens/tools/electrical_calculators_screen.dart';
+import '../screens/tools/transformer_reference_screen.dart';
+import '../screens/tools/transformer_workbench_screen.dart';
+import '../screens/tools/transformer_bank_screen.dart';
+import '../models/transformer_models.dart';
 import '../screens/notifications/notifications_screen.dart';
 import '../screens/settings/notification_settings_screen.dart';
 import '../screens/settings/app_settings_screen.dart';
@@ -43,6 +47,9 @@ class AppRouter {
   static const String training = '/training';
   static const String feedback = '/feedback';
   static const String electricalCalculators = '/electrical-calculators';
+  static const String transformerReference = '/tools/transformer-reference';
+  static const String transformerWorkbench = '/tools/transformer-workbench';
+  static const String transformerBank = '/tools/transformer-bank';
   static const String notifications = '/notifications';
   static const String notificationSettings = '/notification-settings';
   static const String appSettings = '/settings/app';
@@ -143,6 +150,25 @@ class AppRouter {
         path: electricalCalculators,
         name: 'electrical-calculators',
         builder: (context, state) => const ElectricalCalculatorsScreen(),
+      ),
+      GoRoute(
+        path: transformerReference,
+        name: 'transformer-reference',
+        builder: (context, state) => const TransformerReferenceScreen(),
+      ),
+      GoRoute(
+        path: transformerWorkbench,
+        name: 'transformer-workbench',
+        builder: (context, state) => const TransformerWorkbenchScreen(
+          bankType: TransformerBankType.wyeToWye,
+          mode: TrainingMode.guided,
+          difficulty: DifficultyLevel.beginner,
+        ),
+      ),
+      GoRoute(
+        path: transformerBank,
+        name: 'transformer-bank',
+        builder: (context, state) => const TransformerBankScreen(),
       ),
       GoRoute(
         path: notifications,

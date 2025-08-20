@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../design_system/app_theme.dart';
 import '../services/connectivity_service.dart';
 import '../services/resilient_firestore_service.dart';
+import '../providers/riverpod/app_state_riverpod_provider.dart';
 
 /// Widget that displays connectivity status and offline indicators
 /// 
 /// Shows a persistent banner when offline and provides sync controls
 /// when connection is restored. Integrates with caching for offline-first UX.
-class OfflineIndicator extends StatelessWidget {
+class OfflineIndicator extends ConsumerWidget {
   /// Whether to show the indicator persistently when online
   final bool showWhenOnline;
   
@@ -26,20 +27,17 @@ class OfflineIndicator extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<ConnectivityService>(
-      builder: (context, connectivity, child) {
-        // Hide indicator when online unless explicitly requested
-        if (connectivity.isOnline && !showWhenOnline && !connectivity.wasOffline) {
-          return const SizedBox.shrink();
-        }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final connectivity = ref.watch(connectivityServiceProvider);
+    // Hide indicator when online unless explicitly requested
+    if (connectivity.isOnline && !showWhenOnline && !connectivity.wasOffline) {
+      return const SizedBox.shrink();
+    }
 
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          height: height ?? _getIndicatorHeight(connectivity),
-          child: _buildIndicatorContent(context, connectivity),
-        );
-      },
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      height: height ?? _getIndicatorHeight(connectivity),
+      child: _buildIndicatorContent(context, connectivity),
     );
   }
 

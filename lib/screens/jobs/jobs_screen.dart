@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/job_model.dart';
-import '../../providers/app_state_provider.dart';
+import '../../providers/riverpod/app_state_riverpod_provider.dart';
 import '../../widgets/optimized_selector_widgets.dart';
 import '../../utils/job_formatting.dart';
 import '../../widgets/notification_badge.dart';
@@ -11,17 +11,17 @@ import 'package:go_router/go_router.dart';
 import '../../navigation/app_router.dart';
 
 
-class JobsScreen extends StatefulWidget {
+class JobsScreen extends ConsumerStatefulWidget {
   const JobsScreen({super.key});
 
   static String routeName = 'jobs';
   static String routePath = '/jobs';
 
   @override
-  State<JobsScreen> createState() => _JobsScreenState();
+  ConsumerState<JobsScreen> createState() => _JobsScreenState();
 }
 
-class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
+class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   late AnimationController _powerFlowController;
   late Animation<double> _powerFlowAnimation;
@@ -195,7 +195,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
           _selectedFilter = filter;
         });
         // Trigger a refresh with the new filter
-        context.read<AppStateProvider>().refreshJobs();
+        ref.read(appStateNotifierProvider.notifier).refreshJobs();
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -645,7 +645,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                 _searchController.clear();
               });
               // Refresh jobs
-              context.read<AppStateProvider>().refreshJobs();
+              ref.read(appStateNotifierProvider.notifier).refreshJobs();
               Navigator.pop(context);
             },
             child: Text('Clear', style: TextStyle(color: AppTheme.textSecondary)),
@@ -919,7 +919,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                                   _selectedFilter = 'All Jobs';
                                 });
                                 // Clear all filters and refresh
-                                context.read<AppStateProvider>().refreshJobs();
+                                ref.read(appStateNotifierProvider.notifier).refreshJobs();
                               },
                               icon: Icon(Icons.clear, size: 16),
                               label: Text('Clear All'),
@@ -985,7 +985,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                               ),
                               const SizedBox(height: AppTheme.spacingMd),
                               ElevatedButton(
-                                onPressed: () => context.read<AppStateProvider>().refreshJobs(),
+                                onPressed: () => ref.read(appStateNotifierProvider.notifier).refreshJobs(),
                                 child: const Text('Retry'),
                               ),
                             ],
@@ -1037,7 +1037,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
                                         valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
                                       )
                                     : ElevatedButton(
-                                        onPressed: () => context.read<AppStateProvider>().loadMoreJobs(),
+                                        onPressed: () => ref.read(appStateNotifierProvider.notifier).loadMoreJobs(),
                                         child: const Text('Load More'),
                                       ),
                               ),
