@@ -212,7 +212,7 @@ class _NotificationPopupState extends State<NotificationPopup>
           padding: const EdgeInsets.all(AppTheme.spacingMd),
           decoration: BoxDecoration(
             border: Border.all(
-              color: AppTheme.borderColor,
+              color: AppTheme.borderLight,
               width: 1,
             ),
             borderRadius: BorderRadius.circular(AppTheme.radiusMd),

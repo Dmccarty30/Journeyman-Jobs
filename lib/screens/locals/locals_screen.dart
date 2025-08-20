@@ -40,8 +40,9 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
   }
 
   void _onScroll() {
-    // Pagination functionality not yet implemented
-    // TODO: Add pagination support to LocalsNotifier
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      ref.read(localsNotifierProvider.notifier).loadLocals(loadMore: true);
+    }
   }
 
 

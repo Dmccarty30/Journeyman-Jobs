@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:provider/provider.dart';
-import 'package:journeyman_jobs/screens/jobs/jobs_screen.dart';
+import 'package:journeyman_jobs/screens/jobs/optimized_jobs_screen.dart';
 import 'package:journeyman_jobs/providers/app_state_provider.dart';
 import 'package:journeyman_jobs/providers/job_filter_provider.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
@@ -38,22 +38,22 @@ void main() {
     when(mockJobFilterProvider.clearFilters()).thenReturn(null);
   });
 
-  Widget createJobsScreen() {
+  Widget createOptimizedJobsScreen() {
     return WidgetTestHelpers.createTestApp(
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider<JobsProvider>.value(value: mockJobsProvider),
           ChangeNotifierProvider<JobFilterProvider>.value(value: mockJobFilterProvider),
         ],
-        child: const JobsScreen(),
+        child: const OptimizedJobsScreen(),
       ),
     );
   }
 
-  group('JobsScreen - Widget Rendering', () {
+  group('OptimizedJobsScreen - Widget Rendering', () {
     testWidgets('should render jobs screen with app bar', (tester) async {
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -64,7 +64,7 @@ void main() {
 
     testWidgets('should display filter button in app bar', (tester) async {
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -73,7 +73,7 @@ void main() {
 
     testWidgets('should have correct theme colors', (tester) async {
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -86,7 +86,7 @@ void main() {
 
     testWidgets('should display search bar', (tester) async {
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -96,13 +96,13 @@ void main() {
     });
   });
 
-  group('JobsScreen - Job List Display', () {
+  group('OptimizedJobsScreen - Job List Display', () {
     testWidgets('should display loading indicator when loading', (tester) async {
       // Arrange
       when(mockJobsProvider.isLoading).thenReturn(true);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -116,7 +116,7 @@ void main() {
       when(mockJobsProvider.jobs).thenReturn(mockJobs);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -131,7 +131,7 @@ void main() {
       when(mockJobsProvider.jobs).thenReturn([]);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -146,7 +146,7 @@ void main() {
       when(mockJobsProvider.error).thenReturn('Failed to load jobs');
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -163,7 +163,7 @@ void main() {
       when(mockJobsProvider.hasMore).thenReturn(true);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -171,7 +171,7 @@ void main() {
     });
   });
 
-  group('JobsScreen - IBEW Specific Features', () {
+  group('OptimizedJobsScreen - IBEW Specific Features', () {
     testWidgets('should display IBEW classification filters', (tester) async {
       // Arrange
       final filters = FilterCriteria(
@@ -181,7 +181,7 @@ void main() {
       when(mockJobFilterProvider.hasActiveFilters).thenReturn(true);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -198,7 +198,7 @@ void main() {
       when(mockJobFilterProvider.hasActiveFilters).thenReturn(true);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -225,7 +225,7 @@ void main() {
       when(mockJobsProvider.jobs).thenReturn(mockJobs);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -244,7 +244,7 @@ void main() {
       when(mockJobsProvider.jobs).thenReturn(mockJobs);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -265,7 +265,7 @@ void main() {
       when(mockJobsProvider.jobs).thenReturn(mockJobs);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -275,10 +275,10 @@ void main() {
     });
   });
 
-  group('JobsScreen - Search and Filter Interactions', () {
+  group('OptimizedJobsScreen - Search and Filter Interactions', () {
     testWidgets('should handle search input', (tester) async {
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
       
       await tester.enterText(find.byType(TextField), 'lineman');
@@ -290,7 +290,7 @@ void main() {
 
     testWidgets('should open filter dialog on filter button tap', (tester) async {
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
       
       await tester.tap(find.byIcon(Icons.filter_list));
@@ -305,7 +305,7 @@ void main() {
       when(mockJobFilterProvider.hasActiveFilters).thenReturn(true);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
       
       await tester.tap(find.text('Clear Filters'));
@@ -322,7 +322,7 @@ void main() {
       when(mockJobsProvider.jobs).thenReturn(mockJobs);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
       
       await tester.fling(find.byType(ListView), const Offset(0, 500), 1000);
@@ -340,7 +340,7 @@ void main() {
       when(mockJobsProvider.hasMore).thenReturn(true);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
       
       await tester.tap(find.text('Load More'));
@@ -351,7 +351,7 @@ void main() {
     });
   });
 
-  group('JobsScreen - Error Handling', () {
+  group('OptimizedJobsScreen - Error Handling', () {
     testWidgets('should retry loading jobs on retry button tap', (tester) async {
       // Arrange
       when(mockJobsProvider.isLoading).thenReturn(false);
@@ -359,7 +359,7 @@ void main() {
       when(mockJobsProvider.error).thenReturn('Network timeout');
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
       
       await tester.tap(find.text('Retry'));
@@ -375,7 +375,7 @@ void main() {
       when(mockJobsProvider.jobs).thenReturn([]);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
       
       await tester.enterText(find.byType(TextField), 'nonexistent job type');
@@ -387,7 +387,7 @@ void main() {
     });
   });
 
-  group('JobsScreen - Performance', () {
+  group('OptimizedJobsScreen - Performance', () {
     testWidgets('should handle large job lists efficiently', (tester) async {
       // Arrange
       final largeJobList = MockData.createJobList(count: 100);
@@ -395,7 +395,7 @@ void main() {
       when(mockJobsProvider.jobs).thenReturn(largeJobList);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -405,7 +405,7 @@ void main() {
 
     testWidgets('should debounce search input', (tester) async {
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
       
       // Type multiple characters quickly
@@ -420,7 +420,7 @@ void main() {
     });
   });
 
-  group('JobsScreen - Accessibility', () {
+  group('OptimizedJobsScreen - Accessibility', () {
     testWidgets('should be accessible with screen readers', (tester) async {
       // Arrange
       final mockJobs = MockData.createJobList(count: 2);
@@ -428,7 +428,7 @@ void main() {
       when(mockJobsProvider.jobs).thenReturn(mockJobs);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -439,7 +439,7 @@ void main() {
 
     testWidgets('should have proper focus management', (tester) async {
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
       
       // Focus search field
@@ -451,10 +451,10 @@ void main() {
     });
   });
 
-  group('JobsScreen - Electrical Theme Integration', () {
+  group('OptimizedJobsScreen - Electrical Theme Integration', () {
     testWidgets('should use electrical industry color scheme', (tester) async {
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert
@@ -472,7 +472,7 @@ void main() {
       when(mockJobsProvider.jobs).thenReturn(mockJobs);
 
       // Act
-      await tester.pumpWidget(createJobsScreen());
+      await tester.pumpWidget(createOptimizedJobsScreen());
       await tester.pumpAndSettle();
 
       // Assert

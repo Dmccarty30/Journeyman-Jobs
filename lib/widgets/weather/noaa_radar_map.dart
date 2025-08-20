@@ -200,7 +200,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               userAgentPackageName: 'com.journeymanjobs.app',
-              tileProvider: CancellableNetworkTileProvider(),
+              tileProvider: NetworkTileProvider(),
             ),
             
             // NOAA Radar overlay (if station available)
@@ -609,7 +609,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                     Text(
                       alert.urgency,
                       style: AppTheme.bodySmall.copyWith(
-                        color: AppTheme.textMuted,
+                        color: AppTheme.textSecondary,
                       ),
                     ),
                   ],
@@ -686,7 +686,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
             Text(
               'Last Update: ${_formatDateTime(system.lastUpdate)}',
               style: AppTheme.bodySmall.copyWith(
-                color: AppTheme.textMuted,
+                color: AppTheme.textSecondary,
                 fontStyle: FontStyle.italic,
               ),
             ),

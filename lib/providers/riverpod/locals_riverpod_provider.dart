@@ -16,6 +16,7 @@ class LocalsState {
     this.isLoading = false,
     this.error,
     this.cachedLocals = const <String, LocalsRecord>{},
+    this.lastDocument,
   });
 
   /// The complete list of locals records.
@@ -36,11 +37,12 @@ class LocalsState {
 
   /// A map of locals keyed by their ID for quick lookup.
   final Map<String, LocalsRecord> cachedLocals;
-/// Returns a new [LocalsState] with the given fields replaced.
+
+  /// The last document snapshot from Firestore for pagination.
+  final DocumentSnapshot? lastDocument;
+
   /// Returns a new [LocalsState] with the given fields replaced.
   ///
-  /// Any parameter left `null` will retain its current value.
-  /// Returns a new [LocalsState] with the given fields replaced.
   /// Any parameter left `null` will retain its current value.
   LocalsState copyWith({
     List<LocalsRecord>? locals,
@@ -49,6 +51,7 @@ class LocalsState {
     bool? isLoading,
     String? error,
     Map<String, LocalsRecord>? cachedLocals,
+    DocumentSnapshot? lastDocument,
   }) =>
       LocalsState(
         locals: locals ?? this.locals,
@@ -57,6 +60,7 @@ class LocalsState {
         isLoading: isLoading ?? this.isLoading,
         error: error ?? this.error,
         cachedLocals: cachedLocals ?? this.cachedLocals,
+        lastDocument: lastDocument ?? this.lastDocument,
       );
 /// Returns a copy of the state with the error cleared.
   /// Returns a copy of the state with the error cleared.
@@ -69,6 +73,7 @@ class LocalsState {
 /// Riverpod notifier that manages loading and searching of locals.
 class LocalsNotifier extends _$LocalsNotifier {
   late final ConcurrentOperationManager _operationManager;
+  static const int _pageSize = 20; // Define page size for pagination
 
   @override
   LocalsState build() {
@@ -76,31 +81,52 @@ class LocalsNotifier extends _$LocalsNotifier {
     return const LocalsState();
   }
 
-  /// Loads locals from Firestore, optionally forcing a refresh.
-  Future<void> loadLocals({bool forceRefresh = false}) async {
-    if (!forceRefresh && state.locals.isNotEmpty) {
+  /// Loads locals from Firestore, optionally forcing a refresh or loading more data.
+  Future<void> loadLocals({bool forceRefresh = false, bool loadMore = false}) async {
+    if (state.isLoading) {
       return;
     }
+
+    if (!forceRefresh && !loadMore && state.locals.isNotEmpty) {
+      return;
+    }
+
+    if (loadMore && state.lastDocument == null && state.locals.isNotEmpty) {
+      // No more documents to load if we're trying to load more and lastDocument is null
+      return;
+    }
+
     state = state.copyWith(isLoading: true);
     try {
-      final List<LocalsRecord> locals = await _operationManager.queueOperation<List<LocalsRecord>>(
+      final QuerySnapshot<Object?> snapshot = await _operationManager.queueOperation<QuerySnapshot<Object?>>(
         type: OperationType.loadLocals,
         operation: () async {
-          final QuerySnapshot<Object?> snapshot = await ref.read(firestoreServiceProvider).getLocals().first;
-          return snapshot.docs
-              .map(LocalsRecord.fromFirestore)
-              .toList();
+          return ref.read(firestoreServiceProvider).getLocals(
+            startAfterDocument: loadMore ? state.lastDocument : null,
+            limit: _pageSize,
+          ).first;
         },
       );
-      final Map<String, LocalsRecord> cached = <String, LocalsRecord>{};
-      for (final LocalsRecord l in locals) {
+
+      final List<LocalsRecord> newLocals = snapshot.docs
+          .map(LocalsRecord.fromFirestore)
+          .toList();
+
+      final List<LocalsRecord> updatedLocals = loadMore
+          ? [...state.locals, ...newLocals]
+          : newLocals;
+
+      final Map<String, LocalsRecord> cached = Map.from(state.cachedLocals);
+      for (final LocalsRecord l in newLocals) {
         cached[l.id] = l;
       }
+
       state = state.copyWith(
-        locals: locals,
-        filteredLocals: locals,
+        locals: updatedLocals,
+        filteredLocals: updatedLocals,
         isLoading: false,
         cachedLocals: cached,
+        lastDocument: newLocals.isNotEmpty ? snapshot.docs.last : null,
       );
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());

@@ -313,7 +313,7 @@ class LocationService {
     // Check if location services are enabled
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      _cachedPermissionStatus = LocationPermission.disabled;
+      _cachedPermissionStatus = LocationPermission.deniedForever;
       
       // Prompt user to enable location services
       if (kDebugMode) {
@@ -323,7 +323,7 @@ class LocationService {
       // Optionally open location settings
       // await Geolocator.openLocationSettings();
       
-      return LocationPermission.disabled;
+      return LocationPermission.deniedForever;
     }
     
     // Check current permission

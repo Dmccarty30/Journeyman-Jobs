@@ -108,12 +108,12 @@ class LocalsListStateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appState = ref.watch(appStateNotifierProvider);
+    final localsProviderState = ref.watch(localsNotifierProvider);
     final localsState = LocalsListState(
-      locals: appState.locals,
-      isLoading: appState.isLoadingLocals,
-      error: appState.localsError,
-      hasMore: appState.hasMoreLocals,
+      locals: localsProviderState.locals,
+      isLoading: localsProviderState.isLoading,
+      error: localsProviderState.error,
+      hasMore: false, // Locals don't have pagination like jobs
     );
     return builder(context, localsState, child);
   }
@@ -164,12 +164,12 @@ class AuthStateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appState = ref.watch(appStateNotifierProvider);
+    final authProviderState = ref.watch(authNotifierProvider);
     final authState = AuthState(
-      isAuthenticated: appState.isAuthenticated,
-      isLoading: appState.isLoadingAuth,
-      error: appState.authError,
-      user: appState.user,
+      isAuthenticated: authProviderState.isAuthenticated,
+      isLoading: authProviderState.isLoading,
+      error: authProviderState.error,
+      user: authProviderState.user,
     );
     return builder(context, authState, child);
   }
@@ -216,25 +216,28 @@ class CombinedAppStateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appState = ref.watch(appStateNotifierProvider);
+    final authProviderState = ref.watch(authNotifierProvider);
+    final jobsProviderState = ref.watch(jobsNotifierProvider);
+    final localsProviderState = ref.watch(localsNotifierProvider);
+    
     final combinedState = CombinedAppState(
       authState: AuthState(
-        isAuthenticated: appState.isAuthenticated,
-        isLoading: appState.isLoadingAuth,
-        error: appState.authError,
-        user: appState.user,
+        isAuthenticated: authProviderState.isAuthenticated,
+        isLoading: authProviderState.isLoading,
+        error: authProviderState.error,
+        user: authProviderState.user,
       ),
       jobsState: JobsListState(
-        jobs: appState.jobs,
-        isLoading: appState.isLoadingJobs,
-        error: appState.jobsError,
-        hasMore: appState.hasMoreJobs,
+        jobs: jobsProviderState.jobs,
+        isLoading: jobsProviderState.isLoading,
+        error: jobsProviderState.error,
+        hasMore: jobsProviderState.hasMoreJobs,
       ),
       localsState: LocalsListState(
-        locals: appState.locals,
-        isLoading: appState.isLoadingLocals,
-        error: appState.localsError,
-        hasMore: appState.hasMoreLocals,
+        locals: localsProviderState.locals,
+        isLoading: localsProviderState.isLoading,
+        error: localsProviderState.error,
+        hasMore: false, // Locals don't have pagination like jobs
       ),
     );
     return builder(context, combinedState, child);

@@ -63,12 +63,14 @@
       "Bash(export PATH=\"$HOME/.local/bin:$PATH\")",
       "Bash(uvx:*)",
       "Bash(dart pub run build_runner:*)",
-      "Bash(/mnt/c/flutter/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs)"
+      "Bash(/mnt/c/flutter/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs)",
+      "Bash(/mnt/c/flutter/flutter/bin/flutter --version)"
     ],
     "deny": [],
     "additionalDirectories": [
       "/tmp",
-      "/home/sweetpc/.claude"
+      "/home/sweetpc/.claude",
+      "/mnt/c/flutter/flutter/bin"
     ]
   },
   "enableAllProjectMcpServers": true,

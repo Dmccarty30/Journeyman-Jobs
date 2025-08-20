@@ -11,7 +11,7 @@ import '../screens/nav_bar_page.dart';
 
 // Placeholder screens for Phase 2
 import '../screens/home/home_screen.dart';
-import '../screens/jobs/jobs_screen.dart';
+import '../screens/jobs/optimized_jobs_screen.dart';
 import '../screens/storm/storm_screen.dart';
 import '../screens/locals/locals_screen.dart';
 import '../screens/settings/settings_screen.dart';
@@ -100,7 +100,7 @@ class AppRouter {
           GoRoute(
             path: jobs,
             name: 'jobs',
-            builder: (context, state) => const JobsScreen(),
+            builder: (context, state) => const OptimizedJobsScreen(),
           ),
           GoRoute(
             path: storm,
