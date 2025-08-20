@@ -43,8 +43,8 @@ class AppState {
 }
 
 /// Connectivity service provider
-@Riverpod(keepAlive: true)
-ConnectivityService connectivityService(ConnectivityServiceRef ref) => ConnectivityService();
+@riverpod
+ConnectivityService connectivityService(Ref ref) => ConnectivityService();
 
 final offlineDataServiceProvider = Provider<OfflineDataService>((ref) {
   final connectivity = ref.watch(connectivityServiceProvider);
@@ -64,8 +64,8 @@ class NotificationServiceAdapter {
   }
 }
 
-@Riverpod(keepAlive: true)
-NotificationServiceAdapter notificationService(NotificationServiceRef ref) => NotificationServiceAdapter();
+@riverpod
+NotificationServiceAdapter notificationService(Ref ref) => NotificationServiceAdapter();
 
 /// Analytics service adapter wrapping static analytics helpers
 class AnalyticsServiceAdapter {
@@ -80,12 +80,12 @@ class AnalyticsServiceAdapter {
   Future<Map<String, dynamic>> getPerformanceMetrics() => AnalyticsService.getPerformanceMetrics();
 }
 
-@Riverpod(keepAlive: true)
-AnalyticsServiceAdapter analyticsService(AnalyticsServiceRef ref) => AnalyticsServiceAdapter();
+@riverpod
+AnalyticsServiceAdapter analyticsService(Ref ref) => AnalyticsServiceAdapter();
 
 /// Connectivity state stream
-@Riverpod(keepAlive: true)
-Stream<bool> connectivityStream(ConnectivityStreamRef ref) {
+@riverpod
+Stream<bool> connectivityStream(Ref ref) {
   final connectivityService = ref.watch(connectivityServiceProvider);
 
   // Create a controller that emits the current connection state and updates
@@ -114,7 +114,7 @@ Stream<bool> connectivityStream(ConnectivityStreamRef ref) {
 }
 
 /// App state notifier
-@Riverpod(keepAlive: true)
+@riverpod
 class AppStateNotifier extends _$AppStateNotifier {
   @override
   AppState build() {
@@ -249,7 +249,7 @@ class AppStateNotifier extends _$AppStateNotifier {
 
 /// Combined app status provider
 @riverpod
-Map<String, dynamic> appStatus(AppStatusRef ref) {
+Map<String, dynamic> appStatus(Ref ref) {
   final appState = ref.watch(appStateNotifierProvider);
   final authState = ref.watch(authNotifierProvider);
   final jobsState = ref.watch(jobsNotifierProvider);
@@ -271,7 +271,7 @@ Map<String, dynamic> appStatus(AppStatusRef ref) {
 
 /// Error aggregation provider
 @riverpod
-List<String> allErrors(AllErrorsRef ref) {
+List<String> allErrors(Ref ref) {
   final List<String> errors = <String>[];
   
   final appState = ref.watch(appStateNotifierProvider);
@@ -297,7 +297,7 @@ List<String> allErrors(AllErrorsRef ref) {
 
 /// Loading state aggregation provider
 @riverpod
-bool isAnyLoading(IsAnyLoadingRef ref) {
+bool isAnyLoading(Ref ref) {
   final appState = ref.watch(appStateNotifierProvider);
   final authState = ref.watch(authNotifierProvider);
   final jobsState = ref.watch(jobsNotifierProvider);

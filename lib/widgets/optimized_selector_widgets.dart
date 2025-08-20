@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/riverpod/app_state_riverpod_provider.dart';
+import '../providers/riverpod/auth_riverpod_provider.dart';
+import '../providers/riverpod/jobs_riverpod_provider.dart';
+import '../providers/riverpod/locals_riverpod_provider.dart';
 import '../models/job_model.dart';
+import '../models/locals_record.dart';
 
 /// State class for jobs list to optimize rebuilds
 class JobsListState {
@@ -48,12 +52,12 @@ class JobsListStateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appState = ref.watch(appStateNotifierProvider);
+    final jobsProviderState = ref.watch(jobsNotifierProvider);
     final jobsState = JobsListState(
-      jobs: appState.jobs,
-      isLoading: appState.isLoadingJobs,
-      error: appState.jobsError,
-      hasMore: appState.hasMoreJobs,
+      jobs: jobsProviderState.jobs,
+      isLoading: jobsProviderState.isLoading,
+      error: jobsProviderState.error,
+      hasMore: jobsProviderState.hasMoreJobs,
     );
     return builder(context, jobsState, child);
   }

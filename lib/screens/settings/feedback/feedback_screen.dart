@@ -287,6 +287,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       isLoading: _isSubmitting,
                       isFullWidth: true,
                       icon: Icons.send,
+                      variant: JJButtonVariant.primary,
                     ),
                   ],
                 ),

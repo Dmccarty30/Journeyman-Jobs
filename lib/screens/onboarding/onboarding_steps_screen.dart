@@ -358,6 +358,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
                     icon: _currentStep == _totalSteps - 1
                         ? Icons.check
                         : Icons.arrow_forward,
+                    variant: JJButtonVariant.primary,
                   ),
                 ),
               ],

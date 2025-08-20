@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../models/filter_criteria.dart';
 import '../../models/job_model.dart';
 import '../../services/resilient_firestore_service.dart';
 import '../../utils/concurrent_operations.dart';
-import '../../utils/filter_performance.dart';
-import '../../utils/memory_management.dart';
+// TODO: Add back when utility classes are implemented
+// import '../../utils/filter_performance.dart';
+// import '../../utils/memory_management.dart';
 
 part 'jobs_riverpod_provider.g.dart';
 
@@ -17,7 +17,7 @@ class JobsState {
   const JobsState({
     this.jobs = const <Job>[],
     this.visibleJobs = const <Job>[],
-    this.activeFilter = const JobFilterCriteria.empty(),
+    this.activeFilter = const JobFilterCriteria(),
     this.isLoading = false,
     this.error,
     this.hasMoreJobs = true,
@@ -61,23 +61,25 @@ class JobsState {
 }
 
 /// Firestore service provider
-@Riverpod(keepAlive: true)
-ResilientFirestoreService firestoreService(FirestoreServiceRef ref) => ResilientFirestoreService();
+@riverpod
+ResilientFirestoreService firestoreService(Ref ref) => ResilientFirestoreService();
 
 /// Jobs notifier for managing job data and operations
-@Riverpod(keepAlive: true)
+@riverpod
 class JobsNotifier extends _$JobsNotifier {
   late final ConcurrentOperationManager _operationManager;
-  late final FilterPerformanceEngine _filterEngine;
-  late final BoundedJobList _boundedJobList;
-  late final VirtualJobListState _virtualJobList;
+  // TODO: Implement these utility classes when ready
+  // late final FilterPerformanceEngine _filterEngine;
+  // late final BoundedJobList _boundedJobList;
+  // late final VirtualJobListState _virtualJobList;
 
   @override
   JobsState build() {
     _operationManager = ConcurrentOperationManager();
-    _filterEngine = FilterPerformanceEngine();
-    _boundedJobList = BoundedJobList();
-    _virtualJobList = VirtualJobListState();
+    // TODO: Implement these utility classes
+    // _filterEngine = FilterPerformanceEngine();
+    // _boundedJobList = BoundedJobList();
+    // _virtualJobList = VirtualJobListState();
 
     return const JobsState();
   }
@@ -88,9 +90,7 @@ class JobsNotifier extends _$JobsNotifier {
     bool isRefresh = false,
     int limit = 20,
   }) async {
-    const String operationId = 'load_jobs';
-    
-    if (_operationManager.isOperationInProgress(operationId)) {
+    if (_operationManager.isOperationInProgress(OperationType.loadJobs)) {
       return;
     }
 
@@ -101,8 +101,9 @@ class JobsNotifier extends _$JobsNotifier {
         hasMoreJobs: true,
         isLoading: true,
       );
-      _boundedJobList.clear();
-      _virtualJobList.clear();
+      // TODO: Implement utility classes
+      // _boundedJobList.clear();
+      // _virtualJobList.clear();
     } else {
       state = state.copyWith(isLoading: true);
     }
@@ -111,25 +112,38 @@ class JobsNotifier extends _$JobsNotifier {
 
     try {
       final result = await _operationManager.executeOperation(
-        operationId,
-        () => ref.read(firestoreServiceProvider).getJobs(
-          filter: filter ?? state.activeFilter,
-          startAfter: isRefresh ? null : state.lastDocument,
-          limit: limit,
-        ),
+        type: OperationType.loadJobs,
+        operation: () async {
+          final firestoreService = ref.read(firestoreServiceProvider);
+          if (filter != null) {
+            // Use the advanced filter method if filter is provided
+            return await firestoreService.getJobsWithFilter(
+              filter: filter,
+              startAfter: isRefresh ? null : state.lastDocument,
+              limit: limit,
+            );
+          } else {
+            // Use the basic method with Map filters
+            final stream = firestoreService.getJobs(
+              startAfter: isRefresh ? null : state.lastDocument,
+              limit: limit,
+            );
+            return await stream.first;
+          }
+        },
       );
 
       stopwatch.stop();
 
-      // Update bounded job list
-      if (isRefresh) {
-        _boundedJobList.replaceAll(result.jobs);
-      } else {
-        _boundedJobList.addAll(result.jobs);
-      }
+      // Convert QuerySnapshot to Job objects
+      final jobs = result.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
+        return Job.fromJson(data);
+      }).toList();
 
-      // Update virtual job list for performance
-      _virtualJobList.updateJobs(_boundedJobList.jobs);
+      // Update state with the new jobs
+      final List<Job> updatedJobs = isRefresh ? jobs : [...state.jobs, ...jobs];
 
       // Update load times for performance tracking
       final List<Duration> newLoadTimes = List<Duration>.from(state.loadTimes)
@@ -139,14 +153,14 @@ class JobsNotifier extends _$JobsNotifier {
       }
 
       state = state.copyWith(
-        jobs: _boundedJobList.jobs,
-        visibleJobs: _virtualJobList.visibleJobs,
+        jobs: updatedJobs,
+        visibleJobs: updatedJobs, // For now, all jobs are visible
         activeFilter: filter ?? state.activeFilter,
         isLoading: false,
-        hasMoreJobs: result.hasMore,
-        lastDocument: result.lastDocument,
+        hasMoreJobs: jobs.length >= limit, // Assume more if we got a full page
+        lastDocument: result.docs.isNotEmpty ? result.docs.last : null,
         loadTimes: newLoadTimes,
-        totalJobsLoaded: state.totalJobsLoaded + result.jobs.length,
+        totalJobsLoaded: updatedJobs.length,
       );
     } catch (e) {
       stopwatch.stop();
@@ -160,25 +174,22 @@ class JobsNotifier extends _$JobsNotifier {
 
   /// Apply filter to jobs
   Future<void> applyFilter(JobFilterCriteria filter) async {
-    const String operationId = 'apply_filter';
-    
-    if (_operationManager.isOperationInProgress(operationId)) {
+    if (_operationManager.isOperationInProgress(OperationType.loadJobs)) {
       return;
     }
 
     final Stopwatch stopwatch = Stopwatch()..start();
 
     try {
-      // Use filter performance engine for optimization
-      final optimizedFilter = _filterEngine.optimizeFilter(filter);
-      
+      // Store the filter and reload jobs
+      state = state.copyWith(activeFilter: filter);
+
       await _operationManager.executeOperation(
-        operationId,
-        () => loadJobs(filter: optimizedFilter, isRefresh: true),
+        type: OperationType.loadJobs,
+        operation: () => loadJobs(filter: filter, isRefresh: true),
       );
 
       stopwatch.stop();
-      _filterEngine.recordFilterTime(stopwatch.elapsed);
     } catch (e) {
       state = state.copyWith(error: e.toString());
       rethrow;
@@ -201,8 +212,9 @@ class JobsNotifier extends _$JobsNotifier {
 
   /// Update visible jobs for virtual scrolling
   void updateVisibleJobsRange(int startIndex, int endIndex) {
-    _virtualJobList.updateVisibleRange(startIndex, endIndex);
-    state = state.copyWith(visibleJobs: _virtualJobList.visibleJobs);
+    // TODO: Implement VirtualJobListState
+    // _virtualJobList.updateVisibleRange(startIndex, endIndex);
+    // state = state.copyWith(visibleJobs: _virtualJobList.visibleJobs);
   }
 
   /// Get job by ID
@@ -230,38 +242,45 @@ class JobsNotifier extends _$JobsNotifier {
                   state.loadTimes.length,
             ),
       'totalJobsLoaded': state.totalJobsLoaded,
-      'memoryUsage': _boundedJobList.estimatedMemoryUsage,
-      'filterPerformance': _filterEngine.getAverageFilterTime(),
+      // TODO: Add back when utility classes are implemented
+      // 'memoryUsage': _boundedJobList.estimatedMemoryUsage,
+      // 'filterPerformance': _filterEngine.getAverageFilterTime(),
     };
 
   /// Dispose resources
   void dispose() {
-    _operationManager.dispose();
-    _boundedJobList.dispose();
-    _virtualJobList.dispose();
+    // TODO: Implement dispose when utility classes are ready
+    // _operationManager.dispose();
+    // _boundedJobList.dispose();
+    // _virtualJobList.dispose();
   }
 }
 
 /// Filtered jobs provider using family for auto-dispose
 @riverpod
 Future<List<Job>> filteredJobs(
-  FilteredJobsRef ref,
+  Ref ref,
   JobFilterCriteria filter,
 ) async {
   final firestoreService = ref.watch(firestoreServiceProvider);
-  
-  final result = await firestoreService.getJobs(
+
+  final result = await firestoreService.getJobsWithFilter(
     filter: filter,
     limit: 50,
   );
-  
-  return result.jobs;
+
+  // Convert QuerySnapshot to Job objects
+  return result.docs.map((doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    data['id'] = doc.id;
+    return Job.fromJson(data);
+  }).toList();
 }
 
 /// Auto-dispose provider for job search
 @riverpod
 Future<List<Job>> searchJobs(
-  SearchJobsRef ref,
+  Ref ref,
   String searchTerm,
 ) async {
   if (searchTerm.trim().isEmpty) {
@@ -269,59 +288,87 @@ Future<List<Job>> searchJobs(
   }
 
   final firestoreService = ref.watch(firestoreServiceProvider);
-  
+
   final JobFilterCriteria filter = JobFilterCriteria(
-    searchTerm: searchTerm,
+    searchQuery: searchTerm,
   );
-  
-  final result = await firestoreService.getJobs(
+
+  final result = await firestoreService.getJobsWithFilter(
     filter: filter,
     limit: 20,
   );
-  
-  return result.jobs;
+
+  // Convert QuerySnapshot to Job objects
+  return result.docs.map((doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    data['id'] = doc.id;
+    return Job.fromJson(data);
+  }).toList();
 }
 
 /// Job by ID provider
 @riverpod
-Future<Job?> jobById(JobByIdRef ref, String jobId) async {
+Future<Job?> jobById(Ref ref, String jobId) async {
   final firestoreService = ref.watch(firestoreServiceProvider);
-  return await firestoreService.getJobById(jobId);
+
+  // Use the basic getJobs stream and filter by ID
+  final stream = firestoreService.getJobs(limit: 1);
+  final snapshot = await stream.first;
+
+  for (final doc in snapshot.docs) {
+    if (doc.id == jobId) {
+      final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      return Job.fromJson(data);
+    }
+  }
+
+  return null;
 }
 
 /// Recent jobs provider
 @riverpod
-Future<List<Job>> recentJobs(RecentJobsRef ref) async {
+Future<List<Job>> recentJobs(Ref ref) async {
   final firestoreService = ref.watch(firestoreServiceProvider);
-  
+
   const JobFilterCriteria filter = JobFilterCriteria(
-    sortBy: 'postedDate',
-    sortOrder: 'desc',
+    sortBy: JobSortOption.datePosted,
+    sortDescending: true,
   );
-  
-  final result = await firestoreService.getJobs(
+
+  final result = await firestoreService.getJobsWithFilter(
     filter: filter,
     limit: 10,
   );
-  
-  return result.jobs;
+
+  // Convert QuerySnapshot to Job objects
+  return result.docs.map((doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    data['id'] = doc.id;
+    return Job.fromJson(data);
+  }).toList();
 }
 
 /// Storm jobs provider (high priority jobs)
 @riverpod
-Future<List<Job>> stormJobs(StormJobsRef ref) async {
+Future<List<Job>> stormJobs(Ref ref) async {
   final firestoreService = ref.watch(firestoreServiceProvider);
-  
+
   const JobFilterCriteria filter = JobFilterCriteria(
-    jobType: <String>['storm', 'emergency'],
-    sortBy: 'priority',
-    sortOrder: 'desc',
+    constructionTypes: <String>['storm', 'emergency'],
+    sortBy: JobSortOption.datePosted,
+    sortDescending: true,
   );
-  
-  final result = await firestoreService.getJobs(
+
+  final result = await firestoreService.getJobsWithFilter(
     filter: filter,
     limit: 20,
   );
-  
-  return result.jobs;
+
+  // Convert QuerySnapshot to Job objects
+  return result.docs.map((doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    data['id'] = doc.id;
+    return Job.fromJson(data);
+  }).toList();
 }

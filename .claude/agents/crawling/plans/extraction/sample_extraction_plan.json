@@ -1,0 +1,19 @@
+[
+  {
+    "url": "https://example.com/jobs",
+    "local_number": "000",
+    "strategy": "css",
+    "css_schema": {
+      "name": "Jobs",
+      "baseSelector": "div.job-posting",
+      "fields": [
+        {"name": "title", "selector": "h3", "type": "text"},
+        {"name": "company", "selector": ".company", "type": "text"},
+        {"name": "location", "selector": ".location", "type": "text"},
+        {"name": "wage", "selector": ".wage", "type": "text"},
+        {"name": "posted_date", "selector": ".date", "type": "text"}
+      ]
+    }
+  }
+]
+

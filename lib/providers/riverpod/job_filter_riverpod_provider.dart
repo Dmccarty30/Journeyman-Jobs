@@ -2,13 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/filter_criteria.dart';
 import '../../models/filter_preset.dart';
-import '../../services/structured_logger.dart';
+import '../../utils/structured_logging.dart';
 
 part 'job_filter_riverpod_provider.g.dart';
 
@@ -16,7 +15,7 @@ part 'job_filter_riverpod_provider.g.dart';
 class JobFilterState {
 
   const JobFilterState({
-    this.currentFilter = const JobFilterCriteria.empty(),
+    this.currentFilter = const JobFilterCriteria(),
     this.presets = const <FilterPreset>[],
     this.recentSearches = const <String>[],
     this.isLoading = false,
@@ -63,11 +62,11 @@ class JobFilterState {
 }
 
 /// SharedPreferences provider
-@Riverpod(keepAlive: true)
-Future<SharedPreferences> sharedPreferences(SharedPreferencesRef ref) async => SharedPreferences.getInstance();
+@riverpod
+Future<SharedPreferences> sharedPreferences(Ref ref) async => SharedPreferences.getInstance();
 
 /// Job filter notifier for managing filter state and presets
-@Riverpod(keepAlive: true)
+@riverpod
 class JobFilterNotifier extends _$JobFilterNotifier {
   static const String _filterKey = 'current_job_filter';
   static const String _presetsKey = 'filter_presets';
@@ -91,7 +90,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
       
       // Load current filter
       final String? filterJson = prefs.getString(_filterKey);
-      JobFilterCriteria currentFilter = const JobFilterCriteria.empty();
+      JobFilterCriteria currentFilter = JobFilterCriteria.empty();
       if (filterJson != null) {
         final dynamic decoded = jsonDecode(filterJson);
         currentFilter = JobFilterCriteria.fromJson(
@@ -183,7 +182,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
 
   /// Clear all filters (immediate notification for deliberate action)
   void clearAllFilters() {
-    state = state.copyWith(currentFilter: const JobFilterCriteria.empty());
+    state = state.copyWith(currentFilter: JobFilterCriteria.empty());
     _saveFilter();
     ref.invalidateSelf();
   }
@@ -532,35 +531,35 @@ class QuickFilterSuggestion {
 
 /// Current filter provider (computed from state)
 @riverpod
-JobFilterCriteria currentJobFilter(CurrentJobFilterRef ref) => ref.watch(jobFilterNotifierProvider).currentFilter;
+JobFilterCriteria currentJobFilter(Ref ref) => ref.watch(jobFilterNotifierProvider).currentFilter;
 
 /// Presets provider (computed from state)
 @riverpod
-List<FilterPreset> filterPresets(FilterPresetsRef ref) => ref.watch(jobFilterNotifierProvider).presets;
+List<FilterPreset> filterPresets(Ref ref) => ref.watch(jobFilterNotifierProvider).presets;
 
 /// Recent searches provider (computed from state)
 @riverpod
-List<String> recentSearches(RecentSearchesRef ref) => ref.watch(jobFilterNotifierProvider).recentSearches;
+List<String> recentSearches(Ref ref) => ref.watch(jobFilterNotifierProvider).recentSearches;
 
 /// Pinned presets provider (computed from state)
 @riverpod
-List<FilterPreset> pinnedPresets(PinnedPresetsRef ref) => ref.watch(jobFilterNotifierProvider).pinnedPresets;
+List<FilterPreset> pinnedPresets(Ref ref) => ref.watch(jobFilterNotifierProvider).pinnedPresets;
 
 /// Recent presets provider (computed from state)
 @riverpod
-List<FilterPreset> recentPresets(RecentPresetsRef ref) => ref.watch(jobFilterNotifierProvider).recentPresets;
+List<FilterPreset> recentPresets(Ref ref) => ref.watch(jobFilterNotifierProvider).recentPresets;
 
 /// Active filters status provider (computed from state)
 @riverpod
-bool hasActiveFilters(HasActiveFiltersRef ref) => ref.watch(jobFilterNotifierProvider).hasActiveFilters;
+bool hasActiveFilters(Ref ref) => ref.watch(jobFilterNotifierProvider).hasActiveFilters;
 
 /// Active filter count provider (computed from state)
 @riverpod
-int activeFilterCount(ActiveFilterCountRef ref) => ref.watch(jobFilterNotifierProvider).activeFilterCount;
+int activeFilterCount(Ref ref) => ref.watch(jobFilterNotifierProvider).activeFilterCount;
 
 /// Quick filter suggestions provider (computed from state)
 @riverpod
-List<QuickFilterSuggestion> quickFilterSuggestions(QuickFilterSuggestionsRef ref) {
+List<QuickFilterSuggestion> quickFilterSuggestions(Ref ref) {
   final notifier = ref.watch(jobFilterNotifierProvider.notifier);
   return notifier.getQuickFilterSuggestions();
 }

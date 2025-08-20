@@ -264,6 +264,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               ? Icons.arrow_forward
                               : Icons.arrow_forward_ios,
                           onPressed: _nextPage,
+                          variant: JJButtonVariant.primary,
                         ),
                       ),
                     ],

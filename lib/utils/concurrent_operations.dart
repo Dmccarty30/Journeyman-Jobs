@@ -117,6 +117,29 @@ class ConcurrentOperationManager {
   int _failedOperations = 0;
   int _timeoutOperations = 0;
 
+  /// Check if an operation of a specific type is currently in progress
+  bool isOperationInProgress(OperationType type) {
+    return _runningOperations.values.any((op) => op.type == type) ||
+           _operationQueue.any((op) => op.type == type);
+  }
+
+  /// Execute an operation directly (wrapper around queueOperation for compatibility)
+  Future<T> executeOperation<T>({
+    required OperationType type,
+    Map<String, dynamic> parameters = const {},
+    int? priority,
+    Duration? timeout,
+    required Future<T> Function() operation,
+  }) async {
+    return queueOperation<T>(
+      type: type,
+      parameters: parameters,
+      priority: priority,
+      timeout: timeout,
+      operation: operation,
+    );
+  }
+
   /// Queue an operation for execution
   Future<T> queueOperation<T>({
     required OperationType type,

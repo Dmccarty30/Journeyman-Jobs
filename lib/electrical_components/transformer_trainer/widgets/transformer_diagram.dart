@@ -16,6 +16,7 @@ import '../painters/open_delta_painter.dart';
 import '../painters/wye_delta_painter.dart';
 import '../painters/wye_wye_painter.dart';
 import '../state/transformer_state.dart';
+import 'connection_point.dart';
 
 /// Interactive transformer diagram widget
 class TransformerDiagram extends StatefulWidget {
@@ -163,7 +164,7 @@ class _TransformerDiagramState extends State<TransformerDiagram>
                     value ? ConnectionMode.dragAndDrop : ConnectionMode.stickyKeys,
                   );
                 } : null,
-                activeColor: Colors.blue,
+                activeThumbColor: Colors.blue,
               ),
               const SizedBox(width: 16),
               const Icon(Icons.pan_tool, size: 20),
@@ -242,9 +243,7 @@ class _TransformerDiagramState extends State<TransformerDiagram>
           onTap: () => _onConnectionPointTapped(point.id, state),
           onDragStart: () => _onDragStart(point.id, state),
           onDragEnd: () => _onDragEnd(state),
-          onAcceptDrop: (DragTargetDetails<String> details) {
-            // Extract data from DragTargetDetails<String>
-            final String fromId = details.data;
+          onAcceptDrop: (String fromId) {
             _onDropAccepted(fromId, point.id, state);
           },
         ),

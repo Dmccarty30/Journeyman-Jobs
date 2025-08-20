@@ -413,23 +413,6 @@ class _TransformerReferenceScreenState
   Widget _buildDeltaWyeDiagram() =>
       CustomPaint(painter: DeltaWyeDiagramPainter());
 
-  TransformerBankType _mapConfigurationToBankType(String configurationType) {
-    switch (configurationType.toUpperCase()) {
-      case 'WYE-WYE':
-        return TransformerBankType.wyeToWye;
-      case 'DELTA-DELTA':
-        return TransformerBankType.deltaToDelta;
-      case 'WYE-DELTA':
-        return TransformerBankType.wyeToDelta;
-      case 'DELTA-WYE':
-        return TransformerBankType.deltaToWye;
-      case 'OPEN DELTA':
-        return TransformerBankType.openDelta;
-      default:
-        // Default to wyeToWye for single pot or unknown configurations
-        return TransformerBankType.wyeToWye;
-    }
-  }
 }
 
 // Custom painters for transformer diagrams

@@ -204,13 +204,13 @@ abstract class BaseTransformerPainter extends CustomPainter {
   Color _getTerminalColor(ConnectionType type) {
     switch (type) {
       case ConnectionType.primary:
-        return AppTheme.errorRed.withOpacity(0.6);
+        return AppTheme.errorRed.withValues(alpha: 0.6);
       case ConnectionType.secondary:
-        return AppTheme.infoBlue.withOpacity(0.6);
+        return AppTheme.infoBlue.withValues(alpha: 0.6);
       case ConnectionType.neutral:
-        return AppTheme.mediumGray.withOpacity(0.6);
+        return AppTheme.mediumGray.withValues(alpha: 0.6);
       case ConnectionType.ground:
-        return AppTheme.groundBrown.withOpacity(0.6);
+        return AppTheme.groundBrown.withValues(alpha: 0.6);
     }
   }
 

@@ -198,6 +198,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
             text: 'Disable',
             onPressed: () => Navigator.of(context).pop(true),
             width: 100,
+            variant: JJButtonVariant.danger,
           ),
         ],
       ),

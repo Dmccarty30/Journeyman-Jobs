@@ -216,6 +216,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           onPressed: _isLoading ? null : _resetPassword,
                           isFullWidth: true,
                           isLoading: _isLoading,
+                          variant: JJButtonVariant.primary,
                         ),
                       ],
                     ),
@@ -279,6 +280,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         icon: Icons.login,
                         onPressed: () => Navigator.pop(context),
                         isFullWidth: true,
+                        variant: JJButtonVariant.primary,
                       ),
 
                       const SizedBox(height: AppTheme.spacingMd),

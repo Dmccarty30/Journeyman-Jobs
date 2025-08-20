@@ -136,6 +136,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       context.push(AppRouter.profile);
                     },
                     isFullWidth: true,
+                    variant: JJButtonVariant.primary,
                   ),
                 ],
               ),

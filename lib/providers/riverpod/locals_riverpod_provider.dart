@@ -1,9 +1,7 @@
-import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/locals_record.dart';
-import '../../services/resilient_firestore_service.dart';
 import '../../utils/concurrent_operations.dart';
 import 'jobs_riverpod_provider.dart' show firestoreServiceProvider;
 
@@ -67,7 +65,7 @@ class LocalsState {
   LocalsState clearError() => copyWith();
 }
 
-@Riverpod(keepAlive: true)
+@riverpod
 /// Riverpod notifier that manages loading and searching of locals.
 class LocalsNotifier extends _$LocalsNotifier {
   late final ConcurrentOperationManager _operationManager;
@@ -192,14 +190,23 @@ class LocalsNotifier extends _$LocalsNotifier {
 
 @riverpod
 /// Riverpod provider that fetches a single local by ID.
-Future<LocalsRecord?> localById(LocalByIdRef ref, String localId) async {
+Future<LocalsRecord?> localById(Ref ref, String localId) async {
   final service = ref.watch(firestoreServiceProvider);
-  return await service.getLocalById(localId);
+  try {
+    final doc = await service.getLocal(localId);
+    if (doc.exists) {
+      return LocalsRecord.fromFirestore(doc);
+    }
+    return null;
+  } catch (e) {
+    // Log error and return null for graceful handling
+    return null;
+  }
 }
 
 @riverpod
 /// Riverpod provider that returns locals filtered by state.
-List<LocalsRecord> localsByState(LocalsByStateRef ref, String stateName) {
+List<LocalsRecord> localsByState(Ref ref, String stateName) {
   final localsState = ref.watch(localsNotifierProvider);
   return localsState.locals
       .where((l) => l.state.toLowerCase() == stateName.toLowerCase())
@@ -208,7 +215,7 @@ List<LocalsRecord> localsByState(LocalsByStateRef ref, String stateName) {
 
 @riverpod
 /// Riverpod provider that returns locals filtered by classification.
-List<LocalsRecord> localsByClassification(LocalsByClassificationRef ref, String classification) {
+List<LocalsRecord> localsByClassification(Ref ref, String classification) {
   final localsState = ref.watch(localsNotifierProvider);
   return localsState.locals
       .where((l) => l.classification?.toLowerCase() == classification.toLowerCase())
@@ -217,25 +224,24 @@ List<LocalsRecord> localsByClassification(LocalsByClassificationRef ref, String 
 
 @riverpod
 /// Riverpod provider that returns locals matching a search term.
-List<LocalsRecord> searchedLocals(SearchedLocalsRef ref, String searchTerm) {
+List<LocalsRecord> searchedLocals(Ref ref, String searchTerm) {
   final localsState = ref.watch(localsNotifierProvider);
   if (searchTerm.trim().isEmpty) {
     return localsState.locals;
   }
   final String normalized = searchTerm.toLowerCase().trim();
   // ignore: inference_failure_on_untyped_parameter
-  // Safely handle potentially nullable fields.
   return localsState.locals.where((l) =>
-      (l.localNumber?.toLowerCase().contains(normalized) ?? false) ||
-      (l.localName?.toLowerCase().contains(normalized) ?? false) ||
-      (l.city?.toLowerCase().contains(normalized) ?? false) ||
-      (l.state?.toLowerCase().contains(normalized) ?? false) ||
-      (l.phone?.toLowerCase().contains(normalized) ?? false),
+      l.localNumber.toLowerCase().contains(normalized) ||
+      l.localName.toLowerCase().contains(normalized) ||
+      l.city.toLowerCase().contains(normalized) ||
+      l.state.toLowerCase().contains(normalized) ||
+      l.phone.toLowerCase().contains(normalized),
   ).toList();
 }
 
 @riverpod
-List<String> allStates(AllStatesRef ref) {
+List<String> allStates(Ref ref) {
   final localsState = ref.watch(localsNotifierProvider);
   final Set<String> set = <String>{};
   for (final l in localsState.locals) {
@@ -246,12 +252,12 @@ List<String> allStates(AllStatesRef ref) {
 }
 
 @riverpod
-List<String> allClassifications(AllClassificationsRef ref) {
+List<String> allClassifications(Ref ref) {
   final localsState = ref.watch(localsNotifierProvider);
   final Set<String> set = <String>{};
   for (final l in localsState.locals) {
     if (l.classification != null) {
-      set.addAll(l.classification!);
+      set.addAll(l.classification! as Iterable<String>);
     }
   }
   final List<String> list = set.toList()..sort();

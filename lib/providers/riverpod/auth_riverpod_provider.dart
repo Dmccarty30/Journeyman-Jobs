@@ -43,19 +43,19 @@ class AuthState {
 }
 
 /// AuthService provider
-@Riverpod(keepAlive: true)
-AuthService authService(AuthServiceRef ref) => AuthService();
+@riverpod
+AuthService authService(Ref ref) => AuthService();
 
 /// Auth state stream provider
-@Riverpod(keepAlive: true)
-Stream<User?> authStateStream(AuthStateStreamRef ref) {
+@riverpod
+Stream<User?> authStateStream(Ref ref) {
   final authService = ref.watch(authServiceProvider);
   return authService.authStateChanges;
 }
 
 /// Current user provider
-@Riverpod(keepAlive: true)
-User? currentUser(CurrentUserRef ref) {
+@riverpod
+User? currentUser(Ref ref) {
   final authState = ref.watch(authStateStreamProvider);
   return authState.when(
     data: (user) => user,
@@ -65,7 +65,7 @@ User? currentUser(CurrentUserRef ref) {
 }
 
 /// Auth state notifier for managing authentication operations
-@Riverpod(keepAlive: true)
+@riverpod
 class AuthNotifier extends _$AuthNotifier {
   late final ConcurrentOperationManager _operationManager;
   int _signInAttempts = 0;
@@ -104,9 +104,7 @@ class AuthNotifier extends _$AuthNotifier {
     required String email,
     required String password,
   }) async {
-    const String operationId = 'sign_in_email_password';
-    
-    if (_operationManager.isOperationInProgress(operationId)) {
+    if (_operationManager.isOperationInProgress(OperationType.signIn)) {
       return;
     }
 
@@ -117,8 +115,8 @@ class AuthNotifier extends _$AuthNotifier {
 
     try {
       await _operationManager.executeOperation(
-        operationId,
-        () => ref.read(authServiceProvider).signInWithEmailAndPassword(
+        type: OperationType.signIn,
+        operation: () => ref.read(authServiceProvider).signInWithEmailAndPassword(
           email: email,
           password: password,
         ),
@@ -146,9 +144,7 @@ class AuthNotifier extends _$AuthNotifier {
 
   /// Sign out
   Future<void> signOut() async {
-    const String operationId = 'sign_out';
-    
-    if (_operationManager.isOperationInProgress(operationId)) {
+    if (_operationManager.isOperationInProgress(OperationType.signOut)) {
       return;
     }
 
@@ -156,8 +152,8 @@ class AuthNotifier extends _$AuthNotifier {
 
     try {
       await _operationManager.executeOperation(
-        operationId,
-        () => ref.read(authServiceProvider).signOut(),
+        type: OperationType.signOut,
+        operation: () => ref.read(authServiceProvider).signOut(),
       );
       
       state = state.copyWith(isLoading: false);
@@ -183,14 +179,14 @@ class AuthNotifier extends _$AuthNotifier {
 
 /// Convenience provider for auth state
 @riverpod
-bool isAuthenticated(IsAuthenticatedRef ref) {
+bool isAuthenticated(Ref ref) {
   final user = ref.watch(currentUserProvider);
   return user != null;
 }
 
 /// Route guard provider
 @riverpod
-bool isRouteProtected(IsRouteProtectedRef ref, String routePath) {
+bool isRouteProtected(Ref ref, String routePath) {
   // Define protected routes
   const List<String> protectedRoutes = <String>[
     '/profile',

@@ -37,8 +37,25 @@ class _TransformerBankScreenState extends State<TransformerBankScreen>
 
   @override
   Widget build(BuildContext context) {
-    // This screen now routes directly to the Reference experience
-    return const TransformerReferenceScreen();
+    return Scaffold(
+      backgroundColor: AppTheme.offWhite,
+      appBar: AppBar(
+        title: const Text('Transformer Bank'),
+        backgroundColor: AppTheme.primaryNavy,
+        foregroundColor: AppTheme.white,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildHeroSection(),
+            _buildModeSelection(),
+            _buildQuickAccess(),
+            const SizedBox(height: AppTheme.spacingLg),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildHeroSection() => Container(

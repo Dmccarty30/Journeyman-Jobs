@@ -177,6 +177,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             text: 'Disable',
             onPressed: () => Navigator.of(context).pop(true),
             width: 100,
+            variant: JJButtonVariant.danger,
           ),
         ],
       ),

@@ -1,12 +1,67 @@
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
-
 import '../design_system/app_theme.dart';
+
+/// Voltage levels used across electrical-themed UI components.
+enum VoltageLevel {
+  low,
+  medium,
+  high,
+}
 
 /// Enhanced electrical-themed background components for the app
 class EnhancedBackgrounds {
   EnhancedBackgrounds._();
+
+  /// Returns a BoxDecoration appropriate for the given voltage level.
+  /// This is used by various widgets (status chips, indicators) that need
+  /// a consistent gradient / styling depending on voltage severity.
+  static BoxDecoration voltageStatusGradient(
+    VoltageLevel level, {
+    BorderRadius? borderRadius,
+  }) {
+    final BorderRadius resolvedRadius =
+        borderRadius ?? BorderRadius.circular(AppTheme.radiusSm);
+
+    switch (level) {
+      case VoltageLevel.high:
+        return BoxDecoration(
+          gradient: LinearGradient(
+            colors: <Color>[
+              AppTheme.errorRed,
+              AppTheme.accentCopper,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: resolvedRadius,
+        );
+      case VoltageLevel.medium:
+        return BoxDecoration(
+          gradient: LinearGradient(
+            colors: <Color>[
+              AppTheme.accentCopper,
+              AppTheme.primaryNavy,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: resolvedRadius,
+        );
+      case VoltageLevel.low:
+        return BoxDecoration(
+          gradient: LinearGradient(
+            colors: <Color>[
+              AppTheme.offWhite,
+              AppTheme.white,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: resolvedRadius,
+        );
+    }
+  }
 
   /// Circuit pattern background with animated electricity flow
   static Widget circuitPatternBackground({
@@ -14,22 +69,23 @@ class EnhancedBackgrounds {
     double opacity = 0.05,
     Color? patternColor,
     bool animated = false,
-  }) => Stack(
-      children: <Widget>[
-        Positioned.fill(
-          child: RepaintBoundary(
-            child: CustomPaint(
-              painter: CircuitPatternPainter(
-                color: patternColor ?? AppTheme.accentCopper,
-                opacity: opacity,
-                animated: animated,
+  }) =>
+      Stack(
+        children: <Widget>[
+          Positioned.fill(
+            child: RepaintBoundary(
+              child: CustomPaint(
+                painter: CircuitPatternPainter(
+                  color: patternColor ?? AppTheme.accentCopper,
+                  opacity: opacity,
+                  animated: animated,
+                ),
               ),
             ),
           ),
-        ),
-        child,
-      ],
-    );
+          child,
+        ],
+      );
 
   /// Gradient background with electrical theme
   static Widget electricalGradient({
@@ -37,35 +93,38 @@ class EnhancedBackgrounds {
     List<Color>? colors,
     AlignmentGeometry begin = Alignment.topLeft,
     AlignmentGeometry end = Alignment.bottomRight,
-  }) => DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: begin,
-          end: end,
-          colors: colors ?? <Color>[
-            AppTheme.primaryNavy.withValues(alpha: 0.95),
-            AppTheme.secondaryNavy,
-          ],
+  }) =>
+      DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: begin,
+            end: end,
+            colors: colors ??
+                <Color>[
+                  AppTheme.primaryNavy.withValues(alpha: 0.95),
+                  AppTheme.secondaryNavy,
+                ],
+          ),
         ),
-      ),
-      child: child,
-    );
+        child: child,
+      );
 
   /// Spark effect background for loading states
   static Widget sparkEffectBackground({
     required Widget child,
     bool active = true,
-  }) => Stack(
-      children: <Widget>[
-        if (active)
-          const Positioned.fill(
-            child: RepaintBoundary(
-              child: SparkAnimation(),
+  }) =>
+      Stack(
+        children: <Widget>[
+          if (active)
+            const Positioned.fill(
+              child: RepaintBoundary(
+                child: SparkAnimation(),
+              ),
             ),
-          ),
-        child,
-      ],
-    );
+          child,
+        ],
+      );
 
   /// Enhanced card background with subtle circuit pattern
   static Widget enhancedCardBackground({
@@ -74,44 +133,45 @@ class EnhancedBackgrounds {
     EdgeInsetsGeometry? margin,
     VoidCallback? onTap,
     bool showCircuitPattern = true,
-  }) => Container(
-      margin: margin,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: AppTheme.radiusLg,
-          child: Container(
-            padding: padding ?? const EdgeInsets.all(AppTheme.spacingMd),
-            decoration: BoxDecoration(
-              color: AppTheme.white,
-              borderRadius: AppTheme.radiusLg,
-              border: Border.all(
-                color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                width: AppTheme.borderWidthThin,
+  }) =>
+      Container(
+        margin: margin,
+          child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+            child: Container(
+              padding: padding ?? const EdgeInsets.all(AppTheme.spacingMd),
+              decoration: BoxDecoration(
+                color: AppTheme.white,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(
+                  color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                  width: AppTheme.borderWidthThin,
+                ),
+                boxShadow: const <BoxShadow>[AppTheme.shadowSm],
               ),
-              boxShadow: const <BoxShadow>[AppTheme.shadowSm],
-            ),
-            child: showCircuitPattern
-                ? Stack(
-                    children: <Widget>[
-                      Positioned.fill(
-                        child: CustomPaint(
-                          painter: CircuitPatternPainter(
-                            color: AppTheme.accentCopper,
-                            opacity: 0.02,
-                            animated: false,
+              child: showCircuitPattern
+                  ? Stack(
+                      children: <Widget>[
+                        Positioned.fill(
+                          child: CustomPaint(
+                            painter: CircuitPatternPainter(
+                              color: AppTheme.accentCopper,
+                              opacity: 0.02,
+                              animated: false,
+                            ),
                           ),
                         ),
-                      ),
-                      child,
-                    ],
-                  )
-                : child,
+                        child,
+                      ],
+                    )
+                  : child,
+            ),
           ),
         ),
-      ),
-    );
+      );
 
   /// Grid pattern background for technical screens
   static Widget gridPatternBackground({
@@ -119,48 +179,49 @@ class EnhancedBackgrounds {
     double spacing = 20.0,
     Color? gridColor,
     double opacity = 0.1,
-  }) => Stack(
-      children: <Widget>[
-        Positioned.fill(
-          child: RepaintBoundary(
-            child: CustomPaint(
-              painter: GridPatternPainter(
-                spacing: spacing,
-                color: gridColor ?? AppTheme.neutralGray400,
-                opacity: opacity,
+  }) =>
+      Stack(
+        children: <Widget>[
+          Positioned.fill(
+            child: RepaintBoundary(
+              child: CustomPaint(
+                painter: GridPatternPainter(
+                  spacing: spacing,
+                  color: gridColor ?? AppTheme.mediumGray,
+                  opacity: opacity,
+                ),
               ),
             ),
           ),
-        ),
-        child,
-      ],
-    );
+          child,
+        ],
+      );
 
   /// Lightning bolt accent for headers and titles
   static Widget lightningAccent({
     required Widget child,
     bool showLightning = true,
     AlignmentGeometry alignment = Alignment.topRight,
-  }) => Stack(
-      children: <Widget>[
-        child,
-        if (showLightning)
-          Positioned(
-            top: -10,
-            right: -10,
-            child: Icon(
-              Icons.bolt,
-              color: AppTheme.accentCopper.withValues(alpha: 0.3),
-              size: 48,
+  }) =>
+      Stack(
+        children: <Widget>[
+          child,
+          if (showLightning)
+            Positioned(
+              top: -10,
+              right: -10,
+              child: Icon(
+                Icons.bolt,
+                color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                size: 48,
+              ),
             ),
-          ),
-      ],
-    );
+        ],
+      );
 }
 
 /// Circuit pattern painter for background effects
 class CircuitPatternPainter extends CustomPainter {
-  
   CircuitPatternPainter({
     required this.color,
     required this.opacity,
@@ -178,7 +239,7 @@ class CircuitPatternPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     const double spacing = 40.0;
-    final Random random = Random(42); // Consistent pattern
+    final math.Random random = math.Random(42); // Consistent pattern
 
     // Draw horizontal lines
     for (double y = 0; y < size.height; y += spacing) {
@@ -225,7 +286,6 @@ class CircuitPatternPainter extends CustomPainter {
 
 /// Grid pattern painter for technical backgrounds
 class GridPatternPainter extends CustomPainter {
-  
   GridPatternPainter({
     required this.spacing,
     required this.color,
@@ -280,7 +340,7 @@ class _SparkAnimationState extends State<SparkAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   final List<Spark> _sparks = <Spark>[];
-  final Random _random = Random();
+  final math.Random _random = math.Random();
 
   @override
   void initState() {
@@ -314,19 +374,18 @@ class _SparkAnimationState extends State<SparkAnimation>
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-      animation: _controller,
-      builder: (BuildContext context, Widget? child) => CustomPaint(
-        painter: SparkPainter(
-          sparks: _sparks,
-          animation: _controller.value,
+        animation: _controller,
+        builder: (BuildContext context, Widget? child) => CustomPaint(
+          painter: SparkPainter(
+            sparks: _sparks,
+            animation: _controller.value,
+          ),
         ),
-      ),
-    );
+      );
 }
 
 /// Individual spark data
 class Spark {
-  
   Spark({
     required this.position,
     required this.velocity,
@@ -339,7 +398,6 @@ class Spark {
 
 /// Spark painter for animation
 class SparkPainter extends CustomPainter {
-  
   SparkPainter({
     required this.sparks,
     required this.animation,

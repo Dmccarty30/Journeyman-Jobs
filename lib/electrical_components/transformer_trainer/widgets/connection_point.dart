@@ -249,7 +249,8 @@ class _ConnectionPointWidgetState extends State<ConnectionPointWidget>
                 ),
               );
             },
-            onWillAcceptWithDetails: (String? data) {
+            onWillAcceptWithDetails: (DragTargetDetails<String> details) {
+              final String? data = details.data;
               if (data == null) return false;
               final bool canAccept = data != widget.connectionPoint.id;
               if (canAccept) {
@@ -257,9 +258,9 @@ class _ConnectionPointWidgetState extends State<ConnectionPointWidget>
               }
               return canAccept;
             },
-            onAcceptWithDetails: (String data) {
+            onAcceptWithDetails: (DragTargetDetails<String> details) {
               HapticFeedback.heavyImpact();
-              widget.onAcceptDrop?.call(data);
+              widget.onAcceptDrop?.call(details.data);
             },
           ),
         ),

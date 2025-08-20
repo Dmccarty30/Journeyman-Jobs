@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:journeyman_jobs/providers/app_state_provider.dart';
-import 'package:journeyman_jobs/providers/job_filter_provider.dart';
+// TODO: Uncomment when Riverpod providers are fixed
+// import 'package:journeyman_jobs/providers/app_state_provider.dart';
+// import 'package:journeyman_jobs/providers/job_filter_provider.dart';
 import 'package:journeyman_jobs/services/auth_service.dart';
 import 'package:journeyman_jobs/services/resilient_firestore_service.dart';
 import 'package:journeyman_jobs/services/connectivity_service.dart';
@@ -111,9 +112,6 @@ class TestResilientFirestoreService extends Mock implements ResilientFirestoreSe
 
   @override
   Future<QuerySnapshot> searchLocals(String searchQuery, {int limit = 20, DocumentSnapshot? startAfter}) async {
-    String searchQuery, {
-    int limit = 20,
-  }) async {
     return await _firestore
         .collection('locals')
         .where('name', isGreaterThanOrEqualTo: searchQuery)

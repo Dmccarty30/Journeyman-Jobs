@@ -7,6 +7,16 @@ import '../illustrations/electrical_illustrations.dart';
 
 // =================== BUTTONS ===================
 
+/// Enum for button variants
+enum JJButtonVariant {
+  /// Primary button variant with gradient background
+  primary,
+  /// Secondary button variant with outline style
+  secondary,
+  /// Danger button variant for destructive actions
+  danger,
+}
+
 class JJPrimaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
@@ -15,6 +25,7 @@ class JJPrimaryButton extends StatelessWidget {
   final bool isFullWidth;
   final double? width;
   final double? height;
+  final JJButtonVariant variant;
 
   const JJPrimaryButton({
     super.key,
@@ -25,6 +36,7 @@ class JJPrimaryButton extends StatelessWidget {
     this.isFullWidth = false,
     this.width,
     this.height,
+    this.variant = JJButtonVariant.primary,
   });
 
   @override
@@ -33,7 +45,7 @@ class JJPrimaryButton extends StatelessWidget {
       width: isFullWidth ? double.infinity : width,
       height: height ?? 56,
       decoration: BoxDecoration(
-        gradient: AppTheme.buttonGradient,
+        gradient: _getButtonGradient(),
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         boxShadow: [AppTheme.shadowSm],
       ),
@@ -83,6 +95,24 @@ class JJPrimaryButton extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Get the appropriate gradient based on the button variant
+  Gradient _getButtonGradient() {
+    switch (variant) {
+      case JJButtonVariant.primary:
+        return AppTheme.buttonGradient;
+      case JJButtonVariant.secondary:
+        return LinearGradient(
+          colors: [AppTheme.white, AppTheme.white],
+        );
+      case JJButtonVariant.danger:
+        return LinearGradient(
+          colors: [AppTheme.errorRed, AppTheme.errorRed.withValues(alpha: 0.8)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        );
+    }
   }
 }
 

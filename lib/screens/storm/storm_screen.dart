@@ -961,7 +961,6 @@ class _StormScreenState extends State<StormScreen> {
 
   void _showOutageDetails(BuildContext context, PowerOutageState outage) {
     final percentage = _powerOutageService.getOutagePercentage(outage);
-    final severity = _powerOutageService.getOutageSeverity(outage);
     
     showModalBottomSheet(
       context: context,
@@ -1159,6 +1158,7 @@ class _StormScreenState extends State<StormScreen> {
                         // Navigate to unions filtered by state
                       },
                       isFullWidth: true,
+                      variant: JJButtonVariant.primary,
                     ),
                   ),
                 ],
@@ -1704,6 +1704,7 @@ class StormDetailsSheet extends StatelessWidget {
                 );
               },
               isFullWidth: true,
+              variant: JJButtonVariant.primary,
             ),
             
             const SizedBox(height: AppTheme.spacingMd),

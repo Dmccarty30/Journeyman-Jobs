@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:go_router/go_router.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
@@ -165,6 +164,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
               _calculateCacheSize();
             },
             width: 120,
+            variant: JJButtonVariant.primary,
           ),
         ],
       ),
@@ -716,7 +716,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
           SliderTheme(
             data: SliderThemeData(
               activeTrackColor: AppTheme.accentCopper,
-              inactiveTrackColor: AppTheme.borderColor,
+              inactiveTrackColor: AppTheme.borderLight,
               thumbColor: AppTheme.accentCopper,
               overlayColor: AppTheme.accentCopper.withValues(alpha: 0.2),
             ),

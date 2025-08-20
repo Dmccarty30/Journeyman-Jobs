@@ -4,6 +4,7 @@ import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/job_model.dart';
 import '../../providers/riverpod/app_state_riverpod_provider.dart';
+import '../../providers/riverpod/jobs_riverpod_provider.dart';
 import '../../widgets/optimized_selector_widgets.dart';
 import '../../utils/job_formatting.dart';
 import '../../widgets/notification_badge.dart';
@@ -195,7 +196,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
           _selectedFilter = filter;
         });
         // Trigger a refresh with the new filter
-        ref.read(appStateNotifierProvider.notifier).refreshJobs();
+        ref.read(appStateNotifierProvider.notifier).refreshAppData();
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -528,6 +529,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
                         icon: Icons.send,
                         onPressed: () => _handleBidNow(job),
                         height: 42,
+                        variant: JJButtonVariant.primary,
                       ),
                     ),
                   ],
@@ -645,7 +647,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
                 _searchController.clear();
               });
               // Refresh jobs
-              ref.read(appStateNotifierProvider.notifier).refreshJobs();
+              ref.read(appStateNotifierProvider.notifier).refreshAppData();
               Navigator.pop(context);
             },
             child: Text('Clear', style: TextStyle(color: AppTheme.textSecondary)),
@@ -919,7 +921,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
                                   _selectedFilter = 'All Jobs';
                                 });
                                 // Clear all filters and refresh
-                                ref.read(appStateNotifierProvider.notifier).refreshJobs();
+                                ref.read(appStateNotifierProvider.notifier).refreshAppData();
                               },
                               icon: Icon(Icons.clear, size: 16),
                               label: Text('Clear All'),
@@ -985,7 +987,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
                               ),
                               const SizedBox(height: AppTheme.spacingMd),
                               ElevatedButton(
-                                onPressed: () => ref.read(appStateNotifierProvider.notifier).refreshJobs(),
+                                onPressed: () => ref.read(appStateNotifierProvider.notifier).refreshAppData(),
                                 child: const Text('Retry'),
                               ),
                             ],
@@ -1037,7 +1039,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
                                         valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
                                       )
                                     : ElevatedButton(
-                                        onPressed: () => ref.read(appStateNotifierProvider.notifier).loadMoreJobs(),
+                                        onPressed: () => ref.read(jobsNotifierProvider.notifier).loadMoreJobs(),
                                         child: const Text('Load More'),
                                       ),
                               ),
@@ -1551,6 +1553,7 @@ class JobDetailsSheet extends StatelessWidget {
                 );
               },
               isFullWidth: true,
+              variant: JJButtonVariant.primary,
             ),
             
             const SizedBox(height: AppTheme.spacingMd),

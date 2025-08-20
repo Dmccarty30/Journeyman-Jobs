@@ -126,7 +126,7 @@ class _LightningBoltPainter extends CustomPainter {
 
     // Add glow effect
     final glowPaint = Paint()
-      ..color = color.withOpacity(0.3)
+      ..color = color.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
 
@@ -169,7 +169,7 @@ class _LightningBoltPainter extends CustomPainter {
         arcPath.lineTo(endX, endY);
       }
       
-      paint.color = color.withOpacity(0.6 - i * 0.2);
+      paint.color = color.withValues(alpha: 0.6 - i * 0.2);
       canvas.drawPath(arcPath, paint);
     }
   }

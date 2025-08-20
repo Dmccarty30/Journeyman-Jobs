@@ -415,6 +415,7 @@ class _AuthScreenState extends State<AuthScreen>
               onPressed: _signUpWithEmail,
               isLoading: _isSignUpLoading,
               isFullWidth: true,
+              variant: JJButtonVariant.primary,
             ),
             
             const SizedBox(height: AppTheme.spacingLg),
@@ -494,6 +495,7 @@ class _AuthScreenState extends State<AuthScreen>
               onPressed: _signInWithEmail,
               isLoading: _isSignInLoading,
               isFullWidth: true,
+              variant: JJButtonVariant.primary,
             ),
             
             const SizedBox(height: AppTheme.spacingLg),

@@ -57,6 +57,7 @@ dependencies:
   riverpod_annotation: ^3.0.0-dev.17
   go_router: ^16.0.0
   rxdart: ^0.28.0
+  provider: ^6.0.0
   
   # UI and utilities
   flutter_animate: ^4.2.0

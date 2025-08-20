@@ -221,9 +221,9 @@ void main() {
 
     test('should handle large IBEW local directory caching', () async {
       // Arrange
-      final largeDi​rectory = MockData.createLocalsList(count: 100);
+      final largeDirectory = MockData.createLocalsList(count: 100);
       const key = 'ibew-directory';
-      final directoryJson = largeDi​rectory.map((l) => l.toJson()).toList();
+      final directoryJson = largeDirectory.map((l) => l.toJson()).toList();
 
       // Act
       await cacheService.setMemoryCache(key, directoryJson);

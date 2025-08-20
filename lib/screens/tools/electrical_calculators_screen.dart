@@ -270,6 +270,7 @@ class _OhmsLawCalculatorState extends State<_OhmsLawCalculator> {
                 child: JJPrimaryButton(
                   text: 'Calculate',
                   onPressed: _calculate,
+                  variant: JJButtonVariant.primary,
                 ),
               ),
             ],
@@ -440,6 +441,7 @@ class _WireSizeCalculatorState extends State<_WireSizeCalculator> {
             text: 'Calculate Wire Size',
             onPressed: _calculate,
             isFullWidth: true,
+            variant: JJButtonVariant.primary,
           ),
 
           if (_result.isNotEmpty) ...[
@@ -587,6 +589,7 @@ class _ConduitFillCalculatorState extends State<_ConduitFillCalculator> {
             text: 'Check Fill',
             onPressed: _calculate,
             isFullWidth: true,
+            variant: JJButtonVariant.primary,
           ),
 
           if (_result.isNotEmpty) ...[
@@ -775,6 +778,7 @@ class _VoltageDropCalculatorState extends State<_VoltageDropCalculator> {
             text: 'Calculate Drop',
             onPressed: _calculate,
             isFullWidth: true,
+            variant: JJButtonVariant.primary,
           ),
 
           if (_result.isNotEmpty) ...[

@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
 import '../../../electrical_components/jj_circuit_breaker_switch.dart';
-import '../../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
 import '../../../services/avatar_service.dart';
 import '../../../navigation/app_router.dart';
 
@@ -22,7 +21,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   late TabController _tabController;
   bool _isEditing = false;
   OverlayEntry? _overlayEntry;
-  bool _hasShownTooltip = false;
   final GlobalKey _editButtonKey = GlobalKey();
   String? _avatarUrl;
   bool _isUploadingAvatar = false;
@@ -197,7 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           // Additional Information
           _howHeardAboutUsController.text = data['how_heard_about_us'] ?? '';
           _lookingToAccomplishController.text = data['lookingToAccomplish'] ?? '';
-        });
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -213,95 +211,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     _hideTooltip();
     setState(() {
       _isEditing = !_isEditing;
-      _hasShownTooltip = true; // Mark tooltip as shown when user starts editing
     });
   }
   
-  void _showEditTooltip() {
-    if (_overlayEntry != null || _hasShownTooltip) return;
-
-    final renderBox = _editButtonKey.currentContext?.findRenderObject() as RenderBox?;
-    if (renderBox == null) return;
-
-    final offset = renderBox.localToGlobal(Offset.zero);
-    final size = renderBox.size;
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    // Calculate tooltip width and position
-    const tooltipWidth = 200.0;
-    const padding = 16.0;
-    
-    // Position tooltip to the left of the button, ensuring it stays on screen
-    final buttonCenterX = offset.dx + (size.width / 2);
-    final idealLeft = buttonCenterX - tooltipWidth + 40; // Shift left significantly
-    final finalLeft = (idealLeft < padding) ? padding : idealLeft;
-    
-    // Make sure tooltip doesn't go off the right edge either
-    final maxLeft = screenWidth - tooltipWidth - padding;
-    final adjustedLeft = (finalLeft > maxLeft) ? maxLeft : finalLeft;
-
-    _overlayEntry = OverlayEntry(
-      builder: (context) => Stack(
-        children: [
-          // Tap to dismiss
-          GestureDetector(
-            onTap: _hideTooltip,
-            behavior: HitTestBehavior.translucent,
-            child: Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: Colors.transparent,
-            ),
-          ),
-          // Tooltip
-          Positioned(
-            top: offset.dy + size.height + 8,
-            left: adjustedLeft,
-            child: Material(
-              color: Colors.transparent,
-              child: Container(
-                width: tooltipWidth,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryNavy,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Arrow pointing up
-                    Transform.translate(
-                      offset: Offset(buttonCenterX - adjustedLeft - 8, -20),
-                      child: CustomPaint(
-                        size: const Size(16, 10),
-                        painter: ArrowPainter(AppTheme.primaryNavy),
-                      ),
-                    ),
-                    Text(
-                      '💡 Tip: Edit your profile to help us match you with the best job opportunities!',
-                      style: AppTheme.bodySmall.copyWith(
-                        color: AppTheme.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    Overlay.of(context).insert(_overlayEntry!);
-  }
 
   void _hideTooltip() {
     _overlayEntry?.remove();
@@ -331,8 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         return;
       }
 
-      // Show loading
-      JJLoader.show(context);
+      // Show loading indicator (removed unused widget creation)
 
       // Prepare data for Firestore
       final profileData = {
@@ -428,6 +339,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.gallery);
+
               },
             ),
             ListTile(
@@ -436,6 +348,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.camera);
+
               },
             ),
             if (_avatarUrl != null)
@@ -454,34 +367,44 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: source);
-    
-    if (image != null) {
-      setState(() {
-        _isUploadingAvatar = true;
-      });
-      
-      try {
-        final user = FirebaseAuth.instance.currentUser;
-        if (user != null) {
-          final avatarUrl = await AvatarService.uploadAvatar(user.uid, image.path);
-          
-          setState(() {
-            _avatarUrl = avatarUrl;
-            _isUploadingAvatar = false;
-          });
-          
+    setState(() {
+      _isUploadingAvatar = true;
+    });
+
+    try {
+      final avatarService = AvatarService();
+      final avatarUrl = await avatarService.uploadAvatar(source);
+
+      if (avatarUrl != null) {
+        setState(() {
+          _avatarUrl = avatarUrl;
+          _isUploadingAvatar = false;
+        });
+
+        if (mounted) {
           JJSnackBar.showSuccess(
             context: context,
             message: 'Profile photo updated successfully!',
           );
         }
-      } catch (e) {
+      } else {
         setState(() {
           _isUploadingAvatar = false;
         });
-        
+
+        if (mounted) {
+          JJSnackBar.showError(
+            context: context,
+            message: 'Failed to upload photo',
+          );
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _isUploadingAvatar = false;
+      });
+
+      if (mounted) {
         JJSnackBar.showError(
           context: context,
           message: 'Failed to upload photo: ${e.toString()}',
@@ -492,24 +415,35 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
 
   Future<void> _removeAvatar() async {
     try {
+      final avatarService = AvatarService();
+      await avatarService.deleteOldAvatar(_avatarUrl);
+
+      // Update Firestore to remove avatar URL
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        await AvatarService.deleteAvatar(user.uid);
-        
-        setState(() {
-          _avatarUrl = null;
-        });
-        
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({'avatarUrl': FieldValue.delete()});
+      }
+
+      setState(() {
+        _avatarUrl = null;
+      });
+
+      if (mounted) {
         JJSnackBar.showSuccess(
           context: context,
           message: 'Profile photo removed',
         );
       }
     } catch (e) {
-      JJSnackBar.showError(
-        context: context,
-        message: 'Failed to remove photo: ${e.toString()}',
-      );
+      if (mounted) {
+        JJSnackBar.showError(
+          context: context,
+          message: 'Failed to remove photo: ${e.toString()}',
+        );
+      }
     }
   }
 
@@ -563,7 +497,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               );
             },
             width: 100,
-            backgroundColor: AppTheme.errorRed,
+            variant: JJButtonVariant.danger,
           ),
         ],
       ),
@@ -738,6 +672,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                   icon: Icons.save,
                   onPressed: _saveProfile,
                   isFullWidth: true,
+                  variant: JJButtonVariant.primary,
                 ),
               ),
             ),
@@ -842,7 +777,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                   ),
                   child: DropdownButtonFormField<String>(
-                    value: _stateController.text.isEmpty ? null : _stateController.text,
+                    initialValue: _stateController.text.isEmpty ? null : _stateController.text,
                     decoration: InputDecoration(
                       labelText: 'State',
                       border: InputBorder.none,
@@ -943,7 +878,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             controller: _homeLocalController,
             enabled: _isEditing,
             prefixIcon: Icons.location_city_outlined,
-            hint: 'e.g., IBEW Local 369',
+            hintText: 'e.g., IBEW Local 369',
+
           ),
           const SizedBox(height: AppTheme.spacingMd),
           JJTextField(
@@ -959,7 +895,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
             child: DropdownButtonFormField<String>(
-              value: _selectedClassification,
+              initialValue: _selectedClassification,
               decoration: const InputDecoration(
                 labelText: 'Classification',
                 border: InputBorder.none,
@@ -985,7 +921,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             controller: _booksOnController,
             enabled: _isEditing,
             prefixIcon: Icons.menu_book_outlined,
-            hint: 'e.g., Book 1, Book 2',
+            hintText: 'e.g., Book 1, Book 2',
+
           ),
           const SizedBox(height: AppTheme.spacingLg),
           Text(
@@ -1069,7 +1006,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
               ),
               child: DropdownButtonFormField<String>(
-                value: _selectedHoursPerWeek,
+                initialValue: _selectedHoursPerWeek,
                 decoration: const InputDecoration(
                   labelText: 'Hours per Week',
                   border: InputBorder.none,
@@ -1098,7 +1035,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
               ),
               child: DropdownButtonFormField<String>(
-                value: _selectedPerDiem,
+                initialValue: _selectedPerDiem,
                 decoration: const InputDecoration(
                   labelText: 'Per Diem',
                   border: InputBorder.none,
@@ -1123,7 +1060,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             controller: _preferredLocalsController,
             enabled: _isEditing,
             prefixIcon: Icons.star_outline,
-            hint: 'e.g., Local 369, Local 77',
+            hintText: 'e.g., Local 369, Local 77',
+
             maxLines: 2,
           ),
           const SizedBox(height: AppTheme.spacingMd),

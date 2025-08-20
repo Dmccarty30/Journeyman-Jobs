@@ -9,10 +9,10 @@ class PowerOutageCard extends StatelessWidget {
   final VoidCallback? onTap;
   
   const PowerOutageCard({
-    Key? key,
+    super.key,
     required this.outageData,
     this.onTap,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,7 @@ class PowerOutageCard extends StatelessWidget {
                       width: 56,
                       height: 56,
                       decoration: BoxDecoration(
-                        color: _getSeverityColor(severity).withOpacity(0.1),
+                        color: _getSeverityColor(severity).withAlpha((255 * 0.1).round()),
                         borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                       ),
                       child: Center(
@@ -172,7 +172,7 @@ class PowerOutageCard extends StatelessWidget {
                     Text(
                       'Total customers: ${service.formatOutageCount(outageData.customerCount)}',
                       style: AppTheme.bodySmall.copyWith(
-                        color: AppTheme.textMuted,
+                        color: AppTheme.textLight,
                       ),
                     ),
                     Row(
@@ -213,7 +213,7 @@ class PowerOutageCard extends StatelessWidget {
       case OutageSeverity.minor:
         return Colors.orange;
       case OutageSeverity.minimal:
-        return AppTheme.textMuted;
+        return AppTheme.textLight;
     }
   }
   
@@ -238,9 +238,9 @@ class PowerOutageSummary extends StatelessWidget {
   final List<PowerOutageState> outages;
   
   const PowerOutageSummary({
-    Key? key,
+    super.key,
     required this.outages,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
@@ -253,8 +253,8 @@ class PowerOutageSummary extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppTheme.errorRed.withOpacity(0.9),
-            AppTheme.warningYellow.withOpacity(0.9),
+            AppTheme.errorRed.withAlpha((255 * 0.9).round()),
+            AppTheme.warningYellow.withAlpha((255 * 0.9).round()),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -287,7 +287,7 @@ class PowerOutageSummary extends StatelessWidget {
                     Text(
                       'Restoration crews needed nationwide',
                       style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.white.withOpacity(0.9),
+                        color: AppTheme.white.withAlpha((255 * 0.9).round()),
                       ),
                     ),
                   ],
@@ -328,7 +328,7 @@ class PowerOutageSummary extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
       decoration: BoxDecoration(
-        color: AppTheme.white.withOpacity(0.2),
+        color: AppTheme.white.withAlpha((255 * 0.2).round()),
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
       ),
       child: Column(
@@ -349,7 +349,7 @@ class PowerOutageSummary extends StatelessWidget {
           Text(
             label,
             style: AppTheme.bodySmall.copyWith(
-              color: AppTheme.white.withOpacity(0.9),
+              color: AppTheme.white.withAlpha((255 * 0.9).round()),
             ),
           ),
         ],

@@ -103,7 +103,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
           controller: _tabController,
           onTap: (index) => setState(() => _selectedTabIndex = index),
           labelColor: AppTheme.white,
-          unselectedLabelColor: AppTheme.white.withOpacity(0.7),
+          unselectedLabelColor: AppTheme.white.withValues(alpha: 0.7),
           indicatorColor: AppTheme.warningYellow,
           tabs: const [
             Tab(text: 'Overview', icon: Icon(Icons.dashboard)),

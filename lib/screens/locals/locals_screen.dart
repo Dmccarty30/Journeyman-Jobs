@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '/models/locals_record.dart';
 import '/design_system/app_theme.dart';
-import '/providers/riverpod/app_state_riverpod_provider.dart';
+import '/providers/riverpod/locals_riverpod_provider.dart';
 import 'dart:io' show Platform;
 import '../../widgets/notification_badge.dart';
 import 'package:go_router/go_router.dart';
@@ -27,7 +27,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(appStateNotifierProvider.notifier).refreshLocals();
+      ref.read(localsNotifierProvider.notifier).loadLocals();
     });
     _scrollController.addListener(_onScroll);
   }
@@ -40,13 +40,8 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
   }
 
   void _onScroll() {
-    final appState = ref.read(appStateNotifierProvider);
-    if (_scrollController.position.pixels >= 
-        _scrollController.position.maxScrollExtent * 0.8 && 
-        !appState.isLoadingLocals && 
-        appState.hasMoreLocals) {
-      ref.read(appStateNotifierProvider.notifier).loadMoreLocals();
-    }
+    // Pagination functionality not yet implemented
+    // TODO: Add pagination support to LocalsNotifier
   }
 
 
@@ -134,7 +129,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
                 setState(() {
                   _selectedState = value;
                 });
-                ref.read(appStateNotifierProvider.notifier).refreshLocals();
+                ref.read(localsNotifierProvider.notifier).loadLocals();
               },
             ),
           ),
@@ -143,8 +138,8 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
           Expanded(
             child: Consumer(
               builder: (context, ref, child) {
-                final appState = ref.watch(appStateNotifierProvider);
-                return _buildLocalsList(appState);
+                final localsState = ref.watch(localsNotifierProvider);
+                return _buildLocalsList(localsState);
               },
             ),
           ),
@@ -153,8 +148,8 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
     );
   }
 
-  Widget _buildLocalsList(appState) {
-    if (appState.isLoadingLocals && appState.locals.isEmpty) {
+  Widget _buildLocalsList(LocalsState localsState) {
+    if (localsState.isLoading && localsState.locals.isEmpty) {
       return const Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
@@ -162,7 +157,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
       );
     }
 
-    if (appState.localsError != null) {
+    if (localsState.error != null) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -181,7 +176,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
             ),
             const SizedBox(height: AppTheme.spacingSm),
             Text(
-              appState.localsError!,
+              localsState.error!,
               style: AppTheme.bodyMedium.copyWith(
                 color: AppTheme.textSecondary
               ),
@@ -189,7 +184,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
             ),
             const SizedBox(height: AppTheme.spacingMd),
             ElevatedButton(
-              onPressed: () => ref.read(appStateNotifierProvider.notifier).refreshLocals(),
+              onPressed: () => ref.read(localsNotifierProvider.notifier).loadLocals(),
               child: const Text('Retry'),
             ),
           ],
@@ -198,9 +193,9 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
     }
 
     // Filter locals based on search query
-    List<LocalsRecord> filteredLocals = appState.locals;
+    List<LocalsRecord> filteredLocals = localsState.locals;
     if (_searchQuery.isNotEmpty) {
-      filteredLocals = appState.locals.where((local) {
+      filteredLocals = localsState.locals.where((local) {
         return local.localUnion.toLowerCase().contains(_searchQuery) ||
                local.city.toLowerCase().contains(_searchQuery) ||
                local.state.toLowerCase().contains(_searchQuery) ||
@@ -244,24 +239,8 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.all(AppTheme.spacingMd),
-      itemCount: filteredLocals.length + (appState.hasMoreLocals ? 1 : 0),
+      itemCount: filteredLocals.length,
       itemBuilder: (context, index) {
-        if (index == filteredLocals.length) {
-          // Loading indicator at the bottom
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(AppTheme.spacingMd),
-              child: appState.isLoadingLocals
-                  ? const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
-                    )
-                  : ElevatedButton(
-                      onPressed: () => ref.read(appStateNotifierProvider.notifier).loadMoreLocals(),
-                      child: const Text('Load More'),
-                    ),
-            ),
-          );
-        }
 
         final local = filteredLocals[index];
         return LocalCard(

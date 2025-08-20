@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../app_theme.dart';
 import '../../models/job_model.dart';
+import '../../utils/job_formatting.dart';
 import 'reusable_components.dart';
 
 /// Enum for JobCard variants
@@ -225,6 +226,7 @@ class JobCard extends StatelessWidget {
                   text: 'Bid Now',
                   onPressed: onBidNow,
                   height: 36,
+                  variant: JJButtonVariant.primary,
                 ),
               ),
             ],
@@ -398,6 +400,7 @@ class JobCard extends StatelessWidget {
                   text: 'Bid Now',
                   onPressed: onBidNow,
                   icon: Icons.flash_on,
+                  variant: JJButtonVariant.primary,
                 ),
               ),
             ],

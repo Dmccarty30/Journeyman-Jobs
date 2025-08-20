@@ -19,6 +19,7 @@ class AppTheme {
   static const Color mediumGray = Color(0xFF718096);
   static const Color lightGray = Color(0xFFE2E8F0);
   static const Color offWhite = Color(0xFFF7FAFC);
+  static const Color neutralGray300 = Color(0xFFD1D5DB);
 
   // Border Colors
   static const Color borderLight = lightGray;
@@ -32,9 +33,13 @@ class AppTheme {
   // Status Colors
   static const Color successGreen = Color(0xFF38A169);
   static const Color warningYellow = Color(0xFFD69E2E);
+  static const Color warningOrange = Color(0xFFED8936);
   static const Color errorRed = Color(0xFFE53E3E);
   static const Color error = Color(0xFFE53E3E); // Alias for errorRed
   static const Color infoBlue = Color(0xFF3182CE);
+
+  // Electrical Colors
+  static const Color groundBrown = Color(0xFF8B4513);
   
   // Text Colors
   static const Color textPrimary = Color(0xFF1A202C);
@@ -93,7 +98,13 @@ class AppTheme {
   static const double radiusRound = 50.0;
   
   // =================== SHADOWS ===================
-  
+
+  static const BoxShadow shadowXs = BoxShadow(
+    color: Color(0x0F000000),
+    blurRadius: 2,
+    offset: Offset(0, 1),
+  );
+
   static const BoxShadow shadowSm = BoxShadow(
     color: Color(0x1A000000),
     blurRadius: 4,
@@ -343,7 +354,7 @@ class AppTheme {
       cardTheme: CardThemeData(
         color: white,
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusLg),
         ),
@@ -451,7 +462,7 @@ class AppTheme {
       cardTheme: CardThemeData(
         color: secondaryNavy,
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.3),
+        shadowColor: Colors.black.withValues(alpha: 0.3),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusLg),
         ),

@@ -41,7 +41,7 @@ class PopupThemeData {
   /// Standard popup theme - fallback for when no theme is provided
   factory PopupThemeData.standard() => const PopupThemeData(
     elevation: 2,
-    borderRadius: AppTheme.radiusLg,
+    borderRadius: BorderRadius.all(Radius.circular(AppTheme.radiusLg)),
     borderColor: AppTheme.accentCopper,
     backgroundColor: AppTheme.white,
     padding: EdgeInsets.all(AppTheme.spacingMd),
@@ -52,19 +52,19 @@ class PopupThemeData {
   /// Elevation: 4, Copper border, Large padding
   factory PopupThemeData.alertDialog() => PopupThemeData(
     elevation: 4,
-    borderRadius: AppTheme.radiusLg,
+    borderRadius: const BorderRadius.all(Radius.circular(AppTheme.radiusLg)),
     borderColor: AppTheme.accentCopper,
     backgroundColor: AppTheme.white,
     padding: const EdgeInsets.all(AppTheme.spacingLg),
     shadows: const <BoxShadow>[AppTheme.shadowMd],
-    barrierColor: AppTheme.black.withOpacity(0.5),
+    barrierColor: AppTheme.black.withValues(alpha: 0.5),
   );
 
   /// BottomSheet theme for content selection, forms, and filters
   /// Elevation: 8, Top radius only, Extra top padding for drag handle
   factory PopupThemeData.bottomSheet() => const PopupThemeData(
     elevation: 8,
-    borderRadius: AppTheme.radiusXl,
+    borderRadius: BorderRadius.all(Radius.circular(AppTheme.radiusXl)),
     borderColor: Colors.transparent,
     backgroundColor: AppTheme.white,
     padding: EdgeInsets.fromLTRB(
@@ -81,7 +81,7 @@ class PopupThemeData {
   /// Matches LocalCard styling exactly - Elevation: 2, Copper border
   factory PopupThemeData.customPopup() => const PopupThemeData(
     elevation: 2,
-    borderRadius: AppTheme.radiusLg,
+    borderRadius: BorderRadius.all(Radius.circular(AppTheme.radiusLg)),
     borderColor: AppTheme.accentCopper,
     backgroundColor: AppTheme.white,
     padding: EdgeInsets.all(AppTheme.spacingMd),
@@ -92,7 +92,7 @@ class PopupThemeData {
   /// Navy background, white text, minimal elevation
   factory PopupThemeData.snackBar() => const PopupThemeData(
     elevation: 1,
-    borderRadius: AppTheme.radiusMd,
+    borderRadius: BorderRadius.all(Radius.circular(AppTheme.radiusMd)),
     borderColor: Colors.transparent,
     backgroundColor: AppTheme.primaryNavy,
     padding: EdgeInsets.symmetric(
@@ -107,7 +107,7 @@ class PopupThemeData {
   /// Highest elevation, optional max dimensions
   factory PopupThemeData.modal() => const PopupThemeData(
     elevation: 8,
-    borderRadius: AppTheme.radiusXl,
+    borderRadius: BorderRadius.all(Radius.circular(AppTheme.radiusXl)),
     borderColor: AppTheme.accentCopper,
     backgroundColor: AppTheme.white,
     padding: EdgeInsets.all(AppTheme.spacingXl),
@@ -120,7 +120,7 @@ class PopupThemeData {
   /// Copper accent, rounded corners, auto-dismiss behavior
   factory PopupThemeData.toast() => PopupThemeData(
     elevation: 2,
-    borderRadius: AppTheme.radiusLg,
+    borderRadius: const BorderRadius.all(Radius.circular(AppTheme.radiusLg)),
     borderColor: AppTheme.accentCopper,
     backgroundColor: AppTheme.white,
     padding: const EdgeInsets.symmetric(
@@ -135,7 +135,7 @@ class PopupThemeData {
   /// Minimal elevation, compact padding
   factory PopupThemeData.dropdown() => const PopupThemeData(
     elevation: 1,
-    borderRadius: AppTheme.radiusMd,
+    borderRadius: BorderRadius.all(Radius.circular(AppTheme.radiusMd)),
     borderColor: AppTheme.neutralGray300,
     backgroundColor: AppTheme.white,
     padding: EdgeInsets.symmetric(
@@ -149,7 +149,7 @@ class PopupThemeData {
   /// Dark background for contrast, small padding
   factory PopupThemeData.tooltip() => const PopupThemeData(
     elevation: 1,
-    borderRadius: AppTheme.radiusSm,
+    borderRadius: BorderRadius.all(Radius.circular(AppTheme.radiusSm)),
     borderColor: Colors.transparent,
     backgroundColor: AppTheme.secondaryNavy,
     padding: EdgeInsets.all(AppTheme.spacingXs),
@@ -160,7 +160,7 @@ class PopupThemeData {
   /// Primary color popup variant - Navy theme
   factory PopupThemeData.primary() => const PopupThemeData(
     elevation: 3,
-    borderRadius: AppTheme.radiusLg,
+    borderRadius: BorderRadius.all(Radius.circular(AppTheme.radiusLg)),
     borderColor: AppTheme.primaryNavy,
     backgroundColor: AppTheme.primaryNavy,
     padding: EdgeInsets.all(AppTheme.spacingMd),
@@ -170,7 +170,7 @@ class PopupThemeData {
   /// Success state popup - Green accent
   factory PopupThemeData.success() => const PopupThemeData(
     elevation: 2,
-    borderRadius: AppTheme.radiusLg,
+    borderRadius: BorderRadius.all(Radius.circular(AppTheme.radiusLg)),
     borderColor: AppTheme.successGreen,
     backgroundColor: AppTheme.white,
     padding: EdgeInsets.all(AppTheme.spacingMd),
@@ -180,7 +180,7 @@ class PopupThemeData {
   /// Warning state popup - Orange accent
   factory PopupThemeData.warning() => const PopupThemeData(
     elevation: 2,
-    borderRadius: AppTheme.radiusLg,
+    borderRadius: BorderRadius.all(Radius.circular(AppTheme.radiusLg)),
     borderColor: AppTheme.warningOrange,
     backgroundColor: AppTheme.white,
     padding: EdgeInsets.all(AppTheme.spacingMd),
@@ -190,7 +190,7 @@ class PopupThemeData {
   /// Error state popup - Red accent
   factory PopupThemeData.error() => const PopupThemeData(
     elevation: 2,
-    borderRadius: AppTheme.radiusLg,
+    borderRadius: BorderRadius.all(Radius.circular(AppTheme.radiusLg)),
     borderColor: AppTheme.errorRed,
     backgroundColor: AppTheme.white,
     padding: EdgeInsets.all(AppTheme.spacingMd),
