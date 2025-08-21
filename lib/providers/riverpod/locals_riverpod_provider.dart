@@ -102,7 +102,7 @@ class LocalsNotifier extends _$LocalsNotifier {
         type: OperationType.loadLocals,
         operation: () async {
           return ref.read(firestoreServiceProvider).getLocals(
-            startAfterDocument: loadMore ? state.lastDocument : null,
+            startAfter: loadMore ? state.lastDocument : null,
             limit: _pageSize,
           ).first;
         },

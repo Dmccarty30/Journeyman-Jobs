@@ -7,19 +7,25 @@ A comprehensive collection of electrical-themed Flutter components designed for 
 ### 🔄 Loading Components
 
 #### ThreePhaseSineWaveLoader
+
 Animated 3-phase AC power visualization with sine waves.
+
 - **Purpose**: Display electrical power flow in 3-phase systems
 - **Features**: Three sine waves with 120° phase difference, smooth animation
 - **Customization**: Colors, size, animation duration
 
 #### ElectricalRotationMeter
+
 Gauge-style loading indicator resembling electrical meters.
+
 - **Purpose**: Professional loading indicator for industrial applications
 - **Features**: Analog meter with needle animation, tick marks, optional label
 - **Customization**: Size, colors, label text, animation duration
 
 #### PowerLineLoader
+
 Transmission line-inspired loading animation.
+
 - **Purpose**: Represent electrical transmission and power flow
 - **Features**: Transmission towers, animated pulse with spark effects
 - **Customization**: Size, colors, animation speed
@@ -27,7 +33,9 @@ Transmission line-inspired loading animation.
 ### 🔧 Interactive Components
 
 #### CircuitBreakerToggle
+
 Interactive switch styled as an electrical circuit breaker.
+
 - **Purpose**: Professional-looking toggle switch for electrical contexts
 - **Features**: Smooth animation, electrical symbols (| for ON, O for OFF)
 - **Customization**: Colors, size, state management
@@ -35,13 +43,17 @@ Interactive switch styled as an electrical circuit breaker.
 ### 🏗️ Static Icons
 
 #### HardHatIcon
+
 Safety-themed icon representing protective equipment.
+
 - **Purpose**: Safety indicators for electrical/construction contexts
 - **Features**: Realistic hard hat design with safety stripe
 - **Customization**: Size, colors
 
 #### TransmissionTowerIcon
+
 Electrical infrastructure icon.
+
 - **Purpose**: Represent electrical transmission infrastructure
 - **Features**: Detailed tower structure with power lines and warning signs
 - **Customization**: Size, color

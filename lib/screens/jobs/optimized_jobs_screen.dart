@@ -5,7 +5,7 @@ import '../../design_system/app_theme.dart';
 import '../../models/job_model.dart';
 import '../../providers/riverpod/app_state_riverpod_provider.dart';
 import '../../providers/riverpod/jobs_riverpod_provider.dart';
-import '../../services/structured_logger.dart';
+import '../../electrical_components/transformer_trainer/services/structured_logger.dart';
 import '../../widgets/virtual_job_list.dart';
 
 /// Optimized jobs screen demonstrating performance improvements

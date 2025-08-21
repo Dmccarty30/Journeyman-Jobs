@@ -25,6 +25,7 @@ import '../screens/tools/electrical_calculators_screen.dart';
 import '../screens/tools/transformer_reference_screen.dart';
 import '../screens/tools/transformer_workbench_screen.dart';
 import '../screens/tools/transformer_bank_screen.dart';
+import '../screens/tools/electrical_components_showcase_screen.dart';
 import '../models/transformer_models.dart';
 import '../screens/notifications/notifications_screen.dart';
 import '../screens/settings/notification_settings_screen.dart';
@@ -50,6 +51,7 @@ class AppRouter {
   static const String transformerReference = '/tools/transformer-reference';
   static const String transformerWorkbench = '/tools/transformer-workbench';
   static const String transformerBank = '/tools/transformer-bank';
+  static const String electricalShowcase = '/tools/electrical-showcase';
   static const String notifications = '/notifications';
   static const String notificationSettings = '/notification-settings';
   static const String appSettings = '/settings/app';
@@ -169,6 +171,11 @@ class AppRouter {
         path: transformerBank,
         name: 'transformer-bank',
         builder: (context, state) => const TransformerBankScreen(),
+      ),
+      GoRoute(
+        path: electricalShowcase,
+        name: 'electrical-showcase',
+        builder: (context, state) => const ElectricalComponentsShowcaseScreen(),
       ),
       GoRoute(
         path: notifications,

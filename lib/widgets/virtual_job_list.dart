@@ -4,6 +4,7 @@ import '../design_system/app_theme.dart';
 import '../design_system/components/job_card.dart';
 import '../models/job_model.dart';
 import '../providers/riverpod/app_state_riverpod_provider.dart';
+import '../providers/riverpod/jobs_riverpod_provider.dart';
 import '../services/connectivity_service.dart';
 
 /// High-performance virtual scrolling job list with infinite loading
@@ -423,7 +424,7 @@ class _VirtualJobListState extends ConsumerState<VirtualJobList> with AutomaticK
 
   /// Refresh job list
   void _refreshJobs() {
-    ref.read(appStateNotifierProvider.notifier).loadJobs(isRefresh: true);
+    ref.read(jobsNotifierProvider.notifier).refreshJobs();
   }
 }
 

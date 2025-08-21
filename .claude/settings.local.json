@@ -64,7 +64,8 @@
       "Bash(uvx:*)",
       "Bash(dart pub run build_runner:*)",
       "Bash(/mnt/c/flutter/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs)",
-      "Bash(/mnt/c/flutter/flutter/bin/flutter --version)"
+      "Bash(/mnt/c/flutter/flutter/bin/flutter --version)",
+      "Bash(powershell.exe:*)"
     ],
     "deny": [],
     "additionalDirectories": [

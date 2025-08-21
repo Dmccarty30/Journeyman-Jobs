@@ -41,6 +41,10 @@ class AppTheme {
   // Electrical Colors
   static const Color groundBrown = Color(0xFF8B4513);
   
+  // Surface Colors
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color surfaceElevated = Color(0xFFF7FAFC);
+  
   // Text Colors
   static const Color textPrimary = Color(0xFF1A202C);
   static const Color textSecondary = Color(0xFF4A5568);
@@ -74,6 +78,15 @@ class AppTheme {
     colors: [
       Color(0xFFFFFFFF),
       Color(0xFFF7FAFC),
+    ],
+  );
+
+  static const LinearGradient electricalGradient = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [
+      Color(0xFFB45309), // Copper
+      Color(0xFFD69E2E), // Light Copper
     ],
   );
   
