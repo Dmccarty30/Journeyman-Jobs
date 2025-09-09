@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "permissions": {
     "allow": [
@@ -91,4 +92,35 @@
   ],
   "disableAllHooks": false,
   "outputStyle": "default"
+=======
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(uv:*)",
+      "Bash(find:*)",
+      "Bash(mv:*)",
+      "Bash(grep:*)",
+      "Bash(npm:*)",
+      "Bash(ls:*)",
+      "Bash(cp:*)",
+      "Write",
+      "Edit",
+      "Bash(chmod:*)",
+      "Bash(touch:*)",
+      "Bash(curl:*)"
+    ],
+    "deny": []
+  },
+  "enableAllProjectMcpServers": false,
+  "enabledMcpjsonServers": [
+    "mcp-server-fetch",
+    "universal_mcp",
+    "firecrawl-mcp",
+    "sequential-thinking",
+    "think-mcp-server"
+  ],
+  "disableAllHooks": false,
+  "outputStyle": "default"
+>>>>>>> main
 }
