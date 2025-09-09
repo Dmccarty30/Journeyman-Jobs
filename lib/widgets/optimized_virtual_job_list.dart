@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../design_system/app_theme.dart';
-import '../design_system/components/optimized_job_card.dart';
+import '../design_system/components/job_card.dart';
 import '../models/job_model.dart';
-import '../providers/app_state_provider.dart';
-import '../services/connectivity_service.dart';
+import '../providers/riverpod/app_state_riverpod_provider.dart';
 
 /// High-performance virtual scrolling job list with mobile optimizations
 /// 
@@ -207,18 +206,14 @@ class _OptimizedVirtualJobListState extends State<OptimizedVirtualJobList>
   Widget _buildJobCard(Job job, int index) {
     return RepaintBoundary(
       key: ValueKey('job-${job.id}-$index'),
-      child: OptimizedJobCard(
+      child: JobCard(
         job: job,
         variant: widget.variant,
-        highContrastMode: widget.highContrastMode,
-        enableSwipeGestures: widget.enableSwipeGestures,
         isFavorited: widget.isJobBookmarked?.call(job) ?? false,
         onTap: () => widget.onJobTap?.call(job),
         onViewDetails: () => widget.onJobDetails?.call(job),
         onBidNow: () => widget.onJobApply?.call(job),
         onFavorite: () => widget.onJobBookmark?.call(job),
-        onSwipeBookmark: () => widget.onJobBookmark?.call(job),
-        onSwipeApply: () => widget.onJobApply?.call(job),
         margin: _getOptimizedMargin(),
       ),
     );
@@ -272,7 +267,7 @@ class _OptimizedVirtualJobListState extends State<OptimizedVirtualJobList>
               const SizedBox(height: AppTheme.spacingMd),
               Text(
                 'No jobs available',
-                style: AppTheme.headingMedium.copyWith(
+                style: AppTheme.headlineMedium.copyWith(
                   color: widget.highContrastMode ? Colors.black : AppTheme.textSecondary,
                   fontWeight: widget.highContrastMode ? FontWeight.w600 : FontWeight.normal,
                 ),
@@ -308,7 +303,7 @@ class _OptimizedVirtualJobListState extends State<OptimizedVirtualJobList>
               const SizedBox(height: AppTheme.spacingMd),
               Text(
                 'Error loading jobs',
-                style: AppTheme.headingMedium.copyWith(
+                style: AppTheme.headlineMedium.copyWith(
                   color: widget.highContrastMode ? Colors.black : AppTheme.textSecondary,
                   fontWeight: widget.highContrastMode ? FontWeight.w600 : FontWeight.normal,
                 ),
@@ -339,9 +334,10 @@ class _OptimizedVirtualJobListState extends State<OptimizedVirtualJobList>
   }
 
   Widget _buildOfflineIndicator() {
-    return Consumer<AppStateProvider>(
-      builder: (context, appState, child) {
-        if (appState.isOnline) return const SizedBox.shrink();
+    return Consumer(
+      builder: (context, ref, child) {
+        final appState = ref.watch(appStateNotifierProvider);
+        if (appState.isConnected) return const SizedBox.shrink();
         
         return Positioned(
           top: 0,
