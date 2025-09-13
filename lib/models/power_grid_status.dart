@@ -6,7 +6,6 @@ class PowerGridStatus {
   final Color stateColor;
   final double loadPercentage;
   final int affectedCustomers;
-  final double voltageLevel;
   final List<String> activeHazards;
 
   PowerGridStatus({
@@ -15,7 +14,6 @@ class PowerGridStatus {
     required this.stateColor,
     required this.loadPercentage,
     required this.affectedCustomers,
-    required this.voltageLevel,
     required this.activeHazards,
   });
 }
@@ -29,7 +27,6 @@ class PowerGridMockData {
         stateColor: Colors.green,
         loadPercentage: 75.5,
         affectedCustomers: 0,
-        voltageLevel: 13.8,
         activeHazards: [],
       ),
       PowerGridStatus(
@@ -38,7 +35,6 @@ class PowerGridMockData {
         stateColor: Colors.orange,
         loadPercentage: 92.1,
         affectedCustomers: 1500,
-        voltageLevel: 12.5,
         activeHazards: ['Overload', 'Equipment Fault'],
       ),
       PowerGridStatus(
@@ -47,7 +43,6 @@ class PowerGridMockData {
         stateColor: Colors.red,
         loadPercentage: 98.0,
         affectedCustomers: 10000,
-        voltageLevel: 11.0,
         activeHazards: ['Storm Damage', 'Power Outage'],
       ),
       PowerGridStatus(
@@ -56,7 +51,6 @@ class PowerGridMockData {
         stateColor: Colors.blue,
         loadPercentage: 60.0,
         affectedCustomers: 0,
-        voltageLevel: 14.0,
         activeHazards: [],
       ),
     ];

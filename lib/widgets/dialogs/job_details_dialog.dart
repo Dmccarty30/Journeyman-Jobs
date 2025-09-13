@@ -236,7 +236,6 @@ class JobDetailsDialog extends ConsumerWidget {
       job.agreement,
       job.typeOfWork,
       job.duration,
-      job.voltageLevel,
       job.datePosted,
     ].any((field) => field?.isNotEmpty ?? false);
 
@@ -288,8 +287,6 @@ class JobDetailsDialog extends ConsumerWidget {
             _buildDetailRow('Type of Work', job.typeOfWork!),
           if (job.duration?.isNotEmpty ?? false)
             _buildDetailRow('Duration', job.duration!),
-          if (job.voltageLevel?.isNotEmpty ?? false)
-            _buildDetailRow('Voltage Level', job.voltageLevel!),
           if (job.datePosted?.isNotEmpty ?? false)
             _buildDetailRow('Date Posted', job.datePosted!),
         ],

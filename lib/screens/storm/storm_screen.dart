@@ -65,12 +65,6 @@ class _StormScreenState extends State<StormScreen> {
                 color: AppTheme.textPrimary,
               ),
             ),
-            Text(
-              'Voltage Level: ${status.voltageLevel.toStringAsFixed(1)} kV',
-              style: AppTheme.bodySmall.copyWith(
-                color: AppTheme.textSecondary,
-              ),
-            ),
             const SizedBox(height: AppTheme.spacingSm),
             if (status.activeHazards.isNotEmpty)
               Wrap(

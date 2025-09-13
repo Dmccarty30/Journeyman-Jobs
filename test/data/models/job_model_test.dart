@@ -148,14 +148,12 @@ void main() {
         'company': 'High Voltage Corp',
         'location': 'Utility Site',
         'classification': 'Journeyman Lineman',
-        'voltageLevel': '69kV',
         'typeOfWork': 'Transmission',
         'local': 58,
       });
 
       // Assert
       expect(job.classification, equals('Journeyman Lineman'));
-      expect(job.voltageLevel, equals('69kV'));
       expect(job.typeOfWork, equals('Transmission'));
       expect(job.local, equals(58));
     });
