@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journeyman Jobs - Comprehensive User Flow Diagrams</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1A202C;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1A202C 0%, #B45309 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .diagram-section {
+            background: white;
+            margin: 30px 0;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .diagram-section h2 {
+            color: #1A202C;
+            border-bottom: 3px solid #B45309;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .diagram-description {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #B45309;
+        }
+        
+        .mermaid {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        h1 { color: white; margin: 0; }
+        h3 { color: #B45309; }
+        
+        .toc {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .toc a {
+            color: #1A202C;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .toc a:hover {
+            color: #B45309;
+        }
+        
+        .key-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #B45309;
+        }
+        
+        .feature-card h4 {
+            color: #1A202C;
+            margin-top: 0;
+        }
+        
+        .summary {
+            background: #1A202C;
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .summary h2 {
+            color: #B45309;
+            border: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .summary-grid h4 {
+            color: #B45309;
+            margin-bottom: 10px;
+        }
+        
+        .summary-grid ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #B7C1CE;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚡ Journeyman Jobs - Comprehensive User Flow Diagrams</h1>
+        <p>Complete Mermaid diagram collection for IBEW electrical worker job discovery app</p>
+        <p><strong>Navy (#1A202C) & Copper (#B45309)</strong> • Professional tools for electrical workers</p>
+    </div>
+
+    <div class="toc">
+        <h2>📋 Table of Contents</h2>
+        <ul>
+            <li><a href="#navigation-flow">1. App Navigation Flow</a></li>
+            <li><a href="#auth-journey">2. User Authentication Journey</a></li>
+            <li><a href="#job-discovery">3. Job Discovery Workflow</a></li>
+            <li><a href="#storm-flow">4. Storm Work Emergency Flow</a></li>
+            <li><a href="#locals-directory">5. IBEW Local Directory Flow</a></li>
+            <li><a href="#data-architecture">6. Data Architecture</a></li>
+            <li><a href="#user-journey">7. Complete User Journey Map</a></li>
+            <li><a href="#state-diagram">8. System State Diagram</a></li>
+            <li><a href="#tools-flow">9. Electrical Tools Flow</a></li>
+            <li><a href="#notification-system">10. Notification System Flow</a></li>
+            <li><a href="#offline-mode">11. Offline Mode & Data Sync</a></li>
+        </ul>
+    </div>
+
+    <div class="diagram-section" id="navigation-flow">
+        <h2>1. App Navigation Flow</h2>
+        <div class="diagram-description">
+            <h3>Complete Navigation Structure</h3>
+            <p><strong>Overview:</strong> This diagram shows the complete navigation structure of the Journeyman Jobs app, from initial splash screen through authentication flow to the main app navigation. It demonstrates the decision trees for new vs. returning users and the comprehensive screen-to-screen transitions throughout the application.</p>
+        </div>
+        
+        <div class="mermaid">
+flowchart TD
+    A[Splash Screen] --> B{Authentication Check}
+    B -->|New User| C[Welcome Screen 1]
+    B -->|Returning User| D{Onboarding Complete?}
+    B -->|Logged Out| C
+    
+    C --> E[Welcome Screen 2]
+    E --> F[Welcome Screen 3]
+    F --> G[Auth Screen]
+    
+    G --> H{Sign Up/Sign In}
+    H -->|Sign Up| I[Registration Form]
+    H -->|Sign In| J[Login Form]
+    H -->|Google/Apple| K[Social Auth]
+    
+    I --> L[Profile Setup]
+    J --> D
+    K --> D
+    
+    D -->|Yes| M[Home Screen]
+    D -->|No| L
+    L --> N[Classification Selection]
+    N --> O[Experience Level]
+    O --> M
+    
+    M --> P[Bottom Navigation]
+    P --> Q[Jobs Screen]
+    P --> R[Storm Screen]
+    P --> S[Locals Screen]
+    P --> T[Settings Screen]
+    
+    Q --> U[Job Details]
+    U --> V[Apply/Bid]
+    
+    R --> W[Weather Radar]
+    R --> X[Emergency Jobs]
+    
+    S --> Y[Local Details]
+    Y --> Z[Contact Actions]
+    
+    T --> AA[Profile Management]
+    T --> AB[Notifications]
+    T --> AC[Help & Support]
+    
+    classDef primaryScreen fill:#1A202C,stroke:#B45309,stroke-width:3px,color:#fff
+    classDef authScreen fill:#38a169,stroke:#2f855a,stroke-width:2px,color:#fff
+    classDef coreScreen fill:#B45309,stroke:#1A202C,stroke-width:2px,color:#fff
+    classDef toolScreen fill:#3182ce,stroke:#2c5282,stroke-width:2px,color:#fff
+    
+    class A,M primaryScreen
+    class C,E,F,G,H,I,J,K,L,N,O authScreen
+    class Q,R,S,T,U,W,X,Y coreScreen
+    class AA,AB,AC,V,Z toolScreen
+        </div>
+        
+        <div class="key-features">
+            <div class="feature-card">
+                <h4>Authentication Flow</h4>
+                <p>Three-screen welcome carousel with tab-based authentication supporting email/password, Google, and Apple Sign-In</p>
+            </div>
+            <div class="feature-card">
+                <h4>Onboarding Process</h4>
+                <p>IBEW-specific profile setup including classification selection and experience level configuration</p>
+            </div>
+            <div class="feature-card">
+                <h4>Main Navigation</h4>
+                <p>Five-tab bottom navigation providing access to all core features and secondary screens</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="diagram-section" id="auth-journey">
+        <h2>2. User Authentication Journey</h2>
+        <div class="diagram-description">
+            <h3>From Splash to Authenticated User</h3>
+            <p><strong>Journey Mapping:</strong> This user journey diagram tracks the emotional and functional experience of users through different authentication paths, showing satisfaction levels and system interactions at each step.</p>
+        </div>
+        
+        <div class="mermaid">
+journey
+    title User Authentication Journey
+    section First Time User
+      App Launch: 5: User
+      Splash Screen: 4: System
+      Welcome Carousel: 5: User
+      Auth Screen Choice: 4: User
+      Registration: 3: User
+      Profile Setup: 4: User
+      Classification: 5: User
+      App Dashboard: 5: User, System
+    section Returning User
+      App Launch: 5: User
+      Auto Login: 5: System
+      Dashboard Load: 5: System
+      Job Suggestions: 4: System
+    section Social Sign-in
+      Auth Screen: 4: User
+      Google/Apple: 5: User
+      Profile Check: 4: System
+      Setup Complete: 5: System
+        </div>
+    </div>
+
+    <div class="diagram-section" id="job-discovery">
+        <h2>3. Job Discovery Workflow</h2>
+        <div class="diagram-description">
+            <h3>Search, Filter, View, Apply Process</h3>
+            <p><strong>Core Functionality:</strong> The job discovery workflow is the primary feature of the app, enabling IBEW workers to find, evaluate, and apply for electrical work opportunities. This flow includes advanced filtering, job details viewing, and application submission.</p>
+        </div>
+        
+        <div class="mermaid">
+flowchart TD
+    A[Home Screen] --> B{Job Discovery}
+    B -->|Suggested Jobs| C[View Job Card]
+    B -->|Search Intent| D[Jobs Screen]
+    
+    D --> E[Search Bar]
+    E --> F[Enter Query]
+    F --> G[Apply Filters]
+    
+    G --> H[Filter Chips]
+    H --> I{Filter Type}
+    I -->|Wireman| J[Inside Wireman Jobs]
+    I -->|Lineman| K[Line Work Jobs]  
+    I -->|Storm| L[Emergency Jobs]
+    I -->|Travel| M[Travel Jobs]
+    
+    J --> N[Job Results List]
+    K --> N
+    L --> N
+    M --> N
+    C --> N
+    
+    N --> O[Select Job Card]
+    O --> P[Job Details Screen]
+    
+    P --> Q{User Action}
+    Q -->|Save Job| R[Add to Favorites]
+    Q -->|Apply Now| S[Application Form]
+    Q -->|View Company| T[Company Info]
+    Q -->|Contact| U[Phone/Email]
+    
+    S --> V{Application Type}
+    V -->|Direct Apply| W[Submit Application]
+    V -->|Bid System| X[Submit Bid]
+    
+    W --> Y[Confirmation]
+    X --> Y
+    Y --> Z[Track Application]
+    
+    R --> AA[Saved Jobs List]
+    T --> BB[Company Website]
+    U --> CC[System Integration]
+    
+    classDef searchFlow fill:#3182ce,stroke:#2c5282,stroke-width:2px,color:#fff
+    classDef jobFlow fill:#B45309,stroke:#1A202C,stroke-width:2px,color:#fff
+    classDef actionFlow fill:#38a169,stroke:#2f855a,stroke-width:2px,color:#fff
+    
+    class D,E,F,G,H,I,J,K,L,M,N searchFlow
+    class O,P,Q,T,BB jobFlow
+    class S,V,W,X,Y,Z,R,AA actionFlow
+        </div>
+        
+        <div class="key-features">
+            <div class="feature-card">
+                <h4>Advanced Filtering</h4>
+                <p>Classification-based filters (Wireman, Lineman), work type filters (Storm, Travel), and location-based search capabilities</p>
+            </div>
+            <div class="feature-card">
+                <h4>Job Details</h4>
+                <p>Comprehensive job information including hourly rate, per diem, start date, duration, requirements, and benefits</p>
+            </div>
+            <div class="feature-card">
+                <h4>Application System</h4>
+                <p>Direct application and bid submission system with application tracking and status updates</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="diagram-section" id="storm-flow">
+        <h2>4. Storm Work Emergency Flow</h2>
+        <div class="diagram-description">
+            <h3>Weather Alerts to Job Assignments</h3>
+            <p><strong>Emergency Response:</strong> Storm work represents high-paying emergency opportunities. This flow integrates NOAA weather data with job opportunities, providing real-time alerts and priority-based job assignments for electrical workers during weather emergencies.</p>
+        </div>
+        
+        <div class="mermaid">
+flowchart TD
+    A[Weather System] --> B[NOAA API Integration]
+    B --> C{Storm Detection}
+    C -->|Severe Weather| D[Generate Alert]
+    C -->|Normal Conditions| E[Regular Monitoring]
+    
+    D --> F[Push Notification]
+    F --> G[User Receives Alert]
+    G --> H{User Response}
+    H -->|Open App| I[Storm Screen]
+    H -->|Ignore| J[Alert Expires]
+    
+    I --> K[Emergency Banner]
+    K --> L[Weather Radar View]
+    L --> M[Power Outage Stats]
+    M --> N[Storm Job Listings]
+    
+    N --> O{Job Priority}
+    O -->|Critical| P[Red Priority Card]
+    O -->|High| Q[Orange Priority Card]
+    O -->|Standard| R[Standard Card]
+    
+    P --> S[Emergency Application]
+    Q --> S
+    R --> S
+    
+    S --> T{Application Process}
+    T -->|Immediate| U[Instant Assignment]
+    T -->|Review Required| V[Contractor Review]
+    
+    U --> W[Job Assignment]
+    V --> X{Review Result}
+    X -->|Approved| W
+    X -->|Rejected| Y[Alternative Jobs]
+    
+    W --> Z[Work Coordination]
+    Z --> AA[Storm Work Execution]
+    
+    E --> B
+    J --> BB[Return to App]
+    Y --> N
+    
+    classDef weatherSystem fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
+    classDef emergencyFlow fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff
+    classDef jobAction fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
+    
+    class A,B,C,D,F weatherSystem
+    class I,K,L,M,N,O,P,Q,R,S emergencyFlow
+    class T,U,V,W,X,Y,Z,AA jobAction
+        </div>
+        
+        <div class="key-features">
+            <div class="feature-card">
+                <h4>NOAA Integration</h4>
+                <p>Real-time weather monitoring with official National Weather Service data for storm detection and alerts</p>
+            </div>
+            <div class="feature-card">
+                <h4>Priority System</h4>
+                <p>Three-tier priority system (Critical, High, Standard) with color coding and immediate application options</p>
+            </div>
+            <div class="feature-card">
+                <h4>Emergency Assignment</h4>
+                <p>Fast-track application process with instant assignments for critical storm work opportunities</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="diagram-section" id="locals-directory">
+        <h2>5. IBEW Local Directory Flow</h2>
+        <div class="diagram-description">
+            <h3>Finding and Contacting Union Locals</h3>
+            <p><strong>Union Directory:</strong> Comprehensive directory of 797+ IBEW locals with integrated contact capabilities. Workers can search by number, location, or state, and directly call, email, or navigate to local union offices.</p>
+        </div>
+        
+        <div class="mermaid">
+flowchart TD
+    A[Home Screen] --> B[Locals Tab]
+    B --> C[Locals Screen]
+    C --> D[Search Options]
+    
+    D --> E{Search Method}
+    E -->|Text Search| F[Search Bar]
+    E -->|State Filter| G[State Chips]
+    E -->|Browse All| H[Full Directory]
+    
+    F --> I[Enter Query]
+    I --> J[Local Number/City/State]
+    J --> K[Filtered Results]
+    
+    G --> L[Select State]
+    L --> M[State-Specific Locals]
+    M --> K
+    
+    H --> N[797+ Locals List]
+    N --> K
+    
+    K --> O[Local Card Display]
+    O --> P{User Action}
+    
+    P -->|Phone Call| Q[System Dialer]
+    P -->|Map Location| R[Maps App]
+    P -->|Website| S[Browser]
+    P -->|Email| T[Email App]
+    P -->|View Details| U[Local Detail Screen]
+    
+    Q --> V[Direct Phone Call]
+    R --> W[Navigation to Local]
+    S --> X[Local Website]
+    T --> Y[Compose Email]
+    U --> Z[Full Local Information]
+    
+    Z --> AA{Multiple Offices?}
+    AA -->|Yes| BB[Office Selection]
+    AA -->|No| CC[Contact Options]
+    
+    BB --> DD[Choose Office]
+    DD --> CC
+    CC --> P
+    
+    classDef directoryFlow fill:#1A202C,stroke:#B45309,stroke-width:2px,color:#fff
+    classDef searchFlow fill:#3182ce,stroke:#2c5282,stroke-width:2px,color:#fff
+    classDef contactFlow fill:#38a169,stroke:#2f855a,stroke-width:2px,color:#fff
+    
+    class B,C,D,O,U,Z,AA,BB,CC directoryFlow
+    class E,F,G,H,I,J,K,L,M,N searchFlow
+    class P,Q,R,S,T,V,W,X,Y,DD contactFlow
+        </div>
+    </div>
+
+    <div class="diagram-section" id="data-architecture">
+        <h2>6. Data Architecture</h2>
+        <div class="diagram-description">
+            <h3>Entity Relationships and Data Flow</h3>
+            <p><strong>System Design:</strong> Firebase-based data architecture supporting user profiles, job listings, IBEW local directory, applications, weather events, and notifications. The entity relationship diagram shows how data flows through the system.</p>
+        </div>
+        
+        <div class="mermaid">
+erDiagram
+    USER {
+        string id PK
+        string email UK
+        string displayName
+        string photoURL
+        string phoneNumber
+        string ibewLocal
+        string ticketNumber
+        string classification
+        integer yearsExperience
+        boolean willingToTravel
+        array preferredWorkTypes
+        timestamp createdAt
+        timestamp lastActive
+    }
+    
+    JOB {
+        string id PK
+        string title
+        string company
+        string description
+        string location
+        float hourlyRate
+        float perDiem
+        date startDate
+        string duration
+        string schedule
+        array requirements
+        array benefits
+        boolean isStormWork
+        string priority
+        string status
+        timestamp postedAt
+        timestamp expiresAt
+    }
+    
+    IBEW_LOCAL {
+        string id PK
+        integer localNumber UK
+        string name
+        string address
+        string city
+        string state
+        string zipCode
+        string phoneNumber
+        string email
+        string website
+        array classifications
+        boolean isActive
+        array officeLocations
+    }
+    
+    APPLICATION {
+        string id PK
+        string userId FK
+        string jobId FK
+        string status
+        string coverLetter
+        array attachments
+        timestamp submittedAt
+        timestamp reviewedAt
+        string reviewNotes
+    }
+    
+    WEATHER_EVENT {
+        string id PK
+        string eventType
+        string severity
+        string location
+        string description
+        timestamp startTime
+        timestamp endTime
+        array affectedAreas
+        boolean isActive
+    }
+    
+    NOTIFICATION {
+        string id PK
+        string userId FK
+        string type
+        string title
+        string message
+        string actionUrl
+        boolean isRead
+        timestamp createdAt
+        timestamp readAt
+    }
+    
+    USER ||--o{ APPLICATION : submits
+    JOB ||--o{ APPLICATION : receives
+    USER ||--o{ NOTIFICATION : receives
+    USER }o--|| IBEW_LOCAL : "belongs to"
+    JOB ||--o| WEATHER_EVENT : "triggered by"
+    WEATHER_EVENT ||--o{ NOTIFICATION : generates
+        </div>
+    </div>
+
+    <div class="diagram-section" id="user-journey">
+        <h2>7. Complete User Journey Map</h2>
+        <div class="diagram-description">
+            <h3>End-to-End User Experience Flows</h3>
+            <p><strong>Holistic Experience:</strong> This journey map traces the complete IBEW worker experience from app discovery through daily usage patterns, emergency storm response, union interactions, and professional tool usage.</p>
+        </div>
+        
+        <div class="mermaid">
+journey
+    title Complete IBEW Worker Journey
+    section Discovery & Onboarding
+      Hear about app: 3: Worker
+      Download from store: 4: Worker
+      Open app first time: 5: Worker
+      View welcome screens: 4: Worker
+      Create account: 3: Worker
+      Set up IBEW profile: 4: Worker
+      Complete onboarding: 5: Worker
+    section Daily Job Search
+      Open app: 5: Worker
+      Check suggestions: 4: System
+      Search specific jobs: 4: Worker
+      Apply filters: 4: Worker
+      Review job details: 5: Worker
+      Apply to jobs: 4: Worker
+      Track applications: 3: Worker
+    section Emergency Storm Response
+      Receive storm alert: 5: System
+      Open storm screen: 5: Worker
+      Check weather radar: 4: Worker
+      View emergency jobs: 5: Worker
+      Apply immediately: 5: Worker
+      Get assignment: 4: Contractor
+      Travel to location: 3: Worker
+    section Union Local Interaction
+      Need local contact: 4: Worker
+      Search IBEW directory: 5: Worker
+      Find local info: 5: System
+      Call local directly: 5: Worker
+      Visit local office: 4: Worker
+    section Professional Tools Usage
+      Need calculation: 4: Worker
+      Open electrical tools: 5: Worker
+      Use Ohm's law calc: 5: Worker
+      Get accurate result: 5: System
+      Apply to field work: 5: Worker
+    section Account Management
+      Update profile: 3: Worker
+      Manage notifications: 4: Worker
+      View job history: 4: Worker
+      Contact support: 2: Worker
+      Provide feedback: 3: Worker
+        </div>
+    </div>
+
+    <div class="diagram-section" id="state-diagram">
+        <h2>8. System State Diagram</h2>
+        <div class="diagram-description">
+            <h3>Application State Management and Transitions</h3>
+            <p><strong>State Management:</strong> Comprehensive state diagram showing all application states and transitions, from app launch through authentication, main navigation, and feature-specific states including weather monitoring.</p>
+        </div>
+        
+        <div class="mermaid">
+stateDiagram-v2
+    [*] --> AppLaunching
+    
+    AppLaunching --> CheckingAuth
+    CheckingAuth --> Unauthenticated: No user
+    CheckingAuth --> Authenticated: Valid user
+    CheckingAuth --> AuthExpired: Token expired
+    
+    Unauthenticated --> WelcomeFlow
+    WelcomeFlow --> Authentication
+    Authentication --> Creating: Sign up
+    Authentication --> SigningIn: Sign in
+    Creating --> ProfileSetup: Success
+    SigningIn --> Authenticated: Success
+    AuthExpired --> Authentication
+    
+    ProfileSetup --> SelectingClassification
+    SelectingClassification --> SettingExperience
+    SettingExperience --> Authenticated
+    
+    Authenticated --> HomeScreen
+    HomeScreen --> JobsScreen: Navigate to Jobs
+    HomeScreen --> StormScreen: Navigate to Storm
+    HomeScreen --> LocalsScreen: Navigate to Locals
+    HomeScreen --> SettingsScreen: Navigate to Settings
+    HomeScreen --> ToolsScreen: Use calculators
+    
+    JobsScreen --> SearchingJobs
+    JobsScreen --> FilteringJobs
+    JobsScreen --> ViewingJobDetails
+    SearchingJobs --> JobResults
+    FilteringJobs --> JobResults
+    JobResults --> ViewingJobDetails
+    ViewingJobDetails --> ApplyingToJob
+    ApplyingToJob --> ApplicationSubmitted
+    ApplicationSubmitted --> TrackingApplication
+    
+    StormScreen --> ViewingWeatherRadar
+    StormScreen --> CheckingOutages
+    StormScreen --> ViewingEmergencyJobs
+    ViewingEmergencyJobs --> ApplyingEmergencyWork
+    ApplyingEmergencyWork --> EmergencyAssignment
+    
+    LocalsScreen --> SearchingLocals
+    LocalsScreen --> FilteringLocals
+    LocalsScreen --> ViewingLocalDetails
+    SearchingLocals --> LocalResults
+    FilteringLocals --> LocalResults
+    LocalResults --> ViewingLocalDetails
+    ViewingLocalDetails --> ContactingLocal
+    ContactingLocal --> ExternalApp: Phone/Maps/Email
+    
+    SettingsScreen --> ProfileManagement
+    SettingsScreen --> NotificationSettings
+    SettingsScreen --> SupportSection
+    ProfileManagement --> UpdatingProfile
+    NotificationSettings --> ConfiguringAlerts
+    
+    ToolsScreen --> ElectricalCalculators
+    ElectricalCalculators --> CalculationResults
+    
+    state WeatherMonitoring {
+        [*] --> MonitoringWeather
+        MonitoringWeather --> StormDetected: Severe weather
+        StormDetected --> GeneratingAlerts
+        GeneratingAlerts --> SendingNotifications
+        SendingNotifications --> MonitoringWeather
+    }
+    
+    WeatherMonitoring --> StormScreen: Alert received
+        </div>
+    </div>
+
+    <div class="diagram-section" id="tools-flow">
+        <h2>9. Electrical Tools Flow</h2>
+        <div class="diagram-description">
+            <h3>Calculator and Transformer Training Workflows</h3>
+            <p><strong>Professional Tools:</strong> Electrical tools suite including Ohm's Law calculator, wire sizing, conduit fill calculations, and interactive transformer training workbench with drag-and-drop connection practice.</p>
+        </div>
+        
+        <div class="mermaid">
+flowchart TD
+    A[Home Screen FAB] --> B[Electrical Demo]
+    B --> C[Tools Menu]
+    A --> D[Quick Calculator Access]
+    D --> C
+    
+    C --> E{Tool Selection}
+    E -->|Calculators| F[Calculator Suite]
+    E -->|Transformer| G[Transformer Workbench]
+    E -->|Reference| H[Component Showcase]
+    
+    F --> I{Calculator Type}
+    I -->|Ohm's Law| J[V,I,R,P Calculator]
+    I -->|Wire Size| K[AWG Calculator]
+    I -->|Conduit Fill| L[NEC Chapter 9]
+    I -->|Voltage Drop| M[Distance Calculator]
+    
+    J --> N[Enter Values]
+    K --> N
+    L --> N
+    M --> N
+    
+    N --> O[Calculate Results]
+    O --> P{Result Validation}
+    P -->|Valid| Q[Display Results]
+    P -->|Invalid| R[Show Error]
+    R --> N
+    
+    Q --> S{User Action}
+    S -->|New Calculation| T[Clear Values]
+    S -->|Share Result| U[Export/Share]
+    S -->|Switch Calculator| I
+    T --> N
+    
+    G --> V[Training Mode Selection]
+    V --> W{Mode Choice}
+    W -->|Guided| X[Step-by-step Training]
+    W -->|Quiz| Y[Assessment Mode]
+    
+    X --> Z[Interactive Diagram]
+    Y --> AA[Connection Challenge]
+    
+    Z --> BB[Connection Points]
+    AA --> BB
+    BB --> CC[Drag & Drop Interface]
+    CC --> DD{Connection Correct?}
+    DD -->|Yes| EE[Success Animation]
+    DD -->|No| FF[Error Feedback]
+    FF --> CC
+    EE --> GG[Next Challenge]
+    GG --> V
+    
+    H --> HH[Component Gallery]
+    HH --> II[Interactive Demos]
+    II --> JJ[Component Details]
+    
+    classDef toolFlow fill:#3182ce,stroke:#2c5282,stroke-width:2px,color:#fff
+    classDef calcFlow fill:#B45309,stroke:#1A202C,stroke-width:2px,color:#fff
+    classDef trainingFlow fill:#38a169,stroke:#2f855a,stroke-width:2px,color:#fff
+    
+    class C,E,F,H,HH,II,JJ toolFlow
+    class I,J,K,L,M,N,O,P,Q,S,T,U calcFlow
+    class V,W,X,Y,Z,AA,BB,CC,DD,EE,FF,GG trainingFlow
+        </div>
+    </div>
+
+    <div class="diagram-section" id="notification-system">
+        <h2>10. Notification System Flow</h2>
+        <div class="diagram-description">
+            <h3>Push Notifications and Alert Management</h3>
+            <p><strong>Alert System:</strong> Comprehensive notification system handling storm alerts, job matches, application updates, and system notifications with priority-based delivery and deep linking to relevant screens.</p>
+        </div>
+        
+        <div class="mermaid">
+flowchart TD
+    A[App Events] --> B[Notification Service]
+    C[Weather API] --> B
+    D[Job Updates] --> B
+    E[System Events] --> B
+    
+    B --> F{Notification Type}
+    F -->|Storm Alert| G[Emergency Notification]
+    F -->|Job Match| H[Job Notification]  
+    F -->|App Update| I[System Notification]
+    F -->|Application Status| J[Status Notification]
+    
+    G --> K[High Priority Push]
+    H --> L[Standard Priority Push]
+    I --> L
+    J --> L
+    
+    K --> M{User Response}
+    L --> M
+    
+    M -->|Tap Notification| N[Deep Link to Screen]
+    M -->|Dismiss| O[Mark as Read]
+    M -->|No Action| P[Remain Unread]
+    
+    N --> Q{Destination Screen}
+    Q -->|Storm Work| R[Storm Screen]
+    Q -->|Job Details| S[Job Details Screen]
+    Q -->|Settings| T[Settings Screen]
+    Q -->|Profile| U[Profile Screen]
+    
+    R --> V[User Engagement]
+    S --> V
+    T --> V
+    U --> V
+    
+    V --> W[Update Notification Status]
+    O --> W
+    W --> X[Analytics Tracking]
+    
+    P --> Y[Notification Center]
+    Y --> Z[Unread Badge Count]
+    
+    X --> AA[User Behavior Data]
+    AA --> BB[Notification Optimization]
+    BB --> B
+    
+    classDef sourceFlow fill:#6b7280,stroke:#4b5563,stroke-width:2px,color:#fff
+    classDef notificationFlow fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
+    classDef responseFlow fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
+    
+    class A,C,D,E sourceFlow
+    class B,F,G,H,I,J,K,L,M,N,Y,Z notificationFlow
+    class O,P,Q,R,S,T,U,V,W,X,AA,BB responseFlow
+        </div>
+    </div>
+
+    <div class="diagram-section" id="offline-mode">
+        <h2>11. Offline Mode & Data Sync</h2>
+        <div class="diagram-description">
+            <h3>Handling Connectivity and Data Synchronization</h3>
+            <p><strong>Offline Capabilities:</strong> Robust offline mode supporting critical features like IBEW directory access, electrical calculators, and cached job information with intelligent data synchronization when connectivity is restored.</p>
+        </div>
+        
+        <div class="mermaid">
+flowchart TD
+    A[App Launch] --> B{Network Check}
+    B -->|Online| C[Full Functionality]
+    B -->|Offline| D[Offline Mode]
+    
+    C --> E[Sync Latest Data]
+    E --> F[Cache Critical Data]
+    F --> G{Connection Lost?}
+    G -->|Yes| D
+    G -->|No| H[Continue Online]
+    
+    D --> I[Local Cache Access]
+    I --> J{Feature Request}
+    J -->|IBEW Directory| K[Cached Locals]
+    J -->|Job Search| L[Limited Cache]
+    J -->|Calculators| M[Full Offline]
+    J -->|Weather Radar| N[Unavailable]
+    
+    K --> O[Display Cached Locals]
+    L --> P[Show Cached Jobs]
+    M --> Q[Calculators Work]
+    N --> R[Show Offline Message]
+    
+    O --> S{User Action}
+    P --> S
+    Q --> S
+    R --> S
+    
+    S -->|Call Local| T[Phone Integration]
+    S -->|Calculate| U[Local Calculation]
+    S -->|Job Details| V[Cached Details Only]
+    S -->|Apply Job| W[Queue for Sync]
+    
+    T --> X[System Dialer]
+    U --> Y[Display Results]
+    V --> Z[Limited Info]
+    W --> AA[Pending Actions Queue]
+    
+    AA --> BB{Connection Restored?}
+    BB -->|Yes| CC[Sync Queued Actions]
+    BB -->|No| DD[Remain in Queue]
+    
+    CC --> EE[Update Server]
+    EE --> FF[Confirm Sync]
+    FF --> GG[Clear Queue]
+    GG --> H
+    
+    classDef onlineFlow fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
+    classDef offlineFlow fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff
+    classDef syncFlow fill:#3182ce,stroke:#2c5282,stroke-width:2px,color:#fff
+    
+    class B,C,E,F,G,H onlineFlow
+    class D,I,J,K,L,M,N,O,P,Q,R offlineFlow
+    class AA,BB,CC,DD,EE,FF,GG syncFlow
+        </div>
+    </div>
+
+    <div class="summary">
+        <h2>⚡ Comprehensive Flow Analysis Summary</h2>
+        
+        <div class="summary-grid">
+            <div>
+                <h4>User Experience Flows</h4>
+                <ul>
+                    <li>Authentication and onboarding journeys</li>
+                    <li>Job discovery and application workflows</li>
+                    <li>Emergency storm work response flows</li>
+                    <li>Professional tool usage patterns</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4>System Architecture</h4>
+                <ul>
+                    <li>Complete navigation structure</li>
+                    <li>Data entity relationships</li>
+                    <li>State management transitions</li>
+                    <li>Offline synchronization logic</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4>Integration Points</h4>
+                <ul>
+                    <li>Firebase backend services</li>
+                    <li>NOAA weather API integration</li>
+                    <li>System app integrations (Phone, Maps, Email)</li>
+                    <li>Push notification workflows</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4>Professional Features</h4>
+                <ul>
+                    <li>IBEW local directory (797+ locals)</li>
+                    <li>Electrical calculation tools</li>
+                    <li>Transformer training workbench</li>
+                    <li>Storm work emergency response</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <div style="font-weight: 600; margin-bottom: 10px;">Design Consistency:</div>
+            <div style="color: #B7C1CE;">Navy (#1A202C) & Copper (#B45309) color scheme • Electrical circuit patterns • Mobile-first responsive design • IBEW worker-focused features</div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <div style="font-weight: 600; margin-bottom: 10px;">Export-Ready Format:</div>
+            <div style="color: #B7C1CE;">All diagrams are in Mermaid format for easy integration into documentation, presentations, and development workflows</div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#1A202C',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#B45309',
+                lineColor: '#B45309',
+                sectionBkgColor: '#f8f9fa',
+                altSectionBkgColor: '#ffffff',
+                gridColor: '#e2e8f0',
+                secondaryColor: '#B45309',
+                tertiaryColor: '#f8f9fa'
+            }
+        });
+    </script>
+</body>
+</html>

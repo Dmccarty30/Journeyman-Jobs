@@ -43,7 +43,6 @@ class NoaaWeatherService {
   
   // Cache durations
   static const Duration _alertsCacheDuration = Duration(minutes: 5);
-  static const Duration _radarCacheDuration = Duration(minutes: 2);
   static const Duration _hurricaneCacheDuration = Duration(minutes: 15);
   
   /// Get all active weather alerts for a location
@@ -52,7 +51,7 @@ class NoaaWeatherService {
     required double longitude,
   }) async {
     try {
-      final cacheKey = 'noaa_alerts_${latitude}_${longitude}';
+      final cacheKey = 'noaa_alerts_${latitude}_$longitude';
       
       // Check cache first
       final cached = await _cacheService.get<String>(cacheKey);
@@ -71,10 +70,6 @@ class NoaaWeatherService {
       if (pointResponse.statusCode != 200) {
         throw Exception('Failed to get point data');
       }
-      
-      final gridId = pointResponse.data['properties']['gridId'];
-      final gridX = pointResponse.data['properties']['gridX'];
-      final gridY = pointResponse.data['properties']['gridY'];
       
       // Get active alerts
       final alertsResponse = await _dio.get(
@@ -150,7 +145,7 @@ class NoaaWeatherService {
       return '$_radarBase/standard/${stationId}_loop.gif';
     } else {
       // Latest single frame
-      return '$_radarBase/standard/${stationId}/${stationId}_${product}_0.gif';
+      return '$_radarBase/standard/$stationId/${stationId}_${product}_0.gif';
     }
   }
   
@@ -171,7 +166,7 @@ class NoaaWeatherService {
     
     final layerString = layers.isNotEmpty ? '_${layers.join('_')}' : '';
     
-    return '$_radarBase/standard/${stationId}/${stationId}_${product}${layerString}_0.gif';
+    return '$_radarBase/standard/$stationId/${stationId}_$product${layerString}_0.gif';
   }
   
   /// Get current tropical systems from National Hurricane Center

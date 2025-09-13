@@ -342,7 +342,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                             Text(
                               '+${_activeAlerts.length - 1} more alerts',
                               style: AppTheme.bodySmall.copyWith(
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withValues(alpha: 0.9),
                               ),
                             ),
                         ],
@@ -368,7 +368,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
               // Radar product selector
               Container(
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryNavy.withOpacity(0.9),
+                  color: AppTheme.primaryNavy.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: AppTheme.accentCopper,
@@ -420,7 +420,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
             child: Container(
               padding: const EdgeInsets.all(AppTheme.spacingSm),
               decoration: BoxDecoration(
-                color: AppTheme.primaryNavy.withOpacity(0.9),
+                color: AppTheme.primaryNavy.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: AppTheme.accentCopper,
@@ -458,7 +458,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
       width: 48,
       height: 48,
       decoration: BoxDecoration(
-        color: AppTheme.primaryNavy.withOpacity(0.9),
+        color: AppTheme.primaryNavy.withValues(alpha: 0.9),
         shape: BoxShape.circle,
         border: Border.all(
           color: AppTheme.accentCopper,

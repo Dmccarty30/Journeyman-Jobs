@@ -62,10 +62,10 @@ class _TransformerReferenceScreenState
         margin: const EdgeInsets.all(AppTheme.spacingMd),
         padding: const EdgeInsets.all(AppTheme.spacingMd),
         decoration: BoxDecoration(
-          color: AppTheme.infoBlue.withOpacity(0.1),
+          color: AppTheme.infoBlue.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           border: Border.all(
-            color: AppTheme.infoBlue.withOpacity(0.3),
+            color: AppTheme.infoBlue.withValues(alpha: 0.3),
           ),
         ),
         child: const Row(

@@ -523,10 +523,10 @@ class _QuickSignupScreenState extends State<QuickSignupScreen> {
     return Container(
       padding: EdgeInsets.all(AppTheme.spacingMd),
       decoration: BoxDecoration(
-        color: AppTheme.accentCopper.withOpacity(0.1),
+        color: AppTheme.accentCopper.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         border: Border.all(
-          color: AppTheme.accentCopper.withOpacity(0.3),
+          color: AppTheme.accentCopper.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -572,7 +572,7 @@ class _QuickSignupScreenState extends State<QuickSignupScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                backgroundColor: AppTheme.successGreen.withOpacity(0.1),
+                backgroundColor: AppTheme.successGreen.withValues(alpha: 0.1),
               ),
               
               if (_job!.perDiem != null) ...[
@@ -585,7 +585,7 @@ class _QuickSignupScreenState extends State<QuickSignupScreen> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  backgroundColor: AppTheme.infoBlue.withOpacity(0.1),
+                  backgroundColor: AppTheme.infoBlue.withValues(alpha: 0.1),
                 ),
               ],
             ],
@@ -1166,7 +1166,7 @@ class _ContactPickerState extends State<ContactPicker> {
         
         return ListTile(
           leading: CircleAvatar(
-            backgroundColor: AppTheme.primaryNavy.withOpacity(0.1),
+            backgroundColor: AppTheme.primaryNavy.withValues(alpha: 0.1),
             child: Text(
               (contact.displayName?.isNotEmpty ?? false)
                   ? contact.displayName![0].toUpperCase()

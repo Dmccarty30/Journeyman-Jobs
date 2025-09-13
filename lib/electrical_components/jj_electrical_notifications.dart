@@ -93,8 +93,7 @@ class JJElectricalNotifications {
       case ElectricalNotificationType.error:
         return const Color(0xFFDC2626); // Red
       case ElectricalNotificationType.info:
-      default:
-        return const Color(0xFF00D4FF); // Electric blue
+      return const Color(0xFF00D4FF); // Electric blue
     }
   }
 }
@@ -110,12 +109,12 @@ enum ElectricalNotificationType {
 /// Electrical-themed toast widget
 class ElectricalToast extends StatefulWidget {
   const ElectricalToast({
-    Key? key,
+    super.key,
     required this.message,
     required this.onDismiss,
     this.type = ElectricalNotificationType.info,
     this.showLightning = true,
-  }) : super(key: key);
+  });
   
   final String message;
   final ElectricalNotificationType type;
@@ -193,7 +192,7 @@ class _ElectricalToastState extends State<ElectricalToast>
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
-            color: AppTheme.primaryNavy.withOpacity(0.95),
+            color: AppTheme.primaryNavy.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: JJElectricalNotifications._getTypeColor(widget.type),
@@ -201,7 +200,7 @@ class _ElectricalToastState extends State<ElectricalToast>
             ),
             boxShadow: [
               BoxShadow(
-                color: JJElectricalNotifications._getTypeColor(widget.type).withOpacity(0.3),
+                color: JJElectricalNotifications._getTypeColor(widget.type).withValues(alpha: 0.3),
                 blurRadius: 15,
                 spreadRadius: 2,
               ),
@@ -213,7 +212,7 @@ class _ElectricalToastState extends State<ElectricalToast>
               Positioned.fill(
                 child: CustomPaint(
                   painter: _MiniCircuitPainter(
-                    color: JJElectricalNotifications._getTypeColor(widget.type).withOpacity(0.1),
+                    color: JJElectricalNotifications._getTypeColor(widget.type).withValues(alpha: 0.1),
                   ),
                 ),
               ),
@@ -273,7 +272,7 @@ class _ElectricalToastState extends State<ElectricalToast>
                         child: Icon(
                           Icons.close,
                           size: 16,
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withValues(alpha: 0.7),
                         ),
                       ),
                     ),
@@ -296,8 +295,7 @@ class _ElectricalToastState extends State<ElectricalToast>
       case ElectricalNotificationType.error:
         return Icons.error;
       case ElectricalNotificationType.info:
-      default:
-        return Icons.info;
+      return Icons.info;
     }
   }
 }
@@ -305,10 +303,10 @@ class _ElectricalToastState extends State<ElectricalToast>
 /// Electrical-themed snack bar content
 class ElectricalSnackBarContent extends StatefulWidget {
   const ElectricalSnackBarContent({
-    Key? key,
+    super.key,
     required this.message,
     this.type = ElectricalNotificationType.info,
-  }) : super(key: key);
+  });
   
   final String message;
   final ElectricalNotificationType type;
@@ -354,17 +352,17 @@ class _ElectricalSnackBarContentState extends State<ElectricalSnackBarContent>
       builder: (context, child) {
         return Container(
           decoration: BoxDecoration(
-            color: AppTheme.primaryNavy.withOpacity(0.95),
+            color: AppTheme.primaryNavy.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: JJElectricalNotifications._getTypeColor(widget.type)
-                  .withOpacity(_glowAnimation.value),
+                  .withValues(alpha: _glowAnimation.value),
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
                 color: JJElectricalNotifications._getTypeColor(widget.type)
-                    .withOpacity(_glowAnimation.value * 0.4),
+                    .withValues(alpha: _glowAnimation.value * 0.4),
                 blurRadius: 12,
                 spreadRadius: 1,
               ),
@@ -377,7 +375,7 @@ class _ElectricalSnackBarContentState extends State<ElectricalSnackBarContent>
                 child: CustomPaint(
                   painter: _SnackBarCircuitPainter(
                     color: JJElectricalNotifications._getTypeColor(widget.type)
-                        .withOpacity(0.2),
+                        .withValues(alpha: 0.2),
                   ),
                 ),
               ),
@@ -404,11 +402,11 @@ class _ElectricalSnackBarContentState extends State<ElectricalSnackBarContent>
 /// Electrical-themed tooltip
 class ElectricalTooltip extends StatefulWidget {
   const ElectricalTooltip({
-    Key? key,
+    super.key,
     required this.message,
     required this.child,
     this.type = ElectricalNotificationType.info,
-  }) : super(key: key);
+  });
   
   final String message;
   final Widget child;
@@ -451,7 +449,7 @@ class _ElectricalTooltipState extends State<ElectricalTooltip>
     return Tooltip(
       message: widget.message,
       decoration: BoxDecoration(
-        color: AppTheme.primaryNavy.withOpacity(0.9),
+        color: AppTheme.primaryNavy.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: JJElectricalNotifications._getTypeColor(widget.type),
@@ -459,7 +457,7 @@ class _ElectricalTooltipState extends State<ElectricalTooltip>
         ),
         boxShadow: [
           BoxShadow(
-            color: JJElectricalNotifications._getTypeColor(widget.type).withOpacity(0.3),
+            color: JJElectricalNotifications._getTypeColor(widget.type).withValues(alpha: 0.3),
             blurRadius: 8,
             spreadRadius: 1,
           ),
@@ -547,13 +545,13 @@ class _LightningPainter extends CustomPainter {
     if (progress == 0) return;
     
     final paint = Paint()
-      ..color = color.withOpacity(0.8)
+      ..color = color.withValues(alpha: 0.8)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
     
     final glowPaint = Paint()
-      ..color = color.withOpacity(0.4)
+      ..color = color.withValues(alpha: 0.4)
       ..strokeWidth = 6
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
@@ -620,7 +618,7 @@ class _SparkEffectPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(1.0 - progress)
+      ..color = color.withValues(alpha: 1.0 - progress)
       ..style = PaintingStyle.fill;
     
     final random = math.Random(42);

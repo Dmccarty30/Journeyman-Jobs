@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'dart:ui' as ui;
 import '../design_system/app_theme.dart';
 
 /// A highly customizable electrical circuit board background with animated
@@ -28,7 +27,7 @@ import '../design_system/app_theme.dart';
 /// ```
 class ElectricalCircuitBackground extends StatefulWidget {
   const ElectricalCircuitBackground({
-    Key? key,
+    super.key,
     this.opacity = 0.15,
     this.animationSpeed = 4.0,
     this.componentDensity = ComponentDensity.medium,
@@ -38,7 +37,7 @@ class ElectricalCircuitBackground extends StatefulWidget {
     this.currentColor,
     this.copperColor,
     this.child,
-  }) : super(key: key);
+  });
 
   /// Overall opacity of the circuit pattern (0.0 - 1.0)
   final double opacity;
@@ -313,29 +312,29 @@ class _CircuitBoardPainter extends CustomPainter {
   void _paintCircuitBoard(Canvas canvas, Size size, List<CircuitTrace> traces, List<CircuitComponent> components) {
     // Create paint objects
     final tracePaint = Paint()
-      ..color = traceColor.withOpacity(opacity * 0.8)
+      ..color = traceColor.withValues(alpha: opacity * 0.8)
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
     
     final thinTracePaint = Paint()
-      ..color = traceColor.withOpacity(opacity * 0.5)
+      ..color = traceColor.withValues(alpha: opacity * 0.5)
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
     
     final viaPaint = Paint()
-      ..color = copperColor.withOpacity(opacity * 0.6)
+      ..color = copperColor.withValues(alpha: opacity * 0.6)
       ..style = PaintingStyle.fill;
     
     final componentPaint = Paint()
-      ..color = traceColor.withOpacity(opacity * 0.7)
+      ..color = traceColor.withValues(alpha: opacity * 0.7)
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
     
     // Draw substrate background (very subtle)
     final substratePaint = Paint()
-      ..color = const Color(0xFFF8F9FA).withOpacity(opacity * 0.3)
+      ..color = const Color(0xFFF8F9FA).withValues(alpha: opacity * 0.3)
       ..style = PaintingStyle.fill;
     canvas.drawRect(Offset.zero & size, substratePaint);
     
@@ -351,7 +350,7 @@ class _CircuitBoardPainter extends CustomPainter {
     
     // Add subtle grid pattern
     final gridPaint = Paint()
-      ..color = traceColor.withOpacity(opacity * 0.2)
+      ..color = traceColor.withValues(alpha: opacity * 0.2)
       ..strokeWidth = 0.5
       ..style = PaintingStyle.stroke;
     _drawGrid(canvas, size, gridPaint);
@@ -550,7 +549,7 @@ class _CircuitBoardPainter extends CustomPainter {
     
     // Inner circle
     final innerPaint = Paint()
-      ..color = paint.color.withOpacity(paint.color.opacity * 0.5)
+      ..color = paint.color.withValues(alpha: paint.color.a * 0.5)
       ..style = PaintingStyle.fill;
     canvas.drawCircle(Offset.zero, size * 0.25, innerPaint);
   }
@@ -615,14 +614,14 @@ class _CurrentFlowPainter extends CustomPainter {
     if (traces.isEmpty) return;
     
     final glowPaint = Paint()
-      ..color = currentColor.withOpacity(opacity * 0.8)
+      ..color = currentColor.withValues(alpha: opacity * 0.8)
       ..strokeWidth = 3.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0);
     
     final corePaint = Paint()
-      ..color = currentColor.withOpacity(opacity * 1.0)
+      ..color = currentColor.withValues(alpha: opacity * 1.0)
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -707,7 +706,7 @@ class _InteractiveComponentsPainter extends CustomPainter {
     if (components.isEmpty) return;
     
     final switchPaint = Paint()
-      ..color = componentColor.withOpacity(opacity * 0.9)
+      ..color = componentColor.withValues(alpha: opacity * 0.9)
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -717,7 +716,7 @@ class _InteractiveComponentsPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
     
     final capacitorPaint = Paint()
-      ..color = componentColor.withOpacity(opacity * 0.7)
+      ..color = componentColor.withValues(alpha: opacity * 0.7)
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
     
@@ -765,11 +764,11 @@ class _InteractiveComponentsPainter extends CustomPainter {
     final isOn = blinkPhase < 0.7; // On 70% of the time
     
     if (isOn) {
-      paint.color = ledColor.withOpacity(opacity * intensity);
+      paint.color = ledColor.withValues(alpha: opacity * intensity);
       
       // Glow effect
       final glowPaint = Paint()
-        ..color = ledColor.withOpacity(opacity * intensity * 0.5)
+        ..color = ledColor.withValues(alpha: opacity * intensity * 0.5)
         ..style = PaintingStyle.fill
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, size * 0.5);
       

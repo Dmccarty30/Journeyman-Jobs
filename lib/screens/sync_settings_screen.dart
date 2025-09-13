@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 import '../services/connectivity_service.dart';
 import '../services/offline_data_service.dart';
 import '../widgets/offline_indicators.dart';

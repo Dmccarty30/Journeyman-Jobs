@@ -2,6 +2,7 @@
 /// 
 /// This file exports all electrical-themed components and utilities
 /// for easy integration throughout the app.
+library;
 
 // Background Components
 export 'circuit_board_background.dart';
@@ -39,9 +40,6 @@ export 'circuit_pattern_painter.dart';
 export 'hard_hat_icon.dart';
 export 'transmission_tower_icon.dart';
 
-// Enhanced Backgrounds
-export 'enhanced_backgrounds.dart';
-
 // Electrical Illustrations & Examples
 export 'electrical_illustrations_example.dart';
 
@@ -67,7 +65,7 @@ class JJElectricalTheme {
   static Widget withElectricalBackground({
     required Widget child,
     double opacity = 0.12,
-    ComponentDensity density = ComponentDensity.medium,
+    ComponentDensity density = ComponentDensity.high,
     double animationSpeed = 1.5,
     bool enableCurrentFlow = true,
     bool enableInteractiveComponents = true,
@@ -131,7 +129,7 @@ extension ElectricalThemeExtensions on Widget {
   /// Wrap with electrical background
   Widget electricalBackground({
     double opacity = 0.12,
-    ComponentDensity density = ComponentDensity.medium,
+    ComponentDensity density = ComponentDensity.high,
   }) {
     return JJElectricalTheme.withElectricalBackground(
       child: this,

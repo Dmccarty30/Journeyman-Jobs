@@ -51,6 +51,9 @@ class AppTheme {
   static const Color textLight = Color(0xFF718096);
   static const Color textDark = Color(0xFF1A202C); // Same as textPrimary
   static const Color textOnDark = Color(0xFFFFFFFF);
+
+  // Shadow Color
+  static const Color shadowColor = Color(0xFF000000);
   
   // =================== GRADIENTS ===================
   
@@ -92,6 +95,7 @@ class AppTheme {
   
   // =================== SPACING ===================
   
+  static const double spacingXxs = 2.0;
   static const double spacingXs = 4.0;
   static const double spacingSm = 8.0;
   static const double spacingMd = 16.0;
@@ -100,6 +104,9 @@ class AppTheme {
   static const double spacingXxl = 48.0;
   static const double spacingXxxl = 64.0;
   
+  // =================== FONT SIZES ===================
+  static const double fontSizeXs = 8.0;
+
   // =================== BORDER RADIUS ===================
   
   static const double radiusXs = 4.0;

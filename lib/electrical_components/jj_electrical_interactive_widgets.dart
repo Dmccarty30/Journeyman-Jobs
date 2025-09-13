@@ -9,7 +9,7 @@ import '../design_system/app_theme.dart';
 /// Electrical button with spark animation on tap
 class JJElectricalButton extends StatefulWidget {
   const JJElectricalButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.child,
     this.style,
@@ -17,7 +17,7 @@ class JJElectricalButton extends StatefulWidget {
     this.glowColor,
     this.enableSparks = true,
     this.enableGlow = true,
-  }) : super(key: key);
+  });
 
   final VoidCallback? onPressed;
   final Widget child;
@@ -131,7 +131,7 @@ class _JJElectricalButtonState extends State<JJElectricalButton>
                     ? [
                         BoxShadow(
                           color: (widget.glowColor ?? const Color(0xFF00D4FF))
-                              .withOpacity(_glowAnimation.value * 0.5),
+                              .withValues(alpha: _glowAnimation.value * 0.5),
                           blurRadius: 15,
                           spreadRadius: 2,
                         ),
@@ -184,7 +184,7 @@ class _JJElectricalButtonState extends State<JJElectricalButton>
 /// Electrical text field with current flow animation
 class JJElectricalTextField extends StatefulWidget {
   const JJElectricalTextField({
-    Key? key,
+    super.key,
     this.controller,
     this.decoration,
     this.onChanged,
@@ -196,7 +196,7 @@ class JJElectricalTextField extends StatefulWidget {
     this.keyboardType,
     this.textInputAction,
     this.validator,
-  }) : super(key: key);
+  });
 
   final TextEditingController? controller;
   final InputDecoration? decoration;
@@ -270,7 +270,7 @@ class _JJElectricalTextFieldState extends State<JJElectricalTextField>
             ? [
                 BoxShadow(
                   color: (widget.currentColor ?? const Color(0xFF00D4FF))
-                      .withOpacity(0.3),
+                      .withValues(alpha: 0.3),
                   blurRadius: 8,
                   spreadRadius: 1,
                 ),
@@ -335,14 +335,14 @@ class _JJElectricalTextFieldState extends State<JJElectricalTextField>
 /// Electrical dropdown with spark selection effects
 class JJElectricalDropdown<T> extends StatefulWidget {
   const JJElectricalDropdown({
-    Key? key,
+    super.key,
     required this.items,
     required this.onChanged,
     this.value,
     this.hint,
     this.sparkColor,
     this.enableSparks = true,
-  }) : super(key: key);
+  });
 
   final List<DropdownMenuItem<T>> items;
   final ValueChanged<T?> onChanged;
@@ -363,12 +363,12 @@ class _JJElectricalDropdownState<T> extends State<JJElectricalDropdown<T>>
   @override
   void initState() {
     super.initState();
-    
+
     _sparkController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
-    
+
     _sparkAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _sparkController, curve: Curves.easeOut),
     );
@@ -380,15 +380,9 @@ class _JJElectricalDropdownState<T> extends State<JJElectricalDropdown<T>>
     super.dispose();
   }
 
-  void _handleChanged(T? value) {
-    if (widget.enableSparks) {
-      _sparkController.forward().then((_) {
-        _sparkController.reset();
-      });
-    }
-    
-    HapticFeedback.selectionClick();
-    widget.onChanged(value);
+  void _handleChanged(T? newValue) {
+    if (newValue == null) return;
+    widget.onChanged(newValue);
   }
 
   @override
@@ -401,7 +395,7 @@ class _JJElectricalDropdownState<T> extends State<JJElectricalDropdown<T>>
             borderRadius: BorderRadius.circular(8),
           ),
           child: DropdownButtonFormField<T>(
-            value: widget.value,
+            initialValue: widget.value,
             items: widget.items,
             onChanged: _handleChanged,
             hint: widget.hint,
@@ -414,14 +408,14 @@ class _JJElectricalDropdownState<T> extends State<JJElectricalDropdown<T>>
             style: const TextStyle(color: Colors.white),
           ),
         ),
-        
-        // Spark effect
+
+        // Add borders to each option of the dropdown for easy identification
         if (widget.enableSparks)
           AnimatedBuilder(
             animation: _sparkAnimation,
             builder: (context, child) {
               if (_sparkAnimation.value == 0) return const SizedBox.shrink();
-              
+
               return Positioned.fill(
                 child: IgnorePointer(
                   child: CustomPaint(
@@ -449,7 +443,7 @@ class _SparkEffectPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(1 - progress)
+      ..color = color.withValues(alpha: 1 - progress)
       ..style = PaintingStyle.fill;
 
     final random = math.Random(42);
@@ -488,13 +482,13 @@ class _TextFieldCurrentPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = currentColor.withOpacity(0.6)
+      ..color = currentColor.withValues(alpha: 0.6)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
     final glowPaint = Paint()
-      ..color = currentColor.withOpacity(0.3)
+      ..color = currentColor.withValues(alpha: 0.3)
       ..strokeWidth = 4
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
@@ -549,7 +543,7 @@ class _DropdownSparkPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(0.8 * (1 - progress))
+      ..color = color.withValues(alpha: 0.8 * (1 - progress))
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 

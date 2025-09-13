@@ -115,10 +115,10 @@ class _ElectricalComponentsShowcaseScreenState extends State<ElectricalComponent
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: AppTheme.primaryNavy.withOpacity(0.1),
+        color: AppTheme.primaryNavy.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppTheme.accentCopper.withOpacity(0.3),
+          color: AppTheme.accentCopper.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -449,7 +449,7 @@ class _ElectricalComponentsShowcaseScreenState extends State<ElectricalComponent
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.accentCopper.withOpacity(0.3)),
+            border: Border.all(color: AppTheme.accentCopper.withValues(alpha: 0.3)),
           ),
           child: const Stack(
             children: [
@@ -480,7 +480,7 @@ class _ElectricalComponentsShowcaseScreenState extends State<ElectricalComponent
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.accentCopper.withOpacity(0.3)),
+            border: Border.all(color: AppTheme.accentCopper.withValues(alpha: 0.3)),
           ),
           child: const Stack(
             children: [
@@ -511,7 +511,7 @@ class _ElectricalComponentsShowcaseScreenState extends State<ElectricalComponent
           height: 120,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.accentCopper.withOpacity(0.3)),
+            border: Border.all(color: AppTheme.accentCopper.withValues(alpha: 0.3)),
           ),
           child: const Stack(
             children: [
@@ -543,14 +543,14 @@ class _ElectricalComponentsShowcaseScreenState extends State<ElectricalComponent
 
   BoxDecoration _buildCardDecoration() {
     return BoxDecoration(
-      color: Colors.white.withOpacity(0.95),
+      color: Colors.white.withValues(alpha: 0.95),
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
-        color: AppTheme.accentCopper.withOpacity(0.3),
+        color: AppTheme.accentCopper.withValues(alpha: 0.3),
       ),
       boxShadow: [
         BoxShadow(
-          color: AppTheme.primaryNavy.withOpacity(0.1),
+          color: AppTheme.primaryNavy.withValues(alpha: 0.1),
           blurRadius: 8,
           spreadRadius: 2,
         ),

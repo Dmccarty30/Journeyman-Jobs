@@ -171,7 +171,7 @@ class JJElectricalPageTransitions {
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF00D4FF).withOpacity(animation.value * 0.3),
+                        color: const Color(0xFF00D4FF).withValues(alpha: animation.value * 0.3),
                         blurRadius: 20,
                         spreadRadius: 5,
                       ),
@@ -229,13 +229,13 @@ class _LightningTransitionPainter extends CustomPainter {
     if (progress == 0) return;
     
     final paint = Paint()
-      ..color = const Color(0xFF00D4FF).withOpacity(0.8)
+      ..color = const Color(0xFF00D4FF).withValues(alpha: 0.8)
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
     
     final glowPaint = Paint()
-      ..color = const Color(0xFF00D4FF).withOpacity(0.4)
+      ..color = const Color(0xFF00D4FF).withValues(alpha: 0.4)
       ..strokeWidth = 8
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
@@ -296,12 +296,12 @@ class _CircuitConnectionPainter extends CustomPainter {
     if (progress == 0) return;
     
     final paint = Paint()
-      ..color = AppTheme.accentCopper.withOpacity(0.6)
+      ..color = AppTheme.accentCopper.withValues(alpha: 0.6)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     
     final glowPaint = Paint()
-      ..color = const Color(0xFF00D4FF).withOpacity(0.4)
+      ..color = const Color(0xFF00D4FF).withValues(alpha: 0.4)
       ..strokeWidth = 4
       ..style = PaintingStyle.stroke
       ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 3);
@@ -387,7 +387,7 @@ class _SparkRevealPainter extends CustomPainter {
     final currentRadius = progress * maxRadius;
     
     final sparkPaint = Paint()
-      ..color = const Color(0xFF00D4FF).withOpacity(0.8)
+      ..color = const Color(0xFF00D4FF).withValues(alpha: 0.8)
       ..style = PaintingStyle.fill;
     
     // Create sparks around the reveal circle
@@ -448,14 +448,14 @@ class _PowerSurgePainter extends CustomPainter {
     
     // Electric field effect
     final fieldPaint = Paint()
-      ..color = const Color(0xFF00D4FF).withOpacity(0.1 * progress)
+      ..color = const Color(0xFF00D4FF).withValues(alpha: 0.1 * progress)
       ..style = PaintingStyle.fill;
     
     canvas.drawRect(Offset.zero & size, fieldPaint);
     
     // Energy waves
     final wavePaint = Paint()
-      ..color = const Color(0xFF00D4FF).withOpacity(0.3 * (1 - progress))
+      ..color = const Color(0xFF00D4FF).withValues(alpha: 0.3 * (1 - progress))
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     

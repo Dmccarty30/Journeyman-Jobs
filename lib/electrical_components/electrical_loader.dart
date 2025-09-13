@@ -11,11 +11,11 @@ class ElectricalLoader extends StatefulWidget {
   final Duration duration;
   
   const ElectricalLoader({
-    Key? key,
+    super.key,
     this.size = 48.0,
     this.color = const Color(0xFFB45309), // Copper color
     this.duration = const Duration(milliseconds: 1500),
-  }) : super(key: key);
+  });
 
   @override
   State<ElectricalLoader> createState() => _ElectricalLoaderState();

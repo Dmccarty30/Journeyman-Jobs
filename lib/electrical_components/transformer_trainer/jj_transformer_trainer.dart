@@ -216,7 +216,7 @@ class JJTransformerTrainer extends StatelessWidget {
   Widget _buildErrorWidget(String errorMessage) => Container(
         padding: const EdgeInsets.all(AppTheme.spacingLg),
         decoration: BoxDecoration(
-          color: AppTheme.errorRed.withOpacity(0.1),
+          color: AppTheme.errorRed.withValues(alpha: 0.1),
           border: Border.all(color: AppTheme.errorRed),
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         ),

@@ -20,19 +20,20 @@ I am going screen by screen, calling out any and all issues, errors, inconsistan
 
 ## HOME SCREEN
 
+1. Be sure to follow the app theme when modifying this screen. The theme ***MUST*** be consistent throughout the entire app. So make sure thet the borders are copper and the correct thickness. The animations are applied and correct as far as when pressing a button, it should spark. The toasts and snack bars are all correct and consistant.
+
 * **REMOVE**
 
 1. The `FAB` For the demo Screen
 2. The second `Notification Badge` that is underneath the `App Bar`
 3. `Find Jobs` button in the quick action section
 
-* **MODIFY**
+* **JOBS CARD**
 
-1. The `job card` need to have "STANDARD" removed from the top right corner of every `card`
-2. The `job card` need to have the hard coded "$" and "Day" removed
-3. The `job card` needs to be formatted with `Rich Text` widgets. `Span 1` will be, for example "Local:", then `span 2` will be the actual value queried from the backend. For example "111" so it will look like "Local": "111", "Classification": "Journeyman Lineman", "Per Diem": "$100". Where the first span is the hardcoded description and the second span is the actual value from the document. The `card` should look like C:\Users\david\Desktop\Journeyman-Jobs\assets\images\job-card.png
+1. In the "Suggested Jobs" section, you are to implement the `CondensedJobCard` from lib\widgets\condensed_job_card.dart
+2. It is based off of the image shown in assets\images\condensed-job-card.png
 
-* **ADD**
+* **DIALOG POPUP**
 
 1. When the user clicks on the `job card` the same `Dialog Popup` that appears when a user clicks on the `job card` on the `Jobs Screen` will appear. This promotes consistancy throughout the app.
 2. The `Dialog Popup` design and layout will reflect "C:\Users\david\Desktop\Journeyman-Jobs\lib\design_system\popup_theme.dart"

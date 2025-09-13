@@ -5,7 +5,6 @@ import '../design_system/components/job_card.dart';
 import '../models/job_model.dart';
 import '../providers/riverpod/app_state_riverpod_provider.dart';
 import '../providers/riverpod/jobs_riverpod_provider.dart';
-import '../services/connectivity_service.dart';
 
 /// High-performance virtual scrolling job list with infinite loading
 /// 
@@ -165,7 +164,7 @@ class _VirtualJobListState extends ConsumerState<VirtualJobList> with AutomaticK
                     padding: const EdgeInsets.all(12),
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: AppTheme.warningYellow.withOpacity(0.1),
+                      color: AppTheme.warningYellow.withValues(alpha: 0.1),
                       border: Border.all(color: AppTheme.warningYellow),
                       borderRadius: BorderRadius.circular(8),
                     ),

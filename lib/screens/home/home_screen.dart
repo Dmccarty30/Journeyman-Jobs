@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
+
 import '../../navigation/app_router.dart';
 import '../../providers/riverpod/jobs_riverpod_provider.dart';
 import '../../providers/riverpod/auth_riverpod_provider.dart';
 import '../../models/job_model.dart';
 import '../../legacy/flutterflow/schema/jobs_record.dart';
-import '../../utils/job_formatting.dart';
+
 import '../../widgets/notification_badge.dart';
+import '../../widgets/condensed_job_card.dart';
+import '../../widgets/dialogs/job_details_dialog.dart';
 import '../../electrical_components/circuit_board_background.dart';
-import 'electrical_demo_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -284,12 +286,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                   return Column(
                     children: jobsState.jobs.take(5).map((job) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-                        child: _buildSuggestedJobCard(
-                          job: job,
-                          onTap: () => _showJobDetailsDialog(context, job),
-                        ),
+                      final jobModel = job is JobsRecord ? _convertJobsRecordToJob(job as JobsRecord) : job;
+                      return CondensedJobCard(
+                        job: jobModel,
+                        onTap: () => _showJobDetailsDialog(context, jobModel),
                       );
                     }).toList(),
                   );
@@ -316,8 +316,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           boxShadow: [AppTheme.shadowSm],
           border: Border.all(
-            color: AppTheme.lightGray,
-            width: 1,
+            color: AppTheme.accentCopper,
+            width: AppTheme.borderWidthThin,
           ),
         ),
         child: Column(
@@ -343,287 +343,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildSuggestedJobCard({
-    required dynamic job,
-    required VoidCallback onTap,
-  }) {
-    final jobModel = job is JobsRecord ? _convertJobsRecordToJob(job) : job as Job;
-    
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(AppTheme.spacingMd),
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          boxShadow: [AppTheme.shadowSm],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      JobFormatting.formatJobTitle(jobModel.jobTitle ?? jobModel.jobClass ?? jobModel.classification ?? 'General Electrical'),
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.primaryNavy,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Classification: ',
-                            style: AppTheme.bodySmall.copyWith(
-                              color: AppTheme.primaryNavy,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          TextSpan(
-                            text: jobModel.classification ?? 'General Electrical',
-                            style: AppTheme.bodySmall.copyWith(
-                              color: AppTheme.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Local: ',
-                            style: AppTheme.bodySmall.copyWith(
-                              color: AppTheme.primaryNavy,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          TextSpan(
-                            text: jobModel.local ?? jobModel.localNumber ?? 'N/A',
-                            style: AppTheme.bodySmall.copyWith(
-                              color: AppTheme.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spacingMd),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                      jobModel.company,
-                        style: AppTheme.bodyMedium.copyWith(
-                          color: AppTheme.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            size: 14,
-                            color: AppTheme.textSecondary,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              JobFormatting.formatLocation(jobModel.location),
-                              style: AppTheme.bodySmall.copyWith(
-                                color: AppTheme.textSecondary,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      jobModel.wage != null ? JobFormatting.formatWage(jobModel.wage) : 'Competitive',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.primaryNavy,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Per Diem: ',
-                            style: AppTheme.bodySmall.copyWith(
-                              color: AppTheme.primaryNavy,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          TextSpan(
-                            text: jobModel.perDiem?.isNotEmpty == true ? jobModel.perDiem! : 'None',
-                            style: AppTheme.bodySmall.copyWith(
-                              color: AppTheme.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            if (jobModel.startDate != null) ...[
-              const SizedBox(height: AppTheme.spacingXs),
-              Row(
-                children: [
-                  Icon(
-                    Icons.calendar_today,
-                    size: 12,
-                    color: AppTheme.textSecondary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Start: ${jobModel.startDate}',
-                    style: AppTheme.labelSmall.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
+
 
   void _showJobDetailsDialog(BuildContext context, dynamic job) {
     final jobModel = job is JobsRecord ? _convertJobsRecordToJob(job) : job as Job;
-    
+
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            jobModel.company,
-            style: AppTheme.headlineSmall.copyWith(
-              color: AppTheme.primaryNavy,
-            ),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildDetailRow('Local', jobModel.local?.toString() ?? 'N/A'),
-                _buildDetailRow('Classification', jobModel.classification ?? 'N/A'),
-                _buildDetailRow('Location', jobModel.location),
-                _buildDetailRow('Hours', '${jobModel.hours ?? 'N/A'} hours/week'),
-                _buildDetailRow('Wage', jobModel.wage != null ? '\$${jobModel.wage}/hr' : 'N/A'),
-                _buildDetailRow('Per Diem', jobModel.perDiem?.isNotEmpty == true ? 'Yes' : 'No'),
-                _buildDetailRow('Start Date', jobModel.startDate ?? 'N/A'),
-                _buildDetailRow('Duration', jobModel.duration ?? 'N/A'),
-                if (jobModel.jobDescription?.isNotEmpty == true) ...[
-                  const SizedBox(height: AppTheme.spacingMd),
-                  Text(
-                    'Description',
-                    style: AppTheme.bodyLarge.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spacingSm),
-                  Text(
-                    jobModel.jobDescription!,
-                    style: AppTheme.bodyMedium,
-                  ),
-                ],
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Close',
-                style: TextStyle(color: AppTheme.textSecondary),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _submitJobApplication(jobModel);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryNavy,
-                foregroundColor: AppTheme.white,
-              ),
-              child: const Text('Apply'),
-            ),
-          ],
-        );
-      },
+      builder: (BuildContext context) => JobDetailsDialog(job: jobModel),
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingXs),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              '$label:',
-              style: AppTheme.bodyMedium.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: AppTheme.bodyMedium,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
-  void _submitJobApplication(Job job) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Application submitted for ${job.classification ?? 'the position'}!',
-          style: const TextStyle(color: Colors.white),
-        ),
-        backgroundColor: AppTheme.primaryNavy,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-    );
-  }
 
   Job _convertJobsRecordToJob(JobsRecord jobsRecord) {
     return Job(

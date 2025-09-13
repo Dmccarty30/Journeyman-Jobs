@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
+import '../utils/string_utils.dart';
 
 /// Model class representing a Job posting
 /// Matches the backend JobsRecord schema
@@ -216,7 +217,7 @@ class Job {
         id: json['id']?.toString() ?? '',
         reference: json['reference'] as DocumentReference?,
         local: parseInt(json['local']) ?? parseInt(json['localNumber']),
-        classification: extractedClassification ?? json['jobClass']?.toString(),
+        classification: StringUtils.normalizeJobTitle(extractedClassification ?? json['jobClass']?.toString()),
         company: json['company']?.toString() ?? json['employer']?.toString() ?? '',
         location: json['location']?.toString() ?? json['Location']?.toString() ?? '',
         hours: hoursInt ?? parseInt(json['Shift']),
@@ -227,7 +228,7 @@ class Job {
         qualifications: json['qualifications']?.toString() ?? json['certifications']?.toString() ?? certifications,
         datePosted: json['date_posted']?.toString() ?? json['datePosted']?.toString(),
         jobDescription: json['description']?.toString() ?? json['job_description']?.toString(),
-        jobTitle: extractedJobTitle ?? json['title']?.toString(),
+        jobTitle: StringUtils.normalizeJobTitle(extractedJobTitle ?? json['title']?.toString()),
         perDiem: json['per_diem']?.toString() ?? json['perDiem']?.toString() ?? json['Benefits']?.toString(),
         agreement: json['agreement']?.toString(),
         numberOfJobs: json['numberOfJobs']?.toString() ?? json['positionsAvailable']?.toString() ?? json['Men Needed']?.toString(),
@@ -235,7 +236,7 @@ class Job {
         startDate: json['startDate']?.toString() ?? json['requestDate']?.toString(),
         startTime: json['startTime']?.toString(),
         booksYourOn: parseIntList(json['booksYourOn']),
-        typeOfWork: json['work_type']?.toString() ?? json['typeOfWork']?.toString() ?? json['Type of Work']?.toString(),
+        typeOfWork: StringUtils.normalizeJobTitle(json['work_type']?.toString() ?? json['typeOfWork']?.toString() ?? json['Type of Work']?.toString()),
         duration: json['duration']?.toString() ?? json['Duration']?.toString(),
         voltageLevel: json['voltageLevel']?.toString() ?? json['voltage_level']?.toString(),
       );

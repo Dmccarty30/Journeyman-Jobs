@@ -293,7 +293,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
+                            color: Colors.black.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -378,7 +378,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                   width: 48,
                   height: 200,
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryNavy.withOpacity(0.9),
+                    color: AppTheme.primaryNavy.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: AppTheme.accentCopper,
@@ -417,7 +417,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryNavy.withOpacity(0.9),
+                  color: AppTheme.primaryNavy.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: AppTheme.accentCopper,
@@ -471,7 +471,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
       width: 48,
       height: 48,
       decoration: BoxDecoration(
-        color: AppTheme.primaryNavy.withOpacity(0.9),
+        color: AppTheme.primaryNavy.withValues(alpha: 0.9),
         shape: BoxShape.circle,
         border: Border.all(
           color: AppTheme.accentCopper,
@@ -490,7 +490,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: AppTheme.primaryNavy.withOpacity(0.9),
+        color: AppTheme.primaryNavy.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: AppTheme.accentCopper,

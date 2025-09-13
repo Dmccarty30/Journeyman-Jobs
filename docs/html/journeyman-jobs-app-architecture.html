@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journeyman Jobs - App Architecture Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1A202C;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .header {
+            background: linear-gradient(135deg, #1A202C 0%, #B45309 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            background: white;
+            margin: 20px 0;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .screen-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .screen-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .screen-card.core {
+            border-left: 4px solid #B45309;
+        }
+        .screen-card.auth {
+            border-left: 4px solid #38a169;
+        }
+        .screen-card.tools {
+            border-left: 4px solid #3182ce;
+        }
+        .screen-card.settings {
+            border-left: 4px solid #805ad5;
+        }
+        .navigation-flow {
+            background: #f0f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .user-journey {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin: 15px 0;
+        }
+        .journey-step {
+            background: #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .arrow {
+            color: #B45309;
+            font-weight: bold;
+        }
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #B45309;
+        }
+        h1 { color: white; margin: 0; }
+        h2 { color: #1A202C; border-bottom: 2px solid #B45309; padding-bottom: 10px; }
+        h3 { color: #B45309; margin-top: 25px; }
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .tech-item {
+            background: #e2e8f0;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .data-flow {
+            background: #e8f5e8;
+            border: 1px solid #c6f6d5;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .navigation-matrix {
+            overflow-x: auto;
+        }
+        code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚡ Journeyman Jobs - App Architecture</h1>
+        <p>Comprehensive architecture documentation for IBEW electrical worker job board app</p>
+    </div>
+
+    <div class="section">
+        <h2>🏗️ App Overview</h2>
+        <p><strong>Journeyman Jobs</strong> is a specialized job discovery app designed exclusively for IBEW (International Brotherhood of Electrical Workers) union members. The app connects journeymen, linemen, wiremen, and other electrical professionals with contractors across North America.</p>
+        
+        <div class="tech-stack">
+            <span class="tech-item">Flutter 3.x</span>
+            <span class="tech-item">Firebase Suite</span>
+            <span class="tech-item">Riverpod State Management</span>
+            <span class="tech-item">Go Router Navigation</span>
+            <span class="tech-item">NOAA Weather API</span>
+            <span class="tech-item">Google/Apple Sign-In</span>
+        </div>
+
+        <h3>Core Mission</h3>
+        <p><strong>"Clearing the Books"</strong> - The app's tagline reflects its purpose of helping electrical workers find job opportunities quickly and efficiently, reducing time spent on unemployment lists ("the books").</p>
+    </div>
+
+    <div class="section">
+        <h2>🚀 User Journey & First-Time Experience</h2>
+        
+        <h3>Entry Point Flow</h3>
+        <div class="user-journey">
+            <span class="journey-step">Splash Screen</span>
+            <span class="arrow">→</span>
+            <span class="journey-step">Auth Check</span>
+            <span class="arrow">→</span>
+            <span class="journey-step">Welcome/Onboarding</span>
+            <span class="arrow">→</span>
+            <span class="journey-step">Main App</span>
+        </div>
+
+        <h3>Authentication States</h3>
+        <div class="navigation-flow">
+            <strong>New Users:</strong> Splash → Welcome (3 screens) → Auth → Onboarding → Home<br>
+            <strong>Returning Users:</strong> Splash → Home (if onboarded) or Onboarding<br>
+            <strong>Logged Out:</strong> Splash → Welcome → Auth
+        </div>
+
+        <h3>Onboarding Experience</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <strong>Welcome Carousel</strong><br>
+                3 intro screens with electrical-themed animations
+            </div>
+            <div class="feature-item">
+                <strong>Authentication</strong><br>
+                Email/password, Google, Apple sign-in options
+            </div>
+            <div class="feature-item">
+                <strong>Profile Setup</strong><br>
+                IBEW local, classification, experience level
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📱 Screen Architecture</h2>
+        
+        <div class="screen-grid">
+            <!-- Authentication Screens -->
+            <div class="screen-card auth">
+                <h3>🔐 Authentication Flow</h3>
+                <ul>
+                    <li><strong>Splash Screen</strong> - App initialization, auth check</li>
+                    <li><strong>Welcome Screen</strong> - 3-page intro carousel</li>
+                    <li><strong>Auth Screen</strong> - Sign up/sign in tabs</li>
+                    <li><strong>Forgot Password</strong> - Password recovery</li>
+                    <li><strong>Onboarding Steps</strong> - Profile completion</li>
+                </ul>
+            </div>
+
+            <!-- Core App Screens -->
+            <div class="screen-card core">
+                <h3>⚡ Core App Screens</h3>
+                <ul>
+                    <li><strong>Home Screen</strong> - Dashboard, quick actions, suggested jobs</li>
+                    <li><strong>Jobs Screen</strong> - Job listings with filters and search</li>
+                    <li><strong>Storm Screen</strong> - Emergency work, weather radar</li>
+                    <li><strong>Locals Screen</strong> - IBEW union directory (797+ locals)</li>
+                    <li><strong>Settings Screen</strong> - Account management, app config</li>
+                </ul>
+            </div>
+
+            <!-- Tool Screens -->
+            <div class="screen-card tools">
+                <h3>🔧 Electrical Tools</h3>
+                <ul>
+                    <li><strong>Electrical Calculators</strong> - Ohm's law, wire size, conduit fill</li>
+                    <li><strong>Transformer Reference</strong> - Technical diagrams and specs</li>
+                    <li><strong>Transformer Workbench</strong> - Interactive training modes</li>
+                    <li><strong>Components Showcase</strong> - Electrical component demos</li>
+                </ul>
+            </div>
+
+            <!-- Settings & Support -->
+            <div class="screen-card settings">
+                <h3>⚙️ Settings & Support</h3>
+                <ul>
+                    <li><strong>Profile Screen</strong> - Personal info, ticket number</li>
+                    <li><strong>Training Certificates</strong> - Credential management</li>
+                    <li><strong>Help & Support</strong> - FAQ, troubleshooting</li>
+                    <li><strong>Notifications</strong> - Push notification settings</li>
+                    <li><strong>Feedback</strong> - User feedback and suggestions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🧭 Navigation Architecture</h2>
+        
+        <h3>Bottom Navigation (Main App)</h3>
+        <div class="navigation-matrix">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tab</th>
+                        <th>Route</th>
+                        <th>Icon</th>
+                        <th>Primary Purpose</th>
+                        <th>Key Features</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Home</strong></td>
+                        <td>/home</td>
+                        <td>🏠</td>
+                        <td>Dashboard & quick actions</td>
+                        <td>User greeting, suggested jobs, electrical calc access</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Jobs</strong></td>
+                        <td>/jobs</td>
+                        <td>💼</td>
+                        <td>Job discovery & application</td>
+                        <td>Search, filter, bid system, job details</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Storm</strong></td>
+                        <td>/storm</td>
+                        <td>⚡</td>
+                        <td>Emergency & storm work</td>
+                        <td>Weather radar, power outages, high-pay assignments</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Locals</strong></td>
+                        <td>/locals</td>
+                        <td>👥</td>
+                        <td>IBEW union directory</td>
+                        <td>797+ locals, contact info, direct calling/mapping</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Settings</strong></td>
+                        <td>/settings</td>
+                        <td>⚙️</td>
+                        <td>Account & app management</td>
+                        <td>Profile, notifications, support, sign out</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>Navigation Patterns</h3>
+        <div class="navigation-flow">
+            <strong>Shell Navigation:</strong> Main tabs use persistent bottom nav with ShellRoute<br>
+            <strong>Modal Navigation:</strong> Settings screens, tools, and details use push navigation<br>
+            <strong>External Navigation:</strong> Phone calls, maps, websites use system integration
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🎯 Key Features by Screen</h2>
+
+        <h3>Home Screen Features</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <strong>User Greeting</strong><br>
+                Personalized welcome with profile photo/initials and ticket number
+            </div>
+            <div class="feature-item">
+                <strong>Quick Actions</strong><br>
+                Electrical calculators, job search shortcuts
+            </div>
+            <div class="feature-item">
+                <strong>Suggested Jobs</strong><br>
+                Top 5 recommended positions based on profile
+            </div>
+            <div class="feature-item">
+                <strong>Electrical Demo FAB</strong><br>
+                Floating action button to showcase electrical UI components
+            </div>
+        </div>
+
+        <h3>Jobs Screen Features</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <strong>Advanced Search</strong><br>
+                Company, location, classification filtering
+            </div>
+            <div class="feature-item">
+                <strong>Filter Chips</strong><br>
+                Journeyman types, transmission, distribution, storm work
+            </div>
+            <div class="feature-item">
+                <strong>Job Cards</strong><br>
+                Rich job info with wage, per diem, start date, location
+            </div>
+            <div class="feature-item">
+                <strong>Bid System</strong><br>
+                Apply for jobs directly through the app
+            </div>
+        </div>
+
+        <h3>Storm Screen Features</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <strong>Emergency Banner</strong><br>
+                Critical storm work availability alerts
+            </div>
+            <div class="feature-item">
+                <strong>Live Weather Radar</strong><br>
+                NOAA radar integration with location services
+            </div>
+            <div class="feature-item">
+                <strong>Power Outage Tracking</strong><br>
+                Real-time state-by-state outage statistics
+            </div>
+            <div class="feature-item">
+                <strong>Storm Work Cards</strong><br>
+                High-priority assignments with enhanced compensation
+            </div>
+        </div>
+
+        <h3>Locals Screen Features</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <strong>Comprehensive Directory</strong><br>
+                797+ IBEW locals with full contact details
+            </div>
+            <div class="feature-item">
+                <strong>State Filtering</strong><br>
+                Quick access to locals by geographic region
+            </div>
+            <div class="feature-item">
+                <strong>Direct Integration</strong><br>
+                One-tap calling, mapping, email, and website access
+            </div>
+            <div class="feature-item">
+                <strong>Multiple Office Support</strong><br>
+                Handles locals with multiple office locations
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔧 Electrical Tools Suite</h2>
+        
+        <h3>Calculator Tools</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <strong>Ohm's Law Calculator</strong><br>
+                Calculate voltage, current, resistance, or power from any two values
+            </div>
+            <div class="feature-item">
+                <strong>Wire Size Calculator</strong><br>
+                Determine proper AWG based on load and voltage requirements
+            </div>
+            <div class="feature-item">
+                <strong>Conduit Fill Calculator</strong><br>
+                NEC Chapter 9 compliance checking for wire counts
+            </div>
+            <div class="feature-item">
+                <strong>Voltage Drop Calculator</strong><br>
+                Calculate percentage drop with distance and load factors
+            </div>
+        </div>
+
+        <h3>Transformer Training Suite</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <strong>Interactive Diagrams</strong><br>
+                Wye-to-wye connection animations with visual feedback
+            </div>
+            <div class="feature-item">
+                <strong>Training Modes</strong><br>
+                Guided learning vs. quiz mode for skill assessment
+            </div>
+            <div class="feature-item">
+                <strong>Connection Points</strong><br>
+                Drag-and-drop interface for connection practice
+            </div>
+            <div class="feature-item">
+                <strong>Visual Feedback</strong><br>
+                Success/failure animations with electrical effects
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>⚡ Weather Integration</h2>
+        
+        <h3>NOAA Weather Services</h3>
+        <div class="data-flow">
+            <strong>Data Sources:</strong>
+            <ul>
+                <li><strong>National Weather Service API:</strong> Official weather alerts and warnings</li>
+                <li><strong>NOAA Radar:</strong> Real-time precipitation and storm tracking</li>
+                <li><strong>Hurricane Center:</strong> Tropical storm and hurricane data</li>
+                <li><strong>Storm Prediction Center:</strong> Severe weather outlooks</li>
+            </ul>
+        </div>
+
+        <h3>Integration Features</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <strong>Location Services</strong><br>
+                GPS-based radar centering with privacy controls
+            </div>
+            <div class="feature-item">
+                <strong>Alert Filtering</strong><br>
+                Focus on events relevant to electrical work safety
+            </div>
+            <div class="feature-item">
+                <strong>Storm Work Correlation</strong><br>
+                Match weather events to job opportunities
+            </div>
+            <div class="feature-item">
+                <strong>Safety Integration</strong><br>
+                Worker safety protocols embedded in weather alerts
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔄 State Management & Data Flow</h2>
+        
+        <h3>Riverpod Architecture</h3>
+        <div class="data-flow">
+            <strong>Provider Structure:</strong>
+            <ul>
+                <li><strong>AuthProvider:</strong> Firebase authentication state</li>
+                <li><strong>JobsProvider:</strong> Job listings, search, filtering</li>
+                <li><strong>LocalsProvider:</strong> IBEW directory data and search</li>
+                <li><strong>WeatherProvider:</strong> NOAA data integration (future)</li>
+                <li><strong>AppStateProvider:</strong> Global app configuration</li>
+            </ul>
+        </div>
+
+        <h3>Data Dependencies</h3>
+        <div class="navigation-matrix">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Screen</th>
+                        <th>Required Data</th>
+                        <th>State Dependencies</th>
+                        <th>External APIs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Home</td>
+                        <td>User profile, suggested jobs</td>
+                        <td>Auth, Jobs providers</td>
+                        <td>Firebase Firestore</td>
+                    </tr>
+                    <tr>
+                        <td>Jobs</td>
+                        <td>Job listings, search results</td>
+                        <td>Jobs provider, search state</td>
+                        <td>Firebase Firestore, job aggregation</td>
+                    </tr>
+                    <tr>
+                        <td>Storm</td>
+                        <td>Weather data, outage info, storm jobs</td>
+                        <td>Location, Jobs provider</td>
+                        <td>NOAA, power company APIs</td>
+                    </tr>
+                    <tr>
+                        <td>Locals</td>
+                        <td>IBEW directory, contact info</td>
+                        <td>Locals provider, search state</td>
+                        <td>Firebase Firestore</td>
+                    </tr>
+                    <tr>
+                        <td>Settings</td>
+                        <td>User profile, app preferences</td>
+                        <td>Auth provider, app state</td>
+                        <td>Firebase Auth, Firestore</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🎨 Design System & Electrical Theming</h2>
+        
+        <h3>Color Palette</h3>
+        <div class="tech-stack">
+            <span class="tech-item" style="background: #1A202C; color: white;">Primary Navy</span>
+            <span class="tech-item" style="background: #B45309; color: white;">Accent Copper</span>
+            <span class="tech-item" style="background: #F56565; color: white;">Error Red</span>
+            <span class="tech-item" style="background: #ECC94B;">Warning Yellow</span>
+            <span class="tech-item" style="background: #48BB78; color: white;">Success Green</span>
+        </div>
+
+        <h3>Electrical UI Components</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <strong>Circuit Board Background</strong><br>
+                Animated electrical circuit patterns with current flow effects
+            </div>
+            <div class="feature-item">
+                <strong>JJ Component Library</strong><br>
+                Custom buttons, loaders, notifications with electrical aesthetics
+            </div>
+            <div class="feature-item">
+                <strong>Lightning Animations</strong><br>
+                Power-up effects, success states, loading indicators
+            </div>
+            <div class="feature-item">
+                <strong>Electrical Icons</strong><br>
+                Industry-specific iconography (bolts, plugs, circuits, transformers)
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📊 User Action Inventory</h2>
+        
+        <h3>Primary Actions</h3>
+        <div class="navigation-matrix">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Screen</th>
+                        <th>Primary Actions</th>
+                        <th>Secondary Actions</th>
+                        <th>System Integrations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Home</td>
+                        <td>View suggested jobs, access calculators</td>
+                        <td>Refresh jobs, view notifications</td>
+                        <td>Firebase sync, job recommendations</td>
+                    </tr>
+                    <tr>
+                        <td>Jobs</td>
+                        <td>Search jobs, apply/bid, view details</td>
+                        <td>Filter, sort, save favorites</td>
+                        <td>Job aggregation APIs, application system</td>
+                    </tr>
+                    <tr>
+                        <td>Storm</td>
+                        <td>View weather radar, apply for storm work</td>
+                        <td>Set notifications, view power outages</td>
+                        <td>NOAA API, location services, job matching</td>
+                    </tr>
+                    <tr>
+                        <td>Locals</td>
+                        <td>Search directory, contact locals</td>
+                        <td>Filter by state, view details</td>
+                        <td>Phone dialer, maps, email, browser</td>
+                    </tr>
+                    <tr>
+                        <td>Tools</td>
+                        <td>Calculate electrical values</td>
+                        <td>Switch calculator types, clear values</td>
+                        <td>Mathematical calculations, result validation</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔐 Security & Privacy</h2>
+        
+        <div class="warning">
+            <h3>⚠️ Data Sensitivity Considerations</h3>
+            <ul>
+                <li><strong>IBEW Ticket Numbers:</strong> Sensitive union membership data</li>
+                <li><strong>Location Data:</strong> GPS coordinates for weather services</li>
+                <li><strong>Contact Information:</strong> Personal phone/email for job applications</li>
+                <li><strong>Employment History:</strong> Previous jobs and union affiliations</li>
+            </ul>
+        </div>
+
+        <h3>Authentication & Authorization</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <strong>Multi-Provider Auth</strong><br>
+                Firebase Auth with email, Google, and Apple Sign-In
+            </div>
+            <div class="feature-item">
+                <strong>Secure Storage</strong><br>
+                Firestore security rules, encrypted sensitive data
+            </div>
+            <div class="feature-item">
+                <strong>Permission Management</strong><br>
+                Granular location, notification, and contact permissions
+            </div>
+            <div class="feature-item">
+                <strong>Union Verification</strong><br>
+                IBEW membership validation through ticket numbers
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🚀 Key Technical Decisions</h2>
+        
+        <h3>Framework Choices</h3>
+        <div class="data-flow">
+            <ul>
+                <li><strong>Flutter:</strong> Cross-platform with excellent performance for complex animations</li>
+                <li><strong>Firebase:</strong> Comprehensive backend-as-a-service with offline support</li>
+                <li><strong>Riverpod:</strong> Robust state management with dependency injection</li>
+                <li><strong>GoRouter:</strong> Type-safe navigation with nested routing support</li>
+                <li><strong>NOAA APIs:</strong> Official government weather data (no API keys required)</li>
+            </ul>
+        </div>
+
+        <h3>Performance Optimizations</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <strong>Lazy Loading</strong><br>
+                Jobs and locals load incrementally with scroll pagination
+            </div>
+            <div class="feature-item">
+                <strong>Image Optimization</strong><br>
+                Cached job company logos and user profile photos
+            </div>
+            <div class="feature-item">
+                <strong>Offline Support</strong><br>
+                Critical features (union directory) work without internet
+            </div>
+            <div class="feature-item">
+                <strong>Animation Performance</strong><br>
+                Hardware-accelerated electrical UI effects and transitions
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📈 Future Roadmap Considerations</h2>
+        
+        <h3>Planned Enhancements</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <strong>Job Aggregation</strong><br>
+                Automated scraping from legacy union job boards
+            </div>
+            <div class="feature-item">
+                <strong>Bid Management</strong><br>
+                Complete bidding system with contractor integration
+            </div>
+            <div class="feature-item">
+                <strong>Weather Automation</strong><br>
+                Automatic storm work notifications based on weather events
+            </div>
+            <div class="feature-item">
+                <strong>Training Integration</strong><br>
+                Expanded transformer training with certification tracking
+            </div>
+        </div>
+    </div>
+
+    <div style="background: #1A202C; color: white; padding: 30px; border-radius: 8px; text-align: center; margin-top: 40px;">
+        <h2 style="color: #B45309; border: none; padding: 0;">⚡ Ready for Wireframe Development</h2>
+        <p>This architecture documentation provides the foundation for creating detailed wireframes, user flow diagrams, and technical specifications for the Journeyman Jobs app.</p>
+        <p><strong>Generated:</strong> January 2025 | <strong>Target Platform:</strong> iOS/Android via Flutter</p>
+    </div>
+</body>
+</html>

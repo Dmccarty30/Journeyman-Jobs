@@ -310,7 +310,7 @@ class QuizModeWidget extends StatelessWidget {
         child: AlertDialog(
           backgroundColor: PopupThemeData.alertDialog().backgroundColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(PopupThemeData.alertDialog().borderRadius),
+            borderRadius: BorderRadius.circular(PopupThemeData.alertDialog().borderRadius as double),
             side: BorderSide(
               color: PopupThemeData.alertDialog().borderColor,
               width: PopupThemeData.alertDialog().borderWidth,
@@ -373,7 +373,7 @@ class QuizModeWidget extends StatelessWidget {
         child: AlertDialog(
           backgroundColor: PopupThemeData.alertDialog().backgroundColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(PopupThemeData.alertDialog().borderRadius),
+            borderRadius: BorderRadius.circular(PopupThemeData.alertDialog().borderRadius as double),
             side: BorderSide(
               color: PopupThemeData.alertDialog().borderColor,
               width: PopupThemeData.alertDialog().borderWidth,
@@ -479,7 +479,7 @@ class QuizModeWidget extends StatelessWidget {
         child: AlertDialog(
           backgroundColor: PopupThemeData.alertDialog().backgroundColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(PopupThemeData.alertDialog().borderRadius),
+            borderRadius: BorderRadius.circular(PopupThemeData.alertDialog().borderRadius as double),
             side: BorderSide(
               color: PopupThemeData.alertDialog().borderColor,
               width: PopupThemeData.alertDialog().borderWidth,

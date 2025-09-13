@@ -96,14 +96,14 @@ class _SuccessAnimationWidgetState extends State<SuccessAnimationWidget>
                   boxShadow: <BoxShadow>[
                     // Primary glow
                     BoxShadow(
-                      color: Colors.green.withOpacity(0.5 * _glowAnimation.value),
+                      color: Colors.green.withValues(alpha: 0.5 * _glowAnimation.value),
                       spreadRadius: 15 * _glowAnimation.value,
                       blurRadius: 20 * _glowAnimation.value,
                     ),
                     // Secondary glow (enhanced)
                     if (widget.enhanced)
                       BoxShadow(
-                        color: Colors.lightGreen.withOpacity(0.3 * _glowAnimation.value),
+                        color: Colors.lightGreen.withValues(alpha: 0.3 * _glowAnimation.value),
                         spreadRadius: 25 * _glowAnimation.value,
                         blurRadius: 30 * _glowAnimation.value,
                       ),
@@ -192,7 +192,7 @@ class _PulseAnimationWidgetState extends State<PulseAnimationWidget>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: widget.color.withOpacity((1 - progress) * 0.5),
+                        color: widget.color.withValues(alpha: (1 - progress) * 0.5),
                         width: 3,
                       ),
                     ),
@@ -208,14 +208,14 @@ class _PulseAnimationWidgetState extends State<PulseAnimationWidget>
                 borderRadius: BorderRadius.circular(50),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
-                    color: widget.color.withOpacity(0.6 * widget.controller.value),
+                    color: widget.color.withValues(alpha: 0.6 * widget.controller.value),
                     spreadRadius: widget.enhanced ? 15 : 10 * widget.controller.value,
                     blurRadius: widget.enhanced ? 25 : 20 * widget.controller.value,
                   ),
                   // Extra glow layer for enhanced mode
                   if (widget.enhanced)
                     BoxShadow(
-                      color: widget.color.withOpacity(0.3 * widget.controller.value),
+                      color: widget.color.withValues(alpha: 0.3 * widget.controller.value),
                       spreadRadius: 30 * widget.controller.value,
                       blurRadius: 40 * widget.controller.value,
                     ),
@@ -274,8 +274,8 @@ class SuccessRaysPainter extends CustomPainter {
           innerPoint,
           outerPoint,
           <Color>[
-            color.withOpacity(0.8 * progress),
-            color.withOpacity(0),
+            color.withValues(alpha: 0.8 * progress),
+            color.withValues(alpha: 0),
           ],
         )
         ..strokeWidth = 3
@@ -314,7 +314,7 @@ class SuccessParticlesPainter extends CustomPainter {
         );
         
         final Paint paint = Paint()
-          ..color = Colors.lightGreen.withOpacity(1 - particleProgress)
+          ..color = Colors.lightGreen.withValues(alpha: 1 - particleProgress)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
         
         // Draw star-shaped particle

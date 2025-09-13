@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flutter JobCard Visual</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        h2 {
+            color: #333;
+            margin-bottom: 16px;
+        }
+        
+        /* Normal Card */
+        .job-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: box-shadow 0.2s ease;
+        }
+        
+        .job-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .storm-card {
+            border: 2px solid #dc3545;
+        }
+        
+        /* Header with badges */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .local-badge {
+            background: rgba(0,30,67,0.1);
+            color: #001e43;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .storm-badge {
+            background: #dc3545;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .storm-badge::before {
+            content: "⚡";
+            font-size: 14px;
+        }
+        
+        /* Title */
+        .job-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        /* Location */
+        .location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .location::before {
+            content: "📍";
+            font-size: 16px;
+        }
+        
+        /* Detail chips */
+        .details {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        
+        .detail-chip {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .detail-chip::before {
+            font-size: 14px;
+        }
+        
+        .work-chip::before { content: "💼"; }
+        .business-chip::before { content: "🏢"; }
+        .schedule-chip::before { content: "🕒"; }
+        
+        /* Wage section */
+        .wage-section {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .wage-label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .wage-amount {
+            color: #b87333;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        /* Skeleton Card */
+        .skeleton-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .skeleton {
+            background: #d0d0d0;
+            border-radius: 4px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .skeleton-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .skeleton-box {
+            height: 24px;
+            background: #d0d0d0;
+            border-radius: 4px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h2>Normal Job Card</h2>
+        <div class="job-card">
+            <div class="card-header">
+                <span class="local-badge">Local 123</span>
+            </div>
+            
+            <div class="job-title">Senior Electrical Technician Position</div>
+            
+            <div class="location">
+                San Francisco, CA
+            </div>
+            
+            <div class="details">
+                <span class="detail-chip work-chip">Journeyman</span>
+                <span class="detail-chip business-chip">Commercial</span>
+                <span class="detail-chip schedule-chip">6 months</span>
+            </div>
+            
+            <div class="wage-section">
+                <span class="wage-label">Wage:</span>
+                <span class="wage-amount">$45.50/hr</span>
+            </div>
+        </div>
+    </div>
+    
+    <div>
+        <h2>Storm Work Card</h2>
+        <div class="job-card storm-card">
+            <div class="card-header">
+                <span class="local-badge">Local 456</span>
+                <span class="storm-badge">STORM WORK</span>
+            </div>
+            
+            <div class="job-title">Emergency Power Restoration Specialist</div>
+            
+            <div class="location">
+                Houston, TX
+            </div>
+            
+            <div class="details">
+                <span class="detail-chip work-chip">Lineman</span>
+                <span class="detail-chip business-chip">Utility</span>
+                <span class="detail-chip schedule-chip">2 weeks</span>
+            </div>
+            
+            <div class="wage-section">
+                <span class="wage-label">Wage:</span>
+                <span class="wage-amount">$65.00/hr</span>
+            </div>
+        </div>
+    </div>
+    
+    <div>
+        <h2>Loading Skeleton</h2>
+        <div class="skeleton-card">
+            <div class="skeleton-header">
+                <div class="skeleton-box" style="width: 80px;"></div>
+                <div class="skeleton-box" style="width: 60px;"></div>
+            </div>
+            
+            <div class="skeleton-box" style="width: 100%; height: 20px; margin-bottom: 8px;"></div>
+            <div class="skeleton-box" style="width: 200px; height: 20px; margin-bottom: 12px;"></div>
+            <div class="skeleton-box" style="width: 150px; height: 16px; margin-bottom: 12px;"></div>
+            
+            <div style="display: flex; gap: 8px;">
+                <div class="skeleton-box" style="width: 80px;"></div>
+                <div class="skeleton-box" style="width: 80px;"></div>
+                <div class="skeleton-box" style="width: 60px;"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

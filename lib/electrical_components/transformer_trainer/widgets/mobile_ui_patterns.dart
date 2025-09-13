@@ -126,7 +126,7 @@ class MobileTransformerControlsSheet extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: isSelected 
-                            ? AppTheme.primaryNavy.withOpacity(0.1)
+                            ? AppTheme.primaryNavy.withValues(alpha: 0.1)
                             : null,
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -214,7 +214,7 @@ class MobileTransformerControlsSheet extends StatelessWidget {
                     onBankTypeChanged(type);
                   }
                 },
-                selectedColor: AppTheme.accentCopper.withOpacity(0.2),
+                selectedColor: AppTheme.accentCopper.withValues(alpha: 0.2),
                 checkmarkColor: AppTheme.accentCopper,
                 side: BorderSide(
                   color: isSelected 
@@ -257,7 +257,7 @@ class MobileTransformerControlsSheet extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
                         color: isSelected 
-                            ? AppTheme.accentCopper.withOpacity(0.2)
+                            ? AppTheme.accentCopper.withValues(alpha: 0.2)
                             : AppTheme.lightGray,
                         border: Border.all(
                           color: isSelected 
@@ -546,7 +546,7 @@ class _MagnificationOverlayState extends State<MagnificationOverlay> {
           border: Border.all(color: AppTheme.primaryNavy, width: 3),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 8,
               spreadRadius: 2,
             ),
@@ -584,7 +584,7 @@ class MobileTransformerTabBar extends StatelessWidget {
         color: AppTheme.white,
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, -2),
           ),

@@ -90,7 +90,7 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
                 boxShadow: <BoxShadow>[
                   if (widget.isSelected)
                     BoxShadow(
-                      color: _getConnectionPointColor().withOpacity(0.5),
+                      color: _getConnectionPointColor().withValues(alpha: 0.5),
                       spreadRadius: 2,
                       blurRadius: 8,
                     ),
@@ -121,7 +121,7 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
               width: 30,
               height: 30,
               decoration: BoxDecoration(
-                color: _getConnectionPointColor().withOpacity(0.7),
+                color: _getConnectionPointColor().withValues(alpha: 0.7),
                 shape: BoxShape.circle,
               ),
             ),
@@ -130,9 +130,9 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: _getConnectionPointColor().withOpacity(0.3),
+              color: _getConnectionPointColor().withValues(alpha: 0.3),
               border: Border.all(
-                color: _getConnectionPointBorderColor().withOpacity(0.3),
+                color: _getConnectionPointBorderColor().withValues(alpha: 0.3),
                 width: 2,
               ),
               shape: BoxShape.circle,
@@ -148,7 +148,11 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
             final bool isHovering = candidateData.isNotEmpty;
             return AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              transform: Matrix4.identity()..scale(isHovering ? 1.2 : 1.0),
+              transform: Matrix4.identity()..scale(
+                isHovering ? 1.2 : 1.0,
+                1.0,
+                1.0,
+              ),
               child: connectionPoint,
             );
           },
@@ -303,7 +307,7 @@ class WireConnectionPainter extends CustomPainter {
 
       // Add dashed line for incorrect connections
       if (!connection.isCorrect) {
-        paint.color = paint.color.withOpacity(0.5);
+        paint.color = paint.color.withValues(alpha: 0.5);
         _drawDashedLine(
           canvas,
           fromPoint.position,
