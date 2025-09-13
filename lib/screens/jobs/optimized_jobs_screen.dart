@@ -6,6 +6,7 @@ import '../../models/job_model.dart';
 import '../../providers/riverpod/app_state_riverpod_provider.dart';
 import '../../providers/riverpod/jobs_riverpod_provider.dart';
 import '../../electrical_components/transformer_trainer/services/structured_logger.dart';
+import '../../electrical_components/circuit_board_background.dart';
 import '../../widgets/virtual_job_list.dart';
 
 /// Optimized jobs screen demonstrating performance improvements
@@ -38,13 +39,25 @@ class _OptimizedJobsScreenState extends ConsumerState<OptimizedJobsScreen>
     return Scaffold(
       backgroundColor: AppTheme.offWhite,
       appBar: _buildOptimizedAppBar(),
-      body: VirtualJobList(
+      body: Stack(
+        children: [
+          // Electrical circuit background
+          const ElectricalCircuitBackground(
+            opacity: 0.12,
+            animationSpeed: 2.5,
+            componentDensity: ComponentDensity.medium,
+            enableCurrentFlow: true,
+          ),
+          // Main content
+          VirtualJobList(
         jobs: jobsState.jobs,
         isLoading: jobsState.isLoading,
         hasMore: jobsState.hasMoreJobs,
         error: jobsState.error,
         onLoadMore: _loadMoreJobs,
         showOfflineIndicators: true,
+          ),
+        ],
       ),
       floatingActionButton: _buildOptimizedFab(),
     );

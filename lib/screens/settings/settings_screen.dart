@@ -6,6 +6,7 @@ import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
 import '../../services/onboarding_service.dart';
+import '../../electrical_components/circuit_board_background.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -71,11 +72,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
           style: AppTheme.headlineMedium.copyWith(color: AppTheme.white),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppTheme.spacingMd),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: Stack(
+        children: [
+          // Electrical circuit background
+          const ElectricalCircuitBackground(
+            opacity: 0.07,
+            animationSpeed: 2.0,
+            componentDensity: ComponentDensity.medium,
+            enableCurrentFlow: true,
+          ),
+          // Existing body content
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
             // User profile section
             Container(
               width: double.infinity,
@@ -247,8 +258,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
 
             const SizedBox(height: AppTheme.spacingXxl),
-          ],
-        ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

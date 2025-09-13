@@ -10,6 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../widgets/notification_badge.dart';
 import 'package:go_router/go_router.dart';
 import '../../navigation/app_router.dart';
+import '../../electrical_components/circuit_board_background.dart';
 // import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 
@@ -242,11 +243,21 @@ class _StormScreenState extends State<StormScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppTheme.spacingMd),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: Stack(
+        children: [
+          // Electrical circuit background
+          const ElectricalCircuitBackground(
+            opacity: 0.10,
+            animationSpeed: 2.0,
+            componentDensity: ComponentDensity.medium,
+            enableCurrentFlow: true,
+          ),
+          // Main content
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
             // Emergency alert banner
             Container(
               width: double.infinity,
@@ -492,8 +503,10 @@ class _StormScreenState extends State<StormScreen> {
                 ],
               ),
             ),
-          ],
-        ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -592,7 +605,7 @@ class _StormScreenState extends State<StormScreen> {
                     Text(
                       'Official US Government Data',
                       style: AppTheme.bodySmall.copyWith(
-                        color: AppTheme.textLight.withOpacity(0.8),
+                        color: AppTheme.textLight.withValues(alpha: 0.8),
                       ),
                     ),
                   ],
@@ -693,7 +706,7 @@ class _StormScreenState extends State<StormScreen> {
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingSm),
                 decoration: BoxDecoration(
-                  color: AppTheme.infoBlue.withOpacity(0.1),
+                  color: AppTheme.infoBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                 ),
                 child: Row(
@@ -770,7 +783,7 @@ class _StormScreenState extends State<StormScreen> {
                   vertical: AppTheme.spacingXs,
                 ),
                 decoration: BoxDecoration(
-                  color: _getAlertColorForSeverity(alert.severity).withOpacity(0.2),
+                  color: _getAlertColorForSeverity(alert.severity).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                 ),
                 child: Text(
@@ -814,10 +827,10 @@ class _StormScreenState extends State<StormScreen> {
                 Container(
                   padding: const EdgeInsets.all(AppTheme.spacingSm),
                   decoration: BoxDecoration(
-                    color: AppTheme.warningYellow.withOpacity(0.1),
+                    color: AppTheme.warningYellow.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                     border: Border.all(
-                      color: AppTheme.warningYellow.withOpacity(0.3),
+                      color: AppTheme.warningYellow.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Text(
@@ -849,10 +862,10 @@ class _StormScreenState extends State<StormScreen> {
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingMd),
                 decoration: BoxDecoration(
-                  color: AppTheme.infoBlue.withOpacity(0.1),
+                  color: AppTheme.infoBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                   border: Border.all(
-                    color: AppTheme.infoBlue.withOpacity(0.3),
+                    color: AppTheme.infoBlue.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -861,7 +874,7 @@ class _StormScreenState extends State<StormScreen> {
                     Row(
                       children: [
                         Icon(
-                          FontAwesomeIcons.hardHat,
+                          FontAwesomeIcons.helmetSafety,
                           color: AppTheme.infoBlue,
                           size: 16,
                         ),
@@ -1037,7 +1050,7 @@ class _StormScreenState extends State<StormScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(AppTheme.spacingMd),
                       decoration: BoxDecoration(
-                        color: AppTheme.errorRed.withOpacity(0.1),
+                        color: AppTheme.errorRed.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                       ),
                       child: Column(
@@ -1064,7 +1077,7 @@ class _StormScreenState extends State<StormScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(AppTheme.spacingMd),
                       decoration: BoxDecoration(
-                        color: AppTheme.warningYellow.withOpacity(0.1),
+                        color: AppTheme.warningYellow.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                       ),
                       child: Column(
@@ -1095,10 +1108,10 @@ class _StormScreenState extends State<StormScreen> {
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingMd),
                 decoration: BoxDecoration(
-                  color: AppTheme.infoBlue.withOpacity(0.1),
+                  color: AppTheme.infoBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                   border: Border.all(
-                    color: AppTheme.infoBlue.withOpacity(0.3),
+                    color: AppTheme.infoBlue.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(

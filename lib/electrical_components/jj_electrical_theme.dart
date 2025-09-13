@@ -9,6 +9,10 @@ export 'circuit_board_background.dart';
 // Interactive Widgets
 export 'jj_electrical_interactive_widgets.dart';
 
+import 'package:flutter/material.dart';
+import 'circuit_board_background.dart';
+import 'jj_electrical_notifications.dart';
+
 // Notifications & Feedback
 export 'jj_electrical_notifications.dart';
 
@@ -144,8 +148,3 @@ extension ElectricalThemeExtensions on Widget {
     );
   }
 }
-
-// Required imports
-import 'package:flutter/material.dart';
-import 'circuit_board_background.dart';
-import 'jj_electrical_notifications.dart';

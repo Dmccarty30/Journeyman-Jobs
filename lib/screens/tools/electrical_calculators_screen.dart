@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
+import '../../electrical_components/circuit_board_background.dart';
 
 class ElectricalCalculatorsScreen extends StatefulWidget {
   const ElectricalCalculatorsScreen({super.key});
@@ -52,8 +53,18 @@ class _ElectricalCalculatorsScreenState extends State<ElectricalCalculatorsScree
         elevation: 0,
         iconTheme: const IconThemeData(color: AppTheme.white),
       ),
-      body: Column(
+      body: Stack(
         children: [
+          // Electrical circuit background
+          const ElectricalCircuitBackground(
+            opacity: 0.10,
+            animationSpeed: 3.5,
+            componentDensity: ComponentDensity.medium,
+            enableCurrentFlow: true,
+          ),
+          // Existing body content
+          Column(
+            children: [
           // Calculator selector
           Container(
             height: 120,
@@ -117,6 +128,8 @@ class _ElectricalCalculatorsScreenState extends State<ElectricalCalculatorsScree
               padding: const EdgeInsets.all(AppTheme.spacingMd),
               child: _buildCalculatorContent(),
             ),
+          ),
+            ],
           ),
         ],
       ),

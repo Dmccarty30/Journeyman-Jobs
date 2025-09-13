@@ -1,73 +1,69 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/connectivity_service.dart';
 import '../services/offline_data_service.dart';
 import '../widgets/offline_indicators.dart';
+import '../providers/riverpod/app_state_riverpod_provider.dart';
 
 /// Screen for managing sync and offline data settings
-class SyncSettingsScreen extends StatefulWidget {
+class SyncSettingsScreen extends ConsumerStatefulWidget {
   const SyncSettingsScreen({super.key});
 
   @override
-  State<SyncSettingsScreen> createState() => _SyncSettingsScreenState();
+  ConsumerState<SyncSettingsScreen> createState() => _SyncSettingsScreenState();
 }
 
-class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
+class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
   bool _isClearing = false;
 
   @override
   Widget build(BuildContext context) {
+    final connectivity = ref.watch(connectivityServiceProvider);
+    final offlineService = ref.watch(offlineDataServiceProvider);
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sync & Offline'),
         elevation: 0,
         actions: [
-          Consumer<OfflineDataService>(
-            builder: (context, offlineService, child) {
-              return IconButton(
-                icon: const Icon(Icons.info_outline),
-                onPressed: () => _showSyncInfo(context, offlineService),
-              );
-            },
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: () => _showSyncInfo(context, offlineService),
           ),
         ],
       ),
-      body: Consumer2<ConnectivityService, OfflineDataService>(
-        builder: (context, connectivity, offlineService, child) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Connection Status Card
-                _buildConnectionStatusCard(connectivity),
-                
-                const SizedBox(height: 16),
-                
-                // Sync Status Card
-                SyncStatusWidget(
-                  onSyncPressed: () => _performSync(offlineService),
-                  onPendingPressed: () => _showPendingChanges(context, offlineService),
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // Sync Strategy Settings
-                _buildSyncStrategyCard(offlineService),
-                
-                const SizedBox(height: 16),
-                
-                // Storage Usage
-                const StorageUsageIndicator(showDetails: true),
-                
-                const SizedBox(height: 16),
-                
-                // Advanced Settings
-                _buildAdvancedSettingsCard(context, offlineService),
-              ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Connection Status Card
+            _buildConnectionStatusCard(connectivity),
+            
+            const SizedBox(height: 16),
+            
+            // Sync Status Card
+            SyncStatusWidget(
+              onSyncPressed: () => _performSync(offlineService),
+              onPendingPressed: () => _showPendingChanges(context, offlineService),
             ),
-          );
-        },
+            
+            const SizedBox(height: 16),
+            
+            // Sync Strategy Settings
+            _buildSyncStrategyCard(offlineService),
+            
+            const SizedBox(height: 16),
+            
+            // Storage Usage
+            const StorageUsageIndicator(showDetails: true),
+            
+            const SizedBox(height: 16),
+            
+            // Advanced Settings
+            _buildAdvancedSettingsCard(context, offlineService),
+          ],
+        ),
       ),
     );
   }

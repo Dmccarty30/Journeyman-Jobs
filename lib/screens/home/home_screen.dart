@@ -9,6 +9,7 @@ import '../../models/job_model.dart';
 import '../../legacy/flutterflow/schema/jobs_record.dart';
 import '../../utils/job_formatting.dart';
 import '../../widgets/notification_badge.dart';
+import '../../electrical_components/circuit_board_background.dart';
 import 'electrical_demo_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -69,13 +70,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () => ref.read(jobsNotifierProvider.notifier).refreshJobs(),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppTheme.spacingMd),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      body: Stack(
+        children: [
+          // Electrical circuit background
+          const ElectricalCircuitBackground(
+            opacity: 0.08,
+            animationSpeed: 3.0,
+            componentDensity: ComponentDensity.medium,
+            enableCurrentFlow: true,
+          ),
+          // Main content
+          RefreshIndicator(
+            onRefresh: () => ref.read(jobsNotifierProvider.notifier).refreshJobs(),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppTheme.spacingMd),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               Consumer(
                 builder: (context, ref, child) {
                   final authState = ref.watch(authNotifierProvider);
@@ -144,12 +155,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ],
                         ),
                       ),
-                      NotificationBadge(
-                        iconColor: AppTheme.primaryNavy,
-                        iconSize: AppTheme.iconLg,
-                        showPopupOnTap: false,
-                        onTap: () => context.push(AppRouter.notifications),
-                      ),
                     ],
                   );
                 },
@@ -173,16 +178,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Icons.calculate_outlined,
                       () {
                         context.push(AppRouter.electricalCalculators);
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: AppTheme.spacingMd),
-                  Expanded(
-                    child: _buildElectricalActionCard(
-                      'Find Jobs',
-                      Icons.work_outline,
-                      () {
-                        context.push(AppRouter.jobs);
                       },
                     ),
                   ),
@@ -302,23 +297,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
 
               const SizedBox(height: AppTheme.spacingXxl),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const ElectricalDemoScreen(),
+                ],
+              ),
             ),
-          );
-        },
-        backgroundColor: AppTheme.accentCopper,
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.electrical_services),
-        label: const Text('⚡ Electrical Demo'),
-        tooltip: 'Try the new electrical theme!',
+          ),
+        ],
       ),
     );
   }
@@ -394,30 +377,46 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      'Local ${jobModel.local ?? jobModel.localNumber ?? 'N/A'}',
-                      style: AppTheme.bodySmall.copyWith(
-                        color: AppTheme.textSecondary,
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Classification: ',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.primaryNavy,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          TextSpan(
+                            text: jobModel.classification ?? 'General Electrical',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Local: ',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.primaryNavy,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          TextSpan(
+                            text: jobModel.local ?? jobModel.localNumber ?? 'N/A',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingSm,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppTheme.accentCopper,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    'STANDARD',
-                    style: AppTheme.labelSmall.copyWith(
-                      color: AppTheme.white,
-                      fontSize: 10,
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -468,12 +467,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      jobModel.perDiem?.isNotEmpty == true
-                          ? 'Per Diem: \$${jobModel.perDiem}/day'
-                          : 'Per Diem: \$0/day',
-                      style: AppTheme.bodySmall.copyWith(
-                        color: AppTheme.textSecondary,
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Per Diem: ',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.primaryNavy,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          TextSpan(
+                            text: jobModel.perDiem?.isNotEmpty == true ? jobModel.perDiem! : 'None',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],

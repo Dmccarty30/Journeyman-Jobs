@@ -1,0 +1,86 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/quality_checks/pre_edit_validation.py",
+            "description": "Validates Edit/MultiEdit operations to prevent technical debt patterns",
+            "enabled": true,
+            "blocking": true,
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/quality_checks/pre_write_validation.py",
+            "description": "Validates Write operations for architectural compliance",
+            "enabled": true,
+            "blocking": true,
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/quality_checks/post_change_validation.py",
+            "description": "Validates all file modifications for quality and consistency",
+            "enabled": true,
+            "blocking": false,
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/quality_checks/prompt_enhancement.py",
+            "description": "Enhances user prompts with quality context and guidance",
+            "enabled": true,
+            "blocking": false,
+            "timeout": 3000
+          }
+        ]
+      }
+    ]
+  },
+  "quality_enforcement": {
+    "enabled": true,
+    "strictness": "medium",
+    "auto_fix": false,
+    "report_only": false,
+    "config_file": "scripts/quality_checks/quality_config.yaml"
+  },
+  "electrical_theme": {
+    "enforce_backgrounds": true,
+    "required_colors": ["primaryNavy", "accentCopper"],
+    "electrical_components": {
+      "mandatory_screens": ["splash", "home", "jobs", "locals"],
+      "background_requirement": "CircuitPatternBackground or ElectricalBackground"
+    }
+  },
+  "architecture": {
+    "state_management": "riverpod",
+    "forbidden_patterns": ["Provider", "setState_in_complex_widgets"],
+    "required_patterns": ["ConsumerWidget", "ConsumerStatefulWidget"],
+    "import_organization": {
+      "flutter_first": true,
+      "external_packages": true,
+      "internal_relative": true
+    }
+  }
+}

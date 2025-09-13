@@ -1,0 +1,167 @@
+# Quality Enforcement Configuration for Journeyman Jobs
+# This file defines rules and patterns for preventing technical debt
+
+project_name: "journeyman_jobs"
+project_path: "/mnt/c/Users/david/Desktop/Journeyman-Jobs"
+
+# State Management Enforcement
+state_management:
+  preferred: "riverpod"
+  forbidden_imports:
+    - "package:provider/provider.dart"
+    - "package:flutter/src/widgets/inherited_widget.dart"
+  required_patterns:
+    - "ConsumerWidget"
+    - "ConsumerStatefulWidget"
+    - "flutter_riverpod"
+  
+# Component Duplication Prevention
+component_patterns:
+  job_cards:
+    max_variants: 2  # Only JobCard with half/full variants allowed
+    forbidden_duplicates:
+      - "enhanced_job_card.dart"
+      - "custom_job_card.dart"
+      - "special_job_card.dart"
+    required_location: "lib/design_system/components/"
+  
+  navigation:
+    max_appbars: 1  # Only one AppBar pattern allowed
+    forbidden_nesting: ["AppBar in body", "AppBar in Scaffold.body"]
+    required_pattern: "AppBar in Scaffold.appBar"
+
+# Electrical Theme Enforcement
+electrical_theme:
+  mandatory_backgrounds:
+    screens: ["splash", "home", "jobs", "locals"]
+    required_components:
+      - "CircuitPatternBackground"
+      - "ElectricalBackground"
+      - "circuit_pattern_painter.dart"
+  
+  color_validation:
+    required_colors:
+      - "AppTheme.primaryNavy"
+      - "AppTheme.accentCopper"
+    forbidden_hardcoded:
+      - "Color(0xFF"
+      - "Colors."
+    exceptions:
+      - "Colors.transparent"
+      - "Colors.white"
+      - "Colors.black"
+
+# Import Organization Rules
+import_organization:
+  order:
+    1: "dart:*"
+    2: "package:flutter/*"
+    3: "package:*"
+    4: "relative imports"
+  
+  forbidden_patterns:
+    - "import '../../../"  # Too many levels up
+    - "import 'package:journeyman_jobs/"  # Use relative for internal
+  
+  required_relative_for:
+    - "lib/models/"
+    - "lib/widgets/"
+    - "lib/services/"
+    - "lib/providers/"
+
+# Widget Structure Rules
+widget_structure:
+  rich_text_pattern:
+    required_format: "Label: Value"
+    forbidden_patterns:
+      - "RichText without spans"
+      - "Text.rich without proper formatting"
+    
+  scaffold_structure:
+    required:
+      - "backgroundColor"
+      - "appBar or no appBar"
+      - "body"
+    forbidden:
+      - "AppBar in body"
+      - "Multiple Scaffold widgets"
+
+# File Naming and Location Rules
+file_organization:
+  screen_files:
+    location: "lib/screens/"
+    suffix: "_screen.dart"
+    required_patterns:
+      - "StatelessWidget or ConsumerWidget"
+      - "Electrical background inclusion"
+  
+  widget_files:
+    location: "lib/widgets/ or lib/design_system/components/"
+    naming: "snake_case.dart"
+    forbidden_prefixes: ["old_", "legacy_", "backup_"]
+  
+  service_files:
+    location: "lib/services/"
+    suffix: "_service.dart"
+    required_patterns:
+      - "class ending with Service"
+
+# Performance Rules
+performance:
+  widget_rebuilds:
+    forbidden_patterns:
+      - "setState in build method"
+      - "Provider.of without listen: false in build"
+    required_patterns:
+      - "Consumer or ConsumerWidget for state access"
+  
+  memory_management:
+    required_dispose:
+      - "AnimationController"
+      - "TextEditingController"
+      - "StreamSubscription"
+
+# Testing Requirements
+testing:
+  required_tests:
+    - "widget_test for new screens"
+    - "unit_test for new services"
+  
+  test_file_location:
+    pattern: "test/**/*_test.dart"
+    mirror_lib: true  # test/ should mirror lib/ structure
+
+# Quality Gates
+quality_gates:
+  syntax_validation:
+    enabled: true
+    tool: "flutter analyze"
+    blocking: true
+  
+  import_validation:
+    enabled: true
+    blocking: true
+  
+  theme_validation:
+    enabled: true
+    blocking: false  # Warning only
+  
+  duplication_check:
+    enabled: true
+    blocking: true
+
+# Error Messages
+error_messages:
+  provider_usage: "Provider is deprecated. Use Riverpod with ConsumerWidget instead."
+  duplicate_component: "Component duplication detected. Use existing JobCard with variants."
+  missing_electrical_bg: "Screen missing electrical background. Add CircuitPatternBackground or ElectricalBackground."
+  hardcoded_colors: "Hardcoded colors detected. Use AppTheme constants instead."
+  appbar_nesting: "AppBar should be in Scaffold.appBar, not in body."
+  poor_imports: "Improve import organization. Use relative imports for internal files."
+
+# Suggestions
+suggestions:
+  provider_to_riverpod: "Convert to: ConsumerWidget + ref.watch(providerName)"
+  electrical_background: "Add: CircuitPatternBackground() as Stack child"
+  color_usage: "Use: AppTheme.primaryNavy instead of hardcoded color"
+  import_fix: "Change to relative import: '../models/job_model.dart'"

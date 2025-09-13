@@ -9,6 +9,7 @@ import '../../services/notification_permission_service.dart';
 import '../../services/fcm_service.dart';
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
 import '../../navigation/app_router.dart';
+import '../../electrical_components/circuit_board_background.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -394,9 +395,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Stack(
         children: [
+          // Electrical circuit background
+          const ElectricalCircuitBackground(
+            opacity: 0.06,
+            animationSpeed: 2.5,
+            componentDensity: ComponentDensity.medium,
+            enableCurrentFlow: true,
+          ),
+          // Existing body content
+          TabBarView(
+            controller: _tabController,
+            children: [
           // Notifications Tab
           Column(
             children: [
@@ -524,6 +535,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                     ],
                   ),
                 ),
+            ],
+          ),
         ],
       ),
     );

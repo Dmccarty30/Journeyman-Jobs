@@ -141,6 +141,34 @@ class _ResourcesScreenState extends State<ResourcesScreen> with SingleTickerProv
       color: AppTheme.accentCopper,
       action: 'transformer_banks',
     ),
+    // New Transformers section
+    ResourceItem(
+      category: 'Transformers',
+      title: 'Transformer Workbench',
+      description: 'Interactive hands-on training with step-by-step guidance',
+      type: ResourceType.tool,
+      icon: Icons.construction,
+      color: AppTheme.successGreen,
+      action: 'transformer_workbench',
+    ),
+    ResourceItem(
+      category: 'Transformers',
+      title: 'Transformer Calculator',
+      description: 'Calculate transformer sizing, impedance, and connections',
+      type: ResourceType.tool,
+      icon: Icons.calculate,
+      color: AppTheme.warningYellow,
+      action: 'transformer_calculator',
+    ),
+    ResourceItem(
+      category: 'Transformers',
+      title: 'Training Simulator',
+      description: 'Practice transformer connections and troubleshooting',
+      type: ResourceType.tool,
+      icon: Icons.school,
+      color: AppTheme.infoBlue,
+      action: 'transformer_simulator',
+    ),
   ];
 
   final List<ResourceItem> _links = [
@@ -517,6 +545,23 @@ class ResourceCard extends StatelessWidget {
         break;
       case 'transformer_banks':
         context.go('/tools/transformer-reference');
+        return;
+      case 'transformer_workbench':
+        context.go('/tools/transformer-workbench');
+        return;
+      case 'transformer_calculator':
+        // TODO: Implement transformer calculator screen
+        JJSnackBar.showInfo(
+          context: context,
+          message: 'Transformer Calculator coming soon',
+        );
+        return;
+      case 'transformer_simulator':
+        // TODO: Implement transformer simulator screen
+        JJSnackBar.showInfo(
+          context: context,
+          message: 'Training Simulator coming soon',
+        );
         return;
       default:
         _showToolDialog(context, item);

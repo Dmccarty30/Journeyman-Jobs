@@ -10,6 +10,7 @@ import '../../utils/job_formatting.dart';
 import '../../widgets/notification_badge.dart';
 import 'package:go_router/go_router.dart';
 import '../../navigation/app_router.dart';
+import '../../electrical_components/circuit_board_background.dart';
 
 
 class JobsScreen extends ConsumerStatefulWidget {
@@ -838,11 +839,21 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
         ],
         body: SafeArea(
           top: false,
-          child: Padding(
-            padding: const EdgeInsets.all(AppTheme.spacingMd),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+          child: Stack(
+            children: [
+              // Electrical circuit background
+              const ElectricalCircuitBackground(
+                opacity: 0.08,
+                animationSpeed: 3.0,
+                componentDensity: ComponentDensity.medium,
+                enableCurrentFlow: true,
+              ),
+              // Existing body content
+              Padding(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                 // Filter categories
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -1055,7 +1066,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
                 ),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );

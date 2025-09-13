@@ -22,19 +22,31 @@ void main() async {
     cacheSizeBytes: 100 * 1024 * 1024, // 100MB cache
   );
   
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(
+    // Wrap the entire app with ProviderScope for Riverpod
+    const ProviderScope(
+      child: JourneymanJobsApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+/// Main application widget using ConsumerWidget for Riverpod integration.
+/// This allows the root app to access Riverpod providers if needed.
+class JourneymanJobsApp extends ConsumerWidget {
+  const JourneymanJobsApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
       title: 'Journeyman Jobs',
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
       routerConfig: AppRouter.router,
+      builder: (BuildContext context, Widget? child) {
+        // Add any global error handling or loading overlays here
+        return child ?? const SizedBox.shrink();
+      },
     );
   }
 }
