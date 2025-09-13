@@ -469,6 +469,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                         stream: _buildNotificationsStream(user.uid),
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
+                            debugPrint('Firestore Stream Error: ${snapshot.error}');
                             return _buildEmptyState('Error loading notifications');
                           }
 
@@ -492,6 +493,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                             itemBuilder: (context, index) {
                               final notification = notifications[index];
                               final data = notification.data() as Map<String, dynamic>;
+                              debugPrint('Notification data: $data');
                               
                               return _buildNotificationCard(
                                 notificationId: notification.id,
@@ -543,6 +545,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
   }
 
   Stream<QuerySnapshot> _buildNotificationsStream(String userId) {
+    debugPrint('Building notifications stream for userId: $userId');
     Query query = FirebaseFirestore.instance
         .collection('notifications')
         .where('userId', isEqualTo: userId)

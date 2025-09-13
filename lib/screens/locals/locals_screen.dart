@@ -8,7 +8,6 @@ import 'dart:io' show Platform;
 import '../../widgets/notification_badge.dart';
 import 'package:go_router/go_router.dart';
 import '../../navigation/app_router.dart';
-import '../../electrical_components/circuit_board_background.dart';
 
 class LocalsScreen extends ConsumerStatefulWidget {
   const LocalsScreen({super.key});
@@ -51,19 +50,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.offWhite,
-      body: Stack(
-        children: [
-          // Electrical circuit background
-          const ElectricalCircuitBackground(
-            opacity: 0.10,
-            animationSpeed: 2.0,
-            componentDensity: ComponentDensity.medium,
-            enableCurrentFlow: true,
-          ),
-          // Main content
-          Column(
-            children: [
-              AppBar(
+      appBar: AppBar(
         title: const Text('IBEW Locals Directory'),
         backgroundColor: AppTheme.primaryNavy,
         elevation: 0,
@@ -116,12 +103,11 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
             ),
           ),
         ),
-              ),
-              Expanded(
-                child: Column(
-                  children: [
-                    // State filter dropdown
-                    Container(
+      ),
+      body: Column(
+        children: [
+          // State filter dropdown
+          Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
             child: DropdownButton<String>(
@@ -149,19 +135,14 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
             ),
           ),
           const SizedBox(height: AppTheme.spacingSm),
-                    // Locals list
-                    Expanded(
-                      child: Consumer(
-                        builder: (context, ref, child) {
-                          final localsState = ref.watch(localsProvider);
-                          return _buildLocalsList(localsState);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          // Locals list
+          Expanded(
+            child: Consumer(
+              builder: (context, ref, child) {
+                final localsState = ref.watch(localsProvider);
+                return _buildLocalsList(localsState);
+              },
+            ),
           ),
         ],
       ),
