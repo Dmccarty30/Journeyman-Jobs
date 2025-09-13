@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/connectivity_service.dart';
-import '../services/offline_data_service.dart';
 import '../providers/riverpod/app_state_riverpod_provider.dart';
 
 /// Connection status indicator that shows current connectivity state

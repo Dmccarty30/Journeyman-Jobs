@@ -268,7 +268,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
           responseTime < 500 ? AppTheme.successGreen : AppTheme.warningYellow, Icons.speed),
         _buildMetricCard('Error Rate', '${errorRate.toStringAsFixed(2)}%', 
           errorRate < 1.0 ? AppTheme.successGreen : AppTheme.errorRed, Icons.error_outline),
-        _buildMetricCard('Throughput', '${throughput}/min', AppTheme.infoBlue, Icons.trending_up),
+        _buildMetricCard('Throughput', '$throughput/min', AppTheme.infoBlue, Icons.trending_up),
       ],
     );
   }

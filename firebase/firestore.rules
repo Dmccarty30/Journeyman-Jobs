@@ -39,6 +39,14 @@ service cloud.firestore {
       allow delete: if false; // Users can't delete their account directly
     }
     
+    // Notifications collection - users can only read/write their own notifications
+    match /notifications/{notificationId} {
+      allow read: if isOwner(resource.data.userId);
+      allow create: if isOwner(request.resource.data.userId);
+      allow update: if isOwner(resource.data.userId);
+      allow delete: if isOwner(resource.data.userId);
+    }
+
     // Test collection - for development only
     match /test/{document=**} {
       allow read, write: if isAuthenticated();

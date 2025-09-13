@@ -15,10 +15,10 @@ class AccessibilityManager {
   /// Initialize accessibility features
   static void initialize(BuildContext context) {
     final MediaQueryData mediaQuery = MediaQuery.of(context);
-    
+
     _isScreenReaderEnabled = mediaQuery.accessibleNavigation;
     _isHighContrastEnabled = mediaQuery.highContrast;
-    _textScaleFactor = mediaQuery.textScaleFactor;
+    _textScaleFactor = mediaQuery.textScaler.scale(1.0);
     _isLargeTextEnabled = _textScaleFactor > 1.3;
   }
   

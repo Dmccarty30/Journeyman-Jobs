@@ -104,7 +104,10 @@ class WireConnection {
       'toPointId': toPointId,
       'isCorrect': isCorrect,
       'errorReason': errorReason,
-      'color': color.value,
+      'color': ((color.a * 255).round() << 24) |
+               ((color.r * 255).round() << 16) |
+               ((color.g * 255).round() << 8) |
+               (color.b * 255).round(),
       'phase': phase,
     };
 }

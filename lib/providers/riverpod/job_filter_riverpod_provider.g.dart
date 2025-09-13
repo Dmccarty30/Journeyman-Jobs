@@ -6,11 +6,15 @@ part of 'job_filter_riverpod_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 /// SharedPreferences provider
+
 @ProviderFor(sharedPreferences)
 const sharedPreferencesProvider = SharedPreferencesProvider._();
 
 /// SharedPreferences provider
+
 final class SharedPreferencesProvider extends $FunctionalProvider<
         AsyncValue<SharedPreferences>,
         SharedPreferences,
@@ -48,8 +52,9 @@ final class SharedPreferencesProvider extends $FunctionalProvider<
 String _$sharedPreferencesHash() => r'9b38b0605ab233f33b0ff939edd1100331a746fa';
 
 /// Job filter notifier for managing filter state and presets
+
 @ProviderFor(JobFilterNotifier)
-const jobFilterNotifierProvider = JobFilterNotifierProvider._();
+const jobFilterProvider = JobFilterNotifierProvider._();
 
 /// Job filter notifier for managing filter state and presets
 final class JobFilterNotifierProvider
@@ -60,7 +65,7 @@ final class JobFilterNotifierProvider
           from: null,
           argument: null,
           retry: null,
-          name: r'jobFilterNotifierProvider',
+          name: r'jobFilterProvider',
           isAutoDispose: true,
           dependencies: null,
           $allTransitiveDependencies: null,
@@ -82,7 +87,9 @@ final class JobFilterNotifierProvider
   }
 }
 
-String _$jobFilterNotifierHash() => r'c1b74e0d18d13d03de0dc14dd1b8f4fe4bfd586e';
+String _$jobFilterNotifierHash() => r'bfe3930ec059c5e501b207fef38099ec8f0ab757';
+
+/// Job filter notifier for managing filter state and presets
 
 abstract class _$JobFilterNotifier extends $Notifier<JobFilterState> {
   JobFilterState build();
@@ -101,10 +108,12 @@ abstract class _$JobFilterNotifier extends $Notifier<JobFilterState> {
 }
 
 /// Current filter provider (computed from state)
+
 @ProviderFor(currentJobFilter)
 const currentJobFilterProvider = CurrentJobFilterProvider._();
 
 /// Current filter provider (computed from state)
+
 final class CurrentJobFilterProvider extends $FunctionalProvider<
     JobFilterCriteria,
     JobFilterCriteria,
@@ -144,13 +153,15 @@ final class CurrentJobFilterProvider extends $FunctionalProvider<
   }
 }
 
-String _$currentJobFilterHash() => r'6151857777140c174666609911d4133be719f935';
+String _$currentJobFilterHash() => r'f8738d257f89b7eec21e2586b5457c5b053c0a29';
 
 /// Presets provider (computed from state)
+
 @ProviderFor(filterPresets)
 const filterPresetsProvider = FilterPresetsProvider._();
 
 /// Presets provider (computed from state)
+
 final class FilterPresetsProvider extends $FunctionalProvider<
     List<FilterPreset>,
     List<FilterPreset>,
@@ -190,13 +201,15 @@ final class FilterPresetsProvider extends $FunctionalProvider<
   }
 }
 
-String _$filterPresetsHash() => r'727fc8eadd737bfa99cf80644c33313e991a5e9e';
+String _$filterPresetsHash() => r'f18ad7b508207d059adb0d4c04a639bacadb1664';
 
 /// Recent searches provider (computed from state)
+
 @ProviderFor(recentSearches)
 const recentSearchesProvider = RecentSearchesProvider._();
 
 /// Recent searches provider (computed from state)
+
 final class RecentSearchesProvider
     extends $FunctionalProvider<List<String>, List<String>, List<String>>
     with $Provider<List<String>> {
@@ -234,13 +247,15 @@ final class RecentSearchesProvider
   }
 }
 
-String _$recentSearchesHash() => r'194a7220f55d3300a47dabdc094cca30d03778cf';
+String _$recentSearchesHash() => r'0f72621c7736b425b45f6e78ceadfa3fc2997a77';
 
 /// Pinned presets provider (computed from state)
+
 @ProviderFor(pinnedPresets)
 const pinnedPresetsProvider = PinnedPresetsProvider._();
 
 /// Pinned presets provider (computed from state)
+
 final class PinnedPresetsProvider extends $FunctionalProvider<
     List<FilterPreset>,
     List<FilterPreset>,
@@ -280,13 +295,15 @@ final class PinnedPresetsProvider extends $FunctionalProvider<
   }
 }
 
-String _$pinnedPresetsHash() => r'7edb3d5e1eaede9e03039b47213f28b6eb812343';
+String _$pinnedPresetsHash() => r'3705eb9bf7814819aa048d4ad2ccc36b3905a206';
 
 /// Recent presets provider (computed from state)
+
 @ProviderFor(recentPresets)
 const recentPresetsProvider = RecentPresetsProvider._();
 
 /// Recent presets provider (computed from state)
+
 final class RecentPresetsProvider extends $FunctionalProvider<
     List<FilterPreset>,
     List<FilterPreset>,
@@ -326,13 +343,15 @@ final class RecentPresetsProvider extends $FunctionalProvider<
   }
 }
 
-String _$recentPresetsHash() => r'2197a594957457241d9f16fc851fb91baf2d357c';
+String _$recentPresetsHash() => r'34c106d504e42873398edeef789a972a9c391f74';
 
 /// Active filters status provider (computed from state)
+
 @ProviderFor(hasActiveFilters)
 const hasActiveFiltersProvider = HasActiveFiltersProvider._();
 
 /// Active filters status provider (computed from state)
+
 final class HasActiveFiltersProvider
     extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// Active filters status provider (computed from state)
@@ -369,13 +388,15 @@ final class HasActiveFiltersProvider
   }
 }
 
-String _$hasActiveFiltersHash() => r'99f5d159294391ecbd1e57df0f38103d03823481';
+String _$hasActiveFiltersHash() => r'c7f34079f57d66daeed486953e9c8f46abf84527';
 
 /// Active filter count provider (computed from state)
+
 @ProviderFor(activeFilterCount)
 const activeFilterCountProvider = ActiveFilterCountProvider._();
 
 /// Active filter count provider (computed from state)
+
 final class ActiveFilterCountProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
   /// Active filter count provider (computed from state)
@@ -412,13 +433,15 @@ final class ActiveFilterCountProvider extends $FunctionalProvider<int, int, int>
   }
 }
 
-String _$activeFilterCountHash() => r'be49f96340339f217402909d3c358f991c2585ec';
+String _$activeFilterCountHash() => r'2a42a31577a4f9a8b463d950818ccb2d45157215';
 
 /// Quick filter suggestions provider (computed from state)
+
 @ProviderFor(quickFilterSuggestions)
 const quickFilterSuggestionsProvider = QuickFilterSuggestionsProvider._();
 
 /// Quick filter suggestions provider (computed from state)
+
 final class QuickFilterSuggestionsProvider extends $FunctionalProvider<
     List<QuickFilterSuggestion>,
     List<QuickFilterSuggestion>,
@@ -459,7 +482,4 @@ final class QuickFilterSuggestionsProvider extends $FunctionalProvider<
 }
 
 String _$quickFilterSuggestionsHash() =>
-    r'9e8b447cdbc2bd2da68e05d424ba9c2b530771e8';
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+    r'94136780b8fb3b7bc726f004899ac3f54fa1b2b7';

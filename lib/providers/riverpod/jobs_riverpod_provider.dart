@@ -5,9 +5,7 @@ import '../../models/filter_criteria.dart';
 import '../../models/job_model.dart';
 import '../../services/resilient_firestore_service.dart';
 import '../../utils/concurrent_operations.dart';
-// TODO: Add back when utility classes are implemented
-// import '../../utils/filter_performance.dart';
-// import '../../utils/memory_management.dart';
+import '../../utils/bounded_job_cache.dart'; // Added for bounded job list support
 
 part 'jobs_riverpod_provider.g.dart';
 
@@ -64,23 +62,23 @@ class JobsState {
 @riverpod
 ResilientFirestoreService firestoreService(Ref ref) => ResilientFirestoreService();
 
+/// Default capacity for the job cache to limit in-memory storage.
+const int defaultJobCacheCapacity = 500;
+
 /// Jobs notifier for managing job data and operations
 @riverpod
 class JobsNotifier extends _$JobsNotifier {
   late final ConcurrentOperationManager _operationManager;
-  // TODO: Implement these utility classes when ready
-  // late final FilterPerformanceEngine _filterEngine;
-  // late final BoundedJobList _boundedJobList;
-  // late final VirtualJobListState _virtualJobList;
+  // Manages in-memory job cache
+  late final BoundedJobCache<Job> _boundedJobCache;
 
   @override
   JobsState build() {
     _operationManager = ConcurrentOperationManager();
-    // TODO: Implement these utility classes
-    // _filterEngine = FilterPerformanceEngine();
-    // _boundedJobList = BoundedJobList();
-    // _virtualJobList = VirtualJobListState();
-
+    _boundedJobCache = BoundedJobCache<Job>(
+      capacity: defaultJobCacheCapacity,
+      idExtractor: (job) => job.id,
+    );
     return const JobsState();
   }
 
@@ -101,9 +99,7 @@ class JobsNotifier extends _$JobsNotifier {
         hasMoreJobs: true,
         isLoading: true,
       );
-      // TODO: Implement utility classes
-      // _boundedJobList.clear();
-      // _virtualJobList.clear();
+      _boundedJobCache.clear(); // Clear cache on refresh
     } else {
       state = state.copyWith(isLoading: true);
     }
@@ -142,8 +138,9 @@ class JobsNotifier extends _$JobsNotifier {
         return Job.fromJson(data);
       }).toList();
 
-      // Update state with the new jobs
-      final List<Job> updatedJobs = isRefresh ? jobs : [...state.jobs, ...jobs];
+      // Update cache with new jobs
+      _boundedJobCache.addAll(jobs);
+      final List<Job> cachedJobs = _boundedJobCache.getAll();
 
       // Update load times for performance tracking
       final List<Duration> newLoadTimes = List<Duration>.from(state.loadTimes)
@@ -152,15 +149,16 @@ class JobsNotifier extends _$JobsNotifier {
         newLoadTimes.removeAt(0); // Keep only last 50 measurements
       }
 
+      // Update state with cached jobs and a visible slice
       state = state.copyWith(
-        jobs: updatedJobs,
-        visibleJobs: updatedJobs, // For now, all jobs are visible
+        jobs: cachedJobs, // The full bounded cache
+        visibleJobs: cachedJobs.take(100).toList(), // Initial visible slice
         activeFilter: filter ?? state.activeFilter,
         isLoading: false,
         hasMoreJobs: jobs.length >= limit, // Assume more if we got a full page
         lastDocument: result.docs.isNotEmpty ? result.docs.last : null,
         loadTimes: newLoadTimes,
-        totalJobsLoaded: updatedJobs.length,
+        totalJobsLoaded: cachedJobs.length, // Total jobs in the bounded cache
       );
     } catch (e) {
       stopwatch.stop();
@@ -211,16 +209,19 @@ class JobsNotifier extends _$JobsNotifier {
   }
 
   /// Update visible jobs for virtual scrolling
+  /// This method updates the [visibleJobs] list in the state based on the
+  /// specified [startIndex] and [endIndex] from the bounded job cache.
   void updateVisibleJobsRange(int startIndex, int endIndex) {
-    // TODO: Implement VirtualJobListState
-    // _virtualJobList.updateVisibleRange(startIndex, endIndex);
-    // state = state.copyWith(visibleJobs: _virtualJobList.visibleJobs);
+    state = state.copyWith(
+      visibleJobs: _boundedJobCache.getRange(startIndex, endIndex),
+    );
   }
 
   /// Get job by ID
   Job? getJobById(String jobId) {
     try {
-      return state.jobs.firstWhere((Job job) => job.id == jobId);
+      // Search in the bounded cache first
+      return _boundedJobCache.getAll().firstWhere((Job job) => job.id == jobId);
     } catch (e) {
       return null;
     }
@@ -242,17 +243,13 @@ class JobsNotifier extends _$JobsNotifier {
                   state.loadTimes.length,
             ),
       'totalJobsLoaded': state.totalJobsLoaded,
-      // TODO: Add back when utility classes are implemented
-      // 'memoryUsage': _boundedJobList.estimatedMemoryUsage,
-      // 'filterPerformance': _filterEngine.getAverageFilterTime(),
+      'estimatedMemoryBytes': _boundedJobCache.estimatedMemoryUsageBytes(), // Added estimated memory usage
     };
 
   /// Dispose resources
   void dispose() {
-    // TODO: Implement dispose when utility classes are ready
-    // _operationManager.dispose();
-    // _boundedJobList.dispose();
-    // _virtualJobList.dispose();
+    _operationManager.dispose();
+    // No explicit dispose needed for BoundedJobCache as it manages its own memory.
   }
 }
 

@@ -142,7 +142,7 @@ class ResponsiveLayoutManager {
   /// Get appropriate font sizes for current device
   static TextScaling getTextScaling(BuildContext context) {
     final DeviceType deviceType = getDeviceType(context);
-    final double textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    final double textScaleFactor = MediaQuery.of(context).textScaler.scale(1.0);
     
     double baseScale;
     switch (deviceType) {

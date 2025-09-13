@@ -1,98 +1,3 @@
-<<<<<<< HEAD
-{
-  "permissions": {
-    "allow": [
-      "Bash(find:*)",
-      "Bash(true)",
-      "Bash(mkdir:*)",
-      "Bash(mv:*)",
-      "Bash(npm install:*)",
-      "Bash(git clone:*)",
-      "Bash(cp:*)",
-      "mcp__serena__find_file",
-      "mcp__serena__list_dir",
-      "mcp__serena__activate_project",
-      "mcp__serena__check_onboarding_performed",
-      "mcp__serena__onboarding",
-      "mcp__serena__find_symbol",
-      "mcp__serena__get_symbols_overview",
-      "mcp__serena__think_about_collected_information",
-      "mcp__serena__write_memory",
-      "mcp__serena__think_about_task_adherence",
-      "mcp__serena__think_about_whether_you_are_done",
-      "mcp__serena__read_memory",
-      "mcp__serena__search_for_pattern",
-      "mcp__serena__list_memories",
-      "Bash(flutter analyze:*)",
-      "Bash(grep:*)",
-      "multiEdit",
-      "task",
-      "todo",
-      "Bash(rg:*)",
-      "Bash(cat:*)",
-      "Bash(cd:*)",
-      "Bash(flutter:*)",
-      "Bash(sed:*)",
-      "Bash(/mnt/c/flutter/bin/flutter pub get)",
-      "Bash(/mnt/c/flutter/flutter/bin/flutter pub get)",
-      "Bash(chmod:*)",
-      "Bash(for file in lib/services/location_service.dart lib/providers/app_state_provider.dart lib/providers/auth_provider.dart)",
-      "Bash(do)",
-      "Bash(done)",
-      "Bash(./scripts/team-health.sh:*)",
-      "Bash(make:*)",
-      "Bash(dart analyze:*)",
-      "WebFetch(domain:firebase.google.com, docs.flutter.dev, docs.anthropic.com, dart.dev, github.com)",
-      "Bash(/mnt/c/flutter/bin/flutter:*)",
-      "Bash(/mnt/c/flutter/flutter/bin/flutter analyze --no-pub)",
-      "Bash(test:*)",
-      "Bash(/mnt/c/flutter/flutter/bin/dart analyze lib)",
-      "Bash(npm search:*)",
-      "Bash(pip search:*)",
-      "Bash(pip install:*)",
-      "Bash(pipx install:*)",
-      "Bash(apt list:*)",
-      "Bash(sudo apt install:*)",
-      "Bash(timeout 30 git clone --depth 1 https://github.com/disler/nano-agent.git /tmp/nano-agent)",
-      "Bash(/mnt/c/flutter/flutter/bin/flutter build apk --debug)",
-      "Bash(./gradlew:*)",
-      "Bash(node:*)",
-      "Bash(claude add npx -y \"@modelcontextprotocol/server-sequential-thinking\")",
-      "Bash(claude add \"@modelcontextprotocol/server-sequential-thinking\")",
-      "Bash(claude list servers)",
-      "Bash(claude mcp:*)",
-      "Bash(export PATH=\"$HOME/.local/bin:$PATH\")",
-      "Bash(uvx:*)",
-      "Bash(dart pub run build_runner:*)",
-      "Bash(/mnt/c/flutter/flutter/bin/flutter pub run build_runner build --delete-conflicting-outputs)",
-      "Bash(/mnt/c/flutter/flutter/bin/flutter --version)",
-      "Bash(powershell.exe:*)"
-    ],
-    "deny": [],
-    "additionalDirectories": [
-      "/tmp",
-      "/home/sweetpc/.claude",
-      "/mnt/c/flutter/flutter/bin"
-    ]
-  },
-  "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "search1api-crawler",
-    "Bright Data",
-    "mcp-server-fetch",
-    "universal_mcp",
-    "Framelink Figma MCP",
-    "server-memory",
-    "firecrawl-mcp",
-    "task-master-ai",
-    "sequential-thinking",
-    "think-mcp-server",
-    "mcp-server-deep-research",
-    "@21st-dev/magic"
-  ],
-  "disableAllHooks": false,
-  "outputStyle": "default"
-=======
 {
   "permissions": {
     "allow": [
@@ -112,6 +17,90 @@
     ],
     "deny": []
   },
+    "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/quality_checks/pre_edit_validation.py",
+            "description": "Validates Edit/MultiEdit operations to prevent technical debt patterns",
+            "enabled": true,
+            "blocking": true,
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/quality_checks/pre_write_validation.py",
+            "description": "Validates Write operations for architectural compliance",
+            "enabled": true,
+            "blocking": true,
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/quality_checks/post_change_validation.py",
+            "description": "Validates all file modifications for quality and consistency",
+            "enabled": true,
+            "blocking": false,
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/quality_checks/prompt_enhancement.py",
+            "description": "Enhances user prompts with quality context and guidance",
+            "enabled": true,
+            "blocking": false,
+            "timeout": 3000
+          }
+        ]
+      }
+    ]
+  },
+  "quality_enforcement": {
+    "enabled": true,
+    "strictness": "medium",
+    "auto_fix": false,
+    "report_only": false,
+    "config_file": "scripts/quality_checks/quality_config.yaml"
+  },
+  "electrical_theme": {
+    "enforce_backgrounds": true,
+    "required_colors": ["primaryNavy", "accentCopper"],
+    "electrical_components": {
+      "mandatory_screens": ["splash", "home", "jobs", "locals"],
+      "background_requirement": "CircuitPatternBackground or ElectricalBackground"
+    }
+  },
+  "architecture": {
+    "state_management": "riverpod",
+    "forbidden_patterns": ["Provider", "setState_in_complex_widgets"],
+    "required_patterns": ["ConsumerWidget", "ConsumerStatefulWidget"],
+    "import_organization": {
+      "flutter_first": true,
+      "external_packages": true,
+      "internal_relative": true
+    }
+  },
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "mcp-server-fetch",
@@ -122,5 +111,4 @@
   ],
   "disableAllHooks": false,
   "outputStyle": "default"
->>>>>>> main
 }

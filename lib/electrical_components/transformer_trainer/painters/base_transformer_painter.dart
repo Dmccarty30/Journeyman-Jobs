@@ -69,7 +69,7 @@ abstract class BaseTransformerPainter extends CustomPainter {
   // Mobile responsive text scaling
   TextStyle _getScaledTextStyle(double baseSize, FontWeight weight, Color color) {
     // Scale text based on device pixel ratio for better mobile readability
-    final double scale = ui.window.devicePixelRatio > 2.5 ? 1.2 : 1.0;
+    final double scale = WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio > 2.5 ? 1.2 : 1.0;
     return TextStyle(
       color: color,
       fontSize: baseSize * scale,

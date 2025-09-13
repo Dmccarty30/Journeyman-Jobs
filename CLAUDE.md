@@ -4,7 +4,7 @@
 
 - **Always read `plan.md`** at the start of a new conversation to understand the project's phases, architecture, and current implementation status.
 - **Check for `TASK.md`** before starting work. If it doesn't exist, create it to track tasks with descriptions and dates.
-- **Review `guide/screens.md`** for detailed screen specifications and feature requirements.
+- **Review `C:\Users\david\Desktop\Journeyman-Jobs\docs\PROJECT_SYSTEM_DESIGN_THEME.md`** for detailed screen specifications and feature requirements.
 - **Understand the electrical theme** - This app serves IBEW electrical workers (journeymen, linemen, wiremen, operators, tree trimmers).
 - **Use Firebase** for all backend operations (Authentication, Firestore, Storage).
 

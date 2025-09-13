@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../services/weather_radar_service.dart';
 import '../../services/location_service.dart';
 import '../../design_system/app_theme.dart';
@@ -26,14 +25,14 @@ class InteractiveRadarMap extends StatefulWidget {
   final Function(LatLng)? onLocationTap;
   
   const InteractiveRadarMap({
-    Key? key,
+    super.key,
     this.initialLatitude = 39.8283, // US center
     this.initialLongitude = -98.5795,
     this.initialZoom = 5.0,
     this.showControls = true,
     this.animateRadar = false,
     this.onLocationTap,
-  }) : super(key: key);
+  });
 
   @override
   State<InteractiveRadarMap> createState() => _InteractiveRadarMapState();
@@ -243,7 +242,6 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               userAgentPackageName: 'com.journeymanjobs.app',
-              tileProvider: CancellableNetworkTileProvider(),
             ),
             
             // Weather radar overlay
@@ -254,9 +252,6 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                     : AlwaysStoppedAnimation(_radarOpacity),
                 child: TileLayer(
                   urlTemplate: _getRadarTileUrl(),
-                  tileProvider: CancellableNetworkTileProvider(),
-                  backgroundColor: Colors.transparent,
-                  keepBuffer: 2,
                 ),
               ),
             
@@ -270,8 +265,6 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                     x: 0, // Will be replaced by flutter_map
                     y: 0, // Will be replaced by flutter_map
                   ).replaceAll('/0/0/', '/{x}/{y}/'),
-                  tileProvider: CancellableNetworkTileProvider(),
-                  backgroundColor: Colors.transparent,
                 ),
               ),
             
@@ -392,7 +385,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                       min: 0.0,
                       max: 1.0,
                       activeColor: AppTheme.accentCopper,
-                      inactiveColor: AppTheme.textMuted,
+                      inactiveColor: Colors.grey,
                       onChanged: (value) {
                         setState(() {
                           _radarOpacity = value;
@@ -534,7 +527,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
           Text(
             label,
             style: AppTheme.bodySmall.copyWith(
-              color: AppTheme.textMuted,
+              color: Colors.grey,
               fontSize: 10,
             ),
           ),

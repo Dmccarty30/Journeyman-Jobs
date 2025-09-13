@@ -55,7 +55,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       // Load more jobs when reaching the bottom
-      ref.read(jobsNotifierProvider.notifier).loadMoreJobs();
+      ref.read(jobsProvider.notifier).loadMoreJobs();
     }
   }
 
@@ -122,7 +122,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
 
   void _applyFilters() {
     // Trigger a new search with current filters
-    ref.invalidate(jobsNotifierProvider);
+    ref.invalidate(jobsProvider);
   }
 
   void _showJobDetails(Job job) {
@@ -317,7 +317,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => ref.invalidate(jobsNotifierProvider),
+              onPressed: () => ref.invalidate(jobsProvider),
               child: const Text('Retry'),
             ),
           ],
@@ -377,7 +377,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final jobsState = ref.watch(jobsNotifierProvider);
+    final jobsState = ref.watch(jobsProvider);
     
     return Scaffold(
       backgroundColor: AppTheme.offWhite,
@@ -429,7 +429,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
           ElectricalCircuitBackground(
             opacity: 0.35,
             animationSpeed: 4.0,
-            componentDensity: ComponentDensity.medium,
+            componentDensity: ComponentDensity.high,
             enableCurrentFlow: true,
             enableInteractiveComponents: true,
           ),
@@ -462,7 +462,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
               
               return RefreshIndicator(
                 onRefresh: () async {
-                  ref.invalidate(jobsNotifierProvider);
+                  ref.invalidate(jobsProvider);
                 },
                 child: ListView.builder(
                   controller: _scrollController,

@@ -6,31 +6,33 @@ part of 'locals_riverpod_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 /// Riverpod notifier that manages loading and searching of locals.
-@ProviderFor(LocalsNotifier)
-const localsNotifierProvider = LocalsNotifierProvider._();
+
+@ProviderFor(Locals)
+const localsProvider = LocalsProvider._();
 
 /// Riverpod notifier that manages loading and searching of locals.
-final class LocalsNotifierProvider
-    extends $NotifierProvider<LocalsNotifier, LocalsState> {
+final class LocalsProvider extends $NotifierProvider<Locals, LocalsState> {
   /// Riverpod notifier that manages loading and searching of locals.
-  const LocalsNotifierProvider._()
+  const LocalsProvider._()
       : super(
           from: null,
           argument: null,
           retry: null,
-          name: r'localsNotifierProvider',
+          name: r'localsProvider',
           isAutoDispose: true,
           dependencies: null,
           $allTransitiveDependencies: null,
         );
 
   @override
-  String debugGetCreateSourceHash() => _$localsNotifierHash();
+  String debugGetCreateSourceHash() => _$localsHash();
 
   @$internal
   @override
-  LocalsNotifier create() => LocalsNotifier();
+  Locals create() => Locals();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(LocalsState value) {
@@ -41,9 +43,11 @@ final class LocalsNotifierProvider
   }
 }
 
-String _$localsNotifierHash() => r'dbee50ceccc11306d29de7774c3cd68ddbc66ada';
+String _$localsHash() => r'e574889b03ff87040f8420569ae9c58876db6158';
 
-abstract class _$LocalsNotifier extends $Notifier<LocalsState> {
+/// Riverpod notifier that manages loading and searching of locals.
+
+abstract class _$Locals extends $Notifier<LocalsState> {
   LocalsState build();
   @$mustCallSuper
   @override
@@ -57,10 +61,12 @@ abstract class _$LocalsNotifier extends $Notifier<LocalsState> {
 }
 
 /// Riverpod provider that fetches a single local by ID.
+
 @ProviderFor(localById)
 const localByIdProvider = LocalByIdFamily._();
 
 /// Riverpod provider that fetches a single local by ID.
+
 final class LocalByIdProvider extends $FunctionalProvider<
         AsyncValue<LocalsRecord?>, LocalsRecord?, FutureOr<LocalsRecord?>>
     with $FutureModifier<LocalsRecord?>, $FutureProvider<LocalsRecord?> {
@@ -111,9 +117,10 @@ final class LocalByIdProvider extends $FunctionalProvider<
   }
 }
 
-String _$localByIdHash() => r'54c08917c280479b031471243c0de0245966b43e';
+String _$localByIdHash() => r'88f2d158c643afb9ad2a961579c6fb1160605970';
 
 /// Riverpod provider that fetches a single local by ID.
+
 final class LocalByIdFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<LocalsRecord?>, String> {
   const LocalByIdFamily._()
@@ -126,6 +133,7 @@ final class LocalByIdFamily extends $Family
         );
 
   /// Riverpod provider that fetches a single local by ID.
+
   LocalByIdProvider call(
     String localId,
   ) =>
@@ -136,10 +144,12 @@ final class LocalByIdFamily extends $Family
 }
 
 /// Riverpod provider that returns locals filtered by state.
+
 @ProviderFor(localsByState)
 const localsByStateProvider = LocalsByStateFamily._();
 
 /// Riverpod provider that returns locals filtered by state.
+
 final class LocalsByStateProvider extends $FunctionalProvider<
     List<LocalsRecord>,
     List<LocalsRecord>,
@@ -199,9 +209,10 @@ final class LocalsByStateProvider extends $FunctionalProvider<
   }
 }
 
-String _$localsByStateHash() => r'26007e0b5e8be3df152b442c28e30dbab8578956';
+String _$localsByStateHash() => r'679e8b7e0e7069491671ec211f9e635dcec9fb8d';
 
 /// Riverpod provider that returns locals filtered by state.
+
 final class LocalsByStateFamily extends $Family
     with $FunctionalFamilyOverride<List<LocalsRecord>, String> {
   const LocalsByStateFamily._()
@@ -214,6 +225,7 @@ final class LocalsByStateFamily extends $Family
         );
 
   /// Riverpod provider that returns locals filtered by state.
+
   LocalsByStateProvider call(
     String stateName,
   ) =>
@@ -224,10 +236,12 @@ final class LocalsByStateFamily extends $Family
 }
 
 /// Riverpod provider that returns locals filtered by classification.
+
 @ProviderFor(localsByClassification)
 const localsByClassificationProvider = LocalsByClassificationFamily._();
 
 /// Riverpod provider that returns locals filtered by classification.
+
 final class LocalsByClassificationProvider extends $FunctionalProvider<
     List<LocalsRecord>,
     List<LocalsRecord>,
@@ -290,9 +304,10 @@ final class LocalsByClassificationProvider extends $FunctionalProvider<
 }
 
 String _$localsByClassificationHash() =>
-    r'79f20f2e407111f6d111504531fc1f7defdb012e';
+    r'5bd4e9c9406c1f2246b1eef478161c4601493bba';
 
 /// Riverpod provider that returns locals filtered by classification.
+
 final class LocalsByClassificationFamily extends $Family
     with $FunctionalFamilyOverride<List<LocalsRecord>, String> {
   const LocalsByClassificationFamily._()
@@ -305,6 +320,7 @@ final class LocalsByClassificationFamily extends $Family
         );
 
   /// Riverpod provider that returns locals filtered by classification.
+
   LocalsByClassificationProvider call(
     String classification,
   ) =>
@@ -315,10 +331,12 @@ final class LocalsByClassificationFamily extends $Family
 }
 
 /// Riverpod provider that returns locals matching a search term.
+
 @ProviderFor(searchedLocals)
 const searchedLocalsProvider = SearchedLocalsFamily._();
 
 /// Riverpod provider that returns locals matching a search term.
+
 final class SearchedLocalsProvider extends $FunctionalProvider<
     List<LocalsRecord>,
     List<LocalsRecord>,
@@ -379,9 +397,10 @@ final class SearchedLocalsProvider extends $FunctionalProvider<
   }
 }
 
-String _$searchedLocalsHash() => r'49034b770ac3db71406a89eabad4c8632a486012';
+String _$searchedLocalsHash() => r'397212ab6ddf6dbd11529d013bb6d808812e04a4';
 
 /// Riverpod provider that returns locals matching a search term.
+
 final class SearchedLocalsFamily extends $Family
     with $FunctionalFamilyOverride<List<LocalsRecord>, String> {
   const SearchedLocalsFamily._()
@@ -394,6 +413,7 @@ final class SearchedLocalsFamily extends $Family
         );
 
   /// Riverpod provider that returns locals matching a search term.
+
   SearchedLocalsProvider call(
     String searchTerm,
   ) =>
@@ -442,7 +462,7 @@ final class AllStatesProvider
   }
 }
 
-String _$allStatesHash() => r'e1df22f7c00ba9aeb27a9a31e0adc441f98c52a5';
+String _$allStatesHash() => r'53d536680dc1bfd63e1afdac1ec7298565533bd5';
 
 @ProviderFor(allClassifications)
 const allClassificationsProvider = AllClassificationsProvider._();
@@ -484,7 +504,4 @@ final class AllClassificationsProvider
 }
 
 String _$allClassificationsHash() =>
-    r'417b9f51ddf7e6d9fcb310a1bd0efe6be43a14a7';
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+    r'6daefd78a65b02e6ec4c1f2deff9e9616b7c09b2';

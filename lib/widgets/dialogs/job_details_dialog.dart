@@ -420,7 +420,7 @@ class JobDetailsDialog extends ConsumerWidget {
     if (localNumber == null) return;
     
     // Find the local record by number
-    final localsState = ref.read(localsNotifierProvider);
+    final localsState = ref.read(localsProvider);
     
     // Try to find the matching local
     LocalsRecord? matchingLocal;

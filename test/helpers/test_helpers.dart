@@ -1,22 +1,62 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as material; // Alias material
 import 'package:flutter/services.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
-// TODO: Uncomment when Riverpod providers are fixed
-// import 'package:journeyman_jobs/providers/app_state_provider.dart';
-// import 'package:journeyman_jobs/providers/job_filter_provider.dart';
-import 'package:journeyman_jobs/services/auth_service.dart';
-import 'package:journeyman_jobs/services/resilient_firestore_service.dart';
-import 'package:journeyman_jobs/services/connectivity_service.dart';
-import 'package:mockito/mockito.dart';
+import 'package:flutter_test/flutter_test.dart' as ft; // Alias flutter_test
+import 'package:provider/provider.dart' as legacy_provider; // Alias provider (still needed for some legacy components)
+import 'package:flutter_riverpod/flutter_riverpod.dart' as riverpod; // Alias flutter_riverpod
+import 'package:mockito/mockito.dart' as m; // Alias mockito
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' as firestore; // Alias cloud_firestore
 
-// Manual mock implementations for complex providers
-class TestAuthService extends Mock implements AuthService {
+// Project-specific imports for Riverpod providers and models
+import 'package:journeyman_jobs/providers/riverpod/app_state_riverpod_provider.dart';
+import 'package:journeyman_jobs/providers/riverpod/job_filter_riverpod_provider.dart';
+import 'package:journeyman_jobs/providers/riverpod/auth_riverpod_provider.dart';
+import 'package:journeyman_jobs/providers/riverpod/connectivity_riverpod_provider.dart';
+import 'package:journeyman_jobs/services/auth_service.dart';
+import 'package:journeyman_jobs/services/resilient_firestore_service.dart';
+import 'package:journeyman_jobs/services/connectivity_service.dart';
+import 'package:journeyman_jobs/models/filter_criteria.dart';
+import 'package:journeyman_jobs/models/job_model.dart'; // Corrected import for Job
+
+// Generated Riverpod provider imports (for overriding) - Removed .g.dart imports
+// These are not imported directly, but are part of their respective .dart files.
+// import 'package:journeman_jobs/providers/riverpod/app_state_riverpod_provider.g.dart';
+// import 'package:journeyman_jobs/providers/riverpod/job_filter_riverpod_provider.g.dart';
+// import 'package:journeyman_jobs/providers/riverpod/auth_riverpod_provider.g.dart';
+// import 'package:journeyman_jobs/providers/riverpod/connectivity_riverpod_provider.g.dart';
+
+
+// A simple mock for UserCredential to resolve the error
+class MockUserCredential implements UserCredential {
+  @override
+  final User? user;
+
+  MockUserCredential({this.user});
+
+  @override
+  AuthCredential? get credential => null;
+  @override
+  String? get verificationId => null;
+  @override
+  String? get verificationCode => null;
+  @override
+  AdditionalUserInfo? get additionalUserInfo => null;
+  
+  @override
+  String get operationType => ''; // Fixed: return empty string for non-nullable
+  
+  @override
+  String? get providerId => null;
+  
+  @override
+  String? get signInMethod => null;
+}
+
+// Manual mock implementations for complex services
+class TestAuthService extends m.Mock implements AuthService {
   final StreamController<User?> _authStateController = StreamController<User?>.broadcast();
   User? _currentUser;
 
@@ -53,26 +93,28 @@ class TestAuthService extends Mock implements AuthService {
   }
 }
 
-class TestResilientFirestoreService extends Mock implements ResilientFirestoreService {
-  @override
-  Future<QuerySnapshot> searchLocals(String searchQuery, {int limit = 20, DocumentSnapshot? startAfter, String? state}) async {
-    return await _firestore
-        .collection('locals')
-        .where('name', isGreaterThanOrEqualTo: searchQuery)
-        .where('name', isLessThan: searchQuery + '\uf8ff')
-        .limit(limit)
-        .get();
-  }
+// Mock Riverpod Notifiers (interfaces for mocking)
+// These are the actual Notifier classes that the generated providers expose.
+// We mock their interfaces to provide controlled behavior in tests.
+class MockJobFilterNotifier extends m.Mock implements JobFilterNotifier {}
+class MockAppStateNotifier extends m.Mock implements AppStateNotifier {}
+class MockAuthNotifier extends m.Mock implements AuthNotifier {}
+class MockConnectivityNotifier extends m.Mock implements ConnectivityNotifier {}
+
+class ConnectivityNotifier {
 }
+
+
+class TestResilientFirestoreService extends m.Mock implements ResilientFirestoreService {
   final FakeFirebaseFirestore _firestore = FakeFirebaseFirestore();
 
   @override
-  Stream<QuerySnapshot> getJobs({
+  Stream<firestore.QuerySnapshot> getJobs({
     Map<String, dynamic>? filters,
-    DocumentSnapshot? startAfter,
+    firestore.DocumentSnapshot? startAfter,
     int limit = 10,
   }) {
-    Query query = _firestore.collection('jobs');
+    firestore.Query query = _firestore.collection('jobs');
     
     if (filters != null) {
       filters.forEach((key, value) {
@@ -92,12 +134,12 @@ class TestResilientFirestoreService extends Mock implements ResilientFirestoreSe
   }
 
   @override
-  Stream<QuerySnapshot> getLocals({
+  Stream<firestore.QuerySnapshot> getLocals({
     String? state,
-    DocumentSnapshot? startAfter,
+    firestore.DocumentSnapshot? startAfter,
     int limit = 20,
   }) {
-    Query query = _firestore.collection('locals');
+    firestore.Query query = _firestore.collection('locals');
     
     if (state != null) {
       query = query.where('state', isEqualTo: state);
@@ -111,13 +153,17 @@ class TestResilientFirestoreService extends Mock implements ResilientFirestoreSe
   }
 
   @override
-  Future<QuerySnapshot> searchLocals(String searchQuery, {int limit = 20, DocumentSnapshot? startAfter}) async {
-    return await _firestore
-        .collection('locals')
-        .where('name', isGreaterThanOrEqualTo: searchQuery)
-        .where('name', isLessThan: searchQuery + '\uf8ff')
-        .limit(limit)
-        .get();
+  Future<firestore.QuerySnapshot> searchLocals(String searchQuery, {int limit = 20, String? state}) async {
+    firestore.Query query = _firestore.collection('locals');
+    
+    if (state != null) {
+      query = query.where('state', isEqualTo: state);
+    }
+
+    query = query.where('name', isGreaterThanOrEqualTo: searchQuery)
+                 .where('name', isLessThan: searchQuery + '\uf8ff');
+    
+    return query.limit(limit).get();
   }
 
   // Helper method to seed test data
@@ -139,7 +185,7 @@ class TestResilientFirestoreService extends Mock implements ResilientFirestoreSe
   }
 }
 
-class TestConnectivityService extends Mock implements ConnectivityService {
+class TestConnectivityService extends m.Mock implements ConnectivityService {
   bool _isConnected = true;
   final StreamController<bool> _connectivityController = StreamController<bool>.broadcast();
 
@@ -162,106 +208,18 @@ class TestConnectivityService extends Mock implements ConnectivityService {
   @override
   bool get hasListeners => _connectivityController.hasListener;
 }
-  bool _isConnected = true;
-  final StreamController<bool> _connectivityController = StreamController<bool>.broadcast();
 
-  @override
-  bool get isConnected => _isConnected;
 
-  @override
-  Stream<bool> get connectivityStream => _connectivityController.stream;
-
-  void setConnected(bool connected) {
-    _isConnected = connected;
-    _connectivityController.add(connected);
-  }
-
-  @override
-  void dispose() {
-    _connectivityController.close();
-  }
-
-  @override
-  bool get hasListeners => _connectivityController.hasListener;
-}
-
-/// Base test widget wrapper with all necessary providers
-class TestAppWrapper extends StatelessWidget {
-  final Widget child;
-  final AuthService? authService;
-  final ResilientFirestoreService? firestoreService;
-  final ConnectivityService? connectivityService;
-  final AppStateProvider? appStateProvider;
-  final JobFilterProvider? jobFilterProvider;
-
-  const TestAppWrapper({
-    Key? key,
-    required this.child,
-    this.authService,
-    this.firestoreService,
-    this.connectivityService,
-    this.appStateProvider,
-    this.jobFilterProvider,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<AuthService>(
-          create: (_) => authService ?? TestAuthService(),
-        ),
-        Provider<ResilientFirestoreService>(
-          create: (_) => firestoreService ?? TestResilientFirestoreService(),
-        ),
-        ChangeNotifierProvider<ConnectivityService>(
-          create: (_) => connectivityService ?? TestConnectivityService(),
-        ),
-        ChangeNotifierProvider<JobFilterProvider>(
-          create: (_) => jobFilterProvider ?? JobFilterProvider(),
-        ),
-        ChangeNotifierProxyProvider3<AuthService, ResilientFirestoreService,
-            ConnectivityService, AppStateProvider>(
-          create: (context) =>
-              appStateProvider ??
-              AppStateProvider(
-                context.read<AuthService>(),
-                context.read<ResilientFirestoreService>(),
-                context.read<ConnectivityService>(),
-              ),
-          update: (context, authService, firestoreService, connectivityService,
-                  previous) =>
-              previous ??
-              AppStateProvider(
-                authService,
-                firestoreService,
-                connectivityService,
-              ),
-        ),
-      ],
-      child: MaterialApp(
-        home: child,
-      ),
-    );
-  }
-}
-
-/// Create a widget test environment with mocked dependencies
-Widget createTestWidget(
-  Widget widget, {
-  AuthService? authService,
-  ResilientFirestoreService? firestoreService,
-  ConnectivityService? connectivityService,
-  AppStateProvider? appStateProvider,
-  JobFilterProvider? jobFilterProvider,
+/// Create a widget test environment with mocked dependencies using Riverpod's ProviderScope
+material.Widget createRiverpodTestWidget(
+  material.Widget widget, {
+  List<riverpod.Override> overrides = const [],
 }) {
-  return TestAppWrapper(
-    child: widget,
-    authService: authService,
-    firestoreService: firestoreService,
-    connectivityService: connectivityService,
-    appStateProvider: appStateProvider,
-    jobFilterProvider: jobFilterProvider,
+  return riverpod.ProviderScope(
+    overrides: overrides,
+    child: material.MaterialApp( // Corrected alias
+      home: widget,
+    ),
   );
 }
 
@@ -291,19 +249,19 @@ FakeFirebaseFirestore createFakeFirestore() {
 
 /// Pump widget and settle with timeout protection
 Future<void> pumpAndSettleWithTimeout(
-  WidgetTester tester, {
+  ft.WidgetTester tester, {
   Duration timeout = const Duration(seconds: 5),
 }) async {
   await tester.pumpAndSettle(
     const Duration(milliseconds: 100),
-    EnginePhase.sendSemanticsUpdate,
+    ft.EnginePhase.sendSemanticsUpdate,
     timeout,
   );
 }
 
 /// Find widgets by key string
-Finder findByKeyString(String key) {
-  return find.byKey(Key(key));
+ft.Finder findByKeyString(String key) {
+  return ft.find.byKey(material.Key(key));
 }
 
 /// Common test data fixtures
@@ -417,45 +375,45 @@ class TestFixtures {
 /// Custom matchers for electrical industry widgets
 class ElectricalMatchers {
   /// Matcher for finding loading indicators
-  static Finder get loadingIndicator => find.byType(CircularProgressIndicator);
+  static ft.Finder get loadingIndicator => ft.find.byType(material.CircularProgressIndicator);
 
   /// Matcher for finding error messages
-  static Finder errorMessage(String message) {
-    return find.textContaining(message);
+  static ft.Finder errorMessage(String message) {
+    return ft.find.textContaining(message);
   }
 
   /// Matcher for job cards
-  static Finder get jobCard => find.byKey(const Key('job-card'));
+  static ft.Finder get jobCard => ft.find.byKey(const material.Key('job-card'));
 
   /// Matcher for local cards
-  static Finder get localCard => find.byKey(const Key('local-card'));
+  static ft.Finder get localCard => ft.find.byKey(const material.Key('local-card'));
 
   /// Matcher for circuit breaker switch
-  static Finder get circuitBreakerSwitch => find.byKey(const Key('circuit-breaker-switch'));
+  static ft.Finder get circuitBreakerSwitch => ft.find.byKey(const material.Key('circuit-breaker-switch'));
 }
 
 /// Extension for common widget test actions
-extension WidgetTesterExtensions on WidgetTester {
+extension WidgetTesterExtensions on ft.WidgetTester {
   /// Enter text and pump
-  Future<void> enterTextAndPump(Finder finder, String text) async {
+  Future<void> enterTextAndPump(ft.Finder finder, String text) async {
     await enterText(finder, text);
     await pump();
   }
 
   /// Tap and pump with settle
-  Future<void> tapAndSettle(Finder finder) async {
+  Future<void> tapAndSettle(ft.Finder finder) async {
     await tap(finder);
     await pumpAndSettle();
   }
 
   /// Scroll until visible and tap
   Future<void> scrollUntilVisibleAndTap(
-    Finder finder, {
+    ft.Finder finder, {
     double delta = 300,
     int maxScrolls = 10,
-    Finder? scrollable,
+    ft.Finder? scrollable,
   }) async {
-    await scrollUntilVisible(
+    await ft.scrollUntilVisible(
       finder,
       delta,
       scrollable: scrollable,
@@ -466,7 +424,7 @@ extension WidgetTesterExtensions on WidgetTester {
   }
 
   /// Send keyboard key event
-  Future<void> sendKeyEvent(LogicalKeyboardKey key) async {
+  Future<void> sendKeyEvent(ft.LogicalKeyboardKey key) async {
     await sendKeyDownEvent(key);
     await sendKeyUpEvent(key);
     await pump();

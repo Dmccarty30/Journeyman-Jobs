@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' show sin, cos, atan2, sqrt, pi;
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'cache_service.dart';
@@ -28,7 +29,6 @@ class WeatherRadarService {
   
   // Cache configuration
   static const Duration _radarCacheDuration = Duration(minutes: 5);
-  static const Duration _satelliteCacheDuration = Duration(minutes: 15);
   
   // Current radar data
   RadarData? _currentRadarData;

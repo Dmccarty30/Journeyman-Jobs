@@ -6,11 +6,15 @@ part of 'auth_riverpod_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 /// AuthService provider
+
 @ProviderFor(authService)
 const authServiceProvider = AuthServiceProvider._();
 
 /// AuthService provider
+
 final class AuthServiceProvider
     extends $FunctionalProvider<AuthService, AuthService, AuthService>
     with $Provider<AuthService> {
@@ -51,10 +55,12 @@ final class AuthServiceProvider
 String _$authServiceHash() => r'ed0872794ec8e4cb3f50cb37b9c0b9467eb51ddb';
 
 /// Auth state stream provider
+
 @ProviderFor(authStateStream)
 const authStateStreamProvider = AuthStateStreamProvider._();
 
 /// Auth state stream provider
+
 final class AuthStateStreamProvider
     extends $FunctionalProvider<AsyncValue<User?>, User?, Stream<User?>>
     with $FutureModifier<User?>, $StreamProvider<User?> {
@@ -87,10 +93,12 @@ final class AuthStateStreamProvider
 String _$authStateStreamHash() => r'945c7573a4c44c1e7821e357b4335dfab9831caf';
 
 /// Current user provider
+
 @ProviderFor(currentUser)
 const currentUserProvider = CurrentUserProvider._();
 
 /// Current user provider
+
 final class CurrentUserProvider extends $FunctionalProvider<User?, User?, User?>
     with $Provider<User?> {
   /// Current user provider
@@ -130,8 +138,9 @@ final class CurrentUserProvider extends $FunctionalProvider<User?, User?, User?>
 String _$currentUserHash() => r'7a7c15dd3ddbe7d5ff4fa9b0c4e9cd832e42c8aa';
 
 /// Auth state notifier for managing authentication operations
+
 @ProviderFor(AuthNotifier)
-const authNotifierProvider = AuthNotifierProvider._();
+const authProvider = AuthNotifierProvider._();
 
 /// Auth state notifier for managing authentication operations
 final class AuthNotifierProvider
@@ -142,7 +151,7 @@ final class AuthNotifierProvider
           from: null,
           argument: null,
           retry: null,
-          name: r'authNotifierProvider',
+          name: r'authProvider',
           isAutoDispose: true,
           dependencies: null,
           $allTransitiveDependencies: null,
@@ -164,7 +173,9 @@ final class AuthNotifierProvider
   }
 }
 
-String _$authNotifierHash() => r'bfadca77556cd208f0c928667973669208285b0a';
+String _$authNotifierHash() => r'0db83949d3c9d7650980d42cf21560b80b37f23a';
+
+/// Auth state notifier for managing authentication operations
 
 abstract class _$AuthNotifier extends $Notifier<AuthState> {
   AuthState build();
@@ -180,10 +191,12 @@ abstract class _$AuthNotifier extends $Notifier<AuthState> {
 }
 
 /// Convenience provider for auth state
+
 @ProviderFor(isAuthenticated)
 const isAuthenticatedProvider = IsAuthenticatedProvider._();
 
 /// Convenience provider for auth state
+
 final class IsAuthenticatedProvider
     extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// Convenience provider for auth state
@@ -223,10 +236,12 @@ final class IsAuthenticatedProvider
 String _$isAuthenticatedHash() => r'ec341d95b490bda54e8278477e26f7b345844931';
 
 /// Route guard provider
+
 @ProviderFor(isRouteProtected)
 const isRouteProtectedProvider = IsRouteProtectedFamily._();
 
 /// Route guard provider
+
 final class IsRouteProtectedProvider
     extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// Route guard provider
@@ -287,6 +302,7 @@ final class IsRouteProtectedProvider
 String _$isRouteProtectedHash() => r'dbeddd3719f65e93f561fe1263b1ff94a0ded4ab';
 
 /// Route guard provider
+
 final class IsRouteProtectedFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
   const IsRouteProtectedFamily._()
@@ -299,6 +315,7 @@ final class IsRouteProtectedFamily extends $Family
         );
 
   /// Route guard provider
+
   IsRouteProtectedProvider call(
     String routePath,
   ) =>
@@ -307,5 +324,3 @@ final class IsRouteProtectedFamily extends $Family
   @override
   String toString() => r'isRouteProtectedProvider';
 }
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

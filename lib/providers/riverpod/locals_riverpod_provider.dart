@@ -71,7 +71,7 @@ class LocalsState {
 
 @riverpod
 /// Riverpod notifier that manages loading and searching of locals.
-class LocalsNotifier extends _$LocalsNotifier {
+class Locals extends _$Locals {
   late final ConcurrentOperationManager _operationManager;
   static const int _pageSize = 20; // Define page size for pagination
 
@@ -83,26 +83,26 @@ class LocalsNotifier extends _$LocalsNotifier {
 
   /// Loads locals from Firestore, optionally forcing a refresh or loading more data.
   Future<void> loadLocals({bool forceRefresh = false, bool loadMore = false}) async {
-    if (state.isLoading) {
+    if (this.state.isLoading) {
       return;
     }
 
-    if (!forceRefresh && !loadMore && state.locals.isNotEmpty) {
+    if (!forceRefresh && !loadMore && this.state.locals.isNotEmpty) {
       return;
     }
 
-    if (loadMore && state.lastDocument == null && state.locals.isNotEmpty) {
+    if (loadMore && this.state.lastDocument == null && this.state.locals.isNotEmpty) {
       // No more documents to load if we're trying to load more and lastDocument is null
       return;
     }
 
-    state = state.copyWith(isLoading: true);
+    this.state = this.state.copyWith(isLoading: true);
     try {
       final QuerySnapshot<Object?> snapshot = await _operationManager.queueOperation<QuerySnapshot<Object?>>(
         type: OperationType.loadLocals,
         operation: () async {
           return ref.read(firestoreServiceProvider).getLocals(
-            startAfter: loadMore ? state.lastDocument : null,
+            startAfter: loadMore ? this.state.lastDocument : null,
             limit: _pageSize,
           ).first;
         },
@@ -113,15 +113,15 @@ class LocalsNotifier extends _$LocalsNotifier {
           .toList();
 
       final List<LocalsRecord> updatedLocals = loadMore
-          ? [...state.locals, ...newLocals]
+          ? [...this.state.locals, ...newLocals]
           : newLocals;
 
-      final Map<String, LocalsRecord> cached = Map.from(state.cachedLocals);
+      final Map<String, LocalsRecord> cached = Map.from(this.state.cachedLocals);
       for (final LocalsRecord l in newLocals) {
         cached[l.id] = l;
       }
 
-      state = state.copyWith(
+      this.state = this.state.copyWith(
         locals: updatedLocals,
         filteredLocals: updatedLocals,
         isLoading: false,
@@ -129,7 +129,7 @@ class LocalsNotifier extends _$LocalsNotifier {
         lastDocument: newLocals.isNotEmpty ? snapshot.docs.last : null,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      this.state = this.state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }
   }
@@ -138,10 +138,10 @@ class LocalsNotifier extends _$LocalsNotifier {
   void searchLocals(String term) {
     final String normalized = term.toLowerCase().trim();
     if (normalized.isEmpty) {
-      state = state.copyWith(filteredLocals: state.locals, searchTerm: '');
+      this.state = this.state.copyWith(filteredLocals: this.state.locals, searchTerm: '');
       return;
     }
-    final List<LocalsRecord> filtered = state.locals.where((LocalsRecord local) =>
+    final List<LocalsRecord> filtered = this.state.locals.where((LocalsRecord local) =>
         local.localNumber.toLowerCase().contains(normalized) ||
         local.localName.toLowerCase().contains(normalized) ||
         local.city.toLowerCase().contains(normalized) ||
@@ -173,19 +173,19 @@ class LocalsNotifier extends _$LocalsNotifier {
         }
         return aNum.compareTo(bNum);
       });
-    state = state.copyWith(filteredLocals: filtered, searchTerm: term);
+    this.state = this.state.copyWith(filteredLocals: filtered, searchTerm: term);
   }
 
   /// Retrieves a local by its ID from the cached map.
-  LocalsRecord? getLocalById(String id) => state.cachedLocals[id];
+  LocalsRecord? getLocalById(String id) => this.state.cachedLocals[id];
 
   /// Returns locals filtered by a given state name.
-  List<LocalsRecord> getLocalsByState(String stateName) => state.locals
+  List<LocalsRecord> getLocalsByState(String stateName) => this.state.locals
       .where((LocalsRecord l) => l.state.toLowerCase() == stateName.toLowerCase())
       .toList();
 
   /// Returns locals filtered by a given classification.
-  List<LocalsRecord> getLocalsByClassification(String classification) => state.locals
+  List<LocalsRecord> getLocalsByClassification(String classification) => this.state.locals
       .where((LocalsRecord l) => l.classification?.toLowerCase() == classification.toLowerCase())
       .toList();
 
@@ -201,12 +201,12 @@ class LocalsNotifier extends _$LocalsNotifier {
 
   /// Clears the current search, resetting filteredLocals and searchTerm.
   void clearSearch() {
-    state = state.copyWith(filteredLocals: state.locals, searchTerm: '');
+    this.state = this.state.copyWith(filteredLocals: this.state.locals, searchTerm: '');
   }
 
   /// Clears any error in the state.
   void clearError() {
-    state = state.clearError();
+    this.state = this.state.clearError();
   }
 
   void dispose() {
@@ -233,7 +233,7 @@ Future<LocalsRecord?> localById(Ref ref, String localId) async {
 @riverpod
 /// Riverpod provider that returns locals filtered by state.
 List<LocalsRecord> localsByState(Ref ref, String stateName) {
-  final localsState = ref.watch(localsNotifierProvider);
+  final localsState = ref.watch(localsProvider);
   return localsState.locals
       .where((l) => l.state.toLowerCase() == stateName.toLowerCase())
       .toList();
@@ -242,7 +242,7 @@ List<LocalsRecord> localsByState(Ref ref, String stateName) {
 @riverpod
 /// Riverpod provider that returns locals filtered by classification.
 List<LocalsRecord> localsByClassification(Ref ref, String classification) {
-  final localsState = ref.watch(localsNotifierProvider);
+  final localsState = ref.watch(localsProvider);
   return localsState.locals
       .where((l) => l.classification?.toLowerCase() == classification.toLowerCase())
       .toList();
@@ -251,7 +251,7 @@ List<LocalsRecord> localsByClassification(Ref ref, String classification) {
 @riverpod
 /// Riverpod provider that returns locals matching a search term.
 List<LocalsRecord> searchedLocals(Ref ref, String searchTerm) {
-  final localsState = ref.watch(localsNotifierProvider);
+  final localsState = ref.watch(localsProvider);
   if (searchTerm.trim().isEmpty) {
     return localsState.locals;
   }
@@ -268,7 +268,7 @@ List<LocalsRecord> searchedLocals(Ref ref, String searchTerm) {
 
 @riverpod
 List<String> allStates(Ref ref) {
-  final localsState = ref.watch(localsNotifierProvider);
+  final localsState = ref.watch(localsProvider);
   final Set<String> set = <String>{};
   for (final l in localsState.locals) {
     set.add(l.state);
@@ -279,7 +279,7 @@ List<String> allStates(Ref ref) {
 
 @riverpod
 List<String> allClassifications(Ref ref) {
-  final localsState = ref.watch(localsNotifierProvider);
+  final localsState = ref.watch(localsProvider);
   final Set<String> set = <String>{};
   for (final l in localsState.locals) {
     if (l.classification != null) {

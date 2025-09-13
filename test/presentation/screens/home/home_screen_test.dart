@@ -13,7 +13,7 @@ import '../../../helpers/widget_test_helpers.dart';
 
 // Generate mocks
 @GenerateMocks([AppStateProvider, GoRouter])
-import 'home_screen_test.mocks.dart';
+part 'home_screen_test.mocks.dart';
 
 void main() {
   late MockAppStateProvider mockAppStateProvider;

@@ -122,7 +122,7 @@ class JobCardImplementation extends StatelessWidget {
         // Row 1: Contractor | Wages
         _buildGridRow(
           leftLabel: 'Contractor:',
-          leftValue: job.company ?? 'N/A',
+          leftValue: job.company,
           rightLabel: 'Wages:',
           rightValue: _formatWages(),
         ),
@@ -131,7 +131,7 @@ class JobCardImplementation extends StatelessWidget {
         // Row 2: Location | Hours
         _buildGridRow(
           leftLabel: 'Location:',
-          leftValue: job.location ?? 'N/A',
+          leftValue: job.location,
           rightLabel: 'Hours:',
           rightValue: job.hours?.toString() ?? 'TBD',
         ),
