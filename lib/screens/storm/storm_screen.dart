@@ -14,6 +14,9 @@ import '../../navigation/app_router.dart';
 import '../../electrical_components/circuit_board_background.dart';
  // import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
  // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
+import '../../widgets/storm/roster_signup_carousel.dart';
+import '../../services/roster_data_service.dart';
+import '../../models/roster_contractor.dart';
 
 
  class StormScreen extends StatefulWidget {
@@ -96,6 +99,11 @@ class _StormScreenState extends State<StormScreen> {
   final PowerOutageService _powerOutageService = PowerOutageService();
   List<PowerOutageState> _powerOutages = [];
   bool _isLoadingOutages = true;
+
+  // Roster signups
+  final RosterDataService _rosterService = RosterDataService();
+  List<RosterContractor> _rosterSignups = [];
+  bool _isLoadingRoster = true;
   
   final List<String> _regions = [
     'All Regions',
@@ -164,6 +172,7 @@ class _StormScreenState extends State<StormScreen> {
   void initState() {
     super.initState();
     _loadPowerOutages();
+    _loadRosterSignups();
   }
 
   @override
@@ -186,6 +195,24 @@ class _StormScreenState extends State<StormScreen> {
       if (mounted) {
         setState(() {
           _isLoadingOutages = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _loadRosterSignups() async {
+    try {
+      final data = await _rosterService.loadRosterData();
+      if (mounted) {
+        setState(() {
+          _rosterSignups = data;
+          _isLoadingRoster = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingRoster = false;
         });
       }
     }
@@ -430,6 +457,38 @@ class _StormScreenState extends State<StormScreen> {
               ],
             ),
 
+            const SizedBox(height: AppTheme.spacingLg),
+
+            // Roster Sign-up
+            Text(
+              'Roster Sign-up',
+              style: AppTheme.headlineSmall.copyWith(
+                color: AppTheme.primaryNavy,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+            JJCard(
+              padding: const EdgeInsets.all(AppTheme.spacingMd),
+              margin: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
+              child: SizedBox(
+                width: double.infinity,
+                child: _isLoadingRoster
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: AppTheme.accentCopper,
+                        ),
+                      )
+                    : (_rosterSignups.isEmpty
+                        ? Center(
+                            child: JJEmptyState(
+                              title: 'No Roster Sign-ups',
+                              subtitle: 'No roster sign-ups available at this time.',
+                              context: 'roster',
+                            ),
+                          )
+                        : const RosterSignupCarousel()),
+              ),
+            ),
             const SizedBox(height: AppTheme.spacingLg),
 
             // Contractor Cards

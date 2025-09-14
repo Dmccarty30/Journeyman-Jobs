@@ -48,7 +48,7 @@ class JJPrimaryButton extends StatelessWidget {
     this.isFullWidth = false,
     this.width,
     this.height,
-    this.variant = JJButtonVariant.primary,
+    this.variant = JJButtonVariant.primary, required JJButtonSize size,
   });
 
   @override
@@ -149,7 +149,7 @@ class JJSecondaryButton extends StatelessWidget {
     this.isLoading = false,
     this.isFullWidth = false,
     this.width,
-    this.height,
+    this.height, required JJButtonVariant variant, required JJButtonSize size,
   });
 
   @override

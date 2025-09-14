@@ -420,8 +420,8 @@ class _CircuitBreakerPainter extends CustomPainter {
     final handleTop = size.height * 0.3;
     final handleBottom = size.height * 0.55;
     
-    // Interpolate handle position
-    final handleY = handleTop + (handleBottom - handleTop) * switchPosition;
+    // Interpolate handle position (inverted so UP = ON, DOWN = OFF)
+    final handleY = handleBottom - (handleBottom - handleTop) * switchPosition;
     
     // Add pressed effect
     final pressOffset = isPressed ? 2.0 : 0.0;
