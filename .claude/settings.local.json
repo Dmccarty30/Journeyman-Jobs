@@ -13,11 +13,20 @@
       "Edit",
       "Bash(chmod:*)",
       "Bash(touch:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(cat:*)"
     ],
     "deny": []
   },
-    "hooks": {
+  "enableAllProjectMcpServers": false,
+  "enabledMcpjsonServers": [
+    "mcp-server-fetch",
+    "universal_mcp",
+    "firecrawl-mcp",
+    "sequential-thinking",
+    "think-mcp-server"
+  ],
+  "hooks": {
     "PreToolUse": [
       {
         "matcher": "Edit|MultiEdit",
@@ -25,9 +34,6 @@
           {
             "type": "command",
             "command": "python3 scripts/quality_checks/pre_edit_validation.py",
-            "description": "Validates Edit/MultiEdit operations to prevent technical debt patterns",
-            "enabled": true,
-            "blocking": true,
             "timeout": 5000
           }
         ]
@@ -38,9 +44,6 @@
           {
             "type": "command",
             "command": "python3 scripts/quality_checks/pre_write_validation.py",
-            "description": "Validates Write operations for architectural compliance",
-            "enabled": true,
-            "blocking": true,
             "timeout": 5000
           }
         ]
@@ -53,9 +56,6 @@
           {
             "type": "command",
             "command": "python3 scripts/quality_checks/post_change_validation.py",
-            "description": "Validates all file modifications for quality and consistency",
-            "enabled": true,
-            "blocking": false,
             "timeout": 10000
           }
         ]
@@ -67,15 +67,14 @@
           {
             "type": "command",
             "command": "python3 scripts/quality_checks/prompt_enhancement.py",
-            "description": "Enhances user prompts with quality context and guidance",
-            "enabled": true,
-            "blocking": false,
             "timeout": 3000
           }
         ]
       }
     ]
   },
+  "disableAllHooks": false,
+  "outputStyle": "default",
   "quality_enforcement": {
     "enabled": true,
     "strictness": "medium",
@@ -85,30 +84,34 @@
   },
   "electrical_theme": {
     "enforce_backgrounds": true,
-    "required_colors": ["primaryNavy", "accentCopper"],
+    "required_colors": [
+      "primaryNavy",
+      "accentCopper"
+    ],
     "electrical_components": {
-      "mandatory_screens": ["splash", "home", "jobs", "locals"],
+      "mandatory_screens": [
+        "splash",
+        "home",
+        "jobs",
+        "locals"
+      ],
       "background_requirement": "CircuitPatternBackground or ElectricalBackground"
     }
   },
   "architecture": {
     "state_management": "riverpod",
-    "forbidden_patterns": ["Provider", "setState_in_complex_widgets"],
-    "required_patterns": ["ConsumerWidget", "ConsumerStatefulWidget"],
+    "forbidden_patterns": [
+      "Provider",
+      "setState_in_complex_widgets"
+    ],
+    "required_patterns": [
+      "ConsumerWidget",
+      "ConsumerStatefulWidget"
+    ],
     "import_organization": {
       "flutter_first": true,
       "external_packages": true,
       "internal_relative": true
     }
-  },
-  "enableAllProjectMcpServers": false,
-  "enabledMcpjsonServers": [
-    "mcp-server-fetch",
-    "universal_mcp",
-    "firecrawl-mcp",
-    "sequential-thinking",
-    "think-mcp-server"
-  ],
-  "disableAllHooks": false,
-  "outputStyle": "default"
+  }
 }

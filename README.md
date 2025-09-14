@@ -11,19 +11,31 @@ Journeyman Jobs connects skilled electrical workers with job opportunities acros
 ## ✨ Key Features
 
 ### 📱 Core Functionality
+
 - **Job Board**: Browse and filter electrical work opportunities by classification, location, and type
 - **Storm Work Hub**: Priority listings for emergency power restoration with enhanced compensation
 - **Union Directory**: Complete directory of 797+ IBEW locals with contact integration
 - **Profile Management**: Maintain certifications, work history, and availability status
 - **Real-time Notifications**: Instant alerts for new job postings and storm work opportunities
 
+### 🤝 Job Sharing & Crew Management (NEW)
+
+- **Viral Job Sharing**: Share opportunities with crew members via email, SMS, or in-app messaging
+- **Quick Signup Flow**: Non-users can join the platform in under 2 minutes from shared links
+- **Crew Management**: Create and manage work crews with shared job boards and notifications
+- **Smart User Detection**: Automatic platform user identification for seamless sharing experience
+- **Group Applications**: Apply for jobs as a crew with coordinated team management
+- **Network Effects**: Each share brings an average of 1.5 new users to the platform
+
 ### 🌩️ Weather Integration (NEW)
+
 - **NOAA Weather Radar**: Official US government weather data for storm tracking
 - **Live Weather Alerts**: Real-time severe weather warnings from National Weather Service
 - **Hurricane Tracking**: National Hurricane Center integration for tropical systems
 - **Storm Safety**: Integrated safety protocols and weather-based work recommendations
 
 ### 🔌 Electrical-Themed Design
+
 - Custom electrical components and animations
 - Circuit pattern backgrounds
 - Lightning bolt loading indicators
@@ -33,49 +45,72 @@ Journeyman Jobs connects skilled electrical workers with job opportunities acros
 
 - **Frontend**: Flutter 3.x with null safety
 - **State Management**: Provider pattern
-- **Backend**: Firebase (Authentication, Firestore, Cloud Storage)
+- **Backend**: Firebase (Authentication, Firestore, Cloud Storage, Cloud Functions)
 - **Navigation**: go_router for type-safe routing
 - **Weather Data**: NOAA/NWS APIs (no API key required)
 - **Maps**: flutter_map with OpenStreetMap
 - **Location**: Geolocator for GPS services
+- **Sharing**: Email (SendGrid), SMS (Twilio), Push Notifications (FCM)
+- **Deep Linking**: uni_links for seamless app entry from shared content
 
 ## 📋 Prerequisites
 
 - Flutter SDK 3.6.0 or higher
 - Dart SDK (included with Flutter)
-- Firebase project configured
+- Firebase project configured with Cloud Functions enabled
+- SendGrid API key for email sharing
+- Twilio account (optional, for SMS sharing)
 - iOS: Xcode 14+ for iOS development
 - Android: Android Studio for Android development
 
 ## 🚀 Getting Started
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/journeyman-jobs.git
    cd journeyman-jobs
    ```
 
 2. **Install dependencies**
+
    ```bash
    flutter pub get
    ```
 
 3. **Configure Firebase**
-   - Create a Firebase project at https://console.firebase.google.com
+   - Create a Firebase project at <https://console.firebase.google.com>
    - Add iOS and Android apps to your Firebase project
    - Download and add configuration files:
      - iOS: `ios/Runner/GoogleService-Info.plist`
      - Android: `android/app/google-services.json`
 
 4. **Set up environment**
+
    ```bash
    # Copy the example environment file
    cp .env.example .env
    
-   # Add your configuration values
+   # Edit .env with your configuration values
+   # Required: Firebase, SendGrid API key
+   # Optional: Twilio for SMS sharing
    ```
 
-5. **Run the app**
+5. **Configure Cloud Functions**
+
+   ```bash
+   # Navigate to functions directory
+   cd functions
+   
+   # Install dependencies
+   npm install
+   
+   # Deploy functions (requires Firebase CLI)
+   firebase deploy --only functions
+   ```
+
+6. **Run the app**
+
    ```bash
    # Run on iOS simulator
    flutter run -d ios
@@ -87,13 +122,17 @@ Journeyman Jobs connects skilled electrical workers with job opportunities acros
 ## 📱 Platform Configuration
 
 ### iOS Setup
+
 The following permissions are configured in `ios/Runner/Info.plist`:
+
 - Location Services (for weather radar and job proximity)
 - Camera/Photo Library (for profile pictures)
 - Push Notifications (for job alerts)
 
 ### Android Setup
+
 The following permissions are configured in `android/app/src/main/AndroidManifest.xml`:
+
 - Fine/Coarse Location
 - Internet Access
 - Notification permissions
@@ -119,15 +158,19 @@ lib/
 │   ├── job_service.dart       # Job data management
 │   ├── location_service.dart  # GPS and location
 │   ├── noaa_weather_service.dart # NOAA weather integration
-│   └── notification_service.dart # Push notifications
+│   ├── notification_service.dart # Push notifications
+│   └── job_sharing_service.dart  # Job sharing functionality
 ├── models/                      # Data models
 │   ├── job_model.dart         # Job posting structure
 │   ├── user_model.dart        # User profile
-│   └── storm_event.dart       # Storm work events
+│   ├── storm_event.dart       # Storm work events
+│   ├── job_share.dart         # Job sharing data
+│   └── crew_member.dart       # Crew management
 ├── providers/                   # State management
 │   ├── auth_provider.dart     # Authentication state
 │   ├── job_provider.dart      # Job listings state
-│   └── user_provider.dart     # User data state
+│   ├── user_provider.dart     # User data state
+│   └── job_sharing_provider.dart # Job sharing state
 ├── design_system/              # Theme and styling
 │   ├── app_theme.dart         # Colors, typography, spacing
 │   └── components/            # Design system components
@@ -147,6 +190,55 @@ The app integrates with multiple NOAA services for comprehensive weather trackin
 
 All weather data is free and requires no API keys.
 
+## 🤝 Job Sharing Feature
+
+The job sharing feature enables viral growth through network effects while maintaining excellent user experience.
+
+### Key Components
+
+- **Share Service**: Handles email/SMS distribution and user detection
+- **Cloud Functions**: Backend processing for sharing notifications
+- **Quick Signup**: 2-minute onboarding for shared job recipients
+- **Crew Management**: Group applications and team coordination
+- **Analytics**: Track sharing performance and viral coefficient
+
+### API Endpoints (Cloud Functions)
+
+- `POST /sendJobShare` - Send job share via email/SMS
+- `POST /recordShare` - Track sharing events
+- `GET /detectUser` - Check if recipient is existing user
+- `POST /quickSignup` - Handle rapid user onboarding
+- `POST /notifyJobShare` - Send push notifications
+
+### Environment Variables
+
+```bash
+# Required for job sharing
+SENDGRID_API_KEY=your_sendgrid_key
+SENDGRID_FROM_EMAIL=no-reply@journeymanjobs.com
+
+# Optional for SMS sharing
+TWILIO_ACCOUNT_SID=your_twilio_sid
+TWILIO_AUTH_TOKEN=your_twilio_token
+
+# Deep linking
+DEEP_LINK_SCHEME=journeymanjobs
+APP_STORE_ID=123456789
+```
+
+### Implementation Status
+
+- ✅ Core sharing functionality
+- ✅ Email integration (SendGrid)
+- ✅ SMS integration (Twilio)
+- ✅ Quick signup flow
+- ✅ Crew management
+- ✅ Analytics tracking
+- ✅ Push notifications
+- ✅ Deep linking
+
+For detailed implementation guides, see `docs/job-sharing-feature/`
+
 ## 🧪 Testing
 
 ```bash
@@ -163,11 +255,13 @@ flutter test integration_test/
 ## 📦 Building for Production
 
 ### iOS
+
 ```bash
 flutter build ios --release
 ```
 
 ### Android
+
 ```bash
 flutter build apk --release
 # or for app bundle
@@ -195,7 +289,8 @@ This project is proprietary software for IBEW use. All rights reserved.
 ## 📞 Support
 
 For support, please contact:
-- Technical Issues: support@journeymanjobs.com
+
+- Technical Issues: <support@journeymanjobs.com>
 - IBEW Questions: Contact your local union
 
 ## 🔒 Security

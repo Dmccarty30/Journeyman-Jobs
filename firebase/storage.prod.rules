@@ -1,0 +1,75 @@
+rules_version = '2';
+
+// Production Firebase Storage Rules for Journeyman Jobs
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper functions for security
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    function isValidImageFile() {
+      return request.resource.contentType.matches('image/.*') &&
+             request.resource.size < 10 * 1024 * 1024; // 10MB limit
+    }
+    
+    function isValidDocumentFile() {
+      return request.resource.contentType.matches('(application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document)') &&
+             request.resource.size < 25 * 1024 * 1024; // 25MB limit for documents
+    }
+    
+    // User profile images - users can only manage their own
+    match /users/{userId}/profile/{imageId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId) && isValidImageFile();
+      allow delete: if isOwner(userId);
+    }
+    
+    // Job attachments - read by authenticated users, write restricted
+    match /jobs/{jobId}/attachments/{attachmentId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admin/Cloud Functions can add job attachments
+      allow delete: if false;
+    }
+    
+    // Share attachments - managed by share creator
+    match /shares/{shareId}/{userId}/{attachmentId} {
+      allow read: if isAuthenticated() && (
+                     isOwner(userId) ||
+                     // TODO: Check if user is recipient of share
+                     true // Simplified for now - would need Firestore lookup
+                  );
+      allow write: if isOwner(userId) && (isValidImageFile() || isValidDocumentFile());
+      allow delete: if isOwner(userId);
+    }
+    
+    // Temporary uploads - 24 hour auto-cleanup
+    match /temp/{userId}/{uploadId} {
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId) && 
+                      (isValidImageFile() || isValidDocumentFile()) &&
+                      request.time < resource.timeCreated + duration.value(1, 'd'); // 24 hour limit
+      allow delete: if isOwner(userId);
+    }
+    
+    // Public assets - read-only for app resources
+    match /public/{assetPath=**} {
+      allow read: if true;
+      allow write: if false; // Only admin uploads
+    }
+    
+    // Backup/Export data - admin only
+    match /exports/{exportId=**} {
+      allow read, write: if false; // Only server-side access
+    }
+    
+    // Default deny rule
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

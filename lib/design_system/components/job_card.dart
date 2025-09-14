@@ -3,6 +3,7 @@ import '../app_theme.dart';
 import '../../models/job_model.dart';
 import '../../utils/job_formatting.dart';
 import 'reusable_components.dart';
+import 'standardized_card.dart';
 
 /// Enum for JobCard variants
 enum JobCardVariant {
@@ -67,343 +68,341 @@ class JobCard extends StatelessWidget {
 
   /// Builds the half-size (compact) variant of the job card
   Widget _buildHalfCard() {
-    return JJCard(
-      onTap: onTap,
-      margin: margin ?? const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingSm,
-        vertical: AppTheme.spacingXs,
-      ),
-      padding: padding ?? const EdgeInsets.all(AppTheme.spacingMd),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Header with company and favorite button
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  job.company,
-                  style: AppTheme.titleMedium.copyWith(
-                    color: AppTheme.primaryNavy,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              if (onFavorite != null)
-                GestureDetector(
-                  onTap: onFavorite,
-                  child: Icon(
-                    isFavorited ? Icons.bookmark : Icons.bookmark_border,
-                    size: AppTheme.iconSm,
-                    color: isFavorited ? AppTheme.accentCopper : AppTheme.textLight,
-                  ),
-                ),
-            ],
-          ),
-          
-          const SizedBox(height: AppTheme.spacingSm),
-          
-          // Job title or classification
-          if (job.jobTitle != null || job.classification != null)
-            Text(
-              job.jobTitle ?? job.classification ?? '',
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textPrimary,
-                fontWeight: FontWeight.w500,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          
+    final List<CardColumnData> columns = [
+      CardColumnData(
+        rows: [
           // Company info
-          if (job.company.isNotEmpty) ...[            
-            const SizedBox(height: AppTheme.spacingXs),
-            Row(
-              children: [
-                Icon(
-                  Icons.business_outlined,
-                  size: AppTheme.iconXs,
-                  color: AppTheme.textSecondary,
-                ),
-                const SizedBox(width: AppTheme.spacingXs),
-                Expanded(
-                  child: Text(
-                    'Company: ${job.company}',
-                    style: AppTheme.labelSmall.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
+          if (job.company.isNotEmpty)
+            CardRowData(
+              icon: Icons.business_outlined,
+              label: 'Company',
+              value: job.company,
             ),
-          ],
           
-          const SizedBox(height: AppTheme.spacingXs),
-          
-          // Location with icon
-          Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                size: AppTheme.iconXs,
-                color: AppTheme.textSecondary,
-              ),
-              const SizedBox(width: AppTheme.spacingXs),
-              Expanded(
-                child: Text(
-                  'Location: ${JobFormatting.formatLocation(job.location)}',
-                  style: AppTheme.labelSmall.copyWith(
-                    color: AppTheme.textSecondary,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+          // Location
+          CardRowData(
+            icon: Icons.location_on_outlined,
+            label: 'Location',
+            value: JobFormatting.formatLocation(job.location),
           ),
           
-          const SizedBox(height: AppTheme.spacingSm),
+          // Wage
+          if (job.wage != null)
+            CardRowData(
+              icon: Icons.attach_money,
+              label: 'Wage',
+              value: '\$${job.wage!.toStringAsFixed(2)}/hr',
+              iconColor: AppTheme.accentCopper,
+              valueColor: AppTheme.accentCopper,
+            ),
           
-          // Wage and hours
-          Row(
+          // Hours
+          if (job.hours != null)
+            CardRowData(
+              icon: Icons.schedule,
+              label: 'Hours',
+              value: '${job.hours!} hrs',
+            ),
+        ],
+      ),
+    ];
+
+    return StandardizedCard(
+      columns: columns,
+      header: job.company,
+      onTap: onTap,
+      margin: margin,
+      padding: padding,
+      showCopperBorder: true,
+      backgroundColor: AppTheme.white,
+    );
+  }
+
+  /// Builds the full-size (detailed) variant of the job card
+  Widget _buildFullCard() {
+    final List<CardColumnData> columns = [
+      // First column - Location and Local info
+      CardColumnData(
+        rows: [
+          CardRowData(
+            icon: Icons.location_on_outlined,
+            label: 'Location',
+            value: job.location,
+          ),
+          if (job.local != null)
+            CardRowData(
+              icon: Icons.group,
+              label: 'Local',
+              value: 'Local ${job.local}',
+            ),
+        ],
+      ),
+      
+      // Second column - Wage and Hours
+      CardColumnData(
+        rows: [
+          if (job.wage != null)
+            CardRowData(
+              icon: Icons.attach_money,
+              label: 'Wage',
+              value: '\$${job.wage!.toStringAsFixed(2)}/hr',
+              iconColor: AppTheme.accentCopper,
+              valueColor: AppTheme.accentCopper,
+            ),
+          if (job.hours != null)
+            CardRowData(
+              icon: Icons.schedule,
+              label: 'Hours',
+              value: '${job.hours!} hrs',
+            ),
+        ],
+      ),
+      
+      // Third column - Positions and Posted date
+      if (job.numberOfJobs != null || job.datePosted != null)
+        CardColumnData(
+          rows: [
+            if (job.numberOfJobs != null)
+              CardRowData(
+                icon: Icons.people,
+                label: 'Positions',
+                value: job.numberOfJobs!,
+              ),
+            if (job.datePosted != null)
+              CardRowData(
+                icon: Icons.calendar_today,
+                label: 'Posted',
+                value: job.datePosted!,
+              ),
+          ],
+        ),
+      
+      // Fourth column - Per Diem and Duration
+      if (job.perDiem != null || job.duration != null)
+        CardColumnData(
+          rows: [
+            if (job.perDiem != null)
+              CardRowData(
+                icon: Icons.hotel,
+                label: 'Per Diem',
+                value: job.perDiem!,
+              ),
+            if (job.duration != null)
+              CardRowData(
+                icon: Icons.timer,
+                label: 'Duration',
+                value: job.duration!,
+              ),
+          ],
+        ),
+    ];
+
+        // Custom header section with company, job title, and favorite button
+        Container(
+          margin: margin ?? const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingMd,
+            vertical: AppTheme.spacingSm,
+          ),
+          padding: padding ?? const EdgeInsets.all(AppTheme.spacingLg),
+          decoration: BoxDecoration(
+            color: AppTheme.white,
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+            border: Border.all(
+              color: AppTheme.accentCopper.withOpacity(0.3),
+              width: 1.5,
+            ),
+            boxShadow: [AppTheme.shadowSm],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (job.wage != null) ...[
-                Icon(
-                  Icons.attach_money,
-                  size: AppTheme.iconXs,
-                  color: AppTheme.accentCopper,
-                ),
+              // Header row with company and favorite button
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      job.company,
+                      style: AppTheme.headlineSmall.copyWith(
+                        color: AppTheme.primaryNavy,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  if (onFavorite != null)
+                    GestureDetector(
+                      onTap: onFavorite,
+                      child: Icon(
+                        isFavorited ? Icons.bookmark : Icons.bookmark_border,
+                        size: AppTheme.iconMd,
+                        color: isFavorited ? AppTheme.accentCopper : AppTheme.textLight,
+                      ),
+                    ),
+                ],
+              ),
+              
+              // Job title/subtitle
+              if (job.jobTitle != null || job.classification != null) ...[
+                const SizedBox(height: AppTheme.spacingSm),
                 Text(
-                  '\$${job.wage!.toStringAsFixed(2)}/hr',
-                  style: AppTheme.bodySmall.copyWith(
-                    color: AppTheme.accentCopper,
+                  JobFormatting.formatJobTitle(job.jobTitle ?? job.classification ?? ''),
+                  style: AppTheme.titleMedium.copyWith(
+                    color: AppTheme.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
-              if (job.wage != null && job.hours != null)
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingSm),
-                  width: 1,
-                  height: 12,
-                  color: AppTheme.lightGray,
-                ),
-              if (job.hours != null) ...[
-                Icon(
-                  Icons.schedule,
-                  size: AppTheme.iconXs,
-                  color: AppTheme.textSecondary,
-                ),
-                const SizedBox(width: AppTheme.spacingXs),
-                Text(
-                  '${job.hours!} hrs',
-                  style: AppTheme.bodySmall.copyWith(
-                    color: AppTheme.textSecondary,
-                  ),
-                ),
-              ],
+              
+              const SizedBox(height: AppTheme.spacingMd),
+              
+              // Standardized card content
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _buildStandardizedColumns(columns),
+              ),
             ],
           ),
-          
-          const SizedBox(height: AppTheme.spacingMd),
-          
-          // Action buttons
-          Row(
+        ),
+        
+        // Action buttons
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingMd,
+            vertical: AppTheme.spacingSm,
+          ),
+          child: Row(
             children: [
               Expanded(
-                child: JJSecondaryButton(
-                  text: 'Details',
+                flex: 2,
+                child: JJButton(
+                  text: 'View Details',
                   onPressed: onViewDetails,
-                  height: 36,
+                  icon: Icons.info_outline,
+                  variant: JJButtonVariant.secondary,
+                  size: JJButtonSize.medium,
                 ),
               ),
-              const SizedBox(width: AppTheme.spacingSm),
+              const SizedBox(width: AppTheme.spacingMd),
               Expanded(
-                child: JJPrimaryButton(
+                flex: 3,
+                child: JJButton(
                   text: 'Bid Now',
                   onPressed: onBidNow,
-                  height: 36,
+                  icon: Icons.flash_on,
                   variant: JJButtonVariant.primary,
+                  size: JJButtonSize.medium,
                 ),
               ),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Builds the standardized columns with vertical dividers
+  List<Widget> _buildStandardizedColumns(List<CardColumnData> columns) {
+    final List<Widget> columnWidgets = [];
+
+    for (int i = 0; i < columns.length; i++) {
+      // Add column
+      columnWidgets.add(
+        Expanded(
+          flex: columns[i].flex ?? 1,
+          child: _buildStandardizedColumn(columns[i]),
+        ),
+      );
+
+      // Add vertical divider between columns (except after the last column)
+      if (i < columns.length - 1) {
+        columnWidgets.add(
+          const SizedBox(width: AppTheme.spacingMd),
+        );
+        columnWidgets.add(
+          _buildVerticalDivider(),
+        );
+        columnWidgets.add(
+          const SizedBox(width: AppTheme.spacingMd),
+        );
+      }
+    }
+
+    return columnWidgets;
+  }
+
+  /// Builds a single standardized column with its rows
+  Widget _buildStandardizedColumn(CardColumnData columnData) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: columnData.rows.map((row) => _buildStandardizedRow(row)).toList(),
+    );
+  }
+
+  /// Builds a single standardized row with icon and rich text
+  Widget _buildStandardizedRow(CardRowData rowData) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Icon
+          Icon(
+            rowData.icon,
+            size: AppTheme.iconXs,
+            color: rowData.iconColor ?? AppTheme.textSecondary,
+          ),
+          const SizedBox(width: AppTheme.spacingXs),
+
+          // Rich text content
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  // Bold label ending with ": "
+                  TextSpan(
+                    text: '${rowData.label}: ',
+                    style: AppTheme.bodySmall.copyWith(
+                      color: AppTheme.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  // Regular value text
+                  TextSpan(
+                    text: rowData.value,
+                    style: AppTheme.bodySmall.copyWith(
+                      color: rowData.valueColor ?? AppTheme.textPrimary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  /// Builds the full-size (detailed) variant of the job card
-  Widget _buildFullCard() {
-    return JJCard(
-      onTap: onTap,
-      margin: margin ?? const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingMd,
-        vertical: AppTheme.spacingSm,
-      ),
-      padding: padding ?? const EdgeInsets.all(AppTheme.spacingLg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with company and favorite button
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  job.company,
-                  style: AppTheme.headlineSmall.copyWith(
-                    color: AppTheme.primaryNavy,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              if (onFavorite != null)
-                GestureDetector(
-                  onTap: onFavorite,
-                  child: Icon(
-                    isFavorited ? Icons.bookmark : Icons.bookmark_border,
-                    size: AppTheme.iconMd,
-                    color: isFavorited ? AppTheme.accentCopper : AppTheme.textLight,
-                  ),
-                ),
-            ],
-          ),
-          
-          const SizedBox(height: AppTheme.spacingSm),
-          
-          // Job title or classification
-          if (job.jobTitle != null || job.classification != null)
-            Text(
-              JobFormatting.formatJobTitle(job.jobTitle ?? job.classification ?? ''),
-              style: AppTheme.titleMedium.copyWith(
-                color: AppTheme.textPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          
-          const SizedBox(height: AppTheme.spacingMd),
-          
-          // Job details grid
-          Row(
-            children: [
-              Expanded(
-                child: _buildDetailItem(
-                  icon: Icons.location_on_outlined,
-                  label: 'Location',
-                  value: job.location,
-                ),
-              ),
-              if (job.local != null)
-                Expanded(
-                  child: _buildDetailItem(
-                    icon: Icons.group,
-                    label: 'Local',
-                    value: 'Local ${job.local}',
-                  ),
-                ),
-            ],
-          ),
-          
-          const SizedBox(height: AppTheme.spacingMd),
-          
-          Row(
-            children: [
-              if (job.wage != null)
-                Expanded(
-                  child: _buildDetailItem(
-                    icon: Icons.attach_money,
-                    label: 'Wage',
-                    value: '\$${job.wage!.toStringAsFixed(2)}/hr',
-                    isHighlighted: true,
-                  ),
-                ),
-              if (job.hours != null)
-                Expanded(
-                  child: _buildDetailItem(
-                    icon: Icons.schedule,
-                    label: 'Hours',
-                    value: '${job.hours!} hrs',
-                  ),
-                ),
-            ],
-          ),
-          
-          if (job.numberOfJobs != null || job.datePosted != null) ...[
-            const SizedBox(height: AppTheme.spacingMd),
-            Row(
-              children: [
-                if (job.numberOfJobs != null)
-                  Expanded(
-                    child: _buildDetailItem(
-                      icon: Icons.people,
-                      label: 'Positions',
-                      value: job.numberOfJobs!,
-                    ),
-                  ),
-                if (job.datePosted != null)
-                  Expanded(
-                    child: _buildDetailItem(
-                      icon: Icons.calendar_today,
-                      label: 'Posted',
-                      value: job.datePosted!,
-                    ),
-                  ),
-              ],
-            ),
+  /// Builds the vertical divider between columns
+  Widget _buildVerticalDivider() {
+    return Container(
+      width: 2,
+      height: 60, // Fixed height for consistency
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppTheme.accentCopper.withOpacity(0.1),
+            AppTheme.accentCopper.withOpacity(0.4),
+            AppTheme.accentCopper.withOpacity(0.1),
           ],
-          
-          // Additional details
-          if (job.perDiem != null || job.duration != null) ...[
-            const SizedBox(height: AppTheme.spacingMd),
-            Row(
-              children: [
-                if (job.perDiem != null)
-                  Expanded(
-                    child: _buildDetailItem(
-                      icon: Icons.hotel,
-                      label: 'Per Diem',
-                      value: job.perDiem!,
-                    ),
-                  ),
-                if (job.duration != null)
-                  Expanded(
-                    child: _buildDetailItem(
-                      icon: Icons.timer,
-                      label: 'Duration',
-                      value: job.duration!,
-                    ),
-                  ),
-              ],
-            ),
-          ],
-          
-          const SizedBox(height: AppTheme.spacingLg),
-          
-          // Action buttons
-          Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: JJSecondaryButton(
-                  text: 'View Details',
-                  onPressed: onViewDetails,
-                  icon: Icons.info_outline,
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingMd),
-              Expanded(
-                flex: 3,
-                child: JJPrimaryButton(
-                  text: 'Bid Now',
-                  onPressed: onBidNow,
-                  icon: Icons.flash_on,
-                  variant: JJButtonVariant.primary,
-                ),
-              ),
-            ],
+        ),
+        borderRadius: BorderRadius.circular(1),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.accentCopper.withOpacity(0.2),
+            blurRadius: 2,
+            offset: const Offset(0, 0),
           ),
         ],
       ),

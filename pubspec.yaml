@@ -91,6 +91,9 @@ dependencies:
   latlong2: ^0.9.1
   dio: ^5.7.0
   geolocator: ^14.0.2
+  
+  # Contacts integration
+  contacts_service: ^0.6.3
 
 dev_dependencies:
   flutter_test:

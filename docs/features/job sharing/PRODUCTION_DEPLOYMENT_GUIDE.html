@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Deployment Guide - Journeyman Jobs</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background-color: #f8f9fa; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #1a202c; border-bottom: 3px solid #b45309; padding-bottom: 10px; }
+        h2 { color: #2d3748; margin-top: 30px; }
+        h3 { color: #4a5568; }
+        .alert { padding: 16px; border-radius: 8px; margin: 20px 0; border-left: 4px solid; }
+        .alert-info { background-color: #e6fffa; border-color: #81e6d9; color: #234e52; }
+        .alert-warning { background-color: #fef5e7; border-color: #f6ad55; color: #c05621; }
+        .alert-success { background-color: #c6f6d5; border-color: #68d391; color: #22543d; }
+        .alert-danger { background-color: #fed7d7; border-color: #fc8181; color: #c53030; }
+        .code-block { background-color: #1a202c; color: #e2e8f0; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 15px 0; }
+        .code { background-color: #f7fafc; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #2d3748; }
+        .step { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #b45309; }
+        .checklist { list-style-type: none; padding: 0; }
+        .checklist li { padding: 8px 0; }
+        .checklist li:before { content: "☐ "; margin-right: 8px; color: #b45309; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #1a202c; color: white; }
+        .nav { background-color: #1a202c; padding: 20px; margin: -40px -40px 40px -40px; border-radius: 10px 10px 0 0; }
+        .nav h1 { color: white; margin: 0; border: none; }
+        .nav p { color: #e2e8f0; margin: 5px 0 0 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <h1>🚀 Production Deployment Guide</h1>
+            <p>Journeyman Jobs - Job Sharing Feature Production Launch</p>
+        </div>
+
+        <h2>📋 Overview</h2>
+        <p>This guide provides step-by-step instructions for deploying the Journeyman Jobs application with job sharing functionality to production. The deployment includes Firebase Cloud Functions, Firestore security rules, FCM push notifications, and comprehensive monitoring.</p>
+
+        <div class="alert alert-warning">
+            <strong>⚠️ Important:</strong> This is a production deployment that will affect live IBEW member data. Ensure all testing is complete and you have proper authorization before proceeding.
+        </div>
+
+        <h2>🎯 Deployment Objectives</h2>
+        <ul>
+            <li>Deploy job sharing Cloud Functions to production Firebase project</li>
+            <li>Configure production Firestore security rules with IBEW data protections</li>
+            <li>Set up FCM push notifications for job sharing events</li>
+            <li>Enable analytics and performance monitoring</li>
+            <li>Implement comprehensive error handling and monitoring</li>
+            <li>Ensure IBEW member data privacy compliance</li>
+        </ul>
+
+        <h2>📋 Pre-Deployment Checklist</h2>
+        <div class="step">
+            <h3>Environment Setup</h3>
+            <ul class="checklist">
+                <li>Firebase CLI installed and updated to latest version</li>
+                <li>Flutter SDK 3.6+ installed and configured</li>
+                <li>Node.js 18+ installed for Cloud Functions</li>
+                <li>Production Firebase project created: <code>journeyman-jobs-prod</code></li>
+                <li>SendGrid production account configured with templates</li>
+                <li>Twilio production account configured (if SMS enabled)</li>
+                <li>Production environment variables file created</li>
+                <li>SSL certificates and domain configuration ready</li>
+                <li>Backup and rollback procedures documented</li>
+                <li>Team notification channels configured</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Security Validation</h3>
+            <ul class="checklist">
+                <li>Security audit report reviewed and approved</li>
+                <li>Firestore security rules tested in simulator</li>
+                <li>API endpoints tested with security scanning tools</li>
+                <li>Data encryption verified at rest and in transit</li>
+                <li>IBEW privacy requirements validated</li>
+                <li>Rate limiting and abuse prevention tested</li>
+                <li>Authentication flows tested across all platforms</li>
+                <li>Emergency access procedures documented</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Feature Testing</h3>
+            <ul class="checklist">
+                <li>Job sharing via email tested end-to-end</li>
+                <li>Job sharing via SMS tested end-to-end</li>
+                <li>Contact picker integration validated</li>
+                <li>Push notifications working across platforms</li>
+                <li>Quick signup flow tested and validated</li>
+                <li>Crew management features tested</li>
+                <li>Deep linking and universal links working</li>
+                <li>Analytics events firing correctly</li>
+                <li>Error handling and recovery tested</li>
+                <li>Performance benchmarks met</li>
+            </ul>
+        </div>
+
+        <h2>🔧 Environment Configuration</h2>
+
+        <h3>Production Environment Variables</h3>
+        <p>Create <code>.env.production</code> file with the following configuration:</p>
+
+        <div class="code-block">
+# Firebase Production Configuration
+FIREBASE_PROJECT_ID=journeyman-jobs-prod
+FIREBASE_API_KEY=AIzaSyD_your_production_api_key_here
+FIREBASE_AUTH_DOMAIN=journeyman-jobs-prod.firebaseapp.com
+FIREBASE_STORAGE_BUCKET=journeyman-jobs-prod.appspot.com
+FIREBASE_MESSAGING_SENDER_ID=123456789012
+
+# SendGrid Email Service (Production)
+SENDGRID_API_KEY=SG.production_sendgrid_api_key_here
+SENDGRID_FROM_EMAIL=no-reply@journeymanjobs.com
+SENDGRID_FROM_NAME=Journeyman Jobs
+
+# Security Settings
+CORS_ORIGIN=https://journeymanjobs.com,https://www.journeymanjobs.com
+MAX_REQUESTS_PER_MINUTE=60
+MAX_SHARES_PER_DAY=100
+ENABLE_RATE_LIMITING=true
+ENABLE_AUDIT_LOGGING=true
+
+# Feature Flags
+ENABLE_EMAIL_SHARING=true
+ENABLE_SMS_SHARING=true
+ENABLE_CREW_MANAGEMENT=true
+MAX_SHARE_RECIPIENTS=25
+        </div>
+
+        <div class="alert alert-danger">
+            <strong>🔒 Security Note:</strong> Never commit production environment files to version control. Store them securely and share only with authorized team members.
+        </div>
+
+        <h2>🚀 Deployment Steps</h2>
+
+        <div class="step">
+            <h3>Step 1: Authentication & Project Setup</h3>
+            <div class="code-block">
+# Authenticate with Firebase
+firebase login
+
+# List available projects
+firebase projects:list
+
+# Switch to production project
+firebase use journeyman-jobs-prod
+
+# Verify project configuration
+firebase projects:list
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Build and Test Cloud Functions</h3>
+            <div class="code-block">
+# Navigate to functions directory
+cd functions
+
+# Install production dependencies
+npm ci --production
+
+# Build TypeScript
+npm run build
+
+# Run tests
+npm test
+
+# Return to root directory
+cd ..
+            </div>
+            
+            <div class="alert alert-info">
+                <strong>💡 Tip:</strong> If tests fail, resolve all issues before proceeding with deployment.
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Deploy Firestore Configuration</h3>
+            <div class="code-block">
+# Deploy security rules and indexes
+firebase deploy --only firestore:rules,firestore:indexes
+
+# Verify rules in Firebase Console
+# https://console.firebase.google.com/project/journeyman-jobs-prod/firestore/rules
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Configure Cloud Functions Environment</h3>
+            <div class="code-block">
+# Set environment variables for functions
+firebase functions:config:set \
+  sendgrid.api_key="$SENDGRID_API_KEY" \
+  twilio.account_sid="$TWILIO_ACCOUNT_SID" \
+  twilio.auth_token="$TWILIO_AUTH_TOKEN" \
+  app.cors_origins="https://journeymanjobs.com,https://www.journeymanjobs.com"
+
+# Verify configuration
+firebase functions:config:get
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 5: Deploy Cloud Functions</h3>
+            <div class="code-block">
+# Deploy all functions
+firebase deploy --only functions
+
+# Monitor deployment
+firebase functions:log
+
+# Test function endpoints
+curl -X GET https://us-central1-journeyman-jobs-prod.cloudfunctions.net/api/health
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 6: Deploy Storage Rules</h3>
+            <div class="code-block">
+# Deploy storage security rules
+firebase deploy --only storage
+
+# Verify storage rules in console
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 7: Build and Deploy Flutter Web (Optional)</h3>
+            <div class="code-block">
+# Clean and build web application
+flutter clean
+flutter pub get
+flutter build web --release \
+  --dart-define=ENVIRONMENT=production \
+  --dart-define=FIREBASE_PROJECT_ID=journeyman-jobs-prod
+
+# Deploy hosting
+firebase deploy --only hosting
+            </div>
+        </div>
+
+        <h2>✅ Post-Deployment Validation</h2>
+
+        <div class="step">
+            <h3>Immediate Validation (First 15 minutes)</h3>
+            <ul class="checklist">
+                <li>All Cloud Functions deployed successfully</li>
+                <li>Health check endpoint responding</li>
+                <li>Firestore rules active and working</li>
+                <li>Storage rules deployed</li>
+                <li>Firebase Console accessible</li>
+                <li>No error alerts triggered</li>
+                <li>Function logs show no critical errors</li>
+            </ul>
+            
+            <h4>Validation Commands:</h4>
+            <div class="code-block">
+# Test health endpoint
+curl https://us-central1-journeyman-jobs-prod.cloudfunctions.net/api/health
+
+# Check function logs
+firebase functions:log --limit 50
+
+# Verify Firestore connectivity
+firebase firestore:databases:list
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Feature Validation (First Hour)</h3>
+            <ul class="checklist">
+                <li>Test job sharing via email end-to-end</li>
+                <li>Verify push notifications working</li>
+                <li>Test contact picker integration</li>
+                <li>Validate quick signup flow</li>
+                <li>Check analytics events firing</li>
+                <li>Test error handling scenarios</li>
+                <li>Verify rate limiting working</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Performance Validation (First 24 Hours)</h3>
+            <ul class="checklist">
+                <li>Monitor function execution times</li>
+                <li>Check memory usage patterns</li>
+                <li>Validate error rates < 1%</li>
+                <li>Confirm response times < 2 seconds</li>
+                <li>Monitor concurrent user handling</li>
+                <li>Verify database query performance</li>
+            </ul>
+        </div>
+
+        <h2>📊 Monitoring & Dashboards</h2>
+
+        <table>
+            <tr>
+                <th>Service</th>
+                <th>Dashboard URL</th>
+                <th>Key Metrics</th>
+            </tr>
+            <tr>
+                <td>Firebase Console</td>
+                <td><a href="https://console.firebase.google.com/project/journeyman-jobs-prod">Firebase Console</a></td>
+                <td>Authentication, Firestore, Functions, Hosting</td>
+            </tr>
+            <tr>
+                <td>Cloud Functions</td>
+                <td>Functions → Logs</td>
+                <td>Invocations, errors, execution time, memory</td>
+            </tr>
+            <tr>
+                <td>Analytics</td>
+                <td>Analytics → Realtime</td>
+                <td>Active users, events, conversions</td>
+            </tr>
+            <tr>
+                <td>Performance</td>
+                <td>Performance → Dashboard</td>
+                <td>App startup, network requests, custom traces</td>
+            </tr>
+        </table>
+
+        <h3>Key Performance Indicators (KPIs)</h3>
+        <ul>
+            <li><strong>Function Success Rate:</strong> > 99%</li>
+            <li><strong>Average Response Time:</strong> < 2 seconds</li>
+            <li><strong>Email Delivery Rate:</strong> > 95%</li>
+            <li><strong>Push Notification Delivery:</strong> > 90%</li>
+            <li><strong>Error Rate:</strong> < 1%</li>
+            <li><strong>User Satisfaction:</strong> Monitor app store ratings</li>
+        </ul>
+
+        <h2>🚨 Emergency Procedures</h2>
+
+        <div class="alert alert-danger">
+            <h3>🆘 Emergency Contacts</h3>
+            <ul>
+                <li><strong>Technical Lead:</strong> [Contact Information]</li>
+                <li><strong>Firebase Admin:</strong> [Contact Information]</li>
+                <li><strong>Security Team:</strong> [Contact Information]</li>
+                <li><strong>IBEW Technical Coordinator:</strong> [Contact Information]</li>
+            </ul>
+        </div>
+
+        <h3>Rollback Procedures</h3>
+        <div class="code-block">
+# Emergency function rollback
+firebase functions:log --limit 100  # Check recent errors
+firebase rollback functions  # Rollback to previous version
+
+# Emergency rule rollback
+git checkout HEAD~1 firebase/firestore.rules
+firebase deploy --only firestore:rules
+
+# Disable problematic features
+firebase functions:config:set feature.email_sharing=false
+firebase functions:config:set feature.sms_sharing=false
+        </div>
+
+        <h3>Common Issues & Solutions</h3>
+        <table>
+            <tr>
+                <th>Issue</th>
+                <th>Symptoms</th>
+                <th>Solution</th>
+            </tr>
+            <tr>
+                <td>Function Timeout</td>
+                <td>Functions timing out after 60s</td>
+                <td>Check for infinite loops, optimize queries, increase timeout</td>
+            </tr>
+            <tr>
+                <td>Rate Limiting</td>
+                <td>Users getting 429 errors</td>
+                <td>Adjust rate limits, implement exponential backoff</td>
+            </tr>
+            <tr>
+                <td>Email Delivery Issues</td>
+                <td>Emails not being sent</td>
+                <td>Check SendGrid status, verify API keys, check templates</td>
+            </tr>
+            <tr>
+                <td>High Memory Usage</td>
+                <td>Functions running out of memory</td>
+                <td>Optimize data processing, increase memory allocation</td>
+            </tr>
+        </table>
+
+        <h2>📈 Success Metrics</h2>
+
+        <div class="step">
+            <h3>Week 1 Success Criteria</h3>
+            <ul>
+                <li>✅ Zero critical security incidents</li>
+                <li>✅ Function uptime > 99.5%</li>
+                <li>✅ Email delivery success rate > 95%</li>
+                <li>✅ User-reported issues < 5 per day</li>
+                <li>✅ App store rating maintained above 4.0</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Month 1 Success Criteria</h3>
+            <ul>
+                <li>✅ Job sharing feature adoption > 30% of active users</li>
+                <li>✅ Share completion rate > 80%</li>
+                <li>✅ Zero data privacy incidents</li>
+                <li>✅ Performance targets consistently met</li>
+                <li>✅ Cost per user within budget projections</li>
+            </ul>
+        </div>
+
+        <div class="alert alert-success">
+            <h3>🎉 Deployment Complete!</h3>
+            <p>Congratulations! You have successfully deployed the Journeyman Jobs application with job sharing functionality to production. The system is now ready to serve IBEW electrical workers with secure, efficient job sharing capabilities.</p>
+            
+            <p><strong>Remember:</strong> Continue monitoring the system closely for the first 48 hours and be prepared to respond quickly to any issues that arise.</p>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background-color: #f8f9fa; border-radius: 5px;">
+            <h3>📞 Support & Maintenance</h3>
+            <p><strong>Documentation:</strong> Keep this guide updated with any changes or lessons learned.</p>
+            <p><strong>Regular Reviews:</strong> Schedule monthly reviews of performance metrics and security posture.</p>
+            <p><strong>Updates:</strong> Plan regular updates and maintenance windows for the system.</p>
+        </div>
+    </div>
+</body>
+</html>

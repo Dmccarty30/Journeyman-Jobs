@@ -5,8 +5,9 @@
 - **Always read `plan.md`** at the start of a new conversation to understand the project's phases, architecture, and current implementation status.
 - **Check for `TASK.md`** before starting work. If it doesn't exist, create it to track tasks with descriptions and dates.
 - **Review `C:\Users\david\Desktop\Journeyman-Jobs\docs\PROJECT_SYSTEM_DESIGN_THEME.md`** for detailed screen specifications and feature requirements.
+- **Job Sharing Feature Documentation** available in `docs/job-sharing-feature/` with complete implementation guides
 - **Understand the electrical theme** - This app serves IBEW electrical workers (journeymen, linemen, wiremen, operators, tree trimmers).
-- **Use Firebase** for all backend operations (Authentication, Firestore, Storage).
+- **Use Firebase** for all backend operations (Authentication, Firestore, Storage, Cloud Functions).
 
 ## 🧱 Code Structure & Modularity
 
@@ -16,11 +17,12 @@
   lib/
   ├── screens/         # Screen widgets (home/, jobs/, unions/, etc.)
   ├── widgets/         # Reusable components (job_card.dart, union_card.dart)
-  ├── services/        # Business logic (job_service.dart, union_service.dart)
-  ├── providers/       # State management (job_provider.dart, user_provider.dart)
-  ├── models/          # Data models (job_model.dart, union_model.dart, user_model.dart)
+  ├── services/        # Business logic (job_service.dart, union_service.dart, job_sharing_service.dart)
+  ├── providers/       # State management (job_provider.dart, user_provider.dart, job_sharing_provider.dart)
+  ├── models/          # Data models (job_model.dart, union_model.dart, user_model.dart, job_share.dart, crew_member.dart)
   ├── design_system/   # Theme and design components
   ├── electrical_components/ # Electrical-themed UI components
+  ├── features/        # Feature-specific code (job_sharing/)
   └── navigation/      # Router configuration (app_router.dart)
   ```
 
@@ -194,6 +196,13 @@
 - **Bid System**: Users can bid on jobs through the app
 - **Storm Work**: Emergency restoration jobs get priority highlighting
 - **Union Directory**: 797+ IBEW locals with contact integration
+- **Job Sharing & Viral Growth**: 
+  - Viral job sharing via email, SMS, and in-app messaging
+  - Quick signup flow for new users (under 2 minutes)
+  - Crew management for group applications and coordination
+  - Smart user detection and seamless sharing experience
+  - Deep linking integration and push notifications
+  - Analytics tracking for viral coefficient and performance
 - **Weather Integration**: 
   - NOAA radar and alerts for storm tracking
   - National Hurricane Center data

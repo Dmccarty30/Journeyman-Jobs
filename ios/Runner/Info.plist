@@ -72,5 +72,9 @@
 	<string>This app needs location access to track severe weather in your area and notify you of nearby storm work opportunities</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs location access to track severe weather in your area and notify you of nearby storm work opportunities</string>
+	
+	<!-- Contacts permissions for job sharing -->
+	<key>NSContactsUsageDescription</key>
+	<string>This app needs access to your contacts to easily share job opportunities with your fellow IBEW brothers and sisters</string>
 </dict>
 </plist>

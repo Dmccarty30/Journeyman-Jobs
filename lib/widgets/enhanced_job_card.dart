@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../design_system/app_theme.dart';
 import '../electrical_components/enhanced_backgrounds.dart' show VoltageLevel, EnhancedBackgrounds;
 import '../models/job_model.dart';
+import '../features/job_sharing/widgets/share_button.dart';
+import '../features/job_sharing/widgets/share_modal.dart';
+import '../features/job_sharing/providers/contact_provider.dart';
+import '../services/job_sharing_service.dart';
 
 /// Enhanced JobCard component with electrical theme
-class EnhancedJobCard extends StatelessWidget {
+class EnhancedJobCard extends ConsumerStatefulWidget {
   /// Creates an EnhancedJobCard.
   ///
   /// The [job] and [variant] parameters are required.
@@ -15,6 +20,7 @@ class EnhancedJobCard extends StatelessWidget {
     this.onViewDetails,
     this.onBidNow,
     this.onFavorite,
+    this.onShare,
     this.isFavorited = false,
     this.margin,
     this.padding,
@@ -38,6 +44,9 @@ class EnhancedJobCard extends StatelessWidget {
   /// Callback when the favorite button is pressed
   final VoidCallback? onFavorite;
   
+  /// Callback when share is completed
+  final Function(List<String> recipientIds, String? message)? onShare;
+  
   /// Whether the job is favorited
   final bool isFavorited;
   
@@ -48,51 +57,143 @@ class EnhancedJobCard extends StatelessWidget {
   final EdgeInsets? padding;
 
   @override
-  Widget build(BuildContext context) => switch (variant) {
-        JobCardVariant.half => _buildHalfCard(),
-        JobCardVariant.full => _buildFullCard(),
-      };
+  ConsumerState<EnhancedJobCard> createState() => _EnhancedJobCardState();
+}
 
-  Widget _buildHalfCard() => EnhancedBackgrounds.enhancedCardBackground(
-        onTap: onTap,
-        margin: margin ?? const EdgeInsets.symmetric(
+class _EnhancedJobCardState extends ConsumerState<EnhancedJobCard> {
+  final JobSharingService _sharingService = JobSharingService();
+  bool _isSharing = false;
+
+  @override
+  Widget build(BuildContext context) {
+    switch (widget.variant) {
+      case JobCardVariant.compact:
+        return _buildCompactCard();
+      case JobCardVariant.standard:
+        return _buildStandardCard();
+      case JobCardVariant.enhanced:
+        return _buildFullCard();
+    }
+  }
+
+  Widget _buildCompactCard() => Card(
+        margin: widget.margin ?? const EdgeInsets.symmetric(
           horizontal: AppTheme.spacingSm,
           vertical: AppTheme.spacingXs,
         ),
-        padding: padding ?? const EdgeInsets.all(AppTheme.spacingMd),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            _buildHeader(),
-            const SizedBox(height: AppTheme.spacingSm),
-            _buildContent(),
-            const SizedBox(height: AppTheme.spacingMd),
-            _buildActionButtons(),
-          ],
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        ),
+        child: InkWell(
+          onTap: widget.onTap,
+          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+          child: Container(
+            padding: widget.padding ?? const EdgeInsets.all(AppTheme.spacingSm),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        'IBEW Local ${widget.job.local}',
+                        style: AppTheme.captionBold.copyWith(
+                          color: AppTheme.accentCopper,
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacingXs),
+                      Text(
+                        widget.job.title,
+                        style: AppTheme.bodyMedium,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        widget.job.location,
+                        style: AppTheme.bodySmall.copyWith(
+                          color: AppTheme.textSecondary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spacingSm),
+                _buildPayRate(),
+                const SizedBox(width: AppTheme.spacingSm),
+                _buildCompactActions(),
+              ],
+            ),
+          ),
+        ),
+      );
+
+  Widget _buildStandardCard() => Card(
+        margin: widget.margin ?? const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingSm,
+          vertical: AppTheme.spacingXs,
+        ),
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        ),
+        child: InkWell(
+          onTap: widget.onTap,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: <Color>[
+                  Colors.white,
+                  Colors.grey.shade50,
+                ],
+              ),
+            ),
+            padding: widget.padding ?? const EdgeInsets.all(AppTheme.spacingMd),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _buildHeader(),
+                const SizedBox(height: AppTheme.spacingSm),
+                _buildContent(),
+                const SizedBox(height: AppTheme.spacingMd),
+                _buildActionButtons(),
+              ],
+            ),
+          ),
         ),
       );
 
   Widget _buildFullCard() => EnhancedBackgrounds.enhancedCardBackground(
-        onTap: onTap,
-        margin: margin ?? const EdgeInsets.symmetric(
+        onTap: widget.onTap,
+        margin: widget.margin ?? const EdgeInsets.symmetric(
           horizontal: AppTheme.spacingSm,
           vertical: AppTheme.spacingXs,
         ),
-        padding: padding ?? const EdgeInsets.all(AppTheme.spacingMd),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _buildEnhancedHeader(),
-            const SizedBox(height: AppTheme.spacingSm),
-            _buildStatusIndicator(),
-            const SizedBox(height: AppTheme.spacingMd),
-            _buildEnhancedContent(),
-            const SizedBox(height: AppTheme.spacingMd),
-            _buildElectricalDetails(),
-            const SizedBox(height: AppTheme.spacingMd),
-            _buildEnhancedActionButtons(),
-          ],
+        voltageLevel: _getVoltageLevel(),
+        child: Padding(
+          padding: widget.padding ?? const EdgeInsets.all(AppTheme.spacingLg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _buildEnhancedHeader(),
+              const SizedBox(height: AppTheme.spacingSm),
+              _buildStatusIndicator(),
+              const SizedBox(height: AppTheme.spacingMd),
+              _buildEnhancedContent(),
+              const SizedBox(height: AppTheme.spacingMd),
+              _buildElectricalDetails(),
+              const SizedBox(height: AppTheme.spacingMd),
+              _buildEnhancedActionButtons(),
+            ],
+          ),
         ),
       );
 
@@ -118,48 +219,49 @@ class EnhancedJobCard extends StatelessWidget {
                 ),
                 const SizedBox(width: AppTheme.spacingXs),
                 Text(
-                  'Local ${job.local ?? "N/A"}',
-                  style: AppTheme.bodySmall.copyWith(
+                  'LOCAL ${widget.job.local}',
+                  style: AppTheme.captionBold.copyWith(
                     color: AppTheme.white,
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
           ),
           const Spacer(),
+          // Job type indicator
           if (_isStormWork())
             Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingSm,
-                vertical: AppTheme.spacingXs,
+                horizontal: AppTheme.spacingXs,
+                vertical: 2,
               ),
               decoration: BoxDecoration(
-                color: AppTheme.warningYellow.withValues(alpha: 0.1),
+                color: AppTheme.errorRed,
                 borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                border: Border.all(
-                  color: AppTheme.warningYellow,
-                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   const Icon(
-                    Icons.thunderstorm,
-                    size: 12,
-                    color: AppTheme.warningYellow,
+                    Icons.warning,
+                    size: 10,
+                    color: AppTheme.white,
                   ),
-                  const SizedBox(width: AppTheme.spacingXs),
+                  const SizedBox(width: 2),
                   Text(
-                    'STORM WORK',
-                    style: AppTheme.bodySmall.copyWith(
-                      color: AppTheme.warningYellow,
-                      fontWeight: FontWeight.bold,
+                    'STORM',
+                    style: AppTheme.captionBold.copyWith(
+                      color: AppTheme.white,
+                      fontSize: 9,
                     ),
                   ),
                 ],
               ),
             ),
+          const SizedBox(width: AppTheme.spacingSm),
+          _buildFavoriteButton(),
+          const SizedBox(width: AppTheme.spacingXs),
+          _buildShareButton(),
         ],
       );
 
@@ -194,19 +296,19 @@ class EnhancedJobCard extends StatelessWidget {
                 ),
                 const SizedBox(width: AppTheme.spacingSm),
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'IBEW Local',
-                      style: AppTheme.bodySmall.copyWith(
+                      'IBEW LOCAL',
+                      style: AppTheme.captionBold.copyWith(
                         color: AppTheme.white.withValues(alpha: 0.8),
                         fontSize: 10,
                       ),
                     ),
                     Text(
-                      '${job.local ?? "N/A"}',
-                      style: AppTheme.bodyLarge.copyWith(
+                      widget.job.local.toString(),
+                      style: AppTheme.headingMedium.copyWith(
                         color: AppTheme.white,
                         fontWeight: FontWeight.bold,
                       ),
@@ -217,8 +319,14 @@ class EnhancedJobCard extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          // Favorite button with electrical animation
-          _buildFavoriteButton(),
+          // Enhanced favorite and share buttons
+          Row(
+            children: [
+              _buildFavoriteButton(),
+              const SizedBox(width: AppTheme.spacingSm),
+              _buildShareButton(),
+            ],
+          ),
         ],
       );
 
@@ -229,38 +337,35 @@ class EnhancedJobCard extends StatelessWidget {
     if (!isUrgent && !isPriority) {
       return const SizedBox.shrink();
     }
-    
+
     return Container(
-      decoration: EnhancedBackgrounds.voltageStatusGradient(
-        isUrgent ? VoltageLevel.high : VoltageLevel.medium,
-      ),
       padding: const EdgeInsets.symmetric(
         horizontal: AppTheme.spacingMd,
         vertical: AppTheme.spacingSm,
       ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isUrgent 
+            ? <Color>[AppTheme.errorRed, const Color(0xFFDC2626)]
+            : <Color>[AppTheme.warningYellow, const Color(0xFFF59E0B)],
+        ),
+        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        boxShadow: const <BoxShadow>[AppTheme.shadowXs],
+      ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Icon(
-            isUrgent ? Icons.thunderstorm : Icons.priority_high,
+            isUrgent ? Icons.warning : Icons.priority_high,
             size: 16,
             color: AppTheme.white,
           ),
-          const SizedBox(width: AppTheme.spacingSm),
+          const SizedBox(width: AppTheme.spacingXs),
           Text(
-            isUrgent ? 'EMERGENCY STORM WORK' : 'HIGH PRIORITY',
+            isUrgent ? 'STORM RESTORATION' : 'HIGH PRIORITY',
             style: AppTheme.bodySmall.copyWith(
               color: AppTheme.white,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
-            ),
-          ),
-          const Spacer(),
-          Container(
-            width: 8,
-            height: 8,
-            decoration: const BoxDecoration(
-              color: AppTheme.white,
-              shape: BoxShape.circle,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -271,190 +376,246 @@ class EnhancedJobCard extends StatelessWidget {
   Widget _buildContent() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          if (job.classification != null)
-            Text(
-              job.classification!,
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.primaryNavy,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          if (_description != null) ...<Widget>[
-            const SizedBox(height: AppTheme.spacingXs),
-            Text(
-              _description!,
-              style: AppTheme.bodySmall.copyWith(
+          Text(
+            widget.job.title,
+            style: AppTheme.headingSmall,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: AppTheme.spacingXs),
+          Row(
+            children: <Widget>[
+              const Icon(
+                Icons.location_on,
+                size: 14,
                 color: AppTheme.textSecondary,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+              const SizedBox(width: AppTheme.spacingXs),
+              Expanded(
+                child: Text(
+                  widget.job.location,
+                  style: AppTheme.bodySmall.copyWith(
+                    color: AppTheme.textSecondary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spacingXs),
+          Row(
+            children: <Widget>[
+              Icon(
+                _getClassificationIcon(widget.job.classification),
+                size: 14,
+                color: AppTheme.textSecondary,
+              ),
+              const SizedBox(width: AppTheme.spacingXs),
+              Text(
+                widget.job.classification,
+                style: AppTheme.bodySmall.copyWith(
+                  color: AppTheme.textSecondary,
+                ),
+              ),
+              const Spacer(),
+              _buildPayRate(),
+            ],
+          ),
         ],
       );
 
   Widget _buildEnhancedContent() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // Classification with electrical icon
-          if (job.classification != null)
-            Row(
-              children: <Widget>[
-                Icon(
-                  _getClassificationIcon(job.classification!),
-                  size: 20,
-                  color: AppTheme.accentCopper,
-                ),
-                const SizedBox(width: AppTheme.spacingSm),
-                Expanded(
-                  child: Text(
-                    job.classification!,
-                    style: AppTheme.headlineSmall.copyWith(
-                      color: AppTheme.primaryNavy,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+          Text(
+            widget.job.title,
+            style: AppTheme.headingMedium.copyWith(
+              fontWeight: FontWeight.bold,
             ),
-          
-          // Location with enhanced styling
-          ...<Widget>[
-            const SizedBox(height: AppTheme.spacingSm),
-            Row(
-              children: <Widget>[
-                const Icon(
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: _buildInfoChip(
                   Icons.location_on,
-                  size: 16,
-                  color: AppTheme.textSecondary,
+                  widget.job.location,
                 ),
-                const SizedBox(width: AppTheme.spacingXs),
-                Expanded(
-                  child: Text(
-                    job.location,
-                    style: AppTheme.bodyMedium.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-          
-          // Description with better formatting
-          if (_description != null) ...<Widget>[
-            const SizedBox(height: AppTheme.spacingMd),
-            Text(
-              _description!,
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textPrimary,
-                height: 1.4,
               ),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+              const SizedBox(width: AppTheme.spacingSm),
+              Expanded(
+                child: _buildInfoChip(
+                  _getClassificationIcon(widget.job.classification),
+                  widget.job.classification,
+                ),
+              ),
+            ],
+          ),
         ],
       );
 
   Widget _buildElectricalDetails() => Container(
         padding: const EdgeInsets.all(AppTheme.spacingMd),
         decoration: BoxDecoration(
-          color: AppTheme.offWhite,
+          color: AppTheme.primaryNavy.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(AppTheme.radiusSm),
           border: Border.all(
-            color: AppTheme.accentCopper.withValues(alpha: 0.2),
+            color: AppTheme.primaryNavy.withValues(alpha: 0.1),
+            width: 1,
           ),
         ),
         child: Row(
           children: <Widget>[
-            _buildDetailItem(
-              icon: Icons.schedule,
-              label: 'Duration',
-              value: job.duration ?? 'TBD',
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Pay Rate',
+                    style: AppTheme.captionBold.copyWith(
+                      color: AppTheme.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingXs),
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.attach_money,
+                        size: 18,
+                        color: AppTheme.accentCopper,
+                      ),
+                      Text(
+                        '${widget.job.payRate.toStringAsFixed(2)}/hr',
+                        style: AppTheme.headingSmall.copyWith(
+                          color: AppTheme.accentCopper,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(width: AppTheme.spacingLg),
-            _buildDetailItem(
-              icon: Icons.attach_money,
-              label: 'Rate',
-              value: _rate,
+            Container(
+              width: 1,
+              height: 40,
+              color: AppTheme.primaryNavy.withValues(alpha: 0.2),
             ),
-            const Spacer(),
-            // Voltage level indicator
-            _buildVoltageIndicator(),
+            const SizedBox(width: AppTheme.spacingMd),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Start Date',
+                    style: AppTheme.captionBold.copyWith(
+                      color: AppTheme.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingXs),
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: AppTheme.primaryNavy,
+                      ),
+                      const SizedBox(width: AppTheme.spacingXs),
+                      Text(
+                        _formatDate(widget.job.startDate),
+                        style: AppTheme.bodyMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       );
 
-  Widget _buildDetailItem({
-    required IconData icon,
-    required String label,
-    required String value,
-  }) =>
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Icon(
-                icon,
-                size: 14,
-                color: AppTheme.accentCopper,
-              ),
-              const SizedBox(width: AppTheme.spacingXs),
-              Text(
-                label,
+  Widget _buildInfoChip(IconData icon, String text) => Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingSm,
+          vertical: AppTheme.spacingXs,
+        ),
+        decoration: BoxDecoration(
+          color: AppTheme.lightGray,
+          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(
+              icon,
+              size: 14,
+              color: AppTheme.textSecondary,
+            ),
+            const SizedBox(width: AppTheme.spacingXs),
+            Expanded(
+              child: Text(
+                text,
                 style: AppTheme.bodySmall.copyWith(
                   color: AppTheme.textSecondary,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ],
-          ),
-          const SizedBox(height: AppTheme.spacingXs),
+            ),
+          ],
+        ),
+      );
+
+  Widget _buildPayRate() => Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
           Text(
-            value,
-            style: AppTheme.bodyMedium.copyWith(
-              color: AppTheme.primaryNavy,
-              fontWeight: FontWeight.w600,
+            '\$${widget.job.payRate.toStringAsFixed(2)}',
+            style: AppTheme.headingSmall.copyWith(
+              color: AppTheme.accentCopper,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            'per hour',
+            style: AppTheme.captionRegular.copyWith(
+              color: AppTheme.textSecondary,
             ),
           ),
         ],
       );
 
-  Widget _buildVoltageIndicator() {
-    final VoltageLevel voltage = _getVoltageLevel();
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingSm,
-        vertical: AppTheme.spacingXs,
-      ),
-      decoration: EnhancedBackgrounds.voltageStatusGradient(voltage),
-      child: Row(
+  Widget _buildCompactActions() => Row(
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const Icon(
-            Icons.bolt,
-            size: 14,
-            color: AppTheme.white,
-          ),
+        children: [
+          _buildShareButton(size: JJShareButtonSize.small),
           const SizedBox(width: AppTheme.spacingXs),
-          Text(
-            _getVoltageText(voltage),
-            style: AppTheme.bodySmall.copyWith(
-              color: AppTheme.white,
-              fontWeight: FontWeight.w600,
+          IconButton(
+            onPressed: widget.onFavorite,
+            icon: Icon(
+              widget.isFavorited ? Icons.favorite : Icons.favorite_border,
+              color: widget.isFavorited ? AppTheme.errorRed : AppTheme.textSecondary,
+              size: 18,
             ),
+            constraints: const BoxConstraints(
+              minWidth: 32,
+              minHeight: 32,
+            ),
+            padding: const EdgeInsets.all(4),
           ),
         ],
-      ),
-    );
-  }
+      );
 
   Widget _buildActionButtons() => Row(
         children: <Widget>[
           Expanded(
             child: ElevatedButton(
-              onPressed: onViewDetails,
+              onPressed: widget.onViewDetails,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.lightGray,
                 foregroundColor: AppTheme.primaryNavy,
@@ -472,7 +633,7 @@ class EnhancedJobCard extends StatelessWidget {
           const SizedBox(width: AppTheme.spacingSm),
           Expanded(
             child: ElevatedButton(
-              onPressed: onBidNow,
+              onPressed: widget.onBidNow,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.accentCopper,
                 foregroundColor: AppTheme.white,
@@ -495,7 +656,7 @@ class EnhancedJobCard extends StatelessWidget {
           Expanded(
             flex: 2,
             child: ElevatedButton.icon(
-              onPressed: onBidNow,
+              onPressed: widget.onBidNow,
               icon: const Icon(Icons.flash_on, size: 18),
               label: const Text('Quick Bid'),
               style: ElevatedButton.styleFrom(
@@ -515,7 +676,7 @@ class EnhancedJobCard extends StatelessWidget {
           const SizedBox(width: AppTheme.spacingSm),
           Expanded(
             child: OutlinedButton(
-              onPressed: onViewDetails,
+              onPressed: widget.onViewDetails,
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppTheme.primaryNavy,
                 side: const BorderSide(
@@ -537,117 +698,177 @@ class EnhancedJobCard extends StatelessWidget {
 
   Widget _buildFavoriteButton() => DecoratedBox(
         decoration: BoxDecoration(
-          color: isFavorited ? AppTheme.errorRed : AppTheme.lightGray,
+          color: widget.isFavorited ? AppTheme.errorRed : AppTheme.lightGray,
           shape: BoxShape.circle,
           boxShadow: const <BoxShadow>[AppTheme.shadowSm],
         ),
         child: IconButton(
-          onPressed: onFavorite,
+          onPressed: widget.onFavorite,
           icon: Icon(
-            isFavorited ? Icons.favorite : Icons.favorite_border,
-            color: isFavorited ? AppTheme.white : AppTheme.textSecondary,
+            widget.isFavorited ? Icons.favorite : Icons.favorite_border,
+            color: widget.isFavorited ? AppTheme.white : AppTheme.textSecondary,
             size: 20,
           ),
         ),
       );
 
-  IconData _getClassificationIcon(String classification) {
-    final String lowerClassification = classification.toLowerCase();
-    if (lowerClassification.contains('lineman')) {
-      return Icons.power_outlined;
-    } else if (lowerClassification.contains('electrician')) {
-      return Icons.electrical_services;
-    } else if (lowerClassification.contains('wireman')) {
-      return Icons.cable;
-    } else if (lowerClassification.contains('operator')) {
-      return Icons.settings;
+  Widget _buildShareButton({JJShareButtonSize size = JJShareButtonSize.medium}) => 
+      JJShareButton(
+        size: size,
+        onPressed: _isSharing ? null : _handleShare,
+        isLoading: _isSharing,
+        tooltip: 'Share job with colleagues',
+      );
+
+  void _handleShare() async {
+    if (_isSharing) return;
+
+    try {
+      setState(() => _isSharing = true);
+
+      // Get contacts
+      final contactsState = ref.read(contactsProvider);
+      final contacts = contactsState.maybeWhen(
+        data: (contacts) => contacts,
+        orElse: () => <UserModel>[],
+      );
+
+      if (!mounted) return;
+
+      // Show share modal
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          maxChildSize: 0.95,
+          minChildSize: 0.5,
+          builder: (context, scrollController) => JJShareModal(
+            job: widget.job,
+            contacts: contacts,
+            onShare: (recipients, message) async {
+              try {
+                final shareId = await _sharingService.shareJob(
+                  job: widget.job,
+                  recipients: recipients,
+                  message: message,
+                );
+
+                if (mounted) {
+                  Navigator.of(context).pop();
+                  
+                  // Show success snackbar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(
+                            Icons.check_circle,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Text('Job shared with ${recipients.length} ${recipients.length == 1 ? 'person' : 'people'}'),
+                        ],
+                      ),
+                      backgroundColor: Colors.green,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  );
+
+                  // Call callback if provided
+                  widget.onShare?.call(
+                    recipients.map((r) => r.id).toList(),
+                    message,
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(
+                            Icons.error,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          const Text('Failed to share job'),
+                        ],
+                      ),
+                      backgroundColor: Colors.red,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              }
+            },
+            isSharing: _isSharing,
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isSharing = false);
+      }
     }
-    return Icons.construction;
+  }
+
+  IconData _getClassificationIcon(String classification) {
+    switch (classification.toLowerCase()) {
+      case 'journeyman lineman':
+      case 'lineman':
+        return Icons.electrical_services;
+      case 'inside wireman':
+      case 'wireman':
+        return Icons.cable;
+      case 'tree trimmer':
+        return Icons.nature;
+      case 'equipment operator':
+        return Icons.construction;
+      default:
+        return Icons.work;
+    }
+  }
+
+  bool _isStormWork() {
+    return widget.job.title.toLowerCase().contains('storm') ||
+        widget.job.description.toLowerCase().contains('emergency') ||
+        (widget.job.additionalProperties?['stormWork'] as bool? ?? false);
+  }
+
+  bool _isHighPriority() {
+    return widget.job.title.toLowerCase().contains('urgent') ||
+        widget.job.description.toLowerCase().contains('priority') ||
+        (widget.job.additionalProperties?['priority'] as bool? ?? false);
   }
 
   VoltageLevel _getVoltageLevel() {
-    final String classification = job.classification?.toLowerCase() ?? '';
-    if (classification.contains('transmission') || 
-        classification.contains('lineman')) {
-      return VoltageLevel.high;
-    } else if (classification.contains('distribution') || 
-               classification.contains('substation')) {
-      return VoltageLevel.medium;
-    }
+    if (_isStormWork()) return VoltageLevel.high;
+    if (_isHighPriority()) return VoltageLevel.medium;
     return VoltageLevel.low;
   }
 
-  String _getVoltageText(VoltageLevel level) {
-    switch (level) {
-      case VoltageLevel.high:
-        return 'HIGH V';
-      case VoltageLevel.medium:
-        return 'MED V';
-      case VoltageLevel.low:
-        return 'LOW V';
-    }
-  }
-
-  /// Check if job is storm work based on job fields
-  bool _isStormWork() {
-    // Check various fields for storm-related keywords
-    final String title = job.jobTitle?.toLowerCase() ?? '';
-    final String description = job.jobDescription?.toLowerCase() ?? '';
-    final String typeOfWork = job.typeOfWork?.toLowerCase() ?? '';
-    final String classification = job.classification?.toLowerCase() ?? '';
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = date.difference(now).inDays;
     
-    return title.contains('storm') || 
-           title.contains('emergency') ||
-           description.contains('storm') ||
-           description.contains('emergency') ||
-           typeOfWork.contains('storm') ||
-           typeOfWork.contains('emergency') ||
-           classification.contains('storm') ||
-           classification.contains('emergency');
-  }
-
-  /// Check if job is high priority based on job fields
-  bool _isHighPriority() {
-    // Check various fields for priority indicators
-    final String title = job.jobTitle?.toLowerCase() ?? '';
-    final String description = job.jobDescription?.toLowerCase() ?? '';
-    final String typeOfWork = job.typeOfWork?.toLowerCase() ?? '';
-    final String classification = job.classification?.toLowerCase() ?? '';
-    final double? wage = job.wage;
+    if (difference == 0) return 'Today';
+    if (difference == 1) return 'Tomorrow';
+    if (difference < 7) return '${difference}d';
     
-    // High priority if it's storm work, high wage,
-    // or contains priority keywords
-    // High wage jobs
-    return _isStormWork() ||
-           (wage != null && wage > 50.0) ||
-           title.contains('urgent') ||
-           title.contains('immediate') ||
-           title.contains('asap') ||
-           description.contains('urgent') ||
-           description.contains('immediate') ||
-           description.contains('asap') ||
-           typeOfWork.contains('urgent') ||
-           typeOfWork.contains('immediate') ||
-           classification.contains('urgent') ||
-           classification.contains('immediate');
-  }
-
-  /// Get job description with fallback
-  String? get _description => job.jobDescription;
-
-  /// Get job rate with formatting
-  String get _rate {
-    if (job.wage != null) {
-      return '\$${job.wage!.toStringAsFixed(2)}/hr';
-    }
-    return 'Contact Local';
+    return '${date.month}/${date.day}';
   }
 }
 
-/// Job card variants for different use cases
+/// Variants for the job card display
 enum JobCardVariant {
-  /// Compact card for home screen and lists
-  half,
-  /// Full detailed card for job listings
-  full,
+  compact,
+  standard,
+  enhanced,
 }

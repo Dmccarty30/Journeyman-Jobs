@@ -1,0 +1,144 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    function isValidUser() {
+      return request.auth != null && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+    
+    function isEmailVerified() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+    
+    function isIBEWMember() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             resource.data.ibewLocal != null;
+    }
+    
+    function isValidShare(shareData) {
+      return shareData.keys().hasAll(['jobId', 'sharedBy', 'shareType', 'createdAt']) &&
+             shareData.sharedBy == request.auth.uid &&
+             shareData.recipients is list &&
+             shareData.recipients.size() <= 25; // Max 25 recipients per share
+    }
+    
+    // Jobs collection - read for verified users, write restricted
+    match /jobs/{jobId} {
+      allow read: if isEmailVerified();
+      allow write: if false; // Only admin through Cloud Functions
+    }
+    
+    // Locals collection - read-only for all users (public IBEW information)
+    match /locals/{localId} {
+      allow read: if true;
+      allow write: if false; // Only admin through Cloud Functions
+    }
+    
+    // Users collection - strict user data protection
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && 
+                       request.resource.data.keys().hasAll(['email', 'uid']) &&
+                       request.resource.data.uid == userId &&
+                       request.resource.data.email == request.auth.token.email;
+      allow update: if isOwner(userId) &&
+                       request.resource.data.uid == resource.data.uid && // Can't change UID
+                       request.resource.data.email == resource.data.email && // Can't change email
+                       !request.resource.data.diff(resource.data).affectedKeys()
+                         .hasAny(['uid', 'email', 'createdAt']); // Protected fields
+      allow delete: if false; // Users can't delete accounts directly
+      
+      // User settings subcollection
+      match /settings/{settingId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+    
+    // Job shares collection - sharing functionality with strict controls
+    match /shares/{shareId} {
+      allow read: if isAuthenticated() && (
+                     resource.data.sharedBy == request.auth.uid ||
+                     resource.data.recipients.hasAny([request.auth.email]) ||
+                     resource.data.isPublic == true
+                  );
+      allow create: if isAuthenticated() && 
+                       isValidShare(request.resource.data) &&
+                       exists(/databases/$(database)/documents/jobs/$(request.resource.data.jobId));
+      allow update: if isOwner(resource.data.sharedBy) &&
+                       !request.resource.data.diff(resource.data).affectedKeys()
+                         .hasAny(['jobId', 'sharedBy', 'createdAt']); // Can't change core fields
+      allow delete: if isOwner(resource.data.sharedBy);
+      
+      // Share analytics subcollection
+      match /analytics/{analyticsId} {
+        allow read: if isOwner(resource.data.sharedBy);
+        allow write: if false; // Only Cloud Functions
+      }
+    }
+    
+    // Notifications collection - user-specific notifications
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && (
+                     resource.data.userId == request.auth.uid ||
+                     resource.data.recipients.hasAny([request.auth.uid])
+                  );
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() &&
+                       resource.data.userId == request.auth.uid &&
+                       !request.resource.data.diff(resource.data).affectedKeys()
+                         .hasAny(['userId', 'createdAt', 'type']); // Can only update status/read
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+    
+    // Crews collection - crew management with permission controls
+    match /crews/{crewId} {
+      allow read: if isAuthenticated() && (
+                     resource.data.leaderId == request.auth.uid ||
+                     resource.data.members.hasAny([request.auth.uid]) ||
+                     resource.data.isPublic == true
+                  );
+      allow create: if isAuthenticated() &&
+                       request.resource.data.leaderId == request.auth.uid &&
+                       request.resource.data.members.hasAny([request.auth.uid]);
+      allow update: if isAuthenticated() && 
+                       resource.data.leaderId == request.auth.uid &&
+                       !request.resource.data.diff(resource.data).affectedKeys()
+                         .hasAny(['leaderId', 'createdAt']); // Can't change leader or creation date
+      allow delete: if isAuthenticated() && resource.data.leaderId == request.auth.uid;
+    }
+    
+    // Analytics collection - restricted to aggregated, non-PII data
+    match /analytics/{analyticsId} {
+      allow read: if false; // Only admin/Cloud Functions
+      allow write: if false; // Only Cloud Functions
+    }
+    
+    // Admin collection - completely restricted
+    match /admin/{document=**} {
+      allow read, write: if false; // Only server-side admin functions
+    }
+    
+    // Rate limiting collection - prevents spam and abuse
+    match /rateLimits/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if false; // Only Cloud Functions manage rate limits
+    }
+    
+    // Audit logs - security tracking (read-only)
+    match /auditLogs/{logId} {
+      allow read: if false; // Only admin access
+      allow write: if false; // Only Cloud Functions
+    }
+  }
+}

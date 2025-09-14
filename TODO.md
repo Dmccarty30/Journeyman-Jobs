@@ -22,42 +22,54 @@ I am going screen by screen, calling out any and all issues, errors, inconsistan
 
 1. Be sure to follow the app theme when modifying this screen. The theme ***MUST*** be consistent throughout the entire app. So make sure thet the borders are copper and the correct thickness. The animations are applied and correct as far as when pressing a button, it should spark. The toasts and snack bars are all correct and consistant.
 
-* **REMOVE**
+* **APP BAR**
 
-1. The `FAB` For the demo Screen
-2. The second `Notification Badge` that is underneath the `App Bar`
-3. `Find Jobs` button in the quick action section
+1. Center 'Journeyman Jobs' text in the `app bar`.
+
+* **QUICK ACTION**
+
+1. Add `Transformer Workbench` to `Quick Action`.
 
 * **JOBS CARD**
 
-1. In the "Suggested Jobs" section, you are to implement the `CondensedJobCard` from lib\widgets\condensed_job_card.dart
-2. It is based off of the image shown in assets\images\condensed-job-card.png
+1. Add copper border around each `condensed card`.
+2. Clean-up the data on the `condensed card`. Move `Wages` From R1C3 to R2C2.
+3. Enforce that each row in each column is formatted from left to right, `icon`, `span1`(BOLD), `span2`(REGULAR).
+4. Remove color text
+5. Remove highlighted background from `locals`
+6. Add `span1`: 'Classification'
+7. Add vertical line divider in between each column
 
 * **DIALOG POPUP**
 
-1. When the user clicks on the `job card` the same `Dialog Popup` that appears when a user clicks on the `job card` on the `Jobs Screen` will appear. This promotes consistancy throughout the app.
-2. The `Dialog Popup` design and layout will reflect "C:\Users\david\Desktop\Journeyman-Jobs\lib\design_system\popup_theme.dart"
+1. Increase font text size by 2.
+2. Remove colored text
 
 ## JOB SCREEN
 
-* **REMOVE**
+* **APP BAR**
 
-1. The `Search` and `Filter` buttons to the right of *Job Opportunities* in the `App Bar`
-2. The `FAB` that refreshes the screen and make it to where the user pulls down to refresh the screen.
+1. Center 'Job Opportunity' text in the `app bar`.
 
-* **MODIFY**
+* **JOBS CARD**
 
-1. The `Job Card` look exactly like "C:\Users\david\Desktop\Journeyman-Jobs\assets\images\jobs-card-layout.png". Where there are two(2) `columns` each with five(5) `rows`. In each `row` there will be a leading `icon` related to the data in that row. `Rich Text` where `span 1` will be a constant and hardcoded like "Local:" and `span 2`, the value inside of the brackets will be the actual value from the backend query.
-2. In between the two columns there will be a `line segment` or `divider` to break up the `card` a little bit
-3. The `Details Button` will be the navy blue color and when pressed wil display the `Dialog Popup` containing all of the data for that job and the `Bid Button` will be the copper color and be inactive for the time being.
-4. The `Dialog Popup` design and layout will reflect "C:\Users\david\Desktop\Journeyman-Jobs\lib\design_system\popup_theme.dart"
+1. Complete `Bid Now` Button. (Automate form submition at the locals job board)
+2. Apply JJ app theme to the `snack bar` showing success after pressing the `Bid Now` Button.
+3. Increase the font size by 2. The text is disporportianatly smaller than the button size
+4. Remove color text
+5. Remove sorting `FAB`. Use horizontall filter mechanism.
+6. Relocate search `FAB` tobelow the horizontal filter and above the `job card`.
+7. Add vertical line divider in between each column
 
-* **ADD**
+* **DIALOG POPUP**
 
-1. A copper icon to the left of "Job Opportunities" in the `App Bar`
-2. `Search` and `Filter` functions just below the `App Bar`
-3. The copper boarder and shadow to the card that is consistant with the `app theme`
-4. If the value isn't available from the backend query simple show "N/A".
+1. Increase font text size by 2.
+2. Remove colored text
+3. Broken action. Failed action when `Local Union` link is pressed.
+4. Apply JJ app theme to `snack bar` after link is pressed
+5. Add 'Contractor' to popup
+6. Reorganize the text. Data flows from left to right. In the popup the backend data `span2` is below the hardcoded data `span1`
+7. Remove link icon to the right of 'location' and 'local union'. The underlined and altered color is enough indication of a link.
 
 ## LOCALS SCREEN
 
@@ -79,23 +91,28 @@ I am going screen by screen, calling out any and all issues, errors, inconsistan
 
 ## STORM SCREEN
 
-* **REMOVE**
+* **APP BAR**
 
-1. 
-2. 
-3. 
+1. Center 'Storm' text in the `app bar`.
+2. Change left `icon` to 'hurricane' or 'tornado' `icon`
 
-* **MODIFY**
+* **CURRENT STORM ACTIVITY**
 
-1. 
-2. 
-3. 
+1. This is where i will include the 'power outage' data.
+2. Modify the 'power outage' data to be displayed at all times. updating every quarter hour.
+3. Include any and all 'Severa Weather' alerts 'Watches/Warnings'
+4. Need a scrolling banner type widget like what is shown on T.V. for the alerts.
 
-* **ADD**
+* **RADAR**
 
-1. 
-2. 
-3. 
+1. Remove the ' Emergency Work Available' container from the top of the screen and put it below the `contractor cards`
+2. Maybe add 'Severe Weather' news clips from the 'Weather Channel' in the same section as the radar.
+
+* **CONTRACTOR CARD**
+
+1. Increase font text size by 2.
+2. Remove colored text
+3. Add vertical line divider in between each column
 
 ## SETTINGS SCREEN
 
@@ -115,8 +132,6 @@ I am going screen by screen, calling out any and all issues, errors, inconsistan
 
 1. To the left of the "Settings" `text` in the `App Bar`, add a copper color gear `icon` that resembles settings in most instances.
 2. Ad the `Notification Badge` to the right of "Settings" in the `App Bar`.
-
-
 
 ### ACCOUNT
 
@@ -150,9 +165,41 @@ I am going screen by screen, calling out any and all issues, errors, inconsistan
 
 ##### DOCUMENTS
 
+###### IBEW DOCUMENTS
+
+* **IBEW CONSTITUTION**
+  
+* **CODE OF EXCELLENCE**
+
+###### SAFETY
+
+* **NFPA 70E STANDARD**
+  
+* **OSHA ELECTRICAL STANDARDS**
+
+###### TECHNICAL
+
+* **NATIONAL ELECTRICAL CODE (NEC)**
+  
+* **IEEE STANDARDS**
+
 ##### TOOLS
 
+###### CALCULATORS
+
+###### REFERENCES
+
+###### TRANSFORMERS
+
 ##### LINKS
+
+###### IBEW OFFICIAL
+
+###### TRAINING
+
+###### SAFETY
+
+###### GOVERNMENT
 
 #### SEND FEEDBACK
 
