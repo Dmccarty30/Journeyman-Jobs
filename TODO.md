@@ -116,18 +116,6 @@ I am going screen by screen, calling out any and all issues, errors, inconsistan
 
 ## SETTINGS SCREEN
 
-* **REMOVE**
-
-1. 
-2. 
-3. 
-
-* **MODIFY**
-
-1. 
-2. 
-3. 
-
 * **ADD**
 
 1. To the left of the "Settings" `text` in the `App Bar`, add a copper color gear `icon` that resembles settings in most instances.
@@ -155,43 +143,157 @@ I am going screen by screen, calling out any and all issues, errors, inconsistan
 
 #### HELP AND SUPPORT
 
+* ***ENFORCE APP THEME CONSISTENCY. APPLY THE COPPER BORDER AND SHADOWS TO ALL OF THE CONTAINERS***
+
 ##### FAQ
+
+* ***UPDATE THE TOAST OR SNACK BAR THAT APPEARS WHEN YOU PRESS ON THE CONTAINER TO SHOW YOU AN ACTION***
+* ***ENFORCE APP THEME CONSISTENCY. APPLY THE COPPER BORDER AND SHADOWS TO ALL OF THE CONTAINERS***
 
 ##### CONTACT
 
+* ***UPDATE THE TOAST OR SNACK BAR THAT APPEARS WHEN YOU PRESS ON THE CONTAINER TO SHOW YOU AN ACTION***
+* ***ENFORCE APP THEME CONSISTENCY. APPLY THE COPPER BORDER AND SHADOWS TO ALL OF THE CONTAINERS***
+
+* **EMAIL SUPPORT**
+
+1. Have to create an email account for this
+
+* **PHONE SUPPORT**
+
+1. None existant
+
+* **LIVE CHAT**
+
+1. Gemini? Unhinged GROK! LOL
+
+* **REPORT A BUG**
+
+1. Have all of the reported bugs sent to my github account and have Copilot address them
+
+* **Remove 'Emergency Safety Issues' container**
+
 ##### GUIDES
 
+* ***ENFORCE APP THEME CONSISTENCY. APPLY THE COPPER BORDER AND SHADOWS TO ALL OF THE CONTAINERS***
+
 #### RESOURCES
+
+* ***UPDATE THE TOAST OR SNACK BAR THAT APPEARS WHEN YOU PRESS ON THE CONTAINER TO SHOW YOU AN ACTION***
+* ***ENFORCE APP THEME CONSISTENCY. APPLY THE COPPER BORDER AND SHADOWS TO ALL OF THE CONTAINERS. THE CONTAINERS SHOULD LOOK LIKE THE CONTAINERS ON THE `SETTING SCREEN`***
 
 ##### DOCUMENTS
 
 ###### IBEW DOCUMENTS
 
 * **IBEW CONSTITUTION**
+
+* When the container is pressed it will launch the user's browser and navigate to that specific URL
+* I also am going/need to research more about this and related assets to increase the available information.
   
 * **CODE OF EXCELLENCE**
+
+* When the container is pressed it will launch the user's browser and navigate to that specific URL
+* I also am going/need to research more about this and related assets to increase the available information.
 
 ###### SAFETY
 
 * **NFPA 70E STANDARD**
+
+* When the container is pressed it will launch the user's browser and navigate to that specific URL
+* I also am going/need to research more about this and related assets to increase the available information.
   
 * **OSHA ELECTRICAL STANDARDS**
+
+* When the container is pressed it will launch the user's browser and navigate to that specific URL
+* I also am going/need to research more about this and related assets to increase the available information.
 
 ###### TECHNICAL
 
 * **NATIONAL ELECTRICAL CODE (NEC)**
+
+* When the container is pressed it will launch the user's browser and navigate to that specific URL
+* I also am going/need to research more about this and related assets to increase the available information.
   
 * **IEEE STANDARDS**
 
+* When the container is pressed it will launch the user's browser and navigate to that specific URL
+* I also am going/need to research more about this and related assets to increase the available information.
+
 ##### TOOLS
+
+* ***UPDATE THE TOAST OR SNACK BAR THAT APPEARS WHEN YOU PRESS ON THE CONTAINER TO SHOW YOU AN ACTION***
+* ***ENFORCE APP THEME CONSISTENCY. APPLY THE COPPER BORDER AND SHADOWS TO ALL OF THE CONTAINERS***
 
 ###### CALCULATORS
 
+* ***UPDATE THE TOAST OR SNACK BAR THAT APPEARS WHEN YOU PRESS ON THE CONTAINER TO SHOW YOU AN ACTION***
+* ***ENFORCE APP THEME CONSISTENCY. APPLY THE COPPER BORDER AND SHADOWS TO ALL OF THE CONTAINERS***
+
+* **VOLTAGE DROP CALCULATOR**
+
+1. Apply all possible JJ app theme widgets and components
+2. Add safe zone. Cannot scroll to the bottom of the screen
+
+* **CONDUIT FILL CALCULATOR**
+
+1. Apply all possible JJ app theme widgets and components
+2. Add safe zone. Cannot scroll to the bottom of the screen
+3. Need to do something about the color theme of the choice chips. Hard to read
+
+* **LOAD CALCULATION TOOL**
+
+1. Apply all possible JJ app theme widgets and components
+2. Add safe zone. Cannot scroll to the bottom of the screen
+3. Add tooltips helping to explain what and how to calulate home appliance load. Maybe add a general chart. Try to reference NEC code
+
 ###### REFERENCES
+
+* ***UPDATE THE TOAST OR SNACK BAR THAT APPEARS WHEN YOU PRESS ON THE CONTAINER TO SHOW YOU AN ACTION***
+* ***ENFORCE APP THEME CONSISTENCY. APPLY THE COPPER BORDER AND SHADOWS TO ALL OF THE CONTAINERS***
+
+1. Relocate the `Transformer Banks` container from the `References` section to the `Transformer` section
+
+* **WIRE SIZE CHART**
+
+1.
+
+* **QUICK REFERENCE**
+
+1. Apply all possible app theme components
+
+* **CONDUIT SIZE CHART**
+
+1. Need to implement a `Conuit Size Chart`
+
+* **ELECTRICAL SYMBOLS**
+
+1. Need to implement a `Electrical Symbols`
 
 ###### TRANSFORMERS
 
+* ***UPDATE THE TOAST OR SNACK BAR THAT APPEARS WHEN YOU PRESS ON THE CONTAINER TO SHOW YOU AN ACTION***
+* ***ENFORCE APP THEME CONSISTENCY. APPLY THE COPPER BORDER AND SHADOWS TO ALL OF THE CONTAINERS***
+
+1. Change all of the icons to custom x-former specific icons
+2. Relocate the `Transformer Banks` container from the `References` section to the `Transformer` section
+
+* **TRANSFORMER WORKBENCH**
+
+1.
+
+* **TRANSFORMER CALCULATOR**
+
+1.
+
+* **TRANSFORMER BANKS**
+
+1.  
+
 ##### LINKS
+
+* ***UPDATE THE TOAST OR SNACK BAR THAT APPEARS WHEN YOU PRESS ON THE CONTAINER TO SHOW YOU AN ACTION***
+* ***ENFORCE APP THEME CONSISTENCY. APPLY THE COPPER BORDER AND SHADOWS TO ALL OF THE CONTAINERS***
 
 ###### IBEW OFFICIAL
 
@@ -203,7 +305,16 @@ I am going screen by screen, calling out any and all issues, errors, inconsistan
 
 #### SEND FEEDBACK
 
+* ***UPDATE THE TOAST OR SNACK BAR THAT APPEARS WHEN YOU PRESS ON THE CONTAINER TO SHOW YOU AN ACTION***
+* ***ENFORCE APP THEME CONSISTENCY. APPLY THE COPPER BORDER AND SHADOWS TO ALL OF THE CONTAINERS***
+
+1. Apply bottom safe zone maybe? The screen will not scroll to the bottom of a container
+2. `Submit Feedback` button sends an email to the same email account as email support
+
 ### APP
+
+* ***UPDATE THE TOAST OR SNACK BAR THAT APPEARS WHEN YOU PRESS ON THE CONTAINER TO SHOW YOU AN ACTION***
+* ***ENFORCE APP THEME CONSISTENCY. APPLY THE COPPER BORDER AND SHADOWS TO ALL OF THE CONTAINERS***
 
 #### NOTIFICATIONS
 

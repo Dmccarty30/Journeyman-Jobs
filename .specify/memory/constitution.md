@@ -1,50 +1,44 @@
 # JOURNEYMAN JOBS Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Library-First
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+Every feature must be developed as a standalone, self-contained library. Each library must be independently testable, fully documented, and serve a clear, singular purpose. Organizational-only libraries are prohibited.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. CLI Interface
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+Every library must expose its core functionality through a Command-Line Interface (CLI). The CLI will adhere to a strict text-in/text-out protocol: input via stdin/args, output to stdout, and errors to stderr. Both JSON and human-readable formats must be supported.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Test-First (NON-NEGOTIABLE)
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+A strict Test-Driven Development (TDD) methodology is mandatory for all new features and bug fixes. The development cycle is as follows: tests are written first, approved by the user, confirmed to fail, and only then is the implementation code written. The Red-Green-Refactor cycle is to be strictly enforced.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Integration Testing
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+Integration tests are required for specific areas of development, including: new library contract tests, any changes to existing contracts, inter-service communication, and modifications to shared schemas.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity
+
+Structured logging is required for all services to ensure debuggability. All versioning will follow the MAJOR.MINOR.BUILD format, with strict adherence to semantic versioning rules for breaking changes. All development should start simple, following YAGNI ("You Ain't Gonna Need It") principles.
+
+## Technical Standards and Stack
+
+The following technical standards are mandatory for all development within the Journeyman Jobs project:
+
+- **Primary Stack**: All application code will be written in Flutter/Dart.
+- **Backend Services**: The project will exclusively use Firebase for backend services, including Firestore, Cloud Functions, and Storage.
+- **Design System**: All UI components must strictly adhere to the "Prime Design System" as documented in `.clinerules/1-prime.md`. No exceptions are permitted.
+
+## Development Workflow and Quality Assurance
+
+All code contributions must follow this workflow:
+
+- **Version Control**: A feature-branch-based workflow is required. All work must be done in a branch and merged via a pull request.
+- **Quality Gates**: Before any code is merged, it must pass a pull request review, receive approval from at least one other developer, and pass all automated tests and quality checks.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This Constitution supersedes all other practices and documents. All pull requests and code reviews must verify compliance with these principles. Any increase in complexity must be explicitly justified. For runtime development guidance, refer to `CLAUDE.md`.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2025-09-14 | **Last Amended**: 2025-09-14

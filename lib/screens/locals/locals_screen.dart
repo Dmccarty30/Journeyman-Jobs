@@ -54,6 +54,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
         title: const Text('IBEW Locals Directory'),
         backgroundColor: AppTheme.primaryNavy,
         elevation: 0,
+        centerTitle: true,
         actions: [
           NotificationBadge(
             iconColor: AppTheme.white,

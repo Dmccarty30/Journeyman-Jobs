@@ -67,9 +67,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         backgroundColor: AppTheme.primaryNavy,
         elevation: 0,
+        centerTitle: true,
         title: Text(
           'Settings',
           style: AppTheme.headlineMedium.copyWith(color: AppTheme.white),
+        ),
+        leading: Container(
+          margin: const EdgeInsets.all(8),
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            gradient: AppTheme.buttonGradient,
+            shape: BoxShape.circle,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: Icon(
+              Icons.settings,
+              size: 20,
+              color: AppTheme.white,
+            ),
+          ),
         ),
       ),
       body: Stack(

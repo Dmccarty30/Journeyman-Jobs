@@ -37,30 +37,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       appBar: AppBar(
         backgroundColor: AppTheme.primaryNavy,
         elevation: 0,
-        title: Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                gradient: AppTheme.buttonGradient,
-                shape: BoxShape.circle,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(6),
-                child: Icon(
-                  Icons.construction,
-                  size: 20,
-                  color: AppTheme.white,
-                ),
-              ),
+        centerTitle: true,
+        leading: Container(
+          margin: const EdgeInsets.all(8),
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            gradient: AppTheme.buttonGradient,
+            shape: BoxShape.circle,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: Icon(
+              Icons.construction,
+              size: 20,
+              color: AppTheme.white,
             ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              'Journeyman Jobs',
-              style: AppTheme.headlineMedium.copyWith(color: AppTheme.white),
-            ),
-          ],
+          ),
+        ),
+        title: Text(
+          'Journeyman Jobs',
+          style: AppTheme.headlineMedium.copyWith(color: AppTheme.white),
         ),
         actions: [
           NotificationBadge(
@@ -180,6 +177,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Icons.calculate_outlined,
                       () {
                         context.push(AppRouter.electricalCalculators);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: AppTheme.spacingSm),
+                  Expanded(
+                    child: _buildElectricalActionCard(
+                      'Transformer Workbench',
+                      Icons.electrical_services,
+                      () {
+                        context.push(AppRouter.transformerWorkbench);
                       },
                     ),
                   ),

@@ -180,51 +180,77 @@ class ContractorCard extends StatelessWidget {
       children: [
         // Left column
         Expanded(
-          child: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: '$leftLabel: ',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textDark,
-                    fontSize: 12,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                _getIconForLabel(leftLabel),
+                size: AppTheme.iconXs,
+                color: AppTheme.textSecondary,
+              ),
+              const SizedBox(width: AppTheme.spacingXs),
+              Expanded(
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '$leftLabel: ',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textDark,
+                          fontSize: 12,
+                        ),
+                      ),
+                      TextSpan(
+                        text: leftValue,
+                        style: TextStyle(
+                          color: leftValueColor ?? AppTheme.textLight,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                TextSpan(
-                  text: leftValue,
-                  style: TextStyle(
-                    color: leftValueColor ?? AppTheme.textLight,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         const SizedBox(width: 16),
         // Right column
         Expanded(
-          child: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: '$rightLabel: ',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textDark,
-                    fontSize: 12,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                _getIconForLabel(rightLabel),
+                size: AppTheme.iconXs,
+                color: AppTheme.textSecondary,
+              ),
+              const SizedBox(width: AppTheme.spacingXs),
+              Expanded(
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '$rightLabel: ',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textDark,
+                          fontSize: 12,
+                        ),
+                      ),
+                      TextSpan(
+                        text: rightValue,
+                        style: TextStyle(
+                          color: rightValueColor ?? AppTheme.textLight,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                TextSpan(
-                  text: rightValue,
-                  style: TextStyle(
-                    color: rightValueColor ?? AppTheme.textLight,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],
@@ -235,27 +261,70 @@ class ContractorCard extends StatelessWidget {
     required String label,
     required String value,
     Color? valueColor,
-  }) => RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: '$label: ',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppTheme.textDark,
-              fontSize: 12,
+  }) => Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          _getIconForLabel(label),
+          size: AppTheme.iconXs,
+          color: AppTheme.textSecondary,
+        ),
+        const SizedBox(width: AppTheme.spacingXs),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: '$label: ',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.textDark,
+                    fontSize: 12,
+                  ),
+                ),
+                TextSpan(
+                  text: value,
+                  style: TextStyle(
+                    color: valueColor ?? AppTheme.textLight,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
             ),
           ),
-          TextSpan(
-            text: value,
-            style: TextStyle(
-              color: valueColor ?? AppTheme.textLight,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
+
+  /// Maps labels to appropriate electrical-themed icons
+  IconData _getIconForLabel(String label) {
+    switch (label.toLowerCase()) {
+      case 'contractor':
+        return Icons.business;
+      case 'starting local':
+      case 'working local':
+        return Icons.location_on;
+      case 'show-up location':
+        return Icons.place;
+      case 'start time':
+        return Icons.access_time;
+      case 'pay scale':
+      case 'local wages':
+        return Icons.attach_money;
+      case 'working conditions':
+        return Icons.work;
+      case 'position requested':
+        return Icons.assignment_ind;
+      case 'positions available':
+        return Icons.people;
+      case 'utility':
+        return Icons.electrical_services;
+      case 'notes/requirements':
+        return Icons.info;
+      default:
+        return Icons.info_outline;
+    }
+  }
 
   /// Format show up time
   String _formatShowUpTime(DateTime? dt) {
@@ -315,26 +384,39 @@ class ContractorCard extends StatelessWidget {
   /// Helper method to build detail rows for the dialog
   Widget _buildDetailRow(String label, String value) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 4),
-    child: RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: '$label: ',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppTheme.textDark,
-              fontSize: 14,
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          _getIconForLabel(label),
+          size: AppTheme.iconXs,
+          color: AppTheme.textSecondary,
+        ),
+        const SizedBox(width: AppTheme.spacingXs),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: '$label: ',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.textDark,
+                    fontSize: 14,
+                  ),
+                ),
+                TextSpan(
+                  text: value,
+                  style: const TextStyle(
+                    color: AppTheme.textLight,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
           ),
-          TextSpan(
-            text: value,
-            style: const TextStyle(
-              color: AppTheme.textLight,
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
 }

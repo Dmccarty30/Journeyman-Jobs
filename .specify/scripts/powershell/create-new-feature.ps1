@@ -14,12 +14,12 @@ if (-not $FeatureDescription -or $FeatureDescription.Count -eq 0) {
 $featureDesc = ($FeatureDescription -join ' ').Trim()
 
 $repoRoot = git rev-parse --show-toplevel
-$specsDir = Join-Path $repoRoot 'specs'
-New-Item -ItemType Directory -Path $specsDir -Force | Out-Null
+$featuresDir = Join-Path $repoRoot 'docs/features'
+New-Item -ItemType Directory -Path $featuresDir -Force | Out-Null
 
 $highest = 0
-if (Test-Path $specsDir) {
-    Get-ChildItem -Path $specsDir -Directory | ForEach-Object {
+if (Test-Path $featuresDir) {
+    Get-ChildItem -Path $featuresDir -Directory | ForEach-Object {
         if ($_.Name -match '^(\d{3})') {
             $num = [int]$matches[1]
             if ($num -gt $highest) { $highest = $num }
@@ -35,10 +35,10 @@ $branchName = "$featureNum-$([string]::Join('-', $words))"
 
 git checkout -b $branchName | Out-Null
 
-$featureDir = Join-Path $specsDir $branchName
+$featureDir = Join-Path $featuresDir $branchName
 New-Item -ItemType Directory -Path $featureDir -Force | Out-Null
 
-$template = Join-Path $repoRoot 'templates/spec-template.md'
+$template = Join-Path $repoRoot '.specify/templates/spec-template.md'
 $specFile = Join-Path $featureDir 'spec.md'
 if (Test-Path $template) { Copy-Item $template $specFile -Force } else { New-Item -ItemType File -Path $specFile | Out-Null }
 

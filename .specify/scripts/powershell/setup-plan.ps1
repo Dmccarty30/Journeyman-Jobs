@@ -8,7 +8,7 @@ $paths = Get-FeaturePathsEnv
 if (-not (Test-FeatureBranch -Branch $paths.CURRENT_BRANCH)) { exit 1 }
 
 New-Item -ItemType Directory -Path $paths.FEATURE_DIR -Force | Out-Null
-$template = Join-Path $paths.REPO_ROOT 'templates/plan-template.md'
+$template = Join-Path $paths.REPO_ROOT '.specify/templates/plan-template.md'
 if (Test-Path $template) { Copy-Item $template $paths.IMPL_PLAN -Force }
 
 if ($Json) {

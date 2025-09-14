@@ -392,36 +392,33 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     return Scaffold(
       backgroundColor: AppTheme.offWhite,
       appBar: AppBar(
-        title: Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppTheme.accentCopper, AppTheme.accentCopper.withValues(alpha: 0.8)],
-                ),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.electrical_services,
-                size: 20,
-                color: AppTheme.white,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Job Opportunities',
-              style: AppTheme.headlineMedium.copyWith(
-                color: AppTheme.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
         backgroundColor: AppTheme.primaryNavy,
         foregroundColor: AppTheme.white,
         elevation: 0,
+        centerTitle: true,
+        leading: Container(
+          margin: const EdgeInsets.all(8),
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppTheme.accentCopper, AppTheme.accentCopper.withValues(alpha: 0.8)],
+            ),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.electrical_services,
+            size: 20,
+            color: AppTheme.white,
+          ),
+        ),
+        title: Text(
+          'Job Opportunities',
+          style: AppTheme.headlineMedium.copyWith(
+            color: AppTheme.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           // Notification icon only
           IconButton(
@@ -517,6 +514,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
           ),
         ],
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
   }
 }

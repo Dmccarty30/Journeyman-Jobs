@@ -3,10 +3,13 @@ import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/storm_event.dart';
 import '../../models/storm_contractor.dart';
+import '../../models/job_model.dart';
 import '../../widgets/storm/contractor_card.dart';
 import '../../widgets/weather/noaa_radar_map.dart';
+import '../../widgets/dialogs/bid_dialog.dart';
 import '../../services/location_service.dart';
 import '../../services/power_outage_service.dart';
+import '../../services/bidding_service.dart';
 import '../../widgets/storm/power_outage_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -225,19 +228,27 @@ class _StormScreenState extends State<StormScreen> {
       appBar: AppBar(
         backgroundColor: AppTheme.primaryNavy,
         elevation: 0,
-        title: Row(
-          children: [
-            const Icon(
+        centerTitle: true,
+        title: Text(
+          'Storm Work',
+          style: AppTheme.headlineMedium.copyWith(color: AppTheme.white),
+        ),
+        leading: Container(
+          margin: const EdgeInsets.all(8),
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            gradient: AppTheme.buttonGradient,
+            shape: BoxShape.circle,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: Icon(
               Icons.flash_on,
+              size: 20,
               color: AppTheme.white,
-              size: AppTheme.iconMd,
             ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              'Storm Work',
-              style: AppTheme.headlineMedium.copyWith(color: AppTheme.white),
-            ),
-          ],
+          ),
         ),
         actions: [
           IconButton(
@@ -570,12 +581,63 @@ class _StormScreenState extends State<StormScreen> {
                       ),
                     );
                   },
-                  onBid: () {
-                    // Handle bid action
-                    JJSnackBar.showSuccess(
-                      context: context,
-                      message: 'Bid submitted for ${storm.name}!',
+                  onBid: () async {
+                    // Convert storm data to Job model for BidDialog
+                    final stormJob = Job(
+                      id: storm.id,
+                      title: storm.name,
+                      company: contractor.contractorName,
+                      location: storm.region,
+                      description: 'Storm restoration work - immediate deployment',
+                      classification: 'Storm Work - ${contractor.positionRequested}',
+                      payRate: storm.payRate,
+                      source: 'Storm Alert',
+                      isUrgent: true,
+                      datePosted: DateTime.now(),
+                      applicationDeadline: DateTime.now().add(const Duration(hours: 24)),
+                      minExperience: '1+ years',
+                      constructionType: 'Storm Restoration',
                     );
+
+                    // Check if user has already applied for this storm work
+                    final biddingService = BiddingService();
+
+                    try {
+                      // Check if user has already applied
+                      final hasAlreadyBid = await biddingService.hasUserBidOnJob(storm.id);
+
+                      if (hasAlreadyBid && mounted) {
+                        JJSnackBar.showInfo(
+                          context: context,
+                          message: 'You have already applied for this storm work.',
+                        );
+                        return;
+                      }
+
+                      if (mounted) {
+                        // Show storm bid dialog
+                        final result = await showDialog<bool>(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => BidDialog(
+                            job: stormJob,
+                            isStormWork: true,
+                          ),
+                        );
+
+                        // If application was successfully submitted
+                        if (result == true) {
+                          // Application submitted successfully - dialog already shows success message
+                        }
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        JJSnackBar.showError(
+                          context: context,
+                          message: 'Unable to process application. Please try again.',
+                        );
+                      }
+                    }
                   },
                 );
               }),

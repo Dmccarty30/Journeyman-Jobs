@@ -5,7 +5,7 @@ $ErrorActionPreference = 'Stop'
 
 $repoRoot = git rev-parse --show-toplevel
 $currentBranch = git rev-parse --abbrev-ref HEAD
-$featureDir = Join-Path $repoRoot "specs/$currentBranch"
+$featureDir = Join-Path $repoRoot "docs/features/$currentBranch"
 $newPlan = Join-Path $featureDir 'plan.md'
 if (-not (Test-Path $newPlan)) { Write-Error "ERROR: No plan.md found at $newPlan"; exit 1 }
 
@@ -30,7 +30,7 @@ $newProjectType = Get-PlanValue 'Project Type'
 
 function Initialize-AgentFile($targetFile, $agentName) {
     if (Test-Path $targetFile) { return }
-    $template = Join-Path $repoRoot 'templates/agent-file-template.md'
+    $template = Join-Path $repoRoot '.specify/templates/agent-file-template.md'
     if (-not (Test-Path $template)) { Write-Error "Template not found: $template"; return }
     $content = Get-Content $template -Raw
     $content = $content.Replace('[PROJECT NAME]', (Split-Path $repoRoot -Leaf))

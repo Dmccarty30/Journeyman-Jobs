@@ -180,51 +180,77 @@ class RichTextJobCard extends StatelessWidget {
       children: [
         // Left column
         Expanded(
-          child: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: '$leftLabel: ',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textDark,
-                    fontSize: 12,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                _getIconForLabel(leftLabel),
+                size: AppTheme.iconXs,
+                color: AppTheme.textSecondary,
+              ),
+              const SizedBox(width: AppTheme.spacingXs),
+              Expanded(
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '$leftLabel: ',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textDark,
+                          fontSize: 12,
+                        ),
+                      ),
+                      TextSpan(
+                        text: leftValue,
+                        style: TextStyle(
+                          color: leftValueColor ?? AppTheme.textLight,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                TextSpan(
-                  text: leftValue,
-                  style: TextStyle(
-                    color: leftValueColor ?? AppTheme.textLight,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         const SizedBox(width: 16),
         // Right column
         Expanded(
-          child: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: '$rightLabel: ',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textDark,
-                    fontSize: 12,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                _getIconForLabel(rightLabel),
+                size: AppTheme.iconXs,
+                color: AppTheme.textSecondary,
+              ),
+              const SizedBox(width: AppTheme.spacingXs),
+              Expanded(
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '$rightLabel: ',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textDark,
+                          fontSize: 12,
+                        ),
+                      ),
+                      TextSpan(
+                        text: rightValue,
+                        style: TextStyle(
+                          color: rightValueColor ?? AppTheme.textLight,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                TextSpan(
-                  text: rightValue,
-                  style: TextStyle(
-                    color: rightValueColor ?? AppTheme.textLight,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],
@@ -235,27 +261,69 @@ class RichTextJobCard extends StatelessWidget {
     required String label,
     required String value,
     Color? valueColor,
-  }) => RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: '$label: ',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppTheme.textDark,
-              fontSize: 12,
+  }) => Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          _getIconForLabel(label),
+          size: AppTheme.iconXs,
+          color: AppTheme.textSecondary,
+        ),
+        const SizedBox(width: AppTheme.spacingXs),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: '$label: ',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.textDark,
+                    fontSize: 12,
+                  ),
+                ),
+                TextSpan(
+                  text: value,
+                  style: TextStyle(
+                    color: valueColor ?? AppTheme.textLight,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
             ),
           ),
-          TextSpan(
-            text: value,
-            style: TextStyle(
-              color: valueColor ?? AppTheme.textLight,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
+
+  /// Maps labels to appropriate electrical-themed icons
+  IconData _getIconForLabel(String label) {
+    switch (label.toLowerCase()) {
+      case 'local':
+        return Icons.location_on;
+      case 'classification':
+        return Icons.build;
+      case 'contractor':
+        return Icons.business;
+      case 'wages':
+        return Icons.attach_money;
+      case 'location':
+        return Icons.place;
+      case 'hours':
+        return Icons.access_time;
+      case 'start date':
+        return Icons.calendar_today;
+      case 'per diem':
+        return Icons.monetization_on;
+      case 'type of work':
+        return Icons.electrical_services;
+      case 'notes/requirements':
+      case 'qualifications':
+        return Icons.info;
+      default:
+        return Icons.info_outline;
+    }
+  }
 
   /// Show the job details dialog
   void _showJobDetailsDialog(BuildContext context) {

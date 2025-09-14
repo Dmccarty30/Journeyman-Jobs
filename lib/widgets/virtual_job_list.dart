@@ -4,9 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math'; // Required for max/min
 import '../design_system/app_theme.dart';
 import '../design_system/components/job_card.dart';
+import '../design_system/components/reusable_components.dart';
 import '../models/job_model.dart';
 import '../providers/riverpod/app_state_riverpod_provider.dart';
 import '../providers/riverpod/jobs_riverpod_provider.dart';
+import '../services/bidding_service.dart';
+import 'dialogs/bid_dialog.dart';
 
 /// High-performance virtual scrolling job list with infinite loading
 /// 
@@ -473,10 +476,47 @@ class _VirtualJobListState extends ConsumerState<VirtualJobList> with AutomaticK
   }
 
   /// Handle job bid
-  void _handleJobBid(Job job, int index) {
-    // Navigate to bidding interface
-    // TODO: Implement bidding
-    debugPrint('Job bid: ${job.id}');
+  void _handleJobBid(Job job, int index) async {
+    // Check if user can already bid for this job
+    final biddingService = BiddingService();
+
+    try {
+      // Check if user has already bid on this job
+      final hasAlreadyBid = await biddingService.hasUserBidOnJob(job.id);
+
+      if (hasAlreadyBid && mounted) {
+        JJSnackBar.showInfo(
+          context: context,
+          message: 'You have already submitted a bid for this job.',
+        );
+        return;
+      }
+
+      if (mounted) {
+        // Show bid dialog
+        final result = await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => BidDialog(
+            job: job,
+            isStormWork: false,
+          ),
+        );
+
+        // If bid was successfully submitted, optionally refresh the job list
+        if (result == true) {
+          // Bid submitted successfully
+          // Could trigger a refresh or update job status here
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        JJSnackBar.showError(
+          context: context,
+          message: 'Unable to process bid. Please try again.',
+        );
+      }
+    }
   }
 
   /// Handle job favorite
