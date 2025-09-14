@@ -2,24 +2,26 @@ import 'package:flutter/material.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/storm_event.dart';
+import '../../models/storm_contractor.dart';
+import '../../widgets/storm/contractor_card.dart';
 import '../../widgets/weather/noaa_radar_map.dart';
 import '../../services/location_service.dart';
 import '../../services/power_outage_service.dart';
 import '../../widgets/storm/power_outage_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../widgets/notification_badge.dart';
 import 'package:go_router/go_router.dart';
 import '../../navigation/app_router.dart';
 import '../../electrical_components/circuit_board_background.dart';
-// import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
-// import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
+ // import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
+ // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 
-class StormScreen extends StatefulWidget {
-  const StormScreen({super.key});
 
-  @override
-  State<StormScreen> createState() => _StormScreenState();
-}
+ class StormScreen extends StatefulWidget {
+   const StormScreen({super.key});
+ 
+   @override
+   State<StormScreen> createState() => _StormScreenState();
+ }
 
 class _StormScreenState extends State<StormScreen> {
 
@@ -194,7 +196,7 @@ class _StormScreenState extends State<StormScreen> {
     return Scaffold(
       backgroundColor: AppTheme.offWhite,
       appBar: AppBar(
-        backgroundColor: AppTheme.warningYellow,
+        backgroundColor: AppTheme.primaryNavy,
         elevation: 0,
         title: Row(
           children: [
@@ -222,16 +224,11 @@ class _StormScreenState extends State<StormScreen> {
               });
               JJSnackBar.showSuccess(
                 context: context,
-                message: _notificationsEnabled 
-                  ? 'Storm work notifications enabled'
-                  : 'Storm work notifications disabled',
+                message: _notificationsEnabled
+                    ? 'Storm work notifications enabled'
+                    : 'Storm work notifications disabled',
               );
-            },
-          ),
-          NotificationBadge(
-            iconColor: AppTheme.white,
-            showPopupOnTap: false,
-            onTap: () {
+              // Navigate to notifications screen
               context.push(AppRouter.notifications);
             },
           ),
@@ -435,69 +432,97 @@ class _StormScreenState extends State<StormScreen> {
 
             const SizedBox(height: AppTheme.spacingLg),
 
-            // Storm events list
+            // Contractor Cards
             Text(
-              'Emergency Assignments',
+              'Contractor Cards',
               style: AppTheme.headlineSmall.copyWith(
                 color: AppTheme.primaryNavy,
               ),
             ),
             const SizedBox(height: AppTheme.spacingMd),
-
+    
             if (_filteredStorms.isEmpty)
               JJEmptyState(
                 title: 'No Active Storms',
                 subtitle: 'No storm restoration work available in the selected region.',
-                context: 'jobs', // Uses electrical illustration instead of sun icon
+                context: 'jobs',
               )
             else
-              ..._filteredStorms.map((storm) => StormEventCard(storm: storm)),
-
-            const SizedBox(height: AppTheme.spacingLg),
-
-            // Safety information
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                color: AppTheme.infoBlue.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(color: AppTheme.infoBlue.withValues(alpha: 0.3)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.safety_check,
-                        color: AppTheme.infoBlue,
-                        size: AppTheme.iconMd,
-                      ),
-                      const SizedBox(width: AppTheme.spacingSm),
-                      Text(
-                        'Storm Work Safety Reminder',
-                        style: AppTheme.headlineSmall.copyWith(
-                          color: AppTheme.infoBlue,
+              ..._filteredStorms.map((storm) {
+                final showUpLocation = (storm.affectedUtilities.isNotEmpty) ? storm.affectedUtilities.first : 'TBD';
+    
+                // Create a StormContractor from the storm data
+                final contractor = StormContractor(
+                  id: storm.id,
+                  contractorName: storm.name,
+                  localWages: storm.payRate,
+                  showUpLocation: showUpLocation,
+                  showUpTime: storm.deploymentDate,
+                  requestedPositions: storm.openPositions,
+                  positionsFilled: 0,
+                  utility: storm.affectedUtilities.isNotEmpty ? storm.affectedUtilities.first : null,
+                  workingLocal: storm.region,
+                  payScale: storm.payRate,
+                  workingConditions: 'Storm Restoration',
+                  positionRequested: 'Lineman',
+                  notesRequirements: 'Storm restoration work - immediate deployment',
+                );
+    
+                return ContractorCard(
+                  contractor: contractor,
+                  onDetails: () {
+                    // Show contractor details dialog
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(storm.name),
+                        content: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _buildDetailRow('Storm', storm.name),
+                              _buildDetailRow('Region', storm.region),
+                              _buildDetailRow('Severity', storm.severity),
+                              _buildDetailRow('Pay Rate', storm.payRate),
+                              _buildDetailRow('Per Diem', storm.perDiem),
+                              _buildDetailRow('Positions', '${storm.openPositions} available'),
+                              _buildDetailRow('Duration', storm.estimatedDuration),
+                              _buildDetailRow('Status', storm.status),
+                              if (storm.affectedUtilities.isNotEmpty)
+                                _buildDetailRow('Utilities', storm.affectedUtilities.join(', ')),
+                            ],
+                          ),
                         ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Close'),
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              context.push(AppRouter.jobs);
+                            },
+                            icon: const Icon(Icons.work),
+                            label: const Text('View Jobs'),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: AppTheme.spacingMd),
-                  Text(
-                    '• Always follow proper safety protocols and use appropriate PPE\n'
-                    '• Be aware of hazardous conditions including downed lines and debris\n'
-                    '• Maintain situational awareness in emergency work environments\n'
-                    '• Report unsafe conditions immediately to supervisors',
-                    style: AppTheme.bodyMedium.copyWith(
-                      color: AppTheme.textPrimary,
-                      height: 1.6,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-              ],
+                    );
+                  },
+                  onBid: () {
+                    // Handle bid action
+                    JJSnackBar.showSuccess(
+                      context: context,
+                      message: 'Bid submitted for ${storm.name}!',
+                    );
+                  },
+                );
+              }),
+    
+            const SizedBox(height: AppTheme.spacingLg),
+          ],
             ),
           ),
         ],
@@ -965,6 +990,32 @@ class _StormScreenState extends State<StormScreen> {
       ),
     );
   }
+
+  /// Helper method to build detail rows for the contractor dialog
+  Widget _buildDetailRow(String label, String value) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: '$label: ',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppTheme.textDark,
+              fontSize: 14,
+            ),
+          ),
+          TextSpan(
+            text: value,
+            style: const TextStyle(
+              color: AppTheme.textLight,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 
   void _showOutageDetails(BuildContext context, PowerOutageState outage) {
     final percentage = _powerOutageService.getOutagePercentage(outage);
