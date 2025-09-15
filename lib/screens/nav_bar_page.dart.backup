@@ -74,19 +74,15 @@ class _NavBarPageState extends State<NavBarPage> {
               label: 'Jobs',
             ),
             BottomNavigationBarItem(
-              icon: _buildIcon(Icons.groups_outlined, Icons.groups, 2),
-              label: 'Crews',
+              icon: _buildIcon(Icons.flash_on_outlined, Icons.flash_on, 2),
+              label: 'Storm',
             ),
             BottomNavigationBarItem(
-              icon: _buildIcon(Icons.flash_on_outlined, Icons.flash_on, 3),
-              label: 'Weather',
-            ),
-            BottomNavigationBarItem(
-              icon: _buildIcon(Icons.people_outline, Icons.people, 4),
+              icon: _buildIcon(Icons.people_outline, Icons.people, 3),
               label: 'Locals',
             ),
             BottomNavigationBarItem(
-              icon: _buildIcon(Icons.settings_outlined, Icons.settings, 5),
+              icon: _buildIcon(Icons.settings_outlined, Icons.settings, 4),
               label: 'Settings',
             ),
           ],

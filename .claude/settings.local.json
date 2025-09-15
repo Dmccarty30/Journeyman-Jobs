@@ -20,7 +20,9 @@
       "Bash(flutter analyze:*)",
       "Bash(xargs cat:*)",
       "Bash(dart analyze:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(dart test:*)",
+      "Read(///**)"
     ],
     "deny": []
   },

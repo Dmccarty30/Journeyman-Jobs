@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../services/notification_permission_service.dart';
-import '../../services/fcm_service.dart';
+import '../../services/fcm_service.dart'; // Ensure this is correctly imported and FCMService is accessible
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
 import '../../navigation/app_router.dart';
 import '../../electrical_components/circuit_board_background.dart';
@@ -741,77 +741,76 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
           onChanged: (value) {
             setState(() => _jobAlertsEnabled = value);
             _savePreference('job_alerts_enabled', value);
-            if (value) {
-              FCMService.subscribeToTopic('job_alerts');
-            } else {
-              FCMService.unsubscribeFromTopic('job_alerts');
-            }
-          },
-        ),
-        _buildToggleItem(
-          icon: Icons.flash_on,
-          title: 'Storm Work',
-          subtitle: 'Emergency and storm restoration opportunities',
-          value: _stormWorkEnabled,
-          onChanged: (value) {
-            setState(() => _stormWorkEnabled = value);
-            _savePreference('storm_work_enabled', value);
-            if (value) {
-              FCMService.subscribeToTopic('storm_alerts');
-            } else {
-              FCMService.unsubscribeFromTopic('storm_alerts');
-            }
-          },
-        ),
-        _buildToggleItem(
-          icon: Icons.people_outline,
-          title: 'Union Updates',
-          subtitle: 'News and updates from your local',
-          value: _unionUpdatesEnabled,
-          onChanged: (value) {
-            setState(() => _unionUpdatesEnabled = value);
-            _savePreference('union_updates_enabled', value);
-            if (value) {
-              FCMService.subscribeToTopic('union_updates');
-            } else {
-              FCMService.unsubscribeFromTopic('union_updates');
-            }
-          },
-        ),
-        _buildToggleItem(
-          icon: Icons.event,
-          title: 'Union Meeting Reminders',
-          subtitle: 'Remind me about upcoming union meetings',
-          value: _unionRemindersEnabled,
-          onChanged: (value) {
-            setState(() => _unionRemindersEnabled = value);
-            _savePreference('union_reminders_enabled', value);
-            if (value) {
-              FCMService.subscribeToTopic('union_reminders');
-            } else {
-              FCMService.unsubscribeFromTopic('union_reminders');
-            }
-          },
-        ),
-        _buildToggleItem(
-          icon: Icons.info_outline,
-          title: 'System Notifications',
-          subtitle: 'App updates and important announcements',
-          value: _systemNotificationsEnabled,
-          onChanged: (value) {
-            setState(() => _systemNotificationsEnabled = value);
-            _savePreference('system_notifications_enabled', value);
-            if (value) {
-              FCMService.subscribeToTopic('system_updates');
-            } else {
-              FCMService.unsubscribeFromTopic('system_updates');
-            }
-          },
-        ),
-      ],
-    );
-  }
-
+          if (value) {
+            FCMService.instance.subscribeToTopicInterface('job_alerts');
+          } else {
+            FCMService.instance.unsubscribeFromTopicInterface('job_alerts');
+          }
+        },
+      ),
+      _buildToggleItem(
+        icon: Icons.flash_on,
+        title: 'Storm Work',
+        subtitle: 'Emergency and storm restoration opportunities',
+        value: _stormWorkEnabled,
+        onChanged: (value) {
+          setState(() => _stormWorkEnabled = value);
+          _savePreference('storm_work_enabled', value);
+          if (value) {
+            FCMService.instance.subscribeToTopicInterface('storm_alerts');
+          } else {
+            FCMService.instance.unsubscribeFromTopicInterface('storm_alerts');
+          }
+        },
+      ),
+      _buildToggleItem(
+        icon: Icons.people_outline,
+        title: 'Union Updates',
+        subtitle: 'News and updates from your local',
+        value: _unionUpdatesEnabled,
+        onChanged: (value) {
+          setState(() => _unionUpdatesEnabled = value);
+          _savePreference('union_updates_enabled', value);
+          if (value) {
+            FCMService.instance.subscribeToTopicInterface('union_updates');
+          } else {
+            FCMService.instance.unsubscribeFromTopicInterface('union_updates');
+          }
+        },
+      ),
+      _buildToggleItem(
+        icon: Icons.event,
+        title: 'Union Meeting Reminders',
+        subtitle: 'Remind me about upcoming union meetings',
+        value: _unionRemindersEnabled,
+        onChanged: (value) {
+          setState(() => _unionRemindersEnabled = value);
+          _savePreference('union_reminders_enabled', value);
+          if (value) {
+            FCMService.instance.subscribeToTopicInterface('union_reminders');
+          } else {
+            FCMService.instance.unsubscribeFromTopicInterface('union_reminders');
+          }
+        },
+      ),
+      _buildToggleItem(
+        icon: Icons.info_outline,
+        title: 'System Notifications',
+        subtitle: 'App updates and important announcements',
+        value: _systemNotificationsEnabled,
+        onChanged: (value) {
+          setState(() => _systemNotificationsEnabled = value);
+          _savePreference('system_notifications_enabled', value);
+          if (value) {
+            FCMService.instance.subscribeToTopicInterface('system_updates');
+          } else {
+            FCMService.instance.unsubscribeFromTopicInterface('system_updates');
+          }
+        },
+      ),
+    ],
+  );
+}
   Widget _buildSoundSection() {
     return _buildSection(
       'Sound & Vibration',

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../config/firebase_config.dart';
@@ -288,7 +287,7 @@ class FCMService {
     }
   }
   /// Subscribe to a general topic
-  Future<void> subscribeToTopic(String topic) async {
+  Future<void> subscribeToTopicInterface(String topic) async {
     try {
       await _messaging.subscribeToTopic(topic);
       print('Subscribed to topic: $topic');
@@ -298,7 +297,7 @@ class FCMService {
   }
 
   /// Unsubscribe from a topic
-  Future<void> unsubscribeFromTopic(String topic) async {
+  Future<void> unsubscribeFromTopicInterface(String topic) async {
     try {
       await _messaging.unsubscribeFromTopic(topic);
       print('Unsubscribed from topic: $topic');

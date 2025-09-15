@@ -13,3 +13,7 @@ export 'circuit_breaker_toggle.dart';
 // Static Icons
 export 'hard_hat_icon.dart';
 export 'transmission_tower_icon.dart';
+
+// Icons and Electrical Themes
+export 'electrical_icons.dart';
+export 'circuit_pattern_painter.dart';

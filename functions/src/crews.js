@@ -8,6 +8,493 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
+// IBEW Protocol Configuration
+const IBEW_LOCALS = {
+  // Key IBEW locals for validation - subset for performance
+  1: { name: 'Local 1', jurisdiction: 'St. Louis, MO', territory: 'Missouri' },
+  3: { name: 'Local 3', jurisdiction: 'New York, NY', territory: 'New York City' },
+  11: { name: 'Local 11', jurisdiction: 'Los Angeles, CA', territory: 'Los Angeles County' },
+  26: { name: 'Local 26', jurisdiction: 'Washington, DC', territory: 'Washington Metro' },
+  46: { name: 'Local 46', jurisdiction: 'Seattle, WA', territory: 'Seattle Metro' },
+  58: { name: 'Local 58', jurisdiction: 'Detroit, MI', territory: 'Detroit Metro' },
+  98: { name: 'Local 98', jurisdiction: 'Philadelphia, PA', territory: 'Philadelphia Metro' },
+  134: { name: 'Local 134', jurisdiction: 'Chicago, IL', territory: 'Chicago Metro' },
+  145: { name: 'Local 145', jurisdiction: 'Rock Island, IL', territory: 'Quad Cities' },
+  177: { name: 'Local 177', jurisdiction: 'Jacksonville, FL', territory: 'Northeast Florida' },
+  // Add more as needed - this is a subset for validation
+};
+
+const VALID_CLASSIFICATIONS = [
+  'Inside Wireman',
+  'Journeyman Lineman',
+  'Tree Trimmer',
+  'Equipment Operator',
+  'Inside Journeyman Electrician',
+  'Apprentice Electrician',
+  'Maintenance Electrician',
+  'Telecommunications Technician'
+];
+
+const CONSTRUCTION_TYPES = [
+  'Commercial',
+  'Industrial',
+  'Residential',
+  'Utility',
+  'Maintenance',
+  'Storm Restoration',
+  'Emergency Work'
+];
+
+/**
+ * IBEW PROTOCOL VALIDATION FUNCTIONS
+ */
+
+// HTTP function to validate IBEW local number
+exports.validateUnionLocal = functions.https.onCall(async (data, context) => {
+  const { localNumber } = data;
+
+  try {
+    // First check our static list for common locals
+    if (IBEW_LOCALS[localNumber]) {
+      return {
+        valid: true,
+        local: IBEW_LOCALS[localNumber],
+        source: 'verified'
+      };
+    }
+
+    // For other locals, check Firestore directory if available
+    const localDoc = await db.collection('ibewLocals').doc(localNumber.toString()).get();
+    if (localDoc.exists) {
+      return {
+        valid: true,
+        local: localDoc.data(),
+        source: 'directory'
+      };
+    }
+
+    // If not found, return invalid but allow with warning
+    return {
+      valid: false,
+      warning: `Local ${localNumber} not found in directory. Please verify this is a valid IBEW local.`,
+      allowWithWarning: true
+    };
+
+  } catch (error) {
+    console.error('Error validating union local:', error);
+    throw new functions.https.HttpsError('internal', 'Failed to validate union local');
+  }
+});
+
+// Check if member classification matches job requirements
+exports.checkClassificationMatch = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be authenticated');
+  }
+
+  const { jobId, memberId } = data;
+
+  try {
+    // Get job requirements
+    const jobDoc = await db.collection('jobs').doc(jobId).get();
+    if (!jobDoc.exists) {
+      throw new functions.https.HttpsError('not-found', 'Job not found');
+    }
+
+    const jobData = jobDoc.data();
+
+    // Get member profile
+    const memberDoc = await db.collection('users').doc(memberId).get();
+    if (!memberDoc.exists) {
+      throw new functions.https.HttpsError('not-found', 'Member not found');
+    }
+
+    const memberData = memberDoc.data();
+
+    // Check classification match
+    const jobClassifications = Array.isArray(jobData.classification) ?
+      jobData.classification : [jobData.classification];
+    const memberClassifications = Array.isArray(memberData.classification) ?
+      memberData.classification : [memberData.classification];
+
+    const hasMatch = jobClassifications.some(jobClass =>
+      memberClassifications.includes(jobClass)
+    );
+
+    // Additional checks for special requirements
+    const checks = {
+      classificationMatch: hasMatch,
+      stormWorkQualified: memberData.stormWorkCertified || false,
+      territoryValid: true, // TODO: Implement territory checking
+      experienceLevel: memberData.experienceYears || 0,
+      certifications: memberData.certifications || []
+    };
+
+    // Determine overall eligibility
+    let eligible = checks.classificationMatch;
+    let warnings = [];
+
+    if (jobData.isStormWork && !checks.stormWorkQualified) {
+      eligible = false;
+      warnings.push('Storm work certification required');
+    }
+
+    if (jobData.minExperience && checks.experienceLevel < jobData.minExperience) {
+      warnings.push(`Minimum ${jobData.minExperience} years experience required`);
+    }
+
+    return {
+      eligible,
+      checks,
+      warnings,
+      jobRequirements: {
+        classifications: jobClassifications,
+        isStormWork: jobData.isStormWork || false,
+        minExperience: jobData.minExperience || 0
+      }
+    };
+
+  } catch (error) {
+    console.error('Error checking classification match:', error);
+    throw error;
+  }
+});
+
+// Prioritize storm work notifications
+exports.prioritizeStormWork = functions.https.onCall(async (data, context) => {
+  const { notification, recipients } = data;
+
+  try {
+    if (!notification.isStormWork) {
+      return { priority: 'normal', urgencyLevel: 1 };
+    }
+
+    // Determine storm work priority based on severity and location
+    let urgencyLevel = 2; // Default storm work priority
+    let priority = 'high';
+
+    // Check for emergency keywords
+    const emergencyKeywords = ['hurricane', 'tornado', 'major outage', 'emergency', 'critical'];
+    const hasEmergencyKeywords = emergencyKeywords.some(keyword =>
+      notification.title.toLowerCase().includes(keyword) ||
+      notification.description.toLowerCase().includes(keyword)
+    );
+
+    if (hasEmergencyKeywords) {
+      urgencyLevel = 3;
+      priority = 'urgent';
+    }
+
+    // Enhanced notification for storm work
+    const enhancedNotification = {
+      ...notification,
+      title: `🚨 STORM WORK: ${notification.title}`,
+      priority,
+      urgencyLevel,
+      isEmergency: urgencyLevel === 3,
+      stormWorkBadge: true,
+      expandedAlert: true
+    };
+
+    return {
+      notification: enhancedNotification,
+      priority,
+      urgencyLevel,
+      deliveryMethod: urgencyLevel === 3 ? 'immediate' : 'priority'
+    };
+
+  } catch (error) {
+    console.error('Error prioritizing storm work:', error);
+    throw new functions.https.HttpsError('internal', 'Failed to prioritize storm work');
+  }
+});
+
+// Coordinate group bid submissions
+exports.coordinateGroupBid = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be authenticated');
+  }
+
+  const { crewId, jobId, bidDetails } = data;
+  const userId = context.auth.uid;
+
+  try {
+    // Verify user is crew member with bidding permission
+    const memberDoc = await db.collection(`crews/${crewId}/members`).doc(userId).get();
+    if (!memberDoc.exists) {
+      throw new functions.https.HttpsError('permission-denied', 'Not a crew member');
+    }
+
+    const memberData = memberDoc.data();
+    if (memberData.role !== 'leader' && !memberData.permissions?.canBid) {
+      throw new functions.https.HttpsError('permission-denied', 'No bidding permission');
+    }
+
+    // Create group bid record
+    const groupBidId = db.collection('groupBids').doc().id;
+    const groupBid = {
+      id: groupBidId,
+      crewId,
+      jobId,
+      submittedBy: userId,
+      submittedAt: admin.firestore.FieldValue.serverTimestamp(),
+      status: 'submitted',
+      bidDetails: {
+        ...bidDetails,
+        bidType: 'crew_bid',
+        memberCount: bidDetails.memberCount || 1
+      },
+      crewMembers: bidDetails.participatingMembers || [userId]
+    };
+
+    await db.collection('groupBids').doc(groupBidId).set(groupBid);
+
+    // Create crew activity log
+    await db.collection(`crews/${crewId}/activity`).add({
+      type: 'group_bid_submitted',
+      actorId: userId,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      data: {
+        jobId,
+        groupBidId,
+        memberCount: bidDetails.memberCount
+      },
+      visibility: 'all'
+    });
+
+    // Notify crew members about bid submission
+    await sendCrewNotification(crewId, {
+      title: '🤝 Group Bid Submitted',
+      body: `Crew bid submitted for job opportunity`,
+      data: {
+        type: 'group_bid_submitted',
+        crewId,
+        jobId,
+        groupBidId
+      }
+    }, userId);
+
+    return {
+      success: true,
+      groupBidId,
+      status: 'submitted'
+    };
+
+  } catch (error) {
+    console.error('Error coordinating group bid:', error);
+    throw error;
+  }
+});
+
+/**
+ * NEW CREW NOTIFICATION TRIGGER FUNCTIONS
+ */
+
+// Trigger when crew invitation is sent
+exports.onCrewInvitationSent = functions.firestore
+  .document('crewInvitations/{invitationId}')
+  .onCreate(async (snap, context) => {
+    const invitation = snap.data();
+    const { invitationId } = context.params;
+
+    try {
+      // Get crew details
+      const crewDoc = await db.collection('crews').doc(invitation.crewId).get();
+      if (!crewDoc.exists) {
+        console.error(`Crew ${invitation.crewId} not found`);
+        return;
+      }
+      const crewData = crewDoc.data();
+
+      // Get inviter details
+      const inviterDoc = await db.collection('users').doc(invitation.inviterUserId).get();
+      const inviterData = inviterDoc.data();
+      const inviterName = inviterData?.displayName || inviterData?.email || 'Crew Leader';
+
+      // Send invitation email using existing email service
+      const { sendInvitationEmail } = require('./email');
+
+      // Check if invited user already exists
+      const usersQuery = await db.collection('users')
+        .where('email', '==', invitation.email)
+        .limit(1)
+        .get();
+
+      if (!usersQuery.empty) {
+        // Existing user - send crew invitation notification
+        const existingUser = usersQuery.docs[0];
+        const userData = existingUser.data();
+
+        if (userData.fcmToken) {
+          await admin.messaging().send({
+            notification: {
+              title: '⚡ Crew Invitation',
+              body: `${inviterName} invited you to join ${crewData.name}`,
+            },
+            data: {
+              type: 'crew_invitation',
+              crewId: invitation.crewId,
+              invitationId,
+              click_action: 'FLUTTER_NOTIFICATION_CLICK'
+            },
+            token: userData.fcmToken
+          });
+        }
+
+        // Also send email for important crew invitations
+        await sendCrewInvitationEmail({
+          email: invitation.email,
+          crewName: crewData.name,
+          inviterName,
+          message: invitation.message,
+          invitationId,
+          isExistingUser: true
+        });
+      } else {
+        // New user - send signup invitation email
+        await sendCrewInvitationEmail({
+          email: invitation.email,
+          crewName: crewData.name,
+          inviterName,
+          message: invitation.message,
+          invitationId,
+          isExistingUser: false
+        });
+      }
+
+      console.log(`Crew invitation sent: ${invitationId} to ${invitation.email}`);
+
+    } catch (error) {
+      console.error('Error in onCrewInvitationSent:', error);
+
+      // Update invitation status to failed
+      await snap.ref.update({
+        status: 'failed',
+        error: error.message,
+        failedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+    }
+  });
+
+// Trigger for emergency alerts (storm work, urgent notifications)
+exports.onEmergencyAlert = functions.firestore
+  .document('emergencyAlerts/{alertId}')
+  .onCreate(async (snap, context) => {
+    const alert = snap.data();
+    const { alertId } = context.params;
+
+    try {
+      // Determine affected areas and classifications
+      const affectedRegions = alert.affectedRegions || [];
+      const requiredClassifications = alert.requiredClassifications || [];
+
+      // Query users in affected areas with required classifications
+      let usersQuery = db.collection('users');
+
+      if (affectedRegions.length > 0) {
+        usersQuery = usersQuery.where('location.state', 'in', affectedRegions);
+      }
+
+      const eligibleUsers = await usersQuery.get();
+
+      // Filter users by classification and availability
+      const targetUsers = [];
+      for (const userDoc of eligibleUsers.docs) {
+        const userData = userDoc.data();
+
+        // Check if user has required classification
+        const userClassifications = Array.isArray(userData.classification) ?
+          userData.classification : [userData.classification];
+
+        const hasRequiredClassification = requiredClassifications.length === 0 ||
+          requiredClassifications.some(req => userClassifications.includes(req));
+
+        if (hasRequiredClassification && userData.fcmToken && userData.emergencyAlerts !== false) {
+          targetUsers.push({
+            userId: userDoc.id,
+            fcmToken: userData.fcmToken,
+            email: userData.email,
+            classification: userClassifications
+          });
+        }
+      }
+
+      // Send high-priority notifications
+      const notificationPromises = targetUsers.map(async (user) => {
+        const message = {
+          notification: {
+            title: `🚨 ${alert.type.toUpperCase()}: ${alert.title}`,
+            body: alert.description,
+            icon: 'emergency_alert_icon',
+          },
+          data: {
+            type: 'emergency_alert',
+            alertId,
+            urgencyLevel: '3',
+            alertType: alert.type,
+            click_action: 'FLUTTER_NOTIFICATION_CLICK'
+          },
+          token: user.fcmToken,
+          android: {
+            priority: 'high',
+            notification: {
+              channelId: 'emergency_alerts',
+              priority: 'high',
+              sound: 'emergency_alert',
+              vibrationPattern: [1000, 1000, 1000]
+            }
+          },
+          apns: {
+            payload: {
+              aps: {
+                priority: 10,
+                sound: 'emergency_alert.caf',
+                category: 'emergency_alert'
+              }
+            }
+          }
+        };
+
+        try {
+          await admin.messaging().send(message);
+          return { userId: user.userId, status: 'sent' };
+        } catch (error) {
+          console.error(`Failed to send emergency alert to ${user.userId}:`, error);
+          return { userId: user.userId, status: 'failed', error: error.message };
+        }
+      });
+
+      const results = await Promise.all(notificationPromises);
+
+      // Update alert with delivery statistics
+      const successCount = results.filter(r => r.status === 'sent').length;
+      const failureCount = results.filter(r => r.status === 'failed').length;
+
+      await snap.ref.update({
+        status: 'delivered',
+        deliveredAt: admin.firestore.FieldValue.serverTimestamp(),
+        deliveryStats: {
+          targetCount: targetUsers.length,
+          successCount,
+          failureCount,
+          deliveryResults: results
+        }
+      });
+
+      console.log(`Emergency alert ${alertId} sent to ${successCount}/${targetUsers.length} users`);
+
+    } catch (error) {
+      console.error('Error in onEmergencyAlert:', error);
+
+      // Update alert status to failed
+      await snap.ref.update({
+        status: 'failed',
+        error: error.message,
+        failedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+    }
+  });
+
 /**
  * CREW CREATION AND MANAGEMENT FUNCTIONS
  */

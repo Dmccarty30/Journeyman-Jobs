@@ -231,19 +231,19 @@ class NotificationManager {
   }) async {
     try {
       if (jobAlerts) {
-        await FCMService.subscribeToTopic('job_alerts');
+        await FCMService.instance.subscribeToTopicInterface('job_alerts');
       }
       
       if (safetyAlerts) {
-        await FCMService.subscribeToTopic('safety_alerts');
+        await FCMService.instance.subscribeToTopicInterface('safety_alerts');
       }
       
       if (stormAlerts) {
-        await FCMService.subscribeToTopic('storm_alerts');
+        await FCMService.instance.subscribeToTopicInterface('storm_alerts');
       }
       
       if (unionLocal != null) {
-        await FCMService.subscribeToTopic('union_$unionLocal');
+        await FCMService.instance.subscribeToTopicInterface('union_$unionLocal');
       }
     } catch (e) {
       debugPrint('Error subscribing to topics: $e');
@@ -259,19 +259,19 @@ class NotificationManager {
   }) async {
     try {
       if (jobAlerts) {
-        await FCMService.unsubscribeFromTopic('job_alerts');
+        await FCMService.instance.unsubscribeFromTopicInterface('job_alerts');
       }
       
       if (safetyAlerts) {
-        await FCMService.unsubscribeFromTopic('safety_alerts');
+        await FCMService.instance.unsubscribeFromTopicInterface('safety_alerts');
       }
       
       if (stormAlerts) {
-        await FCMService.unsubscribeFromTopic('storm_alerts');
+        await FCMService.instance.unsubscribeFromTopicInterface('storm_alerts');
       }
       
       if (unionLocal != null) {
-        await FCMService.unsubscribeFromTopic('union_$unionLocal');
+        await FCMService.instance.unsubscribeFromTopicInterface('union_$unionLocal');
       }
     } catch (e) {
       debugPrint('Error unsubscribing from topics: $e');

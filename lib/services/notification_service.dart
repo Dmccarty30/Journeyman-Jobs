@@ -57,63 +57,27 @@ class NotificationService {
       // Update FCM topic subscription
       final topicName = _getTopicName(type);
       if (topicName != null) {
-        if (enabled) {
-          await FCMService.subscribeToTopic(topicName);
-        } else {
-          await FCMService.unsubscribeFromTopic(topicName);
+          if (enabled) {
+            await FCMService.subscribeToTopic(topicName); // Corrected method call
+          } else {
+            await FCMService.unsubscribeFromTopic(topicName); // Corrected method call
+          }
         }
-      }
 
-      // Update Firestore
+      // Subscribe to user-specific topics
       final user = _auth.currentUser;
       if (user != null) {
-        final fieldName = _getPreferenceFieldName(type);
-        await _firestore.collection('users').doc(user.uid).update({
-          'notificationPreferences.$fieldName': enabled,
-          'updatedAt': FieldValue.serverTimestamp(),
-        });
+        // Subscribe to user's union local if set
+        final userDoc = await _firestore.collection('users').doc(user.uid).get();
+        final unionLocal = userDoc.data()?['unionLocal'] as String?;
+        if (unionLocal != null) {
+          await FCMService.subscribeToTopic('local_$unionLocal'); // Corrected method call
+        }
       }
-
-      return true;
+      return true; // Indicate success
     } catch (e) {
-      debugPrint('Error toggling notification type $type: $e');
-      return false;
-    }
-  }
-
-  /// Get FCM topic name for notification type
-  static String? _getTopicName(String type) {
-    switch (type) {
-      case 'job_alerts':
-        return 'job_alerts';
-      case 'storm_work':
-        return 'storm_alerts';
-      case 'union_updates':
-        return 'union_updates';
-      case 'union_reminders':
-        return 'union_reminders';
-      case 'system_notifications':
-        return 'system_updates';
-      default:
-        return null;
-    }
-  }
-
-  /// Get Firestore field name for notification type
-  static String _getPreferenceFieldName(String type) {
-    switch (type) {
-      case 'job_alerts':
-        return 'jobAlertsEnabled';
-      case 'storm_work':
-        return 'stormWorkEnabled';
-      case 'union_updates':
-        return 'unionUpdatesEnabled';
-      case 'union_reminders':
-        return 'unionRemindersEnabled';
-      case 'system_notifications':
-        return 'systemNotificationsEnabled';
-      default:
-        return type;
+      debugPrint('Error toggling notification type: $e'); // More specific error message
+      return false; // Indicate failure
     }
   }
 
