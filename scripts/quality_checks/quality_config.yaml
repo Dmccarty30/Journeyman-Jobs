@@ -20,9 +20,9 @@ component_patterns:
   job_cards:
     max_variants: 2  # Only JobCard with half/full variants allowed
     forbidden_duplicates:
-      - "enhanced_job_card.dart"
       - "custom_job_card.dart"
       - "special_job_card.dart"
+      - "enhanced_job_card.dart"  # Removed - now using rich_text_job_card.dart
     required_location: "lib/design_system/components/"
   
   navigation:

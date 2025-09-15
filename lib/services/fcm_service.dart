@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart';
@@ -25,7 +26,7 @@ class FCMService {
   StreamSubscription<RemoteMessage>? _backgroundSubscription;
 
   /// Initialize FCM service with production configuration
-  Future<void> initialize() async {
+  Future<void> initialize(BuildContext appContext) async {
     try {
       // Request notification permissions
       await _requestPermissions();
@@ -313,6 +314,26 @@ class FCMService {
 
   /// Get message stream for listening to incoming messages
   Stream<RemoteMessage>? get messageStream => _messageController?.stream;
+
+  /// Subscribe to a topic for push notifications
+  static Future<void> subscribeToTopic(String topic) async {
+    try {
+      await FirebaseMessaging.instance.subscribeToTopic(topic);
+      print('Successfully subscribed to topic: $topic');
+    } catch (e) {
+      print('Error subscribing to topic $topic: $e');
+    }
+  }
+
+  /// Unsubscribe from a topic
+  static Future<void> unsubscribeFromTopic(String topic) async {
+    try {
+      await FirebaseMessaging.instance.unsubscribeFromTopic(topic);
+      print('Successfully unsubscribed from topic: $topic');
+    } catch (e) {
+      print('Error unsubscribing from topic $topic: $e');
+    }
+  }
 
   /// Dispose resources
   void dispose() {

@@ -19,7 +19,7 @@ import '../../electrical_components/circuit_board_background.dart';
  // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 import '../../widgets/storm/roster_signup_carousel.dart';
 import '../../services/roster_data_service.dart';
-import '../../models/roster_contractor.dart';
+import '../../models/storm_roster_signup.dart';
 
 
  class StormScreen extends StatefulWidget {
@@ -585,18 +585,13 @@ class _StormScreenState extends State<StormScreen> {
                     // Convert storm data to Job model for BidDialog
                     final stormJob = Job(
                       id: storm.id,
-                      title: storm.name,
+                      jobTitle: storm.name,
                       company: contractor.contractorName,
                       location: storm.region,
-                      description: 'Storm restoration work - immediate deployment',
+                      jobDescription: 'Storm restoration work - immediate deployment',
                       classification: 'Storm Work - ${contractor.positionRequested}',
-                      payRate: storm.payRate,
-                      source: 'Storm Alert',
-                      isUrgent: true,
-                      datePosted: DateTime.now(),
-                      applicationDeadline: DateTime.now().add(const Duration(hours: 24)),
-                      minExperience: '1+ years',
-                      constructionType: 'Storm Restoration',
+                      wage: double.tryParse(storm.payRate.toString()),
+                      typeOfWork: 'Storm Restoration',
                     );
 
                     // Check if user has already applied for this storm work

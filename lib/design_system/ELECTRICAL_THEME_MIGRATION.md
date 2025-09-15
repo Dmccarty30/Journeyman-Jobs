@@ -197,11 +197,10 @@ final patternOpacity = isHighContrast ? 0.0 : 0.03;
 ### Widget Tests
 
 ```dart
-testWidgets('Enhanced job card displays electrical theme', (tester) async {
+testWidgets('Rich text job card displays electrical theme', (tester) async {
   await tester.pumpWidget(MaterialApp(
-    home: EnhancedJobCard(
+    home: RichTextJobCard(
       job: mockJob,
-      variant: JobCardVariant.full,
     ),
   ));
   
@@ -233,7 +232,7 @@ testWidgets('Circuit pattern does not cause excessive rebuilds', (tester) async 
 ```dart
 lib/design_system/components/
 ├── enhanced_backgrounds.dart      # New electrical backgrounds
-├── enhanced_job_card.dart         # Enhanced job card
+├── rich_text_job_card.dart        # Rich text job card
 ├── job_card.dart                  # Original job card (keep for compatibility)
 └── reusable_components.dart       # Original components
 ```

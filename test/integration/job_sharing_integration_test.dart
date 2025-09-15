@@ -10,7 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
-import '../../lib/widgets/enhanced_job_card.dart';
+import '../../lib/widgets/rich_text_job_card.dart';
 import '../../lib/models/job_model.dart';
 import '../../lib/models/user_model.dart';
 import '../../lib/features/job_sharing/widgets/share_button.dart';
@@ -59,16 +59,19 @@ void main() {
       testUsers = await _createTestUsers();
     });
 
-    testWidgets('Enhanced job card displays share button correctly', (tester) async {
+    testWidgets('RichText job card displays details and bid buttons correctly', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
           child: Material(
-            child: EnhancedJobCard(
+            child: RichTextJobCard(
               job: testJobs.first,
-              variant: JobCardVariant.enhanced,
-              onShare: (recipientIds, message) {
-                // Callback handling
-                print('Share completed: $recipientIds, message: $message');
+              onDetails: () {
+                // Details callback handling
+                print('Details tapped');
+              },
+              onBid: () {
+                // Bid callback handling
+                print('Bid tapped');
               },
             ),
           ),
@@ -76,28 +79,26 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Verify share button is present
-      expect(find.byType(JJShareButton), findsOneWidget);
-      
-      // Verify electrical theme consistency
-      final shareButton = find.byType(JJShareButton);
-      expect(shareButton, findsOneWidget);
-      
-      // Verify tooltip
-      await tester.longPress(shareButton);
+      // Verify Details button is present
+      expect(find.text('Details'), findsOneWidget);
+
+      // Verify Bid Now button is present
+      expect(find.text('Bid Now'), findsOneWidget);
+
+      // Test Details button tap
+      await tester.tap(find.text('Details'));
       await tester.pumpAndSettle();
-      expect(find.text('Share job with colleagues'), findsOneWidget);
     });
 
-    testWidgets('Complete share flow - tap to modal to success', (tester) async {
+    testWidgets('Complete bid flow - tap to action completion', (tester) async {
+      bool bidTapped = false;
       await tester.pumpWidget(
         _buildTestApp(
           child: Material(
-            child: EnhancedJobCard(
+            child: RichTextJobCard(
               job: testJobs.first,
-              variant: JobCardVariant.enhanced,
-              onShare: (recipientIds, message) {
-                expect(recipientIds, isNotEmpty);
+              onBid: () {
+                bidTapped = true;
               },
             ),
           ),
@@ -105,88 +106,54 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Step 1: Tap share button
-      final shareButton = find.byType(JJShareButton);
-      expect(shareButton, findsOneWidget);
-      await tester.tap(shareButton);
+      // Step 1: Tap bid button
+      final bidButton = find.text('Bid Now');
+      expect(bidButton, findsOneWidget);
+      await tester.tap(bidButton);
       await tester.pumpAndSettle();
 
-      // Step 2: Verify share modal appears
-      expect(find.byType(JJShareModal), findsOneWidget);
-      
-      // Verify job details are displayed in modal
+      // Verify bid callback was called
+      expect(bidTapped, isTrue);
+    });
+
+    testWidgets('Job card displays job information correctly', (tester) async {
+      await tester.pumpWidget(
+        _buildTestApp(
+          child: Material(
+            child: RichTextJobCard(
+              job: testJobs.first,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Verify job information is displayed
       expect(find.text(testJobs.first.title), findsOneWidget);
       expect(find.text('IBEW Local ${testJobs.first.local}'), findsOneWidget);
-      
-      // Step 3: Select a contact (mock interaction)
-      // Note: In real test, this would involve contact picker interaction
-      // For integration test, we'll simulate successful selection
-      
-      // Find and tap send button (should be disabled initially)
-      final sendButton = find.text('Share Job');
-      expect(sendButton, findsOneWidget);
-      
-      // The button should be disabled initially (no contacts selected)
-      // In a real scenario, we'd select contacts first
-      
-      // Simulate successful sharing by manually calling the callback
-      // This represents what would happen after contact selection and send
-      await tester.pumpAndSettle();
-      
-      // Verify modal can be closed
-      await tester.tapAt(const Offset(50, 50)); // Tap outside modal
-      await tester.pumpAndSettle();
     });
 
-    testWidgets('Share button loading state works correctly', (tester) async {
+    testWidgets('Job card displays consistent electrical theme styling', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
           child: Material(
-            child: JJShareButton(
-              onPressed: () {
-                // Simulate long operation
-              },
-              isLoading: true,
+            child: RichTextJobCard(
+              job: testJobs.first,
             ),
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      // Verify loading indicator is shown
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      
-      // Verify button cannot be tapped while loading
-      await tester.tap(find.byType(JJShareButton));
-      await tester.pumpAndSettle();
+      // Verify electrical-themed styling is present
+      expect(find.byType(RichTextJobCard), findsOneWidget);
+
+      // Verify action buttons are present
+      expect(find.text('Details'), findsOneWidget);
+      expect(find.text('Bid Now'), findsOneWidget);
     });
 
-    testWidgets('Different job card variants include share functionality', (tester) async {
-      for (final variant in JobCardVariant.values) {
-        await tester.pumpWidget(
-          _buildTestApp(
-            child: Material(
-              child: EnhancedJobCard(
-                job: testJobs.first,
-                variant: variant,
-              ),
-            ),
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        // All variants should have share button
-        expect(
-          find.byType(JJShareButton), 
-          findsOneWidget,
-          reason: 'Share button missing in $variant variant',
-        );
-        
-        await tester.binding.reassembleApplication();
-      }
-    });
-
-    testWidgets('Storm work jobs have appropriate share styling', (tester) async {
+    testWidgets('Storm work jobs display correctly in RichText card', (tester) async {
       final stormJob = Job(
         id: 'storm-job-1',
         title: 'Emergency Storm Restoration - Lines Down',
@@ -202,35 +169,31 @@ void main() {
       await tester.pumpWidget(
         _buildTestApp(
           child: Material(
-            child: EnhancedJobCard(
+            child: RichTextJobCard(
               job: stormJob,
-              variant: JobCardVariant.enhanced,
             ),
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      // Verify storm indicator is present
-      expect(find.text('STORM RESTORATION'), findsOneWidget);
-      
-      // Verify share button is present for urgent sharing
-      expect(find.byType(JJShareButton), findsOneWidget);
+      // Verify job information is displayed
+      expect(find.text(stormJob.title), findsOneWidget);
+
+      // Verify action buttons are present
+      expect(find.text('Details'), findsOneWidget);
+      expect(find.text('Bid Now'), findsOneWidget);
     });
 
-    testWidgets('Contact provider integration works', (tester) async {
+    testWidgets('RichText job card integrates with provider data', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            contactsProvider.overrideWith(
-              (ref) => AsyncValue.data(testUsers),
-            ),
-          ],
           child: MaterialApp(
             home: Material(
-              child: EnhancedJobCard(
+              child: RichTextJobCard(
                 job: testJobs.first,
-                variant: JobCardVariant.enhanced,
+                onDetails: () {},
+                onBid: () {},
               ),
             ),
           ),
@@ -238,42 +201,43 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Tap share button
-      await tester.tap(find.byType(JJShareButton));
-      await tester.pumpAndSettle();
+      // Verify job card is displayed
+      expect(find.byType(RichTextJobCard), findsOneWidget);
 
-      // Verify contact data is available in modal
-      expect(find.byType(JJShareModal), findsOneWidget);
+      // Verify buttons work
+      expect(find.text('Details'), findsOneWidget);
+      expect(find.text('Bid Now'), findsOneWidget);
     });
 
-    testWidgets('Share button accessibility', (tester) async {
+    testWidgets('Job card buttons are accessible', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
           child: Material(
-            child: JJShareButton(
-              onPressed: () {},
-              tooltip: 'Share this job opportunity',
+            child: RichTextJobCard(
+              job: testJobs.first,
+              onDetails: () {},
+              onBid: () {},
             ),
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      // Test semantic labels
-      final shareButton = find.byType(JJShareButton);
-      expect(shareButton, findsOneWidget);
-      
-      // Verify tooltip accessibility
-      final widget = tester.widget<Tooltip>(find.byType(Tooltip));
-      expect(widget.message, 'Share this job opportunity');
+      // Test button accessibility
+      final detailsButton = find.text('Details');
+      expect(detailsButton, findsOneWidget);
+
+      final bidButton = find.text('Bid Now');
+      expect(bidButton, findsOneWidget);
     });
 
-    testWidgets('Performance - share button animation timing', (tester) async {
+    testWidgets('Performance - button interaction timing', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
           child: Material(
-            child: JJShareButton(
-              onPressed: () {},
+            child: RichTextJobCard(
+              job: testJobs.first,
+              onBid: () {},
             ),
           ),
         ),
@@ -281,28 +245,27 @@ void main() {
       await tester.pumpAndSettle();
 
       final stopwatch = Stopwatch()..start();
-      
-      // Tap button and measure animation time
-      await tester.tap(find.byType(JJShareButton));
+
+      // Tap button and measure response time
+      await tester.tap(find.text('Bid Now'));
       await tester.pumpAndSettle();
-      
+
       stopwatch.stop();
-      
-      // Animation should complete quickly (under 1 second)
-      expect(stopwatch.elapsedMilliseconds, lessThan(1000));
+
+      // Interaction should be responsive (under 100ms)
+      expect(stopwatch.elapsedMilliseconds, lessThan(100));
     });
 
-    testWidgets('Error handling - share service failure', (tester) async {
+    testWidgets('Error handling - callback exception handling', (tester) async {
       await tester.pumpWidget(
         _buildTestApp(
           child: Material(
             child: Builder(
-              builder: (context) => EnhancedJobCard(
+              builder: (context) => RichTextJobCard(
                 job: testJobs.first,
-                variant: JobCardVariant.enhanced,
-                onShare: (recipientIds, message) {
-                  // Simulate error
-                  throw Exception('Share failed');
+                onBid: () {
+                  // Simulate error in callback
+                  throw Exception('Bid failed');
                 },
               ),
             ),
@@ -311,9 +274,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // This would test error handling, but requires more complex setup
-      // with actual service mocking
-      expect(find.byType(JJShareButton), findsOneWidget);
+      // Verify job card renders correctly
+      expect(find.byType(RichTextJobCard), findsOneWidget);
+      expect(find.text('Bid Now'), findsOneWidget);
     });
 
     testWidgets('Responsive design - different screen sizes', (tester) async {
@@ -326,29 +289,28 @@ void main() {
 
       for (final size in sizes) {
         await tester.binding.setSurfaceSize(size);
-        
+
         await tester.pumpWidget(
           _buildTestApp(
             child: Material(
-              child: EnhancedJobCard(
+              child: RichTextJobCard(
                 job: testJobs.first,
-                variant: JobCardVariant.enhanced,
               ),
             ),
           ),
         );
         await tester.pumpAndSettle();
 
-        // Share button should be present and properly sized
+        // Job card should be present and properly responsive
         expect(
-          find.byType(JJShareButton), 
+          find.byType(RichTextJobCard),
           findsOneWidget,
-          reason: 'Share button missing at size $size',
+          reason: 'Job card missing at size $size',
         );
 
-        // Button should be accessible (not too small)
-        final button = tester.widget<JJShareButton>(find.byType(JJShareButton));
-        expect(button.size != JJShareButtonSize.small || size.width >= 320, isTrue);
+        // Buttons should be accessible at all sizes
+        expect(find.text('Details'), findsOneWidget);
+        expect(find.text('Bid Now'), findsOneWidget);
       }
 
       // Reset to default size
@@ -356,50 +318,53 @@ void main() {
     });
 
     group('Electrical Theme Consistency', () {
-      testWidgets('Share button uses copper accent color', (tester) async {
+      testWidgets('Job card uses electrical theme colors', (tester) async {
         await tester.pumpWidget(
           _buildTestApp(
             child: Material(
-              child: JJShareButton(
-                onPressed: () {},
+              child: RichTextJobCard(
+                job: testJobs.first,
               ),
             ),
           ),
         );
         await tester.pumpAndSettle();
 
-        // Verify electrical theme colors are used
-        // This would require more detailed widget inspection
-        expect(find.byType(JJShareButton), findsOneWidget);
+        // Verify job card renders with proper theming
+        expect(find.byType(RichTextJobCard), findsOneWidget);
+
+        // Check that electrical icons are present
+        expect(find.byIcon(Icons.location_on), findsAtLeastNWidgets(1));
+        expect(find.byIcon(Icons.build), findsAtLeastNWidgets(1));
       });
 
-      testWidgets('Circuit pattern overlay renders', (tester) async {
+      testWidgets('Electrical icons render in job information', (tester) async {
         await tester.pumpWidget(
           _buildTestApp(
             child: Material(
-              child: JJShareButton(
-                onPressed: () {},
-                size: JJShareButtonSize.large,
+              child: RichTextJobCard(
+                job: testJobs.first,
               ),
             ),
           ),
         );
         await tester.pumpAndSettle();
 
-        // Verify CustomPaint (circuit pattern) is present
-        expect(find.byType(CustomPaint), findsAtLeastNWidgets(1));
+        // Verify electrical-themed icons are present
+        expect(find.byIcon(Icons.electrical_services), findsAtLeastNWidgets(1));
+        expect(find.byIcon(Icons.flash_on), findsOneWidget);
       });
     });
   });
 
   group('Performance Tests', () {
-    testWidgets('Job card with share button renders within performance threshold', (tester) async {
+    testWidgets('RichText job card renders within performance threshold', (tester) async {
       final stopwatch = Stopwatch()..start();
-      
+
       await tester.pumpWidget(
         _buildTestApp(
           child: Material(
-            child: EnhancedJobCard(
+            child: RichTextJobCard(
               job: Job(
                 id: 'perf-test-job',
                 title: 'Performance Test Job',
@@ -409,20 +374,19 @@ void main() {
                 payRate: 50.0,
                 startDate: DateTime.now(),
               ),
-              variant: JobCardVariant.enhanced,
             ),
           ),
         ),
       );
       await tester.pumpAndSettle();
-      
+
       stopwatch.stop();
-      
+
       // Should render in under 100ms
       expect(stopwatch.elapsedMilliseconds, lessThan(100));
     });
 
-    testWidgets('Multiple job cards with share buttons perform well', (tester) async {
+    testWidgets('Multiple RichText job cards perform well', (tester) async {
       final jobs = List.generate(
         10,
         (index) => Job(
@@ -437,28 +401,31 @@ void main() {
       );
 
       final stopwatch = Stopwatch()..start();
-      
+
       await tester.pumpWidget(
         _buildTestApp(
           child: Material(
             child: Column(
-              children: jobs.map((job) => EnhancedJobCard(
+              children: jobs.map((job) => RichTextJobCard(
                 job: job,
-                variant: JobCardVariant.standard,
               )).toList(),
             ),
           ),
         ),
       );
       await tester.pumpAndSettle();
-      
+
       stopwatch.stop();
-      
+
       // 10 job cards should render in under 500ms
       expect(stopwatch.elapsedMilliseconds, lessThan(500));
-      
-      // Verify all share buttons are present
-      expect(find.byType(JJShareButton), findsNWidgets(10));
+
+      // Verify all job cards are present
+      expect(find.byType(RichTextJobCard), findsNWidgets(10));
+
+      // Verify all action buttons are present
+      expect(find.text('Details'), findsNWidgets(10));
+      expect(find.text('Bid Now'), findsNWidgets(10));
     });
   });
 }

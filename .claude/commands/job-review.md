@@ -31,7 +31,7 @@ This command loads essential context for a new agent session by examining the co
   - @lib\utils\job_formatting.dart
   - @lib\widgets\virtual_job_list.dart
   - @lib\widgets\optimized_virtual_job_list.dart
-  - @lib\widgets\enhanced_job_card.dart
+  - @lib\widgets\rich_text_job_card.dart
   - @lib\design_system\components\job_card_implementation.dart
   - @lib\design_system\components\job_card.dart
   - @lib\models\job_model.dart

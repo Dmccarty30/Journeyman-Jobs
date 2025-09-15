@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
+import '../../design_system/popup_theme.dart';
 import '../../services/bidding_service.dart';
 import '../../models/job_model.dart';
 
@@ -57,7 +58,7 @@ class _BidDialogState extends State<BidDialog> {
       if (widget.isStormWork) {
         result = await _biddingService.submitStormBid(
           stormId: widget.job.id,
-          stormName: widget.job.title,
+          stormName: widget.job.jobTitle ?? 'Storm Job',
           contractor: widget.job.company,
           specialRequirements: _messageController.text.trim().isEmpty
               ? null
@@ -67,7 +68,7 @@ class _BidDialogState extends State<BidDialog> {
       } else {
         result = await _biddingService.submitJobBid(
           jobId: widget.job.id,
-          jobTitle: widget.job.title,
+          jobTitle: widget.job.jobTitle ?? 'Job Title',
           company: widget.job.company,
           coverMessage: _messageController.text.trim().isEmpty
               ? null
@@ -108,20 +109,19 @@ class _BidDialogState extends State<BidDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = PopupThemeData.alertDialog();
     return Dialog(
-      backgroundColor: Colors.transparent,
+      backgroundColor: theme.backgroundColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: theme.borderRadius,
+        side: BorderSide(
+          color: theme.borderColor,
+          width: AppTheme.borderWidthThin,
+        ),
+      ),
       child: Container(
         constraints: const BoxConstraints(maxWidth: 400),
-        padding: const EdgeInsets.all(AppTheme.spacingLg),
-        decoration: BoxDecoration(
-          gradient: AppTheme.cardGradient,
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-          border: Border.all(
-            color: AppTheme.accentCopper,
-            width: AppTheme.borderWidthThin,
-          ),
-          boxShadow: [AppTheme.shadowLg],
-        ),
+        padding: theme.padding,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,7 +139,7 @@ class _BidDialogState extends State<BidDialog> {
                   child: Icon(
                     widget.isStormWork ? Icons.flash_on : Icons.work,
                     color: AppTheme.white,
-                    size: 20,
+                    size: AppTheme.iconSm,
                   ),
                 ),
                 const SizedBox(width: AppTheme.spacingMd),
@@ -154,7 +154,7 @@ class _BidDialogState extends State<BidDialog> {
                         ),
                       ),
                       Text(
-                        widget.job.title,
+                        widget.job.jobTitle ?? 'Job Title',
                         style: AppTheme.bodyMedium.copyWith(
                           color: AppTheme.textSecondary,
                         ),
@@ -175,17 +175,8 @@ class _BidDialogState extends State<BidDialog> {
             const SizedBox(height: AppTheme.spacingLg),
 
             // Job details
-            Container(
-              width: double.infinity,
+            JJCard(
               padding: const EdgeInsets.all(AppTheme.spacingMd),
-              decoration: BoxDecoration(
-                color: AppTheme.white,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(
-                  color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                  width: AppTheme.borderWidthThin,
-                ),
-              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -228,7 +219,7 @@ class _BidDialogState extends State<BidDialog> {
                       ],
                     ),
                   ],
-                  if (widget.job.classification.isNotEmpty) ...[
+                  if (widget.job.classification!.isNotEmpty) ...[
                     const SizedBox(height: AppTheme.spacingSm),
                     Row(
                       children: [
@@ -240,7 +231,7 @@ class _BidDialogState extends State<BidDialog> {
                         const SizedBox(width: AppTheme.spacingSm),
                         Expanded(
                           child: Text(
-                            widget.job.classification,
+                            widget.job.classification ?? 'Classification',
                             style: AppTheme.bodyMedium.copyWith(
                               color: AppTheme.textSecondary,
                             ),
@@ -256,46 +247,13 @@ class _BidDialogState extends State<BidDialog> {
             const SizedBox(height: AppTheme.spacingLg),
 
             // Cover message / Special requirements
-            Text(
-              widget.isStormWork ? 'Special Requirements (Optional)' : 'Cover Message (Optional)',
-              style: AppTheme.titleMedium.copyWith(
-                color: AppTheme.primaryNavy,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingSm),
-            TextField(
+            JJTextField(
+              label: widget.isStormWork ? 'Special Requirements (Optional)' : 'Cover Message (Optional)',
+              hintText: widget.isStormWork
+                  ? 'Any special requirements or availability notes...'
+                  : 'Tell the employer why you\'re the right fit...',
               controller: _messageController,
               maxLines: 3,
-              maxLength: 300,
-              decoration: InputDecoration(
-                hintText: widget.isStormWork
-                    ? 'Any special requirements or availability notes...'
-                    : 'Tell the employer why you\'re the right fit...',
-                hintStyle: AppTheme.bodyMedium.copyWith(
-                  color: AppTheme.textLight,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  borderSide: BorderSide(
-                    color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  borderSide: BorderSide(
-                    color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  borderSide: const BorderSide(
-                    color: AppTheme.accentCopper,
-                    width: 2,
-                  ),
-                ),
-                contentPadding: const EdgeInsets.all(AppTheme.spacingMd),
-              ),
-              style: AppTheme.bodyMedium,
             ),
 
             const SizedBox(height: AppTheme.spacingLg),
@@ -344,20 +302,21 @@ class _BidDialogState extends State<BidDialog> {
             Row(
               children: [
                 Expanded(
-                  child: JJSecondaryButton(
+                  child: JJButton(
                     text: 'Cancel',
                     onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(false),
+                    variant: JJButtonVariant.secondary,
                     isFullWidth: true,
                   ),
                 ),
                 const SizedBox(width: AppTheme.spacingMd),
                 Expanded(
-                  child: JJPrimaryButton(
+                  child: JJButton(
                     text: _isSubmitting ? 'Submitting...' : 'Submit Bid',
                     icon: _isSubmitting ? null : Icons.send,
                     onPressed: _isSubmitting ? null : _submitBid,
-                    isFullWidth: true,
                     variant: JJButtonVariant.primary,
+                    isFullWidth: true,
                   ),
                 ),
               ],

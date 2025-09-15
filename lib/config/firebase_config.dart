@@ -14,62 +14,38 @@ class FirebaseConfig {
 
   /// Production Firebase configuration
   static const FirebaseOptions productionOptions = FirebaseOptions(
-    apiKey: String.fromEnvironment('FIREBASE_API_KEY', 
+    apiKey: String.fromEnvironment('FIREBASE_API_KEY',
            defaultValue: 'AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
-    appId: String.fromEnvironment('FIREBASE_APP_ID', 
+    appId: String.fromEnvironment('FIREBASE_APP_ID',
            defaultValue: '1:123456789012:web:abcdef123456'),
-    messagingSenderId: String.fromEnvironment('FIREBASE_MESSAGING_SENDER_ID', 
+    messagingSenderId: String.fromEnvironment('FIREBASE_MESSAGING_SENDER_ID',
                        defaultValue: '123456789012'),
-    projectId: String.fromEnvironment('FIREBASE_PROJECT_ID', 
+    projectId: String.fromEnvironment('FIREBASE_PROJECT_ID',
                defaultValue: 'journeyman-jobs-prod'),
-    authDomain: String.fromEnvironment('FIREBASE_AUTH_DOMAIN', 
+    authDomain: String.fromEnvironment('FIREBASE_AUTH_DOMAIN',
                 defaultValue: 'journeyman-jobs-prod.firebaseapp.com'),
-    storageBucket: String.fromEnvironment('FIREBASE_STORAGE_BUCKET', 
+    storageBucket: String.fromEnvironment('FIREBASE_STORAGE_BUCKET',
                    defaultValue: 'journeyman-jobs-prod.appspot.com'),
-    measurementId: String.fromEnvironment('FIREBASE_MEASUREMENT_ID', 
+    measurementId: String.fromEnvironment('FIREBASE_MEASUREMENT_ID',
                    defaultValue: 'G-XXXXXXXXXX'),
-    // Android configuration
-    androidApiKey: String.fromEnvironment('FIREBASE_ANDROID_API_KEY', 
-                   defaultValue: 'AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
-    androidAppId: String.fromEnvironment('FIREBASE_ANDROID_APP_ID', 
-                  defaultValue: '1:123456789012:android:abcdef123456'),
-    // iOS configuration
-    iosApiKey: String.fromEnvironment('FIREBASE_IOS_API_KEY', 
-               defaultValue: 'AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
-    iosAppId: String.fromEnvironment('FIREBASE_IOS_APP_ID', 
-              defaultValue: '1:123456789012:ios:abcdef123456'),
-    iosBundleId: String.fromEnvironment('FIREBASE_IOS_BUNDLE_ID', 
-                 defaultValue: 'com.journeymanjobs.app'),
   );
 
-  /// Development Firebase configuration  
+  /// Development Firebase configuration
   static const FirebaseOptions developmentOptions = FirebaseOptions(
-    apiKey: String.fromEnvironment('FIREBASE_DEV_API_KEY', 
+    apiKey: String.fromEnvironment('FIREBASE_DEV_API_KEY',
            defaultValue: 'AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
-    appId: String.fromEnvironment('FIREBASE_DEV_APP_ID', 
+    appId: String.fromEnvironment('FIREBASE_DEV_APP_ID',
            defaultValue: '1:123456789012:web:abcdef123456'),
-    messagingSenderId: String.fromEnvironment('FIREBASE_DEV_MESSAGING_SENDER_ID', 
+    messagingSenderId: String.fromEnvironment('FIREBASE_DEV_MESSAGING_SENDER_ID',
                        defaultValue: '123456789012'),
-    projectId: String.fromEnvironment('FIREBASE_DEV_PROJECT_ID', 
+    projectId: String.fromEnvironment('FIREBASE_DEV_PROJECT_ID',
                defaultValue: 'journeyman-jobs-dev'),
-    authDomain: String.fromEnvironment('FIREBASE_DEV_AUTH_DOMAIN', 
+    authDomain: String.fromEnvironment('FIREBASE_DEV_AUTH_DOMAIN',
                 defaultValue: 'journeyman-jobs-dev.firebaseapp.com'),
-    storageBucket: String.fromEnvironment('FIREBASE_DEV_STORAGE_BUCKET', 
+    storageBucket: String.fromEnvironment('FIREBASE_DEV_STORAGE_BUCKET',
                    defaultValue: 'journeyman-jobs-dev.appspot.com'),
-    measurementId: String.fromEnvironment('FIREBASE_DEV_MEASUREMENT_ID', 
+    measurementId: String.fromEnvironment('FIREBASE_DEV_MEASUREMENT_ID',
                    defaultValue: 'G-XXXXXXXXXX'),
-    // Android configuration
-    androidApiKey: String.fromEnvironment('FIREBASE_DEV_ANDROID_API_KEY', 
-                   defaultValue: 'AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
-    androidAppId: String.fromEnvironment('FIREBASE_DEV_ANDROID_APP_ID', 
-                  defaultValue: '1:123456789012:android:abcdef123456'),
-    // iOS configuration
-    iosApiKey: String.fromEnvironment('FIREBASE_DEV_IOS_API_KEY', 
-               defaultValue: 'AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
-    iosAppId: String.fromEnvironment('FIREBASE_DEV_IOS_APP_ID', 
-              defaultValue: '1:123456789012:ios:abcdef123456'),
-    iosBundleId: String.fromEnvironment('FIREBASE_DEV_IOS_BUNDLE_ID', 
-                 defaultValue: 'com.journeymanjobs.app.dev'),
   );
 
   /// Check if we're in production mode

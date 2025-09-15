@@ -197,6 +197,8 @@ class JobCard extends StatelessWidget {
         ),
     ];
 
+    return Column(
+      children: [
         // Custom header section with company, job title, and favorite button
         Container(
           margin: margin ?? const EdgeInsets.symmetric(
@@ -208,7 +210,7 @@ class JobCard extends StatelessWidget {
             color: AppTheme.white,
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
             border: Border.all(
-              color: AppTheme.accentCopper.withOpacity(0.3),
+              color: AppTheme.accentCopper.withValues(alpha: 0.3),
               width: 1.5,
             ),
             boxShadow: [AppTheme.shadowSm],
@@ -392,15 +394,15 @@ class JobCard extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppTheme.accentCopper.withOpacity(0.1),
-            AppTheme.accentCopper.withOpacity(0.4),
-            AppTheme.accentCopper.withOpacity(0.1),
+            AppTheme.accentCopper.withValues(alpha: 0.1),
+            AppTheme.accentCopper.withValues(alpha: 0.4),
+            AppTheme.accentCopper.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(1),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.accentCopper.withOpacity(0.2),
+            color: AppTheme.accentCopper.withValues(alpha: 0.2),
             blurRadius: 2,
             offset: const Offset(0, 0),
           ),
@@ -409,43 +411,4 @@ class JobCard extends StatelessWidget {
     );
   }
 
-  /// Builds a detail item with icon, label, and value
-  Widget _buildDetailItem({
-    required IconData icon,
-    required String label,
-    required String value,
-    bool isHighlighted = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(
-              icon,
-              size: AppTheme.iconXs,
-              color: isHighlighted ? AppTheme.accentCopper : AppTheme.textSecondary,
-            ),
-            const SizedBox(width: AppTheme.spacingXs),
-            Text(
-              label,
-              style: AppTheme.bodySmall.copyWith(
-                color: AppTheme.textSecondary,
-                fontSize: 11,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingXs),
-        Text(
-          value,
-          style: AppTheme.bodySmall.copyWith(
-            color: isHighlighted ? AppTheme.accentCopper : AppTheme.textPrimary,
-            fontWeight: isHighlighted ? FontWeight.w600 : FontWeight.w500,
-          ),
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    );
-  }
 }

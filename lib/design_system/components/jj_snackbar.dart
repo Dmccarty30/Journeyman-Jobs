@@ -341,7 +341,7 @@ class JJToast {
       ),
     );
 
-    overlay?.insert(overlayEntry);
+    overlay.insert(overlayEntry);
 
     // Auto remove after duration
     Future.delayed(duration, () {

@@ -24,7 +24,7 @@ The comprehensive job-sharing feature for Journeyman Jobs has been **fully imple
 
 ### ✅ **User Interface Components**
 
-- `lib/widgets/enhanced_job_card.dart` - Job cards with integrated share functionality
+- `lib/widgets/rich_text_job_card.dart` - Job cards with clean display formatting
 - `lib/features/job_sharing/widgets/share_button.dart` - Lightning-themed share button
 - `lib/features/job_sharing/widgets/share_modal.dart` - Complete sharing interface
 - `lib/features/job_sharing/widgets/recipient_selector.dart` - Advanced contact selection

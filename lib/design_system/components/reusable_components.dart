@@ -149,7 +149,7 @@ class JJSecondaryButton extends StatelessWidget {
     this.isLoading = false,
     this.isFullWidth = false,
     this.width,
-    this.height, required JJButtonVariant variant, required JJButtonSize size,
+    this.height, required JJButtonSize size, required JJButtonVariant variant,
   });
 
   @override

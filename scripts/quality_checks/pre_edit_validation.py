@@ -108,7 +108,7 @@ class PreEditValidator:
             # Check if this is creating a new job card variant
             existing_job_cards = [
                 "lib/design_system/components/job_card.dart",
-                "lib/widgets/enhanced_job_card.dart"
+                "lib/widgets/rich_text_job_card.dart"
             ]
             
             normalized_path = file_path.replace("\\", "/")

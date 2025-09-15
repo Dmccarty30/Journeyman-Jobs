@@ -1,6 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
-import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../config/firebase_config.dart';
@@ -37,9 +36,7 @@ class AnalyticsService {
       await _setUserProperties();
 
       _isInitialized = true;
-      print('Analytics service initialized successfully');
     } catch (e) {
-      print('Error initializing Analytics service: $e');
       rethrow;
     }
   }
@@ -61,7 +58,6 @@ class AnalyticsService {
       'environment': FirebaseConfig.isProduction ? 'production' : 'development',
     });
 
-    print('Analytics configured with privacy settings');
   }
 
   /// Configure Firebase Performance Monitoring
@@ -74,7 +70,6 @@ class AnalyticsService {
     // Enable/disable automatic data collection
     await _performance.setDataCollectionEnabled(config.dataCollectionEnabled);
 
-    print('Performance monitoring configured');
   }
 
   /// Set user properties while respecting privacy
@@ -126,7 +121,6 @@ class AnalyticsService {
         ...?additionalData,
       });
     } catch (e) {
-      print('Error tracking job share: $e');
     }
   }
 
@@ -151,7 +145,6 @@ class AnalyticsService {
         },
       );
     } catch (e) {
-      print('Error tracking share response: $e');
     }
   }
 
@@ -171,7 +164,6 @@ class AnalyticsService {
         },
       );
     } catch (e) {
-      print('Error tracking app event: $e');
     }
   }
 
@@ -189,7 +181,6 @@ class AnalyticsService {
         screenClass: screenClass ?? screenName,
       );
     } catch (e) {
-      print('Error tracking screen view: $e');
     }
   }
 
@@ -217,7 +208,6 @@ class AnalyticsService {
         },
       );
     } catch (e) {
-      print('Error tracking error: $e');
     }
   }
 
@@ -242,7 +232,6 @@ class AnalyticsService {
         'timestamp': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error logging to Firestore: $e');
     }
   }
 

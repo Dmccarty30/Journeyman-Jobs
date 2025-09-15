@@ -67,21 +67,26 @@ class NotificationServiceAdapter {
 @riverpod
 NotificationServiceAdapter notificationService(Ref ref) => NotificationServiceAdapter();
 
-/// Analytics service adapter wrapping static analytics helpers
+/// Analytics service adapter wrapping AnalyticsService instance
 class AnalyticsServiceAdapter {
+  AnalyticsServiceAdapter(this._analyticsService);
+
+  final AnalyticsService _analyticsService;
+
   Future<void> initialize() async {
-    // AnalyticsService uses static helper methods; keep a no-op initializer
-    // in case future setup is required.
-    return;
+    await _analyticsService.initialize();
   }
 
-  Future<void> logEvent(String eventName, {Map<String, dynamic>? parameters}) => AnalyticsService.logCustomEvent(eventName, parameters ?? <String, dynamic>{});
+  Future<void> logEvent(String eventName, Map<String, dynamic> map, {Map<String, dynamic>? parameters}) => _analyticsService.trackAppEvent(eventName: eventName, parameters: parameters);
 
-  Future<Map<String, dynamic>> getPerformanceMetrics() => AnalyticsService.getPerformanceMetrics();
+  Future<Map<String, dynamic>> getPerformanceMetrics() => _analyticsService.getPerformanceMetrics();
 }
 
 @riverpod
-AnalyticsServiceAdapter analyticsService(Ref ref) => AnalyticsServiceAdapter();
+AnalyticsServiceAdapter analyticsService(Ref ref) {
+  // Initialize AnalyticsService.instance once and provide it
+  return AnalyticsServiceAdapter(AnalyticsService.instance);
+}
 
 /// Connectivity state stream
 @riverpod
@@ -125,7 +130,7 @@ class AppStateNotifier extends _$AppStateNotifier {
           state = state.copyWith(isConnected: isConnected);
           
           // Track connectivity events
-          AnalyticsService.logCustomEvent(
+          ref.read(analyticsServiceProvider).logEvent(
             'connectivity_changed',
             <String, dynamic>{'is_connected': isConnected},
           );
@@ -133,11 +138,14 @@ class AppStateNotifier extends _$AppStateNotifier {
         loading: () {},
         error: (Object error, StackTrace stackTrace) {
           state = state.copyWith(globalError: 'Connectivity error: $error');
+          // Log error
+          ref.read(analyticsServiceProvider).logEvent('connectivity_error', <String, dynamic>{'error': error.toString()});
         },
       );
     });
 
-    _initializeApp();
+    // Start initialization asynchronously
+    Future.microtask(_initializeApp);
     return const AppState();
   }
 
@@ -156,14 +164,16 @@ class AppStateNotifier extends _$AppStateNotifier {
       }
 
       state = state.copyWith(isInitialized: true);
-      
+
       // Track app initialization
-      AnalyticsService.logCustomEvent('app_initialized', <String, dynamic>{});
-    } catch (e) {
+      ref.read(analyticsServiceProvider).logEvent('app_initialized', <String, dynamic>{});
+    } catch (e, st) {
       state = state.copyWith(
         globalError: 'Failed to initialize app: $e',
         isInitialized: true, // Still mark as initialized to prevent infinite loading
       );
+      // Log error
+      ref.read(analyticsServiceProvider).logEvent('app_initialization_error', <String, dynamic>{'error': e.toString(), 'stackTrace': st.toString()});
     }
   }
 
@@ -199,11 +209,13 @@ class AppStateNotifier extends _$AppStateNotifier {
       };
 
       state = state.copyWith(performanceMetrics: performanceMetrics);
-      
+
       // Track refresh event
-      AnalyticsService.logCustomEvent('app_data_refreshed', <String, dynamic>{});
-    } catch (e) {
+      ref.read(analyticsServiceProvider).logEvent('app_data_refreshed', <String, dynamic>{});
+    } catch (e, st) {
       state = state.copyWith(globalError: 'Failed to refresh data: $e');
+      // Log error
+      ref.read(analyticsServiceProvider).logEvent('app_data_refresh_error', <String, dynamic>{'error': e.toString(), 'stackTrace': st.toString()});
       rethrow;
     }
   }
@@ -212,11 +224,13 @@ class AppStateNotifier extends _$AppStateNotifier {
   Future<void> handleUserSignIn() async {
     try {
       await _loadInitialData();
-      
+
       // Track sign in event
-      AnalyticsService.logCustomEvent('user_signed_in', <String, dynamic>{});
-    } catch (e) {
+      ref.read(analyticsServiceProvider).logEvent('user_signed_in', <String, dynamic>{});
+    } catch (e, st) {
       state = state.copyWith(globalError: 'Failed to load user data: $e');
+      // Log error
+      ref.read(analyticsServiceProvider).logEvent('user_sign_in_error', <String, dynamic>{'error': e.toString(), 'stackTrace': st.toString()});
     }
   }
 
@@ -226,11 +240,13 @@ class AppStateNotifier extends _$AppStateNotifier {
       // Clear all provider states
       ref.invalidate(jobsProvider);
       ref.invalidate(localsProvider);
-      
+
       // Track sign out event
-      AnalyticsService.logCustomEvent('user_signed_out', <String, dynamic>{});
-    } catch (e) {
+      ref.read(analyticsServiceProvider).logEvent('user_signed_out', <String, dynamic>{});
+    } catch (e, st) {
       state = state.copyWith(globalError: 'Error during sign out: $e');
+      // Log error
+      ref.read(analyticsServiceProvider).logEvent('user_sign_out_error', <String, dynamic>{'error': e.toString(), 'stackTrace': st.toString()});
     }
   }
 

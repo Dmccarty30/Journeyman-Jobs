@@ -17,9 +17,9 @@ import 'fcm_service.dart';
 class JobSharingService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final AnalyticsService _analytics = AnalyticsService();
+  final AnalyticsService _analytics = AnalyticsService.instance;
   final EnhancedNotificationService _notifications = EnhancedNotificationService();
-  final FCMService _fcm = FCMService();
+  final FCMService _fcm = FCMService.instance;
 
   /// Share a job with specified recipients
   /// 
@@ -48,15 +48,15 @@ class JobSharingService {
         jobId: job.id,
         senderId: currentUser.uid,
         senderName: currentUser.displayName ?? 'Unknown User',
-        recipientIds: recipients.map((r) => r.id).toList(),
+        recipientIds: recipients.map((r) => r.uid).toList(), // Use uid for UserModel
         message: message,
         shareMethod: shareMethod,
         timestamp: DateTime.now(),
         status: ShareStatus.pending,
-        jobTitle: job.title,
-        jobLocal: job.local.toString(),
+        jobTitle: job.jobTitle ?? 'Job Title',
+        jobLocal: (job.local ?? 0).toString(),
         jobLocation: job.location,
-        jobPayRate: job.payRate,
+        jobPayRate: job.wage?.toString() ?? '0.00',
       );
 
       // Save to Firestore
@@ -69,7 +69,7 @@ class JobSharingService {
       await _sendNotifications(shareNotification, recipients);
 
       // Track analytics
-      await _analytics.logJobShare(
+      await _analytics.trackJobShare(
         jobId: job.id,
         recipientCount: recipients.length,
         shareMethod: shareMethod,

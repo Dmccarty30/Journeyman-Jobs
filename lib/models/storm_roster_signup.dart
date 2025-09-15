@@ -50,66 +50,75 @@ class RosterContractor {
     required this.signUpInfo,
   });
 
-  // Factory constructor to parse data from CSV row
-  factory RosterContractor.fromCsv(List<String> row) {
-    if (row.length != 3) {
-      throw FormatException('CSV row must have exactly 3 columns.');
-    }
-
-    final companyName = row[0].trim();
-    final onlineForm = row[1].trim();
-    final website = row[2].trim();
-
-    // Parse the sign-up info based on the onlineForm and website fields
-    final signUpInfo = _parseSignUpInfo(onlineForm, website);
-
+  /// Factory constructor to create RosterContractor from Firestore data
+  factory RosterContractor.fromMap(Map<String, dynamic> data) {
     return RosterContractor(
-      companyName: companyName,
-      onlineForm: onlineForm,
-      website: website,
-      signUpInfo: signUpInfo,
+      companyName: data['companyName'] ?? '',
+      onlineForm: data['onlineForm'] ?? '',
+      website: data['website'] ?? '',
+      signUpInfo: _parseSignUpInfoFromMap(data['signUpInfo'] as Map<String, dynamic>? ?? {}),
     );
   }
 
-  // Helper to parse sign-up information
-  static SignUpInfo _parseSignUpInfo(String onlineForm, String website) {
-    // Prioritize website if it looks like a direct sign-up link
-    if (website.isNotEmpty && (website.startsWith('http://') || website.startsWith('https://'))) {
-      // Check if website itself contains sign-up keywords
-      if (website.toLowerCase().contains('signup') || website.toLowerCase().contains('roster') || website.toLowerCase().contains('join')) {
-        return UrlSignUp(url: website);
-      }
-      // If it's just a general website, we might not consider it a direct sign-up action
-      // unless the onlineForm provides more specific instructions.
+  /// Convert RosterContractor to Map for Firestore storage
+  Map<String, dynamic> toMap() {
+    return {
+      'companyName': companyName,
+      'onlineForm': onlineForm,
+      'website': website,
+      'signUpInfo': _signUpInfoToMap(signUpInfo),
+    };
+  }
+
+  /// Parse SignUpInfo from Map data
+  static SignUpInfo _parseSignUpInfoFromMap(Map<String, dynamic> data) {
+    final type = data['type'] ?? 'unknown';
+
+    switch (type) {
+      case 'url':
+        return UrlSignUp(url: data['url'] ?? '');
+      case 'text':
+        return TextSignUp(
+          phoneNumber: data['phoneNumber'] ?? '',
+          message: data['message'] ?? '',
+        );
+      case 'phone':
+        return PhoneSignUp(phoneNumber: data['phoneNumber'] ?? '');
+      case 'email':
+        return EmailSignUp(email: data['email'] ?? '');
+      case 'mixed':
+        return MixedSignUp(
+          text: data['text'] ?? '',
+          url: data['url'],
+        );
+      default:
+        return UnknownSignUp(details: data['details'] ?? 'No specific sign-up instructions found.');
     }
+  }
 
-    // Check onlineForm for phone numbers and text instructions
-    if (onlineForm.isNotEmpty) {
-      // Regex to find phone numbers (basic pattern)
-      final phoneMatch = RegExp(r'(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})').firstMatch(onlineForm);
-      if (phoneMatch != null) {
-        final phoneNumber = phoneMatch.group(1)!;
-        // Extract message if present
-        final messageMatch = RegExp(r'Text ["\']?([^"\']+)["\']? to').firstMatch(onlineForm);
-        return TextSignUp(phoneNumber: phoneNumber, message: messageMatch.group(1)!);
-            }
-
-      // Check for email addresses
-      final emailMatch = RegExp(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}').firstMatch(onlineForm);
-      if (emailMatch != null) {
-        return EmailSignUp(email: emailMatch.group(0)!);
-      }
-
-      // Check for mixed instructions (e.g., website link within text)
-      if (website.isNotEmpty && onlineForm.contains(website)) {
-         return MixedSignUp(text: onlineForm.replaceAll(website, '').trim(), url: website);
-      }
-
-      // If it's just text instructions without a clear phone/email/URL
-      return MixedSignUp(text: onlineForm);
+  /// Convert SignUpInfo to Map for storage
+  static Map<String, dynamic> _signUpInfoToMap(SignUpInfo signUpInfo) {
+    if (signUpInfo is UrlSignUp) {
+      return {'type': 'url', 'url': signUpInfo.url};
+    } else if (signUpInfo is TextSignUp) {
+      return {
+        'type': 'text',
+        'phoneNumber': signUpInfo.phoneNumber,
+        'message': signUpInfo.message,
+      };
+    } else if (signUpInfo is PhoneSignUp) {
+      return {'type': 'phone', 'phoneNumber': signUpInfo.phoneNumber};
+    } else if (signUpInfo is EmailSignUp) {
+      return {'type': 'email', 'email': signUpInfo.email};
+    } else if (signUpInfo is MixedSignUp) {
+      return {
+        'type': 'mixed',
+        'text': signUpInfo.text,
+        'url': signUpInfo.url,
+      };
+    } else if (signUpInfo is UnknownSignUp) {
+      return {'type': 'unknown', 'details': signUpInfo.details};
     }
-
-    // If no specific pattern is found, return UnknownSignUp
-    return const UnknownSignUp(details: 'No specific sign-up instructions found.');
+    return {'type': 'unknown', 'details': 'Unknown sign-up type'};
   }
 }
