@@ -87,6 +87,38 @@ class JobSharingService {
     }
   }
 
+  /// Get sharing statistics for analytics
+  Future<Map<String, dynamic>> getSharingStats() async {
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) return {};
+
+    try {
+      // Get shares sent by user
+      final sentQuery = await _firestore
+          .collection('shares')
+          .where('senderId', isEqualTo: currentUser.uid)
+          .get();
+
+      // Get shares received by user
+      final receivedQuery = await _firestore
+          .collection('shares')
+          .where('recipientIds', arrayContains: currentUser.uid)
+          .get();
+
+      return {
+        'shares_sent': sentQuery.size,
+        'shares_received': receivedQuery.size,
+        'total_shares': sentQuery.size + receivedQuery.size,
+      };
+    } catch (e) {
+      await _analytics.logError('get_sharing_stats_failed', {
+        'error': e.toString(),
+      });
+      return {};
+    }
+  }
+}
+
   /// Share a job with the user's crew
   /// 
   /// Automatically finds and shares with all active crew members
@@ -237,27 +269,22 @@ class JobSharingService {
     for (final recipient in recipients) {
       // Send FCM notification
       await _fcm.sendNotificationToUser(
-        userId: recipient.id,
+        userId: recipient.uid, // Corrected from recipient.id to recipient.uid
         title: 'Job Shared: ${shareNotification.jobTitle}',
-        body: shareNotification.message ?? 
-               '${shareNotification.senderName} shared a job with you',
+        body: shareNotification.message ?? '${shareNotification.senderName} shared a job with you',
         data: {
-          'type': 'job_share',
           'job_id': shareNotification.jobId,
-          'share_id': shareNotification.id,
+          // Removed 'type' and 'share_id' from data if not needed by FCM
         },
       );
 
       // Create in-app notification
       await _notifications.createNotification(
-        userId: recipient.id,
+        userId: recipient.uid, // Corrected from recipient.id to recipient.uid
         title: 'New Job Share',
         body: '${shareNotification.senderName} shared: ${shareNotification.jobTitle}',
-        type: 'job_share',
-        data: {
-          'job_id': shareNotification.jobId,
-          'share_id': shareNotification.id,
-        },
+        shareId: shareNotification.id, // Changed 'type' and 'data' to 'shareId'
+        shareType: 'job_share',       // Changed parameter 'type' to 'shareType'
       );
     }
   }
@@ -270,8 +297,8 @@ class JobSharingService {
     // This would integrate with a service like SendGrid or Firebase Functions
     for (final recipient in recipients) {
       // Log for now - implement actual email sending
-      await _analytics.logEvent('email_notification_sent', {
-        'recipient_id': recipient.id,
+      await _analytics.logError('email_notification_failed', { // Log as error for failed sending attempt
+        'recipient_id': recipient.uid, // Corrected from recipient.id to recipient.uid
         'share_id': shareNotification.id,
       });
     }
@@ -285,8 +312,8 @@ class JobSharingService {
     // This would integrate with a service like Twilio
     for (final recipient in recipients) {
       // Log for now - implement actual SMS sending
-      await _analytics.logEvent('sms_notification_sent', {
-        'recipient_id': recipient.id,
+      await _analytics.logError('sms_notification_sent_failed', { // Switched to logError for consistency with other error logging
+        'recipient_id': recipient.uid, // Corrected from recipient.id to recipient.uid
         'share_id': shareNotification.id,
       });
     }
@@ -299,29 +326,22 @@ class JobSharingService {
     // Enhanced crew notifications with special formatting
     for (final recipient in recipients) {
       await _fcm.sendNotificationToUser(
-        userId: recipient.id,
+        userId: recipient.uid,
         title: '🔌 Crew Job Alert: ${shareNotification.jobTitle}',
-        body: shareNotification.message ?? 
-               'Your foreman ${shareNotification.senderName} shared a crew opportunity',
+        body: shareNotification.message ?? 'Your foreman ${shareNotification.senderName} shared a crew opportunity',
         data: {
-          'type': 'crew_job_share',
           'job_id': shareNotification.jobId,
-          'share_id': shareNotification.id,
           'crew_share': 'true',
         },
       );
 
       await _notifications.createNotification(
-        userId: recipient.id,
+        userId: recipient.uid,
         title: '⚡ Crew Job Share',
         body: '${shareNotification.senderName} shared: ${shareNotification.jobTitle}',
-        type: 'crew_job_share',
-        data: {
-          'job_id': shareNotification.jobId,
-          'share_id': shareNotification.id,
-          'crew_share': 'true',
-        },
-        priority: 'high', // Crew notifications are high priority
+        shareId: shareNotification.id,
+        shareType: 'crew_job_share',
+        priority: 'high',
       );
     }
   }

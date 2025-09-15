@@ -1,0 +1,217 @@
+---
+# Journeyman Jobs UI/Frontend Development Team
+# Team Focus: User interface, user experience, frontend development, and quick fixes
+
+team_name: "UI-Frontend-QuickFix Team"
+team_code: "UIFX"
+platform_context: "Journeyman Jobs IBEW Electrical Trade Platform"
+mission: "Create exceptional user experiences for electrical workers and contractors while handling rapid fixes and interface improvements"
+
+# Team Purpose & Scope
+purpose:
+  primary: "Deliver outstanding user interfaces and experiences for electrical job placement"
+  secondary: "Handle quick fixes, UI bugs, and frontend performance issues"
+  tertiary: "Ensure mobile-first design for electrical field workers"
+
+responsibilities:
+  - "Design and implement electrical trade user interfaces"
+  - "Optimize mobile applications for field workers in challenging environments"
+  - "Handle urgent UI/UX fixes and improvements"
+  - "Maintain design system consistency across electrical trade platform"
+  - "Ensure accessibility compliance for electrical workers"
+  - "Document UI/UX decisions and design patterns"
+  - "Optimize frontend performance for poor connectivity conditions"
+
+# Team Composition
+agents:
+  core_agents:
+    - name: "ui-ux-designer"
+      role: "Lead Designer"
+      specialization: "Electrical trade user research, field worker interfaces, contractor dashboards"
+      responsibility: "Design strategy, user research, wireframing, accessibility compliance"
+      
+    - name: "frontend-developer" 
+      role: "Frontend Lead"
+      specialization: "React components, mobile-first design, real-time job placement interfaces"
+      responsibility: "Component development, state management, performance optimization"
+      
+    - name: "mobile-developer"
+      role: "Mobile Specialist"
+      specialization: "Field worker apps, offline functionality, native performance"
+      responsibility: "Mobile app development, offline features, device optimization"
+      
+    - name: "dx-optimizer"
+      role: "Developer Experience"
+      specialization: "Frontend tooling, build optimization, development workflows"
+      responsibility: "Development efficiency, tooling setup, workflow automation"
+      
+    - name: "documentation-manager"
+      role: "Documentation Lead"
+      specialization: "UI/UX documentation, component libraries, design system docs"
+      responsibility: "Keep UI documentation current, component usage guides"
+
+  meta_agent:
+    - name: "meta-agent-2"
+      role: "Dynamic Agent Creator"
+      specialization: "Create specialized agents for unique UI/frontend challenges"
+      responsibility: "Generate new agents when team lacks specific capabilities"
+
+# Skills & Capabilities Matrix
+team_capabilities:
+  design_skills:
+    - "Electrical trade user research and persona development"
+    - "Mobile-first design for field workers"
+    - "High-contrast themes for outdoor visibility"
+    - "Work glove compatible interface design"
+    - "Accessibility compliance (WCAG 2.1 AA)"
+    - "Design system development and maintenance"
+    
+  technical_skills:
+    - "React/React Native development"
+    - "Flutter for cross-platform mobile apps"
+    - "Responsive CSS and Tailwind implementation"
+    - "Real-time state management (WebSocket, Redux)"
+    - "Offline-first architecture design"
+    - "Progressive Web App (PWA) development"
+    - "Performance optimization for 3G networks"
+    
+  domain_expertise:
+    - "IBEW electrical trade classifications"
+    - "Electrical field worker workflows and constraints"
+    - "Contractor hiring processes and requirements"
+    - "Union dispatch procedures and compliance"
+    - "Mobile device usage in electrical work environments"
+
+# Workflow & Processes
+workflow:
+  task_intake:
+    process: "Triage system for UI/UX requests"
+    priority_levels:
+      critical: "Safety issues, broken mobile app, storm work interface failures"
+      high: "New electrical trade features, major UI bugs, accessibility issues"
+      medium: "Design improvements, performance optimizations, documentation updates"
+      low: "Design system enhancements, future planning, research initiatives"
+    
+  development_process:
+    1. "Requirements gathering with electrical trade context"
+    2. "User research and field worker validation (if needed)"
+    3. "Design mockups and prototypes"
+    4. "Technical feasibility assessment"
+    5. "Implementation with accessibility and mobile-first approach"
+    6. "Testing in electrical work environments (simulated)"
+    7. "Documentation update and design system maintenance"
+    8. "Deployment and monitoring"
+
+  quality_assurance:
+    design_review:
+      - "Electrical trade user experience validation"
+      - "Mobile device compatibility (various screen sizes)"
+      - "Accessibility compliance check"
+      - "Design system consistency verification"
+      
+    technical_review:
+      - "Performance testing on 3G networks"
+      - "Offline functionality validation"
+      - "Cross-browser and cross-device testing"
+      - "Real-time feature testing"
+
+# Communication Protocols
+communication:
+  internal_team:
+    daily_sync: "Quick standup focused on UI/UX priorities and blockers"
+    design_reviews: "Weekly design critiques with electrical trade focus"
+    technical_discussions: "Bi-weekly frontend architecture and performance reviews"
+    
+  external_coordination:
+    stakeholder_updates: "Regular updates to electrical workers and contractors on UI improvements"
+    cross_team_collaboration: "Coordinate with Performance Team on optimization needs"
+    user_feedback: "Direct communication channels with IBEW members and electrical contractors"
+
+  tools:
+    design_collaboration: "Figma for design systems and electrical trade prototypes"
+    code_collaboration: "GitHub for version control and code reviews"
+    communication: "Slack for real-time coordination and async updates"
+    documentation: "Notion for design decisions and electrical trade requirements"
+
+# Success Metrics & KPIs
+success_metrics:
+  user_experience:
+    - "Mobile app user satisfaction: >4.5/5 for electrical field workers"
+    - "Job application completion rate: >90% on mobile devices"
+    - "Task completion time: <3 minutes for job search and apply"
+    - "Accessibility compliance: 100% WCAG 2.1 AA adherence"
+    
+  technical_performance:
+    - "Page load time: <3 seconds on 3G networks"
+    - "Mobile app crash rate: <1% for electrical field workers"
+    - "Offline functionality: 100% core features available without internet"
+    - "Cross-device compatibility: 100% on target electrical worker devices"
+    
+  business_impact:
+    - "Reduced support tickets for UI issues: 50% reduction quarter-over-quarter"
+    - "Increased contractor platform adoption: 25% growth through better interfaces"
+    - "Faster time-to-hire for electrical positions: 20% improvement"
+
+# Emergency Response Procedures
+emergency_protocols:
+  critical_ui_failures:
+    response_time: "15 minutes to acknowledge, 2 hours to deploy fix"
+    escalation: "Immediate notification to all team members and platform leadership"
+    communication: "Status updates every 30 minutes to stakeholders"
+    
+  storm_work_mobilization:
+    priority: "All resources redirect to storm work interface optimization"
+    response: "24/7 team availability during major weather events"
+    coordination: "Direct liaison with electrical contractors and IBEW locals"
+
+# Resource Requirements
+resources:
+  development_tools:
+    - "Figma Pro for electrical trade design systems"
+    - "Advanced mobile device testing lab"
+    - "Performance monitoring tools (Lighthouse, WebPageTest)"
+    - "Accessibility testing tools (aXe, WAVE)"
+    
+  testing_infrastructure:
+    - "Real electrical work environment simulation"
+    - "Various mobile devices used by field workers"
+    - "Network throttling for 3G/poor connectivity testing"
+    - "Usability testing facilities"
+
+# Continuous Improvement
+improvement_processes:
+  quarterly_reviews:
+    - "Electrical field worker satisfaction surveys"
+    - "Contractor interface usability assessments"
+    - "Performance benchmark reviews"
+    - "Design system evolution planning"
+    
+  learning_initiatives:
+    - "Regular electrical trade industry research"
+    - "Frontend technology trend analysis"
+    - "Accessibility best practice updates"
+    - "Mobile development advancement tracking"
+
+# Integration with Other Teams
+team_coordination:
+  performance_team:
+    interface: "Share performance metrics and optimization opportunities"
+    collaboration: "Joint reviews of frontend performance improvements"
+    
+  major_operations_team:
+    interface: "Design input for new electrical trade features"
+    collaboration: "UI/UX requirements for major platform enhancements"
+    
+  meta_agent_activation:
+    triggers:
+      - "Unique electrical trade UI requirements not covered by existing agents"
+      - "Specialized accessibility needs for electrical workers"
+      - "Novel mobile interaction patterns for field work environments"
+      - "Complex design system challenges"
+    
+    process:
+      1. "Identify capability gap in current team composition"
+      2. "Define specialized agent requirements"
+      3. "Activate meta-agent-2 to create tailored solution"
+      4. "Integrate new agent into team workflow"
+      5. "Document new capabilities for future reference"

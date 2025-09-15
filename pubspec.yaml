@@ -93,7 +93,7 @@ dependencies:
   geolocator: ^14.0.2
   
   # Contacts integration
-  contacts_service: ^0.6.3
+  flutter_contacts: ^1.1.7+1
 
 dev_dependencies:
   flutter_test:

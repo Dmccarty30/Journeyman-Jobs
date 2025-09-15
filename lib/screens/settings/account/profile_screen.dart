@@ -497,7 +497,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               );
             },
             width: 100,
-            variant: JJButtonVariant.danger,
+            variant: JJButtonVariant.danger, size: JJButtonSize.medium,
           ),
         ],
       ),
@@ -673,6 +673,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                   onPressed: _saveProfile,
                   isFullWidth: true,
                   variant: JJButtonVariant.primary,
+                  size: JJButtonSize.medium,
                 ),
               ),
             ),

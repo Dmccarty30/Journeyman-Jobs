@@ -1,0 +1,329 @@
+---
+# Journeyman Jobs Major Operations Team
+# Team Focus: New feature implementation, major refactoring, codebase mergers, and architectural decisions
+
+team_name: "Major-Operations Team"
+team_code: "MAJOPS"
+platform_context: "Journeyman Jobs IBEW Electrical Trade Platform"
+mission: "Execute complex electrical trade platform transformations, implement major features, and drive architectural evolution"
+
+# Team Purpose & Scope
+purpose:
+  primary: "Implement major electrical trade platform features and architectural improvements"
+  secondary: "Execute large-scale refactoring, system mergers, and infrastructure transformations"
+  tertiary: "Establish architectural standards and drive technical innovation for electrical workforce solutions"
+
+responsibilities:
+  - "Design and implement major electrical trade features (new job classifications, IBEW integrations)"
+  - "Execute large-scale architectural refactoring and system modernization"
+  - "Manage complex codebase mergers and system integrations"
+  - "Establish architectural patterns and technical standards for electrical trade systems"
+  - "Coordinate cross-team technical initiatives and platform-wide changes"
+  - "Design and implement data infrastructure for electrical workforce analytics"
+  - "Create comprehensive technical documentation for complex systems"
+  - "Optimize AI systems for electrical job matching and contractor communication"
+
+# Team Composition
+agents:
+  core_agents:
+    - name: "architect-reviewer"
+      role: "Technical Architecture Lead"
+      specialization: "Electrical trade system architecture, SOLID principles, technical debt assessment"
+      responsibility: "Architectural decisions, code review standards, technical debt management"
+      
+    - name: "backend-architect"
+      role: "System Design Lead"
+      specialization: "RESTful APIs, microservices, electrical contractor integrations, IBEW local systems"
+      responsibility: "Backend architecture, API design, service boundaries, integration patterns"
+      
+    - name: "context-manager"
+      role: "Project Coordination Lead"
+      specialization: "Multi-agent coordination, context preservation, complex project management"
+      responsibility: "Cross-team coordination, context management, project timeline oversight"
+      
+    - name: "data-engineer" 
+      role: "Data Infrastructure Lead"
+      specialization: "ETL pipelines, electrical workforce analytics, contractor performance data"
+      responsibility: "Data architecture, analytics infrastructure, reporting systems"
+      
+    - name: "docs-architect"
+      role: "Technical Documentation Lead"
+      specialization: "Comprehensive system documentation, electrical trade guides, API specifications"
+      responsibility: "Technical documentation strategy, knowledge management, onboarding materials"
+      
+    - name: "prompt-engineer"
+      role: "AI Systems Lead"
+      specialization: "Job matching algorithms, contractor communication, AI optimization for electrical trades"
+      responsibility: "AI system design, prompt optimization, machine learning integration"
+
+  meta_agent:
+    - name: "meta-agent-2"
+      role: "Specialized Agent Creator"
+      specialization: "Create domain-specific agents for complex electrical trade challenges"
+      responsibility: "Generate new agents for unique major operation requirements"
+
+# Skills & Capabilities Matrix
+team_capabilities:
+  architectural_design:
+    - "Electrical trade platform architecture design and evolution"
+    - "Microservices architecture for contractor and IBEW local integrations"
+    - "API design for electrical workforce management systems"
+    - "Database architecture for real-time job placement systems"
+    - "Security architecture for electrical worker and contractor data"
+    - "Scalability planning for storm mobilization and peak hiring"
+    
+  systems_integration:
+    - "IBEW local dispatch system integration patterns"
+    - "Electrical contractor management system APIs"
+    - "Mobile app backend integration for field workers"
+    - "Third-party electrical industry service integrations"
+    - "Legacy system modernization and migration"
+    - "Cross-platform data synchronization"
+    
+  data_architecture:
+    - "Electrical workforce analytics data pipelines"
+    - "Real-time job availability streaming systems"
+    - "Contractor performance data warehousing"
+    - "Geographic data processing for IBEW territories"
+    - "Machine learning infrastructure for job matching"
+    - "Compliance and audit data management"
+    
+  technical_leadership:
+    - "Technical decision-making for electrical trade requirements"
+    - "Code review standards and architectural compliance"
+    - "Technical debt assessment and remediation planning"
+    - "Technology evaluation and adoption strategies"
+    - "Team technical mentoring and knowledge transfer"
+    - "Technical risk assessment and mitigation"
+
+# Workflow & Processes
+workflow:
+  project_lifecycle:
+    initiation:
+      - "Electrical trade requirement analysis and feasibility assessment"
+      - "Architectural impact evaluation and design planning"
+      - "Resource allocation and timeline estimation"
+      - "Risk assessment and mitigation strategy development"
+      
+    planning:
+      - "Detailed technical specification creation"
+      - "Integration point identification and API design"
+      - "Data migration and transformation planning"
+      - "Testing strategy and acceptance criteria definition"
+      
+    execution:
+      - "Iterative development with architectural review checkpoints"
+      - "Continuous integration and deployment pipeline management"
+      - "Cross-team coordination and dependency management"
+      - "Quality assurance and performance validation"
+      
+    delivery:
+      - "Production deployment with rollback procedures"
+      - "Documentation completion and knowledge transfer"
+      - "Post-implementation monitoring and optimization"
+      - "Lessons learned capture and process improvement"
+  
+  decision_making:
+    architectural_decisions:
+      process: "Architectural Decision Records (ADRs) for all major decisions"
+      stakeholders: "Technical leads, product management, electrical trade experts"
+      criteria: "Technical excellence, electrical trade suitability, maintainability, scalability"
+      documentation: "Comprehensive rationale and alternative analysis"
+      
+    technology_adoption:
+      evaluation: "Proof of concept development and electrical trade compatibility assessment"
+      approval: "Cross-team technical review and electrical industry impact analysis"
+      implementation: "Phased rollout with performance monitoring and feedback collection"
+      
+  risk_management:
+    technical_risks: "Architectural complexity, integration challenges, performance impacts"
+    business_risks: "Electrical worker experience disruption, contractor workflow interruption"
+    mitigation: "Comprehensive testing, gradual rollouts, rollback procedures"
+    monitoring: "Real-time impact assessment and immediate response protocols"
+
+# Communication Protocols
+communication:
+  internal_coordination:
+    architectural_reviews: "Weekly architecture alignment sessions"
+    technical_decisions: "Bi-weekly technical decision review and documentation"
+    project_synchronization: "Daily standup for active major operations"
+    knowledge_sharing: "Monthly technical deep-dives and best practices sessions"
+    
+  cross_team_collaboration:
+    requirements_gathering: "Regular sessions with UI/Frontend and Performance teams"
+    impact_assessment: "Cross-team review of major changes and their implications"
+    integration_planning: "Collaborative design sessions for complex system integrations"
+    testing_coordination: "Joint testing strategies for platform-wide changes"
+    
+  stakeholder_communication:
+    executive_updates: "Monthly progress reports on major electrical trade initiatives"
+    electrical_industry_liaison: "Regular communication with IBEW representatives and contractors"
+    user_impact_communication: "Advance notice and education for major platform changes"
+    technical_community: "External sharing of electrical trade platform innovations"
+
+  tools:
+    technical_collaboration: "Miro for architecture diagrams, Confluence for technical specifications"
+    code_collaboration: "GitHub for version control, code reviews, and architectural discussions"
+    project_management: "Jira for epic and story management, timeline tracking"
+    communication: "Slack for real-time coordination, Zoom for architectural design sessions"
+
+# Success Metrics & KPIs
+success_metrics:
+  delivery_excellence:
+    project_completion:
+      - "Major features delivered on time: >90% adherence to committed timelines"
+      - "Budget adherence: <10% variance from approved project budgets"
+      - "Quality metrics: <5% post-delivery defects for major features"
+      - "Stakeholder satisfaction: >4.5/5 rating from electrical trade stakeholders"
+      
+    technical_quality:
+      - "Architectural compliance: 100% ADR documentation for major decisions"
+      - "Code review coverage: 100% for architectural changes"
+      - "Documentation completeness: 100% for new major features"
+      - "Security review completion: 100% for new integrations and features"
+  
+  platform_impact:
+    electrical_trade_advancement:
+      - "New electrical trade feature adoption: >80% within 3 months"
+      - "Integration success rate: >95% for IBEW local and contractor connections"
+      - "Platform scalability improvement: 50% capacity increase year-over-year"
+      - "Technical debt reduction: 25% reduction in technical debt ratio annually"
+      
+    innovation_metrics:
+      - "AI system accuracy improvement: 15% enhancement in job matching precision"
+      - "API performance improvement: 30% response time reduction for new endpoints"
+      - "Data processing efficiency: 40% improvement in electrical workforce analytics"
+      - "Mobile app feature enhancement: 20% improvement in field worker satisfaction"
+  
+  operational_excellence:
+    - "Major operation incident rate: <2% of deployments cause production issues"
+    - "Rollback frequency: <5% of major deployments require rollback"
+    - "Cross-team collaboration rating: >4.7/5 from other teams"
+    - "Knowledge transfer effectiveness: 100% team capability maintenance during transitions"
+
+# Emergency Response Procedures
+emergency_protocols:
+  major_operation_failures:
+    immediate_response: "All-hands incident response within 30 minutes"
+    assessment: "Technical impact analysis and rollback decision within 2 hours"
+    communication: "Stakeholder notification and regular updates every hour"
+    resolution: "Fix-forward or rollback completion within 8 hours"
+    
+  architectural_conflicts:
+    detection: "Automated conflict detection in CI/CD pipeline"
+    escalation: "Immediate technical lead involvement and cross-team notification"
+    resolution: "Emergency architectural review session within 4 hours"
+    documentation: "Updated ADRs and prevention measures within 24 hours"
+    
+  integration_failures:
+    containment: "Immediate isolation of failed integration to prevent cascade effects"
+    assessment: "Impact analysis on electrical workers and contractors within 1 hour"
+    coordination: "Direct communication with affected IBEW locals and contractors"
+    resolution: "Graduated recovery with validation testing before full restoration"
+
+# Resource Requirements
+resources:
+  development_infrastructure:
+    - "Comprehensive development and staging environments"
+    - "Advanced CI/CD pipeline with electrical trade specific testing"
+    - "Performance testing infrastructure for major operations"
+    - "Security scanning and compliance validation tools"
+    
+  design_and_planning_tools:
+    - "Enterprise architecture modeling tools"
+    - "Technical documentation and knowledge management systems"
+    - "Project management and timeline tracking tools"
+    - "Collaborative design and decision-making platforms"
+    
+  specialized_expertise:
+    - "External electrical trade industry consultants for complex integrations"
+    - "Advanced security and compliance specialists"
+    - "Performance optimization experts for large-scale systems"
+    - "AI and machine learning specialists for electrical job matching"
+
+# Continuous Improvement
+improvement_processes:
+  technical_evolution:
+    quarterly_architecture_review: "Comprehensive platform architecture assessment"
+    annual_technology_evaluation: "Emerging technology adoption planning"
+    continuous_learning: "Regular training on electrical trade industry developments"
+    innovation_initiatives: "Dedicated time for experimental electrical trade solutions"
+    
+  process_optimization:
+    retrospectives: "Post-major-operation lessons learned and process improvements"
+    efficiency_analysis: "Regular workflow optimization and automation opportunities"
+    quality_enhancement: "Continuous improvement of delivery quality and stakeholder satisfaction"
+    knowledge_management: "Enhanced documentation and knowledge sharing processes"
+    
+  industry_alignment:
+    electrical_trade_research: "Regular study of electrical industry trends and requirements"
+    competitive_analysis: "Ongoing assessment of electrical workforce platform innovations"
+    standards_compliance: "Continuous alignment with IBEW protocols and electrical industry standards"
+    user_feedback_integration: "Regular incorporation of electrical worker and contractor feedback"
+
+# Integration with Other Teams
+team_coordination:
+  ui_frontend_team:
+    interface: "Major feature UI/UX requirements and design collaboration"
+    collaboration: "Joint planning for user-facing electrical trade feature development"
+    handoff: "Comprehensive technical specifications and API documentation"
+    
+  performance_upkeep_team:
+    interface: "Performance requirements and optimization planning for major features"
+    collaboration: "Joint architecture review for performance impact assessment"
+    validation: "Performance testing coordination for major platform changes"
+    
+  meta_agent_activation:
+    triggers:
+      - "Complex electrical trade requirements requiring specialized domain expertise"
+      - "Novel integration challenges with IBEW local or contractor systems"
+      - "Advanced AI requirements for electrical job matching optimization"
+      - "Unique architectural challenges for electrical workforce solutions"
+      - "Specialized compliance requirements for electrical industry regulations"
+    
+    process:
+      1. "Identify capability gap requiring specialized electrical trade expertise"
+      2. "Define detailed agent requirements and success criteria"
+      3. "Activate meta-agent-2 to create tailored electrical trade specialist"
+      4. "Integrate new agent into major operations workflow and decision-making"
+      5. "Document new capabilities and establish ongoing utilization patterns"
+
+# Governance & Standards
+governance_framework:
+  technical_standards:
+    - "Electrical trade platform coding standards and best practices"
+    - "API design guidelines for contractor and IBEW local integrations"
+    - "Security standards for electrical worker and contractor data protection"
+    - "Documentation standards for complex electrical trade system features"
+    
+  decision_authority:
+    architectural: "Technical Architecture Lead with team consensus and stakeholder input"
+    integration: "System Design Lead with cross-team collaboration and business approval"
+    data: "Data Infrastructure Lead with privacy and compliance team validation"
+    ai_systems: "AI Systems Lead with electrical trade domain expert consultation"
+    
+  compliance_requirements:
+    - "IBEW protocol compliance for all union-related integrations"
+    - "Electrical industry safety standards integration and validation"
+    - "Data privacy and security compliance for workforce information"
+    - "Accessibility compliance for electrical worker applications"
+
+# Quality Assurance & Testing
+qa_framework:
+  comprehensive_testing:
+    unit_testing: "100% coverage for business logic and electrical trade algorithms"
+    integration_testing: "Complete API and service integration validation"
+    electrical_trade_testing: "Specialized testing for IBEW and contractor workflows"
+    performance_testing: "Load testing for major features under peak electrical trade usage"
+    
+  validation_processes:
+    architectural_review: "Mandatory architecture review for all major changes"
+    security_assessment: "Comprehensive security review for new integrations"
+    electrical_trade_validation: "Domain expert review for electrical industry compliance"
+    user_acceptance_testing: "Electrical worker and contractor validation of major features"
+    
+  deployment_validation:
+    staging_verification: "Complete feature validation in production-like environment"
+    gradual_rollout: "Phased deployment with monitoring and rollback capabilities"
+    post_deployment_monitoring: "Comprehensive monitoring and immediate issue response"
+    success_validation: "Metrics-based confirmation of major operation success"

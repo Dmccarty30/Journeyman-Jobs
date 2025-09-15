@@ -25,7 +25,8 @@
       "Bash(sed:*)",
       "Bash(.specify/scripts/powershell/create-new-feature.ps1 -Json \"This feature provides a central hub of communication between users. Especially the user''s who travel together. The ones that do travel together often do so because they can slightly tolerate each other but more importantly, they share the same job and work preferences. So, that means that they ''Tramp'' together, or travel. When one finds a plausible job, they will notify the other guys about the job, then they all bid for it and most of the time get it because they onboard as an entire crew. Which employers like because they get along with each other, they are more dependable, etc. So this feature, ''Crews'' is exactly that reflected through my app.\")",
       "Bash(/mnt/c/Users/david/Desktop/Journeyman-Jobs/.specify/scripts/bash/create-new-feature.sh \"This feature provides a central hub of communication between users. Especially the user''s who travel together. The ones that do travel together often do so because they can slightly tolerate each other but more importantly, they share the same job and work preferences. So, that means that they ''Tramp'' together, or travel. When one finds a plausible job, they will notify the other guys about the job, then they all bid for it and most of the time get it because they onboard as an entire crew. Which employers like because they get along with each other, they are more dependable, etc. So this feature, ''Crews'' is exactly that reflected through my app.\")",
-      "Bash(/mnt/c/Users/david/Desktop/Journeyman-Jobs/.specify/scripts/bash/create-new-feature.sh:*)"
+      "Bash(/mnt/c/Users/david/Desktop/Journeyman-Jobs/.specify/scripts/bash/create-new-feature.sh:*)",
+      "WebFetch(domain:)"
     ],
     "deny": []
   },

@@ -283,6 +283,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     // Submit button
                     JJPrimaryButton(
                       text: 'Submit Feedback',
+                      size: JJButtonSize.large,
                       onPressed: _isSubmitting ? null : _submitFeedback,
                       isLoading: _isSubmitting,
                       isFullWidth: true,

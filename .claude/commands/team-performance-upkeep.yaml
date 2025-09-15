@@ -1,0 +1,274 @@
+---
+# Journeyman Jobs Performance & Codebase Upkeep Team
+# Team Focus: Performance optimization, state management, code quality, and platform reliability
+
+team_name: "Performance-Upkeep Team"
+team_code: "PERF"
+platform_context: "Journeyman Jobs IBEW Electrical Trade Platform"
+mission: "Ensure optimal performance, reliability, and maintainability of electrical job placement systems"
+
+# Team Purpose & Scope
+purpose:
+  primary: "Maintain peak performance for electrical job placement systems under all conditions"
+  secondary: "Ensure codebase quality, maintainability, and technical debt management"
+  tertiary: "Provide data-driven insights for platform optimization and electrical workforce analytics"
+
+responsibilities:
+  - "Optimize database queries for real-time job availability and contractor data"
+  - "Analyze electrical workforce patterns and job placement efficiency metrics"
+  - "Debug production issues affecting electrical workers and contractors"
+  - "Troubleshoot infrastructure during storm mobilization and peak hiring"
+  - "Refactor electrical trade codebase and resolve technical debt"
+  - "Monitor and maintain platform performance during critical events"
+  - "Ensure scalability for nationwide IBEW local coverage"
+
+# Team Composition
+agents:
+  core_agents:
+    - name: "database-optimizer"
+      role: "Database Performance Lead"
+      specialization: "SQL optimization, job placement query tuning, contractor data efficiency"
+      responsibility: "Database performance, indexing strategies, real-time data access optimization"
+      
+    - name: "data-scientist"
+      role: "Analytics & Insights Lead"
+      specialization: "Electrical workforce analytics, job placement efficiency, contractor performance metrics"
+      responsibility: "Performance analytics, predictive modeling, data-driven optimization insights"
+      
+    - name: "debugger"
+      role: "Issue Resolution Specialist"
+      specialization: "Production debugging, electrical trade system failures, contractor integration issues"
+      responsibility: "Root cause analysis, systematic debugging, error resolution"
+      
+    - name: "devops-troubleshooter"
+      role: "Infrastructure Reliability Lead"
+      specialization: "Production system health, storm mobilization scaling, peak load management"
+      responsibility: "Infrastructure monitoring, incident response, scaling optimization"
+      
+    - name: "refactorer"
+      role: "Code Quality Specialist"
+      specialization: "Electrical trade codebase cleanup, technical debt reduction, architecture improvement"
+      responsibility: "Code quality maintenance, refactoring initiatives, technical debt management"
+
+  meta_agent:
+    - name: "meta-agent-2"
+      role: "Dynamic Performance Agent Creator"
+      specialization: "Create specialized agents for unique performance and reliability challenges"
+      responsibility: "Generate new agents when team lacks specific optimization capabilities"
+
+# Skills & Capabilities Matrix
+team_capabilities:
+  performance_optimization:
+    - "Database query optimization for electrical job matching"
+    - "Real-time data processing for job availability updates"
+    - "Caching strategies for contractor and IBEW local data"
+    - "Geographic query optimization for territory-based searches"
+    - "Mobile application performance tuning"
+    - "API response time optimization for contractor integrations"
+    
+  reliability_engineering:
+    - "Storm mobilization traffic surge handling"
+    - "Disaster recovery and business continuity planning"
+    - "Production monitoring and alerting systems"
+    - "Load balancing for peak electrical hiring seasons"
+    - "Fault tolerance and graceful degradation"
+    - "Security performance optimization"
+    
+  code_quality_management:
+    - "Technical debt assessment and prioritization"
+    - "Code complexity analysis and reduction"
+    - "Architectural refactoring for electrical trade systems"
+    - "Performance regression prevention"
+    - "Code review standards and automation"
+    - "Legacy system modernization"
+    
+  data_analytics:
+    - "Electrical workforce mobility pattern analysis"
+    - "Job placement efficiency optimization"
+    - "Contractor performance benchmarking"
+    - "Platform usage analytics and insights"
+    - "Predictive modeling for hiring demands"
+    - "A/B testing for performance improvements"
+
+# Workflow & Processes
+workflow:
+  monitoring_operations:
+    continuous_monitoring:
+      - "Real-time performance metrics tracking"
+      - "Database query performance analysis"
+      - "API response time monitoring"
+      - "Mobile app performance tracking"
+      - "Infrastructure health monitoring"
+      
+    alerting_thresholds:
+      critical: "System downtime, data corruption, security breaches"
+      high: "Performance degradation >50%, failed contractor integrations"
+      medium: "Slow queries >2s, elevated error rates"
+      low: "Performance trending downward, code quality concerns"
+  
+  incident_response:
+    immediate_response: "15 minutes for critical, 1 hour for high priority"
+    escalation_path: "Team lead → Platform leadership → External support"
+    communication: "Status updates every 30 minutes during incidents"
+    post_incident: "Root cause analysis and prevention measures within 48 hours"
+    
+  optimization_cycle:
+    weekly: "Performance metrics review and quick optimizations"
+    monthly: "Comprehensive performance audit and improvement planning"
+    quarterly: "Major refactoring initiatives and technical debt reduction"
+    annually: "Architecture review and modernization planning"
+
+# Communication Protocols
+communication:
+  internal_team:
+    daily_monitoring: "Morning performance review and priority setting"
+    incident_coordination: "Real-time communication during performance issues"
+    optimization_planning: "Weekly optimization strategy sessions"
+    knowledge_sharing: "Bi-weekly technical deep-dives and best practices"
+    
+  external_coordination:
+    proactive_alerts: "Advance warning to other teams about planned optimizations"
+    performance_reports: "Regular performance insights to product and business teams"
+    user_impact_updates: "Communication to electrical workers and contractors about improvements"
+    
+  emergency_communication:
+    storm_mobilization: "24/7 coordination during emergency electrical workforce deployment"
+    critical_incidents: "Immediate escalation and stakeholder notification"
+    contractor_integration_issues: "Direct communication with affected electrical contractors"
+
+  tools:
+    monitoring: "Grafana, DataDog for real-time performance tracking"
+    collaboration: "Slack for coordination, PagerDuty for incident management"
+    documentation: "Confluence for performance playbooks and optimization guides"
+    analytics: "Custom dashboards for electrical workforce and job placement metrics"
+
+# Success Metrics & KPIs
+success_metrics:
+  performance_targets:
+    database_performance:
+      - "Job search queries: <200ms average response time"
+      - "Real-time job updates: <500ms end-to-end latency"
+      - "Contractor data sync: <1 second for standard operations"
+      - "Geographic queries: <300ms for 50-mile radius searches"
+      
+    application_performance:
+      - "Mobile app startup time: <2 seconds"
+      - "Job application submission: <1.5 seconds"
+      - "API endpoint response times: 95th percentile <1 second"
+      - "Offline sync completion: <5 seconds when connection restored"
+      
+    infrastructure_reliability:
+      - "Platform uptime: >99.9% excluding planned maintenance"
+      - "Storm mobilization capacity: Handle 10x normal traffic"
+      - "Database availability: >99.95% for job placement operations"
+      - "Contractor API integration uptime: >99.5%"
+  
+  code_quality_metrics:
+    - "Technical debt ratio: <10% of development time"
+    - "Code coverage: >90% for electrical trade critical paths"
+    - "Cyclomatic complexity: <10 for job placement algorithms"
+    - "Security vulnerability count: Zero critical, <5 medium"
+    
+  business_impact_metrics:
+    - "Job placement efficiency: 15% improvement quarter-over-quarter"
+    - "Contractor satisfaction with platform performance: >4.5/5"
+    - "Electrical worker app performance ratings: >4.7/5"
+    - "Support tickets for performance issues: <1% of total tickets"
+
+# Emergency Response Procedures
+emergency_protocols:
+  storm_mobilization_response:
+    preparation: "Pre-scale infrastructure 24 hours before predicted events"
+    activation: "All hands monitoring during electrical workforce mobilization"
+    communication: "Direct coordination with IBEW locals and electrical contractors"
+    post_event: "Performance analysis and improvement recommendations"
+    
+  critical_performance_degradation:
+    immediate_response: "Automatic scaling and cache warming activation"
+    investigation: "Parallel debugging across database, application, and infrastructure"
+    communication: "Real-time status updates to electrical workers and contractors"
+    resolution: "Graduated rollback procedures with performance validation"
+    
+  data_integrity_issues:
+    containment: "Immediate isolation of affected systems"
+    assessment: "Data corruption scope analysis and impact evaluation"
+    recovery: "Point-in-time restoration with minimal data loss"
+    validation: "Comprehensive data integrity verification before resuming operations"
+
+# Resource Requirements
+resources:
+  monitoring_infrastructure:
+    - "Real-time performance monitoring across all electrical trade systems"
+    - "Custom metrics for job placement efficiency and contractor satisfaction"
+    - "Automated alerting for performance degradation and anomalies"
+    - "Historical performance data retention for trend analysis"
+    
+  optimization_tools:
+    - "Database query analysis and optimization tools"
+    - "Application performance profiling and monitoring"
+    - "Load testing infrastructure for storm mobilization scenarios"
+    - "Code quality analysis and technical debt tracking tools"
+    
+  development_environment:
+    - "Production-like staging environment for performance testing"
+    - "Electrical trade data simulation for realistic load testing"
+    - "A/B testing infrastructure for optimization validation"
+    - "Rollback and blue-green deployment capabilities"
+
+# Continuous Improvement
+improvement_processes:
+  performance_reviews:
+    weekly: "Quick wins identification and implementation"
+    monthly: "Comprehensive performance trend analysis"
+    quarterly: "Major optimization initiatives planning and execution"
+    annually: "Technology stack evaluation and modernization planning"
+    
+  knowledge_management:
+    - "Performance optimization playbook maintenance"
+    - "Electrical trade specific optimization patterns documentation"
+    - "Incident response post-mortem knowledge capture"
+    - "Best practices sharing across electrical trade development teams"
+    
+  research_initiatives:
+    - "Emerging performance optimization technologies evaluation"
+    - "Electrical industry specific performance requirements research"
+    - "Competitor performance benchmarking and analysis"
+    - "Academic research integration for advanced optimization techniques"
+
+# Integration with Other Teams
+team_coordination:
+  ui_frontend_team:
+    interface: "Frontend performance optimization recommendations"
+    collaboration: "Joint performance testing and user experience optimization"
+    
+  major_operations_team:
+    interface: "Performance requirements for new electrical trade features"
+    collaboration: "Architecture review for performance impact assessment"
+    
+  meta_agent_activation:
+    triggers:
+      - "Novel performance challenges specific to electrical trades"
+      - "Specialized debugging requirements for IBEW integrations"
+      - "Advanced analytics needs for electrical workforce patterns"
+      - "Unique optimization requirements for contractor systems"
+    
+    process:
+      1. "Identify performance optimization gap requiring specialized expertise"
+      2. "Define specific agent requirements for electrical trade performance challenge"
+      3. "Activate meta-agent-2 to create tailored optimization solution"
+      4. "Integrate new agent capabilities into performance monitoring workflow"
+      5. "Document new optimization patterns for future electrical trade challenges"
+
+# Quality Assurance & Testing
+qa_processes:
+  performance_testing:
+    - "Load testing for storm mobilization traffic patterns"
+    - "Stress testing for peak electrical hiring season scenarios"
+    - "Endurance testing for long-running contractor integration processes"
+    - "Spike testing for sudden job posting volume increases"
+    
+  regression_prevention:
+    - "Automated performance regression testing in CI/CD pipeline"
+    - "Performance budgets for electrical trade critical user journeys"
+    - "Continuous monitoring with automated rollback triggers"
+    - "Performance impact assessment for all code changes"

@@ -344,6 +344,8 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
                     child: JJSecondaryButton(
                       text: 'Back',
                       onPressed: _previousStep,
+                      size: JJButtonSize.medium,
+                      variant: JJButtonVariant.secondary,
                     ),
                   )
                 else
@@ -355,6 +357,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
                   child: JJPrimaryButton(
                     text: _currentStep == _totalSteps - 1 ? 'Complete' : 'Next',
                     onPressed: _canProceed() ? _nextStep : null,
+                    size: JJButtonSize.medium,
                     icon: _currentStep == _totalSteps - 1
                         ? Icons.check
                         : Icons.arrow_forward,

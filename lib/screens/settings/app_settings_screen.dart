@@ -154,6 +154,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
           ),
           JJPrimaryButton(
             text: 'Clear Cache',
+            size: JJButtonSize.medium,
             onPressed: () async {
               Navigator.of(context).pop();
               // Simulate cache clearing

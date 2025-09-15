@@ -334,6 +334,7 @@ class _StormScreenState extends State<StormScreen> {
                     text: 'View Live Weather Radar',
                     icon: FontAwesomeIcons.cloudBolt,
                     onPressed: () => _showWeatherRadar(context),
+                    size: JJButtonSize.medium,
                     isFullWidth: false,
                     variant: JJButtonVariant.primary,
                   ),
@@ -1319,7 +1320,9 @@ class _StormScreenState extends State<StormScreen> {
                         Navigator.pop(context);
                         // Navigate to jobs filtered by state
                       },
+                      size: JJButtonSize.medium,
                       isFullWidth: true,
+                      variant: JJButtonVariant.secondary,
                     ),
                   ),
                   const SizedBox(width: AppTheme.spacingMd),
@@ -1331,6 +1334,7 @@ class _StormScreenState extends State<StormScreen> {
                         Navigator.pop(context);
                         // Navigate to unions filtered by state
                       },
+                      size: JJButtonSize.medium,
                       isFullWidth: true,
                       variant: JJButtonVariant.primary,
                     ),
@@ -1870,6 +1874,7 @@ class StormDetailsSheet extends StatelessWidget {
             JJPrimaryButton(
               text: 'Express Interest',
               icon: Icons.flash_on,
+              size: JJButtonSize.medium,
               onPressed: () {
                 Navigator.pop(context);
                 JJSnackBar.showSuccess(
@@ -1886,6 +1891,7 @@ class StormDetailsSheet extends StatelessWidget {
             JJSecondaryButton(
               text: 'Get Alerts for Similar Events',
               icon: Icons.notifications_active,
+              size: JJButtonSize.medium,
               onPressed: () {
                 JJSnackBar.showSuccess(
                   context: context,
@@ -1893,6 +1899,7 @@ class StormDetailsSheet extends StatelessWidget {
                 );
               },
               isFullWidth: true,
+              variant: JJButtonVariant.secondary,
             ),
           ],
         ),

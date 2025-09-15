@@ -212,6 +212,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         
                         JJPrimaryButton(
                           text: 'Send Reset Instructions',
+                          size: JJButtonSize.large,
                           icon: Icons.send,
                           onPressed: _isLoading ? null : _resetPassword,
                           isFullWidth: true,
@@ -277,6 +278,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                       JJPrimaryButton(
                         text: 'Back to Sign In',
+                        size: JJButtonSize.large,
                         icon: Icons.login,
                         onPressed: () => Navigator.pop(context),
                         isFullWidth: true,
@@ -287,6 +289,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                       JJSecondaryButton(
                         text: 'Resend Email',
+                        size: JJButtonSize.large,
+                        variant: JJButtonVariant.secondary,
                         icon: Icons.refresh,
                         onPressed: _isLoading ? null : () {
                           setState(() {

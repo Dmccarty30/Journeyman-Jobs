@@ -131,6 +131,7 @@ class NotificationPermissionService {
             ),
             JJPrimaryButton(
               text: 'Enable Notifications',
+              size: JJButtonSize.medium,
               onPressed: () => Navigator.of(context).pop(true),
               width: 180,
             ),
@@ -190,6 +191,7 @@ class NotificationPermissionService {
             ),
             JJPrimaryButton(
               text: 'Open Settings',
+              size: JJButtonSize.medium,
               onPressed: () {
                 Navigator.of(context).pop();
                 openAppSettings();

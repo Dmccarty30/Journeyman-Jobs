@@ -241,6 +241,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         Expanded(
                           child: JJSecondaryButton(
                             text: 'Back',
+                            size: JJButtonSize.large,
+                            variant: JJButtonVariant.secondary,
                             onPressed: () {
                               _pageController.previousPage(
                                 duration: const Duration(milliseconds: 300),
@@ -260,11 +262,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           text: _currentPage == _pages.length - 1
                               ? 'Get Started'
                               : 'Next',
+                          size: JJButtonSize.large,
                           icon: _currentPage == _pages.length - 1
                               ? Icons.arrow_forward
                               : Icons.arrow_forward_ios,
                           onPressed: _nextPage,
-                          variant: JJButtonVariant.primary,
                         ),
                       ),
                     ],
