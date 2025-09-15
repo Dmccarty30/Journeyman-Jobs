@@ -319,12 +319,12 @@ class _StormScreenState extends State<StormScreen> {
                     ),
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
-                  JJPrimaryButton(
+                  JJButton(
                     text: 'View Live Weather Radar',
+                    variant: JJButtonVariant.primary,
                     icon: FontAwesomeIcons.cloudBolt,
                     onPressed: () => _showWeatherRadar(context),
                     isFullWidth: false,
-                    variant: JJButtonVariant.primary,
                   ),
                 ],
               ),
@@ -1255,8 +1255,9 @@ class _StormScreenState extends State<StormScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: JJSecondaryButton(
+                    child: JJButton(
                       text: 'View Jobs',
+                      variant: JJButtonVariant.secondary,
                       icon: FontAwesomeIcons.briefcase,
                       onPressed: () {
                         Navigator.pop(context);
@@ -1267,15 +1268,15 @@ class _StormScreenState extends State<StormScreen> {
                   ),
                   const SizedBox(width: AppTheme.spacingMd),
                   Expanded(
-                    child: JJPrimaryButton(
+                    child: JJButton(
                       text: 'View Unions',
+                      variant: JJButtonVariant.primary,
                       icon: FontAwesomeIcons.users,
                       onPressed: () {
                         Navigator.pop(context);
                         // Navigate to unions filtered by state
                       },
                       isFullWidth: true,
-                      variant: JJButtonVariant.primary,
                     ),
                   ),
                 ],
@@ -1810,8 +1811,9 @@ class StormDetailsSheet extends StatelessWidget {
             const SizedBox(height: AppTheme.spacingXl),
             
             // Action buttons
-            JJPrimaryButton(
+            JJButton(
               text: 'Express Interest',
+              variant: JJButtonVariant.primary,
               icon: Icons.flash_on,
               onPressed: () {
                 Navigator.pop(context);
@@ -1821,13 +1823,13 @@ class StormDetailsSheet extends StatelessWidget {
                 );
               },
               isFullWidth: true,
-              variant: JJButtonVariant.primary,
             ),
             
             const SizedBox(height: AppTheme.spacingMd),
             
-            JJSecondaryButton(
+            JJButton(
               text: 'Get Alerts for Similar Events',
+              variant: JJButtonVariant.secondary,
               icon: Icons.notifications_active,
               onPressed: () {
                 JJSnackBar.showSuccess(

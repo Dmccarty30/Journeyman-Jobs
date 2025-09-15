@@ -1,4 +1,3 @@
-
 // Enum to represent different types of sign-up information
 sealed class SignUpInfo {
   const SignUpInfo();
@@ -73,10 +72,12 @@ class RosterContractor {
 
   // Helper to parse sign-up information
   static SignUpInfo _parseSignUpInfo(String onlineForm, String website) {
+    print('DEBUG: Parsing signUpInfo with onlineForm="$onlineForm", website="$website"');
     // Prioritize website if it looks like a direct sign-up link
     if (website.isNotEmpty && (website.startsWith('http://') || website.startsWith('https://'))) {
       // Check if website itself contains sign-up keywords
       if (website.toLowerCase().contains('signup') || website.toLowerCase().contains('roster') || website.toLowerCase().contains('join')) {
+        print('DEBUG: Returning UrlSignUp for website="$website"');
         return UrlSignUp(url: website);
       }
       // If it's just a general website, we might not consider it a direct sign-up action
@@ -90,26 +91,37 @@ class RosterContractor {
       if (phoneMatch != null) {
         final phoneNumber = phoneMatch.group(1)!;
         // Extract message if present
-        final messageMatch = RegExp(r'Text ["\']?([^"\']+)["\']? to').firstMatch(onlineForm);
-        return TextSignUp(phoneNumber: phoneNumber, message: messageMatch.group(1)!);
-            }
+        final messageMatch = RegExp(r'Text (.+?) to').firstMatch(onlineForm);
+        print('DEBUG: Found phone number, phoneNumber="$phoneNumber", messageMatch=${messageMatch != null ? '"${messageMatch.group(1)}"' : 'null'}');
+        if (messageMatch != null) {
+          print('DEBUG: Returning TextSignUp with message');
+          return TextSignUp(phoneNumber: phoneNumber, message: messageMatch.group(1)!);
+        } else {
+          print('DEBUG: No message found, returning PhoneSignUp');
+          return PhoneSignUp(phoneNumber: phoneNumber);
+        }
+      }
 
       // Check for email addresses
       final emailMatch = RegExp(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}').firstMatch(onlineForm);
       if (emailMatch != null) {
+        print('DEBUG: Returning EmailSignUp for email="${emailMatch.group(0)}"');
         return EmailSignUp(email: emailMatch.group(0)!);
       }
 
       // Check for mixed instructions (e.g., website link within text)
       if (website.isNotEmpty && onlineForm.contains(website)) {
+        print('DEBUG: Returning MixedSignUp with URL');
          return MixedSignUp(text: onlineForm.replaceAll(website, '').trim(), url: website);
       }
 
       // If it's just text instructions without a clear phone/email/URL
+      print('DEBUG: Returning MixedSignUp for text instructions');
       return MixedSignUp(text: onlineForm);
     }
 
     // If no specific pattern is found, return UnknownSignUp
+    print('DEBUG: No patterns matched, returning UnknownSignUp');
     return const UnknownSignUp(details: 'No specific sign-up instructions found.');
   }
 }

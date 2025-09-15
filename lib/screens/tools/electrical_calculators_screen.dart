@@ -273,17 +273,18 @@ class _OhmsLawCalculatorState extends State<_OhmsLawCalculator> {
           Row(
             children: [
               Expanded(
-                child: JJSecondaryButton(
+                child: JJButton(
                   text: 'Clear',
+                  variant: JJButtonVariant.secondary,
                   onPressed: _clear,
                 ),
               ),
               const SizedBox(width: AppTheme.spacingMd),
               Expanded(
-                child: JJPrimaryButton(
+                child: JJButton(
                   text: 'Calculate',
-                  onPressed: _calculate,
                   variant: JJButtonVariant.primary,
+                  onPressed: _calculate,
                 ),
               ),
             ],
@@ -450,11 +451,11 @@ class _WireSizeCalculatorState extends State<_WireSizeCalculator> {
 
           const SizedBox(height: AppTheme.spacingLg),
 
-          JJPrimaryButton(
+          JJButton(
             text: 'Calculate Wire Size',
+            variant: JJButtonVariant.primary,
             onPressed: _calculate,
             isFullWidth: true,
-            variant: JJButtonVariant.primary,
           ),
 
           if (_result.isNotEmpty) ...[
@@ -598,8 +599,9 @@ class _ConduitFillCalculatorState extends State<_ConduitFillCalculator> {
 
           const SizedBox(height: AppTheme.spacingLg),
 
-          JJPrimaryButton(
+          JJButton(
             text: 'Check Fill',
+            variant: JJButtonVariant.primary,
             onPressed: _calculate,
             isFullWidth: true,
             variant: JJButtonVariant.primary,
@@ -787,8 +789,9 @@ class _VoltageDropCalculatorState extends State<_VoltageDropCalculator> {
 
           const SizedBox(height: AppTheme.spacingLg),
 
-          JJPrimaryButton(
+          JJButton(
             text: 'Calculate Drop',
+            variant: JJButtonVariant.primary,
             onPressed: _calculate,
             isFullWidth: true,
             variant: JJButtonVariant.primary,

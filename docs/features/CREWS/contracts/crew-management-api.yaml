@@ -1,0 +1,859 @@
+openapi: 3.0.0
+info:
+  title: Crew Management API
+  version: 1.0.0
+  description: Firebase Cloud Functions API for crew communication and coordination
+
+paths:
+  /crews:
+    post:
+      summary: Create a new crew
+      operationId: createCrew
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  minLength: 3
+                  maxLength: 50
+                  description: Crew name (must be unique for user)
+                logoUrl:
+                  type: string
+                  format: uri
+                  description: Optional crew logo from Firebase Storage
+                preferences:
+                  $ref: '#/components/schemas/CrewPreferences'
+      responses:
+        '201':
+          description: Crew created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Crew'
+        '400':
+          description: Invalid input or user already has 5 crews
+        '401':
+          description: Unauthorized
+
+    get:
+      summary: Get user's crews
+      operationId: getUserCrews
+      responses:
+        '200':
+          description: List of user's crews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Crew'
+
+  /crews/{crewId}:
+    get:
+      summary: Get crew details
+      operationId: getCrew
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Crew details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrewWithMembers'
+        '404':
+          description: Crew not found
+        '403':
+          description: Not a member of this crew
+
+    patch:
+      summary: Update crew settings (Leader only)
+      operationId: updateCrew
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 3
+                  maxLength: 50
+                logoUrl:
+                  type: string
+                preferences:
+                  $ref: '#/components/schemas/CrewPreferences'
+      responses:
+        '200':
+          description: Crew updated successfully
+        '403':
+          description: Only crew leader can update crew settings
+
+    delete:
+      summary: Delete crew (Leader only)
+      operationId: deleteCrew
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Crew deleted successfully
+        '403':
+          description: Only crew leader can delete crew
+
+  /crews/{crewId}/members:
+    get:
+      summary: Get crew members
+      operationId: getCrewMembers
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of crew members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CrewMember'
+
+    post:
+      summary: Invite member to crew
+      operationId: inviteMember
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - inviteMethod
+                - inviteValue
+              properties:
+                inviteMethod:
+                  type: string
+                  enum: [email, phone, userId]
+                inviteValue:
+                  type: string
+                  description: Email address, phone number, or user ID
+      responses:
+        '201':
+          description: Invitation sent successfully
+        '400':
+          description: Invalid invite method, crew full, or user already member
+        '403':
+          description: No permission to invite members
+
+  /crews/{crewId}/members/{userId}:
+    patch:
+      summary: Update member preferences
+      operationId: updateMemberPreferences
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                workPreferences:
+                  $ref: '#/components/schemas/CrewMemberPreferences'
+                notifications:
+                  $ref: '#/components/schemas/NotificationSettings'
+      responses:
+        '200':
+          description: Member preferences updated
+        '403':
+          description: Can only update own preferences
+
+    delete:
+      summary: Remove member from crew
+      operationId: removeMember
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  enum: [leaving, voted_out, inactive]
+                voteId:
+                  type: string
+                  description: Required if reason is voted_out
+      responses:
+        '204':
+          description: Member removed successfully
+        '400':
+          description: Cannot remove crew leader without transfer
+        '403':
+          description: Insufficient permissions
+
+  /crews/{crewId}/invitations/{invitationId}/accept:
+    post:
+      summary: Accept crew invitation
+      operationId: acceptInvitation
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: invitationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully joined crew
+        '400':
+          description: Invitation expired or crew full
+        '404':
+          description: Invitation not found
+
+  /crews/{crewId}/invitations/{invitationId}/decline:
+    post:
+      summary: Decline crew invitation
+      operationId: declineInvitation
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: invitationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Invitation declined
+        '404':
+          description: Invitation not found
+
+  /crews/{crewId}/jobs:
+    get:
+      summary: Get jobs shared with crew
+      operationId: getCrewJobs
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, coordinating, submitted, closed]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: List of job notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JobNotification'
+
+    post:
+      summary: Share job with crew
+      operationId: shareJobToCrew
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jobId
+              properties:
+                jobId:
+                  type: string
+                message:
+                  type: string
+                  maxLength: 500
+                  description: Optional note about the job
+                isPriority:
+                  type: boolean
+                  description: Mark as urgent/storm work
+      responses:
+        '201':
+          description: Job shared successfully
+        '400':
+          description: Job already shared to crew or invalid job ID
+        '403':
+          description: Not a crew member
+
+  /crews/{crewId}/jobs/{notificationId}/respond:
+    post:
+      summary: Respond to job notification
+      operationId: respondToJobNotification
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - response
+              properties:
+                response:
+                  type: string
+                  enum: [interested, not_interested, applied, needs_more_info, conditional_yes]
+                note:
+                  type: string
+                  maxLength: 200
+                  description: Optional response note
+      responses:
+        '200':
+          description: Response recorded successfully
+        '404':
+          description: Job notification not found
+
+  /crews/{crewId}/messages:
+    get:
+      summary: Get crew messages
+      operationId: getCrewMessages
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+        - name: before
+          in: query
+          schema:
+            type: string
+            format: date-time
+            description: Get messages before this timestamp (pagination)
+      responses:
+        '200':
+          description: List of crew messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CrewCommunication'
+
+    post:
+      summary: Send message to crew
+      operationId: sendCrewMessage
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+                - type
+              properties:
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 5000
+                type:
+                  type: string
+                  enum: [text, announcement, poll, coordination_request, work_update]
+                attachments:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MessageAttachment'
+                  maxItems: 10
+                replyToMessageId:
+                  type: string
+                  description: Message ID if replying to a message
+      responses:
+        '201':
+          description: Message sent successfully
+        '400':
+          description: Invalid message content or attachments too large
+        '403':
+          description: Not a crew member
+
+  /crews/{crewId}/messages/{messageId}:
+    patch:
+      summary: Edit message (sender only)
+      operationId: editMessage
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 5000
+                isPinned:
+                  type: boolean
+                  description: Only crew leader can pin/unpin messages
+      responses:
+        '200':
+          description: Message updated successfully
+        '403':
+          description: Can only edit own messages or pin as leader
+
+    delete:
+      summary: Delete message
+      operationId: deleteMessage
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Message deleted successfully
+        '403':
+          description: Can only delete own messages or as leader
+
+  /crews/{crewId}/bids:
+    get:
+      summary: Get crew's group bids
+      operationId: getGroupBids
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, submitted, accepted, rejected]
+      responses:
+        '200':
+          description: List of group bids
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupBid'
+
+    post:
+      summary: Submit group bid for job
+      operationId: submitGroupBid
+      parameters:
+        - name: crewId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - jobId
+                - participatingMembers
+                - terms
+              properties:
+                jobId:
+                  type: string
+                jobNotificationId:
+                  type: string
+                participatingMembers:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 2
+                  description: User IDs of participating crew members
+                memberRoles:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  description: Proposed roles for each member
+                terms:
+                  $ref: '#/components/schemas/BidTerms'
+      responses:
+        '201':
+          description: Group bid submitted successfully
+        '400':
+          description: Invalid bid or insufficient crew interest
+
+components:
+  schemas:
+    Crew:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        logoUrl:
+          type: string
+        leaderId:
+          type: string
+        memberIds:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        isActive:
+          type: boolean
+        memberLimit:
+          type: integer
+          default: 10
+        stats:
+          $ref: '#/components/schemas/CrewStats'
+
+    CrewWithMembers:
+      allOf:
+        - $ref: '#/components/schemas/Crew'
+        - type: object
+          properties:
+            members:
+              type: array
+              items:
+                $ref: '#/components/schemas/CrewMember'
+            preferences:
+              $ref: '#/components/schemas/CrewPreferences'
+
+    CrewMember:
+      type: object
+      properties:
+        userId:
+          type: string
+        crewId:
+          type: string
+        role:
+          type: string
+          enum: [leader, member, invited]
+        joinedAt:
+          type: string
+          format: date-time
+        lastActive:
+          type: string
+          format: date-time
+        isAvailable:
+          type: boolean
+        workPreferences:
+          $ref: '#/components/schemas/CrewMemberPreferences'
+        notifications:
+          $ref: '#/components/schemas/NotificationSettings'
+
+    CrewPreferences:
+      type: object
+      properties:
+        acceptedJobTypes:
+          type: array
+          items:
+            type: string
+            enum: [inside_wireman, journeyman_lineman, tree_trimmer, equipment_operator, inside_journeyman_electrician, storm_work]
+        minimumCrewRate:
+          type: number
+        maxTravelDistanceMiles:
+          type: integer
+        preferredStates:
+          type: array
+          items:
+            type: string
+        avoidedStates:
+          type: array
+          items:
+            type: string
+        autoShareMatchingJobs:
+          type: boolean
+        matchThreshold:
+          type: integer
+          minimum: 0
+          maximum: 100
+
+    CrewMemberPreferences:
+      type: object
+      properties:
+        preferredJobTypes:
+          type: array
+          items:
+            type: string
+        minAcceptableRate:
+          type: number
+        maxTravelDistance:
+          type: integer
+        autoApplyToCrewJobs:
+          type: boolean
+
+    NotificationSettings:
+      type: object
+      properties:
+        jobShares:
+          type: boolean
+          default: true
+        directMessages:
+          type: boolean
+          default: true
+        memberActivity:
+          type: boolean
+          default: true
+        urgentJobs:
+          type: boolean
+          default: true
+        voteRequests:
+          type: boolean
+          default: true
+        quietHours:
+          type: string
+          example: "22:00-06:00"
+
+    JobNotification:
+      type: object
+      properties:
+        id:
+          type: string
+        jobId:
+          type: string
+        crewId:
+          type: string
+        sharedByUserId:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        memberResponses:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MemberResponse'
+        groupBidStatus:
+          type: string
+          enum: [pending, coordinating, submitted, accepted, rejected, individual]
+        isPriority:
+          type: boolean
+        viewCount:
+          type: integer
+        responseCount:
+          type: integer
+
+    MemberResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+        type:
+          type: string
+          enum: [interested, not_interested, applied, needs_more_info, conditional_yes]
+        timestamp:
+          type: string
+          format: date-time
+        note:
+          type: string
+
+    CrewCommunication:
+      type: object
+      properties:
+        id:
+          type: string
+        crewId:
+          type: string
+        senderId:
+          type: string
+        content:
+          type: string
+        type:
+          type: string
+          enum: [text, jobShare, announcement, poll, systemNotification, coordinationRequest, workUpdate]
+        timestamp:
+          type: string
+          format: date-time
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageAttachment'
+        readBy:
+          type: object
+          additionalProperties:
+            type: string
+            format: date-time
+        isPinned:
+          type: boolean
+        isEdited:
+          type: boolean
+
+    MessageAttachment:
+      type: object
+      properties:
+        id:
+          type: string
+        fileName:
+          type: string
+        url:
+          type: string
+          format: uri
+        type:
+          type: string
+          enum: [image, document, certification, voiceNote, location, contact]
+        sizeBytes:
+          type: integer
+        thumbnailUrl:
+          type: string
+          format: uri
+
+    GroupBid:
+      type: object
+      properties:
+        id:
+          type: string
+        crewId:
+          type: string
+        jobId:
+          type: string
+        participatingMembers:
+          type: array
+          items:
+            type: string
+        memberRoles:
+          type: object
+          additionalProperties:
+            type: string
+        submittedAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [pending, submitted, accepted, rejected]
+        terms:
+          $ref: '#/components/schemas/BidTerms'
+
+    BidTerms:
+      type: object
+      properties:
+        proposedRate:
+          type: number
+        startDate:
+          type: string
+          format: date
+        estimatedDuration:
+          type: integer
+          description: Duration in weeks
+        housingRequested:
+          type: boolean
+        transportationRequested:
+          type: boolean
+
+    CrewStats:
+      type: object
+      properties:
+        totalJobsShared:
+          type: integer
+        totalGroupApplications:
+          type: integer
+        successfulGroupHires:
+          type: integer
+        groupSuccessRate:
+          type: number
+        averageResponseTime:
+          type: number
+          description: Average response time in hours

@@ -281,7 +281,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     const SizedBox(height: AppTheme.spacingXl),
 
                     // Submit button
-                    JJPrimaryButton(
+                    JJButton(
                       text: 'Submit Feedback',
                       onPressed: _isSubmitting ? null : _submitFeedback,
                       isLoading: _isSubmitting,

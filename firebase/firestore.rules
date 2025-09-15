@@ -15,6 +15,28 @@ service cloud.firestore {
              exists(/databases/$(database)/documents/users/$(request.auth.uid));
     }
     
+    // Helper functions for crew access control
+    function isCrewMember(crewId) {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid));
+    }
+    
+    function isCrewLeader(crewId) {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role == 'leader';
+    }
+    
+    function isValidCrewData() {
+      return request.resource.data.keys().hasAll(['name', 'leaderId', 'createdAt']) &&
+             request.resource.data.leaderId == request.auth.uid;
+    }
+    
+    function isValidMemberData() {
+      return request.resource.data.keys().hasAll(['role', 'joinedAt']) &&
+             request.resource.data.role in ['leader', 'member'];
+    }
+    
     // Jobs collection - read-only for authenticated users
     match /jobs/{jobId} {
       allow read: if isAuthenticated();
@@ -37,6 +59,11 @@ service cloud.firestore {
                        request.resource.data.uid == resource.data.uid && // Can't change UID
                        request.resource.data.email == resource.data.email; // Can't change email through direct write
       allow delete: if false; // Users can't delete their account directly
+      
+      // User crew memberships (for quick crew list lookup)
+      match /crewMemberships/{crewId} {
+        allow read, write: if isOwner(userId);
+      }
     }
     
     // Notifications collection - users can only read/write their own notifications
@@ -45,6 +72,89 @@ service cloud.firestore {
       allow create: if isOwner(request.resource.data.userId);
       allow update: if isOwner(resource.data.userId);
       allow delete: if isOwner(resource.data.userId);
+    }
+
+    // ==================================
+    // CREWS COMMUNICATION HUB RULES
+    // ==================================
+
+    // Crews main collection
+    match /crews/{crewId} {
+      // Only crew members can read crew data
+      allow read: if isCrewMember(crewId);
+      
+      // Only authenticated users can create crews (they become the leader)
+      allow create: if isAuthenticated() && isValidCrewData();
+      
+      // Only crew leader can update main crew document
+      allow update: if isCrewLeader(crewId);
+      
+      // Only crew leader can delete crew
+      allow delete: if isCrewLeader(crewId);
+
+      // Crew members subcollection
+      match /members/{userId} {
+        // All crew members can read member list
+        allow read: if isCrewMember(crewId);
+        
+        // Users can only join crew if invited (handled by Cloud Function) OR if they're the leader creating the crew
+        allow create: if (isAuthenticated() && userId == request.auth.uid && isValidMemberData()) ||
+                         isCrewLeader(crewId);
+        
+        // Users can update their own membership data, leaders can update any member
+        allow update: if (isAuthenticated() && userId == request.auth.uid) || 
+                         isCrewLeader(crewId);
+        
+        // Users can leave crew themselves, leaders can remove members
+        allow delete: if (isAuthenticated() && userId == request.auth.uid) || 
+                         isCrewLeader(crewId);
+      }
+
+      // Crew job notifications subcollection
+      match /jobNotifications/{notificationId} {
+        // All crew members can read job notifications
+        allow read: if isCrewMember(crewId);
+        
+        // All crew members can create job notifications (share jobs)
+        allow create: if isCrewMember(crewId) && 
+                         request.resource.data.sharedByUserId == request.auth.uid;
+        
+        // Members can update to add their responses
+        allow update: if isCrewMember(crewId);
+        
+        // Only the member who shared or crew leader can delete
+        allow delete: if (isAuthenticated() && resource.data.sharedByUserId == request.auth.uid) || 
+                         isCrewLeader(crewId);
+      }
+
+      // Crew communications subcollection
+      match /communications/{messageId} {
+        // All crew members can read messages
+        allow read: if isCrewMember(crewId);
+        
+        // All crew members can send messages
+        allow create: if isCrewMember(crewId) && 
+                         request.resource.data.senderId == request.auth.uid;
+        
+        // Only sender can update their own messages (for editing)
+        allow update: if isAuthenticated() && 
+                         resource.data.senderId == request.auth.uid;
+        
+        // Only sender or crew leader can delete messages
+        allow delete: if (isAuthenticated() && resource.data.senderId == request.auth.uid) || 
+                         isCrewLeader(crewId);
+      }
+
+      // Crew activity subcollection (system-generated activity logs)
+      match /activity/{activityId} {
+        // All crew members can read activity
+        allow read: if isCrewMember(crewId);
+        
+        // Only Cloud Functions can create activity logs
+        allow create: if false;
+        allow update: if false;
+        allow delete: if false;
+      }
     }
 
     // Test collection - for development only

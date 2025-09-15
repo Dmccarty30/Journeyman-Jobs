@@ -239,8 +239,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       // Back button (hidden on first page)
                       if (_currentPage > 0)
                         Expanded(
-                          child: JJSecondaryButton(
+                          child: JJButton(
                             text: 'Back',
+                            variant: JJButtonVariant.secondary,
                             onPressed: () {
                               _pageController.previousPage(
                                 duration: const Duration(milliseconds: 300),
@@ -256,7 +257,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       
                       // Next/Get Started button
                       Expanded(
-                        child: JJPrimaryButton(
+                        child: JJButton(
                           text: _currentPage == _pages.length - 1
                               ? 'Get Started'
                               : 'Next',

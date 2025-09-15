@@ -410,7 +410,7 @@ class _AuthScreenState extends State<AuthScreen>
             const SizedBox(height: AppTheme.spacingXl),
             
             // Sign Up Button
-            JJPrimaryButton(
+            JJButton(
               text: 'Create Account',
               onPressed: _signUpWithEmail,
               isLoading: _isSignUpLoading,
@@ -490,7 +490,7 @@ class _AuthScreenState extends State<AuthScreen>
             const SizedBox(height: AppTheme.spacingLg),
             
             // Sign In Button
-            JJPrimaryButton(
+            JJButton(
               text: 'Sign In',
               onPressed: _signInWithEmail,
               isLoading: _isSignInLoading,

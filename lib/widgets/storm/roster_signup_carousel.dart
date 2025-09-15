@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 // For rootBundle
 import 'package:journeyman_jobs/design_system/app_theme.dart' show AppTheme;
-import 'package:journeyman_jobs/design_system/components/reusable_components.dart' show JJButtonSize, JJButtonVariant, JJPrimaryButton, JJSecondaryButton;
+import 'package:journeyman_jobs/design_system/components/reusable_components.dart' show JJButton, JJButtonSize, JJButtonVariant;
 import 'package:journeyman_jobs/models/storm_roster_signup.dart' show UnknownSignUp, MixedSignUp, RosterContractor, SignUpInfo, UrlSignUp, TextSignUp, PhoneSignUp, EmailSignUp;
 import 'package:journeyman_jobs/services/roster_data_service.dart' show RosterDataService;
 import 'package:url_launcher/url_launcher.dart';
@@ -352,8 +352,9 @@ class _RosterContractorCardState extends State<RosterContractorCard> {
 
     if (info is UrlSignUp) {
       buttons.add(
-        JJPrimaryButton(
+        JJButton(
           text: 'Open Website',
+          variant: JJButtonVariant.primary,
           icon: Icons.link,
           onPressed: () => widget.onTap(), // This will call _launchAction with UrlSignUp
           variant: JJButtonVariant.primary,
@@ -362,8 +363,9 @@ class _RosterContractorCardState extends State<RosterContractorCard> {
       );
     } else if (info is TextSignUp) {
       buttons.add(
-        JJPrimaryButton(
+        JJButton(
           text: 'Text Us',
+          variant: JJButtonVariant.primary,
           icon: Icons.message,
           onPressed: () => widget.onTap(), // This will call _launchAction with TextSignUp
           variant: JJButtonVariant.primary,
@@ -372,8 +374,9 @@ class _RosterContractorCardState extends State<RosterContractorCard> {
       );
     } else if (info is PhoneSignUp) {
       buttons.add(
-        JJPrimaryButton(
+        JJButton(
           text: 'Call Now',
+          variant: JJButtonVariant.primary,
           icon: Icons.phone,
           onPressed: () => widget.onTap(), // This will call _launchAction with PhoneSignUp
           variant: JJButtonVariant.primary,
@@ -382,8 +385,9 @@ class _RosterContractorCardState extends State<RosterContractorCard> {
       );
     } else if (info is EmailSignUp) {
       buttons.add(
-        JJPrimaryButton(
+        JJButton(
           text: 'Email Us',
+          variant: JJButtonVariant.primary,
           icon: Icons.email,
           onPressed: () => widget.onTap(), // This will call _launchAction with EmailSignUp
           variant: JJButtonVariant.primary,
@@ -392,8 +396,9 @@ class _RosterContractorCardState extends State<RosterContractorCard> {
       );
     } else if (info is MixedSignUp && info.url != null && info.url!.isNotEmpty) {
       buttons.add(
-        JJPrimaryButton(
+        JJButton(
           text: 'Visit Website',
+          variant: JJButtonVariant.primary,
           icon: Icons.link,
           onPressed: () => widget.onTap(), // This will call _launchAction with MixedSignUp (URL)
           variant: JJButtonVariant.primary,
@@ -406,8 +411,9 @@ class _RosterContractorCardState extends State<RosterContractorCard> {
 
     // Add a back button to flip the card
     buttons.add(
-      JJSecondaryButton(
+      JJButton(
         text: 'Back',
+        variant: JJButtonVariant.secondary,
         icon: Icons.arrow_back,
         onPressed: _toggleFlip,
         variant: JJButtonVariant.secondary,

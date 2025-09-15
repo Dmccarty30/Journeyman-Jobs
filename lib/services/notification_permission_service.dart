@@ -129,9 +129,10 @@ class NotificationPermissionService {
                 ),
               ),
             ),
-            JJPrimaryButton(
+            JJButton(
               text: 'Enable Notifications',
               onPressed: () => Navigator.of(context).pop(true),
+              variant: JJButtonVariant.primary,
               width: 180,
             ),
           ],
@@ -188,12 +189,13 @@ class NotificationPermissionService {
                 ),
               ),
             ),
-            JJPrimaryButton(
+            JJButton(
               text: 'Open Settings',
               onPressed: () {
                 Navigator.of(context).pop();
                 openAppSettings();
               },
+              variant: JJButtonVariant.primary,
               width: 140,
             ),
           ],

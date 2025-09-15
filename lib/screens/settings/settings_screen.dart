@@ -140,14 +140,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                   const SizedBox(height: AppTheme.spacingLg),
-                  JJPrimaryButton(
-                    text: 'Edit Profile',
-                    icon: Icons.edit,
-                    onPressed: () {
-                      context.push(AppRouter.profile);
-                    },
-                    isFullWidth: true,
-                    variant: JJButtonVariant.primary,
+                  JJButton(
+                   text: 'Edit Profile',
+                   icon: Icons.edit,
+                   onPressed: () {
+                     context.push(AppRouter.profile);
+                   },
+                   isFullWidth: true,
+                   variant: JJButtonVariant.primary,
                   ),
                 ],
               ),
@@ -247,11 +247,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               child: Column(
                 children: [
-                  JJSecondaryButton(
-                    text: 'Sign Out',
-                    icon: Icons.logout,
-                    onPressed: _signOut,
-                    isFullWidth: true,
+                  JJButton(
+                   text: 'Sign Out',
+                   icon: Icons.logout,
+                   onPressed: _signOut,
+                   isFullWidth: true,
+                   variant: JJButtonVariant.secondary,
                   ),
                 ],
               ),

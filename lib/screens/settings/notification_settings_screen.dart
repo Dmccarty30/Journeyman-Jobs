@@ -173,7 +173,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               ),
             ),
           ),
-          JJPrimaryButton(
+          JJButton(
             text: 'Disable',
             onPressed: () => Navigator.of(context).pop(true),
             width: 100,

@@ -7,6 +7,7 @@
  * - Push notifications via FCM
  * - Quick signup flows
  * - User invitation system
+ * - Crew communication and management
  */
 
 const functions = require('firebase-functions');
@@ -48,6 +49,18 @@ const {
   trackSignupConversion
 } = require('./analytics');
 
+// Crew functions
+const {
+  onCrewCreated,
+  onMemberJoined,
+  onMemberLeft,
+  onJobSharedToCrew,
+  onJobResponseUpdated,
+  onCrewMessage,
+  inviteCrewMembers,
+  acceptCrewInvitation
+} = require('./crews');
+
 // Export all functions
 module.exports = {
   // Email Functions
@@ -73,6 +86,16 @@ module.exports = {
   trackUserInvitation,
   trackSignupConversion,
   
+  // Crew Management Functions
+  onCrewCreated,
+  onMemberJoined,
+  onMemberLeft,
+  onJobSharedToCrew,
+  onJobResponseUpdated,
+  onCrewMessage,
+  inviteCrewMembers,
+  acceptCrewInvitation,
+  
   // Utility Functions
   healthCheck: functions.https.onRequest((req, res) => {
     res.status(200).json({
@@ -84,7 +107,8 @@ module.exports = {
         sms: 'active', 
         push: 'active',
         signup: 'active',
-        analytics: 'active'
+        analytics: 'active',
+        crews: 'active'
       }
     });
   }),

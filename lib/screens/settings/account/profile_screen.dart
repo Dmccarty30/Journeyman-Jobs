@@ -487,8 +487,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               ),
             ),
           ),
-          JJPrimaryButton(
+          JJButton(
             text: 'Delete',
+            variant: JJButtonVariant.danger,
             onPressed: () {
               Navigator.of(context).pop();
               JJSnackBar.showSuccess(
@@ -667,8 +668,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               top: false,
               child: Container(
                 padding: const EdgeInsets.all(AppTheme.spacingMd),
-                child: JJPrimaryButton(
+                child: JJButton(
                   text: 'Save Changes',
+                  variant: JJButtonVariant.primary,
                   icon: Icons.save,
                   onPressed: _saveProfile,
                   isFullWidth: true,

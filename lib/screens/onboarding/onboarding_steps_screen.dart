@@ -341,9 +341,10 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
               children: [
                 if (_currentStep > 0)
                   Expanded(
-                    child: JJSecondaryButton(
+                    child: JJButton(
                       text: 'Back',
                       onPressed: _previousStep,
+                      variant: JJButtonVariant.secondary,
                     ),
                   )
                 else
@@ -352,7 +353,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
                 const SizedBox(width: AppTheme.spacingMd),
                 
                 Expanded(
-                  child: JJPrimaryButton(
+                  child: JJButton(
                     text: _currentStep == _totalSteps - 1 ? 'Complete' : 'Next',
                     onPressed: _canProceed() ? _nextStep : null,
                     icon: _currentStep == _totalSteps - 1

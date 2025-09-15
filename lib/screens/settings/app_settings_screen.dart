@@ -152,7 +152,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
               ),
             ),
           ),
-          JJPrimaryButton(
+          JJButton(
             text: 'Clear Cache',
             onPressed: () async {
               Navigator.of(context).pop();

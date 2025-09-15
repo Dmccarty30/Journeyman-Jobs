@@ -14,7 +14,13 @@
       "Bash(chmod:*)",
       "Bash(touch:*)",
       "Bash(curl:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(.specify/scripts/powershell/check-task-prerequisites.ps1 -Json)",
+      "Bash(flutter test:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(xargs cat:*)",
+      "Bash(dart analyze:*)",
+      "Bash(sed:*)"
     ],
     "deny": []
   },

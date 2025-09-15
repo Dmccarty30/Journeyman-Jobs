@@ -31,6 +31,12 @@ import '../screens/notifications/notifications_screen.dart';
 import '../screens/settings/notification_settings_screen.dart';
 import '../screens/settings/app_settings_screen.dart';
 
+// Crew feature imports (placeholder implementations)
+import '../features/crews/screens/crew_list_screen.dart';
+import '../features/crews/screens/create_crew_screen.dart';
+import '../features/crews/screens/crew_detail_screen.dart';
+import '../features/crews/screens/crew_communication_screen.dart';
+
 class AppRouter {
   static const String splash = '/';
   static const String welcome = '/welcome';
@@ -39,6 +45,7 @@ class AppRouter {
   static const String onboarding = '/onboarding';
   static const String home = '/home';
   static const String jobs = '/jobs';
+  static const String crews = '/crews';
   static const String storm = '/storm';
   static const String locals = '/locals';
   static const String settings = '/settings';
@@ -55,6 +62,11 @@ class AppRouter {
   static const String notifications = '/notifications';
   static const String notificationSettings = '/notification-settings';
   static const String appSettings = '/settings/app';
+  
+  // Crew-specific routes
+  static const String createCrew = '/crews/create';
+  static const String crewDetail = '/crews/:crewId';
+  static const String crewCommunication = '/crews/:crewId/chat';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -103,6 +115,11 @@ class AppRouter {
             path: jobs,
             name: 'jobs',
             builder: (context, state) => const JobsScreen(),
+          ),
+          GoRoute(
+            path: crews,
+            name: 'crews',
+            builder: (context, state) => const CrewListScreen(),
           ),
           GoRoute(
             path: storm,
@@ -191,6 +208,29 @@ class AppRouter {
         path: appSettings,
         name: 'app-settings',
         builder: (context, state) => const AppSettingsScreen(),
+      ),
+
+      // Crew-specific routes
+      GoRoute(
+        path: createCrew,
+        name: 'create-crew',
+        builder: (context, state) => const CreateCrewScreen(),
+      ),
+      GoRoute(
+        path: crewDetail,
+        name: 'crew-detail',
+        builder: (context, state) {
+          final crewId = state.pathParameters['crewId']!;
+          return CrewDetailScreen(crewId: crewId);
+        },
+      ),
+      GoRoute(
+        path: crewCommunication,
+        name: 'crew-communication',
+        builder: (context, state) {
+          final crewId = state.pathParameters['crewId']!;
+          return CrewCommunicationScreen(crewId: crewId);
+        },
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
@@ -283,7 +323,7 @@ class AppRouter {
 
   /// Check if current route is in main navigation
   static bool isMainNavigationRoute(String location) {
-    return [home, jobs, storm, locals, settings].contains(location);
+    return [home, jobs, crews, storm, locals, settings].contains(location);
   }
 
   /// Get the index of the current tab for bottom navigation
@@ -293,12 +333,14 @@ class AppRouter {
         return 0;
       case jobs:
         return 1;
-      case storm:
+      case crews:
         return 2;
-      case locals:
+      case storm:
         return 3;
-      case settings:
+      case locals:
         return 4;
+      case settings:
+        return 5;
       default:
         return 0;
     }
@@ -312,10 +354,12 @@ class AppRouter {
       case 1:
         return jobs;
       case 2:
-        return storm;
+        return crews;
       case 3:
-        return locals;
+        return storm;
       case 4:
+        return locals;
+      case 5:
         return settings;
       default:
         return home;
