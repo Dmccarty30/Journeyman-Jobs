@@ -23,7 +23,7 @@ class ShareNotificationModel {
     this.jobCompany,
     this.isRead = false,
     required this.createdAt,
-    this.readAt,
+    this.readAt, required String shareMethod, required String senderId, required String jobLocal, required status, required DateTime timestamp, required List<dynamic> recipientIds, required String jobLocation, required jobPayRate,
   });
 
   ShareNotificationModel copyWith({

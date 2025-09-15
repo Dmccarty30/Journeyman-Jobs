@@ -75,9 +75,7 @@ class AnalyticsServiceAdapter {
     return;
   }
 
-  Future<void> logEvent(String eventName, {Map<String, dynamic>? parameters}) => AnalyticsService.logCustomEvent(eventName, parameters ?? <String, dynamic>{});
-
-  Future<Map<String, dynamic>> getPerformanceMetrics() => AnalyticsService.getPerformanceMetrics();
+  Future<void> logEvent(String eventName, {Map<String, dynamic>? parameters}) => AnalyticsService.instance.trackAppEvent(eventName: eventName, parameters: parameters ?? <String, dynamic>{});
 }
 
 @riverpod
@@ -125,9 +123,9 @@ class AppStateNotifier extends _$AppStateNotifier {
           state = state.copyWith(isConnected: isConnected);
           
           // Track connectivity events
-          AnalyticsService.logCustomEvent(
-            'connectivity_changed',
-            <String, dynamic>{'is_connected': isConnected},
+          AnalyticsService.instance.trackAppEvent(
+            eventName: 'connectivity_changed',
+            parameters: <String, dynamic>{'is_connected': isConnected},
           );
         },
         loading: () {},
@@ -158,7 +156,7 @@ class AppStateNotifier extends _$AppStateNotifier {
       state = state.copyWith(isInitialized: true);
       
       // Track app initialization
-      AnalyticsService.logCustomEvent('app_initialized', <String, dynamic>{});
+      AnalyticsService.instance.trackAppEvent(eventName: 'app_initialized', parameters: <String, dynamic>{});
     } catch (e) {
       state = state.copyWith(
         globalError: 'Failed to initialize app: $e',
@@ -201,7 +199,7 @@ class AppStateNotifier extends _$AppStateNotifier {
       state = state.copyWith(performanceMetrics: performanceMetrics);
       
       // Track refresh event
-      AnalyticsService.logCustomEvent('app_data_refreshed', <String, dynamic>{});
+      AnalyticsService.instance.trackAppEvent(eventName: 'app_data_refreshed', parameters: <String, dynamic>{});
     } catch (e) {
       state = state.copyWith(globalError: 'Failed to refresh data: $e');
       rethrow;
@@ -214,7 +212,7 @@ class AppStateNotifier extends _$AppStateNotifier {
       await _loadInitialData();
       
       // Track sign in event
-      AnalyticsService.logCustomEvent('user_signed_in', <String, dynamic>{});
+      AnalyticsService.instance.trackAppEvent(eventName: 'user_signed_in', parameters: <String, dynamic>{});
     } catch (e) {
       state = state.copyWith(globalError: 'Failed to load user data: $e');
     }
@@ -228,7 +226,7 @@ class AppStateNotifier extends _$AppStateNotifier {
       ref.invalidate(localsProvider);
       
       // Track sign out event
-      AnalyticsService.logCustomEvent('user_signed_out', <String, dynamic>{});
+      AnalyticsService.instance.trackAppEvent(eventName: 'user_signed_out', parameters: <String, dynamic>{});
     } catch (e) {
       state = state.copyWith(globalError: 'Error during sign out: $e');
     }

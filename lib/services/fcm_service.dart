@@ -287,6 +287,25 @@ class FCMService {
       print('Error subscribing to local topic: $e');
     }
   }
+  /// Subscribe to a general topic
+  Future<void> subscribeToTopic(String topic) async {
+    try {
+      await _messaging.subscribeToTopic(topic);
+      print('Subscribed to topic: $topic');
+    } catch (e) {
+      print('Error subscribing to topic $topic: $e');
+    }
+  }
+
+  /// Unsubscribe from a topic
+  Future<void> unsubscribeFromTopic(String topic) async {
+    try {
+      await _messaging.unsubscribeFromTopic(topic);
+      print('Unsubscribed from topic: $topic');
+    } catch (e) {
+      print('Error unsubscribing from topic $topic: $e');
+    }
+  }
 
   /// Track notification analytics
   Future<void> _trackNotificationReceived(RemoteMessage message) async {
