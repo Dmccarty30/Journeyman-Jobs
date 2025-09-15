@@ -74,6 +74,7 @@ class RosterContractor {
 
   // Helper to parse sign-up information
   static SignUpInfo _parseSignUpInfo(String onlineForm, String website) {
+    debugPrint('DEBUG: Parsing sign-up info - onlineForm: "$onlineForm", website: "$website"');
     // Prioritize website if it looks like a direct sign-up link
     if (website.isNotEmpty && (website.startsWith('http://') || website.startsWith('https://'))) {
       // Check if website itself contains sign-up keywords
@@ -89,25 +90,31 @@ class RosterContractor {
       // Regex to find phone numbers (basic pattern)
       final phoneMatch = RegExp(r'(\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})').firstMatch(onlineForm);
       if (phoneMatch != null) {
-        final phoneNumber = phoneMatch.group(1)!;
-        // Extract message if present
-        final messageMatch = RegExp(r'Text ["\';;;]?([^"']+)["\']? to').firstMatch(onlineForm);
-        return TextSignUp(phoneNumber: phoneNumber, message: messageMatch.group(1)!);
-            }
+        final phoneNumber = phoneMatch.group(1);
+        if (phoneNumber != null) {
+          // Extract message if present
+          final messageMatch = RegExp(r'Text (.+?) to').firstMatch(onlineForm);
+          final message = messageMatch != null ? messageMatch.group(1) ?? 'Text to sign up' : 'Text to sign up';
+          return TextSignUp(phoneNumber: phoneNumber, message: message);
+        }
+      }
 
       // Check for email addresses
       final emailMatch = RegExp(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}').firstMatch(onlineForm);
       if (emailMatch != null) {
-        return EmailSignUp(email: emailMatch.group(0)!);
+        final email = emailMatch.group(0);
+        if (email != null) {
+          return EmailSignUp(email: email);
+        }
       }
 
       // Check for mixed instructions (e.g., website link within text)
       if (website.isNotEmpty && onlineForm.contains(website)) {
-         return MixedSignUp(text: onlineForm.replaceAll(website, '').trim(), url: website);
+        return MixedSignUp(text: onlineForm.replaceAll(website, '').trim(), url: website);
       }
 
       // If it's just text instructions without a clear phone/email/URL
-      return MixedSignUp(text: onlineForm);
+      return MixedSignUp(text: onlineForm, url: null);
     }
 
     // If no specific pattern is found, return UnknownSignUp
