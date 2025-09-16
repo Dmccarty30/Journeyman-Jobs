@@ -65,6 +65,7 @@ firebase firestore:import test-data/ --project=journeyman-jobs
 **Objective**: Test crew creation and member invitation flow
 
 1. **Launch the app**
+
    ```bash
    flutter run
    ```
@@ -354,6 +355,7 @@ final testJobs = [
 ## Verification Checklist
 
 ### Core Crew Management
+
 - [ ] Create crew with leader automatically assigned
 - [ ] Crew becomes active with 2+ members
 - [ ] Maximum 5 crews per user enforced
@@ -364,6 +366,7 @@ final testJobs = [
 - [ ] Members can leave crew independently
 
 ### Job Sharing and Coordination
+
 - [ ] Share jobs to specific crews
 - [ ] Job notifications appear immediately
 - [ ] Members can respond with interest level
@@ -373,6 +376,7 @@ final testJobs = [
 - [ ] Job sharing prevents duplicates within 24 hours
 
 ### Real-time Communication
+
 - [ ] Messages deliver instantly to all members
 - [ ] Read receipts show message status
 - [ ] Typing indicators work in group chat
@@ -382,6 +386,7 @@ final testJobs = [
 - [ ] Push notifications trigger for important messages
 
 ### Member Management & Governance
+
 - [ ] Vote initiation works (leader or member request)
 - [ ] All eligible members can participate in votes
 - [ ] Vote results calculated correctly (majority wins)
@@ -390,6 +395,7 @@ final testJobs = [
 - [ ] Leadership transfer works when leader leaves
 
 ### Performance & Reliability
+
 - [ ] Crew communication hub loads in <100ms
 - [ ] Message history pagination works smoothly
 - [ ] Offline mode shows cached crew data
@@ -398,6 +404,7 @@ final testJobs = [
 - [ ] App maintains responsiveness with large crews
 
 ### Data Privacy & Security
+
 - [ ] Firestore security rules prevent unauthorized access
 - [ ] Users can only see crews they belong to
 - [ ] Message editing only by original sender
@@ -408,6 +415,7 @@ final testJobs = [
 ## Troubleshooting Common Issues
 
 ### Issue: Crew not syncing between devices
+
 ```bash
 # Check Firestore offline persistence
 await FirebaseFirestore.instance.enableNetwork();
@@ -419,6 +427,7 @@ print('User: ${user?.uid}');
 ```
 
 ### Issue: Push notifications not working
+
 ```bash
 # Check FCM token generation
 final fcmToken = await FirebaseMessaging.instance.getToken();
@@ -431,6 +440,7 @@ await FirebaseMessaging.instance.subscribeToTopic('crew_$crewId');
 ```
 
 ### Issue: Messages not delivering in real-time
+
 ```dart
 // Check Firestore connection status
 FirebaseFirestore.instance.snapshotsInSync().listen((_) {
@@ -450,6 +460,7 @@ messagesStream.listen(
 ```
 
 ### Issue: Slow crew communication hub loading
+
 ```dart
 // Enable Firestore aggressive caching
 FirebaseFirestore.instance.settings = Settings(

@@ -152,7 +152,7 @@ class _CrewListScreenState extends ConsumerState<CrewListScreen>
   /// Navigate to crew detail screen
   void _onCrewTap(Crew crew) {
     HapticFeedback.selectionClick();
-    ref.read(crewProvider.notifier).selectCrew(crew);
+    ref.read(crewProvider.notifier).selectCrew(crew.id);
     context.push('/crews/${crew.id}');
   }
 

@@ -1037,3 +1037,613 @@ exports.acceptCrewInvitation = functions.https.onCall(async (data, context) => {
     throw error;
   }
 });
+
+/**
+ * ENHANCED FCM NOTIFICATION FUNCTIONS
+ */
+
+// Enhanced crew notification function with retry logic and better error handling
+async function sendCrewNotificationWithRetry(crewId, notification, excludeUserId = null, priority = 'normal', retries = 3) {
+  try {
+    // Get all crew members for targeted notifications
+    const membersSnapshot = await db.collection(`crews/${crewId}/members`).get();
+    const memberIds = membersSnapshot.docs
+      .map(doc => doc.id)
+      .filter(id => id !== excludeUserId);
+
+    if (memberIds.length === 0) {
+      console.log(`No members to notify in crew ${crewId}`);
+      return { success: true, sentCount: 0 };
+    }
+
+    // Get user FCM tokens
+    const usersSnapshot = await db.collection('users')
+      .where(admin.firestore.FieldPath.documentId(), 'in', memberIds.slice(0, 10))
+      .get();
+
+    const tokens = [];
+    const userTokenMap = {};
+    
+    usersSnapshot.docs.forEach(doc => {
+      const userData = doc.data();
+      if (userData.fcmToken) {
+        tokens.push(userData.fcmToken);
+        userTokenMap[userData.fcmToken] = doc.id;
+      }
+    });
+
+    if (tokens.length === 0) {
+      console.log(`No valid FCM tokens found for crew ${crewId}`);
+      return { success: true, sentCount: 0 };
+    }
+
+    // Create multicast message for better performance
+    const message = {
+      notification: {
+        title: notification.title,
+        body: notification.body,
+        icon: 'crew_notification_icon',
+      },
+      data: {
+        ...notification.data,
+        timestamp: Date.now().toString()
+      },
+      android: {
+        priority: priority === 'high' ? 'high' : 'normal',
+        notification: {
+          channelId: 'crew_notifications',
+          priority: priority === 'high' ? 'high' : 'default',
+          sound: priority === 'high' ? 'crew_urgent' : 'crew_default',
+          tag: `crew_${crewId}_${notification.data.type || 'general'}`
+        }
+      },
+      apns: {
+        payload: {
+          aps: {
+            priority: priority === 'high' ? 10 : 5,
+            category: 'crew_notification',
+            sound: priority === 'high' ? 'crew_urgent.caf' : 'crew_default.caf',
+            badge: 1
+          }
+        }
+      },
+      tokens: tokens
+    };
+
+    // Send multicast message
+    const response = await admin.messaging().sendMulticast(message);
+    
+    // Handle failed tokens
+    if (response.failureCount > 0) {
+      const failedTokens = [];
+      response.responses.forEach((resp, idx) => {
+        if (!resp.success) {
+          const token = tokens[idx];
+          const userId = userTokenMap[token];
+          failedTokens.push({ token, userId, error: resp.error });
+          
+          // If token is invalid, remove it from user document
+          if (resp.error?.code === 'messaging/invalid-registration-token' ||
+              resp.error?.code === 'messaging/registration-token-not-registered') {
+            db.collection('users').doc(userId).update({
+              fcmToken: admin.firestore.FieldValue.delete()
+            }).catch(err => console.error(`Error removing invalid token for user ${userId}:`, err));
+          }
+        }
+      });
+      
+      console.error(`${response.failureCount} notifications failed for crew ${crewId}:`, failedTokens);
+      
+      // Retry with exponential backoff for retriable errors
+      if (retries > 0 && response.failureCount < tokens.length) {
+        await new Promise(resolve => setTimeout(resolve, (4 - retries) * 1000));
+        return sendCrewNotificationWithRetry(crewId, notification, excludeUserId, priority, retries - 1);
+      }
+    }
+
+    console.log(`Crew notification sent to ${response.successCount}/${tokens.length} members in crew ${crewId}`);
+    
+    // Log notification activity
+    await db.collection(`crews/${crewId}/notifications`).add({
+      type: notification.data.type || 'general',
+      title: notification.title,
+      sentAt: admin.firestore.FieldValue.serverTimestamp(),
+      targetCount: tokens.length,
+      successCount: response.successCount,
+      failureCount: response.failureCount,
+      priority
+    });
+
+    return {
+      success: true,
+      sentCount: response.successCount,
+      failedCount: response.failureCount,
+      totalTargets: tokens.length
+    };
+
+  } catch (error) {
+    console.error('Error sending crew notification with retry:', error);
+    
+    // Log error for debugging
+    await db.collection(`crews/${crewId}/notifications`).add({
+      type: 'error',
+      error: error.message,
+      failedAt: admin.firestore.FieldValue.serverTimestamp(),
+      retryAttempt: 4 - retries
+    }).catch(err => console.error('Error logging notification failure:', err));
+    
+    throw error;
+  }
+}
+
+// Enhanced job shared to crew trigger
+exports.onJobSharedToCrewEnhanced = functions.firestore
+  .document('crews/{crewId}/jobNotifications/{notificationId}')
+  .onCreate(async (snap, context) => {
+    const notification = snap.data();
+    const { crewId, notificationId } = context.params;
+
+    try {
+      // Get crew details
+      const crewDoc = await db.collection('crews').doc(crewId).get();
+      if (!crewDoc.exists) {
+        console.error(`Crew ${crewId} not found`);
+        return;
+      }
+      const crewData = crewDoc.data();
+
+      // Get job details
+      const jobDoc = await db.collection('jobs').doc(notification.jobId).get();
+      if (!jobDoc.exists) {
+        console.error(`Job ${notification.jobId} not found`);
+        return;
+      }
+      const jobData = jobDoc.data();
+
+      // Get sharer details
+      const sharerDoc = await db.collection('users').doc(notification.sharedByUserId).get();
+      const sharerData = sharerDoc.data();
+      const sharerName = sharerData?.displayName || sharerData?.email || 'A crew member';
+
+      // Determine notification priority
+      const isStormWork = jobData.isStormWork || false;
+      const isUrgent = jobData.isUrgent || false;
+      const priority = (isStormWork || isUrgent) ? 'high' : 'normal';
+
+      // Create enhanced notification title and body
+      const title = isStormWork ? 
+        `🚨 STORM WORK: New Job Shared` : 
+        `⚡ New Job Opportunity`;
+      
+      const body = notification.message ? 
+        `${sharerName}: ${notification.message}` : 
+        `${sharerName} shared "${jobData.title}" with your crew`;
+
+      // Send enhanced push notification
+      await sendCrewNotificationWithRetry(crewId, {
+        title,
+        body,
+        data: {
+          type: 'crew_job_share',
+          crewId,
+          crewName: crewData.name,
+          jobId: notification.jobId,
+          notificationId,
+          sharedByUserId: notification.sharedByUserId,
+          sharedByName: sharerName,
+          isStormWork: isStormWork.toString(),
+          isUrgent: isUrgent.toString(),
+          click_action: 'FLUTTER_NOTIFICATION_CLICK'
+        }
+      }, notification.sharedByUserId, priority);
+
+      // Create detailed activity log
+      await db.collection(`crews/${crewId}/activity`).add({
+        type: 'job_shared',
+        actorId: notification.sharedByUserId,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        data: {
+          jobId: notification.jobId,
+          jobTitle: jobData.title,
+          jobLocation: `${jobData.location.city}, ${jobData.location.state}`,
+          jobUnion: jobData.union.local,
+          notificationId,
+          message: notification.message,
+          isStormWork,
+          isUrgent,
+          classification: jobData.classification
+        },
+        visibility: 'all'
+      });
+
+      // Track job sharing analytics
+      await db.collection('analytics/jobSharing/events').add({
+        eventType: 'crew_job_share',
+        crewId,
+        jobId: notification.jobId,
+        sharedByUserId: notification.sharedByUserId,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        metadata: {
+          crewSize: crewData.memberCount || 0,
+          jobType: jobData.constructionType,
+          isStormWork,
+          hasMessage: !!notification.message
+        }
+      });
+
+      console.log(`Enhanced job ${notification.jobId} shared to crew ${crewId} with priority ${priority}`);
+
+    } catch (error) {
+      console.error('Error in onJobSharedToCrewEnhanced:', error);
+      
+      // Update notification with error status
+      await snap.ref.update({
+        status: 'failed',
+        error: error.message,
+        failedAt: admin.firestore.FieldValue.serverTimestamp()
+      }).catch(err => console.error('Error updating notification status:', err));
+    }
+  });
+
+// Enhanced crew member added trigger
+exports.onCrewMemberAddedEnhanced = functions.firestore
+  .document('crews/{crewId}/members/{userId}')
+  .onCreate(async (snap, context) => {
+    const memberData = snap.data();
+    const { crewId, userId } = context.params;
+
+    try {
+      // Get crew details
+      const crewDoc = await db.collection('crews').doc(crewId).get();
+      if (!crewDoc.exists) {
+        console.error(`Crew ${crewId} not found`);
+        return;
+      }
+      const crewData = crewDoc.data();
+
+      // Get new member details
+      const userDoc = await db.collection('users').doc(userId).get();
+      if (!userDoc.exists) {
+        console.error(`User ${userId} not found`);
+        return;
+      }
+      const userData = userDoc.data();
+      const memberName = userData.displayName || userData.email || 'New Member';
+
+      // Subscribe user to crew notifications
+      if (userData.fcmToken) {
+        try {
+          await admin.messaging().subscribeToTopic(userData.fcmToken, `crew_${crewId}`);
+          console.log(`Subscribed user ${userId} to crew_${crewId} topic`);
+        } catch (error) {
+          console.error(`Error subscribing user ${userId} to crew topic:`, error);
+        }
+      }
+
+      // Send welcome notification to new member
+      if (userData.fcmToken) {
+        const welcomeMessage = {
+          notification: {
+            title: `Welcome to ${crewData.name}! ⚡`,
+            body: `You've successfully joined the crew. Start collaborating on job opportunities!`
+          },
+          data: {
+            type: 'crew_welcome',
+            crewId,
+            crewName: crewData.name,
+            role: memberData.role,
+            click_action: 'FLUTTER_NOTIFICATION_CLICK'
+          },
+          token: userData.fcmToken,
+          android: {
+            notification: {
+              channelId: 'crew_notifications',
+              sound: 'crew_welcome',
+              icon: 'crew_welcome_icon'
+            }
+          },
+          apns: {
+            payload: {
+              aps: {
+                category: 'crew_welcome',
+                sound: 'crew_welcome.caf'
+              }
+            }
+          }
+        };
+
+        await admin.messaging().send(welcomeMessage);
+        console.log(`Welcome notification sent to new member ${userId}`);
+      }
+
+      // Notify existing crew members about new member
+      await sendCrewNotificationWithRetry(crewId, {
+        title: 'New Crew Member Joined! 🤝',
+        body: `${memberName} has joined your crew`,
+        data: {
+          type: 'member_joined',
+          crewId,
+          crewName: crewData.name,
+          newMemberId: userId,
+          newMemberName: memberName,
+          newMemberRole: memberData.role,
+          click_action: 'FLUTTER_NOTIFICATION_CLICK'
+        }
+      }, userId); // Exclude the new member
+
+      // Create detailed activity log
+      await db.collection(`crews/${crewId}/activity`).add({
+        type: 'member_joined',
+        actorId: userId,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        data: {
+          userId,
+          memberName,
+          role: memberData.role,
+          invitedBy: memberData.invitedBy,
+          classification: userData.classification,
+          location: userData.location
+        },
+        visibility: 'all'
+      });
+
+      // Update crew member count
+      await db.collection('crews').doc(crewId).update({
+        memberCount: admin.firestore.FieldValue.increment(1),
+        lastActivity: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      // Add crew to user's membership list
+      await db.collection(`users/${userId}/crewMemberships`).doc(crewId).set({
+        role: memberData.role,
+        joinedAt: memberData.joinedAt,
+        crewName: crewData.name,
+        crewDescription: crewData.description,
+        notifications: true
+      });
+
+      console.log(`Enhanced member ${userId} (${memberName}) joined crew ${crewId}`);
+
+    } catch (error) {
+      console.error('Error in onCrewMemberAddedEnhanced:', error);
+    }
+  });
+
+// Enhanced crew message trigger
+exports.onCrewMessageSentEnhanced = functions.firestore
+  .document('crews/{crewId}/communications/{messageId}')
+  .onCreate(async (snap, context) => {
+    const message = snap.data();
+    const { crewId, messageId } = context.params;
+
+    try {
+      // Get crew details
+      const crewDoc = await db.collection('crews').doc(crewId).get();
+      if (!crewDoc.exists) {
+        console.error(`Crew ${crewId} not found`);
+        return;
+      }
+      const crewData = crewDoc.data();
+
+      // Get sender details
+      const senderDoc = await db.collection('users').doc(message.senderId).get();
+      if (!senderDoc.exists) {
+        console.error(`Sender ${message.senderId} not found`);
+        return;
+      }
+      const senderData = senderDoc.data();
+      const senderName = senderData.displayName || senderData.email || 'Crew Member';
+
+      // Determine notification priority and whether to send push notifications
+      const shouldNotify = message.messageType === 'urgent' || 
+                          message.messageType === 'announcement' ||
+                          message.mentionedUsers?.length > 0;
+
+      if (!shouldNotify) {
+        console.log(`Message ${messageId} in crew ${crewId} doesn't require push notification`);
+        return;
+      }
+
+      const priority = message.messageType === 'urgent' ? 'high' : 'normal';
+      
+      // Create notification title and body based on message type
+      let title, body;
+      if (message.messageType === 'urgent') {
+        title = `🚨 Urgent Message from ${senderName}`;
+        body = message.content;
+      } else if (message.messageType === 'announcement') {
+        title = `📢 Announcement from ${senderName}`;
+        body = message.content;
+      } else if (message.mentionedUsers?.length > 0) {
+        title = `${senderName} mentioned you`;
+        body = message.content;
+      }
+
+      // Send notification to crew members (or specific mentioned users)
+      const targetUsers = message.mentionedUsers?.length > 0 ? 
+        message.mentionedUsers : 
+        null; // null means all crew members
+
+      if (targetUsers) {
+        // Send individual notifications to mentioned users
+        for (const userId of targetUsers) {
+          if (userId !== message.senderId) {
+            await sendUserNotification(userId, {
+              title,
+              body,
+              data: {
+                type: 'crew_mention',
+                crewId,
+                crewName: crewData.name,
+                messageId,
+                senderId: message.senderId,
+                senderName,
+                messageType: message.messageType,
+                click_action: 'FLUTTER_NOTIFICATION_CLICK'
+              }
+            });
+          }
+        }
+      } else {
+        // Send to all crew members
+        await sendCrewNotificationWithRetry(crewId, {
+          title,
+          body,
+          data: {
+            type: 'crew_message',
+            crewId,
+            crewName: crewData.name,
+            messageId,
+            senderId: message.senderId,
+            senderName,
+            messageType: message.messageType,
+            threadId: message.threadId,
+            click_action: 'FLUTTER_NOTIFICATION_CLICK'
+          }
+        }, message.senderId, priority);
+      }
+
+      // Create activity log for important messages
+      if (message.messageType === 'announcement' || message.messageType === 'urgent') {
+        await db.collection(`crews/${crewId}/activity`).add({
+          type: 'crew_message',
+          actorId: message.senderId,
+          timestamp: admin.firestore.FieldValue.serverTimestamp(),
+          data: {
+            messageId,
+            messageType: message.messageType,
+            content: message.content.substring(0, 100), // First 100 chars
+            hasAttachment: message.attachments?.length > 0,
+            mentionCount: message.mentionedUsers?.length || 0
+          },
+          visibility: 'all'
+        });
+      }
+
+      // Update crew last activity
+      await db.collection('crews').doc(crewId).update({
+        lastActivity: admin.firestore.FieldValue.serverTimestamp(),
+        lastMessage: {
+          senderId: message.senderId,
+          senderName,
+          content: message.content.substring(0, 50),
+          type: message.messageType,
+          timestamp: message.timestamp
+        }
+      });
+
+      console.log(`Enhanced message notification sent for ${messageId} in crew ${crewId} (type: ${message.messageType})`);
+
+    } catch (error) {
+      console.error('Error in onCrewMessageSentEnhanced:', error);
+    }
+  });
+
+/**
+ * CREW INVITATION EMAIL FUNCTION
+ */
+
+// Send crew invitation email (referenced in crew functions but was missing)
+async function sendCrewInvitationEmail({ email, crewName, inviterName, message, invitationId, isExistingUser }) {
+  try {
+    const sgMail = require('@sendgrid/mail');
+    
+    const acceptLink = isExistingUser ?
+      `https://journeymanjobs.app/crew/accept?invitation=${invitationId}` :
+      `https://journeymanjobs.app/signup?invitation=${invitationId}&utm_source=crew_invitation&utm_medium=email`;
+
+    const emailTemplate = createCrewInvitationEmailTemplate({
+      crewName,
+      inviterName,
+      message,
+      acceptLink,
+      isExistingUser
+    });
+
+    const msg = {
+      to: email,
+      from: {
+        email: 'crews@journeymanjobs.app',
+        name: 'Journeyman Jobs - IBEW Crews'
+      },
+      subject: `⚡ You're invited to join ${crewName} on Journeyman Jobs`,
+      html: emailTemplate,
+      categories: ['crew-invitation', isExistingUser ? 'existing-user' : 'new-user']
+    };
+
+    await sgMail.send(msg);
+    console.log(`Crew invitation email sent to ${email}`);
+
+  } catch (error) {
+    console.error('Error sending crew invitation email:', error);
+    throw error;
+  }
+}
+
+function createCrewInvitationEmailTemplate({ crewName, inviterName, message, acceptLink, isExistingUser }) {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <body style="font-family: 'Inter', Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 0;">
+      <div style="max-width: 600px; margin: 0 auto; background: white;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%); padding: 32px 24px; text-align: center;">
+          <div style="color: #b45309; font-size: 28px; font-weight: bold; margin-bottom: 8px;">⚡ Journeyman Jobs</div>
+          <div style="color: white; font-size: 18px;">IBEW Crew Invitation</div>
+        </div>
+        
+        <div style="padding: 40px 24px;">
+          <h1 style="color: #1a202c; font-size: 24px; margin: 0 0 20px 0;">You're Invited to Join a Crew!</h1>
+          
+          <p style="color: #4a5568; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+            ${inviterName} has invited you to join <strong style="color: #b45309;">${crewName}</strong> on Journeyman Jobs.
+          </p>
+          
+          ${message ? `
+            <div style="background: #edf2f7; padding: 20px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #b45309;">
+              <p style="margin: 0; color: #2d3748; font-style: italic;">"${message}"</p>
+              <p style="margin: 8px 0 0 0; color: #718096; font-size: 14px;">- ${inviterName}</p>
+            </div>
+          ` : ''}
+          
+          <!-- Benefits -->
+          <div style="margin-bottom: 32px;">
+            <h3 style="color: #1a202c; margin: 0 0 16px 0;">What are IBEW Crews?</h3>
+            <ul style="color: #4a5568; padding-left: 20px; line-height: 1.6;">
+              <li>Collaborate with trusted electrical professionals</li>
+              <li>Share job opportunities within your crew</li>
+              <li>Coordinate group bids and team applications</li>
+              <li>Stay connected for storm work and emergency calls</li>
+              <li>Build your professional network in the brotherhood</li>
+            </ul>
+          </div>
+          
+          <!-- CTA -->
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="${acceptLink}" style="background: linear-gradient(135deg, #b45309 0%, #d69e2e 100%); color: white; padding: 18px 36px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 18px; display: inline-block; box-shadow: 0 4px 16px rgba(180, 83, 9, 0.4);">
+              ${isExistingUser ? '🤝 Accept Invitation' : '⚡ Join Crew & Network'}
+            </a>
+          </div>
+          
+          <div style="text-align: center; color: #718096; font-size: 14px;">
+            <p>${isExistingUser ? 'Click above to join the crew' : 'Joining creates your free account and adds you to the crew'}</p>
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div style="background: #f7fafc; padding: 24px; text-align: center; border-top: 1px solid #e2e8f0;">
+          <div style="color: #718096; font-size: 12px; margin-bottom: 8px;">
+            Journeyman Jobs - IBEW Professional Network
+          </div>
+          <div style="color: #a0aec0; font-size: 10px;">
+            This invitation was sent by ${inviterName}. Questions? Reply to this email.
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+// Export the email function for use in other modules
+module.exports.sendCrewInvitationEmail = sendCrewInvitationEmail;

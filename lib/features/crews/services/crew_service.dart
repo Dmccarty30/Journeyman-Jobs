@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
-import '../../models/crew.dart';
-import '../../models/crew_member.dart';
-import '../../models/crew_enums.dart';
+import '../models/crew.dart';
+import '../models/crew_member.dart';
+import '../models/crew_enums.dart';
 
 /// Service for crew management operations
 /// Handles all CRUD operations for crews, members, and invitations

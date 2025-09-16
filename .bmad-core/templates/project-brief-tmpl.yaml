@@ -3,6 +3,7 @@ template:
   id: project-brief-template-v2
   name: Project Brief
   version: 2.0
+  engine: bmad-core
   output:
     format: markdown
     filename: docs/brief.md
@@ -45,7 +46,7 @@ sections:
       - Primary problem being solved
       - Target market identification
       - Key value proposition
-    template: "{{executive_summary_content}}"
+    template: '{{executive_summary_content}}'
 
   - id: problem-statement
     title: Problem Statement
@@ -55,7 +56,7 @@ sections:
       - Impact of the problem (quantify if possible)
       - Why existing solutions fall short
       - Urgency and importance of solving this now
-    template: "{{detailed_problem_description}}"
+    template: '{{detailed_problem_description}}'
 
   - id: proposed-solution
     title: Proposed Solution
@@ -65,7 +66,7 @@ sections:
       - Key differentiators from existing solutions
       - Why this solution will succeed where others haven't
       - High-level vision for the product
-    template: "{{solution_description}}"
+    template: '{{solution_description}}'
 
   - id: target-users
     title: Target Users
@@ -78,28 +79,29 @@ sections:
     sections:
       - id: primary-segment
         title: "Primary User Segment: {{segment_name}}"
-        template: "{{primary_user_description}}"
+        template: '{{primary_user_description}}'
       - id: secondary-segment
         title: "Secondary User Segment: {{segment_name}}"
         condition: Has secondary user segment
-        template: "{{secondary_user_description}}"
+        template: '{{secondary_user_description}}'
 
   - id: goals-metrics
     title: Goals & Success Metrics
-    instruction: Establish clear objectives and how to measure success. Make goals SMART (Specific, Measurable, Achievable, Relevant, Time-bound)
+    instruction: |
+      Establish clear objectives and how to measure success. Make goals SMART (Specific, Measurable, Achievable, Relevant, Time-bound)
     sections:
       - id: business-objectives
         title: Business Objectives
         type: bullet-list
-        template: "- {{objective_with_metric}}"
+        template: '- {{objective_with_metric}}'
       - id: user-success-metrics
         title: User Success Metrics
         type: bullet-list
-        template: "- {{user_metric}}"
+        template: '- {{user_metric}}'
       - id: kpis
         title: Key Performance Indicators (KPIs)
         type: bullet-list
-        template: "- {{kpi}}: {{definition_and_target}}"
+        template: '- {{kpi}}: {{definition_and_target}}'
 
   - id: mvp-scope
     title: MVP Scope
@@ -108,14 +110,14 @@ sections:
       - id: core-features
         title: Core Features (Must Have)
         type: bullet-list
-        template: "- **{{feature}}:** {{description_and_rationale}}"
+        template: '- **{{feature}}:** {{description_and_rationale}}'
       - id: out-of-scope
         title: Out of Scope for MVP
         type: bullet-list
-        template: "- {{feature_or_capability}}"
+        template: '- {{feature_or_capability}}'
       - id: mvp-success-criteria
         title: MVP Success Criteria
-        template: "{{mvp_success_definition}}"
+        template: '{{mvp_success_definition}}'
 
   - id: post-mvp-vision
     title: Post-MVP Vision
@@ -123,13 +125,13 @@ sections:
     sections:
       - id: phase-2-features
         title: Phase 2 Features
-        template: "{{next_priority_features}}"
+        template: '{{next_priority_features}}'
       - id: long-term-vision
         title: Long-term Vision
-        template: "{{one_two_year_vision}}"
+        template: '{{one_two_year_vision}}'
       - id: expansion-opportunities
         title: Expansion Opportunities
-        template: "{{potential_expansions}}"
+        template: '{{potential_expansions}}'
 
   - id: technical-considerations
     title: Technical Considerations
@@ -170,7 +172,7 @@ sections:
       - id: key-assumptions
         title: Key Assumptions
         type: bullet-list
-        template: "- {{assumption}}"
+        template: '- {{assumption}}'
 
   - id: risks-questions
     title: Risks & Open Questions
@@ -179,15 +181,15 @@ sections:
       - id: key-risks
         title: Key Risks
         type: bullet-list
-        template: "- **{{risk}}:** {{description_and_impact}}"
+        template: '- **{{risk}}:** {{description_and_impact}}'
       - id: open-questions
         title: Open Questions
         type: bullet-list
-        template: "- {{question}}"
+        template: '- {{question}}'
       - id: research-areas
         title: Areas Needing Further Research
         type: bullet-list
-        template: "- {{research_topic}}"
+        template: '- {{research_topic}}'
 
   - id: appendices
     title: Appendices
@@ -204,10 +206,10 @@ sections:
       - id: stakeholder-input
         title: B. Stakeholder Input
         condition: Has stakeholder feedback
-        template: "{{stakeholder_feedback}}"
+        template: '{{stakeholder_feedback}}'
       - id: references
         title: C. References
-        template: "{{relevant_links_and_docs}}"
+        template: '{{relevant_links_and_docs}}'
 
   - id: next-steps
     title: Next Steps
@@ -215,7 +217,7 @@ sections:
       - id: immediate-actions
         title: Immediate Actions
         type: numbered-list
-        template: "{{action_item}}"
+        template: '{{action_item}}'
       - id: pm-handoff
         title: PM Handoff
         content: |

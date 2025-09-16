@@ -196,14 +196,14 @@
 - **Bid System**: Users can bid on jobs through the app
 - **Storm Work**: Emergency restoration jobs get priority highlighting
 - **Union Directory**: 797+ IBEW locals with contact integration
-- **Job Sharing & Viral Growth**: 
+- **Job Sharing & Viral Growth**:
   - Viral job sharing via email, SMS, and in-app messaging
   - Quick signup flow for new users (under 2 minutes)
   - Crew management for group applications and coordination
   - Smart user detection and seamless sharing experience
   - Deep linking integration and push notifications
   - Analytics tracking for viral coefficient and performance
-- **Weather Integration**: 
+- **Weather Integration**:
   - NOAA radar and alerts for storm tracking
   - National Hurricane Center data
   - Storm Prediction Center outlooks
@@ -213,7 +213,7 @@
   - Journeyman Lineman
   - Tree Trimmer
   - Equipment Operator
-  - Inside Journeyman Electrician 
+  - Inside Journeyman Electrician
 - **Construction Types**:
   - Commercial
   - Industrial

@@ -22,7 +22,8 @@
       "Bash(dart analyze:*)",
       "Bash(sed:*)",
       "Bash(dart test:*)",
-      "Read(///**)"
+      "Read(///**)",
+      "Bash(node:*)"
     ],
     "deny": []
   },

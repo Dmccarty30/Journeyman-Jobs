@@ -18,27 +18,32 @@ This is a Flutter application called "Journeyman Jobs" for IBEW electrical worke
 ## Critical Non-Obvious Patterns
 
 ### Firebase Initialization
+
 - Always check `if (Firebase.apps.isEmpty)` before initializing Firebase in main.dart
 - Firestore uses 100MB cache for offline persistence: `cacheSizeBytes: 100 * 1024 * 1024`
 
 ### Design System (MANDATORY)
+
 - **NEVER hardcode values** - Always use `AppTheme` constants from `lib/design_system/app_theme.dart`
 - **JJ-prefixed components only**: Use `JJButton`, `JJCard`, `JJTextField` instead of standard Flutter components
 - **Electrical theme enforcement**: All UI must follow copper (#B45309) and navy (#1A202C) color scheme
 - **Prime Design System**: Reference `.roo/rules/1-prime.md` for complete design guidelines - NO EXCEPTIONS
 
 ### State Management
+
 - App wrapped in `ProviderScope` for Riverpod
 - Main app is `ConsumerWidget` to access providers
 - Use `AppRouter.router` for navigation
 
 ### Testing Structure
+
 - Test files mirror `lib/` structure in `test/` directory
 - Minimum coverage: widget rendering, user interaction, state management, error handling
 
 ## Commands
 
 ### Development
+
 ```bash
 flutter run                    # Run on connected device/emulator
 flutter run --debug            # Debug mode
@@ -47,6 +52,7 @@ flutter run --release          # Release mode
 ```
 
 ### Testing
+
 ```bash
 flutter test                    # Run all tests
 flutter test test/widgets/      # Run widget tests only
@@ -54,6 +60,7 @@ flutter test --coverage         # Generate coverage report
 ```
 
 ### Building
+
 ```bash
 flutter build apk              # Build Android APK
 flutter build ios              # Build iOS app
@@ -61,6 +68,7 @@ flutter build web              # Build web app
 ```
 
 ### Analysis & Linting
+
 ```bash
 flutter analyze                # Static analysis
 flutter format .               # Format code
@@ -69,11 +77,13 @@ flutter format .               # Format code
 ## Code Style Guidelines
 
 ### Imports
+
 - Prefer relative imports within features
 - Absolute imports for cross-feature dependencies
 - Group imports: Flutter, third-party, local
 
 ### Naming Conventions
+
 - Classes: PascalCase
 - Methods/functions: camelCase
 - Variables: camelCase
@@ -81,6 +91,7 @@ flutter format .               # Format code
 - Files: snake_case.dart
 
 ### Error Handling
+
 ```dart
 try {
   // Implementation
@@ -91,6 +102,7 @@ try {
 ```
 
 ### Async Operations
+
 - Always handle loading and error states
 - Use proper error boundaries
 - Show user feedback for operations
@@ -98,11 +110,13 @@ try {
 ## Firebase Integration
 
 ### Collections Structure
+
 - Jobs, Users, Unions, Crews, etc.
 - Use Firestore security rules
 - Implement offline persistence where needed
 
 ### Authentication
+
 - Google Sign-In and Apple Sign-In support
 - Proper permission handling
 - Secure token management
@@ -110,12 +124,14 @@ try {
 ## Weather Integration
 
 ### NOAA Services
+
 - Use official government APIs (no keys needed)
 - `api.weather.gov` for weather data
 - `radar.weather.gov` for radar images
 - Cache data for offline access during storms
 
 ### Location Services
+
 - Request permissions gracefully
 - Use `geolocator` package
 - Respect user privacy
@@ -123,12 +139,14 @@ try {
 ## Job Sharing Features
 
 ### Viral Growth
+
 - Email/SMS sharing with deep linking
 - Quick signup flow (< 2 minutes)
 - Crew management and coordination
 - Analytics tracking for viral coefficient
 
 ### Contact Integration
+
 - `contacts_service` for phone contacts
 - Permission handling
 - Smart user detection
@@ -136,6 +154,7 @@ try {
 ## Union Directory
 
 ### Data Management
+
 - 797+ IBEW locals with contact info
 - Offline caching critical
 - Performance optimization for large lists
@@ -144,12 +163,14 @@ try {
 ## Security & Privacy
 
 ### Data Protection
+
 - Never log PII (ticket numbers, SSN)
 - Encrypt sensitive data
 - Secure Firebase rules
 - Location data never stored without encryption
 
 ### Union Data Sensitivity
+
 - Handle IBEW local information professionally
 - Respect member-only content
 - Proper access controls
@@ -157,17 +178,21 @@ try {
 ## AI Assistant Rules
 
 ### Serena MCP Server (MANDATORY)
+
 For code analysis, debugging, documentation, testing, architecture, and performance tasks:
+
 - Use Serena MCP server tools first
 - Located at `C:\Users\david\Documents\Cline\MCP\serena\`
 - Document when Serena is used or unavailable
 
 ### Task Tracking
+
 - Update `TASK.md` with progress
 - Mark completed tasks with dates
 - Note discovered issues during work
 
 ### Code Quality
+
 - Create widget tests for all new screens
 - Follow electrical theme in all components
 - Use standardized JJ-prefixed components
@@ -176,12 +201,14 @@ For code analysis, debugging, documentation, testing, architecture, and performa
 ## Performance Considerations
 
 ### Mobile Optimization
+
 - Large job lists need virtualization
 - Image caching with `cached_network_image`
 - Efficient state management
 - Battery-conscious location services
 
 ### Offline Capability
+
 - Critical features work offline
 - Firestore persistence enabled
 - Weather data caching
