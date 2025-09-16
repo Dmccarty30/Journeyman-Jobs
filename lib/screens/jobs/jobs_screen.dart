@@ -43,11 +43,9 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    print('JobsScreen: initState called');
     // Manually trigger initial load if not already loading
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!ref.read(jobsProvider).isLoading && ref.read(jobsProvider).jobs.isEmpty) {
-        print('JobsScreen: Triggering initial job load from initState');
         ref.read(jobsProvider.notifier).loadJobs(isRefresh: true);
       }
     });
@@ -385,9 +383,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('JobsScreen: build method called');
     final jobsState = ref.watch(jobsProvider);
-    print('JobsScreen: jobsState isLoading: ${jobsState.isLoading}, jobs count: ${jobsState.jobs.length}, error: ${jobsState.error}');
     
     return Scaffold(
       backgroundColor: AppTheme.offWhite,

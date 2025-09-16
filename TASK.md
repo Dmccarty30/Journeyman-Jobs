@@ -77,7 +77,7 @@
 
 ## Architecture Overview
 
-```
+```dart
 Enhanced Job Card (All Variants)
 ├── Share Button (JJShareButton)
 │   ├── Lightning bolt icon with electrical theme

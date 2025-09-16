@@ -94,13 +94,13 @@ class _JJShareButtonState extends State<JJShareButton>
               borderRadius: BorderRadius.circular(buttonConfig.borderRadius),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.shadowColor.withOpacity(0.2),
+                  color: AppTheme.shadowColor.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
                 if (_isPressed)
                   BoxShadow(
-                    color: AppTheme.accentCopper.withOpacity(0.4),
+                    color: AppTheme.accentCopper.withValues(alpha: 0.4),
                     blurRadius: 12,
                     spreadRadius: 2,
                   ),
@@ -122,7 +122,7 @@ class _JJShareButtonState extends State<JJShareButton>
                         ),
                         child: CustomPaint(
                           painter: CircuitPatternPainter(
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.white.withValues(alpha: 0.1),
                             strokeWidth: 1.0,
                           ),
                         ),
@@ -147,10 +147,10 @@ class _JJShareButtonState extends State<JJShareButton>
                         size: buttonConfig.iconSize,
                         color: buttonConfig.iconColor,
                       )
-                        .animate(trigger: _isPressed)
+                        .animate(target: _isPressed ? 1.0 : 0.0)
                         .shimmer(
                           duration: 400.ms,
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                         )
                         .scale(
                           begin: const Offset(1.0, 1.0),

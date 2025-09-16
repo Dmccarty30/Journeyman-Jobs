@@ -126,14 +126,14 @@ class _JJNotificationCardState extends State<JJNotificationCard>
                       border: Border.all(
                         color: widget.notification.isRead
                             ? AppTheme.borderLight
-                            : AppTheme.accentCopper.withOpacity(0.3),
+                            : AppTheme.accentCopper.withValues(alpha: 0.3),
                         width: widget.notification.isRead
                             ? AppTheme.borderWidthThin
                             : AppTheme.borderWidthMedium,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.shadowColor.withOpacity(
+                          color: AppTheme.shadowColor.withValues(alpha: 
                             widget.notification.isRead ? 0.05 : 0.1,
                           ),
                           blurRadius: widget.notification.isRead ? 4 : 8,
@@ -209,7 +209,7 @@ class _JJNotificationCardState extends State<JJNotificationCard>
         if (widget.showAvatar) ...[
           CircleAvatar(
             radius: 16,
-            backgroundColor: _getTypeColor().withOpacity(0.1),
+            backgroundColor: _getTypeColor().withValues(alpha: 0.1),
             backgroundImage: widget.notification.senderProfileImage != null
                 ? NetworkImage(widget.notification.senderProfileImage!)
                 : null,
@@ -239,7 +239,7 @@ class _JJNotificationCardState extends State<JJNotificationCard>
                       vertical: AppTheme.spacingXxs,
                     ),
                     decoration: BoxDecoration(
-                      color: _getTypeColor().withOpacity(0.1),
+                      color: _getTypeColor().withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                     ),
                     child: Row(
@@ -330,10 +330,10 @@ class _JJNotificationCardState extends State<JJNotificationCard>
           Container(
             padding: const EdgeInsets.all(AppTheme.spacingSm),
             decoration: BoxDecoration(
-              color: AppTheme.accentCopper.withOpacity(0.05),
+              color: AppTheme.accentCopper.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(AppTheme.radiusSm),
               border: Border.all(
-                color: AppTheme.accentCopper.withOpacity(0.2),
+                color: AppTheme.accentCopper.withValues(alpha: 0.2),
                 width: AppTheme.borderWidthThin,
               ),
             ),

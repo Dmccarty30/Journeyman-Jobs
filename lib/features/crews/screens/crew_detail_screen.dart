@@ -531,10 +531,10 @@ class _CrewDetailScreenState extends ConsumerState<CrewDetailScreen>
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: AppTheme.accentCopper.withOpacity(0.2),
+                              color: AppTheme.accentCopper.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: AppTheme.accentCopper.withOpacity(0.3),
+                                color: AppTheme.accentCopper.withValues(alpha: 0.3),
                               ),
                             ),
                             child: Text(
@@ -606,10 +606,10 @@ class _CrewDetailScreenState extends ConsumerState<CrewDetailScreen>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppTheme.warningOrange.withOpacity(0.2),
+                    color: AppTheme.warningOrange.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: AppTheme.warningOrange.withOpacity(0.3),
+                      color: AppTheme.warningOrange.withValues(alpha: 0.3),
                     ),
                   ),
                   child: const Column(
@@ -807,10 +807,10 @@ class _CrewDetailScreenState extends ConsumerState<CrewDetailScreen>
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: AppTheme.accentCopper.withOpacity(0.1),
+                          color: AppTheme.accentCopper.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: AppTheme.accentCopper.withOpacity(0.3),
+                            color: AppTheme.accentCopper.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Text(
@@ -1311,7 +1311,7 @@ class _CrewDetailScreenState extends ConsumerState<CrewDetailScreen>
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppTheme.accentCopper.withOpacity(0.1),
+          color: AppTheme.accentCopper.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
@@ -1365,7 +1365,7 @@ class _CrewDetailScreenState extends ConsumerState<CrewDetailScreen>
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.accentCopper.withOpacity(0.1),
+                color: AppTheme.accentCopper.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(

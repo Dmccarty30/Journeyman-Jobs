@@ -77,7 +77,6 @@ class _QuickSignupScreenState extends State<QuickSignupScreen> {
       }
       
     } catch (e) {
-      print('Error loading data: $e');
     } finally {
       setState(() => _isLoading = false);
     }
@@ -598,7 +597,6 @@ class _QuickSignupScreenState extends State<QuickSignupScreen> {
       });
       
     } catch (e) {
-      print('Error tracking share conversion: $e');
       // Don't fail signup if analytics fail
     }
   }
@@ -622,7 +620,6 @@ class _QuickSignupScreenState extends State<QuickSignupScreen> {
         },
       });
     } catch (e) {
-      print('Error auto-applying to job: $e');
       // Don't fail signup if auto-apply fails
     }
   }

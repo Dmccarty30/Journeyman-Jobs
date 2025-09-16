@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
@@ -24,12 +23,12 @@ class JJContactPicker extends ConsumerStatefulWidget {
   final int maxSelection;
 
   const JJContactPicker({
-    Key? key,
+    super.key,
     required this.onContactsSelected,
     this.existingPlatformUsers,
     this.allowMultiSelect = true,
     this.maxSelection = 10,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<JJContactPicker> createState() => _JJContactPickerState();
@@ -372,7 +371,7 @@ class _JJContactPickerState extends ConsumerState<JJContactPicker> {
 
   /// Build loading view
   Widget _buildLoadingView() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -486,7 +485,7 @@ class _JJContactPickerState extends ConsumerState<JJContactPicker> {
   /// Build contact list item
   Widget _buildContactItem(Contact contact) {
     final isSelected = _selectedContacts.contains(contact);
-    final isExistingUser = _isExistingPlatformUser(contact);
+    _isExistingPlatformUser(contact);
     final canSelect = widget.allowMultiSelect 
         ? _selectedContacts.length < widget.maxSelection || isSelected
         : true;

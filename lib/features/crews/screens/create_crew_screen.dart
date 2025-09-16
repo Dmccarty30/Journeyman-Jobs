@@ -91,7 +91,7 @@ class _CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
       ),
       backgroundColor: AppTheme.primaryNavy,
       elevation: 2,
-      shadowColor: AppTheme.shadowColor.withOpacity(0.2),
+      shadowColor: AppTheme.shadowColor.withValues(alpha: 0.2),
       iconTheme: const IconThemeData(color: AppTheme.white),
       actions: [
         TextButton(
@@ -143,7 +143,7 @@ class _CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
   Widget _buildCrewBasicsSection() {
     return Card(
       elevation: 2,
-      shadowColor: AppTheme.shadowColor.withOpacity(0.1),
+      shadowColor: AppTheme.shadowColor.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -172,7 +172,7 @@ class _CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
   Widget _buildIBEWSpecificationsSection() {
     return Card(
       elevation: 2,
-      shadowColor: AppTheme.shadowColor.withOpacity(0.1),
+      shadowColor: AppTheme.shadowColor.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -193,7 +193,7 @@ class _CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
   Widget _buildLocationAndAvailabilitySection() {
     return Card(
       elevation: 2,
-      shadowColor: AppTheme.shadowColor.withOpacity(0.1),
+      shadowColor: AppTheme.shadowColor.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -216,7 +216,7 @@ class _CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
   Widget _buildRatesAndRequirementsSection() {
     return Card(
       elevation: 2,
-      shadowColor: AppTheme.shadowColor.withOpacity(0.1),
+      shadowColor: AppTheme.shadowColor.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -241,7 +241,7 @@ class _CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
   Widget _buildPrivacyAndPermissionsSection() {
     return Card(
       elevation: 2,
-      shadowColor: AppTheme.shadowColor.withOpacity(0.1),
+      shadowColor: AppTheme.shadowColor.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -263,7 +263,7 @@ class _CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppTheme.accentCopper.withOpacity(0.1),
+            color: AppTheme.accentCopper.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -417,7 +417,7 @@ class _CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
                     }
                   });
                 },
-                selectedColor: AppTheme.accentCopper.withOpacity(0.2),
+                selectedColor: AppTheme.accentCopper.withValues(alpha: 0.2),
                 checkmarkColor: AppTheme.accentCopper,
                 side: BorderSide(
                   color: isSelected ? AppTheme.accentCopper : AppTheme.lightGray,
@@ -481,7 +481,7 @@ class _CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
                     }
                   });
                 },
-                selectedColor: AppTheme.accentCopper.withOpacity(0.2),
+                selectedColor: AppTheme.accentCopper.withValues(alpha: 0.2),
                 checkmarkColor: AppTheme.accentCopper,
                 side: BorderSide(
                   color: isSelected ? AppTheme.accentCopper : AppTheme.lightGray,

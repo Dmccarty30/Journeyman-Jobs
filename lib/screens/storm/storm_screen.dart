@@ -205,7 +205,7 @@ class _StormScreenState extends State<StormScreen> {
       final data = await _rosterService.loadRosterData();
       if (mounted) {
         setState(() {
-          _rosterSignups = data;
+          _rosterSignups = data.cast<RosterContractor>();
           _isLoadingRoster = false;
         });
       }

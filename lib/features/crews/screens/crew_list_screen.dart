@@ -325,7 +325,7 @@ class _CrewListScreenState extends ConsumerState<CrewListScreen>
         color: AppTheme.lightGray,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppTheme.mediumGray.withOpacity(0.3),
+          color: AppTheme.mediumGray.withValues(alpha: 0.3),
         ),
       ),
       child: TextField(
@@ -371,7 +371,7 @@ class _CrewListScreenState extends ConsumerState<CrewListScreen>
             FilterChip(
               label: Text(_selectedClassification!),
               selected: true,
-              selectedColor: AppTheme.accentCopper.withOpacity(0.2),
+              selectedColor: AppTheme.accentCopper.withValues(alpha: 0.2),
               checkmarkColor: AppTheme.accentCopper,
               onSelected: (_) {
                 setState(() {
@@ -384,7 +384,7 @@ class _CrewListScreenState extends ConsumerState<CrewListScreen>
             FilterChip(
               label: const Text('Storm Work Only'),
               selected: true,
-              selectedColor: AppTheme.accentCopper.withOpacity(0.2),
+              selectedColor: AppTheme.accentCopper.withValues(alpha: 0.2),
               checkmarkColor: AppTheme.accentCopper,
               avatar: const Icon(Icons.flash_on, size: 16),
               onSelected: (_) {
@@ -450,7 +450,7 @@ class _CrewListScreenState extends ConsumerState<CrewListScreen>
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppTheme.accentCopper.withOpacity(0.1),
+                color: AppTheme.accentCopper.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -529,7 +529,7 @@ class _CrewListScreenState extends ConsumerState<CrewListScreen>
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.accentCopper.withOpacity(0.1),
+                color: AppTheme.accentCopper.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -569,7 +569,7 @@ class _CrewListScreenState extends ConsumerState<CrewListScreen>
                 'Perfect for storm work, job coordination, and union local collaboration',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: AppTheme.mediumGray.withOpacity(0.8),
+                  color: AppTheme.mediumGray.withValues(alpha: 0.8),
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
                 ),
@@ -682,7 +682,7 @@ class _CrewListScreenState extends ConsumerState<CrewListScreen>
                 return FilterChip(
                   label: Text(classification),
                   selected: _selectedClassification == classification,
-                  selectedColor: AppTheme.accentCopper.withOpacity(0.2),
+                  selectedColor: AppTheme.accentCopper.withValues(alpha: 0.2),
                   checkmarkColor: AppTheme.accentCopper,
                   onSelected: (selected) {
                     setState(() {

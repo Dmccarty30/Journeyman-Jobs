@@ -193,7 +193,7 @@ class _CrewCommunicationScreenState extends ConsumerState<CrewCommunicationScree
               Text(
                 isOnline ? 'Online' : 'Offline',
                 style: AppTheme.labelSmall.copyWith(
-                  color: AppTheme.white.withOpacity(0.8),
+                  color: AppTheme.white.withValues(alpha: 0.8),
                 ),
               ),
               if (isLoading) ...[
@@ -345,7 +345,7 @@ class _CrewCommunicationScreenState extends ConsumerState<CrewCommunicationScree
             Icon(
               Icons.error_outline,
               size: 64,
-              color: AppTheme.errorRed.withOpacity(0.5),
+              color: AppTheme.errorRed.withValues(alpha: 0.5),
             ),
             const SizedBox(height: AppTheme.spacingMd),
             Text(
@@ -390,7 +390,7 @@ class _CrewCommunicationScreenState extends ConsumerState<CrewCommunicationScree
             Icon(
               Icons.chat_bubble_outline,
               size: 64,
-              color: AppTheme.accentCopper.withOpacity(0.5),
+              color: AppTheme.accentCopper.withValues(alpha: 0.5),
             ),
             const SizedBox(height: AppTheme.spacingMd),
             Text(
@@ -420,7 +420,7 @@ class _CrewCommunicationScreenState extends ConsumerState<CrewCommunicationScree
       margin: const EdgeInsets.all(AppTheme.spacingSm),
       padding: const EdgeInsets.all(AppTheme.spacingSm),
       decoration: BoxDecoration(
-        color: AppTheme.lightGray.withOpacity(0.5),
+        color: AppTheme.lightGray.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
         border: Border(
           left: BorderSide(
@@ -499,7 +499,7 @@ class _CrewCommunicationScreenState extends ConsumerState<CrewCommunicationScree
                     width: 6,
                     height: 6,
                     decoration: BoxDecoration(
-                      color: AppTheme.accentCopper.withOpacity(
+                      color: AppTheme.accentCopper.withValues(alpha: 
                         0.5 + (0.5 * _typingAnimation.value),
                       ),
                       shape: BoxShape.circle,
@@ -604,7 +604,7 @@ class _CrewCommunicationScreenState extends ConsumerState<CrewCommunicationScree
         horizontal: AppTheme.spacingMd,
         vertical: AppTheme.spacingXs,
       ),
-      color: color.withOpacity(0.1),
+      color: color.withValues(alpha: 0.1),
       child: Row(
         children: [
           Icon(icon, size: 16, color: color),
@@ -691,7 +691,7 @@ class _CrewCommunicationScreenState extends ConsumerState<CrewCommunicationScree
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: AppTheme.accentCopper.withOpacity(0.1),
+          color: AppTheme.accentCopper.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: const Icon(
@@ -738,7 +738,7 @@ class _CrewCommunicationScreenState extends ConsumerState<CrewCommunicationScree
   Widget _buildMessageField() {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.lightGray.withOpacity(0.3),
+        color: AppTheme.lightGray.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: AppTheme.lightGray,
@@ -846,10 +846,10 @@ class _CrewCommunicationScreenState extends ConsumerState<CrewCommunicationScree
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingXs),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(6),
             border: Border.all(
-              color: color.withOpacity(0.3),
+              color: color.withValues(alpha: 0.3),
               width: AppTheme.borderWidthThin,
             ),
           ),

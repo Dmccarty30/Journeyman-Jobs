@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_to_list_in_spreads
+
 import 'package:flutter/material.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../models/job_model.dart';
@@ -9,7 +11,7 @@ import '../models/share_notification_model.dart';
 /// 
 /// For development and testing purposes
 class JJShareWidgetsDemo extends StatefulWidget {
-  const JJShareWidgetsDemo({Key? key}) : super(key: key);
+  const JJShareWidgetsDemo({super.key});
 
   @override
   State<JJShareWidgetsDemo> createState() => _JJShareWidgetsDemoState();
@@ -34,27 +36,86 @@ class _JJShareWidgetsDemoState extends State<JJShareWidgetsDemo> {
     datePosted: DateTime.now().subtract(const Duration(days: 2)).toString(),
     typeOfWork: 'Commercial',
   );
-
-  final _mockContacts = [
-    UserModel(
-      id: 'user-1',
-      name: 'Mike Johnson',
-      email: 'mike.johnson@ibew.org',
-      profileImageUrl: null,
-    ),
-    UserModel(
-      id: 'user-2',
-      name: 'Sarah Wilson',
-      email: 'sarah.wilson@ibew.org',
-      profileImageUrl: null,
-    ),
-    UserModel(
-      id: 'user-3',
-      name: 'David Chen',
-      email: 'david.chen@ibew.org',
-      profileImageUrl: null,
-    ),
-  ];
+final _mockContacts = [
+  UserModel(
+    uid: 'user-1',
+    firstName: 'Mike',
+    lastName: 'Johnson',
+    email: 'mike.johnson@ibew.org',
+    phoneNumber: '555-0101',
+    address1: '123 Main St',
+    city: 'Boston',
+    state: 'MA',
+    zipcode: '02101',
+    homeLocal: '103',
+    ticketNumber: 'T12345',
+    classification: 'Journeyman',
+    isWorking: true,
+    constructionTypes: ['Commercial', 'Residential'],
+    networkWithOthers: true,
+    careerAdvancements: true,
+    betterBenefits: true,
+    higherPayRate: true,
+    learnNewSkill: true,
+    travelToNewLocation: true,
+    findLongTermWork: true,
+    onboardingStatus: 'completed',
+    createdTime: DateTime.now(),
+    photoUrl: null,
+  ), // Closing parenthesis for the first UserModel
+  UserModel(
+    uid: 'user-2',
+    firstName: 'Sarah',
+    lastName: 'Wilson',
+    email: 'sarah.wilson@ibew.org',
+    phoneNumber: '555-0102',
+    address1: '456 Oak Ave',
+    city: 'Boston',
+    state: 'MA',
+    zipcode: '02102',
+    homeLocal: '103',
+    ticketNumber: 'T67890',
+    classification: 'Journeyman',
+    isWorking: true,
+    constructionTypes: ['Industrial', 'Commercial'],
+    networkWithOthers: true,
+    careerAdvancements: true,
+    betterBenefits: true,
+    higherPayRate: true,
+    learnNewSkill: true,
+    travelToNewLocation: true,
+    findLongTermWork: true,
+    onboardingStatus: 'completed',
+    createdTime: DateTime.now(),
+    photoUrl: null,
+  ),
+  UserModel(
+    uid: 'user-3',
+    firstName: 'David',
+    lastName: 'Chen',
+    email: 'david.chen@ibew.org',
+    phoneNumber: '555-0103',
+    address1: '789 Pine St',
+    city: 'Boston',
+    state: 'MA',
+    zipcode: '02103',
+    homeLocal: '103',
+    ticketNumber: 'T11111',
+    classification: 'Journeyman',
+    isWorking: false,
+    constructionTypes: ['Residential', 'Industrial'],
+    networkWithOthers: true,
+    careerAdvancements: true,
+    betterBenefits: true,
+    higherPayRate: true,
+    learnNewSkill: true,
+    travelToNewLocation: true,
+    findLongTermWork: true,
+    onboardingStatus: 'completed',
+    createdTime: DateTime.now(),
+    photoUrl: null,
+  ),
+];
 
   final _mockNotifications = [
     ShareNotificationModel(
@@ -250,7 +311,7 @@ class _JJShareWidgetsDemoState extends State<JJShareWidgetsDemo> {
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.shadowColor.withOpacity(0.1),
+            color: AppTheme.shadowColor.withValues(alpha:0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),

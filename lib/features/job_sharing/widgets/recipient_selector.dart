@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../models/user_model.dart';
+import '../models/user_model_extensions.dart';
 
 /// Widget for selecting and adding recipients for job sharing
 /// 
@@ -25,12 +26,12 @@ class JJRecipientSelector extends StatefulWidget {
   final int maxRecipients;
 
   const JJRecipientSelector({
-    Key? key,
+    super.key,
     required this.contacts,
     required this.selectedRecipients,
     required this.onRecipientsChanged,
     this.maxRecipients = 10,
-  }) : super(key: key);
+  });
 
   @override
   State<JJRecipientSelector> createState() => _JJRecipientSelectorState();
@@ -43,25 +44,24 @@ class _JJRecipientSelectorState extends State<JJRecipientSelector>
   
   List<UserModel> _filteredContacts = [];
   bool _showSearchResults = false;
-  late AnimationController _searchController;
+  late AnimationController _animationController;
   late Animation<double> _searchAnimation;
 
   @override
   void initState() {
     super.initState();
     _filteredContacts = widget.contacts;
-    
-    _searchController = AnimationController(
+    _animationController = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
     _searchAnimation = CurvedAnimation(
-      parent: _searchController,
+      parent: _animationController,
       curve: Curves.easeOut,
     );
     
     // Listen for search changes
-    this._searchController.addListener(_onSearchChanged);
+    _searchController.addListener(_onSearchChanged);
     _searchFocus.addListener(_onFocusChanged);
   }
 
@@ -69,7 +69,7 @@ class _JJRecipientSelectorState extends State<JJRecipientSelector>
   void dispose() {
     _searchController.dispose();
     _searchFocus.dispose();
-    this._searchController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -81,7 +81,7 @@ class _JJRecipientSelectorState extends State<JJRecipientSelector>
       } else {
         _filteredContacts = widget.contacts.where((contact) {
           return contact.name.toLowerCase().contains(query) ||
-                 (contact.email?.toLowerCase().contains(query) ?? false);
+                 (contact.email.toLowerCase().contains(query));
         }).toList();
       }
     });
@@ -91,11 +91,10 @@ class _JJRecipientSelectorState extends State<JJRecipientSelector>
     setState(() {
       _showSearchResults = _searchFocus.hasFocus;
     });
-    
     if (_searchFocus.hasFocus) {
-      _searchController.forward();
+      _animationController.forward();
     } else {
-      _searchController.reverse();
+      _animationController.reverse();
     }
   }
 
@@ -176,7 +175,7 @@ class _JJRecipientSelectorState extends State<JJRecipientSelector>
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.accentCopper.withOpacity(0.2),
+            color: AppTheme.accentCopper.withValues(alpha: 0.2),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -188,11 +187,11 @@ class _JJRecipientSelectorState extends State<JJRecipientSelector>
           // Avatar
           CircleAvatar(
             radius: 12,
-            backgroundColor: Colors.white.withOpacity(0.2),
-            backgroundImage: recipient.profileImageUrl != null
-                ? NetworkImage(recipient.profileImageUrl!)
+            backgroundColor: Colors.white.withValues(alpha: 0.2),
+            backgroundImage: recipient.profileImageUrl.isNotEmpty
+                ? NetworkImage(recipient.profileImageUrl)
                 : null,
-            child: recipient.profileImageUrl == null
+            child: recipient.profileImageUrl.isEmpty
                 ? Text(
                     recipient.name.isNotEmpty
                         ? recipient.name[0].toUpperCase()
@@ -228,7 +227,7 @@ class _JJRecipientSelectorState extends State<JJRecipientSelector>
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(AppTheme.radiusSm),
               ),
               child: const Icon(
@@ -330,7 +329,7 @@ class _JJRecipientSelectorState extends State<JJRecipientSelector>
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.shadowColor.withOpacity(0.1),
+                    color: AppTheme.shadowColor.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -365,12 +364,12 @@ class _JJRecipientSelectorState extends State<JJRecipientSelector>
             padding: const EdgeInsets.all(AppTheme.spacingMd),
             decoration: BoxDecoration(
               color: isSelected
-                  ? AppTheme.accentCopper.withOpacity(0.1)
+                  ? AppTheme.accentCopper.withValues(alpha: 0.1)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(AppTheme.radiusSm),
               border: isSelected
                   ? Border.all(
-                      color: AppTheme.accentCopper.withOpacity(0.3),
+                      color: AppTheme.accentCopper.withValues(alpha: 0.3),
                       width: AppTheme.borderWidthThin,
                     )
                   : null,
@@ -380,11 +379,11 @@ class _JJRecipientSelectorState extends State<JJRecipientSelector>
                 // Avatar
                 CircleAvatar(
                   radius: 18,
-                  backgroundColor: AppTheme.accentCopper.withOpacity(0.1),
-                  backgroundImage: contact.profileImageUrl != null
-                      ? NetworkImage(contact.profileImageUrl!)
+                  backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.1),
+                  backgroundImage: contact.profileImageUrl.isNotEmpty
+                      ? NetworkImage(contact.profileImageUrl)
                       : null,
-                  child: contact.profileImageUrl == null
+                  child: contact.profileImageUrl.isEmpty
                       ? Text(
                           contact.name.isNotEmpty
                               ? contact.name[0].toUpperCase()
@@ -415,17 +414,17 @@ class _JJRecipientSelectorState extends State<JJRecipientSelector>
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      if (contact.email != null) ...[
-                        const SizedBox(height: AppTheme.spacingXxs),
-                        Text(
-                          contact.email!,
-                          style: AppTheme.bodySmall.copyWith(
-                            color: AppTheme.textSecondary,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      ...[
+                      const SizedBox(height: AppTheme.spacingXxs),
+                      Text(
+                        contact.email,
+                        style: AppTheme.bodySmall.copyWith(
+                          color: AppTheme.textSecondary,
                         ),
-                      ],
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                     ],
                   ),
                 ),

@@ -5,10 +5,7 @@ import 'package:journeyman_jobs/design_system/components/reusable_components.dar
 import 'package:journeyman_jobs/models/storm_roster_signup.dart' show UnknownSignUp, MixedSignUp, RosterContractor, SignUpInfo, UrlSignUp, TextSignUp, PhoneSignUp, EmailSignUp;
 import 'package:journeyman_jobs/services/roster_data_service.dart' show RosterDataService;
 import 'package:url_launcher/url_launcher.dart';
-// For CSV parsing
-import '..\lib/models/storm_roster_signup.dart'; // Import the renamed model
-import '../services/roster_data_service.dart'; // Import the data service
-import '../design_system/app_theme.dart'; // Assuming AppTheme is available for styling
+
 
 class RosterSignupCarousel extends StatefulWidget {
   const RosterSignupCarousel({super.key});

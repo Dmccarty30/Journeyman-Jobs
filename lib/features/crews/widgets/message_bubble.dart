@@ -202,10 +202,10 @@ class _MessageBubbleState extends State<MessageBubble>
             vertical: AppTheme.spacingSm,
           ),
           decoration: BoxDecoration(
-            color: AppTheme.lightGray.withOpacity(0.3),
+            color: AppTheme.lightGray.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: AppTheme.primaryNavy.withOpacity(0.1),
+              color: AppTheme.primaryNavy.withValues(alpha: 0.1),
               width: 1,
             ),
           ),
@@ -284,10 +284,10 @@ class _MessageBubbleState extends State<MessageBubble>
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: roleColor.withOpacity(0.1),
+        color: roleColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: roleColor.withOpacity(0.3),
+          color: roleColor.withValues(alpha: 0.3),
           width: 0.5,
         ),
       ),
@@ -320,7 +320,7 @@ class _MessageBubbleState extends State<MessageBubble>
         ) : null,
         boxShadow: [
           BoxShadow(
-            color: AppTheme.shadowColor.withOpacity(0.1),
+            color: AppTheme.shadowColor.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -349,8 +349,8 @@ class _MessageBubbleState extends State<MessageBubble>
       ),
       decoration: BoxDecoration(
         color: isEmergency 
-            ? AppTheme.errorRed.withOpacity(0.1)
-            : AppTheme.warningOrange.withOpacity(0.1),
+            ? AppTheme.errorRed.withValues(alpha: 0.1)
+            : AppTheme.warningOrange.withValues(alpha: 0.1),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(18),
           topRight: Radius.circular(18),
@@ -408,7 +408,7 @@ class _MessageBubbleState extends State<MessageBubble>
         'edited',
         style: AppTheme.labelSmall.copyWith(
           color: widget.isCurrentUser 
-              ? AppTheme.white.withOpacity(0.7)
+              ? AppTheme.white.withValues(alpha: 0.7)
               : AppTheme.textSecondary,
           fontStyle: FontStyle.italic,
         ),
@@ -469,7 +469,7 @@ class _MessageBubbleState extends State<MessageBubble>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppTheme.lightGray.withOpacity(0.3),
+          color: AppTheme.lightGray.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -497,7 +497,7 @@ class _MessageBubbleState extends State<MessageBubble>
               child: Icon(
                 Icons.image_not_supported,
                 color: widget.isCurrentUser 
-                    ? AppTheme.white.withOpacity(0.7)
+                    ? AppTheme.white.withValues(alpha: 0.7)
                     : AppTheme.textSecondary,
               ),
             );
@@ -512,11 +512,11 @@ class _MessageBubbleState extends State<MessageBubble>
       padding: const EdgeInsets.all(AppTheme.spacingSm),
       decoration: BoxDecoration(
         color: widget.isCurrentUser 
-            ? AppTheme.white.withOpacity(0.1)
-            : AppTheme.lightGray.withOpacity(0.3),
+            ? AppTheme.white.withValues(alpha: 0.1)
+            : AppTheme.lightGray.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppTheme.lightGray.withOpacity(0.3),
+          color: AppTheme.lightGray.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -547,7 +547,7 @@ class _MessageBubbleState extends State<MessageBubble>
                   _formatFileSize(attachment.sizeBytes),
                   style: AppTheme.labelSmall.copyWith(
                     color: widget.isCurrentUser 
-                        ? AppTheme.white.withOpacity(0.7)
+                        ? AppTheme.white.withValues(alpha: 0.7)
                         : AppTheme.textSecondary,
                   ),
                 ),
@@ -557,7 +557,7 @@ class _MessageBubbleState extends State<MessageBubble>
           Icon(
             Icons.download,
             color: widget.isCurrentUser 
-                ? AppTheme.white.withOpacity(0.7)
+                ? AppTheme.white.withValues(alpha: 0.7)
                 : AppTheme.textSecondary,
             size: 20,
           ),
@@ -571,11 +571,11 @@ class _MessageBubbleState extends State<MessageBubble>
       padding: const EdgeInsets.all(AppTheme.spacingSm),
       decoration: BoxDecoration(
         color: widget.isCurrentUser 
-            ? AppTheme.white.withOpacity(0.1)
-            : AppTheme.lightGray.withOpacity(0.3),
+            ? AppTheme.white.withValues(alpha: 0.1)
+            : AppTheme.lightGray.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppTheme.lightGray.withOpacity(0.3),
+          color: AppTheme.lightGray.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -605,7 +605,7 @@ class _MessageBubbleState extends State<MessageBubble>
                     attachment.description!,
                     style: AppTheme.labelSmall.copyWith(
                       color: widget.isCurrentUser 
-                          ? AppTheme.white.withOpacity(0.7)
+                          ? AppTheme.white.withValues(alpha: 0.7)
                           : AppTheme.textSecondary,
                     ),
                   ),
@@ -615,7 +615,7 @@ class _MessageBubbleState extends State<MessageBubble>
           Icon(
             Icons.open_in_new,
             color: widget.isCurrentUser 
-                ? AppTheme.white.withOpacity(0.7)
+                ? AppTheme.white.withValues(alpha: 0.7)
                 : AppTheme.textSecondary,
             size: 20,
           ),
@@ -629,11 +629,11 @@ class _MessageBubbleState extends State<MessageBubble>
       padding: const EdgeInsets.all(AppTheme.spacingSm),
       decoration: BoxDecoration(
         color: widget.isCurrentUser 
-            ? AppTheme.white.withOpacity(0.1)
-            : AppTheme.lightGray.withOpacity(0.3),
+            ? AppTheme.white.withValues(alpha: 0.1)
+            : AppTheme.lightGray.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppTheme.accentCopper.withOpacity(0.3),
+          color: AppTheme.accentCopper.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -664,7 +664,7 @@ class _MessageBubbleState extends State<MessageBubble>
                   'Electrical Schematic - ${_formatFileSize(attachment.sizeBytes)}',
                   style: AppTheme.labelSmall.copyWith(
                     color: widget.isCurrentUser 
-                        ? AppTheme.white.withOpacity(0.7)
+                        ? AppTheme.white.withValues(alpha: 0.7)
                         : AppTheme.textSecondary,
                   ),
                 ),
@@ -674,7 +674,7 @@ class _MessageBubbleState extends State<MessageBubble>
           Icon(
             Icons.open_in_new,
             color: widget.isCurrentUser 
-                ? AppTheme.white.withOpacity(0.7)
+                ? AppTheme.white.withValues(alpha: 0.7)
                 : AppTheme.textSecondary,
             size: 20,
           ),
@@ -688,11 +688,11 @@ class _MessageBubbleState extends State<MessageBubble>
       padding: const EdgeInsets.all(AppTheme.spacingSm),
       decoration: BoxDecoration(
         color: widget.isCurrentUser 
-            ? AppTheme.white.withOpacity(0.1)
-            : AppTheme.lightGray.withOpacity(0.3),
+            ? AppTheme.white.withValues(alpha: 0.1)
+            : AppTheme.lightGray.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppTheme.lightGray.withOpacity(0.3),
+          color: AppTheme.lightGray.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -732,8 +732,8 @@ class _MessageBubbleState extends State<MessageBubble>
       padding: const EdgeInsets.all(AppTheme.spacingSm),
       decoration: BoxDecoration(
         color: widget.isCurrentUser 
-            ? AppTheme.white.withOpacity(0.1)
-            : AppTheme.lightGray.withOpacity(0.3),
+            ? AppTheme.white.withValues(alpha: 0.1)
+            : AppTheme.lightGray.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(6),
         border: Border(
           left: BorderSide(
@@ -748,7 +748,7 @@ class _MessageBubbleState extends State<MessageBubble>
             Icons.reply,
             size: 16,
             color: widget.isCurrentUser 
-                ? AppTheme.white.withOpacity(0.7)
+                ? AppTheme.white.withValues(alpha: 0.7)
                 : AppTheme.textSecondary,
           ),
           const SizedBox(width: AppTheme.spacingXs),
@@ -756,7 +756,7 @@ class _MessageBubbleState extends State<MessageBubble>
             'Replying to message',
             style: AppTheme.labelSmall.copyWith(
               color: widget.isCurrentUser 
-                  ? AppTheme.white.withOpacity(0.7)
+                  ? AppTheme.white.withValues(alpha: 0.7)
                   : AppTheme.textSecondary,
               fontStyle: FontStyle.italic,
             ),
@@ -781,7 +781,7 @@ class _MessageBubbleState extends State<MessageBubble>
               Icons.push_pin,
               size: 12,
               color: widget.isCurrentUser 
-                  ? AppTheme.white.withOpacity(0.7)
+                  ? AppTheme.white.withValues(alpha: 0.7)
                   : AppTheme.textSecondary,
             ),
             const SizedBox(width: AppTheme.spacingXs),
@@ -804,14 +804,14 @@ class _MessageBubbleState extends State<MessageBubble>
           size: 14,
           color: hasBeenRead 
               ? AppTheme.successGreen 
-              : AppTheme.white.withOpacity(0.7),
+              : AppTheme.white.withValues(alpha: 0.7),
         ),
         if (readCount > 2) ...[
           const SizedBox(width: AppTheme.spacingXxs),
           Text(
             '$readCount',
             style: AppTheme.labelSmall.copyWith(
-              color: AppTheme.white.withOpacity(0.7),
+              color: AppTheme.white.withValues(alpha: 0.7),
               fontSize: 10,
             ),
           ),
@@ -1005,7 +1005,7 @@ class _MessageBubbleState extends State<MessageBubble>
       return LinearGradient(
         colors: [
           AppTheme.errorRed,
-          AppTheme.errorRed.withOpacity(0.8),
+          AppTheme.errorRed.withValues(alpha: 0.8),
         ],
       );
     }

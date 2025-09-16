@@ -262,7 +262,6 @@ class _ShareOptionsBottomSheet extends StatelessWidget {
 
   Future<void> _shareViaLink(BuildContext context) async {
     // Generate and copy share link
-    final shareLink = 'https://journeymanjobs.app/job/$jobId';
     
     // Copy to clipboard (you'd need to add clipboard dependency)
     // await Clipboard.setData(ClipboardData(text: shareLink));
@@ -276,9 +275,9 @@ class StormRosterContactSelection extends ConsumerStatefulWidget {
   final String stormEventId;
 
   const StormRosterContactSelection({
-    Key? key,
+    super.key,
     required this.stormEventId,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<StormRosterContactSelection> createState() => _StormRosterContactSelectionState();

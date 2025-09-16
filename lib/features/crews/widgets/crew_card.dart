@@ -164,16 +164,16 @@ class _CrewCardState extends State<CrewCard>
 
   LinearGradient _buildCardGradient() {
     final baseColor = _isPressed 
-        ? AppTheme.primaryNavy.withOpacity(0.95)
-        : AppTheme.primaryNavy.withOpacity(0.9);
+        ? AppTheme.primaryNavy.withValues(alpha: 0.95)
+        : AppTheme.primaryNavy.withValues(alpha: 0.9);
     
     return LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
         baseColor,
-        baseColor.withOpacity(0.8),
-        AppTheme.primaryNavy.withOpacity(0.85),
+        baseColor.withValues(alpha: 0.8),
+        AppTheme.primaryNavy.withValues(alpha: 0.85),
       ],
     );
   }
@@ -192,7 +192,7 @@ class _CrewCardState extends State<CrewCard>
     return Positioned.fill(
       child: CustomPaint(
         painter: CircuitPatternPainter(
-          color: AppTheme.accentCopper.withOpacity(0.1),
+          color: AppTheme.accentCopper.withValues(alpha: 0.1),
           strokeWidth: 1,
           spacing: 40,
         ),
@@ -252,7 +252,7 @@ class _CrewCardState extends State<CrewCard>
                   children: [
                     Icon(
                       Icons.location_on,
-                      color: AppTheme.accentCopper.withOpacity(0.8),
+                      color: AppTheme.accentCopper.withValues(alpha: 0.8),
                       size: 14,
                     ),
                     const SizedBox(width: 4),
@@ -319,7 +319,7 @@ class _CrewCardState extends State<CrewCard>
               Text(
                 'Created by ${_getCreatorName()}',
                 style: AppTheme.bodySmall.copyWith(
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
               ),
             ],
@@ -353,8 +353,8 @@ class _CrewCardState extends State<CrewCard>
                   border: Border.all(color: AppTheme.accentCopper, width: 2),
                   gradient: LinearGradient(
                     colors: [
-                      AppTheme.accentCopper.withOpacity(0.8),
-                      AppTheme.accentCopper.withOpacity(0.6),
+                      AppTheme.accentCopper.withValues(alpha: 0.8),
+                      AppTheme.accentCopper.withValues(alpha: 0.6),
                     ],
                   ),
                 ),
@@ -400,8 +400,8 @@ class _CrewCardState extends State<CrewCard>
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: isActive 
-            ? const Color(0xFF10B981).withOpacity(0.2)
-            : Colors.grey.withOpacity(0.2),
+            ? const Color(0xFF10B981).withValues(alpha: 0.2)
+            : Colors.grey.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isActive 
@@ -456,7 +456,7 @@ class _CrewCardState extends State<CrewCard>
         Text(
           _formatLastActivity(widget.crew.lastActivityAt ?? widget.crew.updatedAt),
           style: AppTheme.bodySmall.copyWith(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
           ),
         ),
       ],
@@ -473,7 +473,7 @@ class _CrewCardState extends State<CrewCard>
       children: [
         Icon(
           icon,
-          color: AppTheme.accentCopper.withOpacity(0.8),
+          color: AppTheme.accentCopper.withValues(alpha: 0.8),
           size: 16,
         ),
         const SizedBox(width: 4),
@@ -490,7 +490,7 @@ class _CrewCardState extends State<CrewCard>
             Text(
               label,
               style: AppTheme.labelSmall.copyWith(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
               ),
             ),
           ],
@@ -516,9 +516,9 @@ class _CrewCardState extends State<CrewCard>
               fontWeight: FontWeight.w500,
             ),
           ),
-          backgroundColor: AppTheme.accentCopper.withOpacity(0.2),
+          backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.2),
           side: BorderSide(
-            color: AppTheme.accentCopper.withOpacity(0.5),
+            color: AppTheme.accentCopper.withValues(alpha: 0.5),
             width: 1,
           ),
           padding: EdgeInsets.zero,
@@ -575,7 +575,7 @@ class _CrewCardState extends State<CrewCard>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: statusColor.withOpacity(0.9),
+          color: statusColor.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: statusColor,

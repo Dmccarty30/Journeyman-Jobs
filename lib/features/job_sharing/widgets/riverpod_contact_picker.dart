@@ -257,7 +257,7 @@ class _JJRiverpodContactPickerState extends ConsumerState<JJRiverpodContactPicke
 
   /// Build loading view
   Widget _buildLoadingView() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

@@ -171,14 +171,14 @@ class _JobNotificationCardState extends ConsumerState<JobNotificationCard>
     if (widget.notification.isExpired) {
       return BoxDecoration(
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        color: AppTheme.lightGray.withOpacity(0.5),
+        color: AppTheme.lightGray.withValues(alpha: 0.5),
       );
     } else if (widget.notification.isPriority) {
       return BoxDecoration(
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         gradient: LinearGradient(
           colors: [
-            AppTheme.errorRed.withOpacity(0.1),
+            AppTheme.errorRed.withValues(alpha: 0.1),
             AppTheme.white,
           ],
           begin: Alignment.topLeft,
@@ -198,7 +198,7 @@ class _JobNotificationCardState extends ConsumerState<JobNotificationCard>
       padding: const EdgeInsets.all(AppTheme.spacingSm),
       decoration: BoxDecoration(
         color: widget.notification.isPriority
-            ? AppTheme.errorRed.withOpacity(0.1)
+            ? AppTheme.errorRed.withValues(alpha: 0.1)
             : AppTheme.offWhite,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(AppTheme.radiusMd),

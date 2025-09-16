@@ -95,7 +95,7 @@ class _JJShareModalState extends State<JJShareModal>
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.black.withOpacity(0.5),
+      color: Colors.black.withValues(alpha: 0.5),
       child: Stack(
         children: [
           // Backdrop tap to close
@@ -122,7 +122,7 @@ class _JJShareModalState extends State<JJShareModal>
                   borderRadius: BorderRadius.circular(AppTheme.radiusLg),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.shadowColor.withOpacity(0.3),
+                      color: AppTheme.shadowColor.withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, -8),
                     ),
@@ -187,7 +187,7 @@ class _JJShareModalState extends State<JJShareModal>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(AppTheme.radiusSm),
             ),
             child: const Icon(
@@ -198,7 +198,7 @@ class _JJShareModalState extends State<JJShareModal>
           )
             .animate()
             .scale(delay: 100.ms)
-            .shimmer(duration: 1000.ms, color: Colors.white.withOpacity(0.5)),
+            .shimmer(duration: 1000.ms, color: Colors.white.withValues(alpha: 0.5)),
           
           const SizedBox(width: AppTheme.spacingMd),
           
@@ -217,7 +217,7 @@ class _JJShareModalState extends State<JJShareModal>
                 Text(
                   'Spread the word to your network',
                   style: AppTheme.bodySmall.copyWith(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
               ],
@@ -232,7 +232,7 @@ class _JJShareModalState extends State<JJShareModal>
               color: Colors.white,
             ),
             style: IconButton.styleFrom(
-              backgroundColor: Colors.white.withOpacity(0.2),
+              backgroundColor: Colors.white.withValues(alpha: 0.2),
             ),
           ),
         ],
@@ -247,7 +247,7 @@ class _JJShareModalState extends State<JJShareModal>
         color: AppTheme.surfaceElevated,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         border: Border.all(
-          color: AppTheme.accentCopper.withOpacity(0.3),
+          color: AppTheme.accentCopper.withValues(alpha: 0.3),
           width: AppTheme.borderWidthThin,
         ),
       ),
@@ -288,7 +288,7 @@ class _JJShareModalState extends State<JJShareModal>
                   vertical: AppTheme.spacingXs,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.accentCopper.withOpacity(0.1),
+                  color: AppTheme.accentCopper.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 ),
                 child: Text(
