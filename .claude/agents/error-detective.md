@@ -1,7 +1,7 @@
 ---
 name: error-detective
 description: Search logs and codebases for error patterns, stack traces, and anomalies. Correlates errors across systems and identifies root causes. Use PROACTIVELY when debugging issues, analyzing logs, or investigating production errors.
-tools: Write, WebFetch, mcp__Bright_data_scrape_page_content, MultiEdit, file_read, file_write, file_str_replace, str_replace_editor, log_analyzer, code_inspector, system_monitor, pattern_matcher, trace_analyzer, correlation_engine, anomaly_detector, query_builder, deployment_tracker, performance_profiler
+tools: Bash, MultiFetch, WebSearch, Edit, MultiEdit, Write, Grep, Glob, Read, Todo
 model: sonnet
 color: red
 ---

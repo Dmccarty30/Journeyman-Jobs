@@ -206,7 +206,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                 label: const Text('Retry'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.accentCopper,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppTheme.white,
                 ),
               ),
             ],
@@ -281,12 +281,12 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                         shape: BoxShape.circle,
                         color: AppTheme.accentCopper,
                         border: Border.all(
-                          color: Colors.white,
+                          color: AppTheme.white,
                           width: 3,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3),
+                            color: AppTheme.black.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -294,7 +294,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                       ),
                       child: const Icon(
                         FontAwesomeIcons.locationCrosshairs,
-                        color: Colors.white,
+                        color: AppTheme.white,
                         size: 20,
                       ),
                     ),
@@ -385,7 +385,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                       min: 0.0,
                       max: 1.0,
                       activeColor: AppTheme.accentCopper,
-                      inactiveColor: Colors.grey,
+                      inactiveColor: AppTheme.mediumGray,
                       onChanged: (value) {
                         setState(() {
                           _radarOpacity = value;
@@ -500,10 +500,10 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
             ),
           ),
           const SizedBox(width: 8),
-          _buildIntensityIndicator(Colors.green, 'Light'),
-          _buildIntensityIndicator(Colors.yellow, 'Moderate'),
-          _buildIntensityIndicator(Colors.orange, 'Heavy'),
-          _buildIntensityIndicator(Colors.red, 'Severe'),
+          _buildIntensityIndicator(AppTheme.successGreen, 'Light'),
+          _buildIntensityIndicator(AppTheme.warningYellow, 'Moderate'),
+          _buildIntensityIndicator(AppTheme.warningOrange, 'Heavy'),
+          _buildIntensityIndicator(AppTheme.errorRed, 'Severe'),
         ],
       ),
     );
@@ -527,7 +527,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
           Text(
             label,
             style: AppTheme.bodySmall.copyWith(
-              color: Colors.grey,
+              color: AppTheme.mediumGray,
               fontSize: 10,
             ),
           ),

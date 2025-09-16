@@ -100,7 +100,7 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
                 child: Icon(
                   _getConnectionPointIcon(),
                   size: 16,
-                  color: Colors.white,
+                  color: AppTheme.white,
                 ),
               ),
             ),
@@ -166,44 +166,44 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
   /// Get connection point color based on type and state
   Color _getConnectionPointColor() {
     if (widget.isConnected) {
-      return Colors.green;
+      return AppTheme.successGreen;
     }
     
     if (widget.isSelected) {
-      return Colors.blue;
+      return AppTheme.infoBlue;
     }
 
     if (!widget.isCompatible) {
-      return Colors.grey[400]!;
+      return AppTheme.mediumGray[400]!;
     }
     
     switch (widget.connectionPoint.type) {
       case ConnectionType.primary:
-        return Colors.red[700]!;
+        return AppTheme.errorRed[700]!;
       case ConnectionType.secondary:
-        return Colors.blue[700]!;
+        return AppTheme.infoBlue[700]!;
       case ConnectionType.neutral:
-        return Colors.grey[600]!;
+        return AppTheme.mediumGray[600]!;
       case ConnectionType.ground:
-        return Colors.brown[700]!;
+        return AppTheme.groundBrown[700]!;
     }
   }
 
   /// Get connection point border color
   Color _getConnectionPointBorderColor() {
     if (widget.isSelected) {
-      return Colors.blue[800]!;
+      return AppTheme.infoBlue[800]!;
     }
     
     if (widget.isConnected) {
-      return Colors.green[800]!;
+      return AppTheme.successGreen[800]!;
     }
 
     if (!widget.isCompatible) {
-      return Colors.grey[600]!;
+      return AppTheme.mediumGray[600]!;
     }
     
-    return Colors.grey[800]!;
+    return AppTheme.mediumGray[800]!;
   }
 
   /// Get appropriate icon for connection point
@@ -238,11 +238,11 @@ class ConnectionPointTooltip extends StatelessWidget {
   Widget build(BuildContext context) => Tooltip(
       message: _getTooltipMessage(),
       decoration: BoxDecoration(
-        color: Colors.grey[800],
+        color: AppTheme.mediumGray[800],
         borderRadius: BorderRadius.circular(8),
       ),
       textStyle: const TextStyle(
-        color: Colors.white,
+        color: AppTheme.white,
         fontSize: 12,
       ),
       child: child,

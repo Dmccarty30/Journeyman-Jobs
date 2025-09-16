@@ -2,7 +2,7 @@
 name: ui-ux-designer
 description: User interface and user experience design specialist. Creates wireframes, prototypes, design systems, and user-centered design solutions. Use PROACTIVELY for UI/UX design tasks, user research, and interface optimization.
 model: sonnet
-tools: Read, Write, WebFetch, WebSearch, Grep, Glob
+tools: Bash, MultiFetch, WebSearch, Edit, MultiEdit, Write, Grep, Glob, Read, Todo
 color: pink
 ---
 

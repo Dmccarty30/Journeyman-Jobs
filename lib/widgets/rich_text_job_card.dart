@@ -169,7 +169,7 @@ class RichTextJobCard extends StatelessWidget {
     );
 
   /// Helper method to build two-column info rows (Local | Classification)
-  Widget _buildTwoColumnRow({
+  static Widget _buildTwoColumnRow({
     required String leftLabel,
     required String leftValue,
     required String rightLabel,
@@ -231,7 +231,7 @@ class RichTextJobCard extends StatelessWidget {
     );
 
   /// Helper method to build single info rows (full width)
-  Widget _buildInfoRow({
+  static Widget _buildInfoRow({
     required String label,
     required String value,
     Color? valueColor,

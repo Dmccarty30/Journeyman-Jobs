@@ -101,9 +101,11 @@ ConnectivityService communicationConnectivityService(Ref ref) {
 /// Main CrewCommunicationProvider for managing real-time crew communication
 @riverpod
 class CrewCommunicationNotifier extends _$CrewCommunicationNotifier {
-  late Timer _typingResetTimer;
+  Timer? _typingResetTimer;
   final Map<String, StreamSubscription<List<CrewCommunication>>> _messageStreams = {};
   final Map<String, Timer> _typingTimers = {};
+  final Map<String, Timer> _uploadProgressTimers = {};
+  final Map<String, Timer> _uploadCleanupTimers = {};
 
   @override
   CrewCommunicationState build() {
@@ -360,10 +362,11 @@ class CrewCommunicationNotifier extends _$CrewCommunicationNotifier {
 
       // TODO: Implement progress tracking in service
       // For now, simulate progress updates
-      Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      _uploadProgressTimers[attachmentId] = Timer.periodic(const Duration(milliseconds: 100), (timer) {
         final currentProgress = state.uploadProgress[attachmentId] ?? 0.0;
         if (currentProgress >= 1.0) {
           timer.cancel();
+          _uploadProgressTimers.remove(attachmentId);
           return;
         }
 
@@ -382,14 +385,21 @@ class CrewCommunicationNotifier extends _$CrewCommunicationNotifier {
       state = state.copyWith(uploadProgress: finalProgress);
 
       // Clean up progress after delay
-      Timer(const Duration(seconds: 2), () {
+      _uploadCleanupTimers[attachmentId] = Timer(const Duration(seconds: 2), () {
         final cleanedProgress = Map<String, double>.from(state.uploadProgress);
         cleanedProgress.remove(attachmentId);
         state = state.copyWith(uploadProgress: cleanedProgress);
+        _uploadCleanupTimers.remove(attachmentId);
       });
 
       return downloadUrl;
     } catch (e) {
+      // Cancel and clean up timers on error
+      _uploadProgressTimers[attachmentId]?.cancel();
+      _uploadProgressTimers.remove(attachmentId);
+      _uploadCleanupTimers[attachmentId]?.cancel();
+      _uploadCleanupTimers.remove(attachmentId);
+
       // Remove progress on error
       final cleanedProgress = Map<String, double>.from(state.uploadProgress);
       cleanedProgress.remove(attachmentId);
@@ -678,7 +688,7 @@ class CrewCommunicationNotifier extends _$CrewCommunicationNotifier {
   }
 
   void _dispose() {
-    _typingResetTimer.cancel();
+    _typingResetTimer?.cancel();
 
     for (final subscription in _messageStreams.values) {
       subscription.cancel();
@@ -689,6 +699,16 @@ class CrewCommunicationNotifier extends _$CrewCommunicationNotifier {
       timer.cancel();
     }
     _typingTimers.clear();
+
+    for (final timer in _uploadProgressTimers.values) {
+      timer.cancel();
+    }
+    _uploadProgressTimers.clear();
+
+    for (final timer in _uploadCleanupTimers.values) {
+      timer.cancel();
+    }
+    _uploadCleanupTimers.clear();
   }
 }
 

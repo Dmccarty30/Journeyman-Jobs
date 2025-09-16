@@ -164,7 +164,7 @@ class _TransformerDiagramState extends State<TransformerDiagram>
                     value ? ConnectionMode.dragAndDrop : ConnectionMode.stickyKeys,
                   );
                 } : null,
-                activeThumbColor: Colors.blue,
+                activeThumbColor: AppTheme.infoBlue,
               ),
               const SizedBox(width: 16),
               const Icon(Icons.pan_tool, size: 20),
@@ -184,7 +184,7 @@ class _TransformerDiagramState extends State<TransformerDiagram>
                 icon: const Icon(Icons.power_settings_new),
                 label: Text(_isEnergized ? 'Energized' : 'Energize Transformer'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _isEnergized ? Colors.green : Colors.orange,
+                  backgroundColor: _isEnergized ? AppTheme.successGreen : AppTheme.warningOrange,
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
               ),
@@ -195,7 +195,7 @@ class _TransformerDiagramState extends State<TransformerDiagram>
                   icon: const Icon(Icons.refresh),
                   label: const Text('Reset'),
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.red,
+                    foregroundColor: AppTheme.errorRed,
                   ),
                 ),
               ],
@@ -393,7 +393,7 @@ class _TransformerDiagramState extends State<TransformerDiagram>
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: Colors.blue.withValues(alpha: 0.6),
+            color: AppTheme.infoBlue.withValues(alpha: 0.6),
             width: 3,
           ),
         ),
@@ -432,16 +432,16 @@ class _TransformerDiagramState extends State<TransformerDiagram>
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: _showFireAnimation
-                ? Colors.red.shade900
+                ? AppTheme.errorRed.shade900
                 : _showPowerUpAnimation
-                    ? Colors.green.shade900
-                    : Colors.black87,
+                    ? AppTheme.successGreen.shade900
+                    : AppTheme.black87,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
             instruction,
             style: const TextStyle(
-              color: Colors.white,
+              color: AppTheme.white,
               fontSize: 14,
             ),
           ),
@@ -500,7 +500,7 @@ class DragPreviewPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..color = Colors.blue.withValues(alpha: 0.6)
+      ..color = AppTheme.infoBlue.withValues(alpha: 0.6)
       ..strokeWidth = 3.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -547,9 +547,9 @@ class ConnectionWirePainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     if (isCorrect) {
-      paint.color = Colors.green;
+      paint.color = AppTheme.successGreen;
     } else {
-      paint.color = Colors.red;
+      paint.color = AppTheme.errorRed;
       paint.strokeWidth = 4.0;
     }
 

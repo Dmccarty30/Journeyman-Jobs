@@ -17,6 +17,82 @@ class CrewService {
   CollectionReference get crewsCollection => _firestore.collection('crews');
   CollectionReference get usersCollection => _firestore.collection('users');
 
+  // Private utility methods
+
+  /// Efficiently fetch crew members using batched queries to avoid N+1 performance issues
+  ///
+  /// This method optimizes for IBEW electrical crews (typically 5-15 members) by:
+  /// - Using whereIn queries with max 10 documents per batch (Firestore limit)
+  /// - Handling partial failures gracefully for emergency situations
+  /// - Providing detailed user data needed for crew coordination
+  Future<List<CrewMember>> _fetchCrewMembersOptimized(String crewId, List<String> memberIds, DateTime crewCreatedAt, String crewCreatedBy) async {
+    if (memberIds.isEmpty) return [];
+
+    final members = <CrewMember>[];
+    const batchSize = 10;
+
+    for (int i = 0; i < memberIds.length; i += batchSize) {
+      final batch = memberIds
+          .skip(i)
+          .take(batchSize)
+          .toList();
+
+      // Single batch query for up to 10 users
+      final batchQuery = await usersCollection
+          .where(FieldPath.documentId, whereIn: batch)
+          .get();
+
+      // Process results from this batch
+      for (final doc in batchQuery.docs) {
+        if (doc.exists) {
+          final userData = doc.data() as Map<String, dynamic>;
+
+          members.add(CrewMember(
+            userId: doc.id,
+            crewId: crewId,
+            displayName: userData['displayName'],
+            email: userData['email'],
+            phone: userData['phone'],
+            profileImageUrl: userData['profileImageUrl'],
+            role: doc.id == crewCreatedBy ? CrewRole.leader : CrewRole.member,
+            joinedAt: crewCreatedAt,
+            isActive: true,
+            workPreferences: CrewMemberPreferences.fromJson(userData['workPreferences'] ?? {}),
+            notifications: NotificationSettings.fromJson(userData['notifications'] ?? {}),
+            classifications: List<String>.from(userData['classifications'] ?? []),
+            localNumber: userData['localNumber'],
+            yearsExperience: userData['yearsExperience'],
+            certifications: List<String>.from(userData['certifications'] ?? []),
+            skills: List<String>.from(userData['skills'] ?? []),
+            availability: MemberAvailability.fromString(userData['availability']) ?? MemberAvailability.available,
+            rating: userData['rating']?.toDouble(),
+            jobsCompleted: userData['jobsCompleted'] ?? 0,
+            emergencyContact: userData['emergencyContact'] != null
+                ? EmergencyContact.fromJson(userData['emergencyContact'])
+                : null,
+          ));
+        }
+      }
+    }
+
+    // Handle partial failures - warn if not all members found (critical for emergency crews)
+    if (members.length < memberIds.length) {
+      final foundIds = members.map((m) => m.userId).toSet();
+      final missingIds = memberIds.where((id) => !foundIds.contains(id)).toList();
+
+      if (kDebugMode) {
+        print('⚠️ Warning: ${missingIds.length} members not found in users collection: $missingIds');
+      }
+    }
+
+    if (kDebugMode) {
+      final batchCount = (memberIds.length / batchSize).ceil();
+      print('👥 Found ${members.length}/${memberIds.length} members in crew $crewId using $batchCount batch queries');
+    }
+
+    return members;
+  }
+
   // Crew CRUD Operations
 
   /// Create a new crew
@@ -231,46 +307,19 @@ class CrewService {
 
   // Member Management Operations
 
-  /// Get all members of a crew
+  /// Get all members of a crew with optimized batch queries
+  ///
+  /// PERFORMANCE: Uses batched whereIn queries instead of N+1 individual document fetches.
+  /// Optimized for IBEW electrical crews during emergency storm mobilization.
   Future<List<CrewMember>> getCrewMembers(String crewId) async {
     try {
       final crew = await getCrew(crewId);
-
-      if (crew.memberIds.isEmpty) {
-        return [];
-      }
-
-      // Get user documents for all member IDs
-      final memberDocs = await Future.wait(
-        crew.memberIds.map((userId) => usersCollection.doc(userId).get()),
+      return await _fetchCrewMembersOptimized(
+        crewId,
+        crew.memberIds,
+        crew.createdAt,
+        crew.createdBy
       );
-
-      final members = <CrewMember>[];
-
-      for (final doc in memberDocs) {
-        if (doc.exists) {
-          // Create CrewMember from user data
-          // Note: This is a simplified implementation
-          // In a real app, you'd have a dedicated crew_members collection
-          final userData = doc.data() as Map<String, dynamic>;
-
-          members.add(CrewMember(
-            userId: doc.id,
-            crewId: crewId,
-            role: doc.id == crew.createdBy ? CrewRole.leader : CrewRole.member,
-            joinedAt: crew.createdAt,
-            isActive: true,
-            workPreferences: CrewMemberPreferences(),
-            notifications: NotificationSettings(),
-          ));
-        }
-      }
-
-      if (kDebugMode) {
-        print('👥 Found ${members.length} members in crew $crewId');
-      }
-
-      return members;
     } catch (e) {
       if (kDebugMode) {
         print('❌ Error getting crew members for $crewId: $e');
@@ -560,7 +609,10 @@ class CrewService {
         .map((doc) => doc.exists ? Crew.fromFirestore(doc) : null);
   }
 
-  /// Stream of crew members
+  /// Stream of crew members with optimized batch queries
+  ///
+  /// PERFORMANCE: Uses batched whereIn queries instead of N+1 individual document fetches.
+  /// Real-time updates for emergency crew coordination during storm work.
   Stream<List<CrewMember>> getCrewMembersStream(String crewId) {
     return crewsCollection
         .doc(crewId)
@@ -569,24 +621,12 @@ class CrewService {
           if (!doc.exists) return [];
 
           final crew = Crew.fromFirestore(doc);
-          if (crew.memberIds.isEmpty) return [];
-
-          final memberDocs = await Future.wait(
-            crew.memberIds.map((userId) => usersCollection.doc(userId).get()),
+          return await _fetchCrewMembersOptimized(
+            crewId,
+            crew.memberIds,
+            crew.createdAt,
+            crew.createdBy
           );
-
-          return memberDocs
-              .where((doc) => doc.exists)
-              .map((doc) => CrewMember(
-                    userId: doc.id,
-                    crewId: crewId,
-                    role: doc.id == crew.createdBy ? CrewRole.leader : CrewRole.member,
-                    joinedAt: crew.createdAt,
-                    isActive: true,
-                    workPreferences: CrewMemberPreferences(),
-                    notifications: NotificationSettings(),
-                  ))
-              .toList();
         });
   }
 }

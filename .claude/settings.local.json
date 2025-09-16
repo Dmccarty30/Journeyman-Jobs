@@ -23,7 +23,9 @@
       "Bash(sed:*)",
       "Bash(dart test:*)",
       "Read(///**)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "WebFetch(domain:)",
+      "Bash(flutter:*)"
     ],
     "deny": []
   },

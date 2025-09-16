@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design_system/app_theme.dart';
 
 class PowerGridStatus {
   final String gridName;
@@ -24,7 +25,7 @@ class PowerGridMockData {
       PowerGridStatus(
         gridName: 'North Grid',
         stateLabel: 'Stable',
-        stateColor: Colors.green,
+        stateColor: AppTheme.successGreen,
         loadPercentage: 75.5,
         affectedCustomers: 0,
         activeHazards: [],
@@ -32,7 +33,7 @@ class PowerGridMockData {
       PowerGridStatus(
         gridName: 'South Grid',
         stateLabel: 'Warning',
-        stateColor: Colors.orange,
+        stateColor: AppTheme.warningOrange,
         loadPercentage: 92.1,
         affectedCustomers: 1500,
         activeHazards: ['Overload', 'Equipment Fault'],
@@ -40,7 +41,7 @@ class PowerGridMockData {
       PowerGridStatus(
         gridName: 'East Grid',
         stateLabel: 'Critical',
-        stateColor: Colors.red,
+        stateColor: AppTheme.errorRed,
         loadPercentage: 98.0,
         affectedCustomers: 10000,
         activeHazards: ['Storm Damage', 'Power Outage'],
@@ -48,7 +49,7 @@ class PowerGridMockData {
       PowerGridStatus(
         gridName: 'West Grid',
         stateLabel: 'Stable',
-        stateColor: Colors.blue,
+        stateColor: AppTheme.infoBlue,
         loadPercentage: 60.0,
         affectedCustomers: 0,
         activeHazards: [],

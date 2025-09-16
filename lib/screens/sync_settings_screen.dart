@@ -80,7 +80,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
               children: [
                 Icon(
                   connectivity.isOnline ? Icons.cloud_done : Icons.cloud_off,
-                  color: connectivity.isOnline ? Colors.green : Colors.red,
+                  color: connectivity.isOnline ? AppTheme.successGreen : AppTheme.errorRed,
                 ),
                 const SizedBox(width: 8),
                 const Text(
@@ -103,14 +103,14 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                   child: _buildInfoRow(
                     'Status',
                     connectivity.isOnline ? 'Online' : 'Offline',
-                    connectivity.isOnline ? Colors.green : Colors.red,
+                    connectivity.isOnline ? AppTheme.successGreen : AppTheme.errorRed,
                   ),
                 ),
                 Expanded(
                   child: _buildInfoRow(
                     'Type',
                     connectivity.connectionType,
-                    Colors.blue,
+                    AppTheme.infoBlue,
                   ),
                 ),
               ],
@@ -121,7 +121,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
               _buildInfoRow(
                 'Last Offline',
                 _formatDateTime(connectivity.lastOfflineTime!),
-                Colors.orange,
+                AppTheme.warningOrange,
               ),
             ],
             
@@ -130,7 +130,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
               _buildInfoRow(
                 'Offline Duration',
                 '${connectivity.offlineDurationMinutes} minutes',
-                Colors.orange,
+                AppTheme.warningOrange,
               ),
             ],
           ],
@@ -233,7 +233,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           Icon(
             icon,
             size: 20,
-            color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+            color: isSelected ? Theme.of(context).primaryColor : AppTheme.mediumGray,
           ),
           const SizedBox(width: 8),
           Text(title),
@@ -357,7 +357,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
             ),
             Text(
               'Maximum offline storage: ${maxMB.round()} MB',
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              style: const TextStyle(fontSize: 12, color: AppTheme.mediumGray),
             ),
           ],
         );
@@ -374,7 +374,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
             '$label: ',
             style: const TextStyle(
               fontSize: 12,
-              color: Colors.grey,
+              color: AppTheme.mediumGray,
             ),
           ),
           Text(
@@ -417,7 +417,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(success ? 'Sync completed successfully' : 'Sync failed'),
-            backgroundColor: success ? Colors.green : Colors.red,
+            backgroundColor: success ? AppTheme.successGreen : AppTheme.errorRed,
           ),
         );
       }
@@ -426,7 +426,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Sync error: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppTheme.errorRed,
           ),
         );
       }
@@ -449,7 +449,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.errorRed),
             child: const Text('Clear'),
           ),
         ],
@@ -466,7 +466,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Offline data cleared successfully'),
-              backgroundColor: Colors.green,
+              backgroundColor: AppTheme.successGreen,
             ),
           );
         }
@@ -475,7 +475,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Error clearing data: $e'),
-              backgroundColor: Colors.red,
+              backgroundColor: AppTheme.errorRed,
             ),
           );
         }

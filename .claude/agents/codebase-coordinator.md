@@ -1,7 +1,7 @@
 ---
 name: codebase-coordinator
 description: Use proactively for comprehensive codebase analysis coordination. Specialist for synthesizing multiple technical reports into unified actionable analysis documents.
-tools: Read, Write, Glob, Grep
+tools: Bash, MultiFetch, WebSearch, Edit, MultiEdit, Write, Grep, Glob, Read, Todo
 model: sonnet
 color: purple
 ---

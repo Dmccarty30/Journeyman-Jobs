@@ -21,7 +21,7 @@ class ConnectionStatusIndicator extends ConsumerWidget {
     final isOnline = connectivity.isOnline;
     final connectionType = connectivity.connectionType;
 
-    final color = isOnline ? Colors.green : Colors.red;
+    final color = isOnline ? AppTheme.successGreen : AppTheme.errorRed;
     final icon = isOnline
         ? (connectivity.isConnectedToWifi ? Icons.wifi : Icons.signal_cellular_4_bar)
         : Icons.wifi_off;
@@ -80,20 +80,20 @@ class OfflineBanner extends ConsumerWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: Colors.orange.shade100,
+            color: AppTheme.warningOrange.shade100,
             child: Row(
               children: [
                 Icon(
                   Icons.cloud_off,
                   size: 20,
-                  color: Colors.orange.shade700,
+                  color: AppTheme.warningOrange.shade700,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'You\'re offline. Some features may be limited.',
                     style: TextStyle(
-                      color: Colors.orange.shade700,
+                      color: AppTheme.warningOrange.shade700,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -107,7 +107,7 @@ class OfflineBanner extends ConsumerWidget {
                     child: Text(
                       connectivity.isOnline ? 'Sync' : 'Waiting...',
                       style: TextStyle(
-                        color: Colors.orange.shade700,
+                        color: AppTheme.warningOrange.shade700,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -147,24 +147,24 @@ class DataFreshnessIndicator extends StatelessWidget {
 
     if (isOfflineData) {
       freshnessText = 'Offline data';
-      color = Colors.orange;
+      color = AppTheme.warningOrange;
       icon = Icons.offline_bolt;
     } else if (age != null) {
       if (age.inMinutes < 5) {
         freshnessText = 'Just updated';
-        color = Colors.green;
+        color = AppTheme.successGreen;
         icon = Icons.check_circle;
       } else if (age.inHours < 1) {
         freshnessText = '${age.inMinutes}m ago';
-        color = Colors.blue;
+        color = AppTheme.infoBlue;
         icon = Icons.access_time;
       } else if (age.inDays < 1) {
         freshnessText = '${age.inHours}h ago';
-        color = Colors.orange;
+        color = AppTheme.warningOrange;
         icon = Icons.schedule;
       } else {
         freshnessText = '${age.inDays}d ago';
-        color = Colors.red;
+        color = AppTheme.errorRed;
         icon = Icons.warning;
       }
     } else {
@@ -244,7 +244,7 @@ class SyncProgressIndicator extends ConsumerWidget {
               child: CircularProgressIndicator(
                 value: isSyncing ? progress : null,
                 strokeWidth: 2,
-                backgroundColor: Colors.grey.shade300,
+                backgroundColor: AppTheme.mediumGray.shade300,
                 valueColor: AlwaysStoppedAnimation<Color>(
                   Theme.of(context).primaryColor,
                 ),
@@ -288,9 +288,9 @@ class PendingChangesIndicator extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: Colors.blue.withValues(alpha: 0.1),
+          color: AppTheme.infoBlue.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
+          border: Border.all(color: AppTheme.infoBlue.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -298,14 +298,14 @@ class PendingChangesIndicator extends ConsumerWidget {
             const Icon(
               Icons.sync_problem,
               size: 16,
-              color: Colors.blue,
+              color: AppTheme.infoBlue,
             ),
             const SizedBox(width: 4),
             Text(
               '$pendingCount pending',
               style: const TextStyle(
                 fontSize: 12,
-                color: Colors.blue,
+                color: AppTheme.infoBlue,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -432,11 +432,11 @@ class StorageUsageIndicator extends ConsumerWidget {
 
         Color color;
         if (percentage < 0.5) {
-          color = Colors.green;
+          color = AppTheme.successGreen;
         } else if (percentage < 0.8) {
-          color = Colors.orange;
+          color = AppTheme.warningOrange;
         } else {
-          color = Colors.red;
+          color = AppTheme.errorRed;
         }
 
         if (!showDetails) {
@@ -492,7 +492,7 @@ class StorageUsageIndicator extends ConsumerWidget {
                 // Progress bar
                 LinearProgressIndicator(
                   value: percentage,
-                  backgroundColor: Colors.grey.shade300,
+                  backgroundColor: AppTheme.mediumGray.shade300,
                   valueColor: AlwaysStoppedAnimation<Color>(color),
                 ),
 
@@ -519,7 +519,7 @@ class StorageUsageIndicator extends ConsumerWidget {
                   'Jobs: ${stats['jobs_count']} • Locals: ${stats['locals_count']} • Search: ${stats['search_history_count']}',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey.shade600,
+                    color: AppTheme.mediumGray.shade600,
                   ),
                 ),
               ],
@@ -548,7 +548,7 @@ class OfflineModeToggle extends ConsumerWidget {
     return ListTile(
       leading: Icon(
         isOfflineDataAvailable ? Icons.offline_bolt : Icons.cloud_off,
-        color: isOfflineDataAvailable ? Colors.green : Colors.grey,
+        color: isOfflineDataAvailable ? AppTheme.successGreen : AppTheme.mediumGray,
       ),
       title: const Text('Offline Mode'),
       subtitle: Text(

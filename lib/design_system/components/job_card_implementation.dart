@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../models/job_model.dart';
+import '../app_theme.dart';
+import '../../electrical_components/circuit_pattern_painter.dart';
 
-/// Job Card Implementation following the exact wireframe specification
-/// from job-card-implementation.md
+/// Job Card Implementation following the IBEW electrical theme
+/// with proper touch targets for workers wearing gloves
 class JobCardImplementation extends StatelessWidget {
   final Job job;
   final VoidCallback? onViewDetails;
@@ -32,31 +34,49 @@ class JobCardImplementation extends StatelessWidget {
         ),
         padding: padding ?? const EdgeInsets.all(24.0),
         decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Colors.black, width: 2.0),
+          color: AppTheme.white,
+          border: Border.all(color: AppTheme.primaryNavy, width: 2.0),
           borderRadius: BorderRadius.circular(8.0),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: Color.fromRGBO(0, 0, 0, 0.1),
+              color: AppTheme.black.withValues(alpha: 0.1),
               blurRadius: 8.0,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            // Header: Local and Classification
-            _buildHeader(),
-            const SizedBox(height: 20.0),
+            // Subtle electrical circuit pattern in background
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.05,
+                child: CustomPaint(
+                  painter: CircuitPatternPainter(
+                    color: AppTheme.primaryNavy,
+                    strokeWidth: 1.0,
+                  ),
+                ),
+              ),
+            ),
             
-            // Grid Layout
-            _buildGridContent(),
-            
-            const SizedBox(height: 24.0),
-            
-            // Action Buttons
-            _buildActionButtons(),
+            // Main content
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header: Local and Classification
+                _buildHeader(),
+                const SizedBox(height: 20.0),
+                
+                // Grid Layout
+                _buildGridContent(),
+                
+                const SizedBox(height: 24.0),
+                
+                // Action Buttons (minimum 48px touch targets)
+                _buildActionButtons(),
+              ],
+            ),
           ],
         ),
       ),
@@ -67,47 +87,59 @@ class JobCardImplementation extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Local info
-        RichText(
-          text: TextSpan(
-            style: const TextStyle(
-              fontFamily: '-apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, sans-serif',
-              fontSize: 18.0,
-              color: Colors.black,
+        // Local info with electrical icon
+        Row(
+          children: [
+            Icon(
+              Icons.electrical_services,
+              color: AppTheme.accentCopper,
+              size: 20.0,
             ),
-            children: [
-              const TextSpan(
-                text: 'Local: ',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF555555),
+            const SizedBox(width: 8.0),
+            RichText(
+              text: TextSpan(
+                style: AppTheme.bodyLarge.copyWith(
+                  color: AppTheme.black,
                 ),
+                children: [
+                  TextSpan(
+                    text: 'Local: ',
+                    style: AppTheme.bodyLarge.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.darkGray,
+                    ),
+                  ),
+                  TextSpan(
+                    text: '${job.localNumber ?? job.local ?? 'N/A'}',
+                    style: AppTheme.bodyLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryNavy,
+                    ),
+                  ),
+                ],
               ),
-              TextSpan(
-                text: '${job.localNumber ?? job.local ?? 'N/A'}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.normal,
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
         
-        // Classification badge
+        // Classification badge with electrical styling
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
           decoration: BoxDecoration(
-            color: const Color(0xFFF0F0F0),
-            border: Border.all(color: const Color(0xFFD0D0D0), width: 1.0),
-            borderRadius: BorderRadius.circular(4.0),
+            gradient: LinearGradient(
+              colors: [
+                AppTheme.accentCopper.withValues(alpha: 0.1),
+                AppTheme.accentCopper.withValues(alpha: 0.2),
+              ],
+            ),
+            border: Border.all(color: AppTheme.accentCopper, width: 1.0),
+            borderRadius: BorderRadius.circular(6.0),
           ),
           child: Text(
             job.classification ?? 'N/A',
-            style: const TextStyle(
-              fontSize: 14.0,
-              color: Colors.black,
-              fontFamily: '-apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, sans-serif',
+            style: AppTheme.labelMedium.copyWith(
+              color: AppTheme.primaryNavy,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
@@ -174,25 +206,23 @@ class JobCardImplementation extends StatelessWidget {
         Expanded(
           child: RichText(
             text: TextSpan(
-              style: const TextStyle(
-                fontFamily: '-apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, sans-serif',
-                fontSize: 15.0,
+              style: AppTheme.bodyMedium.copyWith(
                 height: 1.5,
-                color: Colors.black,
+                color: AppTheme.black,
               ),
               children: [
                 TextSpan(
                   text: '$leftLabel ',
-                  style: const TextStyle(
+                  style: AppTheme.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF555555),
+                    color: AppTheme.darkGray,
                   ),
                 ),
                 TextSpan(
                   text: leftValue,
-                  style: const TextStyle(
+                  style: AppTheme.bodyMedium.copyWith(
                     fontWeight: FontWeight.normal,
-                    color: Colors.black,
+                    color: AppTheme.black,
                   ),
                 ),
               ],
@@ -204,25 +234,23 @@ class JobCardImplementation extends StatelessWidget {
         Expanded(
           child: RichText(
             text: TextSpan(
-              style: const TextStyle(
-                fontFamily: '-apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, sans-serif',
-                fontSize: 15.0,
+              style: AppTheme.bodyMedium.copyWith(
                 height: 1.5,
-                color: Colors.black,
+                color: AppTheme.black,
               ),
               children: [
                 TextSpan(
                   text: '$rightLabel ',
-                  style: const TextStyle(
+                  style: AppTheme.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF555555),
+                    color: AppTheme.darkGray,
                   ),
                 ),
                 TextSpan(
                   text: rightValue,
-                  style: const TextStyle(
+                  style: AppTheme.bodyMedium.copyWith(
                     fontWeight: FontWeight.normal,
-                    color: Colors.black,
+                    color: AppTheme.black,
                   ),
                 ),
               ],
@@ -239,25 +267,23 @@ class JobCardImplementation extends StatelessWidget {
   }) {
     return RichText(
       text: TextSpan(
-        style: const TextStyle(
-          fontFamily: '-apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, sans-serif',
-          fontSize: 15.0,
+        style: AppTheme.bodyMedium.copyWith(
           height: 1.5,
-          color: Colors.black,
+          color: AppTheme.black,
         ),
         children: [
           TextSpan(
             text: '$label ',
-            style: const TextStyle(
+            style: AppTheme.bodyMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: Color(0xFF555555),
+              color: AppTheme.darkGray,
             ),
           ),
           TextSpan(
             text: value,
-            style: const TextStyle(
+            style: AppTheme.bodyMedium.copyWith(
               fontWeight: FontWeight.normal,
-              color: Colors.black,
+              color: AppTheme.black,
             ),
           ),
         ],
@@ -278,25 +304,23 @@ class JobCardImplementation extends StatelessWidget {
         Expanded(
           child: RichText(
             text: TextSpan(
-              style: const TextStyle(
-                fontFamily: '-apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, sans-serif',
-                fontSize: 15.0,
+              style: AppTheme.bodyMedium.copyWith(
                 height: 1.6,
-                color: Colors.black,
+                color: AppTheme.black,
               ),
               children: [
                 TextSpan(
                   text: '$label ',
-                  style: const TextStyle(
+                  style: AppTheme.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF555555),
+                    color: AppTheme.darkGray,
                   ),
                 ),
                 TextSpan(
                   text: value,
-                  style: const TextStyle(
+                  style: AppTheme.bodyMedium.copyWith(
                     fontWeight: FontWeight.normal,
-                    color: Colors.black,
+                    color: AppTheme.black,
                   ),
                 ),
               ],
@@ -311,43 +335,60 @@ class JobCardImplementation extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: OutlinedButton(
-            onPressed: onViewDetails,
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6.0),
+          child: SizedBox(
+            height: 48.0, // Minimum touch target for gloved hands
+            child: OutlinedButton(
+              onPressed: onViewDetails,
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6.0),
+                ),
+                side: BorderSide(color: AppTheme.primaryNavy, width: 2.0),
               ),
-              side: const BorderSide(color: Colors.black, width: 2.0),
-            ),
-            child: const Text(
-              'Details',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
+              child: Text(
+                'Details',
+                style: AppTheme.labelLarge.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.primaryNavy,
+                ),
               ),
             ),
           ),
         ),
         const SizedBox(width: 12.0),
         Expanded(
-          child: ElevatedButton(
-            onPressed: onBidNow,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFEB3B),
-              foregroundColor: Colors.black,
-              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6.0),
+          child: SizedBox(
+            height: 48.0, // Minimum touch target for gloved hands
+            child: ElevatedButton(
+              onPressed: onBidNow,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.accentCopper,
+                foregroundColor: AppTheme.white,
+                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6.0),
+                ),
+                side: BorderSide(color: AppTheme.secondaryCopper, width: 2.0),
+                elevation: 2.0,
               ),
-              side: const BorderSide(color: Color(0xFFF9A825), width: 2.0),
-            ),
-            child: const Text(
-              'Bid',
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w500,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.bolt,
+                    size: 16.0,
+                    color: AppTheme.white,
+                  ),
+                  const SizedBox(width: 6.0),
+                  Text(
+                    'Bid',
+                    style: AppTheme.labelLarge.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.white,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

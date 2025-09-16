@@ -169,7 +169,7 @@ class ContractorCard extends StatelessWidget {
     );
 
   /// Helper method to build two-column info rows
-  Widget _buildTwoColumnRow({
+  static Widget _buildTwoColumnRow({
     required String leftLabel,
     required String leftValue,
     required String rightLabel,
@@ -231,7 +231,7 @@ class ContractorCard extends StatelessWidget {
     );
 
   /// Helper method to build single info rows (full width)
-  Widget _buildInfoRow({
+  static Widget _buildInfoRow({
     required String label,
     required String value,
     Color? valueColor,
@@ -313,7 +313,7 @@ class ContractorCard extends StatelessWidget {
   }
 
   /// Helper method to build detail rows for the dialog
-  Widget _buildDetailRow(String label, String value) => Padding(
+  static Widget _buildDetailRow(String label, String value) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 4),
     child: RichText(
       text: TextSpan(

@@ -172,7 +172,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                 label: const Text('Retry'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.accentCopper,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppTheme.white,
                 ),
               ),
             ],
@@ -246,7 +246,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                         shape: BoxShape.circle,
                         color: _getStormColor(system.classification),
                         border: Border.all(
-                          color: Colors.white,
+                          color: AppTheme.white,
                           width: 3,
                         ),
                       ),
@@ -256,13 +256,13 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                           children: [
                             Icon(
                               FontAwesomeIcons.hurricane,
-                              color: Colors.white,
+                              color: AppTheme.white,
                               size: 24,
                             ),
                             Text(
                               system.name,
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppTheme.white,
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -288,13 +288,13 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                         shape: BoxShape.circle,
                         color: AppTheme.accentCopper,
                         border: Border.all(
-                          color: Colors.white,
+                          color: AppTheme.white,
                           width: 3,
                         ),
                       ),
                       child: const Icon(
                         FontAwesomeIcons.locationCrosshairs,
-                        color: Colors.white,
+                        color: AppTheme.white,
                         size: 20,
                       ),
                     ),
@@ -323,7 +323,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                   children: [
                     Icon(
                       FontAwesomeIcons.triangleExclamation,
-                      color: Colors.white,
+                      color: AppTheme.white,
                       size: 24,
                     ),
                     const SizedBox(width: AppTheme.spacingSm),
@@ -334,7 +334,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                           Text(
                             _activeAlerts.first.event,
                             style: AppTheme.headlineSmall.copyWith(
-                              color: Colors.white,
+                              color: AppTheme.white,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -342,7 +342,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                             Text(
                               '+${_activeAlerts.length - 1} more alerts',
                               style: AppTheme.bodySmall.copyWith(
-                                color: Colors.white.withValues(alpha: 0.9),
+                                color: AppTheme.white.withValues(alpha: 0.9),
                               ),
                             ),
                         ],
@@ -350,7 +350,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                     ),
                     Icon(
                       Icons.arrow_forward_ios,
-                      color: Colors.white,
+                      color: AppTheme.white,
                       size: 16,
                     ),
                   ],
@@ -482,7 +482,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
       case 'Moderate':
         return AppTheme.warningYellow;
       case 'Minor':
-        return Colors.orange;
+        return AppTheme.warningOrange;
       default:
         return AppTheme.infoBlue;
     }
@@ -600,7 +600,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                       child: Text(
                         alert.severity.toUpperCase(),
                         style: AppTheme.labelSmall.copyWith(
-                          color: Colors.white,
+                          color: AppTheme.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

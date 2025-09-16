@@ -211,7 +211,7 @@ class PowerOutageCard extends StatelessWidget {
       case OutageSeverity.moderate:
         return AppTheme.warningYellow;
       case OutageSeverity.minor:
-        return Colors.orange;
+        return AppTheme.warningOrange;
       case OutageSeverity.minimal:
         return AppTheme.textLight;
     }

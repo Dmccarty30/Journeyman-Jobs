@@ -42,16 +42,16 @@ class _TransformerWorkbenchScreenState extends State<TransformerWorkbenchScreen>
   bool _showValidation = false;
   String? _currentHint;
   String? _validationMessage;
-  Color _selectedWireColor = Colors.red;
+  Color _selectedWireColor = AppTheme.errorRed;
   String _selectedPhase = 'A';
   
   // Wire colors for different phases
   final Map<String, Color> _wireColors = <String, Color>{
-    'A': Colors.red,
-    'B': Colors.blue,
-    'C': Colors.yellow,
-    'N': Colors.grey,
-    'G': Colors.green,
+    'A': AppTheme.errorRed,
+    'B': AppTheme.infoBlue,
+    'C': AppTheme.warningYellow,
+    'N': AppTheme.mediumGray,
+    'G': AppTheme.successGreen,
   };
 
   @override
@@ -526,7 +526,7 @@ class _TransformerWorkbenchScreenState extends State<TransformerWorkbenchScreen>
           ),
           child: const Icon(
             Icons.cable,
-            color: Colors.white,
+            color: AppTheme.white,
             size: 24,
           ),
         ),
@@ -607,7 +607,7 @@ class _TransformerWorkbenchScreenState extends State<TransformerWorkbenchScreen>
       builder: (BuildContext context, Widget? child) => Positioned.fill(
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Colors.green.withValues(alpha: 0.1 * _successAnimation.value),
+              color: AppTheme.successGreen.withValues(alpha: 0.1 * _successAnimation.value),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
             child: Center(
@@ -616,7 +616,7 @@ class _TransformerWorkbenchScreenState extends State<TransformerWorkbenchScreen>
                 child: Container(
                   padding: const EdgeInsets.all(AppTheme.spacingLg),
                   decoration: BoxDecoration(
-                    color: Colors.green,
+                    color: AppTheme.successGreen,
                     borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                   ),
                   child: Column(
@@ -624,14 +624,14 @@ class _TransformerWorkbenchScreenState extends State<TransformerWorkbenchScreen>
                     children: <Widget>[
                       const Icon(
                         Icons.check_circle,
-                        color: Colors.white,
+                        color: AppTheme.white,
                         size: 48,
                       ),
                       const SizedBox(height: AppTheme.spacingSm),
                       Text(
                         _validationMessage ?? 'Correct!',
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppTheme.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -667,7 +667,7 @@ class _TransformerWorkbenchScreenState extends State<TransformerWorkbenchScreen>
                   children: <Widget>[
                     const Icon(
                       Icons.lightbulb,
-                      color: Colors.white,
+                      color: AppTheme.white,
                       size: 24,
                     ),
                     const SizedBox(width: AppTheme.spacingMd),
@@ -675,7 +675,7 @@ class _TransformerWorkbenchScreenState extends State<TransformerWorkbenchScreen>
                       child: Text(
                         _currentHint!,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppTheme.white,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
@@ -690,7 +690,7 @@ class _TransformerWorkbenchScreenState extends State<TransformerWorkbenchScreen>
                       },
                       icon: const Icon(
                         Icons.close,
-                        color: Colors.white,
+                        color: AppTheme.white,
                         size: 20,
                       ),
                     ),
@@ -828,19 +828,19 @@ class _TransformerWorkbenchScreenState extends State<TransformerWorkbenchScreen>
   }
 
   void _showValidationWarning(String message) {
-    _showSnackBar(message, Colors.orange);
+    _showSnackBar(message, AppTheme.warningOrange);
   }
 
   void _showValidationError(String message) {
-    _showSnackBar(message, Colors.red);
+    _showSnackBar(message, AppTheme.errorRed);
   }
 
   void _showSuccessMessage(String message) {
-    _showSnackBar(message, Colors.green);
+    _showSnackBar(message, AppTheme.successGreen);
   }
 
   void _showErrorMessage(String message) {
-    _showSnackBar(message, Colors.red);
+    _showSnackBar(message, AppTheme.errorRed);
   }
 
   void _showSnackBar(String message, Color color) {
@@ -1035,8 +1035,8 @@ class WireConnectionPainter extends CustomPainter {
 
       // Set wire color based on connection validity
       paint.color = connection.isCorrect 
-        ? Colors.green 
-        : Colors.red.withValues(alpha: 0.7);
+        ? AppTheme.successGreen 
+        : AppTheme.errorRed.withValues(alpha: 0.7);
 
       // Draw curved wire
       final Path path = Path();
