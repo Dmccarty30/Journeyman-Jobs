@@ -1,6 +1,6 @@
 ---
 name: flutter-expert
-description: Master Flutter development with Dart, widgets, and platform integrations. Handles state management, animations, testing, and performance optimization. Deploys to iOS, Android, Web, and desktop. Use PROACTIVELY for Flutter architecture, UI implementation, or cross-platform features. IMPORTANT use webSearch, webFetch, mcp_BrightDate_scrape_as_markdown to gather up-to-date documentation from https://docs.flutter.dev/ related to the tasks assigned to you, ***EVERY*** time you are assigned a task.
+description: Master Flutter development with Dart, widgets, and platform integrations. Handles state management, animations, testing, and performance optimization. Deploys to iOS, Android, Web, and desktop. Use PROACTIVELY for Flutter architecture, UI implementation, or cross-platform features.
 model: sonnet
 tools: Bash, MultiFetch, WebSearch, Edit, MultiEdit, Write, Grep, Glob, Read, Todo
 color: orange
