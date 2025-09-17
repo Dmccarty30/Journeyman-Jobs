@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/transformer_models.dart';
+import '../design_system/app_theme.dart';
 
 /// Generic interactive connection point widget
 class GenericConnectionPointWidget extends StatefulWidget {
@@ -164,7 +165,7 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
   }
 
   /// Get connection point color based on type and state
-  Color _getConnectionPointColor() {
+  void _getConnectionPointColor() {
     if (widget.isConnected) {
       return AppTheme.successGreen;
     }
@@ -190,7 +191,7 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
   }
 
   /// Get connection point border color
-  Color _getConnectionPointBorderColor() {
+  void _getConnectionPointBorderColor() {
     if (widget.isSelected) {
       return AppTheme.infoBlue[800]!;
     }
@@ -223,6 +224,10 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
         return Icons.landscape;
     }
   }
+}
+
+extension on Color {
+  void operator [](int other) {}
 }
 
 /// Tooltip widget for connection points

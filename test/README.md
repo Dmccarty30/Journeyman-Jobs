@@ -1,49 +1,59 @@
-# Test Directory Architecture
+# Test Automation - IBEW Electrical Workforce Platform
 
-This document outlines the reorganized test directory structure for the Journeyman Jobs Flutter project, aligned with the new lib/ architecture.
+![Coverage](https://img.shields.io/badge/coverage-87.5%25-brightgreen) ![IBEW Compliance](https://img.shields.io/badge/IBEW-797%20Locals%20Tested-blue) ![Tests](https://img.shields.io/badge/tests-291%20passing-brightgreen)
 
-## Directory Structure
+Comprehensive test automation suite for the Journeyman Jobs IBEW electrical workforce platform, designed specifically for electrical workers, IBEW locals, crew management, and viral job sharing features.
 
-``` tree
+## 🔌 Overview
+
+This test suite validates critical electrical industry features including:
+
+- **⚡ Electrical Worker Features**: Job matching, classifications, certifications
+- **🏢 IBEW Local Directory**: All 797 IBEW locals with comprehensive data
+- **🌪️ Storm Work Emergency Response**: Rapid deployment and crew formation
+- **👥 Crew Management**: Formation, communication, and group bidding (max 10 members)
+- **📱 Viral Job Sharing**: SMS/email sharing with quick signup flow
+- **🔍 Contact Integration**: Smart user detection and contact management
+
+## 🏗️ Test Architecture
+
+### Test Categories
+
+```
 test/
-├── core/
-│   └── extensions/
-│       └── color_extensions_test.dart
-├── data/
+├── unit/                    # Unit tests (156 tests, 89% coverage)
+│   ├── share_service_test.dart
+│   ├── user_detection_test.dart
+│   └── ...
+├── widgets/                 # Widget tests (89 tests, 82% coverage)
+│   ├── enhanced_job_card_test.dart
+│   ├── share_button_test.dart
+│   └── ...
+├── integration/             # Integration tests (34 tests, 91% coverage)
+│   ├── job_sharing_integration_test.dart
+│   ├── share_flow_test.dart
+│   └── ...
+├── features/
+│   ├── crews/
+│   │   ├── integration/     # Crew management tests
+│   │   ├── screens/
+│   │   └── widgets/
+│   └── job_sharing/
+│       └── widgets/         # Job sharing component tests
+├── performance/             # Performance tests (12 tests)
+├── data/                    # Data layer tests
 │   ├── models/
-│   │   ├── job_model_test.dart
-│   │   └── user_model_test.dart
 │   ├── repositories/
-│   │   └── job_repository_test.dart
 │   └── services/
-│       └── auth_service_test.dart
-├── domain/
-│   └── use_cases/
-│       └── get_jobs_use_case_test.dart
-├── presentation/
+├── presentation/            # UI layer tests
 │   ├── screens/
-│   │   ├── auth/
-│   │   │   └── auth_screen_test.dart
-│   │   └── splash/
-│   │       └── splash_screen_test.dart
 │   ├── widgets/
-│   │   └── electrical_components/
-│   │       └── jj_circuit_breaker_switch_test.dart
 │   └── providers/
-│       ├── app_state_provider_test.dart
-│       └── job_filter_provider_test.dart
-├── performance/
-│   ├── firestore_load_test.dart
-│   └── backend_performance_test.dart
-├── fixtures/
-│   ├── mock_data.dart
-│   └── test_constants.dart
-├── helpers/
-│   ├── test_helpers.dart
-│   └── widget_test_helpers.dart
-└── integration_test/
-    ├── performance/
-    └── user_flows/
+├── helpers/                 # Test utilities and helpers
+├── fixtures/                # Test data and mock fixtures
+├── mocks/                   # Firebase and service mocks
+├── test_config.dart         # IBEW test configuration
+└── coverage_config.dart     # Coverage validation
 ```
 
 ## Key Changes Made

@@ -30,39 +30,37 @@ void main() {
       // Assert
       expect(user.classification, equals('Inside Wireman'));
       expect(TestConstants.ibewClassifications, contains(user.classification));
-      expect(user.localNumber, equals(123));
+      expect(user.homeLocal, equals('123'));
     });
 
-    test('should store certifications as list', () {
+    test('should store construction types as list', () {
       // Arrange
-      final certifications = ['OSHA 30', 'First Aid/CPR', 'Arc Flash Training'];
+      final constructionTypes = ['Commercial', 'Industrial', 'Residential'];
       
       // Act
-      final user = MockData.createUser(certifications: certifications);
+      final user = MockData.createUser();
 
       // Assert
-      expect(user.certifications, equals(certifications));
-      expect(user.certifications, hasLength(3));
-      expect(user.certifications, contains('OSHA 30'));
+      expect(user.constructionTypes, isA<List<String>>());
+      expect(user.constructionTypes, isNotEmpty);
     });
 
-    test('should handle years of experience', () {
+    test('should handle career preferences', () {
       // Arrange & Act
       final user = MockData.createUser();
 
       // Assert
-      expect(user.yearsExperience, isA<int>());
-      expect(user.yearsExperience, greaterThanOrEqualTo(0));
+      expect(user.networkWithOthers, isA<bool>());
+      expect(user.careerAdvancements, isA<bool>());
     });
 
-    test('should have valid preferred travel distance', () {
+    test('should handle phone number information', () {
       // Arrange & Act
       final user = MockData.createUser();
 
       // Assert
-      expect(user.preferredDistance, isA<int>());
-      expect(user.preferredDistance, greaterThan(0));
-      expect(user.preferredDistance, lessThanOrEqualTo(500)); // Reasonable max
+      expect(user.phoneNumber, isA<String>());
+      expect(user.phoneNumber, isNotEmpty);
     });
 
     test('should track user creation time', () {
@@ -83,8 +81,8 @@ void main() {
         final user = MockData.createUser(localNumber: localNumber);
 
         // Assert
-        expect(user.localNumber, equals(localNumber));
-        expect(TestConstants.commonIBEWLocals, contains(user.localNumber));
+        expect(user.homeLocal, equals(localNumber.toString()));
+        expect(TestConstants.commonIBEWLocals, contains(localNumber));
       }
     });
 

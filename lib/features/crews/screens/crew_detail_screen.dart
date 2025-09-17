@@ -409,16 +409,16 @@ class _CrewDetailScreenState extends ConsumerState<CrewDetailScreen>
           onPressed: _onBackPressed,
         ),
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            JJElectricalLoader(
+            ElectricalLoader(
               size: 60,
               color: AppTheme.accentCopper,
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Loading crew details...',
               style: TextStyle(
                 fontSize: 16,

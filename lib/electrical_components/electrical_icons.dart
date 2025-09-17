@@ -13,11 +13,11 @@ class ElectricalIcons {
   static const IconData crewMember = Icons.person_outline;
 
   // Job and work type icons
-  static const IconData inside_wireman = Icons.electrical_services;
-  static const IconData journeyman_lineman = Icons.power;
-  static const IconData tree_trimmer = Icons.nature;
-  static const IconData equipment_operator = Icons.construction;
-  static const IconData inside_journeyman = Icons.build_circle;
+  static const IconData insideWireman = Icons.electrical_services;
+  static const IconData journeymanLineman = Icons.power;
+  static const IconData treeTrimmer = Icons.nature;
+  static const IconData equipmentOperator = Icons.construction;
+  static const IconData insideJourneyman = Icons.build_circle;
 
   // Equipment and electrical icons
   static const IconData powerLine = Icons.power_outlined;
@@ -51,17 +51,17 @@ class ElectricalIcons {
   static IconData getClassificationIcon(String classification) {
     switch (classification.toLowerCase()) {
       case 'inside_wireman':
-        return inside_wireman;
+        return insideWireman;
       case 'journeyman_lineman':
-        return journeyman_lineman;
+        return journeymanLineman;
       case 'tree_trimmer':
-        return tree_trimmer;
+        return treeTrimmer;
       case 'equipment_operator':
-        return equipment_operator;
+        return equipmentOperator;
       case 'inside_journeyman':
-        return inside_journeyman;
+        return insideJourneyman;
       default:
-        return electrical_services;
+        return Icons.electrical_services;
     }
   }
 

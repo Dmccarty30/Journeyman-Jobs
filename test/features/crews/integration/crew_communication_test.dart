@@ -202,7 +202,7 @@ void main() {
         // Arrange: Job coordination message
         const crewId = 'crew_commercial_002';
         final coordinationRequest = {
-          'content': 'Need 2 journeymen for panel installation tomorrow. Who\'s available? Job pays $42/hr.',
+          'content': 'Need 2 journeymen for panel installation tomorrow. Who\'s available? Job pays \$42/hr.',
           'type': 'coordination_request',
           'jobDetails': {
             'rate': 42.0,

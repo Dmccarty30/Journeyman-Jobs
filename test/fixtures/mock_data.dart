@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:journeyman_jobs/models/job_model.dart';
 import 'package:journeyman_jobs/models/user_model.dart';
-import 'package:journeyman_jobs/legacy/flutterflow/schema/locals_record.dart';
+import 'package:journeyman_jobs/models/locals_record.dart';
 
 /// Centralized mock data for all tests
 class MockData {
@@ -45,7 +45,7 @@ class MockData {
   ];
 
   /// Create mock job data
-  static Job createJob({
+  static JobModel createJob({
     String? id,
     String? company,
     String? location,
@@ -57,7 +57,7 @@ class MockData {
     final jobId = id ?? 'job-${DateTime.now().millisecondsSinceEpoch}';
     final jobLocal = localNumber ?? realIBEWLocals.first;
     
-    return Job(
+    return JobModel(
       id: jobId,
       company: company ?? 'Test Electric Company',
       location: location ?? 'Test City, TS',
@@ -85,15 +85,28 @@ class MockData {
   }) {
     return UserModel(
       uid: uid ?? 'user-${DateTime.now().millisecondsSinceEpoch}',
+      firstName: displayName?.split(' ').first ?? 'Test',
+      lastName: displayName?.split(' ').last ?? 'User',
+      phoneNumber: '555-123-4567',
       email: email ?? 'test@ibew.local',
-      displayName: displayName ?? 'Test User',
-      localNumber: localNumber ?? realIBEWLocals.first,
+      address1: '123 Main St',
+      city: 'Test City',
+      state: 'TS',
+      zipcode: '12345',
+      homeLocal: localNumber?.toString() ?? realIBEWLocals.first.toString(),
+      ticketNumber: '12345',
       classification: classification ?? electricalClassifications.first,
+      isWorking: false,
+      constructionTypes: ['Commercial'],
+      networkWithOthers: true,
+      careerAdvancements: true,
+      betterBenefits: true,
+      higherPayRate: true,
+      learnNewSkill: true,
+      travelToNewLocation: true,
+      findLongTermWork: true,
+      onboardingStatus: 'completed',
       createdTime: DateTime.now(),
-      certifications: certifications ?? ['OSHA 30', 'First Aid/CPR'],
-      yearsExperience: 5,
-      preferredDistance: 50,
-      isActive: true,
     );
   }
 
@@ -109,21 +122,25 @@ class MockData {
     final local = localNumber ?? realIBEWLocals.first;
     
     return LocalsRecord(
-      reference: FirebaseFirestore.instance.collection('locals').doc('local-$local'),
-      localNumber: local,
-      name: name ?? 'IBEW Local $local',
-      state: state ?? ibewStates.first,
+      id: 'local-$local',
+      localNumber: local.toString(),
+      localName: name ?? 'IBEW Local $local',
+      location: state ?? ibewStates.first,
       address: address ?? '$local Union Street, Test City, ${state ?? ibewStates.first} 12345',
-      phone: phone ?? '(555) ${local.toString().padLeft(3, '0')}-4567',
-      classifications: classifications ?? electricalClassifications.take(3).toList(),
+      contactPhone: phone ?? '(555) ${local.toString().padLeft(3, '0')}-4567',
+      contactEmail: 'info@local$local.ibew.org',
       website: 'https://local$local.ibew.org',
-      email: 'info@local$local.ibew.org',
-      createdTime: DateTime.now(),
+      memberCount: 100 + local,
+      specialties: classifications ?? electricalClassifications.take(3).toList(),
+      isActive: true,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      reference: FirebaseFirestore.instance.collection('locals').doc('local-$local'),
     );
   }
 
   /// Create multiple mock jobs for testing lists
-  static List<Job> createJobList({
+  static List<JobModel> createJobList({
     int count = 10,
     bool includeStormWork = false,
   }) {
@@ -168,7 +185,7 @@ class MockData {
   }) {
     return {
       'classifications': classifications ?? [electricalClassifications.first],
-      'constructionTypes': constructionTypes ?? [constructionTypes.first],
+      'constructionTypes': constructionTypes ?? [MockData.constructionTypes.first],
       'locals': locals ?? [realIBEWLocals.first],
       'minWage': minWage ?? 30.0,
       'maxWage': maxWage ?? 60.0,
@@ -237,7 +254,7 @@ class MockData {
   }
 
   /// Generate realistic electrical industry test scenarios
-  static Map<String, List<Job>> createElectricalScenarios() {
+  static Map<String, List<JobModel>> createElectricalScenarios() {
     return {
       'commercial_projects': createJobList(count: 8)
           .where((job) => job.typeOfWork == 'Commercial')
@@ -252,7 +269,7 @@ class MockData {
   }
 
   /// Create test data for performance testing
-  static List<Job> createLargeJobDataset({int count = 1000}) {
+  static List<JobModel> createLargeJobDataset({int count = 1000}) {
     return createJobList(count: count);
   }
 
@@ -265,37 +282,4 @@ class MockData {
       'last_sync': DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
     };
   }
-}
-
-/// Constants for testing
-class TestConstants {
-  // Test timeouts
-  static const Duration shortTimeout = Duration(seconds: 5);
-  static const Duration mediumTimeout = Duration(seconds: 15);
-  static const Duration longTimeout = Duration(seconds: 30);
-
-  // Test keys for widget identification
-  static const String jobCardKey = 'job-card';
-  static const String localCardKey = 'local-card';
-  static const String circuitBreakerKey = 'circuit-breaker-switch';
-  static const String electricalLoaderKey = 'electrical-loader';
-  static const String loadingIndicatorKey = 'loading-indicator';
-  static const String errorMessageKey = 'error-message';
-
-  // Test user credentials
-  static const String testEmail = 'test@ibew.local';
-  static const String testPassword = 'TestPassword123!';
-  static const String testUserId = 'test-user-12345';
-
-  // Test Firebase collections
-  static const String jobsCollection = 'jobs';
-  static const String localsCollection = 'locals';
-  static const String usersCollection = 'users';
-  static const String notificationsCollection = 'notifications';
-
-  // Test error messages
-  static const String networkErrorMessage = 'Network connection failed';
-  static const String authErrorMessage = 'Authentication failed';
-  static const String firestoreErrorMessage = 'Firestore operation failed';
-  static const String permissionErrorMessage = 'Permission denied';
 }

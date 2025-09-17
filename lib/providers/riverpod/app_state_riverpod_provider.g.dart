@@ -6,371 +6,156 @@ part of 'app_state_riverpod_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-// GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint, type=warning
-/// Connectivity service provider
-
-@ProviderFor(connectivityService)
-const connectivityServiceProvider = ConnectivityServiceProvider._();
-
-/// Connectivity service provider
-
-final class ConnectivityServiceProvider extends $FunctionalProvider<
-    ConnectivityService,
-    ConnectivityService,
-    ConnectivityService> with $Provider<ConnectivityService> {
-  /// Connectivity service provider
-  const ConnectivityServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'connectivityServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$connectivityServiceHash();
-
-  @$internal
-  @override
-  $ProviderElement<ConnectivityService> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  ConnectivityService create(Ref ref) {
-    return connectivityService(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(ConnectivityService value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<ConnectivityService>(value),
-    );
-  }
-}
-
 String _$connectivityServiceHash() =>
-    r'fe947b36f73c7e039fb04b7b9dd605f6ed10e715';
+    r'677485e07ca6fa8073f9617c75776c018263e026';
 
-@ProviderFor(notificationService)
-const notificationServiceProvider = NotificationServiceProvider._();
+/// Connectivity service provider
+///
+/// Copied from [connectivityService].
+@ProviderFor(connectivityService)
+final connectivityServiceProvider =
+    AutoDisposeProvider<ConnectivityService>.internal(
+  connectivityService,
+  name: r'connectivityServiceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$connectivityServiceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-final class NotificationServiceProvider extends $FunctionalProvider<
-    NotificationServiceAdapter,
-    NotificationServiceAdapter,
-    NotificationServiceAdapter> with $Provider<NotificationServiceAdapter> {
-  const NotificationServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'notificationServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$notificationServiceHash();
-
-  @$internal
-  @override
-  $ProviderElement<NotificationServiceAdapter> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  NotificationServiceAdapter create(Ref ref) {
-    return notificationService(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(NotificationServiceAdapter value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<NotificationServiceAdapter>(value),
-    );
-  }
-}
-
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ConnectivityServiceRef = AutoDisposeProviderRef<ConnectivityService>;
 String _$notificationServiceHash() =>
-    r'fb3c063b7fdea39af2e2b78234bad97723ce172e';
+    r'7a12f8dfd99c00e00ecdc934505845fe28698b1c';
 
+/// See also [notificationService].
+@ProviderFor(notificationService)
+final notificationServiceProvider =
+    AutoDisposeProvider<NotificationServiceAdapter>.internal(
+  notificationService,
+  name: r'notificationServiceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$notificationServiceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef NotificationServiceRef
+    = AutoDisposeProviderRef<NotificationServiceAdapter>;
+String _$analyticsServiceHash() => r'dbfd5f7e297d796707b3a6af30cf2d0028f81961';
+
+/// See also [analyticsService].
 @ProviderFor(analyticsService)
-const analyticsServiceProvider = AnalyticsServiceProvider._();
+final analyticsServiceProvider =
+    AutoDisposeProvider<AnalyticsServiceAdapter>.internal(
+  analyticsService,
+  name: r'analyticsServiceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$analyticsServiceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-final class AnalyticsServiceProvider extends $FunctionalProvider<
-    AnalyticsServiceAdapter,
-    AnalyticsServiceAdapter,
-    AnalyticsServiceAdapter> with $Provider<AnalyticsServiceAdapter> {
-  const AnalyticsServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'analyticsServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$analyticsServiceHash();
-
-  @$internal
-  @override
-  $ProviderElement<AnalyticsServiceAdapter> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  AnalyticsServiceAdapter create(Ref ref) {
-    return analyticsService(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AnalyticsServiceAdapter value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AnalyticsServiceAdapter>(value),
-    );
-  }
-}
-
-String _$analyticsServiceHash() => r'4ccdc6ead800c7ff2969519a91583607d65cc34e';
-
-/// Connectivity state stream
-
-@ProviderFor(connectivityStream)
-const connectivityStreamProvider = ConnectivityStreamProvider._();
-
-/// Connectivity state stream
-
-final class ConnectivityStreamProvider
-    extends $FunctionalProvider<AsyncValue<bool>, bool, Stream<bool>>
-    with $FutureModifier<bool>, $StreamProvider<bool> {
-  /// Connectivity state stream
-  const ConnectivityStreamProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'connectivityStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$connectivityStreamHash();
-
-  @$internal
-  @override
-  $StreamProviderElement<bool> $createElement($ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
-
-  @override
-  Stream<bool> create(Ref ref) {
-    return connectivityStream(ref);
-  }
-}
-
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AnalyticsServiceRef = AutoDisposeProviderRef<AnalyticsServiceAdapter>;
 String _$connectivityStreamHash() =>
-    r'9a74892d7b82b588c7d9005b074e4b24858e44ef';
+    r'1a0eab65059dfe3bf1fcfc224841e1869cd933d7';
 
-/// App state notifier
+/// Connectivity state stream
+///
+/// Copied from [connectivityStream].
+@ProviderFor(connectivityStream)
+final connectivityStreamProvider = AutoDisposeStreamProvider<bool>.internal(
+  connectivityStream,
+  name: r'connectivityStreamProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$connectivityStreamHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-@ProviderFor(AppStateNotifier)
-const appStateProvider = AppStateNotifierProvider._();
-
-/// App state notifier
-final class AppStateNotifierProvider
-    extends $NotifierProvider<AppStateNotifier, AppState> {
-  /// App state notifier
-  const AppStateNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'appStateProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$appStateNotifierHash();
-
-  @$internal
-  @override
-  AppStateNotifier create() => AppStateNotifier();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AppState value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AppState>(value),
-    );
-  }
-}
-
-String _$appStateNotifierHash() => r'529169686853b3aeaad194b59fe8c85cd79eff93';
-
-/// App state notifier
-
-abstract class _$AppStateNotifier extends $Notifier<AppState> {
-  AppState build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final created = build();
-    final ref = this.ref as $Ref<AppState, AppState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<AppState, AppState>, AppState, Object?, Object?>;
-    element.handleValue(ref, created);
-  }
-}
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ConnectivityStreamRef = AutoDisposeStreamProviderRef<bool>;
+String _$appStatusHash() => r'2e22fe27e9f782a583c2783fe8da780b44287e30';
 
 /// Combined app status provider
-
+///
+/// Copied from [appStatus].
 @ProviderFor(appStatus)
-const appStatusProvider = AppStatusProvider._();
+final appStatusProvider = AutoDisposeProvider<Map<String, dynamic>>.internal(
+  appStatus,
+  name: r'appStatusProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$appStatusHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Combined app status provider
-
-final class AppStatusProvider extends $FunctionalProvider<
-    Map<String, dynamic>,
-    Map<String, dynamic>,
-    Map<String, dynamic>> with $Provider<Map<String, dynamic>> {
-  /// Combined app status provider
-  const AppStatusProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'appStatusProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$appStatusHash();
-
-  @$internal
-  @override
-  $ProviderElement<Map<String, dynamic>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  Map<String, dynamic> create(Ref ref) {
-    return appStatus(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(Map<String, dynamic> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<Map<String, dynamic>>(value),
-    );
-  }
-}
-
-String _$appStatusHash() => r'78bd39e084c1635b554d93b21c7ef0402ae9eea3';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AppStatusRef = AutoDisposeProviderRef<Map<String, dynamic>>;
+String _$allErrorsHash() => r'ee3b5e282c8832fa8ae4d1236b20beeddc5335c2';
 
 /// Error aggregation provider
-
+///
+/// Copied from [allErrors].
 @ProviderFor(allErrors)
-const allErrorsProvider = AllErrorsProvider._();
+final allErrorsProvider = AutoDisposeProvider<List<String>>.internal(
+  allErrors,
+  name: r'allErrorsProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$allErrorsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Error aggregation provider
-
-final class AllErrorsProvider
-    extends $FunctionalProvider<List<String>, List<String>, List<String>>
-    with $Provider<List<String>> {
-  /// Error aggregation provider
-  const AllErrorsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'allErrorsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$allErrorsHash();
-
-  @$internal
-  @override
-  $ProviderElement<List<String>> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  List<String> create(Ref ref) {
-    return allErrors(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<String> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<List<String>>(value),
-    );
-  }
-}
-
-String _$allErrorsHash() => r'f35b135706826a39f3b58466fff3bde4edf4b474';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AllErrorsRef = AutoDisposeProviderRef<List<String>>;
+String _$isAnyLoadingHash() => r'75a001ebb3183d10d1e98ce2e26c074572445613';
 
 /// Loading state aggregation provider
-
+///
+/// Copied from [isAnyLoading].
 @ProviderFor(isAnyLoading)
-const isAnyLoadingProvider = IsAnyLoadingProvider._();
+final isAnyLoadingProvider = AutoDisposeProvider<bool>.internal(
+  isAnyLoading,
+  name: r'isAnyLoadingProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$isAnyLoadingHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Loading state aggregation provider
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef IsAnyLoadingRef = AutoDisposeProviderRef<bool>;
+String _$appStateNotifierHash() => r'3298fc1cdba3bceea07370249832197fbd6e0236';
 
-final class IsAnyLoadingProvider extends $FunctionalProvider<bool, bool, bool>
-    with $Provider<bool> {
-  /// Loading state aggregation provider
-  const IsAnyLoadingProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'isAnyLoadingProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+/// App state notifier
+///
+/// Copied from [AppStateNotifier].
+@ProviderFor(AppStateNotifier)
+final appStateNotifierProvider =
+    AutoDisposeNotifierProvider<AppStateNotifier, AppState>.internal(
+  AppStateNotifier.new,
+  name: r'appStateNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$appStateNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-  @override
-  String debugGetCreateSourceHash() => _$isAnyLoadingHash();
-
-  @$internal
-  @override
-  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  bool create(Ref ref) {
-    return isAnyLoading(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
-}
-
-String _$isAnyLoadingHash() => r'd690900773dbee154be5ac8d14aa25c8d2d1ede3';
+typedef _$AppStateNotifier = AutoDisposeNotifier<AppState>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

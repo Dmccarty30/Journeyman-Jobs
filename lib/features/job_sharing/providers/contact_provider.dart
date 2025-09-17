@@ -3,13 +3,15 @@ import 'dart:developer' as dev;
 
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../services/contact_service.dart';
 
+part 'contact_provider.g.dart';
+
 /// Provider for ContactService instance
-final contactServiceProvider = Provider<ContactService>((ref) {
-  return ContactService.instance;
-});
+@Riverpod()
+ContactService contactService(ContactServiceRef ref) => ContactService.instance;
 
 /// State class for contact-related data
 class ContactState {
@@ -304,31 +306,45 @@ class ContactNotifier extends StateNotifier<ContactState> {
 }
 
 /// Provider for contact state management
+@Riverpod()
+class ContactStateNotifier extends _$ContactStateNotifier {
+  @override
+  ContactState build() {
+    final contactService = ref.watch(contactServiceProvider);
+    return ContactNotifier(contactService).state;
+  }
+}
+
+/// Provider for checking if contacts permission is granted
+@Riverpod()
+Future<bool> contactPermission(ContactPermissionRef ref) async {
+  final contactService = ref.watch(contactServiceProvider);
+  return contactService.hasContactsPermission();
+}
+
+/// Provider for selected contact count
+@Riverpod()
+int selectedContactCount(SelectedContactCountRef ref) {
+  final contactState = ref.watch(contactProvider);
+  return contactState.selectedContacts.length;
+}
+
+/// Provider for filtered contact count
+@Riverpod()
+int filteredContactCount(FilteredContactCountRef ref) {
+  final contactState = ref.watch(contactProvider);
+  return contactState.filteredContacts.length;
+}
+
+/// Provider for checking if search is active
+@Riverpod()
+bool hasActiveSearch(HasActiveSearchRef ref) {
+  final contactState = ref.watch(contactProvider);
+  return contactState.searchQuery.isNotEmpty;
+}
+
+/// Legacy provider for contact state management (keeping for compatibility)
 final contactProvider = StateNotifierProvider<ContactNotifier, ContactState>((ref) {
   final contactService = ref.watch(contactServiceProvider);
   return ContactNotifier(contactService);
-});
-
-/// Provider for checking if contacts permission is granted
-final contactPermissionProvider = FutureProvider<bool>((ref) async {
-  final contactService = ref.watch(contactServiceProvider);
-  return contactService.hasContactsPermission();
-});
-
-/// Provider for selected contact count
-final selectedContactCountProvider = Provider<int>((ref) {
-  final contactState = ref.watch(contactProvider);
-  return contactState.selectedContacts.length;
-});
-
-/// Provider for filtered contact count
-final filteredContactCountProvider = Provider<int>((ref) {
-  final contactState = ref.watch(contactProvider);
-  return contactState.filteredContacts.length;
-});
-
-/// Provider for checking if search is active
-final hasActiveSearchProvider = Provider<bool>((ref) {
-  final contactState = ref.watch(contactProvider);
-  return contactState.searchQuery.isNotEmpty;
 });

@@ -8,7 +8,6 @@ part 'auth_riverpod_provider.g.dart';
 
 /// Authentication state model for Riverpod
 class AuthState {
-
   const AuthState({
     this.user,
     this.isLoading = false,
@@ -30,31 +29,32 @@ class AuthState {
     String? error,
     Duration? lastSignInDuration,
     double? signInSuccessRate,
-  }) => AuthState(
-      user: user ?? this.user,
-      isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
-      lastSignInDuration: lastSignInDuration ?? this.lastSignInDuration,
-      signInSuccessRate: signInSuccessRate ?? this.signInSuccessRate,
-    );
+  }) =>
+      AuthState(
+        user: user ?? this.user,
+        isLoading: isLoading ?? this.isLoading,
+        error: error ?? this.error,
+        lastSignInDuration: lastSignInDuration ?? this.lastSignInDuration,
+        signInSuccessRate: signInSuccessRate ?? this.signInSuccessRate,
+      );
 
   AuthState clearError() => copyWith();
 }
 
 /// AuthService provider
-@riverpod
-AuthService authService(Ref ref) => AuthService();
+@Riverpod()
+AuthService authService(AuthServiceRef ref) => AuthService();
 
 /// Auth state stream provider
-@riverpod
-Stream<User?> authStateStream(Ref ref) {
+@Riverpod()
+Stream<User?> authStateStream(AuthStateStreamRef ref) {
   final authService = ref.watch(authServiceProvider);
   return authService.authStateChanges;
 }
 
 /// Current user provider
-@riverpod
-User? currentUser(Ref ref) {
+@Riverpod()
+User? currentUser(CurrentUserRef ref) {
   final authState = ref.watch(authStateStreamProvider);
   return authState.when(
     data: (user) => user,
@@ -64,7 +64,7 @@ User? currentUser(Ref ref) {
 }
 
 /// Auth state notifier for managing authentication operations
-@riverpod
+@Riverpod()
 class AuthNotifier extends _$AuthNotifier {
   late final ConcurrentOperationManager _operationManager;
   int _signInAttempts = 0;
@@ -73,9 +73,10 @@ class AuthNotifier extends _$AuthNotifier {
   @override
   AuthState build() {
     _operationManager = ConcurrentOperationManager();
-    
+
     // Listen to auth state changes
-    ref.listen(authStateStreamProvider, (AsyncValue<User?>? previous, AsyncValue<User?> next) {
+    ref.listen(authStateStreamProvider,
+        (AsyncValue<User?>? previous, AsyncValue<User?> next) {
       next.when(
         data: (User? user) {
           state = state.copyWith(
@@ -115,15 +116,16 @@ class AuthNotifier extends _$AuthNotifier {
     try {
       await _operationManager.executeOperation(
         type: OperationType.signIn,
-        operation: () => ref.read(authServiceProvider).signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        ),
+        operation: () =>
+            ref.read(authServiceProvider).signInWithEmailAndPassword(
+                  email: email,
+                  password: password,
+                ),
       );
 
       stopwatch.stop();
       _successfulSignIns++;
-      
+
       state = state.copyWith(
         isLoading: false,
         lastSignInDuration: stopwatch.elapsed,
@@ -154,7 +156,7 @@ class AuthNotifier extends _$AuthNotifier {
         type: OperationType.signOut,
         operation: () => ref.read(authServiceProvider).signOut(),
       );
-      
+
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(
@@ -177,15 +179,15 @@ class AuthNotifier extends _$AuthNotifier {
 }
 
 /// Convenience provider for auth state
-@riverpod
-bool isAuthenticated(Ref ref) {
+@Riverpod()
+bool isAuthenticated(IsAuthenticatedRef ref) {
   final user = ref.watch(currentUserProvider);
   return user != null;
 }
 
 /// Route guard provider
-@riverpod
-bool isRouteProtected(Ref ref, String routePath) {
+@Riverpod()
+bool isRouteProtected(IsRouteProtectedRef ref, String routePath) {
   // Define protected routes
   const List<String> protectedRoutes = <String>[
     '/profile',

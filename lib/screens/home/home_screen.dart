@@ -26,7 +26,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(jobsProvider.notifier).loadJobs();
+      ref.read(jobsNotifierProvider.notifier).loadJobs();
     });
   }
 
@@ -83,7 +83,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           // Main content
           RefreshIndicator(
-            onRefresh: () => ref.read(jobsProvider.notifier).refreshJobs(),
+            onRefresh: () => ref.read(jobsNotifierProvider.notifier).refreshJobs(),
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(AppTheme.spacingMd),
               child: Column(
@@ -91,7 +91,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 children: [
               Consumer(
                 builder: (context, ref, child) {
-                  final authState = ref.watch(authProvider);
+                  final authState = ref.watch(authNotifierProvider);
                   if (!authState.isAuthenticated) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,7 +215,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
               Consumer(
                 builder: (context, ref, child) {
-                  final jobsState = ref.watch(jobsProvider);
+                  final jobsState = ref.watch(jobsNotifierProvider);
                   if (jobsState.isLoading) {
                     return const Center(
                       child: Padding(
@@ -241,7 +241,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                             const SizedBox(height: AppTheme.spacingSm),
                             ElevatedButton(
-                              onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
+                              onPressed: () => ref.read(jobsNotifierProvider.notifier).refreshJobs(),
                               child: const Text('Retry'),
                             ),
                           ],
@@ -270,7 +270,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                             const SizedBox(height: AppTheme.spacingSm),
                             TextButton(
-                              onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
+                              onPressed: () => ref.read(jobsNotifierProvider.notifier).refreshJobs(),
                               child: Text(
                                 'Refresh',
                                 style: AppTheme.bodyMedium.copyWith(

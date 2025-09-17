@@ -1020,7 +1020,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
 }
 
 // Helper service to create notifications
-class NotificationService {
+class _LocalNotificationHelper {
   static Future<void> createNotification({
     required String userId,
     required String type,

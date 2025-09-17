@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 // For rootBundle
-import 'package:journeyman_jobs/design_system/app_theme.dart' show AppTheme;
-import 'package:journeyman_jobs/design_system/components/reusable_components.dart' show JJButton, JJButtonSize, JJButtonVariant;
-import 'package:journeyman_jobs/models/storm_roster_signup.dart' show UnknownSignUp, MixedSignUp, RosterContractor, SignUpInfo, UrlSignUp, TextSignUp, PhoneSignUp, EmailSignUp;
-import 'package:journeyman_jobs/services/roster_data_service.dart' show RosterDataService;
+import '../../design_system/app_theme.dart' show AppTheme;
+import '../../design_system/components/reusable_components.dart' show JJButton, JJButtonSize, JJButtonVariant;
+import '../../models/storm_roster_signup.dart' show UnknownSignUp, MixedSignUp, RosterContractor, SignUpInfo, UrlSignUp, TextSignUp, PhoneSignUp, EmailSignUp;
+import '../../services/roster_data_service.dart' show RosterDataService;
 import 'package:url_launcher/url_launcher.dart';
 
 

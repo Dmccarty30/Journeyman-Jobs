@@ -6,321 +6,259 @@ part of 'auth_riverpod_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-// GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint, type=warning
-/// AuthService provider
+String _$authServiceHash() => r'087414bb6bee00d72012934e1a5bee629fc9f82d';
 
+/// AuthService provider
+///
+/// Copied from [authService].
 @ProviderFor(authService)
-const authServiceProvider = AuthServiceProvider._();
+final authServiceProvider = AutoDisposeProvider<AuthService>.internal(
+  authService,
+  name: r'authServiceProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$authServiceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// AuthService provider
-
-final class AuthServiceProvider
-    extends $FunctionalProvider<AuthService, AuthService, AuthService>
-    with $Provider<AuthService> {
-  /// AuthService provider
-  const AuthServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'authServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$authServiceHash();
-
-  @$internal
-  @override
-  $ProviderElement<AuthService> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  AuthService create(Ref ref) {
-    return authService(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AuthService value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AuthService>(value),
-    );
-  }
-}
-
-String _$authServiceHash() => r'ed0872794ec8e4cb3f50cb37b9c0b9467eb51ddb';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AuthServiceRef = AutoDisposeProviderRef<AuthService>;
+String _$authStateStreamHash() => r'1dbee8ac1590937318f7c85a7afb20730f1f4c70';
 
 /// Auth state stream provider
-
+///
+/// Copied from [authStateStream].
 @ProviderFor(authStateStream)
-const authStateStreamProvider = AuthStateStreamProvider._();
+final authStateStreamProvider = AutoDisposeStreamProvider<User?>.internal(
+  authStateStream,
+  name: r'authStateStreamProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$authStateStreamHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Auth state stream provider
-
-final class AuthStateStreamProvider
-    extends $FunctionalProvider<AsyncValue<User?>, User?, Stream<User?>>
-    with $FutureModifier<User?>, $StreamProvider<User?> {
-  /// Auth state stream provider
-  const AuthStateStreamProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'authStateStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$authStateStreamHash();
-
-  @$internal
-  @override
-  $StreamProviderElement<User?> $createElement($ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
-
-  @override
-  Stream<User?> create(Ref ref) {
-    return authStateStream(ref);
-  }
-}
-
-String _$authStateStreamHash() => r'945c7573a4c44c1e7821e357b4335dfab9831caf';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AuthStateStreamRef = AutoDisposeStreamProviderRef<User?>;
+String _$currentUserHash() => r'2c9954d8e0c05f10e8d7235a732c652026c25f15';
 
 /// Current user provider
-
+///
+/// Copied from [currentUser].
 @ProviderFor(currentUser)
-const currentUserProvider = CurrentUserProvider._();
+final currentUserProvider = AutoDisposeProvider<User?>.internal(
+  currentUser,
+  name: r'currentUserProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$currentUserHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Current user provider
-
-final class CurrentUserProvider extends $FunctionalProvider<User?, User?, User?>
-    with $Provider<User?> {
-  /// Current user provider
-  const CurrentUserProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'currentUserProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$currentUserHash();
-
-  @$internal
-  @override
-  $ProviderElement<User?> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  User? create(Ref ref) {
-    return currentUser(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(User? value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<User?>(value),
-    );
-  }
-}
-
-String _$currentUserHash() => r'7a7c15dd3ddbe7d5ff4fa9b0c4e9cd832e42c8aa';
-
-/// Auth state notifier for managing authentication operations
-
-@ProviderFor(AuthNotifier)
-const authProvider = AuthNotifierProvider._();
-
-/// Auth state notifier for managing authentication operations
-final class AuthNotifierProvider
-    extends $NotifierProvider<AuthNotifier, AuthState> {
-  /// Auth state notifier for managing authentication operations
-  const AuthNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'authProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$authNotifierHash();
-
-  @$internal
-  @override
-  AuthNotifier create() => AuthNotifier();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AuthState value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AuthState>(value),
-    );
-  }
-}
-
-String _$authNotifierHash() => r'0db83949d3c9d7650980d42cf21560b80b37f23a';
-
-/// Auth state notifier for managing authentication operations
-
-abstract class _$AuthNotifier extends $Notifier<AuthState> {
-  AuthState build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final created = build();
-    final ref = this.ref as $Ref<AuthState, AuthState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<AuthState, AuthState>, AuthState, Object?, Object?>;
-    element.handleValue(ref, created);
-  }
-}
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CurrentUserRef = AutoDisposeProviderRef<User?>;
+String _$isAuthenticatedHash() => r'45336f82b98678239b4891278406d2e18cc88e4d';
 
 /// Convenience provider for auth state
-
+///
+/// Copied from [isAuthenticated].
 @ProviderFor(isAuthenticated)
-const isAuthenticatedProvider = IsAuthenticatedProvider._();
+final isAuthenticatedProvider = AutoDisposeProvider<bool>.internal(
+  isAuthenticated,
+  name: r'isAuthenticatedProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$isAuthenticatedHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Convenience provider for auth state
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef IsAuthenticatedRef = AutoDisposeProviderRef<bool>;
+String _$isRouteProtectedHash() => r'49b195b8de0146f75b51ea267a30ee74bb704b5c';
 
-final class IsAuthenticatedProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
-  /// Convenience provider for auth state
-  const IsAuthenticatedProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'isAuthenticatedProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+/// Copied from Dart SDK
+class _SystemHash {
+  _SystemHash._();
 
-  @override
-  String debugGetCreateSourceHash() => _$isAuthenticatedHash();
-
-  @$internal
-  @override
-  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  bool create(Ref ref) {
-    return isAuthenticated(ref);
+  static int combine(int hash, int value) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + value);
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+    return hash ^ (hash >> 6);
   }
 
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
+  static int finish(int hash) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
+    // ignore: parameter_assignments
+    hash = hash ^ (hash >> 11);
+    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
 
-String _$isAuthenticatedHash() => r'ec341d95b490bda54e8278477e26f7b345844931';
-
 /// Route guard provider
-
+///
+/// Copied from [isRouteProtected].
 @ProviderFor(isRouteProtected)
-const isRouteProtectedProvider = IsRouteProtectedFamily._();
+const isRouteProtectedProvider = IsRouteProtectedFamily();
 
 /// Route guard provider
-
-final class IsRouteProtectedProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
+///
+/// Copied from [isRouteProtected].
+class IsRouteProtectedFamily extends Family<bool> {
   /// Route guard provider
-  const IsRouteProtectedProvider._(
-      {required IsRouteProtectedFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
+  ///
+  /// Copied from [isRouteProtected].
+  const IsRouteProtectedFamily();
+
+  /// Route guard provider
+  ///
+  /// Copied from [isRouteProtected].
+  IsRouteProtectedProvider call(
+    String routePath,
+  ) {
+    return IsRouteProtectedProvider(
+      routePath,
+    );
+  }
+
+  @override
+  IsRouteProtectedProvider getProviderOverride(
+    covariant IsRouteProtectedProvider provider,
+  ) {
+    return call(
+      provider.routePath,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'isRouteProtectedProvider';
+}
+
+/// Route guard provider
+///
+/// Copied from [isRouteProtected].
+class IsRouteProtectedProvider extends AutoDisposeProvider<bool> {
+  /// Route guard provider
+  ///
+  /// Copied from [isRouteProtected].
+  IsRouteProtectedProvider(
+    String routePath,
+  ) : this._internal(
+          (ref) => isRouteProtected(
+            ref as IsRouteProtectedRef,
+            routePath,
+          ),
+          from: isRouteProtectedProvider,
           name: r'isRouteProtectedProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$isRouteProtectedHash,
+          dependencies: IsRouteProtectedFamily._dependencies,
+          allTransitiveDependencies:
+              IsRouteProtectedFamily._allTransitiveDependencies,
+          routePath: routePath,
         );
 
-  @override
-  String debugGetCreateSourceHash() => _$isRouteProtectedHash();
+  IsRouteProtectedProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.routePath,
+  }) : super.internal();
+
+  final String routePath;
 
   @override
-  String toString() {
-    return r'isRouteProtectedProvider'
-        ''
-        '($argument)';
-  }
-
-  @$internal
-  @override
-  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  bool create(Ref ref) {
-    final argument = this.argument as String;
-    return isRouteProtected(
-      ref,
-      argument,
-    );
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
+  Override overrideWith(
+    bool Function(IsRouteProtectedRef provider) create,
+  ) {
+    return ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
+      override: IsRouteProtectedProvider._internal(
+        (ref) => create(ref as IsRouteProtectedRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        routePath: routePath,
+      ),
     );
+  }
+
+  @override
+  AutoDisposeProviderElement<bool> createElement() {
+    return _IsRouteProtectedProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is IsRouteProtectedProvider && other.argument == argument;
+    return other is IsRouteProtectedProvider && other.routePath == routePath;
   }
 
   @override
   int get hashCode {
-    return argument.hashCode;
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, routePath.hashCode);
+
+    return _SystemHash.finish(hash);
   }
 }
 
-String _$isRouteProtectedHash() => r'dbeddd3719f65e93f561fe1263b1ff94a0ded4ab';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin IsRouteProtectedRef on AutoDisposeProviderRef<bool> {
+  /// The parameter `routePath` of this provider.
+  String get routePath;
+}
 
-/// Route guard provider
-
-final class IsRouteProtectedFamily extends $Family
-    with $FunctionalFamilyOverride<bool, String> {
-  const IsRouteProtectedFamily._()
-      : super(
-          retry: null,
-          name: r'isRouteProtectedProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
-
-  /// Route guard provider
-
-  IsRouteProtectedProvider call(
-    String routePath,
-  ) =>
-      IsRouteProtectedProvider._(argument: routePath, from: this);
+class _IsRouteProtectedProviderElement extends AutoDisposeProviderElement<bool>
+    with IsRouteProtectedRef {
+  _IsRouteProtectedProviderElement(super.provider);
 
   @override
-  String toString() => r'isRouteProtectedProvider';
+  String get routePath => (origin as IsRouteProtectedProvider).routePath;
 }
+
+String _$authNotifierHash() => r'4a5bcff076f36afe85f8cceae95c3b3ae0faac53';
+
+/// Auth state notifier for managing authentication operations
+///
+/// Copied from [AuthNotifier].
+@ProviderFor(AuthNotifier)
+final authNotifierProvider =
+    AutoDisposeNotifierProvider<AuthNotifier, AuthState>.internal(
+  AuthNotifier.new,
+  name: r'authNotifierProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$authNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$AuthNotifier = AutoDisposeNotifier<AuthState>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -7,17 +7,21 @@ import 'standardized_card.dart';
 
 /// Enum for JobCard variants
 enum JobCardVariant {
-  /// Half-size variant for home screen and compact displays
+  /// Half-size variant for home screen and compact displays (alias: compact)
   half,
   /// Full-size variant for jobs screen with detailed information
   full,
+  /// Compact variant - alias for half to maintain backward compatibility
+  compact,
+  /// Enhanced variant - same as full but with additional functionality
+  enhanced,
 }
 
 /// Reusable JobCard component for displaying job information
 /// Supports two variants: half (compact) and full (detailed)
 class JobCard extends StatelessWidget {
   /// The job object containing all job data
-  final Job job;
+  final JobModel job;
   
   /// The variant type determining the card size and information display
   final JobCardVariant variant;
@@ -60,8 +64,10 @@ class JobCard extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (variant) {
       case JobCardVariant.half:
+      case JobCardVariant.compact:
         return _buildHalfCard();
       case JobCardVariant.full:
+      case JobCardVariant.enhanced:
         return _buildFullCard();
     }
   }

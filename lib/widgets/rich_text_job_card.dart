@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:journeyman_jobs/design_system/app_theme.dart';
+import '../design_system/app_theme.dart';
 import '../models/job_model.dart';
-import 'package:journeyman_jobs/widgets/dialogs/job_details_dialog.dart';
+import 'dialogs/job_details_dialog.dart';
 
 /// A card widget displaying job details using RichText with icons
 /// Shows job information in a two-span format: bold labels and bracketed values
@@ -12,7 +12,7 @@ class RichTextJobCard extends StatelessWidget {
     this.onDetails,
     this.onBid,
   });
-  final Job job;
+  final JobModel job;
   final VoidCallback? onDetails;
   final VoidCallback? onBid;
 

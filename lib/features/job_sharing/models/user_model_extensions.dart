@@ -1,4 +1,4 @@
-import 'package:journeyman_jobs/models/user_model.dart';
+import '../../../models/user_model.dart';
 
 /// Extension methods for UserModel to provide backward compatibility
 /// with job_sharing widgets that expect different property names.

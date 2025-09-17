@@ -267,23 +267,13 @@ class _CrewCommunicationScreenState extends ConsumerState<CrewCommunicationScree
   }
 
   Widget _buildMessagesList() {
-    return StreamBuilder<List<CrewCommunication>>(
-      stream: ref.watch(crewMessagesProvider(widget.crewId)),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildLoadingIndicator();
-        }
-
-        if (snapshot.hasError) {
-          return _buildErrorState(snapshot.error.toString());
-        }
-
-        final messages = snapshot.data ?? [];
-
+    final messagesAsync = ref.watch(crewMessagesProvider(widget.crewId));
+    
+    return messagesAsync.when(
+      data: (messages) {
         if (messages.isEmpty) {
           return _buildEmptyState();
         }
-
         return ListView.builder(
           controller: _scrollController,
           reverse: true, // Show newest messages at bottom
@@ -312,6 +302,8 @@ class _CrewCommunicationScreenState extends ConsumerState<CrewCommunicationScree
           },
         );
       },
+      loading: () => _buildLoadingIndicator(),
+      error: (error, stackTrace) => _buildErrorState(error.toString()),
     );
   }
 
@@ -1030,14 +1022,13 @@ class _CrewCommunicationScreenState extends ConsumerState<CrewCommunicationScree
       await ref.read(crewCommunicationNotifierProvider.notifier).sendMessage(
         crewId: widget.crewId,
         content: 'Shared current location',
-        messageType: MessageType.locationShare,
+        messageType: MessageType.system,
         attachments: [
           MessageAttachment(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
-            messageId: '',
             fileName: 'location_${DateTime.now().millisecondsSinceEpoch}',
             url: 'geo:${position.latitude},${position.longitude}',
-            type: AttachmentType.location,
+            type: AttachmentType.document,
             sizeBytes: 0,
             uploadedAt: DateTime.now(),
             description: 'Current job site location',
@@ -1063,7 +1054,6 @@ class _CrewCommunicationScreenState extends ConsumerState<CrewCommunicationScree
         attachments.add(
           MessageAttachment(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
-            messageId: '',
             fileName: file.path.split('/').last,
             url: file.path, // Temporary local path
             type: AttachmentType.image,

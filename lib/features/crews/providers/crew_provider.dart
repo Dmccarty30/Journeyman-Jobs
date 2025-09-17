@@ -2,16 +2,18 @@ import 'dart:async';
 import 'dart:developer' as dev;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../models/crew.dart';
 import '../models/crew_member.dart';
 import '../models/crew_enums.dart';
 import '../services/crew_service.dart';
 
+part 'crew_provider.g.dart';
+
 /// Provider for CrewService instance
-final crewServiceProvider = Provider<CrewService>((ref) {
-  return CrewService();
-});
+@Riverpod()
+CrewService crewService(CrewServiceRef ref) => CrewService();
 
 /// State class for crew-related data
 class CrewState {
@@ -490,74 +492,95 @@ class CrewNotifier extends StateNotifier<CrewState> {
   }
 }
 
-/// Provider for crew state management
+/// Crew state notifier provider
+@Riverpod()
+class CrewStateNotifier extends _$CrewStateNotifier {
+  @override
+  CrewState build() {
+    final crewService = ref.watch(crewServiceProvider);
+    return CrewNotifier(crewService).state;
+  }
+}
+
+/// Provider for user's crews stream
+@Riverpod()
+Stream<List<Crew>> userCrewsStream(UserCrewsStreamRef ref, String userId) {
+  final crewService = ref.watch(crewServiceProvider);
+  return crewService.getUserCrewsStream(userId);
+}
+
+/// Provider for specific crew stream
+@Riverpod()
+Stream<Crew?> crewStream(CrewStreamRef ref, String crewId) {
+  final crewService = ref.watch(crewServiceProvider);
+  return crewService.getCrewStream(crewId);
+}
+
+/// Provider for crew members stream
+@Riverpod()
+Stream<List<CrewMember>> crewMembersStream(CrewMembersStreamRef ref, String crewId) {
+  final crewService = ref.watch(crewServiceProvider);
+  return crewService.getCrewMembersStream(crewId);
+}
+
+/// Legacy provider for crew state management (keeping for compatibility)
 final crewProvider = StateNotifierProvider<CrewNotifier, CrewState>((ref) {
   final crewService = ref.watch(crewServiceProvider);
   return CrewNotifier(crewService);
 });
 
-/// Provider for user's crews stream
-final userCrewsStreamProvider = StreamProvider.family<List<Crew>, String>((ref, userId) {
-  final crewService = ref.watch(crewServiceProvider);
-  return crewService.getUserCrewsStream(userId);
-});
-
-/// Provider for specific crew stream
-final crewStreamProvider = StreamProvider.family<Crew?, String>((ref, crewId) {
-  final crewService = ref.watch(crewServiceProvider);
-  return crewService.getCrewStream(crewId);
-});
-
-/// Provider for crew members stream
-final crewMembersStreamProvider = StreamProvider.family<List<CrewMember>, String>((ref, crewId) {
-  final crewService = ref.watch(crewServiceProvider);
-  return crewService.getCrewMembersStream(crewId);
-});
-
 /// Provider for user's crew count
-final userCrewCountProvider = Provider<int>((ref) {
+@Riverpod()
+int userCrewCount(UserCrewCountRef ref) {
   final crewState = ref.watch(crewProvider);
   return crewState.userCrews.length;
-});
+}
 
 /// Provider for selected crew member count
-final selectedCrewMemberCountProvider = Provider<int>((ref) {
+@Riverpod()
+int selectedCrewMemberCount(SelectedCrewMemberCountRef ref) {
   final crewState = ref.watch(crewProvider);
   return crewState.selectedCrewMembers.length;
-});
+}
 
 /// Provider for checking if user can create more crews (max 5)
-final canCreateMoreCrewsProvider = Provider<bool>((ref) {
+@Riverpod()
+bool canCreateMoreCrews(CanCreateMoreCrewsRef ref) {
   final crewState = ref.watch(crewProvider);
   return crewState.userCrews.length < 5;
-});
+}
 
 /// Provider for search results count
-final searchResultsCountProvider = Provider<int>((ref) {
+@Riverpod()
+int searchResultsCount(SearchResultsCountRef ref) {
   final crewState = ref.watch(crewProvider);
   return crewState.searchResults.length;
-});
+}
 
 /// Provider for checking if search is active
-final hasActiveCrewSearchProvider = Provider<bool>((ref) {
+@Riverpod()
+bool hasActiveCrewSearch(HasActiveCrewSearchRef ref) {
   final crewState = ref.watch(crewProvider);
   return crewState.searchQuery.isNotEmpty;
-});
+}
 
 /// Provider for checking if crew is loading
-final crewLoadingProvider = Provider<bool>((ref) {
+@Riverpod()
+bool crewLoading(CrewLoadingRef ref) {
   final crewState = ref.watch(crewProvider);
   return crewState.isLoading;
-});
+}
 
 /// Provider for crew error state
-final crewErrorProvider = Provider<String?>((ref) {
+@Riverpod()
+String? crewError(CrewErrorRef ref) {
   final crewState = ref.watch(crewProvider);
   return crewState.errorMessage;
-});
+}
 
 /// Provider for offline mode status
-final crewOfflineModeProvider = Provider<bool>((ref) {
+@Riverpod()
+bool crewOfflineMode(CrewOfflineModeRef ref) {
   final crewState = ref.watch(crewProvider);
   return crewState.isOffline;
-});
+}

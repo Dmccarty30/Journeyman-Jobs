@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../design_system/app_theme.dart';
 import '../../../electrical_components/electrical_loader.dart';
@@ -131,7 +132,7 @@ class _CrewListScreenState extends ConsumerState<CrewListScreen>
     HapticFeedback.lightImpact();
     
     try {
-      await ref.read(crewProvider.notifier).refreshUserCrews();
+      await ref.read(crewProvider.notifier).initializeUserCrews(FirebaseAuth.instance.currentUser?.uid ?? '');
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -417,15 +418,15 @@ class _CrewListScreenState extends ConsumerState<CrewListScreen>
 
   /// Build electrical-themed loading state
   Widget _buildLoadingState() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          JJElectricalLoader(
+          ElectricalLoader(
             size: 60,
             color: AppTheme.accentCopper,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             'Loading your crews...',
             style: TextStyle(

@@ -15,7 +15,7 @@ import '../../lib/models/job_model.dart';
 import '../../lib/models/user_model.dart';
 import '../../lib/features/job_sharing/widgets/share_button.dart';
 import '../../lib/features/job_sharing/widgets/share_modal.dart';
-import '../../lib/features/job_sharing/providers/contact_provider.dart';
+import '../../lib/providers/riverpod/contacts_provider.dart';
 import '../../lib/services/job_sharing_service.dart';
 import '../../lib/design_system/app_theme.dart';
 

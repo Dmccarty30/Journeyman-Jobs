@@ -28,16 +28,6 @@ class FirebaseConfig {
                    defaultValue: 'journeyman-jobs-prod.appspot.com'),
     measurementId: String.fromEnvironment('FIREBASE_MEASUREMENT_ID', 
                    defaultValue: 'G-XXXXXXXXXX'),
-    // Android configuration
-    androidApiKey: String.fromEnvironment('FIREBASE_ANDROID_API_KEY', 
-                   defaultValue: 'AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
-    androidAppId: String.fromEnvironment('FIREBASE_ANDROID_APP_ID', 
-                  defaultValue: '1:123456789012:android:abcdef123456'),
-    // iOS configuration
-    iosApiKey: String.fromEnvironment('FIREBASE_IOS_API_KEY', 
-               defaultValue: 'AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
-    iosAppId: String.fromEnvironment('FIREBASE_IOS_APP_ID', 
-              defaultValue: '1:123456789012:ios:abcdef123456'),
     iosBundleId: String.fromEnvironment('FIREBASE_IOS_BUNDLE_ID', 
                  defaultValue: 'com.journeymanjobs.app'),
   );
@@ -58,16 +48,6 @@ class FirebaseConfig {
                    defaultValue: 'journeyman-jobs-dev.appspot.com'),
     measurementId: String.fromEnvironment('FIREBASE_DEV_MEASUREMENT_ID', 
                    defaultValue: 'G-XXXXXXXXXX'),
-    // Android configuration
-    androidApiKey: String.fromEnvironment('FIREBASE_DEV_ANDROID_API_KEY', 
-                   defaultValue: 'AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
-    androidAppId: String.fromEnvironment('FIREBASE_DEV_ANDROID_APP_ID', 
-                  defaultValue: '1:123456789012:android:abcdef123456'),
-    // iOS configuration
-    iosApiKey: String.fromEnvironment('FIREBASE_DEV_IOS_API_KEY', 
-               defaultValue: 'AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
-    iosAppId: String.fromEnvironment('FIREBASE_DEV_IOS_APP_ID', 
-              defaultValue: '1:123456789012:ios:abcdef123456'),
     iosBundleId: String.fromEnvironment('FIREBASE_DEV_IOS_BUNDLE_ID', 
                  defaultValue: 'com.journeymanjobs.app.dev'),
   );

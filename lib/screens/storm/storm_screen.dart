@@ -12,8 +12,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../../navigation/app_router.dart';
 import '../../electrical_components/circuit_board_background.dart';
- // import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
- // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 import '../../widgets/storm/roster_signup_carousel.dart';
 import '../../services/roster_data_service.dart';
 import '../../models/roster_contractor.dart';
@@ -28,70 +26,6 @@ import '../../models/roster_contractor.dart';
 
 class _StormScreenState extends State<StormScreen> {
 
-  // TODO: Use when power grid status cards are implemented
-  // final List<PowerGridStatus> _powerGridStatuses = PowerGridMockData.getSampleData();
-
-  // TODO: Implement power grid status cards when needed
-  /*List<Widget> _buildPowerGridStatusCards() {
-    return _powerGridStatuses.map((status) {
-      return Container(
-        margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          boxShadow: [AppTheme.shadowSm],
-        ),
-        padding: const EdgeInsets.all(AppTheme.spacingMd),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.power,
-                    color: status.stateColor, size: 30),
-                const SizedBox(width: AppTheme.spacingSm),
-                Text(
-                  status.gridName,
-                  style: AppTheme.headlineSmall
-                      .copyWith(color: AppTheme.primaryNavy),
-                ),
-                const Spacer(),
-                Text(
-                  status.stateLabel,
-                  style: AppTheme.bodySmall
-                      .copyWith(color: status.stateColor),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spacingSm),
-            Text(
-              'Load: ${status.loadPercentage.toStringAsFixed(1)}%, Affected Customers: ${status.affectedCustomers}',
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textPrimary,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingSm),
-            if (status.activeHazards.isNotEmpty)
-              Wrap(
-                spacing: AppTheme.spacingSm,
-                children: status.activeHazards.map((hazard) {
-                  return Chip(
-                    backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.2),
-                    label: Text(
-                      hazard,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.accentCopper,
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-          ],
-        ),
-      );
-    }).toList();
-  }*/
   bool _notificationsEnabled = false;
   String _selectedRegion = 'All Regions';
   

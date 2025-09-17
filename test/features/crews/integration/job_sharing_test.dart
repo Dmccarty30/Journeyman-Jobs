@@ -80,7 +80,7 @@ void main() {
         const jobId = 'job_hurricane_restoration_fl';
         final shareRequest = {
           'jobId': jobId,
-          'message': 'Urgent: Hurricane restoration work in Florida. $50/hr + per diem. All hands needed!',
+          'message': 'Urgent: Hurricane restoration work in Florida. \$50/hr + per diem. All hands needed!',
           'isPriority': true,
           'stormEvent': 'Hurricane Milton',
           'estimatedDuration': '3-4 weeks',

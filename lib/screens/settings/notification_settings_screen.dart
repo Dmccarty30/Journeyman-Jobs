@@ -354,9 +354,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             setState(() => _jobAlertsEnabled = value);
             _savePreference('job_alerts_enabled', value);
             if (value) {
-              FCMService.subscribeToTopic('job_alerts');
+              FCMService.instance.subscribeToTopicInterface('job_alerts');
             } else {
-              FCMService.unsubscribeFromTopic('job_alerts');
+              FCMService.instance.unsubscribeFromTopicInterface('job_alerts');
             }
           },
         ),
@@ -369,9 +369,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             setState(() => _stormWorkEnabled = value);
             _savePreference('storm_work_enabled', value);
             if (value) {
-              FCMService.subscribeToTopic('storm_alerts');
+              FCMService.instance.subscribeToTopicInterface('storm_alerts');
             } else {
-              FCMService.unsubscribeFromTopic('storm_alerts');
+              FCMService.instance.unsubscribeFromTopicInterface('storm_alerts');
             }
           },
         ),

@@ -9,6 +9,7 @@ import '../../../services/cache_service.dart';
 import '../../../design_system/app_theme.dart';
 import '../models/crew_communication.dart';
 import '../models/message_attachment.dart';
+import '../models/crew_enums.dart';
 
 /// Service result wrapper for consistent API responses
 class ServiceResult<T> {
@@ -459,8 +460,8 @@ class CrewCommunicationService {
     }
   }
 
-  /// Pin message (convenience method for tests)
-  Future<ServiceResult<Map<String, dynamic>>> pinMessage({
+  /// Pin message with result (convenience method for tests)
+  Future<ServiceResult<Map<String, dynamic>>> pinMessageWithResult({
     required String crewId,
     required String messageId,
   }) async {
@@ -531,8 +532,8 @@ class CrewCommunicationService {
     }
   }
 
-  /// Edit message (convenience method for tests)
-  Future<ServiceResult<Map<String, dynamic>>> editMessage({
+  /// Edit message with result (convenience method for tests)
+  Future<ServiceResult<Map<String, dynamic>>> editMessageWithResult({
     required String crewId,
     required String messageId,
     required String newContent,
@@ -593,7 +594,7 @@ class CrewCommunicationService {
       );
 
       if (messageType == MessageType.safetyAlert ||
-          messageType == MessageType.emergencyAlert) {
+          messageType == MessageType.emergency) {
         // Mark safety messages as deleted but preserve for audit
         await _messagesCollection.doc(messageId).update({
           'deleted': true,
@@ -619,8 +620,8 @@ class CrewCommunicationService {
     }
   }
 
-  /// Delete message (convenience method for tests)
-  Future<ServiceResult<void>> deleteMessage({
+  /// Delete message with result (convenience method for tests)
+  Future<ServiceResult<void>> deleteMessageWithResult({
     required String crewId,
     required String messageId,
   }) async {
@@ -693,7 +694,7 @@ class CrewCommunicationService {
         crewId: crewId,
         senderId: currentUser.uid,
         content: content,
-        type: MessageType.emergencyAlert,
+        type: MessageType.emergency,
         timestamp: DateTime.now(),
         senderName: userName,
         senderRole: userRole,
@@ -1159,9 +1160,10 @@ class CrewCommunicationService {
     // Check file size
     final fileSize = await attachment.length();
     if (fileSize > maxFileSize) {
-      throw const CrewCommunicationException(
+      final maxSizeMB = (maxFileSize / (1024 * 1024)).round();
+      throw CrewCommunicationException(
         code: 'file_too_large',
-        message: 'Attachment exceeds maximum size of ${(maxFileSize / (1024 * 1024)).round()}MB',
+        message: 'Attachment exceeds maximum size of ${maxSizeMB}MB',
       );
     }
 

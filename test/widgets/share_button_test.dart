@@ -760,7 +760,7 @@ void main() {
         QuickShareOption(
           type: 'test',
           title: 'Test Option',
-          icon: Icons.test_tube,
+          icon: Icons.science,
         ),
       ];
 
@@ -789,7 +789,7 @@ void main() {
         QuickShareOption(
           type: 'simple',
           title: 'Simple Option',
-          icon: Icons.simple_icons,
+          icon: Icons.adjust,
         ),
       ];
 
@@ -1033,10 +1033,10 @@ void main() {
 
       // Check semantic properties
       final shareButton = find.byKey(const Key('share-button-a11y-job'));
-      expect(tester.getSemantics(shareButton), hasProperty('onTap'));
+      expect(tester.getSemantics(shareButton).hasFlag(SemanticsFlag.isButton), isTrue);
 
       final quickOption = find.byKey(const Key('quick-share-option-accessible'));
-      expect(tester.getSemantics(quickOption), hasProperty('onTap'));
+      expect(tester.getSemantics(quickOption).hasFlag(SemanticsFlag.isButton), isTrue);
     });
 
     testWidgets('Share widgets announce state changes', (tester) async {

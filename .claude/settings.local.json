@@ -25,17 +25,21 @@
       "Read(///**)",
       "Bash(node:*)",
       "WebFetch(domain:)",
-      "Bash(flutter:*)"
+      "Bash(flutter:*)",
+      "Bash(dart run build_runner build:*)",
+      "Bash(dart format:*)",
+      "Bash(rm:*)",
+      "Bash(timeout 60 flutter analyze)"
     ],
     "deny": []
   },
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "mcp-server-fetch",
-    "universal_mcp",
     "firecrawl-mcp",
     "sequential-thinking",
-    "think-mcp-server"
+    "think-mcp-server",
+    "serena_mcp"
   ],
   "hooks": {
     "PreToolUse": [

@@ -11,7 +11,6 @@ part 'jobs_riverpod_provider.g.dart';
 
 /// Jobs state model for Riverpod
 class JobsState {
-
   const JobsState({
     this.jobs = const <Job>[],
     this.visibleJobs = const <Job>[],
@@ -43,30 +42,32 @@ class JobsState {
     DocumentSnapshot? lastDocument,
     List<Duration>? loadTimes,
     int? totalJobsLoaded,
-  }) => JobsState(
-      jobs: jobs ?? this.jobs,
-      visibleJobs: visibleJobs ?? this.visibleJobs,
-      activeFilter: activeFilter ?? this.activeFilter,
-      isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
-      hasMoreJobs: hasMoreJobs ?? this.hasMoreJobs,
-      lastDocument: lastDocument ?? this.lastDocument,
-      loadTimes: loadTimes ?? this.loadTimes,
-      totalJobsLoaded: totalJobsLoaded ?? this.totalJobsLoaded,
-    );
+  }) =>
+      JobsState(
+        jobs: jobs ?? this.jobs,
+        visibleJobs: visibleJobs ?? this.visibleJobs,
+        activeFilter: activeFilter ?? this.activeFilter,
+        isLoading: isLoading ?? this.isLoading,
+        error: error ?? this.error,
+        hasMoreJobs: hasMoreJobs ?? this.hasMoreJobs,
+        lastDocument: lastDocument ?? this.lastDocument,
+        loadTimes: loadTimes ?? this.loadTimes,
+        totalJobsLoaded: totalJobsLoaded ?? this.totalJobsLoaded,
+      );
 
   JobsState clearError() => copyWith();
 }
 
 /// Firestore service provider
-@riverpod
-ResilientFirestoreService firestoreService(Ref ref) => ResilientFirestoreService();
+@Riverpod()
+ResilientFirestoreService firestoreService(FirestoreServiceRef ref) =>
+    ResilientFirestoreService();
 
 /// Default capacity for the job cache to limit in-memory storage.
 const int defaultJobCacheCapacity = 500;
 
 /// Jobs notifier for managing job data and operations
-@riverpod
+@Riverpod()
 class JobsNotifier extends _$JobsNotifier {
   late final ConcurrentOperationManager _operationManager;
   // Manages in-memory job cache
@@ -142,11 +143,13 @@ class JobsNotifier extends _$JobsNotifier {
       _boundedJobCache.addAll(jobs);
       final List<Job> cachedJobs = _boundedJobCache.getAll();
 
-      // Update load times for performance tracking
-      final List<Duration> newLoadTimes = List<Duration>.from(state.loadTimes)
-        ..add(stopwatch.elapsed);
-      if (newLoadTimes.length > 50) {
-        newLoadTimes.removeAt(0); // Keep only last 50 measurements
+      // Update load times for performance tracking (optimized)
+      final List<Duration> newLoadTimes;
+      if (state.loadTimes.length >= 50) {
+        // More efficient: skip creating new list when at capacity
+        newLoadTimes = [...state.loadTimes.skip(1), stopwatch.elapsed];
+      } else {
+        newLoadTimes = [...state.loadTimes, stopwatch.elapsed];
       }
 
       // Update state with cached jobs and a visible slice
@@ -234,17 +237,18 @@ class JobsNotifier extends _$JobsNotifier {
 
   /// Get performance metrics
   Map<String, dynamic> getPerformanceMetrics() => <String, dynamic>{
-      'averageLoadTime': state.loadTimes.isEmpty
-          ? Duration.zero
-          : Duration(
-              milliseconds: state.loadTimes
-                  .map((Duration d) => d.inMilliseconds)
-                  .reduce((int a, int b) => a + b) ~/
-                  state.loadTimes.length,
-            ),
-      'totalJobsLoaded': state.totalJobsLoaded,
-      'estimatedMemoryBytes': _boundedJobCache.estimatedMemoryUsageBytes(), // Added estimated memory usage
-    };
+        'averageLoadTime': state.loadTimes.isEmpty
+            ? Duration.zero
+            : Duration(
+                milliseconds: state.loadTimes
+                        .map((Duration d) => d.inMilliseconds)
+                        .reduce((int a, int b) => a + b) ~/
+                    state.loadTimes.length,
+              ),
+        'totalJobsLoaded': state.totalJobsLoaded,
+        'estimatedMemoryBytes': _boundedJobCache
+            .estimatedMemoryUsageBytes(), // Added estimated memory usage
+      };
 
   /// Dispose resources
   void dispose() {
@@ -254,9 +258,9 @@ class JobsNotifier extends _$JobsNotifier {
 }
 
 /// Filtered jobs provider using family for auto-dispose
-@riverpod
+@Riverpod()
 Future<List<Job>> filteredJobs(
-  Ref ref,
+  FilteredJobsRef ref,
   JobFilterCriteria filter,
 ) async {
   final firestoreService = ref.watch(firestoreServiceProvider);
@@ -275,9 +279,9 @@ Future<List<Job>> filteredJobs(
 }
 
 /// Auto-dispose provider for job search
-@riverpod
+@Riverpod()
 Future<List<Job>> searchJobs(
-  Ref ref,
+  SearchJobsRef ref,
   String searchTerm,
 ) async {
   if (searchTerm.trim().isEmpty) {
@@ -304,8 +308,8 @@ Future<List<Job>> searchJobs(
 }
 
 /// Job by ID provider
-@riverpod
-Future<Job?> jobById(Ref ref, String jobId) async {
+@Riverpod()
+Future<Job?> jobById(JobByIdRef ref, String jobId) async {
   final firestoreService = ref.watch(firestoreServiceProvider);
 
   // Use the basic getJobs stream and filter by ID
@@ -324,8 +328,8 @@ Future<Job?> jobById(Ref ref, String jobId) async {
 }
 
 /// Recent jobs provider
-@riverpod
-Future<List<Job>> recentJobs(Ref ref) async {
+@Riverpod()
+Future<List<Job>> recentJobs(RecentJobsRef ref) async {
   final firestoreService = ref.watch(firestoreServiceProvider);
 
   const JobFilterCriteria filter = JobFilterCriteria(
@@ -347,8 +351,8 @@ Future<List<Job>> recentJobs(Ref ref) async {
 }
 
 /// Storm jobs provider (high priority jobs)
-@riverpod
-Future<List<Job>> stormJobs(Ref ref) async {
+@Riverpod()
+Future<List<Job>> stormJobs(StormJobsRef ref) async {
   final firestoreService = ref.watch(firestoreServiceProvider);
 
   const JobFilterCriteria filter = JobFilterCriteria(

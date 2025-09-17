@@ -101,6 +101,9 @@ dependencies:
   
   # Contacts integration
   contacts_service: ^0.6.3
+  
+  # Time formatting
+  timeago: ^3.7.0
 
 dev_dependencies:
   flutter_test:

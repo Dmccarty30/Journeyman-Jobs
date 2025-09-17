@@ -5,10 +5,10 @@ import '../../fixtures/mock_data.dart';
 import '../../fixtures/test_constants.dart';
 
 void main() {
-  group('Job Model Tests', () {
-    test('should create Job with required fields', () {
+  group('JobModel Tests', () {
+    test('should create JobModel with required fields', () {
       // Arrange & Act
-      final job = Job(
+      final job = JobModel(
         id: 'test-job-id',
         company: 'Test Electric Company',
         location: 'Test City, TS',
@@ -20,7 +20,7 @@ void main() {
       expect(job.location, equals('Test City, TS'));
     });
 
-    test('should create Job from JSON correctly', () {
+    test('should create JobModel from JSON correctly', () {
       // Arrange
       final jsonData = {
         'id': 'test-job-1',
@@ -34,7 +34,7 @@ void main() {
       };
 
       // Act
-      final job = Job.fromJson(jsonData);
+      final job = JobModel.fromJson(jsonData);
 
       // Assert
       expect(job.id, equals('test-job-1'));
@@ -47,7 +47,7 @@ void main() {
       expect(job.typeOfWork, equals('Commercial'));
     });
 
-    test('should convert Job to JSON correctly', () {
+    test('should convert JobModel to JSON correctly', () {
       // Arrange
       final job = MockData.createJob(
         id: 'test-job-2',
@@ -76,7 +76,7 @@ void main() {
       };
 
       // Act
-      final job = Job.fromJson(jsonData);
+      final job = JobModel.fromJson(jsonData);
 
       // Assert
       expect(job.wage, equals(42.50));
@@ -92,7 +92,7 @@ void main() {
       };
 
       // Act & Assert
-      expect(() => Job.fromJson(badJsonData), throwsA(isA<FormatException>()));
+      expect(() => JobModel.fromJson(badJsonData), throwsA(isA<FormatException>()));
     });
 
     test('should create Firestore-compatible JSON', () {
@@ -143,7 +143,7 @@ void main() {
 
     test('should handle electrical industry specific fields', () {
       // Arrange & Act
-      final job = Job.fromJson({
+      final job = JobModel.fromJson({
         'id': 'electrical-job',
         'company': 'High Voltage Corp',
         'location': 'Utility Site',
@@ -173,11 +173,11 @@ void main() {
     });
   });
 
-  group('Job Model Performance Tests', () {
+  group('JobModel Performance Tests', () {
     test('should handle large JSON parsing efficiently', () {
       // Arrange
       final stopwatch = Stopwatch()..start();
-      final jobs = <Job>[];
+      final jobs = <JobModel>[];
 
       // Act
       for (int i = 0; i < 1000; i++) {

@@ -210,7 +210,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                         const SizedBox(height: AppTheme.spacingXl),
                         
-                        JJPrimaryButton(
+                        JJButton(
                           text: 'Send Reset Instructions',
                           icon: Icons.send,
                           onPressed: _isLoading ? null : _resetPassword,
@@ -275,7 +275,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                       const SizedBox(height: AppTheme.spacingLg),
 
-                      JJPrimaryButton(
+                      JJButton(
                         text: 'Back to Sign In',
                         icon: Icons.login,
                         onPressed: () => Navigator.pop(context),
@@ -285,7 +285,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                       const SizedBox(height: AppTheme.spacingMd),
 
-                      JJSecondaryButton(
+                      JJButton(
                         text: 'Resend Email',
                         icon: Icons.refresh,
                         onPressed: _isLoading ? null : () {

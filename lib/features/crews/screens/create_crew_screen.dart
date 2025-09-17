@@ -703,7 +703,7 @@ class _CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
       // Get current user ID (this would normally come from auth provider)
       const String currentUserId = 'current_user_id'; // TODO: Get from auth provider
       
-      final crew = await ref.read(crewProviderProvider.notifier).createCrew(
+      final crew = await ref.read(crewProvider.notifier).createCrew(
         creatorId: currentUserId,
         name: _nameController.text.trim(),
         description: _descriptionController.text.trim().isEmpty 

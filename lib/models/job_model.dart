@@ -3,10 +3,12 @@ import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import '../utils/string_utils.dart';
 
+/// Type alias for backward compatibility
+
 /// Model class representing a Job posting
 /// Matches the backend JobsRecord schema
 @immutable
-class Job {
+class JobModel {
   // Document reference
   final String id;
   final DocumentReference? reference;
@@ -36,7 +38,7 @@ class Job {
   final String? duration;
 
   /// Constructor with required and optional parameters
-  const Job({
+  const JobModel({
     required this.id,
     this.reference,
     this.local,
@@ -63,8 +65,13 @@ class Job {
     this.duration,
   });
 
+  // Convenience getters for common UI properties
+  String get title => jobTitle ?? classification ?? 'Job Opportunity';
+  String get description => jobDescription ?? 'No description available';
+  double? get payRate => wage;
+
   /// Creates a copy of this Job with the given fields replaced with new values
-  Job copyWith({
+  JobModel copyWith({
     String? id,
     DocumentReference? reference,
     int? local,
@@ -90,7 +97,7 @@ class Job {
     String? typeOfWork,
     String? duration,
   }) {
-    return Job(
+    return JobModel(
       id: id ?? this.id,
       reference: reference ?? this.reference,
       local: local ?? this.local,
@@ -118,9 +125,9 @@ class Job {
     );
   }
 
-  /// Creates a Job instance from a JSON map
+  /// Creates a JobModel instance from a JSON map
   /// Handles both Firestore documents and standard JSON
-  factory Job.fromJson(Map<String, dynamic> json) {
+  factory JobModel.fromJson(Map<String, dynamic> json) {
     // Helper function to parse DateTime from various formats
     DateTime parseDateTime(dynamic value) {
       if (value == null) {
@@ -210,7 +217,7 @@ class Job {
         }
       }
       
-      return Job(
+      return JobModel(
         id: json['id']?.toString() ?? '',
         reference: json['reference'] as DocumentReference?,
         local: parseInt(json['local']) ?? parseInt(json['localNumber']),
@@ -241,7 +248,7 @@ class Job {
     }
   }
 
-  /// Converts this Job instance to a JSON map
+  /// Converts this JobModel instance to a JSON map
   /// [useFirestoreTypes] - If true, converts DateTime to Timestamp for Firestore
   /// [includeNullValues] - If true, includes null values in the output map
   Map<String, dynamic> toJson({
@@ -300,23 +307,23 @@ class Job {
     return data;
   }
 
-  /// Converts this Job instance to a Firestore-compatible map
+  /// Converts this JobModel instance to a Firestore-compatible map
   /// This is a convenience method that calls toJson with Firestore settings
   Map<String, dynamic> toFirestore() {
     return toJson(useFirestoreTypes: true, includeNullValues: false);
   }
 
-  /// Creates a Job instance from a Firestore DocumentSnapshot
+  /// Creates a JobModel instance from a Firestore DocumentSnapshot
   /// This is a convenience factory that extracts data and adds the document ID
-  factory Job.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+  factory JobModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     data['id'] = doc.id; // Ensure the document ID is included
-    return Job.fromJson(data);
+    return JobModel.fromJson(data);
   }
 
   @override
   String toString() {
-    return 'Job('
+    return 'JobModel('
         'id: $id, '
         'company: $company, '
         'location: $location, '
@@ -331,7 +338,7 @@ class Job {
     if (identical(this, other)) return true;
     final listEquals = const ListEquality().equals;
     
-    return other is Job &&
+    return other is JobModel &&
         other.id == id &&
         other.reference == reference &&
         other.local == local &&
@@ -386,3 +393,7 @@ class Job {
         duration,
       ]);
 }
+
+/// Type alias for backward compatibility
+/// Use JobModel for new code
+typedef Job = JobModel;

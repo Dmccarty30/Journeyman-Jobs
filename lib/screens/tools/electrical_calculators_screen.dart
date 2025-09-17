@@ -604,7 +604,6 @@ class _ConduitFillCalculatorState extends State<_ConduitFillCalculator> {
             variant: JJButtonVariant.primary,
             onPressed: _calculate,
             isFullWidth: true,
-            variant: JJButtonVariant.primary,
           ),
 
           if (_result.isNotEmpty) ...[
@@ -794,7 +793,6 @@ class _VoltageDropCalculatorState extends State<_VoltageDropCalculator> {
             variant: JJButtonVariant.primary,
             onPressed: _calculate,
             isFullWidth: true,
-            variant: JJButtonVariant.primary,
           ),
 
           if (_result.isNotEmpty) ...[

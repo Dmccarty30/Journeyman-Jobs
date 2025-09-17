@@ -11,6 +11,7 @@ class ShareNotificationModel {
   final bool isRead;
   final DateTime createdAt;
   final DateTime? readAt;
+  final String? shareMethod;  // Added for compatibility
 
   const ShareNotificationModel({
     required this.id,
@@ -24,6 +25,7 @@ class ShareNotificationModel {
     this.isRead = false,
     required this.createdAt,
     this.readAt,
+    this.shareMethod,
   });
 
   ShareNotificationModel copyWith({
@@ -38,6 +40,7 @@ class ShareNotificationModel {
     bool? isRead,
     DateTime? createdAt,
     DateTime? readAt,
+    String? shareMethod,
   }) {
     return ShareNotificationModel(
       id: id ?? this.id,
@@ -51,6 +54,7 @@ class ShareNotificationModel {
       isRead: isRead ?? this.isRead,
       createdAt: createdAt ?? this.createdAt,
       readAt: readAt ?? this.readAt,
+      shareMethod: shareMethod ?? this.shareMethod,
     );
   }
 

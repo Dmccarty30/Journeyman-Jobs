@@ -260,6 +260,14 @@ class AppTheme {
     letterSpacing: 0.5,
   );
   
+  // =================== LEGACY ALIASES FOR BACKWARD COMPATIBILITY ===================
+  
+  // These are for backward compatibility - use headline* versions in new code
+  static TextStyle get headingLarge => headlineLarge;
+  static TextStyle get headingMedium => headlineMedium;
+  static TextStyle get headingSmall => headlineSmall;
+  static TextStyle get captionText => labelSmall;
+  
   // Button Text Styles
   static TextStyle buttonLarge = GoogleFonts.inter(
     fontSize: 16,

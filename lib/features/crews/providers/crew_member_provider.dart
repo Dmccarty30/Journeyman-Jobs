@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer' as dev;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 
@@ -9,10 +10,11 @@ import '../models/crew_member.dart';
 import '../models/crew_enums.dart';
 import '../services/crew_member_service.dart';
 
+part 'crew_member_provider.g.dart';
+
 /// Provider for CrewMemberService instance
-final crewMemberServiceProvider = Provider<CrewMemberService>((ref) {
-  return CrewMemberService();
-});
+@Riverpod()
+CrewMemberService crewMemberService(CrewMemberServiceRef ref) => CrewMemberService();
 
 /// State class for crew member management
 class CrewMemberState {
@@ -162,10 +164,9 @@ class CrewMemberNotifier extends StateNotifier<CrewMemberState> {
 
       final invitationId = await _service.sendInvitation(
         crewId: crewId,
-        invitationType: invitationData['inviteMethod'] ?? 'email',
-        inviteValue: invitationData['inviteValue'] ?? '',
-        message: invitationData['message'] ?? '',
-        role: invitationData['role'] ?? CrewRole.crewMember,
+        invitedBy: invitationData['invitedBy'] ?? '',  // Should be passed in data
+        recipientId: invitationData['recipientId'] ?? invitationData['inviteValue'] ?? '',  // Use inviteValue as fallback
+        message: invitationData['message'],
       );
 
       state = state.copyWith(
@@ -205,6 +206,7 @@ class CrewMemberNotifier extends StateNotifier<CrewMemberState> {
         crewId: crewId,
         memberId: memberId,
         newRole: newRole,
+        updatedBy: 'current-user-id', // TODO: Get current user ID from FirebaseAuth
       );
 
       state = state.copyWith(
@@ -241,6 +243,8 @@ class CrewMemberNotifier extends StateNotifier<CrewMemberState> {
       await _service.removeMember(
         crewId: crewId,
         memberId: memberId,
+        removedBy: 'current-user-id', // TODO: Get current user ID from FirebaseAuth
+        reason: 'Removed by admin',  // Default reason
       );
 
       state = state.copyWith(
@@ -388,8 +392,8 @@ class CrewMemberNotifier extends StateNotifier<CrewMemberState> {
 
       await _service.updateMemberPreferences(
         crewId: crewId,
-        memberId: memberId,
-        preferences: preferences,
+        userId: memberId,
+        workPreferences: preferences,
       );
 
       state = state.copyWith(
@@ -426,7 +430,7 @@ class CrewMemberNotifier extends StateNotifier<CrewMemberState> {
 
       await _service.updateMemberAvailability(
         crewId: crewId,
-        memberId: memberId,
+        userId: memberId,
         availability: availability,
       );
 
@@ -483,27 +487,40 @@ class CrewMemberNotifier extends StateNotifier<CrewMemberState> {
 }
 
 /// Main provider for crew member state management
+@Riverpod()
+class CrewMemberStateNotifier extends _$CrewMemberStateNotifier {
+  @override
+  CrewMemberState build() {
+    final service = ref.watch(crewMemberServiceProvider);
+    return CrewMemberNotifier(service).state;
+  }
+}
+
+/// Provider for crew members by crew ID with real-time updates
+@Riverpod()
+Stream<List<CrewMember>> crewMembersStream(CrewMembersStreamRef ref, String crewId) {
+  final service = ref.watch(crewMemberServiceProvider);
+  return service.getCrewMembersStream(crewId);
+}
+
+/// Provider for pending invitations
+@Riverpod()
+Future<List<Map<String, dynamic>>> pendingInvitations(PendingInvitationsRef ref) async {
+  final service = ref.watch(crewMemberServiceProvider);
+  return await service.getPendingInvitations();
+}
+
+/// Provider for specific crew member details
+@Riverpod()
+Future<CrewMember?> crewMemberDetails(CrewMemberDetailsRef ref, String crewId, String userId) async {
+  final service = ref.watch(crewMemberServiceProvider);
+  return await service.getCrewMember(crewId, userId);
+}
+
+/// Legacy provider for crew member state management (keeping for compatibility)
 final crewMemberProvider = StateNotifierProvider<CrewMemberNotifier, CrewMemberState>((ref) {
   final service = ref.watch(crewMemberServiceProvider);
   return CrewMemberNotifier(service);
-});
-
-/// Provider for crew members by crew ID with real-time updates
-final crewMembersStreamProvider = StreamProvider.family<List<CrewMember>, String>((ref, crewId) {
-  final service = ref.watch(crewMemberServiceProvider);
-  return service.getCrewMembersStream(crewId);
-});
-
-/// Provider for pending invitations
-final pendingInvitationsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
-  final service = ref.watch(crewMemberServiceProvider);
-  return await service.getPendingInvitations();
-});
-
-/// Provider for specific crew member details
-final crewMemberDetailsProvider = FutureProvider.family<CrewMember?, ({String crewId, String userId})>((ref, params) async {
-  final service = ref.watch(crewMemberServiceProvider);
-  return await service.getCrewMember(params.crewId, params.userId);
 });
 
 /// Provider for crew member count by crew

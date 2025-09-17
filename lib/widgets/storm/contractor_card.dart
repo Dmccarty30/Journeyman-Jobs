@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:journeyman_jobs/design_system/app_theme.dart';
+import '../../design_system/app_theme.dart';
 import '../../models/storm_contractor.dart';
 
 /// A card widget displaying contractor details using RichText with icons

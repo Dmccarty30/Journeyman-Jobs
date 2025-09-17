@@ -6,428 +6,524 @@ part of 'jobs_riverpod_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-// GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint, type=warning
-/// Firestore service provider
+String _$firestoreServiceHash() => r'92564222ab3e11e8e2f122719bfec20d520a3074';
 
+/// Firestore service provider
+///
+/// Copied from [firestoreService].
 @ProviderFor(firestoreService)
-const firestoreServiceProvider = FirestoreServiceProvider._();
+final firestoreServiceProvider =
+    AutoDisposeProvider<ResilientFirestoreService>.internal(
+  firestoreService,
+  name: r'firestoreServiceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$firestoreServiceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Firestore service provider
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef FirestoreServiceRef = AutoDisposeProviderRef<ResilientFirestoreService>;
+String _$filteredJobsHash() => r'f808184942b66ac2530a8cee778bd335f94fdd4e';
 
-final class FirestoreServiceProvider extends $FunctionalProvider<
-    ResilientFirestoreService,
-    ResilientFirestoreService,
-    ResilientFirestoreService> with $Provider<ResilientFirestoreService> {
-  /// Firestore service provider
-  const FirestoreServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'firestoreServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+/// Copied from Dart SDK
+class _SystemHash {
+  _SystemHash._();
 
-  @override
-  String debugGetCreateSourceHash() => _$firestoreServiceHash();
-
-  @$internal
-  @override
-  $ProviderElement<ResilientFirestoreService> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  ResilientFirestoreService create(Ref ref) {
-    return firestoreService(ref);
+  static int combine(int hash, int value) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + value);
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+    return hash ^ (hash >> 6);
   }
 
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(ResilientFirestoreService value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<ResilientFirestoreService>(value),
-    );
-  }
-}
-
-String _$firestoreServiceHash() => r'665e0c40804f3306f3afbce70fab7d9fc5247907';
-
-/// Jobs notifier for managing job data and operations
-
-@ProviderFor(JobsNotifier)
-const jobsProvider = JobsNotifierProvider._();
-
-/// Jobs notifier for managing job data and operations
-final class JobsNotifierProvider
-    extends $NotifierProvider<JobsNotifier, JobsState> {
-  /// Jobs notifier for managing job data and operations
-  const JobsNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'jobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$jobsNotifierHash();
-
-  @$internal
-  @override
-  JobsNotifier create() => JobsNotifier();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(JobsState value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<JobsState>(value),
-    );
-  }
-}
-
-String _$jobsNotifierHash() => r'9c3f1eed224cd4fbe6c147943078e29a1581ae23';
-
-/// Jobs notifier for managing job data and operations
-
-abstract class _$JobsNotifier extends $Notifier<JobsState> {
-  JobsState build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final created = build();
-    final ref = this.ref as $Ref<JobsState, JobsState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<JobsState, JobsState>, JobsState, Object?, Object?>;
-    element.handleValue(ref, created);
+  static int finish(int hash) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
+    // ignore: parameter_assignments
+    hash = hash ^ (hash >> 11);
+    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
 
 /// Filtered jobs provider using family for auto-dispose
-
+///
+/// Copied from [filteredJobs].
 @ProviderFor(filteredJobs)
-const filteredJobsProvider = FilteredJobsFamily._();
+const filteredJobsProvider = FilteredJobsFamily();
 
 /// Filtered jobs provider using family for auto-dispose
-
-final class FilteredJobsProvider extends $FunctionalProvider<
-        AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
-    with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
+///
+/// Copied from [filteredJobs].
+class FilteredJobsFamily extends Family<AsyncValue<List<Job>>> {
   /// Filtered jobs provider using family for auto-dispose
-  const FilteredJobsProvider._(
-      {required FilteredJobsFamily super.from,
-      required JobFilterCriteria super.argument})
-      : super(
-          retry: null,
-          name: r'filteredJobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$filteredJobsHash();
-
-  @override
-  String toString() {
-    return r'filteredJobsProvider'
-        ''
-        '($argument)';
-  }
-
-  @$internal
-  @override
-  $FutureProviderElement<List<Job>> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<Job>> create(Ref ref) {
-    final argument = this.argument as JobFilterCriteria;
-    return filteredJobs(
-      ref,
-      argument,
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is FilteredJobsProvider && other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
-}
-
-String _$filteredJobsHash() => r'f34109b3e9daa3e8f76eee9badfa2c7817cc0ada';
-
-/// Filtered jobs provider using family for auto-dispose
-
-final class FilteredJobsFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<List<Job>>, JobFilterCriteria> {
-  const FilteredJobsFamily._()
-      : super(
-          retry: null,
-          name: r'filteredJobsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+  ///
+  /// Copied from [filteredJobs].
+  const FilteredJobsFamily();
 
   /// Filtered jobs provider using family for auto-dispose
-
+  ///
+  /// Copied from [filteredJobs].
   FilteredJobsProvider call(
     JobFilterCriteria filter,
-  ) =>
-      FilteredJobsProvider._(argument: filter, from: this);
-
-  @override
-  String toString() => r'filteredJobsProvider';
-}
-
-/// Auto-dispose provider for job search
-
-@ProviderFor(searchJobs)
-const searchJobsProvider = SearchJobsFamily._();
-
-/// Auto-dispose provider for job search
-
-final class SearchJobsProvider extends $FunctionalProvider<
-        AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
-    with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
-  /// Auto-dispose provider for job search
-  const SearchJobsProvider._(
-      {required SearchJobsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'searchJobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$searchJobsHash();
-
-  @override
-  String toString() {
-    return r'searchJobsProvider'
-        ''
-        '($argument)';
-  }
-
-  @$internal
-  @override
-  $FutureProviderElement<List<Job>> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<Job>> create(Ref ref) {
-    final argument = this.argument as String;
-    return searchJobs(
-      ref,
-      argument,
+  ) {
+    return FilteredJobsProvider(
+      filter,
     );
   }
 
   @override
+  FilteredJobsProvider getProviderOverride(
+    covariant FilteredJobsProvider provider,
+  ) {
+    return call(
+      provider.filter,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'filteredJobsProvider';
+}
+
+/// Filtered jobs provider using family for auto-dispose
+///
+/// Copied from [filteredJobs].
+class FilteredJobsProvider extends AutoDisposeFutureProvider<List<Job>> {
+  /// Filtered jobs provider using family for auto-dispose
+  ///
+  /// Copied from [filteredJobs].
+  FilteredJobsProvider(
+    JobFilterCriteria filter,
+  ) : this._internal(
+          (ref) => filteredJobs(
+            ref as FilteredJobsRef,
+            filter,
+          ),
+          from: filteredJobsProvider,
+          name: r'filteredJobsProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$filteredJobsHash,
+          dependencies: FilteredJobsFamily._dependencies,
+          allTransitiveDependencies:
+              FilteredJobsFamily._allTransitiveDependencies,
+          filter: filter,
+        );
+
+  FilteredJobsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.filter,
+  }) : super.internal();
+
+  final JobFilterCriteria filter;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<Job>> Function(FilteredJobsRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: FilteredJobsProvider._internal(
+        (ref) => create(ref as FilteredJobsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        filter: filter,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<Job>> createElement() {
+    return _FilteredJobsProviderElement(this);
+  }
+
+  @override
   bool operator ==(Object other) {
-    return other is SearchJobsProvider && other.argument == argument;
+    return other is FilteredJobsProvider && other.filter == filter;
   }
 
   @override
   int get hashCode {
-    return argument.hashCode;
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, filter.hashCode);
+
+    return _SystemHash.finish(hash);
   }
 }
 
-String _$searchJobsHash() => r'ddc3acadff3d73c6ab9b471f80bdbc3b95ee5097';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin FilteredJobsRef on AutoDisposeFutureProviderRef<List<Job>> {
+  /// The parameter `filter` of this provider.
+  JobFilterCriteria get filter;
+}
+
+class _FilteredJobsProviderElement
+    extends AutoDisposeFutureProviderElement<List<Job>> with FilteredJobsRef {
+  _FilteredJobsProviderElement(super.provider);
+
+  @override
+  JobFilterCriteria get filter => (origin as FilteredJobsProvider).filter;
+}
+
+String _$searchJobsHash() => r'1742fb28e041cf640cdf8653ee5b6870b2943d37';
 
 /// Auto-dispose provider for job search
+///
+/// Copied from [searchJobs].
+@ProviderFor(searchJobs)
+const searchJobsProvider = SearchJobsFamily();
 
-final class SearchJobsFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<List<Job>>, String> {
-  const SearchJobsFamily._()
-      : super(
-          retry: null,
-          name: r'searchJobsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+/// Auto-dispose provider for job search
+///
+/// Copied from [searchJobs].
+class SearchJobsFamily extends Family<AsyncValue<List<Job>>> {
+  /// Auto-dispose provider for job search
+  ///
+  /// Copied from [searchJobs].
+  const SearchJobsFamily();
 
   /// Auto-dispose provider for job search
-
+  ///
+  /// Copied from [searchJobs].
   SearchJobsProvider call(
     String searchTerm,
-  ) =>
-      SearchJobsProvider._(argument: searchTerm, from: this);
-
-  @override
-  String toString() => r'searchJobsProvider';
-}
-
-/// Job by ID provider
-
-@ProviderFor(jobById)
-const jobByIdProvider = JobByIdFamily._();
-
-/// Job by ID provider
-
-final class JobByIdProvider
-    extends $FunctionalProvider<AsyncValue<Job?>, Job?, FutureOr<Job?>>
-    with $FutureModifier<Job?>, $FutureProvider<Job?> {
-  /// Job by ID provider
-  const JobByIdProvider._(
-      {required JobByIdFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'jobByIdProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$jobByIdHash();
-
-  @override
-  String toString() {
-    return r'jobByIdProvider'
-        ''
-        '($argument)';
-  }
-
-  @$internal
-  @override
-  $FutureProviderElement<Job?> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<Job?> create(Ref ref) {
-    final argument = this.argument as String;
-    return jobById(
-      ref,
-      argument,
+  ) {
+    return SearchJobsProvider(
+      searchTerm,
     );
   }
 
   @override
+  SearchJobsProvider getProviderOverride(
+    covariant SearchJobsProvider provider,
+  ) {
+    return call(
+      provider.searchTerm,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'searchJobsProvider';
+}
+
+/// Auto-dispose provider for job search
+///
+/// Copied from [searchJobs].
+class SearchJobsProvider extends AutoDisposeFutureProvider<List<Job>> {
+  /// Auto-dispose provider for job search
+  ///
+  /// Copied from [searchJobs].
+  SearchJobsProvider(
+    String searchTerm,
+  ) : this._internal(
+          (ref) => searchJobs(
+            ref as SearchJobsRef,
+            searchTerm,
+          ),
+          from: searchJobsProvider,
+          name: r'searchJobsProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$searchJobsHash,
+          dependencies: SearchJobsFamily._dependencies,
+          allTransitiveDependencies:
+              SearchJobsFamily._allTransitiveDependencies,
+          searchTerm: searchTerm,
+        );
+
+  SearchJobsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.searchTerm,
+  }) : super.internal();
+
+  final String searchTerm;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<Job>> Function(SearchJobsRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: SearchJobsProvider._internal(
+        (ref) => create(ref as SearchJobsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        searchTerm: searchTerm,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<Job>> createElement() {
+    return _SearchJobsProviderElement(this);
+  }
+
+  @override
   bool operator ==(Object other) {
-    return other is JobByIdProvider && other.argument == argument;
+    return other is SearchJobsProvider && other.searchTerm == searchTerm;
   }
 
   @override
   int get hashCode {
-    return argument.hashCode;
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, searchTerm.hashCode);
+
+    return _SystemHash.finish(hash);
   }
 }
 
-String _$jobByIdHash() => r'fe0b6ad481434b99b4f2dd06952e724f38be0922';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin SearchJobsRef on AutoDisposeFutureProviderRef<List<Job>> {
+  /// The parameter `searchTerm` of this provider.
+  String get searchTerm;
+}
+
+class _SearchJobsProviderElement
+    extends AutoDisposeFutureProviderElement<List<Job>> with SearchJobsRef {
+  _SearchJobsProviderElement(super.provider);
+
+  @override
+  String get searchTerm => (origin as SearchJobsProvider).searchTerm;
+}
+
+String _$jobByIdHash() => r'054afb4a6f2974156198be45901444ca798ea1f9';
 
 /// Job by ID provider
+///
+/// Copied from [jobById].
+@ProviderFor(jobById)
+const jobByIdProvider = JobByIdFamily();
 
-final class JobByIdFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<Job?>, String> {
-  const JobByIdFamily._()
-      : super(
-          retry: null,
-          name: r'jobByIdProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+/// Job by ID provider
+///
+/// Copied from [jobById].
+class JobByIdFamily extends Family<AsyncValue<Job?>> {
+  /// Job by ID provider
+  ///
+  /// Copied from [jobById].
+  const JobByIdFamily();
 
   /// Job by ID provider
-
+  ///
+  /// Copied from [jobById].
   JobByIdProvider call(
     String jobId,
-  ) =>
-      JobByIdProvider._(argument: jobId, from: this);
+  ) {
+    return JobByIdProvider(
+      jobId,
+    );
+  }
 
   @override
-  String toString() => r'jobByIdProvider';
+  JobByIdProvider getProviderOverride(
+    covariant JobByIdProvider provider,
+  ) {
+    return call(
+      provider.jobId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'jobByIdProvider';
 }
 
-/// Recent jobs provider
+/// Job by ID provider
+///
+/// Copied from [jobById].
+class JobByIdProvider extends AutoDisposeFutureProvider<Job?> {
+  /// Job by ID provider
+  ///
+  /// Copied from [jobById].
+  JobByIdProvider(
+    String jobId,
+  ) : this._internal(
+          (ref) => jobById(
+            ref as JobByIdRef,
+            jobId,
+          ),
+          from: jobByIdProvider,
+          name: r'jobByIdProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$jobByIdHash,
+          dependencies: JobByIdFamily._dependencies,
+          allTransitiveDependencies: JobByIdFamily._allTransitiveDependencies,
+          jobId: jobId,
+        );
 
+  JobByIdProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.jobId,
+  }) : super.internal();
+
+  final String jobId;
+
+  @override
+  Override overrideWith(
+    FutureOr<Job?> Function(JobByIdRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: JobByIdProvider._internal(
+        (ref) => create(ref as JobByIdRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        jobId: jobId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<Job?> createElement() {
+    return _JobByIdProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is JobByIdProvider && other.jobId == jobId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, jobId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin JobByIdRef on AutoDisposeFutureProviderRef<Job?> {
+  /// The parameter `jobId` of this provider.
+  String get jobId;
+}
+
+class _JobByIdProviderElement extends AutoDisposeFutureProviderElement<Job?>
+    with JobByIdRef {
+  _JobByIdProviderElement(super.provider);
+
+  @override
+  String get jobId => (origin as JobByIdProvider).jobId;
+}
+
+String _$recentJobsHash() => r'a9698563aa709fb7a8e2a71c5a687bf23ad628af';
+
+/// Recent jobs provider
+///
+/// Copied from [recentJobs].
 @ProviderFor(recentJobs)
-const recentJobsProvider = RecentJobsProvider._();
+final recentJobsProvider = AutoDisposeFutureProvider<List<Job>>.internal(
+  recentJobs,
+  name: r'recentJobsProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$recentJobsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Recent jobs provider
-
-final class RecentJobsProvider extends $FunctionalProvider<
-        AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
-    with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
-  /// Recent jobs provider
-  const RecentJobsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'recentJobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$recentJobsHash();
-
-  @$internal
-  @override
-  $FutureProviderElement<List<Job>> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<Job>> create(Ref ref) {
-    return recentJobs(ref);
-  }
-}
-
-String _$recentJobsHash() => r'8341fc7b0b1a2cdd2a579f40045cde688c655cb9';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef RecentJobsRef = AutoDisposeFutureProviderRef<List<Job>>;
+String _$stormJobsHash() => r'421a5c47787c0eccd3abde306627c8602d58e12e';
 
 /// Storm jobs provider (high priority jobs)
-
+///
+/// Copied from [stormJobs].
 @ProviderFor(stormJobs)
-const stormJobsProvider = StormJobsProvider._();
+final stormJobsProvider = AutoDisposeFutureProvider<List<Job>>.internal(
+  stormJobs,
+  name: r'stormJobsProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$stormJobsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Storm jobs provider (high priority jobs)
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef StormJobsRef = AutoDisposeFutureProviderRef<List<Job>>;
+String _$jobsNotifierHash() => r'bb68107f35fb2309631b7e785b42d8374e30ca2a';
 
-final class StormJobsProvider extends $FunctionalProvider<AsyncValue<List<Job>>,
-        List<Job>, FutureOr<List<Job>>>
-    with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
-  /// Storm jobs provider (high priority jobs)
-  const StormJobsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'stormJobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+/// Jobs notifier for managing job data and operations
+///
+/// Copied from [JobsNotifier].
+@ProviderFor(JobsNotifier)
+final jobsNotifierProvider =
+    AutoDisposeNotifierProvider<JobsNotifier, JobsState>.internal(
+  JobsNotifier.new,
+  name: r'jobsNotifierProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$jobsNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-  @override
-  String debugGetCreateSourceHash() => _$stormJobsHash();
-
-  @$internal
-  @override
-  $FutureProviderElement<List<Job>> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<Job>> create(Ref ref) {
-    return stormJobs(ref);
-  }
-}
-
-String _$stormJobsHash() => r'd996a8a060f5630019fcddb8edd0c1fa279dcfad';
+typedef _$JobsNotifier = AutoDisposeNotifier<JobsState>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

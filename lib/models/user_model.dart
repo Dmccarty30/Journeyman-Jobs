@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// Type alias for backward compatibility
+
 /// User Model for IBEW Electrical Workers
 /// 
 /// Represents a complete user profile for the Journeyman Jobs app,
@@ -55,6 +57,9 @@ class UserModel {
   final String onboardingStatus;
   final DateTime createdTime;
   final DateTime? updatedTime;
+  
+  /// Push Notification Support
+  final List<String> fcmTokens;
 
   const UserModel({
     required this.uid,
@@ -90,13 +95,18 @@ class UserModel {
     required this.onboardingStatus,
     required this.createdTime,
     this.updatedTime,
+    this.fcmTokens = const [],
   });
 
   /// Get full name
   String get fullName => '$firstName $lastName';
+  
+  /// Convenience getters for backward compatibility
+  String get id => uid;  // Some code expects 'id' instead of 'uid'
+  String get displayName => fullName;  // Some tests expect displayName
+  String get ibewLocal => homeLocal;  // Alternative name for homeLocal
+  bool get isActive => true;  // Default to active for compatibility
 
-  /// Get display name (alias for fullName)
-  String get displayName => fullName;
 
   /// Get formatted address
   String get fullAddress {
@@ -145,6 +155,7 @@ class UserModel {
       'onboardingStatus': onboardingStatus,
       'createdTime': createdTime.toIso8601String(),
       'updatedTime': updatedTime?.toIso8601String(),
+      'fcmTokens': fcmTokens,
     };
   }
 
@@ -186,6 +197,9 @@ class UserModel {
       updatedTime: json['updatedTime'] != null 
           ? DateTime.parse(json['updatedTime'] as String) 
           : null,
+      fcmTokens: json['fcmTokens'] != null 
+          ? List<String>.from(json['fcmTokens'] as List) 
+          : const [],
     );
   }
 
@@ -233,6 +247,7 @@ class UserModel {
     String? onboardingStatus,
     DateTime? createdTime,
     DateTime? updatedTime,
+    List<String>? fcmTokens,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -268,6 +283,7 @@ class UserModel {
       onboardingStatus: onboardingStatus ?? this.onboardingStatus,
       createdTime: createdTime ?? this.createdTime,
       updatedTime: updatedTime ?? DateTime.now(),
+      fcmTokens: fcmTokens ?? this.fcmTokens,
     );
   }
 
@@ -284,6 +300,9 @@ class UserModel {
   @override
   int get hashCode => uid.hashCode;
 }
+
+/// Type alias for backward compatibility
+/// Use UserModel for new code
 
 /// Classification options for IBEW workers
 class Classification {

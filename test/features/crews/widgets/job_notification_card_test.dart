@@ -10,13 +10,13 @@ import 'package:journeyman_jobs/design_system/app_theme.dart';
 
 void main() {
   group('JobNotificationCard Widget Tests', () {
-    late Job mockJob;
+    late JobModel mockJob;
     late JobNotification mockNotification;
     late JobNotification priorityNotification;
     late JobNotification expiredNotification;
 
     setUp(() {
-      mockJob = const Job(
+      mockJob = const JobModel(
         id: 'job1',
         company: 'ABC Electric',
         location: 'Chicago, IL',

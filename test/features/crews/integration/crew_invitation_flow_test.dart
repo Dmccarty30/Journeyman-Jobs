@@ -60,7 +60,7 @@ void main() {
       expect(find.text('DEPLOYMENT DETAILS'), findsNothing); // Will fail
       expect(find.text('Location: Florida Hurricane Zone'), findsNothing); // Will fail
       expect(find.text('Duration: 2-4 weeks'), findsNothing); // Will fail
-      expect(find.text('Premium Storm Rates: $65/hr + Per Diem'), findsNothing); // Will fail
+      expect(find.text('Premium Storm Rates: \$65/hr + Per Diem'), findsNothing); // Will fail
       expect(find.text('Travel Accommodations Provided'), findsNothing); // Will fail
 
       // Step 4: Review safety and union requirements

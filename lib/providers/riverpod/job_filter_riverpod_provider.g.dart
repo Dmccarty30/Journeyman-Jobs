@@ -6,480 +6,199 @@ part of 'job_filter_riverpod_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-// GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint, type=warning
-/// SharedPreferences provider
+String _$sharedPreferencesHash() => r'478f199fb7a4d61bcad4292f3db43e351478a6a7';
 
+/// SharedPreferences provider
+///
+/// Copied from [sharedPreferences].
 @ProviderFor(sharedPreferences)
-const sharedPreferencesProvider = SharedPreferencesProvider._();
+final sharedPreferencesProvider =
+    AutoDisposeFutureProvider<SharedPreferences>.internal(
+  sharedPreferences,
+  name: r'sharedPreferencesProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$sharedPreferencesHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// SharedPreferences provider
-
-final class SharedPreferencesProvider extends $FunctionalProvider<
-        AsyncValue<SharedPreferences>,
-        SharedPreferences,
-        FutureOr<SharedPreferences>>
-    with
-        $FutureModifier<SharedPreferences>,
-        $FutureProvider<SharedPreferences> {
-  /// SharedPreferences provider
-  const SharedPreferencesProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'sharedPreferencesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$sharedPreferencesHash();
-
-  @$internal
-  @override
-  $FutureProviderElement<SharedPreferences> $createElement(
-          $ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<SharedPreferences> create(Ref ref) {
-    return sharedPreferences(ref);
-  }
-}
-
-String _$sharedPreferencesHash() => r'9b38b0605ab233f33b0ff939edd1100331a746fa';
-
-/// Job filter notifier for managing filter state and presets
-
-@ProviderFor(JobFilterNotifier)
-const jobFilterProvider = JobFilterNotifierProvider._();
-
-/// Job filter notifier for managing filter state and presets
-final class JobFilterNotifierProvider
-    extends $NotifierProvider<JobFilterNotifier, JobFilterState> {
-  /// Job filter notifier for managing filter state and presets
-  const JobFilterNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'jobFilterProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$jobFilterNotifierHash();
-
-  @$internal
-  @override
-  JobFilterNotifier create() => JobFilterNotifier();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(JobFilterState value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<JobFilterState>(value),
-    );
-  }
-}
-
-String _$jobFilterNotifierHash() => r'bfe3930ec059c5e501b207fef38099ec8f0ab757';
-
-/// Job filter notifier for managing filter state and presets
-
-abstract class _$JobFilterNotifier extends $Notifier<JobFilterState> {
-  JobFilterState build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final created = build();
-    final ref = this.ref as $Ref<JobFilterState, JobFilterState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<JobFilterState, JobFilterState>,
-        JobFilterState,
-        Object?,
-        Object?>;
-    element.handleValue(ref, created);
-  }
-}
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef SharedPreferencesRef = AutoDisposeFutureProviderRef<SharedPreferences>;
+String _$currentJobFilterHash() => r'1c38045fc754c82a9d5bb84b78182d4492095829';
 
 /// Current filter provider (computed from state)
-
+///
+/// Copied from [currentJobFilter].
 @ProviderFor(currentJobFilter)
-const currentJobFilterProvider = CurrentJobFilterProvider._();
+final currentJobFilterProvider =
+    AutoDisposeProvider<JobFilterCriteria>.internal(
+  currentJobFilter,
+  name: r'currentJobFilterProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$currentJobFilterHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Current filter provider (computed from state)
-
-final class CurrentJobFilterProvider extends $FunctionalProvider<
-    JobFilterCriteria,
-    JobFilterCriteria,
-    JobFilterCriteria> with $Provider<JobFilterCriteria> {
-  /// Current filter provider (computed from state)
-  const CurrentJobFilterProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'currentJobFilterProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$currentJobFilterHash();
-
-  @$internal
-  @override
-  $ProviderElement<JobFilterCriteria> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  JobFilterCriteria create(Ref ref) {
-    return currentJobFilter(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(JobFilterCriteria value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<JobFilterCriteria>(value),
-    );
-  }
-}
-
-String _$currentJobFilterHash() => r'f8738d257f89b7eec21e2586b5457c5b053c0a29';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CurrentJobFilterRef = AutoDisposeProviderRef<JobFilterCriteria>;
+String _$filterPresetsHash() => r'2d3d31ef20b7d6341c83a52cde26698b2ef9db41';
 
 /// Presets provider (computed from state)
-
+///
+/// Copied from [filterPresets].
 @ProviderFor(filterPresets)
-const filterPresetsProvider = FilterPresetsProvider._();
+final filterPresetsProvider = AutoDisposeProvider<List<FilterPreset>>.internal(
+  filterPresets,
+  name: r'filterPresetsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$filterPresetsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Presets provider (computed from state)
-
-final class FilterPresetsProvider extends $FunctionalProvider<
-    List<FilterPreset>,
-    List<FilterPreset>,
-    List<FilterPreset>> with $Provider<List<FilterPreset>> {
-  /// Presets provider (computed from state)
-  const FilterPresetsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'filterPresetsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$filterPresetsHash();
-
-  @$internal
-  @override
-  $ProviderElement<List<FilterPreset>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  List<FilterPreset> create(Ref ref) {
-    return filterPresets(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<FilterPreset> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<List<FilterPreset>>(value),
-    );
-  }
-}
-
-String _$filterPresetsHash() => r'f18ad7b508207d059adb0d4c04a639bacadb1664';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef FilterPresetsRef = AutoDisposeProviderRef<List<FilterPreset>>;
+String _$recentSearchesHash() => r'9821676370caa38ec8e142aef676b44a9d7d851d';
 
 /// Recent searches provider (computed from state)
-
+///
+/// Copied from [recentSearches].
 @ProviderFor(recentSearches)
-const recentSearchesProvider = RecentSearchesProvider._();
+final recentSearchesProvider = AutoDisposeProvider<List<String>>.internal(
+  recentSearches,
+  name: r'recentSearchesProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$recentSearchesHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Recent searches provider (computed from state)
-
-final class RecentSearchesProvider
-    extends $FunctionalProvider<List<String>, List<String>, List<String>>
-    with $Provider<List<String>> {
-  /// Recent searches provider (computed from state)
-  const RecentSearchesProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'recentSearchesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$recentSearchesHash();
-
-  @$internal
-  @override
-  $ProviderElement<List<String>> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  List<String> create(Ref ref) {
-    return recentSearches(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<String> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<List<String>>(value),
-    );
-  }
-}
-
-String _$recentSearchesHash() => r'0f72621c7736b425b45f6e78ceadfa3fc2997a77';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef RecentSearchesRef = AutoDisposeProviderRef<List<String>>;
+String _$pinnedPresetsHash() => r'49d89eb1d57185f91b4900b962afff0d1f995660';
 
 /// Pinned presets provider (computed from state)
-
+///
+/// Copied from [pinnedPresets].
 @ProviderFor(pinnedPresets)
-const pinnedPresetsProvider = PinnedPresetsProvider._();
+final pinnedPresetsProvider = AutoDisposeProvider<List<FilterPreset>>.internal(
+  pinnedPresets,
+  name: r'pinnedPresetsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$pinnedPresetsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Pinned presets provider (computed from state)
-
-final class PinnedPresetsProvider extends $FunctionalProvider<
-    List<FilterPreset>,
-    List<FilterPreset>,
-    List<FilterPreset>> with $Provider<List<FilterPreset>> {
-  /// Pinned presets provider (computed from state)
-  const PinnedPresetsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'pinnedPresetsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$pinnedPresetsHash();
-
-  @$internal
-  @override
-  $ProviderElement<List<FilterPreset>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  List<FilterPreset> create(Ref ref) {
-    return pinnedPresets(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<FilterPreset> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<List<FilterPreset>>(value),
-    );
-  }
-}
-
-String _$pinnedPresetsHash() => r'3705eb9bf7814819aa048d4ad2ccc36b3905a206';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef PinnedPresetsRef = AutoDisposeProviderRef<List<FilterPreset>>;
+String _$recentPresetsHash() => r'6f7ccf4d0ea932c82d27947e9eb6d8a7e73d2752';
 
 /// Recent presets provider (computed from state)
-
+///
+/// Copied from [recentPresets].
 @ProviderFor(recentPresets)
-const recentPresetsProvider = RecentPresetsProvider._();
+final recentPresetsProvider = AutoDisposeProvider<List<FilterPreset>>.internal(
+  recentPresets,
+  name: r'recentPresetsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$recentPresetsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Recent presets provider (computed from state)
-
-final class RecentPresetsProvider extends $FunctionalProvider<
-    List<FilterPreset>,
-    List<FilterPreset>,
-    List<FilterPreset>> with $Provider<List<FilterPreset>> {
-  /// Recent presets provider (computed from state)
-  const RecentPresetsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'recentPresetsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$recentPresetsHash();
-
-  @$internal
-  @override
-  $ProviderElement<List<FilterPreset>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  List<FilterPreset> create(Ref ref) {
-    return recentPresets(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<FilterPreset> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<List<FilterPreset>>(value),
-    );
-  }
-}
-
-String _$recentPresetsHash() => r'34c106d504e42873398edeef789a972a9c391f74';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef RecentPresetsRef = AutoDisposeProviderRef<List<FilterPreset>>;
+String _$hasActiveFiltersHash() => r'686d42b7186e13d87739c2c1a20e20c54b677d35';
 
 /// Active filters status provider (computed from state)
-
+///
+/// Copied from [hasActiveFilters].
 @ProviderFor(hasActiveFilters)
-const hasActiveFiltersProvider = HasActiveFiltersProvider._();
+final hasActiveFiltersProvider = AutoDisposeProvider<bool>.internal(
+  hasActiveFilters,
+  name: r'hasActiveFiltersProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$hasActiveFiltersHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Active filters status provider (computed from state)
-
-final class HasActiveFiltersProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
-  /// Active filters status provider (computed from state)
-  const HasActiveFiltersProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'hasActiveFiltersProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$hasActiveFiltersHash();
-
-  @$internal
-  @override
-  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  bool create(Ref ref) {
-    return hasActiveFilters(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
-}
-
-String _$hasActiveFiltersHash() => r'c7f34079f57d66daeed486953e9c8f46abf84527';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef HasActiveFiltersRef = AutoDisposeProviderRef<bool>;
+String _$activeFilterCountHash() => r'86ba906dbf54cf223e973341a724ef6332ee4ffc';
 
 /// Active filter count provider (computed from state)
-
+///
+/// Copied from [activeFilterCount].
 @ProviderFor(activeFilterCount)
-const activeFilterCountProvider = ActiveFilterCountProvider._();
+final activeFilterCountProvider = AutoDisposeProvider<int>.internal(
+  activeFilterCount,
+  name: r'activeFilterCountProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$activeFilterCountHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// Active filter count provider (computed from state)
-
-final class ActiveFilterCountProvider extends $FunctionalProvider<int, int, int>
-    with $Provider<int> {
-  /// Active filter count provider (computed from state)
-  const ActiveFilterCountProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'activeFilterCountProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$activeFilterCountHash();
-
-  @$internal
-  @override
-  $ProviderElement<int> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  int create(Ref ref) {
-    return activeFilterCount(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(int value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<int>(value),
-    );
-  }
-}
-
-String _$activeFilterCountHash() => r'2a42a31577a4f9a8b463d950818ccb2d45157215';
-
-/// Quick filter suggestions provider (computed from state)
-
-@ProviderFor(quickFilterSuggestions)
-const quickFilterSuggestionsProvider = QuickFilterSuggestionsProvider._();
-
-/// Quick filter suggestions provider (computed from state)
-
-final class QuickFilterSuggestionsProvider extends $FunctionalProvider<
-    List<QuickFilterSuggestion>,
-    List<QuickFilterSuggestion>,
-    List<QuickFilterSuggestion>> with $Provider<List<QuickFilterSuggestion>> {
-  /// Quick filter suggestions provider (computed from state)
-  const QuickFilterSuggestionsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'quickFilterSuggestionsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$quickFilterSuggestionsHash();
-
-  @$internal
-  @override
-  $ProviderElement<List<QuickFilterSuggestion>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  List<QuickFilterSuggestion> create(Ref ref) {
-    return quickFilterSuggestions(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<QuickFilterSuggestion> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<List<QuickFilterSuggestion>>(value),
-    );
-  }
-}
-
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ActiveFilterCountRef = AutoDisposeProviderRef<int>;
 String _$quickFilterSuggestionsHash() =>
-    r'94136780b8fb3b7bc726f004899ac3f54fa1b2b7';
+    r'866dc1cf24f212387f97873161dc1e90ea0e667d';
+
+/// Quick filter suggestions provider (computed from state)
+///
+/// Copied from [quickFilterSuggestions].
+@ProviderFor(quickFilterSuggestions)
+final quickFilterSuggestionsProvider =
+    AutoDisposeProvider<List<QuickFilterSuggestion>>.internal(
+  quickFilterSuggestions,
+  name: r'quickFilterSuggestionsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$quickFilterSuggestionsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef QuickFilterSuggestionsRef
+    = AutoDisposeProviderRef<List<QuickFilterSuggestion>>;
+String _$jobFilterNotifierHash() => r'ef09a79cb147695c9bd550fd9c5eec098dcd9497';
+
+/// Job filter notifier for managing filter state and presets
+///
+/// Copied from [JobFilterNotifier].
+@ProviderFor(JobFilterNotifier)
+final jobFilterNotifierProvider =
+    AutoDisposeNotifierProvider<JobFilterNotifier, JobFilterState>.internal(
+  JobFilterNotifier.new,
+  name: r'jobFilterNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$jobFilterNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$JobFilterNotifier = AutoDisposeNotifier<JobFilterState>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

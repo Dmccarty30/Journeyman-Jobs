@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'message_attachment.dart';
+import 'crew_enums.dart';
 
 /// Crew Communication Model for IBEW Electrical Workers
 ///
@@ -377,31 +378,7 @@ class CrewCommunication {
   int get hashCode => id.hashCode;
 }
 
-/// Types of messages in crew communication
-///
-/// Specialized message types for electrical worker crew coordination
-enum MessageType {
-  /// Regular text message
-  text,
-
-  /// Important announcements from crew leaders
-  announcement,
-
-  /// Work progress updates with optional attachments
-  workUpdate,
-
-  /// Coordination requests for job assignments
-  coordinationRequest,
-
-  /// Safety alerts and warnings
-  safetyAlert,
-
-  /// Emergency alerts requiring immediate attention
-  emergencyAlert,
-
-  /// Regular safety check-ins from field crews
-  safetyCheckin;
-}
+// MessageType is now imported from crew_enums.dart
 
 /// Message urgency levels for prioritization
 enum MessageUrgency {

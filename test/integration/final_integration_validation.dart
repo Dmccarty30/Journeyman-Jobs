@@ -6,18 +6,18 @@ import '../../lib/widgets/enhanced_job_card.dart';
 import '../../lib/models/job_model.dart';
 import '../../lib/models/user_model.dart';
 import '../../lib/features/job_sharing/widgets/share_button.dart';
-import '../../lib/features/job_sharing/providers/contact_provider.dart';
+import '../../lib/providers/riverpod/contacts_provider.dart';
 import '../../lib/design_system/app_theme.dart';
 
 /// Final validation test for job sharing integration
 /// This test validates the complete integration without external dependencies
 void main() {
   group('Final Job Sharing Integration Validation', () {
-    late Job testJob;
+    late JobModel testJob;
     late List<UserModel> testContacts;
 
     setUp(() {
-      testJob = Job(
+      testJob = JobModel(
         id: 'validation-job-1',
         title: 'Storm Emergency - Lines Down',
         description: 'Immediate response needed for power restoration',

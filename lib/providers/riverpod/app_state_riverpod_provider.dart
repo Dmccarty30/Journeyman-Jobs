@@ -15,7 +15,6 @@ part 'app_state_riverpod_provider.g.dart';
 
 /// Global app state model
 class AppState {
-
   const AppState({
     this.isConnected = true,
     this.isInitialized = false,
@@ -32,19 +31,21 @@ class AppState {
     bool? isInitialized,
     String? globalError,
     Map<String, dynamic>? performanceMetrics,
-  }) => AppState(
-      isConnected: isConnected ?? this.isConnected,
-      isInitialized: isInitialized ?? this.isInitialized,
-      globalError: globalError ?? this.globalError,
-      performanceMetrics: performanceMetrics ?? this.performanceMetrics,
-    );
+  }) =>
+      AppState(
+        isConnected: isConnected ?? this.isConnected,
+        isInitialized: isInitialized ?? this.isInitialized,
+        globalError: globalError ?? this.globalError,
+        performanceMetrics: performanceMetrics ?? this.performanceMetrics,
+      );
 
   AppState clearError() => copyWith();
 }
 
 /// Connectivity service provider
-@riverpod
-ConnectivityService connectivityService(Ref ref) => ConnectivityService();
+@Riverpod()
+ConnectivityService connectivityService(ConnectivityServiceRef ref) =>
+    ConnectivityService();
 
 final offlineDataServiceProvider = Provider<OfflineDataService>((ref) {
   final connectivity = ref.watch(connectivityServiceProvider);
@@ -64,8 +65,9 @@ class NotificationServiceAdapter {
   }
 }
 
-@riverpod
-NotificationServiceAdapter notificationService(Ref ref) => NotificationServiceAdapter();
+@Riverpod()
+NotificationServiceAdapter notificationService(NotificationServiceRef ref) =>
+    NotificationServiceAdapter();
 
 /// Analytics service adapter wrapping static analytics helpers
 class AnalyticsServiceAdapter {
@@ -75,15 +77,18 @@ class AnalyticsServiceAdapter {
     return;
   }
 
-  Future<void> logEvent(String eventName, {Map<String, dynamic>? parameters}) => AnalyticsService.instance.trackAppEvent(eventName: eventName, parameters: parameters ?? <String, dynamic>{});
+  Future<void> logEvent(String eventName, {Map<String, dynamic>? parameters}) =>
+      AnalyticsService.instance.trackAppEvent(
+          eventName: eventName, parameters: parameters ?? <String, dynamic>{});
 }
 
-@riverpod
-AnalyticsServiceAdapter analyticsService(Ref ref) => AnalyticsServiceAdapter();
+@Riverpod()
+AnalyticsServiceAdapter analyticsService(AnalyticsServiceRef ref) =>
+    AnalyticsServiceAdapter();
 
 /// Connectivity state stream
-@riverpod
-Stream<bool> connectivityStream(Ref ref) {
+@Riverpod()
+Stream<bool> connectivityStream(ConnectivityStreamRef ref) {
   final connectivityService = ref.watch(connectivityServiceProvider);
 
   // Create a controller that emits the current connection state and updates
@@ -112,16 +117,17 @@ Stream<bool> connectivityStream(Ref ref) {
 }
 
 /// App state notifier
-@riverpod
+@Riverpod()
 class AppStateNotifier extends _$AppStateNotifier {
   @override
   AppState build() {
     // Listen to connectivity changes
-    ref.listen(connectivityStreamProvider, (AsyncValue<bool>? previous, AsyncValue<bool> next) {
+    ref.listen(connectivityStreamProvider,
+        (AsyncValue<bool>? previous, AsyncValue<bool> next) {
       next.when(
         data: (bool isConnected) {
           state = state.copyWith(isConnected: isConnected);
-          
+
           // Track connectivity events
           AnalyticsService.instance.trackAppEvent(
             eventName: 'connectivity_changed',
@@ -154,13 +160,15 @@ class AppStateNotifier extends _$AppStateNotifier {
       }
 
       state = state.copyWith(isInitialized: true);
-      
+
       // Track app initialization
-      AnalyticsService.instance.trackAppEvent(eventName: 'app_initialized', parameters: <String, dynamic>{});
+      AnalyticsService.instance.trackAppEvent(
+          eventName: 'app_initialized', parameters: <String, dynamic>{});
     } catch (e) {
       state = state.copyWith(
         globalError: 'Failed to initialize app: $e',
-        isInitialized: true, // Still mark as initialized to prevent infinite loading
+        isInitialized:
+            true, // Still mark as initialized to prevent infinite loading
       );
     }
   }
@@ -169,7 +177,7 @@ class AppStateNotifier extends _$AppStateNotifier {
   Future<void> _loadInitialData() async {
     try {
       await Future.wait(<Future<void>>[
-        ref.read(jobsProvider.notifier).loadJobs(),
+        ref.read(jobsNotifierProvider.notifier).loadJobs(),
         ref.read(localsProvider.notifier).loadLocals(),
       ]);
     } catch (e) {
@@ -182,10 +190,10 @@ class AppStateNotifier extends _$AppStateNotifier {
   Future<void> refreshAppData() async {
     try {
       final bool isAuthenticated = ref.read(isAuthenticatedProvider);
-      
+
       if (isAuthenticated) {
         await Future.wait<void>(<Future<void>>[
-          ref.read(jobsProvider.notifier).refreshJobs(),
+          ref.read(jobsNotifierProvider.notifier).refreshJobs(),
           ref.read(localsProvider.notifier).loadLocals(forceRefresh: true),
         ]);
       }
@@ -193,13 +201,15 @@ class AppStateNotifier extends _$AppStateNotifier {
       // Update performance metrics
       final Map<String, Object> performanceMetrics = <String, Object>{
         'last_refresh': DateTime.now().toIso8601String(),
-        'jobs_metrics': ref.read(jobsProvider.notifier).getPerformanceMetrics(),
+        'jobs_metrics':
+            ref.read(jobsNotifierProvider.notifier).getPerformanceMetrics(),
       };
 
       state = state.copyWith(performanceMetrics: performanceMetrics);
-      
+
       // Track refresh event
-      AnalyticsService.instance.trackAppEvent(eventName: 'app_data_refreshed', parameters: <String, dynamic>{});
+      AnalyticsService.instance.trackAppEvent(
+          eventName: 'app_data_refreshed', parameters: <String, dynamic>{});
     } catch (e) {
       state = state.copyWith(globalError: 'Failed to refresh data: $e');
       rethrow;
@@ -210,9 +220,10 @@ class AppStateNotifier extends _$AppStateNotifier {
   Future<void> handleUserSignIn() async {
     try {
       await _loadInitialData();
-      
+
       // Track sign in event
-      AnalyticsService.instance.trackAppEvent(eventName: 'user_signed_in', parameters: <String, dynamic>{});
+      AnalyticsService.instance.trackAppEvent(
+          eventName: 'user_signed_in', parameters: <String, dynamic>{});
     } catch (e) {
       state = state.copyWith(globalError: 'Failed to load user data: $e');
     }
@@ -222,11 +233,12 @@ class AppStateNotifier extends _$AppStateNotifier {
   Future<void> handleUserSignOut() async {
     try {
       // Clear all provider states
-      ref.invalidate(jobsProvider);
+      ref.invalidate(jobsNotifierProvider);
       ref.invalidate(localsProvider);
-      
+
       // Track sign out event
-      AnalyticsService.instance.trackAppEvent(eventName: 'user_signed_out', parameters: <String, dynamic>{});
+      AnalyticsService.instance.trackAppEvent(
+          eventName: 'user_signed_out', parameters: <String, dynamic>{});
     } catch (e) {
       state = state.copyWith(globalError: 'Error during sign out: $e');
     }
@@ -239,18 +251,18 @@ class AppStateNotifier extends _$AppStateNotifier {
 
   /// Update performance metrics
   void updatePerformanceMetrics(Map<String, dynamic> metrics) {
-    final Map<String, dynamic> updatedMetrics = Map<String, dynamic>.from(state.performanceMetrics)
-      ..addAll(metrics);
+    final Map<String, dynamic> updatedMetrics =
+        Map<String, dynamic>.from(state.performanceMetrics)..addAll(metrics);
     state = state.copyWith(performanceMetrics: updatedMetrics);
   }
 }
 
 /// Combined app status provider
-@riverpod
-Map<String, dynamic> appStatus(Ref ref) {
-  final appState = ref.watch(appStateProvider);
-  final authState = ref.watch(authProvider);
-  final jobsState = ref.watch(jobsProvider);
+@Riverpod()
+Map<String, dynamic> appStatus(AppStatusRef ref) {
+  final appState = ref.watch(appStateNotifierProvider);
+  final authState = ref.watch(authNotifierProvider);
+  final jobsState = ref.watch(jobsNotifierProvider);
   final localsState = ref.watch(localsProvider);
 
   return <String, dynamic>{
@@ -268,13 +280,13 @@ Map<String, dynamic> appStatus(Ref ref) {
 }
 
 /// Error aggregation provider
-@riverpod
-List<String> allErrors(Ref ref) {
+@Riverpod()
+List<String> allErrors(AllErrorsRef ref) {
   final List<String> errors = <String>[];
-  
-  final appState = ref.watch(appStateProvider);
-  final authState = ref.watch(authProvider);
-  final jobsState = ref.watch(jobsProvider);
+
+  final appState = ref.watch(appStateNotifierProvider);
+  final authState = ref.watch(authNotifierProvider);
+  final jobsState = ref.watch(jobsNotifierProvider);
   final localsState = ref.watch(localsProvider);
 
   if (appState.globalError != null) {
@@ -294,15 +306,15 @@ List<String> allErrors(Ref ref) {
 }
 
 /// Loading state aggregation provider
-@riverpod
-bool isAnyLoading(Ref ref) {
-  final appState = ref.watch(appStateProvider);
-  final authState = ref.watch(authProvider);
-  final jobsState = ref.watch(jobsProvider);
+@Riverpod()
+bool isAnyLoading(IsAnyLoadingRef ref) {
+  final appState = ref.watch(appStateNotifierProvider);
+  final authState = ref.watch(authNotifierProvider);
+  final jobsState = ref.watch(jobsNotifierProvider);
   final localsState = ref.watch(localsProvider);
 
   return !appState.isInitialized ||
-         authState.isLoading ||
-         jobsState.isLoading ||
-         localsState.isLoading;
+      authState.isLoading ||
+      jobsState.isLoading ||
+      localsState.isLoading;
 }

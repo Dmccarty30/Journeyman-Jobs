@@ -20,11 +20,13 @@ class RosterDataService {
       final rawData = await rootBundle.loadString('docs/storm roster data/JJ Storm Roster.csv');
 
       // Parse the CSV data
-      // The first row is the header, so we use hasHeaders: true in the converter.
-      final List<List<dynamic>> csvTable = const CsvToListConverter(hasHeaders: true).convert(rawData);
+      // The first row is the header, so we skip it when processing the data.
+      final List<List<dynamic>> csvTable = const CsvToListConverter().convert(rawData);
+      // Skip the header row (first row)
+      final dataRows = csvTable.isNotEmpty ? csvTable.sublist(1) : [];
 
       // Convert CSV rows to RosterContractor objects
-      _rosterData = csvTable.map((row) {
+      _rosterData = dataRows.map((row) {
         // Ensure all values are strings before passing to the factory
         final stringRow = row.map((value) => value.toString()).toList();
         return RosterContractor.fromCsv(stringRow);

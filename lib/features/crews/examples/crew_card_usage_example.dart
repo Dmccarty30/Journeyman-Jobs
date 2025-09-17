@@ -130,7 +130,7 @@ class CrewCardUsageExample extends ConsumerWidget {
       padding: const EdgeInsets.only(bottom: 12, top: 8),
       child: Text(
         title,
-        style: AppTheme.headingMedium.copyWith(
+        style: AppTheme.headlineMedium.copyWith(
           color: AppTheme.primaryNavy,
           fontWeight: FontWeight.bold,
         ),

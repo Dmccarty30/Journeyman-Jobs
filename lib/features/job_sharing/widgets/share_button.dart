@@ -286,6 +286,48 @@ enum JJShareButtonVariant {
   secondary,
 }
 
+/// Wrapper for JJShareButton that provides job-specific functionality
+class ShareButton extends StatelessWidget {
+  /// The ID of the job to share
+  final String jobId;
+  
+  /// Size of the share button
+  final double? size;
+  
+  /// Variant of the share button
+  final JJShareButtonVariant variant;
+  
+  const ShareButton({
+    Key? key,
+    required this.jobId,
+    this.size,
+    this.variant = JJShareButtonVariant.primary,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // Determine size based on provided size value
+    JJShareButtonSize buttonSize = JJShareButtonSize.medium;
+    if (size != null) {
+      if (size! <= 20) {
+        buttonSize = JJShareButtonSize.small;
+      } else if (size! >= 32) {
+        buttonSize = JJShareButtonSize.large;
+      }
+    }
+    
+    return JJShareButton(
+      onPressed: () {
+        // TODO: Implement job sharing functionality with jobId
+        // This would open the sharing modal and pass the jobId
+      },
+      size: buttonSize,
+      variant: variant,
+      tooltip: 'Share job with colleagues',
+    );
+  }
+}
+
 /// Custom painter for circuit pattern overlay
 class CircuitPatternPainter extends CustomPainter {
   final Color color;

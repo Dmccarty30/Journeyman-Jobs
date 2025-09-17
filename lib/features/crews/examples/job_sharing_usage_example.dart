@@ -23,7 +23,7 @@ class JobSharingUsageExample {
       🌪️ URGENT STORM WORK - Hurricane recovery in Pensacola, FL
 
       Details:
-      - Rate: $65/hr + per diem
+      - Rate: \$65/hr + per diem
       - Duration: 2-4 weeks
       - Housing provided
       - Start: Tomorrow 6 AM
@@ -82,7 +82,7 @@ class JobSharingUsageExample {
       const message = '''
       High voltage transmission project in Dallas area
 
-      - Rate: $52/hr
+      - Rate: \$52/hr
       - Duration: 8 weeks
       - Commercial project
       - Local 20 jurisdiction

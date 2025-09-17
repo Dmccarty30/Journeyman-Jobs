@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../../../design_system/app_theme.dart';
 import '../animations/electrical_fire_animation.dart';
 import '../animations/flash_animation.dart';
 import '../animations/power_up_animation.dart';
@@ -432,10 +433,10 @@ class _TransformerDiagramState extends State<TransformerDiagram>
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: _showFireAnimation
-                ? AppTheme.errorRed.shade900
+                ? AppTheme.errorRed
                 : _showPowerUpAnimation
-                    ? AppTheme.successGreen.shade900
-                    : AppTheme.black87,
+                    ? AppTheme.successGreen
+                    : AppTheme.black,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(

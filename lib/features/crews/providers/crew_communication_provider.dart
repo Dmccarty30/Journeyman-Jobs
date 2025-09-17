@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../services/connectivity_service.dart';
 import '../models/crew_communication.dart';
+import '../models/crew_enums.dart';
 import '../models/message_attachment.dart';
 import '../services/crew_communication_service.dart';
 
@@ -87,19 +88,19 @@ class CrewCommunicationState {
 }
 
 /// CrewCommunicationService provider
-@riverpod
-CrewCommunicationService crewCommunicationService(Ref ref) {
+@Riverpod()
+CrewCommunicationService crewCommunicationService(CrewCommunicationServiceRef ref) {
   return CrewCommunicationService();
 }
 
 /// Connectivity service provider for communication
-@riverpod
-ConnectivityService communicationConnectivityService(Ref ref) {
+@Riverpod()
+ConnectivityService communicationConnectivityService(CommunicationConnectivityServiceRef ref) {
   return ConnectivityService();
 }
 
 /// Main CrewCommunicationProvider for managing real-time crew communication
-@riverpod
+@Riverpod()
 class CrewCommunicationNotifier extends _$CrewCommunicationNotifier {
   Timer? _typingResetTimer;
   final Map<String, StreamSubscription<List<CrewCommunication>>> _messageStreams = {};
@@ -467,7 +468,7 @@ class CrewCommunicationNotifier extends _$CrewCommunicationNotifier {
       final service = ref.read(crewCommunicationServiceProvider);
 
       if (state.isOnline) {
-        final result = await service.editMessage(
+        final result = await service.editMessageWithResult(
           crewId: crewId,
           messageId: messageId,
           newContent: newContent,
@@ -501,7 +502,7 @@ class CrewCommunicationNotifier extends _$CrewCommunicationNotifier {
       final service = ref.read(crewCommunicationServiceProvider);
 
       if (state.isOnline) {
-        final result = await service.deleteMessage(
+        final result = await service.deleteMessageWithResult(
           crewId: crewId,
           messageId: messageId,
         );
@@ -533,7 +534,7 @@ class CrewCommunicationNotifier extends _$CrewCommunicationNotifier {
       final service = ref.read(crewCommunicationServiceProvider);
 
       if (state.isOnline) {
-        final result = await service.pinMessage(
+        final result = await service.pinMessageWithResult(
           crewId: crewId,
           messageId: messageId,
         );
@@ -653,21 +654,19 @@ class CrewCommunicationNotifier extends _$CrewCommunicationNotifier {
             break;
           case 'editMessage':
             await service.editMessage(
-              crewId: messageData['crewId'],
-              messageId: messageData['messageId'],
-              newContent: messageData['newContent'],
+              messageData['messageId'],
+              messageData['newContent'],
             );
             break;
           case 'deleteMessage':
             await service.deleteMessage(
-              crewId: messageData['crewId'],
-              messageId: messageData['messageId'],
+              messageData['messageId'],
             );
             break;
           case 'pinMessage':
             await service.pinMessage(
-              crewId: messageData['crewId'],
-              messageId: messageData['messageId'],
+              messageData['messageId'],
+              true,
             );
             break;
         }
@@ -713,57 +712,57 @@ class CrewCommunicationNotifier extends _$CrewCommunicationNotifier {
 }
 
 /// Provider for getting messages for a specific crew
-@riverpod
-Stream<List<CrewCommunication>> crewMessages(Ref ref, String crewId) {
+@Riverpod()
+Stream<List<CrewCommunication>> crewMessages(CrewMessagesRef ref, String crewId) {
   final notifier = ref.watch(crewCommunicationNotifierProvider.notifier);
   return notifier.getMessagesStream(crewId);
 }
 
 /// Provider for getting unread count for a specific crew
-@riverpod
-Stream<int> crewUnreadCount(Ref ref, String crewId) {
+@Riverpod()
+Stream<int> crewUnreadCount(CrewUnreadCountRef ref, String crewId) {
   final notifier = ref.watch(crewCommunicationNotifierProvider.notifier);
   return notifier.getUnreadCountStream(crewId);
 }
 
 /// Provider for checking if any crew has unread messages
-@riverpod
-bool hasUnreadMessages(Ref ref) {
+@Riverpod()
+bool hasUnreadMessages(HasUnreadMessagesRef ref) {
   final state = ref.watch(crewCommunicationNotifierProvider);
   return state.unreadCounts.values.any((count) => count > 0);
 }
 
 /// Provider for getting total unread count across all crews
-@riverpod
-int totalUnreadCount(Ref ref) {
+@Riverpod()
+int totalUnreadCount(TotalUnreadCountRef ref) {
   final state = ref.watch(crewCommunicationNotifierProvider);
   return state.unreadCounts.values.fold(0, (total, count) => total + count);
 }
 
 /// Provider for checking if any crew is currently loading
-@riverpod
-bool isAnyCrewLoading(Ref ref) {
+@Riverpod()
+bool isAnyCrewLoading(IsAnyCrewLoadingRef ref) {
   final state = ref.watch(crewCommunicationNotifierProvider);
   return state.loadingStates.values.any((isLoading) => isLoading);
 }
 
 /// Provider for getting all crew communication errors
-@riverpod
-List<String> allCommunicationErrors(Ref ref) {
+@Riverpod()
+List<String> allCommunicationErrors(AllCommunicationErrorsRef ref) {
   final state = ref.watch(crewCommunicationNotifierProvider);
   return state.errors.values.where((error) => error != null).cast<String>().toList();
 }
 
 /// Provider for checking if there are pending offline messages
-@riverpod
-bool hasPendingOfflineMessages(Ref ref) {
+@Riverpod()
+bool hasPendingOfflineMessages(HasPendingOfflineMessagesRef ref) {
   final state = ref.watch(crewCommunicationNotifierProvider);
   return state.offlineMessageQueue.isNotEmpty;
 }
 
 /// Provider for getting offline message count
-@riverpod
-int offlineMessageCount(Ref ref) {
+@Riverpod()
+int offlineMessageCount(OfflineMessageCountRef ref) {
   final state = ref.watch(crewCommunicationNotifierProvider);
   return state.offlineMessageQueue.length;
 }

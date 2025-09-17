@@ -45,8 +45,8 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     _scrollController.addListener(_onScroll);
     // Manually trigger initial load if not already loading
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!ref.read(jobsProvider).isLoading && ref.read(jobsProvider).jobs.isEmpty) {
-        ref.read(jobsProvider.notifier).loadJobs(isRefresh: true);
+      if (!ref.read(jobsNotifierProvider).isLoading && ref.read(jobsNotifierProvider).jobs.isEmpty) {
+        ref.read(jobsNotifierProvider.notifier).loadJobs(isRefresh: true);
       }
     });
   }
@@ -61,7 +61,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       // Load more jobs when reaching the bottom
-      ref.read(jobsProvider.notifier).loadMoreJobs();
+      ref.read(jobsNotifierProvider.notifier).loadMoreJobs();
     }
   }
 
@@ -128,7 +128,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
 
   void _applyFilters() {
     // Trigger a new search with current filters
-    ref.invalidate(jobsProvider);
+    ref.invalidate(jobsNotifierProvider);
   }
 
   void _showJobDetails(Job job) {
@@ -323,7 +323,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => ref.invalidate(jobsProvider),
+              onPressed: () => ref.invalidate(jobsNotifierProvider),
               child: const Text('Retry'),
             ),
           ],
@@ -383,7 +383,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final jobsState = ref.watch(jobsProvider);
+    final jobsState = ref.watch(jobsNotifierProvider);
     
     return Scaffold(
       backgroundColor: AppTheme.offWhite,
@@ -468,7 +468,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
               
               return RefreshIndicator(
                 onRefresh: () async {
-                  ref.invalidate(jobsProvider);
+                  ref.invalidate(jobsNotifierProvider);
                 },
                 child: ListView.builder(
                   controller: _scrollController,

@@ -378,18 +378,6 @@ class _MessageBubbleState extends State<MessageBubble>
     );
   }
 
-  Widget _buildMessageContent() {
-    return Padding(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildMessageText(),
-          if (widget.message.isEdited) _buildEditedIndicator(),
-        ],
-      ),
-    );
-  }
 
   Widget _buildMessageText() {
     return SelectableText(

@@ -32,7 +32,7 @@ export 'jj_circuit_breaker_switch_list_tile.dart';
 
 // Toast & Feedback Components
 export 'jj_electrical_toast.dart';
-export 'jj_snack_bar.dart';
+// export 'jj_snack_bar.dart'; // Removed - use JJSnackBar from design_system/components/reusable_components.dart
 
 // Utility Components
 export 'circuit_breaker_toggle.dart';
