@@ -27,7 +27,7 @@ class NotificationManager {
       
       // Initialize FCM service
       if (appContext.mounted) {
-        await FCMService.initialize(appContext);
+        await FCMService.instance.initialize(appContext);
         debugPrint('✓ FCM Service initialized');
       }
 

@@ -411,8 +411,8 @@ class AppTheme {
         elevation: 8,
       ),
       
-      // Text Theme
-      textTheme: TextTheme(
+      // Text Theme - Use base theme and override with Inter font
+      textTheme: ThemeData.light().textTheme.copyWith(
         displayLarge: displayLarge,
         displayMedium: displayMedium,
         displaySmall: displaySmall,
@@ -568,7 +568,7 @@ class AppTheme {
         elevation: 8,
       ),
 
-      textTheme: TextTheme(
+      textTheme: ThemeData.dark().textTheme.copyWith(
         displayLarge: displayLarge.copyWith(color: white),
         displayMedium: displayMedium.copyWith(color: white),
         displaySmall: displaySmall.copyWith(color: white),

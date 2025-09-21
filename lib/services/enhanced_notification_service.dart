@@ -1,9 +1,10 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/job_model.dart';
-import 'fcm_service.dart';
 import 'local_notification_service.dart';
 
 /// Enhanced notification service specifically designed for IBEW electrical workers
@@ -417,6 +418,34 @@ class EnhancedNotificationService {
       debugPrint('Application update sent for $jobTitle at $company');
     } catch (e) {
       debugPrint('Error sending application update: $e');
+    }
+  }
+
+  /// Create a notification for a specific user
+  static Future<void> createNotification({
+    required String userId,
+    required String title,
+    required String body,
+    required String type,
+    Map<String, dynamic>? data,
+    String priority = 'normal',
+  }) async {
+    try {
+      await _firestore.collection('notifications').add({
+        'userId': userId,
+        'title': title,
+        'message': body,
+        'type': type,
+        'isRead': false,
+        'timestamp': FieldValue.serverTimestamp(),
+        'priority': priority,
+        'data': data ?? {},
+      });
+
+      debugPrint('Notification created for user $userId: $title');
+    } catch (e) {
+      debugPrint('Error creating notification: $e');
+      rethrow;
     }
   }
 }

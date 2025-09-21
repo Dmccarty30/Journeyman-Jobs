@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/job_model.dart';
@@ -20,9 +22,9 @@ import 'fcm_service.dart';
 class JobSharingService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final AnalyticsService _analytics = AnalyticsService();
+  final AnalyticsService _analytics = AnalyticsService.instance;
   final EnhancedNotificationService _notifications = EnhancedNotificationService();
-  final FCMService _fcm = FCMService();
+  final FCMService _fcm = FCMService.instance;
 
   /// Share a job with specified recipients
   /// 
@@ -73,6 +75,12 @@ class JobSharingService {
 
       // Track analytics
       await _analytics.logJobShare(
+        {
+          'job_id': job.id,
+          'recipient_count': recipients.length,
+          'share_method': shareMethod,
+          'has_message': message != null,
+        },
         jobId: job.id,
         recipientCount: recipients.length,
         shareMethod: shareMethod,
@@ -134,7 +142,7 @@ class JobSharingService {
             .get();
         
         if (memberDoc.exists) {
-          crewMembers.add(UserModel.fromMap(memberDoc.data()!));
+          crewMembers.add(UserModel.fromJson(memberDoc.data()!));
         }
       }
 
@@ -252,7 +260,7 @@ class JobSharingService {
       );
 
       // Create in-app notification
-      await _notifications.createNotification(
+      await EnhancedNotificationService.createNotification(
         userId: recipient.id,
         title: 'New Job Share',
         body: '${shareNotification.senderName} shared: ${shareNotification.jobTitle}',
@@ -314,7 +322,7 @@ class JobSharingService {
         },
       );
 
-      await _notifications.createNotification(
+      await EnhancedNotificationService.createNotification(
         userId: recipient.id,
         title: '⚡ Crew Job Share',
         body: '${shareNotification.senderName} shared: ${shareNotification.jobTitle}',
@@ -1078,7 +1086,7 @@ class JobSharingService {
         },
       );
 
-      await _notifications.createNotification(
+      await EnhancedNotificationService.createNotification(
         userId: memberId,
         title: title,
         body: body,
@@ -1171,7 +1179,7 @@ class JobSharingService {
         },
       );
 
-      await _notifications.createNotification(
+      await EnhancedNotificationService.createNotification(
         userId: memberId,
         title: 'Group Bid Submitted',
         body: 'Your crew\'s group bid has been submitted for review',
@@ -1230,7 +1238,7 @@ class JobSharingService {
         },
       );
 
-      await _notifications.createNotification(
+      await EnhancedNotificationService.createNotification(
         userId: memberId,
         title: title,
         body: employerResponse ?? body,

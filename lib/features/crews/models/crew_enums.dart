@@ -710,6 +710,58 @@ extension CrewEnumListExtensions<T extends Enum> on Iterable<T> {
       firstWhereOrNull((e) => e.serialize() == value);
 }
 
+/// Share status for job sharing notifications
+/// 
+/// Tracks the status of job shares between users
+enum ShareStatus {
+  /// Share has been created but not yet viewed
+  pending,
+  
+  /// Share has been viewed by the recipient
+  viewed,
+  
+  /// Share has been accepted by the recipient
+  accepted,
+  
+  /// Share has been declined by the recipient
+  declined,
+  
+  /// Share has expired
+  expired;
+
+  /// Get display name for UI
+  String get displayName {
+    switch (this) {
+      case ShareStatus.pending:
+        return 'Pending';
+      case ShareStatus.viewed:
+        return 'Viewed';
+      case ShareStatus.accepted:
+        return 'Accepted';
+      case ShareStatus.declined:
+        return 'Declined';
+      case ShareStatus.expired:
+        return 'Expired';
+    }
+  }
+
+  /// Convert from string representation
+  static ShareStatus? fromString(String? value) {
+    if (value == null) return null;
+    return ShareStatus.values.firstWhereOrNull(
+      (status) => status.name.toLowerCase() == value.toLowerCase(),
+    );
+  }
+
+  /// Get all available statuses as strings
+  static List<String> get allStrings => 
+      ShareStatus.values.map((status) => status.name).toList();
+
+  /// Get all display names
+  static List<String> get allDisplayNames => 
+      ShareStatus.values.map((status) => status.displayName).toList();
+}
+
 /// Generic deserialization function for crew enums
 T? deserializeCrewEnum<T>(String? value) {
   switch (T) {
@@ -725,6 +777,8 @@ T? deserializeCrewEnum<T>(String? value) {
       return AttachmentType.values.deserialize(value) as T?;
     case JobType _:
       return JobType.values.deserialize(value) as T?;
+    case ShareStatus _:
+      return ShareStatus.values.deserialize(value) as T?;
     default:
       return null;
   }

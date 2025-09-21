@@ -149,7 +149,7 @@ class AnalyticsService {
   }
 
   /// Log job sharing events
-  Future<void> logJobShare(Map<String, dynamic> data) async {
+  Future<void> logJobShare(Map<String, dynamic> data, {required String jobId, required int recipientCount, required String shareMethod, required bool hasMessage}) async {
     await logEvent('job_share', data);
   }
 

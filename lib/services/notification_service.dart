@@ -58,9 +58,9 @@ class NotificationService {
       final topicName = _getTopicName(type);
       if (topicName != null) {
           if (enabled) {
-            await FCMService.subscribeToTopic(topicName); // Corrected method call
+            await FCMService.instance.subscribeToTopicInterface(topicName);
           } else {
-            await FCMService.unsubscribeFromTopic(topicName); // Corrected method call
+            await FCMService.instance.unsubscribeFromTopicInterface(topicName);
           }
         }
 
@@ -71,7 +71,7 @@ class NotificationService {
         final userDoc = await _firestore.collection('users').doc(user.uid).get();
         final unionLocal = userDoc.data()?['unionLocal'] as String?;
         if (unionLocal != null) {
-          await FCMService.subscribeToTopic('local_$unionLocal'); // Corrected method call
+          await FCMService.instance.subscribeToTopicInterface('local_$unionLocal');
         }
       }
       return true; // Indicate success
@@ -98,9 +98,9 @@ class NotificationService {
       for (final type in types) {
         final enabled = prefs.getBool('${type}_enabled') ?? true;
         final topicName = _getTopicName(type);
-        
+
         if (enabled && topicName != null) {
-          await FCMService.subscribeToTopic(topicName);
+          await FCMService.instance.subscribeToTopicInterface(topicName);
         }
       }
 
@@ -111,7 +111,7 @@ class NotificationService {
         final userDoc = await _firestore.collection('users').doc(user.uid).get();
         final unionLocal = userDoc.data()?['unionLocal'] as String?;
         if (unionLocal != null) {
-          await FCMService.subscribeToTopic('local_$unionLocal');
+          await FCMService.instance.subscribeToTopicInterface('local_$unionLocal');
         }
       }
     } catch (e) {
@@ -246,6 +246,24 @@ class NotificationService {
         'status': status,
       },
     );
+  }
+
+  /// Map notification types to FCM topic names
+  static String? _getTopicName(String type) {
+    switch (type) {
+      case 'job_alerts':
+        return 'job_alerts';
+      case 'storm_work':
+        return 'storm_work';
+      case 'union_updates':
+        return 'union_updates';
+      case 'union_reminders':
+        return 'union_reminders';
+      case 'system_notifications':
+        return 'system_notifications';
+      default:
+        return null;
+    }
   }
 
   static String _getStatusEmoji(String status) {

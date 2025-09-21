@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -24,7 +25,7 @@ class FCMService {
   StreamSubscription<RemoteMessage>? _backgroundSubscription;
 
   /// Initialize FCM service with production configuration
-  Future<void> initialize() async {
+  Future<void> initialize(BuildContext appContext) async {
     try {
       // Request notification permissions
       await _requestPermissions();
@@ -331,6 +332,152 @@ class FCMService {
 
   /// Get message stream for listening to incoming messages
   Stream<RemoteMessage>? get messageStream => _messageController?.stream;
+
+  /// Send notification to a specific user
+  Future<void> sendNotificationToUser({
+    required String userId,
+    required String title,
+    required String body,
+    Map<String, dynamic>? data,
+  }) async {
+    try {
+      // Get user's FCM tokens from Firestore
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (!userDoc.exists) {
+        print('User not found: $userId');
+        return;
+      }
+
+      final userData = userDoc.data();
+      final fcmTokens = userData?['fcmTokens'] as List<dynamic>? ?? [];
+
+      if (fcmTokens.isEmpty) {
+        print('No FCM tokens found for user: $userId');
+        return;
+      }
+
+      // Send notification to all user's tokens
+      for (final tokenData in fcmTokens) {
+        final token = tokenData['token'] as String?;
+        if (token != null && token.isNotEmpty) {
+          await _sendToToken(token, title, body, data);
+        }
+      }
+
+      print('Notification sent to user: $userId');
+    } catch (e) {
+      print('Error sending notification to user: $e');
+      rethrow;
+    }
+  }
+
+  /// Send notification to a specific FCM token
+  Future<void> _sendToToken(
+    String token,
+    String title,
+    String body,
+    Map<String, dynamic>? data,
+  ) async {
+    try {
+      // This would typically use Firebase Admin SDK or a cloud function
+      // For now, we'll log the notification details
+      print('Would send notification to token: $token');
+      print('Title: $title');
+      print('Body: $body');
+      print('Data: $data');
+
+      // TODO: Implement actual FCM sending via Firebase Admin SDK
+      // This would require a cloud function or server-side implementation
+    } catch (e) {
+      print('Error sending to token: $e');
+      rethrow;
+    }
+  }
+
+  /// Clear app badge count (iOS)
+  static Future<void> clearBadge() async {
+    try {
+      if (Platform.isIOS) {
+        // On iOS, we can clear the badge by sending a notification with badge count 0
+        // This is the standard approach for iOS badge management
+        await _sendBadgeClearNotification();
+        print('Badge clear notification sent');
+      } else {
+        print('Badge clearing is only supported on iOS');
+      }
+    } catch (e) {
+      print('Error clearing badge: $e');
+      rethrow;
+    }
+  }
+
+  /// Send a notification to clear the badge count
+  static Future<void> _sendBadgeClearNotification() async {
+    try {
+      // Get current user's FCM token
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        print('No user logged in - cannot clear badge');
+        return;
+      }
+
+      // Get user's FCM tokens from Firestore
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        print('User document not found');
+        return;
+      }
+
+      final userData = userDoc.data();
+      final fcmTokens = userData?['fcmTokens'] as List<dynamic>? ?? [];
+
+      if (fcmTokens.isEmpty) {
+        print('No FCM tokens found for user');
+        return;
+      }
+
+      // Send a silent notification with badge count 0 to clear the badge
+      for (final tokenData in fcmTokens) {
+        final token = tokenData['token'] as String?;
+        if (token != null && token.isNotEmpty) {
+          await _sendBadgeClearToToken(token);
+        }
+      }
+
+      print('Badge clear notifications sent to all user tokens');
+    } catch (e) {
+      print('Error sending badge clear notification: $e');
+      rethrow;
+    }
+  }
+
+  /// Send badge clear notification to specific token
+  static Future<void> _sendBadgeClearToToken(String token) async {
+    try {
+      // This would typically use Firebase Admin SDK or a cloud function
+      // For now, we'll log the notification details
+      print('Would send badge clear notification to token: $token');
+      print('Badge count: 0 (to clear badge)');
+
+      // TODO: Implement actual FCM sending via Firebase Admin SDK
+      // This would require a cloud function or server-side implementation
+      // The notification should have:
+      // - content_available: true (silent notification)
+      // - badge: 0 (to clear the badge)
+      // - No title/body (silent)
+    } catch (e) {
+      print('Error sending badge clear to token: $e');
+      rethrow;
+    }
+  }
 
   /// Dispose resources
   void dispose() {

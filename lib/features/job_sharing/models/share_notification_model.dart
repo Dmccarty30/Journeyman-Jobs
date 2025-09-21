@@ -1,105 +1,139 @@
 /// Notification model for job sharing system
+/// Compatible with job_sharing_service.dart expectations
+import '../../crews/models/crew_enums.dart';
+
 class ShareNotificationModel {
   final String id;
-  final ShareNotificationType type;
-  final String message;
+  final String jobId;
+  final String senderId;
   final String? senderName;
-  final String? senderProfileImage;
-  final String? jobId;
+  final List<String> recipientIds;
+  final String? message;
+  final String shareMethod;
+  final DateTime timestamp;
+  final ShareStatus status;
   final String? jobTitle;
-  final String? jobCompany;
-  final bool isRead;
-  final DateTime createdAt;
-  final DateTime? readAt;
-  final String? shareMethod;  // Added for compatibility
+  final String? jobLocal;
+  final String? jobLocation;
+  final double? jobPayRate;
 
   const ShareNotificationModel({
     required this.id,
-    required this.type,
-    required this.message,
+    required this.jobId,
+    required this.senderId,
     this.senderName,
-    this.senderProfileImage,
-    this.jobId,
+    required this.recipientIds,
+    this.message,
+    this.shareMethod = 'in_app',
+    required this.timestamp,
+    this.status = ShareStatus.pending,
     this.jobTitle,
-    this.jobCompany,
-    this.isRead = false,
-    required this.createdAt,
-    this.readAt,
-    this.shareMethod,
+    this.jobLocal,
+    this.jobLocation,
+    this.jobPayRate,
   });
 
   ShareNotificationModel copyWith({
     String? id,
-    ShareNotificationType? type,
-    String? message,
-    String? senderName,
-    String? senderProfileImage,
     String? jobId,
-    String? jobTitle,
-    String? jobCompany,
-    bool? isRead,
-    DateTime? createdAt,
-    DateTime? readAt,
+    String? senderId,
+    String? senderName,
+    List<String>? recipientIds,
+    String? message,
     String? shareMethod,
+    DateTime? timestamp,
+    ShareStatus? status,
+    String? jobTitle,
+    String? jobLocal,
+    String? jobLocation,
+    double? jobPayRate,
   }) {
     return ShareNotificationModel(
       id: id ?? this.id,
-      type: type ?? this.type,
-      message: message ?? this.message,
-      senderName: senderName ?? this.senderName,
-      senderProfileImage: senderProfileImage ?? this.senderProfileImage,
       jobId: jobId ?? this.jobId,
-      jobTitle: jobTitle ?? this.jobTitle,
-      jobCompany: jobCompany ?? this.jobCompany,
-      isRead: isRead ?? this.isRead,
-      createdAt: createdAt ?? this.createdAt,
-      readAt: readAt ?? this.readAt,
+      senderId: senderId ?? this.senderId,
+      senderName: senderName ?? this.senderName,
+      recipientIds: recipientIds ?? this.recipientIds,
+      message: message ?? this.message,
       shareMethod: shareMethod ?? this.shareMethod,
+      timestamp: timestamp ?? this.timestamp,
+      status: status ?? this.status,
+      jobTitle: jobTitle ?? this.jobTitle,
+      jobLocal: jobLocal ?? this.jobLocal,
+      jobLocation: jobLocation ?? this.jobLocation,
+      jobPayRate: jobPayRate ?? this.jobPayRate,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'jobId': jobId,
+      'senderId': senderId,
+      'senderName': senderName,
+      'recipientIds': recipientIds,
+      'message': message,
+      'shareMethod': shareMethod,
+      'timestamp': timestamp.toIso8601String(),
+      'status': status.name,
+      'jobTitle': jobTitle,
+      'jobLocal': jobLocal,
+      'jobLocation': jobLocation,
+      'jobPayRate': jobPayRate,
+    };
+  }
+
+  factory ShareNotificationModel.fromMap(Map<String, dynamic> map) {
+    return ShareNotificationModel(
+      id: map['id'] as String,
+      jobId: map['jobId'] as String,
+      senderId: map['senderId'] as String,
+      senderName: map['senderName'] as String?,
+      recipientIds: List<String>.from(map['recipientIds'] as List),
+      message: map['message'] as String?,
+      shareMethod: map['shareMethod'] as String? ?? 'in_app',
+      timestamp: DateTime.parse(map['timestamp'] as String),
+      status: ShareStatus.fromString(map['status'] as String? ?? 'pending') ?? ShareStatus.pending,
+      jobTitle: map['jobTitle'] as String?,
+      jobLocal: map['jobLocal'] as String?,
+      jobLocation: map['jobLocation'] as String?,
+      jobPayRate: (map['jobPayRate'] as num?)?.toDouble(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'type': type.name,
-      'message': message,
-      'senderName': senderName,
-      'senderProfileImage': senderProfileImage,
       'jobId': jobId,
+      'senderId': senderId,
+      'senderName': senderName,
+      'recipientIds': recipientIds,
+      'message': message,
+      'shareMethod': shareMethod,
+      'timestamp': timestamp.millisecondsSinceEpoch,
+      'status': status.name,
       'jobTitle': jobTitle,
-      'jobCompany': jobCompany,
-      'isRead': isRead,
-      'createdAt': createdAt.millisecondsSinceEpoch,
-      'readAt': readAt?.millisecondsSinceEpoch,
+      'jobLocal': jobLocal,
+      'jobLocation': jobLocation,
+      'jobPayRate': jobPayRate,
     };
   }
 
   factory ShareNotificationModel.fromJson(Map<String, dynamic> json) {
     return ShareNotificationModel(
       id: json['id'] as String,
-      type: ShareNotificationType.values.firstWhere(
-        (e) => e.name == json['type'],
-        orElse: () => ShareNotificationType.jobShared,
-      ),
-      message: json['message'] as String,
+      jobId: json['jobId'] as String,
+      senderId: json['senderId'] as String,
       senderName: json['senderName'] as String?,
-      senderProfileImage: json['senderProfileImage'] as String?,
-      jobId: json['jobId'] as String?,
+      recipientIds: List<String>.from(json['recipientIds'] as List),
+      message: json['message'] as String?,
+      shareMethod: json['shareMethod'] as String? ?? 'in_app',
+      timestamp: DateTime.fromMillisecondsSinceEpoch(json['timestamp'] as int),
+      status: ShareStatus.fromString(json['status'] as String? ?? 'pending') ?? ShareStatus.pending,
       jobTitle: json['jobTitle'] as String?,
-      jobCompany: json['jobCompany'] as String?,
-      isRead: json['isRead'] as bool? ?? false,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt'] as int),
-      readAt: json['readAt'] != null 
-          ? DateTime.fromMillisecondsSinceEpoch(json['readAt'] as int)
-          : null,
+      jobLocal: json['jobLocal'] as String?,
+      jobLocation: json['jobLocation'] as String?,
+      jobPayRate: (json['jobPayRate'] as num?)?.toDouble(),
     );
   }
-}
-
-/// Types of share notifications
-enum ShareNotificationType {
-  jobShared,     // User shared a job with others
-  shareReceived, // User received a job share from someone
-  shareViewed,   // Someone viewed a job user shared
-  shareExpired,  // A share has expired
 }
