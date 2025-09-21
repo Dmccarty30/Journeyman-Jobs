@@ -1,6 +1,6 @@
 import 'dart:developer' as dev;
 
-import 'package:contacts_service/contacts_service.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Service class for handling contact-related operations

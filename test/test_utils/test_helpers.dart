@@ -21,13 +21,18 @@ class TestHelpers {
     );
   }
 
-  /// Creates a mock user credential for testing
-  static MockUserCredential createMockUserCredential({
+  /// Creates a mock user credential for testing  
+  /// Returns the MockFirebaseAuth instance which handles UserCredential creation
+  static MockFirebaseAuth createMockUserCredential({
     String uid = 'test-uid-123',
     String email = 'test@ibew26.org',
   }) {
     final user = createMockUser(uid: uid, email: email);
-    return MockUserCredential(user: user);
+    // Return MockFirebaseAuth which provides UserCredential through sign-in methods
+    return MockFirebaseAuth(
+      signedIn: true,
+      mockUser: user,
+    );
   }
 
   /// Creates a configured MockFirebaseAuth instance

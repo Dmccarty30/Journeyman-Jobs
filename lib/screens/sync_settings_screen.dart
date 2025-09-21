@@ -5,6 +5,7 @@ import '../services/connectivity_service.dart';
 import '../services/offline_data_service.dart';
 import '../widgets/offline_indicators.dart';
 import '../providers/riverpod/app_state_riverpod_provider.dart';
+import '../design_system/app_theme.dart';
 
 /// Screen for managing sync and offline data settings
 class SyncSettingsScreen extends ConsumerStatefulWidget {

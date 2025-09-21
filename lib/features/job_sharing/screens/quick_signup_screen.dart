@@ -394,18 +394,14 @@ class _QuickSignupScreenState extends State<QuickSignupScreen> {
                 }
                 return null;
               },
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword 
-                      ? Icons.visibility_outlined 
-                      : Icons.visibility_off_outlined,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
-                },
-              ),
+              suffixIcon: _obscurePassword 
+                  ? Icons.visibility_outlined 
+                  : Icons.visibility_off_outlined,
+              onSuffixIconPressed: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
               textInputAction: TextInputAction.done,
               onFieldSubmitted: (_) => _handleSignup(),
             ),
@@ -413,7 +409,7 @@ class _QuickSignupScreenState extends State<QuickSignupScreen> {
             const SizedBox(height: AppTheme.spacingXl),
             
             // Submit button with electrical theme
-            JJPrimaryButton(
+            JJButton(
               text: 'Create Account & Apply',
               icon: Icons.rocket_launch_outlined,
               onPressed: _handleSignup,

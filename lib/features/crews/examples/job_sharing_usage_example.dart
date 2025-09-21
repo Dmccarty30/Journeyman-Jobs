@@ -1,4 +1,4 @@
-import '../models/job_notification.dart';
+import 'package:flutter/foundation.dart';
 import '../models/group_bid.dart';
 import '../models/crew_enums.dart';
 import '../../../services/job_sharing_service.dart';
@@ -40,7 +40,7 @@ class JobSharingUsageExample {
         expiresAt: DateTime.now().add(const Duration(hours: 8)),
       );
 
-      print('Storm work shared to crew: $notificationId');
+      debugPrint('Storm work shared to crew: $notificationId');
 
       // 3. Crew members respond (this would happen from their devices)
       await _simulateCrewResponses(notificationId);
@@ -55,7 +55,7 @@ class JobSharingUsageExample {
           .map((entry) => entry.key)
           .toList();
 
-      print('Interested crew members: ${interestedMembers.length}');
+      debugPrint('Interested crew members: ${interestedMembers.length}');
 
       // 5. If enough interest, create group bid
       if (interestedMembers.length >= 3) {
@@ -67,7 +67,7 @@ class JobSharingUsageExample {
         );
       }
     } catch (e) {
-      print('Storm work coordination failed: $e');
+      debugPrint('Storm work coordination failed: $e');
     }
   }
 
@@ -97,6 +97,8 @@ class JobSharingUsageExample {
         isPriority: false,
         expiresAt: DateTime.now().add(const Duration(days: 3)),
       );
+      
+      debugPrint('Regular job shared: $notificationId');
 
       // 2. Auto-calculate match score
       final matchScore = await _jobSharingService.calculateCrewMatchScore(
@@ -104,16 +106,16 @@ class JobSharingUsageExample {
         crewId,
       );
 
-      print('Job match score: ${(matchScore * 100).toStringAsFixed(1)}%');
+      debugPrint('Job match score: ${(matchScore * 100).toStringAsFixed(1)}%');
 
       // 3. Auto-share similar jobs if enabled
       final autoSharedJobs = await _jobSharingService.autoShareMatchingJobs(
         crewId,
       );
 
-      print('Auto-shared ${autoSharedJobs.length} matching jobs');
+      debugPrint('Auto-shared ${autoSharedJobs.length} matching jobs');
     } catch (e) {
-      print('Regular job sharing failed: $e');
+      debugPrint('Regular job sharing failed: $e');
     }
   }
 
@@ -176,11 +178,11 @@ class JobSharingUsageExample {
 
       // 2. Create the group bid
       final bidId = await _jobSharingService.createGroupBid(groupBid);
-      print('Group bid created: $bidId');
+      debugPrint('Group bid created: $bidId');
 
       // 3. Submit to employer
       await _jobSharingService.submitGroupBid(bidId);
-      print('Group bid submitted successfully');
+      debugPrint('Group bid submitted successfully');
 
       // 4. Simulate employer response (this would come from external system)
       await Future.delayed(const Duration(seconds: 2));
@@ -191,9 +193,9 @@ class JobSharingUsageExample {
         employerResponse: 'Congratulations! Your crew has been selected for this project. Please contact our project manager to finalize details.',
       );
 
-      print('Bid accepted! Crew got the job.');
+      debugPrint('Bid accepted! Crew got the job.');
     } catch (e) {
-      print('Group bidding failed: $e');
+      debugPrint('Group bidding failed: $e');
     }
   }
 
@@ -207,31 +209,31 @@ class JobSharingUsageExample {
       // Get comprehensive crew job history
       final history = await _jobSharingService.getCrewJobHistory(crewId);
 
-      print('=== Crew Performance Analytics ===');
-      print('Total job shares: ${history['total_job_shares']}');
-      print('Total group bids: ${history['total_group_bids']}');
-      print('Accepted bids: ${history['accepted_bids']}');
-      print('Success rate: ${history['success_rate'].toStringAsFixed(1)}%');
-      print('Avg response rate: ${history['average_response_rate'].toStringAsFixed(1)}%');
+      debugPrint('=== Crew Performance Analytics ===');
+      debugPrint('Total job shares: ${history['total_job_shares']}');
+      debugPrint('Total group bids: ${history['total_group_bids']}');
+      debugPrint('Accepted bids: ${history['accepted_bids']}');
+      debugPrint('Success rate: ${history['success_rate'].toStringAsFixed(1)}%');
+      debugPrint('Avg response rate: ${history['average_response_rate'].toStringAsFixed(1)}%');
 
       // Analyze recent activity
       final recentNotifications = history['recent_notifications'] as List;
       final recentBids = history['recent_bids'] as List;
 
-      print('\n=== Recent Activity ===');
-      print('Recent notifications: ${recentNotifications.length}');
-      print('Recent bids: ${recentBids.length}');
+      debugPrint('\n=== Recent Activity ===');
+      debugPrint('Recent notifications: ${recentNotifications.length}');
+      debugPrint('Recent bids: ${recentBids.length}');
 
       // Performance insights
       if (history['success_rate'] > 75) {
-        print('\n✅ High-performing crew! Great job coordination.');
+        debugPrint('\n✅ High-performing crew! Great job coordination.');
       } else if (history['success_rate'] > 50) {
-        print('\n⚠️ Moderate performance. Consider improving response times.');
+        debugPrint('\n⚠️ Moderate performance. Consider improving response times.');
       } else {
-        print('\n❌ Low success rate. Review bidding strategy and job matching.');
+        debugPrint('\n❌ Low success rate. Review bidding strategy and job matching.');
       }
     } catch (e) {
-      print('Analytics failed: $e');
+      debugPrint('Analytics failed: $e');
     }
   }
 
@@ -244,7 +246,7 @@ class JobSharingUsageExample {
       const userId = 'field_worker_555';
 
       // Simulate worker in field with intermittent connectivity
-      print('Worker responding to job from remote location...');
+      debugPrint('Worker responding to job from remote location...');
 
       await _jobSharingService.respondToJobNotification(
         notificationId,
@@ -253,9 +255,9 @@ class JobSharingUsageExample {
         note: 'Available for this job. Currently finishing up in Tampa, can start Monday.',
       );
 
-      print('Response recorded successfully despite connectivity issues');
+      debugPrint('Response recorded successfully despite connectivity issues');
     } catch (e) {
-      print('Offline response failed: $e');
+      debugPrint('Offline response failed: $e');
       // In real app, this would queue for retry when connectivity returns
     }
   }
@@ -317,7 +319,7 @@ class JobSharingUsageExample {
     final bidId = await _jobSharingService.createGroupBid(groupBid);
     await _jobSharingService.submitGroupBid(bidId);
 
-    print('Storm work group bid submitted: $bidId');
+    debugPrint('Storm work group bid submitted: $bidId');
   }
 
   /// Helper: Assign roles for storm work
@@ -348,20 +350,20 @@ class JobSharingUsageExample {
 void main() async {
   final example = JobSharingUsageExample();
 
-  print('🌩️ Running storm work coordination example...');
+  debugPrint('🌩️ Running storm work coordination example...');
   await example.stormWorkCoordinationExample();
 
-  print('\n🔌 Running regular job sharing example...');
+  debugPrint('\n🔌 Running regular job sharing example...');
   await example.regularJobSharingExample();
 
-  print('\n👥 Running group bidding example...');
+  debugPrint('\n👥 Running group bidding example...');
   await example.groupBiddingExample();
 
-  print('\n📊 Running crew analytics example...');
+  debugPrint('\n📊 Running crew analytics example...');
   await example.crewAnalyticsExample();
 
-  print('\n📱 Running offline response example...');
+  debugPrint('\n📱 Running offline response example...');
   await example.offlineJobResponseExample();
 
-  print('\n✅ All examples completed!');
+  debugPrint('\n✅ All examples completed!');
 }

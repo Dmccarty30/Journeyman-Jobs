@@ -1,12 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../lib/services/job_sharing_service.dart';
-import '../../lib/features/crews/models/job_notification.dart';
-import '../../lib/features/crews/models/group_bid.dart';
-import '../../lib/features/crews/models/crew_enums.dart';
+import 'package:journeyman_jobs/services/job_sharing_service.dart';
+import 'package:journeyman_jobs/features/crews/models/job_notification.dart';
+import 'package:journeyman_jobs/features/crews/models/group_bid.dart';
+import 'package:journeyman_jobs/features/crews/models/crew_enums.dart';
 import '../mocks/firebase_mocks.dart';
 
 /// Test suite for crew-specific job sharing functionality
@@ -205,7 +204,7 @@ void main() {
             .thenReturn(mockQuery);
 
         when(mockNotificationDoc.reference.update(any))
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async => null);
 
         // Act
         await jobSharingService.respondToJobNotification(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer' as dev;
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -95,6 +96,7 @@ class CrewState {
 /// Crew state notifier for electrical worker crews
 class CrewNotifier extends StateNotifier<CrewState> {
   final CrewService _crewService;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   Timer? _searchDebounceTimer;
   StreamSubscription? _userCrewsSubscription;
   StreamSubscription? _selectedCrewSubscription;
@@ -185,8 +187,12 @@ class CrewNotifier extends StateNotifier<CrewState> {
     try {
       state = state.setLoading(true);
 
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) throw Exception('User not authenticated');
+
       final updatedCrew = await _crewService.updateCrew(
         crewId: crewId,
+        userId: currentUser.uid,
         name: name,
         description: description,
         imageUrl: imageUrl,
@@ -330,9 +336,9 @@ class CrewNotifier extends StateNotifier<CrewState> {
 
       await _crewService.inviteMember(
         crewId: crewId,
-        invitedUserId: invitedUserId,
-        invitedBy: invitedBy,
-        message: message,
+        inviterId: invitedBy,
+        inviteMethod: 'userId',
+        inviteValue: invitedUserId,
       );
 
       dev.log('Invited user $invitedUserId to crew $crewId');
@@ -348,6 +354,7 @@ class CrewNotifier extends StateNotifier<CrewState> {
   /// Accept crew invitation
   Future<bool> acceptInvitation({
     required String crewId,
+    required String invitationId,
     required String userId,
   }) async {
     try {
@@ -355,6 +362,7 @@ class CrewNotifier extends StateNotifier<CrewState> {
 
       await _crewService.acceptInvitation(
         crewId: crewId,
+        invitationId: invitationId,
         userId: userId,
       );
 
@@ -371,11 +379,13 @@ class CrewNotifier extends StateNotifier<CrewState> {
   /// Decline crew invitation
   Future<bool> declineInvitation({
     required String crewId,
+    required String invitationId,
     required String userId,
   }) async {
     try {
       await _crewService.declineInvitation(
         crewId: crewId,
+        invitationId: invitationId,
         userId: userId,
       );
 
@@ -400,7 +410,8 @@ class CrewNotifier extends StateNotifier<CrewState> {
       await _crewService.removeMember(
         crewId: crewId,
         memberId: memberId,
-        removedBy: removedBy,
+        removerId: removedBy,
+        reason: 'Removed by admin',
       );
 
       dev.log('Removed member $memberId from crew $crewId');
@@ -436,10 +447,13 @@ class CrewNotifier extends StateNotifier<CrewState> {
       await _crewService.updateMemberPreferences(
         crewId: crewId,
         userId: userId,
-        availableDays: availableDays,
-        preferredShifts: preferredShifts,
-        willingToTravel: willingToTravel,
-        maxTravelDistance: maxTravelDistance,
+        targetUserId: userId,
+        workPreferences: CrewMemberPreferences(
+          maxTravelRadius: maxTravelDistance ?? 50,
+          availableForStormWork: willingToTravel ?? true,
+          availableForWeekends: true,
+          availableForOvertime: true,
+        ),
       );
 
       dev.log('Updated member preferences for $userId in crew $crewId');

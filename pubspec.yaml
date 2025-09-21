@@ -99,8 +99,8 @@ dependencies:
   dio: ^5.7.0
   geolocator: ^14.0.2
   
-  # Contacts integration
-  contacts_service: ^0.6.3
+  # Contacts integration - updated for Flutter 3.6+ compatibility
+  flutter_contacts: ^1.1.7+1
   
   # Time formatting
   timeago: ^3.7.0

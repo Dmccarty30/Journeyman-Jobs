@@ -1,14 +1,14 @@
+library test_config;
+
 /// Comprehensive Test Configuration for Journeyman Jobs IBEW Platform
 /// 
 /// This file provides centralized test configuration for the electrical workforce
 /// platform, including specialized test utilities for IBEW electrical workers,
 /// crew management, job sharing, and viral growth features.
 
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mockito/mockito.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
@@ -162,8 +162,8 @@ class ElectricalTestDataGenerator {
     return {
       'id': id ?? 'crew_${random}_test',
       'name': '${specializations[random % specializations.length]} Team Alpha',
-      'leader_id': leaderId ?? 'leader_${random}',
-      'member_ids': memberIds ?? ['leader_${random}'],
+      'leader_id': leaderId ?? 'leader_$random',
+      'member_ids': memberIds ?? ['leader_$random'],
       'specialization': specialization ?? specializations[random % specializations.length],
       'is_active': true,
       'member_limit': 10,
@@ -199,8 +199,8 @@ class ElectricalTestDataGenerator {
     
     return {
       'uid': uid ?? 'user_${random}_test',
-      'email': email ?? 'test.user${random}@ibew${_majorLocals[random % _majorLocals.length]}.org',
-      'display_name': displayName ?? 'Test Worker ${random}',
+      'email': email ?? 'test.user$random@ibew${_majorLocals[random % _majorLocals.length]}.org',
+      'display_name': displayName ?? 'Test Worker $random',
       'ibew_local': localNumber ?? _majorLocals[random % _majorLocals.length],
       'classification': classification ?? JJTestConfig.ibewTestData['classifications'][classificationIndex],
       'is_ibew_member': isIBEWMember,

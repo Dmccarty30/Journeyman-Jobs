@@ -10,6 +10,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 // Mocks
 @GenerateMocks([
   FirebaseAnalytics,
+  FirebaseFirestore,
 ])
 import 'share_service_test.mocks.dart';
 
@@ -452,7 +453,7 @@ void main() {
     group('Error Handling', () {
       test('should handle Firestore errors gracefully', () async {
         // Arrange - Create a mock that throws
-        final mockFirestore = MockFirebaseFirestore();
+        final mockFirestore = FakeFirebaseFirestore();
         when(mockFirestore.collection('jobs')).thenThrow(
           FirebaseException(plugin: 'firestore', code: 'unavailable'),
         );

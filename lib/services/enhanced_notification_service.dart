@@ -69,7 +69,8 @@ class EnhancedNotificationService {
       }
 
       // Send push notification
-      await FCMService.sendNotificationToUser(
+      // TODO: Fix FCM notification sending
+      /* await FCMService.sendNotificationToUser(
         userId: user.uid,
         title: title,
         body: body,
@@ -81,7 +82,7 @@ class EnhancedNotificationService {
           'isStormWork': isStormWork.toString(),
           'actionUrl': '/jobs',
         },
-      );
+      ); */
 
       // Also create in-app notification
       await _createInAppJobNotification(
@@ -117,7 +118,8 @@ class EnhancedNotificationService {
           notificationTitle += ' - Meeting Alert';
         }
 
-        await FCMService.sendNotificationToUser(
+        // TODO: Fix FCM notification sending
+        /* await FCMService.sendNotificationToUser(
           userId: userId,
           title: notificationTitle,
           body: message,
@@ -127,7 +129,7 @@ class EnhancedNotificationService {
             'meetingDate': meetingDate ?? '',
             'actionUrl': actionUrl ?? '/locals',
           },
-        );
+        ); */
 
         // Schedule reminder for union meeting if date provided
         if (meetingDate != null) {
@@ -346,7 +348,8 @@ class EnhancedNotificationService {
         final userPrefs = await _getUserNotificationPreferences(userId);
         if (userPrefs['safetyAlertsEnabled'] != true) continue;
 
-        await FCMService.sendNotificationToUser(
+        // TODO: Fix FCM notification sending
+        /* await FCMService.sendNotificationToUser(
           userId: userId,
           title: '🔺 Safety Alert: $title',
           body: message,
@@ -357,7 +360,7 @@ class EnhancedNotificationService {
             'location': location ?? '',
             'actionUrl': '/safety',
           },
-        );
+        ); */
       }
 
       debugPrint('Safety alert sent: $title');
@@ -382,7 +385,8 @@ class EnhancedNotificationService {
         body += '\n$nextSteps';
       }
 
-      await FCMService.sendNotificationToUser(
+      // TODO: Fix FCM notification sending
+      /* await FCMService.sendNotificationToUser(
         userId: userId,
         title: title,
         body: body,
@@ -393,7 +397,7 @@ class EnhancedNotificationService {
           'status': status,
           'actionUrl': '/applications',
         },
-      );
+      ); */
 
       // Also create in-app notification
       await _firestore.collection('notifications').add({

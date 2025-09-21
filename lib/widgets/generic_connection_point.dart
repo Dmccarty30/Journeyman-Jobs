@@ -165,7 +165,7 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
   }
 
   /// Get connection point color based on type and state
-  void _getConnectionPointColor() {
+  Color _getConnectionPointColor() {
     if (widget.isConnected) {
       return AppTheme.successGreen;
     }
@@ -175,36 +175,36 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
     }
 
     if (!widget.isCompatible) {
-      return AppTheme.mediumGray[400]!;
+      return AppTheme.mediumGray;
     }
     
     switch (widget.connectionPoint.type) {
       case ConnectionType.primary:
-        return AppTheme.errorRed[700]!;
+        return AppTheme.errorRed;
       case ConnectionType.secondary:
-        return AppTheme.infoBlue[700]!;
+        return AppTheme.infoBlue;
       case ConnectionType.neutral:
-        return AppTheme.mediumGray[600]!;
+        return AppTheme.mediumGray;
       case ConnectionType.ground:
-        return AppTheme.groundBrown[700]!;
+        return AppTheme.groundBrown;
     }
   }
 
   /// Get connection point border color
-  void _getConnectionPointBorderColor() {
+  Color _getConnectionPointBorderColor() {
     if (widget.isSelected) {
-      return AppTheme.infoBlue[800]!;
+      return AppTheme.infoBlue;
     }
     
     if (widget.isConnected) {
-      return AppTheme.successGreen[800]!;
+      return AppTheme.successGreen;
     }
 
     if (!widget.isCompatible) {
-      return AppTheme.mediumGray[600]!;
+      return AppTheme.mediumGray;
     }
     
-    return AppTheme.mediumGray[800]!;
+    return AppTheme.mediumGray;
   }
 
   /// Get appropriate icon for connection point
@@ -243,7 +243,7 @@ class ConnectionPointTooltip extends StatelessWidget {
   Widget build(BuildContext context) => Tooltip(
       message: _getTooltipMessage(),
       decoration: BoxDecoration(
-        color: AppTheme.mediumGray[800],
+        color: AppTheme.mediumGray,
         borderRadius: BorderRadius.circular(8),
       ),
       textStyle: const TextStyle(

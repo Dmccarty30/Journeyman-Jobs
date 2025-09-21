@@ -50,12 +50,12 @@ class JobsListStateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final jobsProviderState = ref.watch(jobsProvider);
+    final jobsNotifierProviderState = ref.watch(jobsNotifierProvider);
     final jobsState = JobsListState(
-      jobs: jobsProviderState.jobs,
-      isLoading: jobsProviderState.isLoading,
-      error: jobsProviderState.error,
-      hasMore: jobsProviderState.hasMoreJobs,
+      jobs: jobsNotifierProviderState.jobs,
+      isLoading: jobsNotifierProviderState.isLoading,
+      error: jobsNotifierProviderState.error,
+      hasMore: jobsNotifierProviderState.hasMoreJobs,
     );
     return builder(context, jobsState, child);
   }
@@ -162,12 +162,12 @@ class AuthStateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authProviderState = ref.watch(authProvider);
+    final authNotifierProviderState = ref.watch(authNotifierProvider);
     final authState = AuthState(
-      isAuthenticated: authProviderState.isAuthenticated,
-      isLoading: authProviderState.isLoading,
-      error: authProviderState.error,
-      user: authProviderState.user,
+      isAuthenticated: authNotifierProviderState.isAuthenticated,
+      isLoading: authNotifierProviderState.isLoading,
+      error: authNotifierProviderState.error,
+      user: authNotifierProviderState.user,
     );
     return builder(context, authState, child);
   }
@@ -214,22 +214,22 @@ class CombinedAppStateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authProviderState = ref.watch(authProvider);
-    final jobsProviderState = ref.watch(jobsProvider);
+    final authNotifierProviderState = ref.watch(authNotifierProvider);
+    final jobsNotifierProviderState = ref.watch(jobsNotifierProvider);
     final localsProviderState = ref.watch(localsProvider);
     
     final combinedState = CombinedAppState(
       authState: AuthState(
-        isAuthenticated: authProviderState.isAuthenticated,
-        isLoading: authProviderState.isLoading,
-        error: authProviderState.error,
-        user: authProviderState.user,
+        isAuthenticated: authNotifierProviderState.isAuthenticated,
+        isLoading: authNotifierProviderState.isLoading,
+        error: authNotifierProviderState.error,
+        user: authNotifierProviderState.user,
       ),
       jobsState: JobsListState(
-        jobs: jobsProviderState.jobs,
-        isLoading: jobsProviderState.isLoading,
-        error: jobsProviderState.error,
-        hasMore: jobsProviderState.hasMoreJobs,
+        jobs: jobsNotifierProviderState.jobs,
+        isLoading: jobsNotifierProviderState.isLoading,
+        error: jobsNotifierProviderState.error,
+        hasMore: jobsNotifierProviderState.hasMoreJobs,
       ),
       localsState: LocalsListState(
         locals: localsProviderState.locals,

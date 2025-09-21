@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
-
 import 'package:journeyman_jobs/widgets/enhanced_job_card.dart';
 import 'package:journeyman_jobs/models/job_model.dart';
 import 'package:journeyman_jobs/models/user_model.dart';
 import 'package:journeyman_jobs/features/job_sharing/widgets/share_button.dart';
 import 'package:journeyman_jobs/providers/riverpod/contacts_provider.dart';
-import 'package:journeyman_jobs/design_system/app_theme.dart';
 import 'package:journeyman_jobs/design_system/components/job_card.dart';
-
-@GenerateMocks([])
-import 'enhanced_job_card_test.mocks.dart';
 
 // Mock Contacts class for testing
 class MockContacts extends Contacts {

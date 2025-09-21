@@ -54,7 +54,7 @@ class CrewService {
             email: userData['email'],
             phone: userData['phone'],
             profileImageUrl: userData['profileImageUrl'],
-            role: doc.id == crewCreatedBy ? CrewRole.leader : CrewRole.member,
+            role: doc.id == crewCreatedBy ? CrewRole.foreman : CrewRole.crewMember,
             joinedAt: crewCreatedAt,
             isActive: true,
             workPreferences: CrewMemberPreferences.fromJson(userData['workPreferences'] ?? {}),

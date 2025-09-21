@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
@@ -1033,10 +1034,10 @@ void main() {
 
       // Check semantic properties
       final shareButton = find.byKey(const Key('share-button-a11y-job'));
-      expect(tester.getSemantics(shareButton).hasFlag(SemanticsFlag.isButton), isTrue);
+      expect(tester.getSemantics(shareButton).flagsCollection.contains(SemanticsFlag.isButton), isTrue);
 
       final quickOption = find.byKey(const Key('quick-share-option-accessible'));
-      expect(tester.getSemantics(quickOption).hasFlag(SemanticsFlag.isButton), isTrue);
+      expect(tester.getSemantics(quickOption).flagsCollection.contains(SemanticsFlag.isButton), isTrue);
     });
 
     testWidgets('Share widgets announce state changes', (tester) async {

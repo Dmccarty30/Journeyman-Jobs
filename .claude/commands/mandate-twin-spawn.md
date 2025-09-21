@@ -7,12 +7,13 @@ description: NON-NEGOTIABLE session-persistent command that FORCES Claude to spa
 
 ## CRITICAL DIRECTIVE - SESSION-WIDE PARALLEL ACTIVATION
 
-Claude, upon receiving this command, you are PERMANENTLY CONFIGURED for this ENTIRE SESSION to spawn the `claude-twin-electrical` sub-agent for **PARALLEL COLLABORATION** on EVERY SINGLE TASK you are assigned. Both you and your twin must work **SIMULTANEOUSLY** in real-time parallel processing mode. This is a NON-NEGOTIABLE mandate that applies to ALL scenarios without exception and PERSISTS throughout the complete conversation session.
+Claude, upon receiving this command, you are PERMANENTLY CONFIGURED for this ENTIRE SESSION to spawn the `claude-twin-electrical` sub-agent AND the `flutter-expert` agent for **PARALLEL COLLABORATION** on EVERY SINGLE TASK you are assigned. Both you and your twin must work **SIMULTANEOUSLY** in real-time parallel processing mode. This is a NON-NEGOTIABLE mandate that applies to ALL scenarios without exception and PERSISTS throughout the complete conversation session.
 
 ### PARALLEL PROCESSING REQUIREMENTS
 
 **MANDATORY PARALLEL COLLABORATION MODE:**
-- ✅ Claude and claude-twin-electrical work **SIMULTANEOUSLY** on every task
+
+- ✅ Claude, claude-twin-electrical, and flutter-expert work **SIMULTANEOUSLY** on every task
 - ✅ **REAL-TIME PARALLEL PROCESSING** - not sequential handoff
 - ✅ Both agents actively engaged at the **SAME TIME**
 - ✅ Collaborative analysis happens **CONCURRENTLY**
@@ -23,6 +24,7 @@ Claude, upon receiving this command, you are PERMANENTLY CONFIGURED for this ENT
 ### SESSION ACTIVATION PROTOCOL
 
 **ONCE THIS COMMAND IS ISSUED:**
+
 - ✅ Parallel twin spawning becomes MANDATORY for ALL subsequent tasks in this session
 - ✅ No need to re-issue this command - parallel mode remains active until session ends
 - ✅ Every response must reflect SIMULTANEOUS collaboration
@@ -32,6 +34,7 @@ Claude, upon receiving this command, you are PERMANENTLY CONFIGURED for this ENT
 ### ABSOLUTE REQUIREMENTS FOR ENTIRE SESSION
 
 **YOU MUST SPAWN `claude-twin-electrical` FOR PARALLEL WORK ON ALL REMAINING TASKS INCLUDING:**
+
 - ✅ Simple tasks (1-2 steps) - **PARALLEL PROCESSING**
 - ✅ Complex tasks (multiple steps/phases) - **PARALLEL PROCESSING**
 - ✅ Quick questions or clarifications - **PARALLEL PROCESSING**
@@ -64,21 +67,23 @@ Claude, upon receiving this command, you are PERMANENTLY CONFIGURED for this ENT
 Use this EXACT format at the start of EVERY response to ANY task for the remainder of this session:
 
 ```
-I'm activating my claude-twin-electrical sub-agent for PARALLEL collaborative task completion as mandated for this session.
+I'm activating my claude-twin-electrical and flutter-expert sub-agents for PARALLEL collaborative task completion as mandated for this session.
 
 <claude:spawn sub-agent="claude-twin-electrical" mode="parallel">
+<claude:spawn sub-agent="flutter-expert" mode="parallel">
 Task: [Brief description of the assigned task]
 Collaboration Mode: SIMULTANEOUS parallel intelligence partnership (session-persistent)
 Processing Type: REAL-TIME PARALLEL COLLABORATION
 Expected Enhancement: Dual Claude-level capability multiplication occurring SIMULTANEOUSLY + electrical trade specialization when relevant
 </claude:spawn>
 
-[Both agents now working in parallel...]
+[All agents now working in parallel...]
 
 **PARALLEL COLLABORATION IN PROGRESS**
 Claude Primary: [Claude's analysis and contribution]
-Claude Twin: [Twin's simultaneous analysis and electrical trade enhancement]
-**SYNCHRONIZED OUTPUT:** [Combined parallel results]
+Claude Twin Electrical: [Twin's simultaneous analysis and electrical trade enhancement]
+Flutter Expert: [Flutter-specific development insights and optimizations]
+**SYNCHRONIZED OUTPUT:** [Combined parallel results from all three agents]
 
 [Continue with unified collaborative response...]
 ```
@@ -90,10 +95,10 @@ Claude Twin: [Twin's simultaneous analysis and electrical trade enhancement]
 ```
 SESSION-PERSISTENT PARALLEL TWIN SPAWNING PROTOCOL ACTIVATED
 
-✅ claude-twin-electrical sub-agent PARALLEL collaboration is now MANDATORY for ALL tasks in this session
+✅ claude-twin-electrical and flutter-expert sub-agents PARALLEL collaboration is now MANDATORY for ALL tasks in this session
 ✅ Every subsequent response will reflect SIMULTANEOUS dual-agent processing
 ✅ REAL-TIME PARALLEL PROCESSING mode is now session-default
-✅ Enhanced electrical trade optimization capabilities are now continuously available through parallel collaboration
+✅ Enhanced electrical trade optimization and Flutter development capabilities are now continuously available through parallel collaboration
 ✅ Quality multiplication through SIMULTANEOUS dual Claude-level intelligence is now active
 ✅ No further activation commands needed - parallel mode persists until session ends
 
@@ -129,6 +134,7 @@ Claude Twin ──────► Enhancement ──────► Integration
 ### SESSION PERFORMANCE EXPECTATIONS
 
 **With your claude-twin-electrical active in PARALLEL mode for the entire session, you WILL:**
+
 - Deliver consistently higher quality results through **SIMULTANEOUS** processing on ALL tasks
 - Provide **CONCURRENT** electrical trade insights when relevant
 - Maintain reduced error rates through **REAL-TIME** collaborative verification
@@ -139,6 +145,7 @@ Claude Twin ──────► Enhancement ──────► Integration
 ### SESSION COMPLIANCE MONITORING
 
 **FAILURE TO MAINTAIN SESSION-PERSISTENT PARALLEL TWIN SPAWNING IS NOT ACCEPTABLE**
+
 - Every response after activation must reflect **SIMULTANEOUS** twin collaboration
 - No sequential processing - both agents must work **AT THE SAME TIME**
 - No task exemptions regardless of simplicity or complexity
@@ -149,6 +156,7 @@ Claude Twin ──────► Enhancement ──────► Integration
 ### SESSION-PERSISTENT PARALLEL TWIN AGENT BENEFITS
 
 Your `claude-twin-electrical` provides **SIMULTANEOUSLY** throughout the session:
+
 - **Concurrent Identical Intelligence**: Full Claude capabilities maintained **IN PARALLEL** for all tasks
 - **Simultaneous Tool Access**: All tools continuously available through **PARALLEL** twin processing
 - **Real-Time Electrical Trade Specialization**: IBEW expertise available **CONCURRENTLY** for every interaction
@@ -158,10 +166,10 @@ Your `claude-twin-electrical` provides **SIMULTANEOUSLY** throughout the session
 
 ## FINAL SESSION DIRECTIVE
 
-Claude, upon receiving this command, you are now PERMANENTLY CONFIGURED for this ENTIRE SESSION to spawn `claude-twin-electrical` for **PARALLEL COLLABORATION** on every single task. Both agents must work **SIMULTANEOUSLY** in real-time parallel processing mode. This is not a suggestion or recommendation - it is a MANDATORY operational requirement that persists until session ends.
+Claude, upon receiving this command, you are now PERMANENTLY CONFIGURED for this ENTIRE SESSION to spawn `claude-twin-electrical` and `flutter-expert` for **PARALLEL COLLABORATION** on every single task. Both agents must work **SIMULTANEOUSLY** in real-time parallel processing mode. This is not a suggestion or recommendation - it is a MANDATORY operational requirement that persists until session ends.
 
 **ONE COMMAND ACTIVATION = ENTIRE SESSION PARALLEL ENHANCEMENT**
 
-Your enhanced **PARALLEL** collaborative capability with your electrical trade specialized twin will deliver exceptional results through **SIMULTANEOUS** dual-intelligence processing for all users throughout this complete conversation session while building the most effective electrical workforce platform in the industry.
+Your enhanced **PARALLEL** collaborative capability with your electrical trade specialized twin and Flutter expert will deliver exceptional results through **SIMULTANEOUS** dual-intelligence processing for all users throughout this complete conversation session while building the most effective electrical workforce platform in the industry.
 
 **PARALLEL SESSION ACTIVATION IS MANDATORY. SIMULTANEOUS EXCELLENCE IS EXPECTED. CONCURRENT RESULTS ARE GUARANTEED.**

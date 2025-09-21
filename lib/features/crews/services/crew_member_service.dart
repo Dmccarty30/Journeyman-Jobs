@@ -95,14 +95,14 @@ class CrewMemberService {
       // TODO: Fix notification sending
       // await _notifications.sendNotification(
       //   userId: userId,
-        title: 'Welcome to ${crew.name}',
-        body: 'You have been added to the crew ${crew.name}',
-        data: {
-          'type': 'crew_member_added',
-          'crewId': crewId,
-          'crewName': crew.name,
-        },
-      );
+      //   title: 'Welcome to ${crew.name}',
+      //   body: 'You have been added to the crew ${crew.name}',
+      //   data: {
+      //     'type': 'crew_member_added',
+      //     'crewId': crewId,
+      //     'crewName': crew.name,
+      //   },
+      // );
 
       // Track analytics
       // TODO: Fix analytics logging
@@ -178,18 +178,18 @@ class CrewMemberService {
       // Send notification
       // TODO: Fix notification sending
       // await _notifications.sendNotification(
-        userId: memberId,
-        title: reason == 'leaving' ? 'Left Crew' : 'Removed from Crew',
-        body: reason == 'leaving' 
-            ? 'You have left ${crew.name}'
-            : 'You have been removed from ${crew.name}',
-        data: {
-          'type': 'crew_member_removed',
-          'crewId': crewId,
-          'crewName': crew.name,
-          'reason': reason,
-        },
-      );
+      //   userId: memberId,
+      //   title: reason == 'leaving' ? 'Left Crew' : 'Removed from Crew',
+      //   body: reason == 'leaving' 
+      //       ? 'You have left ${crew.name}'
+      //       : 'You have been removed from ${crew.name}',
+      //   data: {
+      //     'type': 'crew_member_removed',
+      //     'crewId': crewId,
+      //     'crewName': crew.name,
+      //     'reason': reason,
+      //   },
+      // );
 
       // Track analytics
       // TODO: Fix analytics logging
@@ -198,14 +198,14 @@ class CrewMemberService {
         'member_id': memberId,
         'removed_by': removedBy,
         'reason': reason,
-      });
+      }); */
     } catch (e) {
       // TODO: Fix analytics error logging
       // await _analytics.logError('crew_member_remove_failed', {
-        'crew_id': crewId,
-        'member_id': memberId,
-        'error': e.toString(),
-      });
+      //   'crew_id': crewId,
+      //   'member_id': memberId,
+      //   'error': e.toString(),
+      // });
       rethrow;
     }
   }
@@ -253,14 +253,14 @@ class CrewMemberService {
         'member_id': memberId,
         'new_role': newRole.name,
         'updated_by': updatedBy,
-      });
+      }); */
     } catch (e) {
       // TODO: Fix analytics error logging
       // await _analytics.logError('crew_member_role_update_failed', {
-        'crew_id': crewId,
-        'member_id': memberId,
-        'error': e.toString(),
-      });
+      //   'crew_id': crewId,
+      //   'member_id': memberId,
+      //   'error': e.toString(),
+      // });
       rethrow;
     }
   }
@@ -281,9 +281,9 @@ class CrewMemberService {
     } catch (e) {
       // TODO: Fix analytics error logging
       // await _analytics.logError('crew_members_fetch_failed', {
-        'crew_id': crewId,
-        'error': e.toString(),
-      });
+      //   'crew_id': crewId,
+      //   'error': e.toString(),
+      // });
       rethrow;
     }
   }
@@ -303,10 +303,10 @@ class CrewMemberService {
     } catch (e) {
       // TODO: Fix analytics error logging
       // await _analytics.logError('crew_member_fetch_failed', {
-        'crew_id': crewId,
-        'user_id': userId,
-        'error': e.toString(),
-      });
+      //   'crew_id': crewId,
+      //   'user_id': userId,
+      //   'error': e.toString(),
+      // });
       rethrow;
     }
   }
@@ -349,14 +349,14 @@ class CrewMemberService {
         'user_id': userId,
         'updated_work_prefs': workPreferences != null,
         'updated_notifications': notificationSettings != null,
-      });
+      }); */
     } catch (e) {
       // TODO: Fix analytics error logging
       // await _analytics.logError('crew_member_preferences_update_failed', {
-        'crew_id': crewId,
-        'user_id': userId,
-        'error': e.toString(),
-      });
+      //   'crew_id': crewId,
+      //   'user_id': userId,
+      //   'error': e.toString(),
+      // });
       rethrow;
     }
   }
@@ -387,14 +387,14 @@ class CrewMemberService {
         'crew_id': crewId,
         'user_id': userId,
         'availability': availability.name,
-      });
+      }); */
     } catch (e) {
       // TODO: Fix analytics error logging
       // await _analytics.logError('crew_member_availability_update_failed', {
-        'crew_id': crewId,
-        'user_id': userId,
-        'error': e.toString(),
-      });
+      //   'crew_id': crewId,
+      //   'user_id': userId,
+      //   'error': e.toString(),
+      // });
       rethrow;
     }
   }
@@ -459,16 +459,16 @@ class CrewMemberService {
       // Send notification
       // TODO: Fix notification sending
       // await _notifications.sendNotification(
-        userId: recipientId,
-        title: 'Crew Invitation',
-        body: 'You have been invited to join ${crew.name}',
-        data: {
-          'type': 'crew_invitation',
-          'invitationId': docRef.id,
-          'crewId': crewId,
-          'crewName': crew.name,
-        },
-      );
+      //   userId: recipientId,
+      //   title: 'Crew Invitation',
+      //   body: 'You have been invited to join ${crew.name}',
+      //   data: {
+      //     'type': 'crew_invitation',
+      //     'invitationId': docRef.id,
+      //     'crewId': crewId,
+      //     'crewName': crew.name,
+      //   },
+      // );
 
       // Track analytics
       // TODO: Fix analytics logging
@@ -477,16 +477,16 @@ class CrewMemberService {
         'invitation_id': docRef.id,
         'recipient_id': recipientId,
         'invited_by': invitedBy,
-      });
+      }); */
 
       return docRef.id;
     } catch (e) {
       // TODO: Fix analytics error logging
       // await _analytics.logError('crew_invitation_send_failed', {
-        'crew_id': crewId,
-        'recipient_id': recipientId,
-        'error': e.toString(),
-      });
+      //   'crew_id': crewId,
+      //   'recipient_id': recipientId,
+      //   'error': e.toString(),
+      // });
       rethrow;
     }
   }
@@ -545,13 +545,13 @@ class CrewMemberService {
         'invitation_id': invitationId,
         'crew_id': inviteData['crewId'],
         'user_id': currentUser.uid,
-      });
+      }); */
     } catch (e) {
       // TODO: Fix analytics error logging
       // await _analytics.logError('crew_invitation_accept_failed', {
-        'invitation_id': invitationId,
-        'error': e.toString(),
-      });
+      //   'invitation_id': invitationId,
+      //   'error': e.toString(),
+      // });
       rethrow;
     }
   }
@@ -591,13 +591,13 @@ class CrewMemberService {
         'invitation_id': invitationId,
         'crew_id': inviteData['crewId'],
         'user_id': currentUser.uid,
-      });
+      }); */
     } catch (e) {
       // TODO: Fix analytics error logging
       // await _analytics.logError('crew_invitation_decline_failed', {
-        'invitation_id': invitationId,
-        'error': e.toString(),
-      });
+      //   'invitation_id': invitationId,
+      //   'error': e.toString(),
+      // });
       rethrow;
     }
   }
@@ -625,9 +625,9 @@ class CrewMemberService {
     } catch (e) {
       // TODO: Fix analytics error logging
       // await _analytics.logError('pending_invitations_fetch_failed', {
-        'user_id': currentUser.uid,
-        'error': e.toString(),
-      });
+      //   'user_id': currentUser.uid,
+      //   'error': e.toString(),
+      // });
       rethrow;
     }
   }

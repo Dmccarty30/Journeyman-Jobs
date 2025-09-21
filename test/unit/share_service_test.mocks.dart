@@ -3,13 +3,18 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
+import 'dart:typed_data' as _i9;
 
-import 'package:firebase_analytics/firebase_analytics.dart' as _i3;
+import 'package:cloud_firestore/cloud_firestore.dart' as _i4;
+import 'package:cloud_firestore_platform_interface/cloud_firestore_platform_interface.dart'
+    as _i3;
+import 'package:firebase_analytics/firebase_analytics.dart' as _i6;
 import 'package:firebase_analytics_platform_interface/firebase_analytics_platform_interface.dart'
-    as _i5;
+    as _i7;
 import 'package:firebase_core/firebase_core.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i8;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -35,10 +40,95 @@ class _FakeFirebaseApp_0 extends _i1.SmartFake implements _i2.FirebaseApp {
         );
 }
 
+class _FakeSettings_1 extends _i1.SmartFake implements _i3.Settings {
+  _FakeSettings_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeCollectionReference_2<T extends Object?> extends _i1.SmartFake
+    implements _i4.CollectionReference<T> {
+  _FakeCollectionReference_2(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeWriteBatch_3 extends _i1.SmartFake implements _i4.WriteBatch {
+  _FakeWriteBatch_3(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeLoadBundleTask_4 extends _i1.SmartFake
+    implements _i4.LoadBundleTask {
+  _FakeLoadBundleTask_4(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeQuerySnapshot_5<T1 extends Object?> extends _i1.SmartFake
+    implements _i4.QuerySnapshot<T1> {
+  _FakeQuerySnapshot_5(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeQuery_6<T extends Object?> extends _i1.SmartFake
+    implements _i4.Query<T> {
+  _FakeQuery_6(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeDocumentReference_7<T extends Object?> extends _i1.SmartFake
+    implements _i4.DocumentReference<T> {
+  _FakeDocumentReference_7(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeFuture_8<T1> extends _i1.SmartFake implements _i5.Future<T1> {
+  _FakeFuture_8(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [FirebaseAnalytics].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
+class MockFirebaseAnalytics extends _i1.Mock implements _i6.FirebaseAnalytics {
   MockFirebaseAnalytics() {
     _i1.throwOnMissingStub(this);
   }
@@ -53,10 +143,10 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
       ) as _i2.FirebaseApp);
 
   @override
-  _i4.Future<String?> get appInstanceId => (super.noSuchMethod(
+  _i5.Future<String?> get appInstanceId => (super.noSuchMethod(
         Invocation.getter(#appInstanceId),
-        returnValue: _i4.Future<String?>.value(),
-      ) as _i4.Future<String?>);
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
 
   @override
   set app(_i2.FirebaseApp? _app) => super.noSuchMethod(
@@ -74,28 +164,28 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
       ) as Map<dynamic, dynamic>);
 
   @override
-  _i4.Future<bool> isSupported() => (super.noSuchMethod(
+  _i5.Future<bool> isSupported() => (super.noSuchMethod(
         Invocation.method(
           #isSupported,
           [],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 
   @override
-  _i4.Future<int?> getSessionId() => (super.noSuchMethod(
+  _i5.Future<int?> getSessionId() => (super.noSuchMethod(
         Invocation.method(
           #getSessionId,
           [],
         ),
-        returnValue: _i4.Future<int?>.value(),
-      ) as _i4.Future<int?>);
+        returnValue: _i5.Future<int?>.value(),
+      ) as _i5.Future<int?>);
 
   @override
-  _i4.Future<void> logEvent({
+  _i5.Future<void> logEvent({
     required String? name,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -107,12 +197,12 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> setConsent({
+  _i5.Future<void> setConsent({
     bool? adStorageConsentGranted,
     bool? analyticsStorageConsentGranted,
     bool? adPersonalizationSignalsConsentGranted,
@@ -138,37 +228,37 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #securityStorageConsentGranted: securityStorageConsentGranted,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> setDefaultEventParameters(
+  _i5.Future<void> setDefaultEventParameters(
           Map<String, Object?>? defaultParameters) =>
       (super.noSuchMethod(
         Invocation.method(
           #setDefaultEventParameters,
           [defaultParameters],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> setAnalyticsCollectionEnabled(bool? enabled) =>
+  _i5.Future<void> setAnalyticsCollectionEnabled(bool? enabled) =>
       (super.noSuchMethod(
         Invocation.method(
           #setAnalyticsCollectionEnabled,
           [enabled],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> setUserId({
+  _i5.Future<void> setUserId({
     String? id,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -179,15 +269,15 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> setUserProperty({
+  _i5.Future<void> setUserProperty({
     required String? name,
     required String? value,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -199,29 +289,29 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> resetAnalyticsData() => (super.noSuchMethod(
+  _i5.Future<void> resetAnalyticsData() => (super.noSuchMethod(
         Invocation.method(
           #resetAnalyticsData,
           [],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logAddPaymentInfo({
+  _i5.Future<void> logAddPaymentInfo({
     String? coupon,
     String? currency,
     String? paymentType,
     double? value,
-    List<_i5.AnalyticsEventItem>? items,
+    List<_i7.AnalyticsEventItem>? items,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -237,19 +327,19 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logAddShippingInfo({
+  _i5.Future<void> logAddShippingInfo({
     String? coupon,
     String? currency,
     double? value,
     String? shippingTier,
-    List<_i5.AnalyticsEventItem>? items,
+    List<_i7.AnalyticsEventItem>? items,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -265,17 +355,17 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logAddToCart({
-    List<_i5.AnalyticsEventItem>? items,
+  _i5.Future<void> logAddToCart({
+    List<_i7.AnalyticsEventItem>? items,
     double? value,
     String? currency,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -289,17 +379,17 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logAddToWishlist({
-    List<_i5.AnalyticsEventItem>? items,
+  _i5.Future<void> logAddToWishlist({
+    List<_i7.AnalyticsEventItem>? items,
     double? value,
     String? currency,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -313,12 +403,12 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logAdImpression({
+  _i5.Future<void> logAdImpression({
     String? adPlatform,
     String? adSource,
     String? adFormat,
@@ -326,7 +416,7 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
     double? value,
     String? currency,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -343,13 +433,13 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logAppOpen({
-    _i5.AnalyticsCallOptions? callOptions,
+  _i5.Future<void> logAppOpen({
+    _i7.AnalyticsCallOptions? callOptions,
     Map<String, Object>? parameters,
   }) =>
       (super.noSuchMethod(
@@ -361,18 +451,18 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #parameters: parameters,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logBeginCheckout({
+  _i5.Future<void> logBeginCheckout({
     double? value,
     String? currency,
-    List<_i5.AnalyticsEventItem>? items,
+    List<_i7.AnalyticsEventItem>? items,
     String? coupon,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -387,12 +477,12 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logCampaignDetails({
+  _i5.Future<void> logCampaignDetails({
     required String? source,
     required String? medium,
     required String? campaign,
@@ -401,7 +491,7 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
     String? aclid,
     String? cp1,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -419,16 +509,16 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logEarnVirtualCurrency({
+  _i5.Future<void> logEarnVirtualCurrency({
     required String? virtualCurrencyName,
     required num? value,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -441,16 +531,16 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logGenerateLead({
+  _i5.Future<void> logGenerateLead({
     String? currency,
     double? value,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -463,15 +553,15 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logJoinGroup({
+  _i5.Future<void> logJoinGroup({
     required String? groupId,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -483,16 +573,16 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logLevelUp({
+  _i5.Future<void> logLevelUp({
     required int? level,
     String? character,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -505,15 +595,15 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logLevelStart({
+  _i5.Future<void> logLevelStart({
     required String? levelName,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -525,16 +615,16 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logLevelEnd({
+  _i5.Future<void> logLevelEnd({
     required String? levelName,
     int? success,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -547,15 +637,15 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logLogin({
+  _i5.Future<void> logLogin({
     String? loginMethod,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -567,17 +657,17 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logPostScore({
+  _i5.Future<void> logPostScore({
     required int? score,
     int? level,
     String? character,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -591,22 +681,22 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logPurchase({
+  _i5.Future<void> logPurchase({
     String? currency,
     String? coupon,
     double? value,
-    List<_i5.AnalyticsEventItem>? items,
+    List<_i7.AnalyticsEventItem>? items,
     double? tax,
     double? shipping,
     String? transactionId,
     String? affiliation,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -625,17 +715,17 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logRemoveFromCart({
+  _i5.Future<void> logRemoveFromCart({
     String? currency,
     double? value,
-    List<_i5.AnalyticsEventItem>? items,
+    List<_i7.AnalyticsEventItem>? items,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -649,16 +739,16 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logScreenView({
+  _i5.Future<void> logScreenView({
     String? screenClass,
     String? screenName,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -671,17 +761,17 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logSelectItem({
+  _i5.Future<void> logSelectItem({
     String? itemListId,
     String? itemListName,
-    List<_i5.AnalyticsEventItem>? items,
+    List<_i7.AnalyticsEventItem>? items,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -695,20 +785,20 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logSelectPromotion({
+  _i5.Future<void> logSelectPromotion({
     String? creativeName,
     String? creativeSlot,
-    List<_i5.AnalyticsEventItem>? items,
+    List<_i7.AnalyticsEventItem>? items,
     String? locationId,
     String? promotionId,
     String? promotionName,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -725,17 +815,17 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logViewCart({
+  _i5.Future<void> logViewCart({
     String? currency,
     double? value,
-    List<_i5.AnalyticsEventItem>? items,
+    List<_i7.AnalyticsEventItem>? items,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -749,12 +839,12 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logSearch({
+  _i5.Future<void> logSearch({
     required String? searchTerm,
     int? numberOfNights,
     int? numberOfRooms,
@@ -765,7 +855,7 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
     String? endDate,
     String? travelClass,
     Map<String, Object>? parameters,
-    _i5.AnalyticsCallOptions? callOptions,
+    _i7.AnalyticsCallOptions? callOptions,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -785,12 +875,12 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #callOptions: callOptions,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logSelectContent({
+  _i5.Future<void> logSelectContent({
     required String? contentType,
     required String? itemId,
     Map<String, Object>? parameters,
@@ -805,12 +895,12 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #parameters: parameters,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logShare({
+  _i5.Future<void> logShare({
     required String? contentType,
     required String? itemId,
     required String? method,
@@ -827,12 +917,12 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #parameters: parameters,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logSignUp({
+  _i5.Future<void> logSignUp({
     required String? signUpMethod,
     Map<String, Object>? parameters,
   }) =>
@@ -845,12 +935,12 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #parameters: parameters,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logSpendVirtualCurrency({
+  _i5.Future<void> logSpendVirtualCurrency({
     required String? itemName,
     required String? virtualCurrencyName,
     required num? value,
@@ -867,36 +957,36 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #parameters: parameters,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logTutorialBegin({Map<String, Object>? parameters}) =>
+  _i5.Future<void> logTutorialBegin({Map<String, Object>? parameters}) =>
       (super.noSuchMethod(
         Invocation.method(
           #logTutorialBegin,
           [],
           {#parameters: parameters},
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logTutorialComplete({Map<String, Object>? parameters}) =>
+  _i5.Future<void> logTutorialComplete({Map<String, Object>? parameters}) =>
       (super.noSuchMethod(
         Invocation.method(
           #logTutorialComplete,
           [],
           {#parameters: parameters},
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logUnlockAchievement({
+  _i5.Future<void> logUnlockAchievement({
     required String? id,
     Map<String, Object>? parameters,
   }) =>
@@ -909,15 +999,15 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #parameters: parameters,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logViewItem({
+  _i5.Future<void> logViewItem({
     String? currency,
     double? value,
-    List<_i5.AnalyticsEventItem>? items,
+    List<_i7.AnalyticsEventItem>? items,
     Map<String, Object>? parameters,
   }) =>
       (super.noSuchMethod(
@@ -931,13 +1021,13 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #parameters: parameters,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logViewItemList({
-    List<_i5.AnalyticsEventItem>? items,
+  _i5.Future<void> logViewItemList({
+    List<_i7.AnalyticsEventItem>? items,
     String? itemListId,
     String? itemListName,
     Map<String, Object>? parameters,
@@ -953,15 +1043,15 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #parameters: parameters,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logViewPromotion({
+  _i5.Future<void> logViewPromotion({
     String? creativeName,
     String? creativeSlot,
-    List<_i5.AnalyticsEventItem>? items,
+    List<_i7.AnalyticsEventItem>? items,
     String? locationId,
     String? promotionId,
     String? promotionName,
@@ -981,12 +1071,12 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #parameters: parameters,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logViewSearchResults({
+  _i5.Future<void> logViewSearchResults({
     required String? searchTerm,
     Map<String, Object>? parameters,
   }) =>
@@ -999,12 +1089,12 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #parameters: parameters,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> logRefund({
+  _i5.Future<void> logRefund({
     String? currency,
     String? coupon,
     double? value,
@@ -1012,7 +1102,7 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
     double? shipping,
     String? transactionId,
     String? affiliation,
-    List<_i5.AnalyticsEventItem>? items,
+    List<_i7.AnalyticsEventItem>? items,
     Map<String, Object>? parameters,
   }) =>
       (super.noSuchMethod(
@@ -1031,66 +1121,402 @@ class MockFirebaseAnalytics extends _i1.Mock implements _i3.FirebaseAnalytics {
             #parameters: parameters,
           },
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> setSessionTimeoutDuration(Duration? timeout) =>
+  _i5.Future<void> setSessionTimeoutDuration(Duration? timeout) =>
       (super.noSuchMethod(
         Invocation.method(
           #setSessionTimeoutDuration,
           [timeout],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> initiateOnDeviceConversionMeasurementWithEmailAddress(
+  _i5.Future<void> initiateOnDeviceConversionMeasurementWithEmailAddress(
           String? emailAddress) =>
       (super.noSuchMethod(
         Invocation.method(
           #initiateOnDeviceConversionMeasurementWithEmailAddress,
           [emailAddress],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> initiateOnDeviceConversionMeasurementWithPhoneNumber(
+  _i5.Future<void> initiateOnDeviceConversionMeasurementWithPhoneNumber(
           String? phoneNumber) =>
       (super.noSuchMethod(
         Invocation.method(
           #initiateOnDeviceConversionMeasurementWithPhoneNumber,
           [phoneNumber],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> initiateOnDeviceConversionMeasurementWithHashedEmailAddress(
+  _i5.Future<void> initiateOnDeviceConversionMeasurementWithHashedEmailAddress(
           String? hashedEmailAddress) =>
       (super.noSuchMethod(
         Invocation.method(
           #initiateOnDeviceConversionMeasurementWithHashedEmailAddress,
           [hashedEmailAddress],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<void> initiateOnDeviceConversionMeasurementWithHashedPhoneNumber(
+  _i5.Future<void> initiateOnDeviceConversionMeasurementWithHashedPhoneNumber(
           String? hashedPhoneNumber) =>
       (super.noSuchMethod(
         Invocation.method(
           #initiateOnDeviceConversionMeasurementWithHashedPhoneNumber,
           [hashedPhoneNumber],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+}
+
+/// A class which mocks [FirebaseFirestore].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockFirebaseFirestore extends _i1.Mock implements _i4.FirebaseFirestore {
+  MockFirebaseFirestore() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.FirebaseApp get app => (super.noSuchMethod(
+        Invocation.getter(#app),
+        returnValue: _FakeFirebaseApp_0(
+          this,
+          Invocation.getter(#app),
+        ),
+      ) as _i2.FirebaseApp);
+
+  @override
+  String get databaseId => (super.noSuchMethod(
+        Invocation.getter(#databaseId),
+        returnValue: _i8.dummyValue<String>(
+          this,
+          Invocation.getter(#databaseId),
+        ),
+      ) as String);
+
+  @override
+  _i3.Settings get settings => (super.noSuchMethod(
+        Invocation.getter(#settings),
+        returnValue: _FakeSettings_1(
+          this,
+          Invocation.getter(#settings),
+        ),
+      ) as _i3.Settings);
+
+  @override
+  set app(_i2.FirebaseApp? _app) => super.noSuchMethod(
+        Invocation.setter(
+          #app,
+          _app,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  set databaseId(String? _databaseId) => super.noSuchMethod(
+        Invocation.setter(
+          #databaseId,
+          _databaseId,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  set settings(_i3.Settings? settings) => super.noSuchMethod(
+        Invocation.setter(
+          #settings,
+          settings,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  Map<dynamic, dynamic> get pluginConstants => (super.noSuchMethod(
+        Invocation.getter(#pluginConstants),
+        returnValue: <dynamic, dynamic>{},
+      ) as Map<dynamic, dynamic>);
+
+  @override
+  _i4.CollectionReference<Map<String, dynamic>> collection(
+          String? collectionPath) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #collection,
+          [collectionPath],
+        ),
+        returnValue: _FakeCollectionReference_2<Map<String, dynamic>>(
+          this,
+          Invocation.method(
+            #collection,
+            [collectionPath],
+          ),
+        ),
+      ) as _i4.CollectionReference<Map<String, dynamic>>);
+
+  @override
+  _i4.WriteBatch batch() => (super.noSuchMethod(
+        Invocation.method(
+          #batch,
+          [],
+        ),
+        returnValue: _FakeWriteBatch_3(
+          this,
+          Invocation.method(
+            #batch,
+            [],
+          ),
+        ),
+      ) as _i4.WriteBatch);
+
+  @override
+  _i5.Future<void> clearPersistence() => (super.noSuchMethod(
+        Invocation.method(
+          #clearPersistence,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i4.LoadBundleTask loadBundle(_i9.Uint8List? bundle) => (super.noSuchMethod(
+        Invocation.method(
+          #loadBundle,
+          [bundle],
+        ),
+        returnValue: _FakeLoadBundleTask_4(
+          this,
+          Invocation.method(
+            #loadBundle,
+            [bundle],
+          ),
+        ),
+      ) as _i4.LoadBundleTask);
+
+  @override
+  void useFirestoreEmulator(
+    String? host,
+    int? port, {
+    bool? sslEnabled = false,
+    bool? automaticHostMapping = true,
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #useFirestoreEmulator,
+          [
+            host,
+            port,
+          ],
+          {
+            #sslEnabled: sslEnabled,
+            #automaticHostMapping: automaticHostMapping,
+          },
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i5.Future<_i4.QuerySnapshot<T>> namedQueryWithConverterGet<T>(
+    String? name, {
+    _i3.GetOptions? options = const _i3.GetOptions(),
+    required _i4.FromFirestore<T>? fromFirestore,
+    required _i4.ToFirestore<T>? toFirestore,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #namedQueryWithConverterGet,
+          [name],
+          {
+            #options: options,
+            #fromFirestore: fromFirestore,
+            #toFirestore: toFirestore,
+          },
+        ),
+        returnValue:
+            _i5.Future<_i4.QuerySnapshot<T>>.value(_FakeQuerySnapshot_5<T>(
+          this,
+          Invocation.method(
+            #namedQueryWithConverterGet,
+            [name],
+            {
+              #options: options,
+              #fromFirestore: fromFirestore,
+              #toFirestore: toFirestore,
+            },
+          ),
+        )),
+      ) as _i5.Future<_i4.QuerySnapshot<T>>);
+
+  @override
+  _i5.Future<_i4.QuerySnapshot<Map<String, dynamic>>> namedQueryGet(
+    String? name, {
+    _i3.GetOptions? options = const _i3.GetOptions(),
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #namedQueryGet,
+          [name],
+          {#options: options},
+        ),
+        returnValue: _i5.Future<_i4.QuerySnapshot<Map<String, dynamic>>>.value(
+            _FakeQuerySnapshot_5<Map<String, dynamic>>(
+          this,
+          Invocation.method(
+            #namedQueryGet,
+            [name],
+            {#options: options},
+          ),
+        )),
+      ) as _i5.Future<_i4.QuerySnapshot<Map<String, dynamic>>>);
+
+  @override
+  _i4.Query<Map<String, dynamic>> collectionGroup(String? collectionPath) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #collectionGroup,
+          [collectionPath],
+        ),
+        returnValue: _FakeQuery_6<Map<String, dynamic>>(
+          this,
+          Invocation.method(
+            #collectionGroup,
+            [collectionPath],
+          ),
+        ),
+      ) as _i4.Query<Map<String, dynamic>>);
+
+  @override
+  _i5.Future<void> disableNetwork() => (super.noSuchMethod(
+        Invocation.method(
+          #disableNetwork,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i4.DocumentReference<Map<String, dynamic>> doc(String? documentPath) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #doc,
+          [documentPath],
+        ),
+        returnValue: _FakeDocumentReference_7<Map<String, dynamic>>(
+          this,
+          Invocation.method(
+            #doc,
+            [documentPath],
+          ),
+        ),
+      ) as _i4.DocumentReference<Map<String, dynamic>>);
+
+  @override
+  _i5.Future<void> enableNetwork() => (super.noSuchMethod(
+        Invocation.method(
+          #enableNetwork,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Stream<void> snapshotsInSync() => (super.noSuchMethod(
+        Invocation.method(
+          #snapshotsInSync,
+          [],
+        ),
+        returnValue: _i5.Stream<void>.empty(),
+      ) as _i5.Stream<void>);
+
+  @override
+  _i5.Future<T> runTransaction<T>(
+    _i4.TransactionHandler<T>? transactionHandler, {
+    Duration? timeout = const Duration(seconds: 30),
+    int? maxAttempts = 5,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #runTransaction,
+          [transactionHandler],
+          {
+            #timeout: timeout,
+            #maxAttempts: maxAttempts,
+          },
+        ),
+        returnValue: _i8.ifNotNull(
+              _i8.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #runTransaction,
+                  [transactionHandler],
+                  {
+                    #timeout: timeout,
+                    #maxAttempts: maxAttempts,
+                  },
+                ),
+              ),
+              (T v) => _i5.Future<T>.value(v),
+            ) ??
+            _FakeFuture_8<T>(
+              this,
+              Invocation.method(
+                #runTransaction,
+                [transactionHandler],
+                {
+                  #timeout: timeout,
+                  #maxAttempts: maxAttempts,
+                },
+              ),
+            ),
+      ) as _i5.Future<T>);
+
+  @override
+  _i5.Future<void> terminate() => (super.noSuchMethod(
+        Invocation.method(
+          #terminate,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> waitForPendingWrites() => (super.noSuchMethod(
+        Invocation.method(
+          #waitForPendingWrites,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setIndexConfigurationFromJSON(String? json) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setIndexConfigurationFromJSON,
+          [json],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }

@@ -192,9 +192,8 @@ class _CrewCardState extends State<CrewCard>
     return Positioned.fill(
       child: CustomPaint(
         painter: CircuitPatternPainter(
-          color: AppTheme.accentCopper.withValues(alpha: 0.1),
-          strokeWidth: 1,
-          spacing: 40,
+          primaryColor: AppTheme.accentCopper.withValues(alpha: 0.1),
+          secondaryColor: AppTheme.accentCopper.withValues(alpha: 0.05),
         ),
       ),
     );

@@ -354,7 +354,6 @@ class _RosterContractorCardState extends State<RosterContractorCard> {
           variant: JJButtonVariant.primary,
           icon: Icons.link,
           onPressed: () => widget.onTap(), // This will call _launchAction with UrlSignUp
-          variant: JJButtonVariant.primary,
           size: JJButtonSize.small,
         ),
       );
@@ -365,7 +364,6 @@ class _RosterContractorCardState extends State<RosterContractorCard> {
           variant: JJButtonVariant.primary,
           icon: Icons.message,
           onPressed: () => widget.onTap(), // This will call _launchAction with TextSignUp
-          variant: JJButtonVariant.primary,
           size: JJButtonSize.small,
         ),
       );
@@ -376,7 +374,6 @@ class _RosterContractorCardState extends State<RosterContractorCard> {
           variant: JJButtonVariant.primary,
           icon: Icons.phone,
           onPressed: () => widget.onTap(), // This will call _launchAction with PhoneSignUp
-          variant: JJButtonVariant.primary,
           size: JJButtonSize.small,
         ),
       );
@@ -387,7 +384,6 @@ class _RosterContractorCardState extends State<RosterContractorCard> {
           variant: JJButtonVariant.primary,
           icon: Icons.email,
           onPressed: () => widget.onTap(), // This will call _launchAction with EmailSignUp
-          variant: JJButtonVariant.primary,
           size: JJButtonSize.small,
         ),
       );
@@ -398,7 +394,6 @@ class _RosterContractorCardState extends State<RosterContractorCard> {
           variant: JJButtonVariant.primary,
           icon: Icons.link,
           onPressed: () => widget.onTap(), // This will call _launchAction with MixedSignUp (URL)
-          variant: JJButtonVariant.primary,
           size: JJButtonSize.small,
         ),
       );
@@ -413,7 +408,6 @@ class _RosterContractorCardState extends State<RosterContractorCard> {
         variant: JJButtonVariant.secondary,
         icon: Icons.arrow_back,
         onPressed: _toggleFlip,
-        variant: JJButtonVariant.secondary,
         size: JJButtonSize.small,
       ),
     );

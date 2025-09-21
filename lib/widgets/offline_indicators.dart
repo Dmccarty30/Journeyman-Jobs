@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/riverpod/app_state_riverpod_provider.dart';
+import '../design_system/app_theme.dart';
 
 /// Connection status indicator that shows current connectivity state
 class ConnectionStatusIndicator extends ConsumerWidget {

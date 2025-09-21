@@ -518,7 +518,7 @@ void main() {
 
         // Assert
         expect(results.length, lessThanOrEqualTo(10)); // Max 10 results
-        expect(results, isSortedBy((match) => -match.confidence)); // Sorted by confidence desc
+        expect(results._isSortedBy((match) => -match.confidence), isTrue); // Sorted by confidence desc
       });
     });
 
@@ -625,7 +625,7 @@ void main() {
             'ibew_local': 134,
             'user_classification': 'Inside Wireman',
             'user_last_active_hours': 1,
-            'detection_time_ms': anyNamed('detection_time_ms'),
+            'detection_time_ms': anyThat(isA<int>()),
           },
         )).called(1);
 
@@ -653,7 +653,7 @@ void main() {
           parameters: {
             'contact_type': 'email',
             'detection_status': 'not_found',
-            'detection_time_ms': anyNamed('detection_time_ms'),
+            'detection_time_ms': anyThat(isA<int>()),
           },
         )).called(1);
       });
@@ -712,7 +712,7 @@ void main() {
 
 // Helper extension for testing
 extension on Iterable<UserMatch> {
-  bool isSortedBy(num Function(UserMatch) keySelector) {
+  bool _isSortedBy(num Function(UserMatch) keySelector) {
     if (length <= 1) return true;
     
     for (int i = 0; i < length - 1; i++) {

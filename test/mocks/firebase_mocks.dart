@@ -13,19 +13,19 @@ class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
 class MockUser extends Mock implements User {}
 
-class MockDocumentReference extends Mock implements DocumentReference {}
+class MockDocumentReference extends Mock implements DocumentReference<Map<String, dynamic>> {}
 
-class MockCollectionReference extends Mock implements CollectionReference {}
+class MockCollectionReference extends Mock implements CollectionReference<Map<String, dynamic>> {}
 
-class MockCollectionGroup extends Mock implements CollectionReference {}
+class MockCollectionGroup extends Mock implements Query<Map<String, dynamic>> {}
 
-class MockDocumentSnapshot extends Mock implements DocumentSnapshot {}
+class MockDocumentSnapshot extends Mock implements DocumentSnapshot<Map<String, dynamic>> {}
 
-class MockQueryDocumentSnapshot extends Mock implements QueryDocumentSnapshot {}
+class MockQueryDocumentSnapshot extends Mock implements QueryDocumentSnapshot<Map<String, dynamic>> {}
 
-class MockQuerySnapshot extends Mock implements QuerySnapshot {}
+class MockQuerySnapshot extends Mock implements QuerySnapshot<Map<String, dynamic>> {}
 
-class MockQuery extends Mock implements Query {}
+class MockQuery extends Mock implements Query<Map<String, dynamic>> {}
 
 class MockBatch extends Mock implements WriteBatch {}
 
