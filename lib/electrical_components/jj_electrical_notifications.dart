@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../design_system/app_theme.dart';
+import 'circuit_board_background.dart';
 
 /// Unified electrical-themed notification widgets
 /// Includes toast, snack bar, and tooltip with lightning animations
@@ -186,6 +187,9 @@ class _ElectricalToastState extends State<ElectricalToast>
   
   @override
   Widget build(BuildContext context) {
+    // Get theme configuration based on notification type
+    final themeConfig = _getThemeConfig(widget.type);
+    
     return SlideTransition(
       position: _slideAnimation,
       child: Material(
@@ -193,28 +197,34 @@ class _ElectricalToastState extends State<ElectricalToast>
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
-            color: AppTheme.primaryNavy.withOpacity(0.95),
-            borderRadius: BorderRadius.circular(12),
+            color: themeConfig['backgroundColor']?.withOpacity(AppTheme.opacityElectricalBackground) ??
+                   AppTheme.primaryNavy.withOpacity(AppTheme.opacityElectricalBackground),
+            borderRadius: BorderRadius.circular(themeConfig['borderRadius'] ?? AppTheme.radiusElectricalToast),
             border: Border.all(
-              color: JJElectricalNotifications._getTypeColor(widget.type),
-              width: 2,
+              color: themeConfig['borderColor'] ?? JJElectricalNotifications._getTypeColor(widget.type),
+              width: themeConfig['borderWidth'] ?? AppTheme.borderWidthCopper,
             ),
             boxShadow: [
-              BoxShadow(
-                color: JJElectricalNotifications._getTypeColor(widget.type).withOpacity(0.3),
+              themeConfig['shadow'] ?? BoxShadow(
+                color: JJElectricalNotifications._getTypeColor(widget.type).withOpacity(AppTheme.opacityElectricalGlow),
                 blurRadius: 15,
                 spreadRadius: 2,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
           child: Stack(
             children: [
-              // Circuit pattern background
+              // High density circuit background (adjusted to match showcase appearance)
               Positioned.fill(
-                child: CustomPaint(
-                  painter: _MiniCircuitPainter(
-                    color: JJElectricalNotifications._getTypeColor(widget.type).withOpacity(0.1),
-                  ),
+                child: ElectricalCircuitBackground(
+                  opacity: 0.08, // Match showcase screen low opacity but with high density
+                  componentDensity: ComponentDensity.high, // HIGH density as required
+                  enableCurrentFlow: themeConfig['enableCurrentFlow'] ?? true,
+                  enableInteractiveComponents: themeConfig['enableInteractiveComponents'] ?? true,
+                  traceColor: AppTheme.electricalBackground,
+                  currentColor: themeConfig['glowColor'] ?? JJElectricalNotifications._getTypeColor(widget.type),
+                  copperColor: AppTheme.accentCopper,
                 ),
               ),
               
@@ -242,12 +252,12 @@ class _ElectricalToastState extends State<ElectricalToast>
                       width: 24,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: JJElectricalNotifications._getTypeColor(widget.type),
+                        color: themeConfig['borderColor'] ?? JJElectricalNotifications._getTypeColor(widget.type),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        _getTypeIcon(widget.type),
-                        size: 16,
+                        themeConfig['icon'] ?? _getTypeIcon(widget.type),
+                        size: AppTheme.iconElectricalToast,
                         color: Colors.white,
                       ),
                     ),
@@ -300,6 +310,20 @@ class _ElectricalToastState extends State<ElectricalToast>
         return Icons.info;
     }
   }
+
+  Map<String, dynamic> _getThemeConfig(ElectricalNotificationType type) {
+    switch (type) {
+      case ElectricalNotificationType.success:
+        return AppTheme.electricalSuccessTheme;
+      case ElectricalNotificationType.warning:
+        return AppTheme.electricalWarningTheme;
+      case ElectricalNotificationType.error:
+        return AppTheme.electricalErrorTheme;
+      case ElectricalNotificationType.info:
+      default:
+        return AppTheme.electricalInfoTheme;
+    }
+  }
 }
 
 /// Electrical-themed snack bar content
@@ -349,36 +373,44 @@ class _ElectricalSnackBarContentState extends State<ElectricalSnackBarContent>
   
   @override
   Widget build(BuildContext context) {
+    // Get theme configuration based on notification type
+    final themeConfig = _getThemeConfig(widget.type);
+    
     return AnimatedBuilder(
       animation: _glowAnimation,
       builder: (context, child) {
         return Container(
           decoration: BoxDecoration(
-            color: AppTheme.primaryNavy.withOpacity(0.95),
-            borderRadius: BorderRadius.circular(8),
+            color: themeConfig['backgroundColor']?.withOpacity(AppTheme.opacityElectricalBackground) ??
+                   AppTheme.primaryNavy.withOpacity(AppTheme.opacityElectricalBackground),
+            borderRadius: BorderRadius.circular(themeConfig['borderRadius'] ?? AppTheme.radiusElectricalSnackBar),
             border: Border.all(
-              color: JJElectricalNotifications._getTypeColor(widget.type)
+              color: (themeConfig['glowColor'] ?? JJElectricalNotifications._getTypeColor(widget.type))
                   .withOpacity(_glowAnimation.value),
-              width: 2,
+              width: themeConfig['borderWidth'] ?? AppTheme.borderWidthMedium,
             ),
             boxShadow: [
-              BoxShadow(
-                color: JJElectricalNotifications._getTypeColor(widget.type)
-                    .withOpacity(_glowAnimation.value * 0.4),
+              themeConfig['shadow'] ?? BoxShadow(
+                color: (themeConfig['glowColor'] ?? JJElectricalNotifications._getTypeColor(widget.type))
+                    .withOpacity(_glowAnimation.value * AppTheme.opacityElectricalGlow),
                 blurRadius: 12,
                 spreadRadius: 1,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
           child: Stack(
             children: [
-              // Circuit traces
+              // High density circuit background (adjusted to match showcase appearance)
               Positioned.fill(
-                child: CustomPaint(
-                  painter: _SnackBarCircuitPainter(
-                    color: JJElectricalNotifications._getTypeColor(widget.type)
-                        .withOpacity(0.2),
-                  ),
+                child: ElectricalCircuitBackground(
+                  opacity: 0.08, // Match showcase screen low opacity but with high density
+                  componentDensity: ComponentDensity.high, // HIGH density as required
+                  enableCurrentFlow: false, // SnackBar doesn't need current flow
+                  enableInteractiveComponents: false, // SnackBar is static
+                  traceColor: AppTheme.electricalBackground,
+                  currentColor: themeConfig['glowColor'] ?? JJElectricalNotifications._getTypeColor(widget.type),
+                  copperColor: AppTheme.accentCopper,
                 ),
               ),
               
@@ -387,8 +419,8 @@ class _ElectricalSnackBarContentState extends State<ElectricalSnackBarContent>
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Text(
                   widget.message,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: AppTheme.bodyMedium.copyWith(
+                    color: AppTheme.textOnDark,
                     fontSize: 14,
                   ),
                 ),
@@ -398,6 +430,20 @@ class _ElectricalSnackBarContentState extends State<ElectricalSnackBarContent>
         );
       },
     );
+  }
+
+  Map<String, dynamic> _getThemeConfig(ElectricalNotificationType type) {
+    switch (type) {
+      case ElectricalNotificationType.success:
+        return AppTheme.electricalSuccessTheme;
+      case ElectricalNotificationType.warning:
+        return AppTheme.electricalWarningTheme;
+      case ElectricalNotificationType.error:
+        return AppTheme.electricalErrorTheme;
+      case ElectricalNotificationType.info:
+      default:
+        return AppTheme.electricalInfoTheme;
+    }
   }
 }
 
@@ -448,25 +494,31 @@ class _ElectricalTooltipState extends State<ElectricalTooltip>
   
   @override
   Widget build(BuildContext context) {
+    // Get theme configuration based on notification type
+    final themeConfig = _getThemeConfig(widget.type);
+    
     return Tooltip(
       message: widget.message,
       decoration: BoxDecoration(
-        color: AppTheme.primaryNavy.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(8),
+        color: themeConfig['backgroundColor']?.withOpacity(AppTheme.opacityElectricalBackground) ??
+               AppTheme.primaryNavy.withOpacity(AppTheme.opacityElectricalBackground),
+        borderRadius: BorderRadius.circular(themeConfig['borderRadius'] ?? AppTheme.radiusElectricalTooltip),
         border: Border.all(
-          color: JJElectricalNotifications._getTypeColor(widget.type),
-          width: 1,
+          color: themeConfig['borderColor'] ?? JJElectricalNotifications._getTypeColor(widget.type),
+          width: AppTheme.borderWidthThin,
         ),
         boxShadow: [
-          BoxShadow(
-            color: JJElectricalNotifications._getTypeColor(widget.type).withOpacity(0.3),
+          themeConfig['shadow'] ?? BoxShadow(
+            color: (themeConfig['glowColor'] ?? JJElectricalNotifications._getTypeColor(widget.type))
+                .withOpacity(AppTheme.opacityElectricalGlow),
             blurRadius: 8,
             spreadRadius: 1,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      textStyle: const TextStyle(
-        color: Colors.white,
+      textStyle: AppTheme.bodySmall.copyWith(
+        color: AppTheme.textOnDark,
         fontSize: 12,
       ),
       onTriggered: () {
@@ -476,7 +528,19 @@ class _ElectricalTooltipState extends State<ElectricalTooltip>
       },
       child: Stack(
         children: [
-          widget.child,
+          // High density circuit background (adjusted to match showcase appearance)
+          Positioned.fill(
+            child: ElectricalCircuitBackground(
+              opacity: 0.08, // Match showcase screen low opacity but with high density
+              componentDensity: ComponentDensity.high, // HIGH density as required
+              enableCurrentFlow: false,
+              enableInteractiveComponents: false,
+              traceColor: AppTheme.electricalBackground,
+              currentColor: themeConfig['glowColor'] ?? JJElectricalNotifications._getTypeColor(widget.type),
+              copperColor: AppTheme.accentCopper,
+              child: widget.child,
+            ),
+          ),
           
           // Spark effect on hover/tap
           AnimatedBuilder(
@@ -489,7 +553,7 @@ class _ElectricalTooltipState extends State<ElectricalTooltip>
                   child: CustomPaint(
                     painter: _SparkEffectPainter(
                       progress: _sparkAnimation.value,
-                      color: JJElectricalNotifications._getTypeColor(widget.type),
+                      color: themeConfig['glowColor'] ?? JJElectricalNotifications._getTypeColor(widget.type),
                     ),
                   ),
                 ),
@@ -499,6 +563,20 @@ class _ElectricalTooltipState extends State<ElectricalTooltip>
         ],
       ),
     );
+  }
+
+  Map<String, dynamic> _getThemeConfig(ElectricalNotificationType type) {
+    switch (type) {
+      case ElectricalNotificationType.success:
+        return AppTheme.electricalSuccessTheme;
+      case ElectricalNotificationType.warning:
+        return AppTheme.electricalWarningTheme;
+      case ElectricalNotificationType.error:
+        return AppTheme.electricalErrorTheme;
+      case ElectricalNotificationType.info:
+      default:
+        return AppTheme.electricalInfoTheme;
+    }
   }
 }
 

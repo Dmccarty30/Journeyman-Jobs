@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../design_system/app_theme.dart';
 import '../services/connectivity_service.dart';
 import '../services/offline_data_service.dart';
 import '../widgets/offline_indicators.dart';
@@ -74,6 +75,10 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
 
   Widget _buildConnectionStatusCard(ConnectivityService connectivity) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        side: const BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthMedium),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -144,6 +149,10 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
 
   Widget _buildSyncStrategyCard(OfflineDataService offlineService) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        side: const BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthMedium),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -271,6 +280,10 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
 
   Widget _buildAdvancedSettingsCard(BuildContext context, OfflineDataService offlineService) {
     return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        side: const BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthMedium),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

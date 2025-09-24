@@ -175,7 +175,11 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
       padding: const EdgeInsets.all(AppTheme.spacingMd),
       decoration: BoxDecoration(
         color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        border: Border.all(
+          color: AppTheme.accentCopper,
+          width: AppTheme.borderWidthMedium,
+        ),
         boxShadow: [AppTheme.shadowSm],
       ),
       child: Column(

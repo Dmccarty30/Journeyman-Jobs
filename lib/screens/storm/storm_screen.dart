@@ -227,17 +227,10 @@ class _StormScreenState extends State<StormScreen> {
               });
               JJSnackBar.showSuccess(
                 context: context,
-                message: _notificationsEnabled 
+                message: _notificationsEnabled
                   ? 'Storm work notifications enabled'
                   : 'Storm work notifications disabled',
               );
-            },
-          ),
-          NotificationBadge(
-            iconColor: AppTheme.white,
-            showPopupOnTap: false,
-            onTap: () {
-              context.push(AppRouter.notifications);
             },
           ),
         ],
@@ -592,7 +585,7 @@ class _StormScreenState extends State<StormScreen> {
                     Text(
                       'Official US Government Data',
                       style: AppTheme.bodySmall.copyWith(
-                        color: AppTheme.textLight.withOpacity(0.8),
+                        color: AppTheme.textLight.withValues(alpha: 0.8),
                       ),
                     ),
                   ],
@@ -693,7 +686,7 @@ class _StormScreenState extends State<StormScreen> {
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingSm),
                 decoration: BoxDecoration(
-                  color: AppTheme.infoBlue.withOpacity(0.1),
+                  color: AppTheme.infoBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                 ),
                 child: Row(
@@ -770,7 +763,7 @@ class _StormScreenState extends State<StormScreen> {
                   vertical: AppTheme.spacingXs,
                 ),
                 decoration: BoxDecoration(
-                  color: _getAlertColorForSeverity(alert.severity).withOpacity(0.2),
+                  color: _getAlertColorForSeverity(alert.severity).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                 ),
                 child: Text(
@@ -814,10 +807,10 @@ class _StormScreenState extends State<StormScreen> {
                 Container(
                   padding: const EdgeInsets.all(AppTheme.spacingSm),
                   decoration: BoxDecoration(
-                    color: AppTheme.warningYellow.withOpacity(0.1),
+                    color: AppTheme.warningYellow.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusXs),
                     border: Border.all(
-                      color: AppTheme.warningYellow.withOpacity(0.3),
+                      color: AppTheme.warningYellow.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Text(
@@ -849,10 +842,10 @@ class _StormScreenState extends State<StormScreen> {
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingMd),
                 decoration: BoxDecoration(
-                  color: AppTheme.infoBlue.withOpacity(0.1),
+                  color: AppTheme.infoBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                   border: Border.all(
-                    color: AppTheme.infoBlue.withOpacity(0.3),
+                    color: AppTheme.infoBlue.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -1037,7 +1030,7 @@ class _StormScreenState extends State<StormScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(AppTheme.spacingMd),
                       decoration: BoxDecoration(
-                        color: AppTheme.errorRed.withOpacity(0.1),
+                        color: AppTheme.errorRed.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                       ),
                       child: Column(
@@ -1064,7 +1057,7 @@ class _StormScreenState extends State<StormScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(AppTheme.spacingMd),
                       decoration: BoxDecoration(
-                        color: AppTheme.warningYellow.withOpacity(0.1),
+                        color: AppTheme.warningYellow.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                       ),
                       child: Column(
@@ -1095,10 +1088,10 @@ class _StormScreenState extends State<StormScreen> {
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingMd),
                 decoration: BoxDecoration(
-                  color: AppTheme.infoBlue.withOpacity(0.1),
+                  color: AppTheme.infoBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                   border: Border.all(
-                    color: AppTheme.infoBlue.withOpacity(0.3),
+                    color: AppTheme.infoBlue.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(

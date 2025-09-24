@@ -71,6 +71,10 @@ class _NotificationPopupState extends State<NotificationPopup>
           decoration: BoxDecoration(
             color: AppTheme.white,
             borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+            border: Border.all(
+              color: AppTheme.accentCopper,
+              width: AppTheme.borderWidthMedium,
+            ),
             boxShadow: [
               BoxShadow(
                 color: AppTheme.primaryNavy.withValues(alpha: 0.2),

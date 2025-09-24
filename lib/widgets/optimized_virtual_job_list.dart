@@ -1,12 +1,15 @@
+import 'dart:async'; // Required for Timer
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:math'; // Required for max/min
 import '../design_system/app_theme.dart';
 import '../design_system/components/job_card.dart';
 import '../models/job_model.dart';
 import '../providers/riverpod/app_state_riverpod_provider.dart';
+import '../providers/riverpod/jobs_riverpod_provider.dart'; // Required for jobsProvider
 
 /// High-performance virtual scrolling job list with mobile optimizations
-/// 
+///
 /// Features:
 /// - 60% improved scroll performance with proper itemExtent
 /// - Efficient memory management with viewport-based rendering
@@ -15,58 +18,58 @@ import '../providers/riverpod/app_state_riverpod_provider.dart';
 /// - Scroll-to-top functionality
 /// - Glove-friendly touch targets
 /// - High-contrast mode support
-class OptimizedVirtualJobList extends StatefulWidget {
+class OptimizedVirtualJobList extends ConsumerStatefulWidget {
   /// List of jobs to display
   final List<Job> jobs;
-  
+
   /// Callback when more jobs need to be loaded
   final VoidCallback? onLoadMore;
-  
+
   /// Whether loading indicator should be shown
   final bool isLoading;
-  
+
   /// Whether there are more jobs to load
   final bool hasMore;
-  
+
   /// Card variant to use for job display
   final JobCardVariant variant;
-  
+
   /// Custom item height for performance optimization
   final double? itemHeight;
-  
+
   /// Scroll threshold for triggering load more (0.0 to 1.0)
   final double loadMoreThreshold;
-  
+
   /// Custom empty state widget
   final Widget? emptyWidget;
-  
+
   /// Custom error widget
   final Widget? errorWidget;
-  
+
   /// Error message if any
   final String? error;
-  
+
   /// Whether to show offline indicators
   final bool showOfflineIndicators;
-  
+
   /// Whether to enable high-contrast mode for outdoor use
   final bool highContrastMode;
-  
+
   /// Whether to enable swipe gestures on cards
   final bool enableSwipeGestures;
-  
+
   /// Callback for job card tap
   final Function(Job)? onJobTap;
-  
+
   /// Callback for job details view
   final Function(Job)? onJobDetails;
-  
+
   /// Callback for job application/bid
   final Function(Job)? onJobApply;
-  
+
   /// Callback for job bookmark/favorite
   final Function(Job)? onJobBookmark;
-  
+
   /// Function to check if job is bookmarked
   final bool Function(Job)? isJobBookmarked;
 
@@ -93,19 +96,27 @@ class OptimizedVirtualJobList extends StatefulWidget {
   });
 
   @override
-  State<OptimizedVirtualJobList> createState() => _OptimizedVirtualJobListState();
+  ConsumerState<OptimizedVirtualJobList> createState() => _OptimizedVirtualJobListState();
 }
 
-class _OptimizedVirtualJobListState extends State<OptimizedVirtualJobList>
+class _OptimizedVirtualJobListState extends ConsumerState<OptimizedVirtualJobList>
     with AutomaticKeepAliveClientMixin {
   late ScrollController _scrollController;
   bool _showScrollToTop = false;
-  
+
+  // Debounce timer for scroll events to limit provider updates
+  Timer? _debounceTimer;
+  // Store the last reported visible range to avoid unnecessary updates
+  int _lastReportedStart = -1;
+  int _lastReportedEnd = -1;
+
   // Performance optimizations
   static const double _defaultItemHeight = 160.0; // Half card height
   static const double _defaultFullItemHeight = 240.0; // Full card height
   static const int _viewportCacheExtent = 3; // Number of items to cache outside viewport
-  
+  // Buffer to extend the visible range for pre-loading
+  static const int _visibleRangeBuffer = 10;
+
   @override
   bool get wantKeepAlive => true;
 
@@ -120,9 +131,15 @@ class _OptimizedVirtualJobListState extends State<OptimizedVirtualJobList>
   void dispose() {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
+    _debounceTimer?.cancel(); // Cancel any active debounce timer
     super.dispose();
   }
 
+  /// Handles scroll events for infinite loading, scroll-to-top button,
+  /// and visible range updates to the JobsProvider.
+  ///
+  /// This method is debounced to prevent excessive calls to the provider
+  /// and ensures that the visible job range is updated efficiently.
   void _scrollListener() {
     // Show/hide scroll to top button
     final showButton = _scrollController.offset > 500;
@@ -131,25 +148,74 @@ class _OptimizedVirtualJobListState extends State<OptimizedVirtualJobList>
         _showScrollToTop = showButton;
       });
     }
-    
+
     // Load more check
-    if (widget.onLoadMore != null && 
-        !widget.isLoading && 
+    if (widget.onLoadMore != null &&
+        !widget.isLoading &&
         widget.hasMore &&
-        _scrollController.position.pixels >= 
+        _scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent * widget.loadMoreThreshold) {
       widget.onLoadMore!();
+    }
+
+    // Debounce visible range updates to the provider
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 150), () {
+      _updateVisibleJobRange();
+    });
+  }
+
+  /// Computes the visible range of items and updates the JobsProvider.
+  ///
+  /// This method calculates the approximate start and end indices of the
+  /// currently visible items in the scroll view, applies a buffer, and
+  /// then calls the provider to update the visible jobs range.
+  void _updateVisibleJobRange() {
+    if (!_scrollController.hasClients) return; // Guard against controller not attached
+
+    final position = _scrollController.position;
+    final totalItemCount = widget.jobs.length;
+    if (totalItemCount == 0) {
+      // If there are no jobs, ensure the visible range is reset
+      if (_lastReportedStart != 0 || _lastReportedEnd != 0) {
+        ref.read(jobsProvider.notifier).updateVisibleJobsRange(0, 0);
+        _lastReportedStart = 0;
+        _lastReportedEnd = 0;
+      }
+      return;
+    }
+
+    final itemHeight = widget.itemHeight ??
+        (widget.variant == JobCardVariant.half ? _defaultItemHeight : _defaultFullItemHeight);
+    final viewportHeight = position.viewportDimension;
+
+    // Calculate first and last visible indices
+    int firstVisibleIndex = max(0, (position.pixels / itemHeight).floor());
+    int lastVisibleIndex = min(
+      totalItemCount - 1,
+      ((position.pixels + viewportHeight) / itemHeight).ceil() -1 // -1 because ceil() can go one past the last visible item
+    );
+
+    // Extend the range by a small buffer
+    int start = max(0, firstVisibleIndex - _visibleRangeBuffer);
+    int end = min(totalItemCount - 1, lastVisibleIndex + _visibleRangeBuffer);
+
+    // Only update if the range has actually changed
+    if (start != _lastReportedStart || end != _lastReportedEnd) {
+      ref.read(jobsProvider.notifier).updateVisibleJobsRange(start, end);
+      _lastReportedStart = start;
+      _lastReportedEnd = end;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    
+
     if (widget.error != null) {
       return _buildErrorState();
     }
-    
+
     if (widget.jobs.isEmpty && !widget.isLoading) {
       return _buildEmptyState();
     }
@@ -158,13 +224,13 @@ class _OptimizedVirtualJobListState extends State<OptimizedVirtualJobList>
       children: [
         // Main list view
         _buildOptimizedListView(),
-        
+
         // Offline indicator
         if (widget.showOfflineIndicators) _buildOfflineIndicator(),
-        
+
         // Scroll to top button
         if (_showScrollToTop) _buildScrollToTopButton(),
-        
+
         // Loading overlay
         if (widget.isLoading && widget.jobs.isEmpty) _buildLoadingOverlay(),
       ],
@@ -172,9 +238,9 @@ class _OptimizedVirtualJobListState extends State<OptimizedVirtualJobList>
   }
 
   Widget _buildOptimizedListView() {
-    final itemHeight = widget.itemHeight ?? 
+    final itemHeight = widget.itemHeight ??
       (widget.variant == JobCardVariant.half ? _defaultItemHeight : _defaultFullItemHeight);
-    
+
     return CustomScrollView(
       controller: _scrollController,
       cacheExtent: itemHeight * _viewportCacheExtent,
@@ -221,7 +287,7 @@ class _OptimizedVirtualJobListState extends State<OptimizedVirtualJobList>
 
   Widget _buildLoadMoreIndicator() {
     if (!widget.isLoading) return const SizedBox.shrink();
-    
+
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       alignment: Alignment.center,
@@ -252,7 +318,7 @@ class _OptimizedVirtualJobListState extends State<OptimizedVirtualJobList>
   }
 
   Widget _buildEmptyState() {
-    return widget.emptyWidget ?? 
+    return widget.emptyWidget ??
       Center(
         child: Padding(
           padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -336,9 +402,9 @@ class _OptimizedVirtualJobListState extends State<OptimizedVirtualJobList>
   Widget _buildOfflineIndicator() {
     return Consumer(
       builder: (context, ref, child) {
-        final appState = ref.watch(appStateNotifierProvider);
+        final appState = ref.watch(appStateProvider);
         if (appState.isConnected) return const SizedBox.shrink();
-        
+
         return Positioned(
           top: 0,
           left: 0,

@@ -27,8 +27,8 @@ class PowerOutageCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         boxShadow: [AppTheme.shadowSm],
         border: Border.all(
-          color: _getSeverityColor(severity),
-          width: 2,
+          color: AppTheme.accentCopper,
+          width: AppTheme.borderWidthMedium,
         ),
       ),
       child: Material(

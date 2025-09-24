@@ -58,6 +58,17 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
       parent: _powerFlowController,
       curve: Curves.linear,
     ));
+
+    // DEBUG: Log jobs state when entering jobs screen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final jobsState = ref.read(jobsNotifierProvider);
+      print('[DEBUG] JobsScreen initState - jobs loaded: ${jobsState.jobs.length}, isLoading: ${jobsState.isLoading}');
+      if (jobsState.jobs.isEmpty && !jobsState.isLoading) {
+        print('[DEBUG] JobsScreen: Jobs not loaded yet, loading them now');
+        // FIX: Load jobs if they haven't been loaded yet
+        ref.read(jobsNotifierProvider.notifier).loadJobs();
+      }
+    });
   }
 
   @override
@@ -542,6 +553,163 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
     );
   }
 
+  Widget _buildCondensedJobCard(Job job) {
+    final isEmergency = job.classification?.toLowerCase().contains('storm') ?? false;
+    
+    return GestureDetector(
+      onTap: () => _showElectricalJobDetails(job),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppTheme.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: const [
+            AppTheme.shadowSm,
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header row with local and classification
+            Row(
+              children: [
+                // Local badge
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryNavy.withValues(alpha: 26/255),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    'Local ${job.localNumber ?? job.local ?? 'N/A'}',
+                    style: AppTheme.labelSmall.copyWith(
+                      color: AppTheme.primaryNavy,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Classification
+                Expanded(
+                  child: Text(
+                    job.classification ?? job.jobClass ?? 'General Electrical',
+                    style: AppTheme.bodyMedium.copyWith(
+                      color: AppTheme.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                // Emergency indicator if applicable
+                if (isEmergency)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppTheme.errorRed,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.flash_on,
+                          size: 12,
+                          color: AppTheme.white,
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          'EMERGENCY',
+                          style: AppTheme.labelSmall.copyWith(
+                            color: AppTheme.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            
+            // Location row
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on,
+                  size: 14,
+                  color: AppTheme.textSecondary,
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    job.location,
+                    style: AppTheme.bodySmall.copyWith(
+                      color: AppTheme.textSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            
+            // Hours and Per Diem row
+            Row(
+              children: [
+                // Hours
+                if (job.hours != null) ...[
+                  Icon(
+                    Icons.access_time,
+                    size: 14,
+                    color: AppTheme.textSecondary,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${job.hours} hrs/week',
+                    style: AppTheme.bodySmall.copyWith(
+                      color: AppTheme.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                ],
+                
+                // Per Diem
+                if (job.perDiem != null && job.perDiem!.isNotEmpty) ...[
+                  Icon(
+                    Icons.hotel,
+                    size: 14,
+                    color: AppTheme.textSecondary,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Per Diem: ${job.perDiem}',
+                    style: AppTheme.bodySmall.copyWith(
+                      color: AppTheme.successGreen,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+                
+                const Spacer(),
+                
+                // Arrow indicator
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 12,
+                  color: AppTheme.textLight,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildJobDetailRow(IconData icon, String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -802,7 +970,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
                   ),
                   const SizedBox(width: AppTheme.spacingSm),
                   Text(
-                    'Power Jobs',
+                    'Job Board',
                     style: AppTheme.headlineMedium.copyWith(
                       color: AppTheme.white,
                       fontWeight: FontWeight.bold,
@@ -812,20 +980,6 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
               ),
             ),
             actions: [
-              IconButton(
-                icon: Icon(Icons.search, color: AppTheme.white),
-                onPressed: () {
-                  _showSearchDialog();
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.filter_alt, color: AppTheme.white),
-                onPressed: () {
-                  setState(() {
-                    _showAdvancedFilters = !_showAdvancedFilters;
-                  });
-                },
-              ),
               NotificationBadge(
                 iconColor: AppTheme.white,
                 showPopupOnTap: false,
@@ -1047,7 +1201,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
                           }
 
                           final job = filteredJobs[index];
-                          return _buildElectricalJobCard(job);
+                          return _buildCondensedJobCard(job);
                         },
                       );
                     },

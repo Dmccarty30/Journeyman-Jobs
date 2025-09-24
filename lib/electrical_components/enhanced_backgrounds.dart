@@ -147,8 +147,8 @@ class EnhancedBackgrounds {
                 color: AppTheme.white,
                 borderRadius: BorderRadius.circular(AppTheme.radiusLg),
                 border: Border.all(
-                  color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                  width: AppTheme.borderWidthThin,
+                  color: AppTheme.accentCopper,
+                  width: AppTheme.borderWidthMedium,
                 ),
                 boxShadow: const <BoxShadow>[AppTheme.shadowSm],
               ),

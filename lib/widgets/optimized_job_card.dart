@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/job_model.dart';
-import '../design_system/app_theme.dart';
 
 class OptimizedJobCard extends StatelessWidget {
   final Job job;
@@ -24,7 +23,7 @@ class OptimizedJobCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              job.title,
+              job.jobTitle ?? 'Job Position',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
@@ -32,10 +31,10 @@ class OptimizedJobCard extends StatelessWidget {
               children: [
                 const Icon(Icons.location_on, size: 16),
                 const SizedBox(width: 4),
-                Text('${job.city}, ${job.state}'),
+                Text(job.location),
               ],
             ),
-            if (job.isStormWork && showStormBadge)
+            if ((job.typeOfWork?.toLowerCase().contains('storm') ?? false) && showStormBadge)
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Row(
@@ -65,7 +64,7 @@ class JobCardSkeleton extends StatelessWidget {
 class _DetailChip extends StatelessWidget {
   final IconData icon;
   final String label;
-  const _DetailChip({super.key, required this.icon, required this.label});
+  const _DetailChip({required this.icon, required this.label});
   @override
   Widget build(BuildContext context) {
     return const SizedBox.shrink();

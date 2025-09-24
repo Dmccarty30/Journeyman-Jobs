@@ -94,6 +94,8 @@ class JobsNotifier extends _$JobsNotifier {
       return;
     }
 
+    print('[DEBUG] JobsNotifier.loadJobs called - isRefresh: $isRefresh, filter: ${filter?.toString()}');
+
     if (isRefresh) {
       state = state.copyWith(
         jobs: <Job>[],
@@ -212,9 +214,20 @@ class JobsNotifier extends _$JobsNotifier {
 
   /// Update visible jobs for virtual scrolling
   void updateVisibleJobsRange(int startIndex, int endIndex) {
-    // TODO: Implement VirtualJobListState
-    // _virtualJobList.updateVisibleRange(startIndex, endIndex);
-    // state = state.copyWith(visibleJobs: _virtualJobList.visibleJobs);
+    // Basic implementation: filter the visible jobs based on the range
+    if (startIndex < 0 || endIndex < 0 || startIndex > endIndex) {
+      return;
+    }
+
+    final List<Job> visibleJobs;
+    if (startIndex >= state.jobs.length) {
+      visibleJobs = <Job>[];
+    } else {
+      final safeEndIndex = endIndex >= state.jobs.length ? state.jobs.length - 1 : endIndex;
+      visibleJobs = state.jobs.sublist(startIndex, safeEndIndex + 1);
+    }
+
+    state = state.copyWith(visibleJobs: visibleJobs);
   }
 
   /// Get job by ID

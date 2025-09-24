@@ -514,6 +514,10 @@ class JJCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor ?? AppTheme.white,
         borderRadius: borderRadius ?? BorderRadius.circular(AppTheme.radiusLg),
+        border: Border.all(
+          color: AppTheme.accentCopper,
+          width: AppTheme.borderWidthMedium,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),

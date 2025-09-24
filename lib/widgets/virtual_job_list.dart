@@ -1,11 +1,12 @@
+import 'dart:async'; // Required for Timer
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:math'; // Required for max/min
 import '../design_system/app_theme.dart';
 import '../design_system/components/job_card.dart';
 import '../models/job_model.dart';
 import '../providers/riverpod/app_state_riverpod_provider.dart';
 import '../providers/riverpod/jobs_riverpod_provider.dart';
-import '../services/connectivity_service.dart';
 
 /// High-performance virtual scrolling job list with infinite loading
 /// 
@@ -67,9 +68,19 @@ class VirtualJobList extends ConsumerStatefulWidget {
 class _VirtualJobListState extends ConsumerState<VirtualJobList> with AutomaticKeepAliveClientMixin {
   late ScrollController _scrollController;
   bool _isLoadingMore = false;
+
+  // Debounce timer for scroll events to limit provider updates
+  Timer? _debounceTimer;
+  // Store the last reported visible range to avoid unnecessary updates
+  int _lastReportedStart = -1;
+  int _lastReportedEnd = -1;
   
   // Performance optimization - estimated item heights
   static const double _loadMoreHeight = 80.0;
+  // Default item height if not provided by the widget
+  static const double _defaultItemHeight = 120.0;
+  // Buffer to extend the visible range for pre-loading
+  static const int _visibleRangeBuffer = 10;
   
   @override
   bool get wantKeepAlive => true;
@@ -85,18 +96,71 @@ class _VirtualJobListState extends ConsumerState<VirtualJobList> with AutomaticK
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    _debounceTimer?.cancel(); // Cancel any active debounce timer
     super.dispose();
   }
 
-  /// Handle scroll events for infinite loading
+  /// Handles scroll events for both infinite loading and visible range updates.
+  ///
+  /// This method is debounced to prevent excessive calls to the provider
+  /// and ensures that the visible job range is updated efficiently.
   void _onScroll() {
-    if (_isLoadingMore || !widget.hasMore || widget.onLoadMore == null) return;
-    
+    // Handle infinite loading logic
+    if (!_isLoadingMore && widget.hasMore && widget.onLoadMore != null) {
+      final position = _scrollController.position;
+      final threshold = position.maxScrollExtent * widget.loadMoreThreshold;
+      
+      if (position.pixels >= threshold) {
+        _loadMore();
+      }
+    }
+
+    // Debounce visible range updates to the provider
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 150), () {
+      _updateVisibleJobRange();
+    });
+  }
+
+  /// Computes the visible range of items and updates the JobsProvider.
+  ///
+  /// This method calculates the approximate start and end indices of the
+  /// currently visible items in the scroll view, applies a buffer, and
+  /// then calls the provider to update the visible jobs range.
+  void _updateVisibleJobRange() {
+    if (!_scrollController.hasClients) return; // Guard against controller not attached
+
     final position = _scrollController.position;
-    final threshold = position.maxScrollExtent * widget.loadMoreThreshold;
-    
-    if (position.pixels >= threshold) {
-      _loadMore();
+    final totalItemCount = widget.jobs.length;
+    if (totalItemCount == 0) {
+      // If there are no jobs, ensure the visible range is reset
+      if (_lastReportedStart != 0 || _lastReportedEnd != 0) {
+        ref.read(jobsNotifierProvider.notifier).updateVisibleJobsRange(0, 0);
+        _lastReportedStart = 0;
+        _lastReportedEnd = 0;
+      }
+      return;
+    }
+
+    final itemHeight = widget.itemHeight ?? _defaultItemHeight;
+    final viewportHeight = position.viewportDimension;
+
+    // Calculate first and last visible indices
+    int firstVisibleIndex = max(0, (position.pixels / itemHeight).floor());
+    int lastVisibleIndex = min(
+      totalItemCount - 1,
+      ((position.pixels + viewportHeight) / itemHeight).ceil() -1 // -1 because ceil() can go one past the last visible item
+    );
+
+    // Extend the range by a small buffer
+    int start = max(0, firstVisibleIndex - _visibleRangeBuffer);
+    int end = min(totalItemCount - 1, lastVisibleIndex + _visibleRangeBuffer);
+
+    // Only update if the range has actually changed
+    if (start != _lastReportedStart || end != _lastReportedEnd) {
+      ref.read(jobsNotifierProvider.notifier).updateVisibleJobsRange(start, end);
+      _lastReportedStart = start;
+      _lastReportedEnd = end;
     }
   }
 
@@ -165,7 +229,7 @@ class _VirtualJobListState extends ConsumerState<VirtualJobList> with AutomaticK
                     padding: const EdgeInsets.all(12),
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: AppTheme.warningYellow.withOpacity(0.1),
+                      color: AppTheme.warningYellow.withValues(alpha: 0.1),
                       border: Border.all(color: AppTheme.warningYellow),
                       borderRadius: BorderRadius.circular(8),
                     ),

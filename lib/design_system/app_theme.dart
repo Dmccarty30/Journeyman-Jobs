@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../electrical_components/circuit_board_background.dart' show ComponentDensity;
 
+/// Comprehensive electrical-themed design system for JJElectricalComponents
+/// Provides consistent theming across all electrical circuit-inspired UI components
+/// including toasts, snackbars, and interactive elements with copper accents
 class AppTheme {
   // =================== COLORS ===================
   
@@ -23,12 +27,15 @@ class AppTheme {
 
   // Border Colors
   static const Color borderLight = lightGray;
+  static const Color borderCopper = accentCopper;
+  static const Color borderCopperLight = secondaryCopper;
   
   // =================== BORDER WIDTHS ===================
   
   static const double borderWidthThin = 1.0;
   static const double borderWidthMedium = 1.5;
   static const double borderWidthThick = 2.0;
+  static const double borderWidthCopper = 2.5;
   
   // Status Colors
   static const Color successGreen = Color(0xFF38A169);
@@ -110,6 +117,43 @@ class AppTheme {
   static const double radiusXxl = 24.0;
   static const double radiusRound = 50.0;
   
+  // JJElectricalComponents Border Radius
+  static const double radiusElectricalToast = 12.0;
+  static const double radiusElectricalSnackBar = 8.0;
+  static const double radiusElectricalTooltip = 8.0;
+  
+  // JJElectricalComponents Icon Sizes
+  static const double iconElectricalToast = 16.0;
+  static const double iconElectricalSnackBar = 14.0;
+  static const double iconElectricalTooltip = 12.0;
+  
+  // JJElectricalComponents Opacity Values
+  static const double opacityElectricalBackground = 0.95;
+  static const double opacityElectricalCircuitTrace = 0.1;
+  static const double opacityElectricalCircuitTraceLight = 0.2;
+  static const double opacityElectricalGlow = 0.3;
+  static const double opacityElectricalGlowMax = 0.8;
+  
+  // =================== JJElectricalComponents COLORS ===================
+  
+  // Electrical Component Backgrounds (high density circuit backgrounds)
+  static const Color electricalBackground = Color(0xFF1A202C); // Dark navy with circuit pattern
+  static const Color electricalSurface = Color(0xFF2D3748); // Secondary navy for components
+  static const Color electricalCircuitTrace = Color(0xFFB45309); // Copper for circuit traces
+  static const Color electricalCircuitTraceLight = Color(0xFFD69E2E); // Light copper for traces
+  
+  // JJElectricalComponents Notification Colors
+  static const Color electricalSuccess = Color(0xFF10B981); // Green power indicator
+  static const Color electricalWarning = Color(0xFFFFD700); // Yellow caution
+  static const Color electricalError = Color(0xFFDC2626); // Red danger
+  static const Color electricalInfo = Color(0xFF00D4FF); // Blue electrical flow
+  
+  // JJElectricalComponents Glow Effects
+  static const Color electricalGlowSuccess = Color(0xFF10B981);
+  static const Color electricalGlowWarning = Color(0xFFFFD700);
+  static const Color electricalGlowError = Color(0xFFDC2626);
+  static const Color electricalGlowInfo = Color(0xFF00D4FF);
+  
   // =================== SHADOWS ===================
 
   static const BoxShadow shadowXs = BoxShadow(
@@ -144,6 +188,35 @@ class AppTheme {
     ),
   ];
   
+  // JJElectricalComponents Shadows
+  static const BoxShadow shadowElectricalSuccess = BoxShadow(
+    color: Color(0x3F10B981),
+    blurRadius: 15,
+    spreadRadius: 2,
+    offset: Offset(0, 4),
+  );
+  
+  static const BoxShadow shadowElectricalWarning = BoxShadow(
+    color: Color(0x3FFFFD700),
+    blurRadius: 15,
+    spreadRadius: 2,
+    offset: Offset(0, 4),
+  );
+  
+  static const BoxShadow shadowElectricalError = BoxShadow(
+    color: Color(0x3FDC2626),
+    blurRadius: 15,
+    spreadRadius: 2,
+    offset: Offset(0, 4),
+  );
+  
+  static const BoxShadow shadowElectricalInfo = BoxShadow(
+    color: Color(0x3F00D4FF),
+    blurRadius: 15,
+    spreadRadius: 2,
+    offset: Offset(0, 4),
+  );
+  
   // =================== ICON SIZES ===================
   
   static const double iconXs = 16.0;
@@ -152,6 +225,86 @@ class AppTheme {
   static const double iconLg = 28.0;
   static const double iconXl = 32.0;
   static const double iconXxl = 40.0;
+  
+  // =================== JJElectricalComponents ANIMATION DURATIONS ===================
+  
+  static const Duration durationElectricalToast = Duration(seconds: 3);
+  static const Duration durationElectricalSnackBar = Duration(seconds: 4);
+  static const Duration durationElectricalGlow = Duration(seconds: 2);
+  static const Duration durationElectricalSpark = Duration(milliseconds: 800);
+  static const Duration durationElectricalSlide = Duration(milliseconds: 400);
+  static const Duration durationElectricalLightning = Duration(milliseconds: 300);
+  
+  // JJElectricalComponents Animation Curves
+  static const Curve curveElectricalSlide = Curves.elasticOut;
+  static const Curve curveElectricalGlow = Curves.easeInOut;
+  static const Curve curveElectricalSpark = Curves.easeOut;
+  static const Curve curveElectricalLightning = Curves.easeOut;
+  
+  // JJElectricalComponents Specific Theme Configurations
+  static const Map<String, dynamic> electricalSuccessTheme = {
+    'backgroundColor': electricalBackground,
+    'borderColor': electricalSuccess,
+    'glowColor': electricalGlowSuccess,
+    'shadow': shadowElectricalSuccess,
+    'icon': Icons.check_circle,
+    'borderRadius': radiusElectricalToast,
+    'borderWidth': borderWidthCopper,
+    'duration': durationElectricalToast,
+    'enableLightning': true,
+    'circuitTraceOpacity': opacityElectricalCircuitTrace,
+  };
+  
+  static const Map<String, dynamic> electricalWarningTheme = {
+    'backgroundColor': electricalBackground,
+    'borderColor': electricalWarning,
+    'glowColor': electricalGlowWarning,
+    'shadow': shadowElectricalWarning,
+    'icon': Icons.warning,
+    'borderRadius': radiusElectricalToast,
+    'borderWidth': borderWidthCopper,
+    'duration': durationElectricalToast,
+    'enableLightning': true,
+    'circuitTraceOpacity': opacityElectricalCircuitTraceLight,
+  };
+  
+  static const Map<String, dynamic> electricalErrorTheme = {
+    'backgroundColor': electricalBackground,
+    'borderColor': electricalError,
+    'glowColor': electricalGlowError,
+    'shadow': shadowElectricalError,
+    'icon': Icons.error,
+    'borderRadius': radiusElectricalToast,
+    'borderWidth': borderWidthCopper,
+    'duration': durationElectricalToast,
+    'enableLightning': true,
+    'circuitTraceOpacity': opacityElectricalCircuitTrace,
+  };
+  
+  static const Map<String, dynamic> electricalInfoTheme = {
+    'backgroundColor': electricalBackground,
+    'borderColor': electricalInfo,
+    'glowColor': electricalGlowInfo,
+    'shadow': shadowElectricalInfo,
+    'icon': Icons.info,
+    'borderRadius': radiusElectricalSnackBar,
+    'borderWidth': borderWidthMedium,
+    'duration': durationElectricalSnackBar,
+    'enableLightning': false,
+    'circuitTraceOpacity': opacityElectricalCircuitTraceLight,
+  };
+  
+  // JJElectricalComponents Circuit Board Configuration
+  static const Map<String, dynamic> electricalCircuitConfig = {
+    'backgroundColor': electricalBackground,
+    'circuitTraceColor': electricalCircuitTrace,
+    'circuitTraceLightColor': electricalCircuitTraceLight,
+    'opacity': 0.12,
+    'componentDensity': ComponentDensity.high,
+    'enableCurrentFlow': true,
+    'enableInteractiveComponents': true,
+    'animationSpeed': 2.0,
+  };
   
   // =================== TYPOGRAPHY ===================
   
@@ -272,6 +425,73 @@ class AppTheme {
     height: 1.25,
   );
   
+  // =================== JJElectricalComponents THEME PROPERTIES ===================
+  
+  /// Comprehensive theme configuration for JJElectricalComponents
+  /// Includes toasts, snackbars, and interactive electrical elements
+  static const Map<String, dynamic> electricalTheme = {
+    // Background configuration
+    'backgroundColor': electricalBackground,
+    'surfaceColor': electricalSurface,
+    'circuitTraceColor': electricalCircuitTrace,
+    'circuitTraceLightColor': electricalCircuitTraceLight,
+    
+    // Notification colors
+    'successColor': electricalSuccess,
+    'warningColor': electricalWarning,
+    'errorColor': electricalError,
+    'infoColor': electricalInfo,
+    
+    // Glow effects
+    'successGlowColor': electricalGlowSuccess,
+    'warningGlowColor': electricalGlowWarning,
+    'errorGlowColor': electricalGlowError,
+    'infoGlowColor': electricalGlowInfo,
+    
+    // Border configuration
+    'borderColor': borderCopper,
+    'borderWidth': borderWidthCopper,
+    'borderRadius': radiusElectricalToast,
+    
+    // Shadows
+    'successShadow': shadowElectricalSuccess,
+    'warningShadow': shadowElectricalWarning,
+    'errorShadow': shadowElectricalError,
+    'infoShadow': shadowElectricalInfo,
+    
+    // Animation durations
+    'toastDuration': durationElectricalToast,
+    'snackBarDuration': durationElectricalSnackBar,
+    'glowDuration': durationElectricalGlow,
+    'sparkDuration': durationElectricalSpark,
+    'slideDuration': durationElectricalSlide,
+    'lightningDuration': durationElectricalLightning,
+    
+    // Component density for circuit backgrounds
+    'componentDensity': ComponentDensity.high,
+    'enableCurrentFlow': true,
+    'enableInteractiveComponents': true,
+    'enableLightningEffects': true,
+    
+    // Opacity values
+    'backgroundOpacity': opacityElectricalBackground,
+    'circuitTraceOpacity': opacityElectricalCircuitTrace,
+    'circuitTraceLightOpacity': opacityElectricalCircuitTraceLight,
+    'glowOpacity': opacityElectricalGlow,
+    'glowMaxOpacity': opacityElectricalGlowMax,
+    
+    // Icon sizes
+    'toastIconSize': iconElectricalToast,
+    'snackBarIconSize': iconElectricalSnackBar,
+    'tooltipIconSize': iconElectricalTooltip,
+    
+    // Animation curves
+    'slideCurve': curveElectricalSlide,
+    'glowCurve': curveElectricalGlow,
+    'sparkCurve': curveElectricalSpark,
+    'lightningCurve': curveElectricalLightning,
+  };
+  
   // =================== THEME DATA ===================
   
   static ThemeData get lightTheme {
@@ -370,6 +590,7 @@ class AppTheme {
         shadowColor: Colors.black.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusLg),
+          side: const BorderSide(color: accentCopper, width: borderWidthMedium),
         ),
         margin: const EdgeInsets.all(spacingSm),
       ),
@@ -478,6 +699,7 @@ class AppTheme {
         shadowColor: Colors.black.withValues(alpha: 0.3),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusLg),
+          side: const BorderSide(color: accentCopper, width: borderWidthMedium),
         ),
         margin: const EdgeInsets.all(spacingSm),
       ),
