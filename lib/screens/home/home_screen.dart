@@ -11,7 +11,6 @@ import '../../models/job_model.dart';
 import '../../legacy/flutterflow/schema/jobs_record.dart';
 import '../../widgets/notification_badge.dart';
 import '../../widgets/condensed_job_card.dart';
-import 'electrical_demo_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -312,20 +311,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const ElectricalDemoScreen(),
-            ),
-          );
-        },
-        backgroundColor: AppTheme.accentCopper,
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.electrical_services),
-        label: const Text('⚡ Electrical Demo'),
-        tooltip: 'Try the new electrical theme!',
-      ),
     );
   }
 
@@ -339,8 +324,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           boxShadow: [AppTheme.shadowSm],
           border: Border.all(
-            color: AppTheme.lightGray,
-            width: 1,
+            color: AppTheme.accentCopper,
+            width: AppTheme.borderWidthCopperThin,
           ),
         ),
         child: Column(

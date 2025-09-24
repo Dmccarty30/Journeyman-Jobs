@@ -27,6 +27,10 @@ class CondensedJobCard extends StatelessWidget {
           boxShadow: const [
             AppTheme.shadowSm,
           ],
+          border: Border.all(
+            color: AppTheme.accentCopper,
+            width: AppTheme.borderWidthCopperThin,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +71,7 @@ class CondensedJobCard extends StatelessWidget {
                   Text(
                     '\$${job.wage!.toStringAsFixed(2)}/hr',
                     style: AppTheme.bodyMedium.copyWith(
-                      color: AppTheme.accentCopper,
+                      color: AppTheme.textPrimary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -130,7 +134,7 @@ class CondensedJobCard extends StatelessWidget {
                   Text(
                     'Per Diem: ${job.perDiem}',
                     style: AppTheme.bodySmall.copyWith(
-                      color: AppTheme.successGreen,
+                      color: AppTheme.textSecondary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

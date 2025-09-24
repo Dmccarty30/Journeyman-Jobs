@@ -141,7 +141,7 @@ class JJSecondaryButton extends StatelessWidget {
   final double? width;
   final double? height;
 
-  const JJSecondaryButton({
+  const JJSecondaryButton(String s, {
     super.key,
     required this.text,
     this.onPressed,

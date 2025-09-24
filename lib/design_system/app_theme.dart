@@ -31,11 +31,12 @@ class AppTheme {
   static const Color borderCopperLight = secondaryCopper;
   
   // =================== BORDER WIDTHS ===================
-  
+
   static const double borderWidthThin = 1.0;
   static const double borderWidthMedium = 1.5;
   static const double borderWidthThick = 2.0;
   static const double borderWidthCopper = 2.5;
+  static const double borderWidthCopperThin = 1.25;
   
   // Status Colors
   static const Color successGreen = Color(0xFF38A169);

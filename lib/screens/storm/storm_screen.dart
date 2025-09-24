@@ -7,9 +7,7 @@ import '../../services/location_service.dart';
 import '../../services/power_outage_service.dart';
 import '../../widgets/storm/power_outage_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../widgets/notification_badge.dart';
-import 'package:go_router/go_router.dart';
-import '../../navigation/app_router.dart';
+
 // import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
 
@@ -1132,6 +1130,7 @@ class _StormScreenState extends State<StormScreen> {
                 children: [
                   Expanded(
                     child: JJSecondaryButton(
+                      'View Jobs', // Added required positional argument
                       text: 'View Jobs',
                       icon: FontAwesomeIcons.briefcase,
                       onPressed: () {
@@ -1703,6 +1702,7 @@ class StormDetailsSheet extends StatelessWidget {
             const SizedBox(height: AppTheme.spacingMd),
             
             JJSecondaryButton(
+              'Get Alerts for Similar Events', // Added required positional argument
               text: 'Get Alerts for Similar Events',
               icon: Icons.notifications_active,
               onPressed: () {

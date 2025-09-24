@@ -342,6 +342,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
                 if (_currentStep > 0)
                   Expanded(
                     child: JJSecondaryButton(
+                      'Back', // Added required positional argument
                       text: 'Back',
                       onPressed: _previousStep,
                     ),
