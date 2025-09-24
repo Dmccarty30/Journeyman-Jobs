@@ -527,6 +527,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
                   children: [
                     Expanded(
                       child: JJSecondaryButton(
+                        'Details', // Required positional parameter
                         text: 'Details',
                         icon: Icons.visibility,
                         onPressed: () => _showElectricalJobDetails(job),
@@ -1713,6 +1714,7 @@ class JobDetailsSheet extends StatelessWidget {
             const SizedBox(height: AppTheme.spacingMd),
             
             JJSecondaryButton(
+              'Save for Later',
               text: 'Save for Later',
               icon: Icons.bookmark_border,
               onPressed: () {
