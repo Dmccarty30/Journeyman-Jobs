@@ -14,7 +14,7 @@ class ElectricalLoader extends StatefulWidget {
     Key? key,
     this.size = 48.0,
     this.color = const Color(0xFFB45309), // Copper color
-    this.duration = const Duration(milliseconds: 1500),
+    this.duration = const Duration(milliseconds: 1500), required String message,
   }) : super(key: key);
 
   @override

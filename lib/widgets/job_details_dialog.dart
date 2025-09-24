@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../design_system/popup_theme.dart';
 import '../design_system/app_theme.dart';
 import '../models/job_model.dart';
+import '../features/crews/providers/crews_riverpod_provider.dart';
 
 /// A comprehensive dialog displaying detailed job information
 /// Follows the PopupTheme guidelines for consistent styling
-class JobDetailsDialog extends StatelessWidget {
+class JobDetailsDialog extends ConsumerWidget {
   const JobDetailsDialog({
     required this.job,
     super.key,
@@ -14,7 +16,7 @@ class JobDetailsDialog extends StatelessWidget {
   final Job job;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final popupTheme = context.popupTheme;
     
     return Dialog(
@@ -67,7 +69,7 @@ class JobDetailsDialog extends StatelessWidget {
               ),
             ),
             // Footer with action buttons
-            _buildFooter(context),
+            _buildFooter(context, ref),
           ],
         ),
       ),
@@ -260,7 +262,9 @@ class JobDetailsDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildFooter(BuildContext context) {
+  Widget _buildFooter(BuildContext context, WidgetRef ref) {
+    final userCrews = ref.watch(userCrewsProvider);
+    
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -276,69 +280,140 @@ class JobDetailsDialog extends StatelessWidget {
           ),
         ),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: OutlinedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppTheme.primaryNavy,
-                side: const BorderSide(color: AppTheme.primaryNavy),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: const Text(
-                'Close',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+          if (userCrews.isNotEmpty) ...[
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => _showShareToCrewsDialog(context, ref),
+                icon: const Icon(Icons.share),
+                label: const Text('Share to Crews'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.accentCopper,
+                  foregroundColor: AppTheme.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () {
-                // TODO: Implement bid functionality
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Bid functionality coming soon!'),
+            const SizedBox(height: 12),
+          ],
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppTheme.primaryNavy,
+                    side: const BorderSide(color: AppTheme.primaryNavy),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.accentCopper,
-                foregroundColor: AppTheme.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.flash_on,
-                    size: 18,
-                  ),
-                  SizedBox(width: 4),
-                  Text(
-                    'Bid Now',
+                  child: const Text(
+                    'Close',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Bid functionality placeholder - implement actual bid logic here
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Bid functionality coming soon!'),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.accentCopper,
+                    foregroundColor: AppTheme.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.flash_on,
+                        size: 18,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        'Bid Now',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
+    );
+  }
+
+  void _showShareToCrewsDialog(BuildContext context, WidgetRef ref) {
+    final userCrews = ref.watch(userCrewsProvider);
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Share to Crews'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Select crews to share this job with:'),
+              const SizedBox(height: 16),
+              ...userCrews.map((crew) {
+                final crewItem = crew;
+                return CheckboxListTile(
+                  title: Text(crewItem.name),
+                  subtitle: Text('${crewItem.memberCount} members'),
+                  value: false, // Multi-selection placeholder - implement selection state management
+                  onChanged: (bool? value) {
+                    // Selection logic placeholder - implement actual selection handling
+                  },
+                );
+              }),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Job shared to selected crews!'),
+                  ),
+                );
+              },
+              child: const Text('Share'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

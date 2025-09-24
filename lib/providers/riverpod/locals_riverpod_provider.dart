@@ -233,7 +233,7 @@ Future<LocalsRecord?> localById(Ref ref, String localId) async {
 @riverpod
 /// Riverpod provider that returns locals filtered by state.
 List<LocalsRecord> localsByState(Ref ref, String stateName) {
-  final localsState = ref.watch(localsNotifierProvider);
+  final localsState = ref.watch(localsProvider);
   return localsState.locals
       .where((l) => l.state.toLowerCase() == stateName.toLowerCase())
       .toList();
@@ -242,7 +242,7 @@ List<LocalsRecord> localsByState(Ref ref, String stateName) {
 @riverpod
 /// Riverpod provider that returns locals filtered by classification.
 List<LocalsRecord> localsByClassification(Ref ref, String classification) {
-  final localsState = ref.watch(localsNotifierProvider);
+  final localsState = ref.watch(localsProvider);
   return localsState.locals
       .where((l) => l.classification?.toLowerCase() == classification.toLowerCase())
       .toList();
@@ -251,7 +251,7 @@ List<LocalsRecord> localsByClassification(Ref ref, String classification) {
 @riverpod
 /// Riverpod provider that returns locals matching a search term.
 List<LocalsRecord> searchedLocals(Ref ref, String searchTerm) {
-  final localsState = ref.watch(localsNotifierProvider);
+  final localsState = ref.watch(localsProvider);
   if (searchTerm.trim().isEmpty) {
     return localsState.locals;
   }
@@ -268,7 +268,7 @@ List<LocalsRecord> searchedLocals(Ref ref, String searchTerm) {
 
 @riverpod
 List<String> allStates(Ref ref) {
-  final localsState = ref.watch(localsNotifierProvider);
+  final localsState = ref.watch(localsProvider);
   final Set<String> set = <String>{};
   for (final l in localsState.locals) {
     set.add(l.state);
@@ -279,11 +279,11 @@ List<String> allStates(Ref ref) {
 
 @riverpod
 List<String> allClassifications(Ref ref) {
-  final localsState = ref.watch(localsNotifierProvider);
+  final localsState = ref.watch(localsProvider);
   final Set<String> set = <String>{};
   for (final l in localsState.locals) {
     if (l.classification != null) {
-      set.addAll(l.classification! as Iterable<String>);
+      set.add(l.classification!);
     }
   }
   final List<String> list = set.toList()..sort();

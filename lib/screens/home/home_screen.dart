@@ -6,6 +6,7 @@ import '../../design_system/popup_theme.dart';
 import '../../navigation/app_router.dart';
 import '../../providers/riverpod/jobs_riverpod_provider.dart';
 import '../../providers/riverpod/auth_riverpod_provider.dart';
+import '../../features/crews/providers/crews_riverpod_provider.dart';
 import '../../models/job_model.dart';
 import '../../legacy/flutterflow/schema/jobs_record.dart';
 import '../../widgets/notification_badge.dart';
@@ -24,7 +25,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(jobsNotifierProvider.notifier).loadJobs();
+      ref.read(jobsProvider.notifier).loadJobs();
     });
   }
 
@@ -71,7 +72,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => ref.read(jobsNotifierProvider.notifier).refreshJobs(),
+        onRefresh: () => ref.read(jobsProvider.notifier).refreshJobs(),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppTheme.spacingMd),
           child: Column(
@@ -79,7 +80,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               Consumer(
                 builder: (context, ref, child) {
-                  final authState = ref.watch(authNotifierProvider);
+                  final authState = ref.watch(authProvider);
                   if (!authState.isAuthenticated) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,7 +159,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   color: AppTheme.primaryNavy,
                 ),
               ),
-              const SizedBox(height: AppTheme.spacingMd),
+              const SizedBox(height: AppTheme.spacingLg),
+
+              Consumer(
+                builder: (context, ref, child) {
+                  final userCrews = ref.watch(userCrewsProvider);
+                  if (userCrews.isNotEmpty) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Active Crews',
+                          style: AppTheme.headlineSmall.copyWith(
+                            color: AppTheme.primaryNavy,
+                          ),
+                        ),
+                        const SizedBox(height: AppTheme.spacingMd),
+                        _buildActiveCrewsWidget(userCrews),
+                        const SizedBox(height: AppTheme.spacingLg),
+                      ],
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
 
               Row(
                 children: [
@@ -203,7 +227,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
               Consumer(
                 builder: (context, ref, child) {
-                  final jobsState = ref.watch(jobsNotifierProvider);
+                  final jobsState = ref.watch(jobsProvider);
                   if (jobsState.isLoading) {
                     return const Center(
                       child: Padding(
@@ -229,7 +253,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                             const SizedBox(height: AppTheme.spacingSm),
                             ElevatedButton(
-                              onPressed: () => ref.read(jobsNotifierProvider.notifier).refreshJobs(),
+                              onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
                               child: const Text('Retry'),
                             ),
                           ],
@@ -258,7 +282,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                             const SizedBox(height: AppTheme.spacingSm),
                             TextButton(
-                              onPressed: () => ref.read(jobsNotifierProvider.notifier).refreshJobs(),
+                              onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
                               child: Text(
                                 'Refresh',
                                 style: AppTheme.bodyMedium.copyWith(
@@ -338,6 +362,73 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildActiveCrewsWidget(List<dynamic> userCrews) {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [AppTheme.shadowSm],
+        border: Border.all(
+          color: AppTheme.lightGray,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.group,
+                color: AppTheme.accentCopper,
+                size: AppTheme.iconMd,
+              ),
+              const SizedBox(width: AppTheme.spacingSm),
+              Text(
+                '${userCrews.length} Active Crew${userCrews.length == 1 ? '' : 's'}',
+                style: AppTheme.bodyLarge.copyWith(
+                  color: AppTheme.primaryNavy,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spacingSm),
+          Text(
+            'Collaborate with your team on shared jobs and opportunities.',
+            style: AppTheme.bodyMedium.copyWith(
+              color: AppTheme.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                // Navigate to Crews tab
+                context.go(AppRouter.crews);
+              },
+              icon: const Icon(Icons.arrow_forward),
+              label: const Text('View Crews'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.accentCopper,
+                foregroundColor: AppTheme.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                textStyle: AppTheme.bodyMedium.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

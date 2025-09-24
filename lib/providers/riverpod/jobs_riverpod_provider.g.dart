@@ -6,11 +6,15 @@ part of 'jobs_riverpod_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 /// Firestore service provider
+
 @ProviderFor(firestoreService)
 const firestoreServiceProvider = FirestoreServiceProvider._();
 
 /// Firestore service provider
+
 final class FirestoreServiceProvider extends $FunctionalProvider<
     ResilientFirestoreService,
     ResilientFirestoreService,
@@ -53,8 +57,9 @@ final class FirestoreServiceProvider extends $FunctionalProvider<
 String _$firestoreServiceHash() => r'665e0c40804f3306f3afbce70fab7d9fc5247907';
 
 /// Jobs notifier for managing job data and operations
+
 @ProviderFor(JobsNotifier)
-const jobsNotifierProvider = JobsNotifierProvider._();
+const jobsProvider = JobsNotifierProvider._();
 
 /// Jobs notifier for managing job data and operations
 final class JobsNotifierProvider
@@ -65,7 +70,7 @@ final class JobsNotifierProvider
           from: null,
           argument: null,
           retry: null,
-          name: r'jobsNotifierProvider',
+          name: r'jobsProvider',
           isAutoDispose: true,
           dependencies: null,
           $allTransitiveDependencies: null,
@@ -87,7 +92,9 @@ final class JobsNotifierProvider
   }
 }
 
-String _$jobsNotifierHash() => r'eaa70d0f9771f123801e9899315c4f251d1c6b29';
+String _$jobsNotifierHash() => r'b15e27fb956ad2338db7f5b34b77e63627ae3750';
+
+/// Jobs notifier for managing job data and operations
 
 abstract class _$JobsNotifier extends $Notifier<JobsState> {
   JobsState build();
@@ -103,10 +110,12 @@ abstract class _$JobsNotifier extends $Notifier<JobsState> {
 }
 
 /// Filtered jobs provider using family for auto-dispose
+
 @ProviderFor(filteredJobs)
 const filteredJobsProvider = FilteredJobsFamily._();
 
 /// Filtered jobs provider using family for auto-dispose
+
 final class FilteredJobsProvider extends $FunctionalProvider<
         AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
@@ -157,9 +166,10 @@ final class FilteredJobsProvider extends $FunctionalProvider<
   }
 }
 
-String _$filteredJobsHash() => r'd87176e3b18f3ffe0827695288d1091c9ee17bdc';
+String _$filteredJobsHash() => r'f34109b3e9daa3e8f76eee9badfa2c7817cc0ada';
 
 /// Filtered jobs provider using family for auto-dispose
+
 final class FilteredJobsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<Job>>, JobFilterCriteria> {
   const FilteredJobsFamily._()
@@ -172,6 +182,7 @@ final class FilteredJobsFamily extends $Family
         );
 
   /// Filtered jobs provider using family for auto-dispose
+
   FilteredJobsProvider call(
     JobFilterCriteria filter,
   ) =>
@@ -182,10 +193,12 @@ final class FilteredJobsFamily extends $Family
 }
 
 /// Auto-dispose provider for job search
+
 @ProviderFor(searchJobs)
 const searchJobsProvider = SearchJobsFamily._();
 
 /// Auto-dispose provider for job search
+
 final class SearchJobsProvider extends $FunctionalProvider<
         AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
@@ -235,9 +248,10 @@ final class SearchJobsProvider extends $FunctionalProvider<
   }
 }
 
-String _$searchJobsHash() => r'c973c85613a9a1fccaded8e95c8c0231f8543633';
+String _$searchJobsHash() => r'ddc3acadff3d73c6ab9b471f80bdbc3b95ee5097';
 
 /// Auto-dispose provider for job search
+
 final class SearchJobsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<Job>>, String> {
   const SearchJobsFamily._()
@@ -250,6 +264,7 @@ final class SearchJobsFamily extends $Family
         );
 
   /// Auto-dispose provider for job search
+
   SearchJobsProvider call(
     String searchTerm,
   ) =>
@@ -260,10 +275,12 @@ final class SearchJobsFamily extends $Family
 }
 
 /// Job by ID provider
+
 @ProviderFor(jobById)
 const jobByIdProvider = JobByIdFamily._();
 
 /// Job by ID provider
+
 final class JobByIdProvider
     extends $FunctionalProvider<AsyncValue<Job?>, Job?, FutureOr<Job?>>
     with $FutureModifier<Job?>, $FutureProvider<Job?> {
@@ -313,9 +330,10 @@ final class JobByIdProvider
   }
 }
 
-String _$jobByIdHash() => r'55cd24edae351463fff57d8922094d773cb53c43';
+String _$jobByIdHash() => r'fe0b6ad481434b99b4f2dd06952e724f38be0922';
 
 /// Job by ID provider
+
 final class JobByIdFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Job?>, String> {
   const JobByIdFamily._()
@@ -328,6 +346,7 @@ final class JobByIdFamily extends $Family
         );
 
   /// Job by ID provider
+
   JobByIdProvider call(
     String jobId,
   ) =>
@@ -338,10 +357,12 @@ final class JobByIdFamily extends $Family
 }
 
 /// Recent jobs provider
+
 @ProviderFor(recentJobs)
 const recentJobsProvider = RecentJobsProvider._();
 
 /// Recent jobs provider
+
 final class RecentJobsProvider extends $FunctionalProvider<
         AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
@@ -371,13 +392,15 @@ final class RecentJobsProvider extends $FunctionalProvider<
   }
 }
 
-String _$recentJobsHash() => r'00ef36440365b08fbee05afc728aacc3d2304bc3';
+String _$recentJobsHash() => r'8341fc7b0b1a2cdd2a579f40045cde688c655cb9';
 
 /// Storm jobs provider (high priority jobs)
+
 @ProviderFor(stormJobs)
 const stormJobsProvider = StormJobsProvider._();
 
 /// Storm jobs provider (high priority jobs)
+
 final class StormJobsProvider extends $FunctionalProvider<AsyncValue<List<Job>>,
         List<Job>, FutureOr<List<Job>>>
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
@@ -407,7 +430,4 @@ final class StormJobsProvider extends $FunctionalProvider<AsyncValue<List<Job>>,
   }
 }
 
-String _$stormJobsHash() => r'613175ea81d33573b25f79be03dacae9105fbefd';
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+String _$stormJobsHash() => r'd996a8a060f5630019fcddb8edd0c1fa279dcfad';

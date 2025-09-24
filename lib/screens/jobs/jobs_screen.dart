@@ -61,12 +61,12 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
 
     // DEBUG: Log jobs state when entering jobs screen
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final jobsState = ref.read(jobsNotifierProvider);
+      final jobsState = ref.read(jobsProvider);
       print('[DEBUG] JobsScreen initState - jobs loaded: ${jobsState.jobs.length}, isLoading: ${jobsState.isLoading}');
       if (jobsState.jobs.isEmpty && !jobsState.isLoading) {
         print('[DEBUG] JobsScreen: Jobs not loaded yet, loading them now');
         // FIX: Load jobs if they haven't been loaded yet
-        ref.read(jobsNotifierProvider.notifier).loadJobs();
+        ref.read(jobsProvider.notifier).loadJobs();
       }
     });
   }
@@ -207,7 +207,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
           _selectedFilter = filter;
         });
         // Trigger a refresh with the new filter
-        ref.read(appStateNotifierProvider.notifier).refreshAppData();
+        ref.read(appStateProvider.notifier).refreshAppData();
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -815,7 +815,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
                 _searchController.clear();
               });
               // Refresh jobs
-              ref.read(appStateNotifierProvider.notifier).refreshAppData();
+              ref.read(appStateProvider.notifier).refreshAppData();
               Navigator.pop(context);
             },
             child: Text('Clear', style: TextStyle(color: AppTheme.textSecondary)),
@@ -1075,7 +1075,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
                                   _selectedFilter = 'All Jobs';
                                 });
                                 // Clear all filters and refresh
-                                ref.read(appStateNotifierProvider.notifier).refreshAppData();
+                                ref.read(appStateProvider.notifier).refreshAppData();
                               },
                               icon: Icon(Icons.clear, size: 16),
                               label: Text('Clear All'),
@@ -1141,7 +1141,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
                               ),
                               const SizedBox(height: AppTheme.spacingMd),
                               ElevatedButton(
-                                onPressed: () => ref.read(appStateNotifierProvider.notifier).refreshAppData(),
+                                onPressed: () => ref.read(appStateProvider.notifier).refreshAppData(),
                                 child: const Text('Retry'),
                               ),
                             ],
@@ -1193,7 +1193,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> with TickerProviderStat
                                         valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
                                       )
                                     : ElevatedButton(
-                                        onPressed: () => ref.read(jobsNotifierProvider.notifier).loadMoreJobs(),
+                                        onPressed: () => ref.read(jobsProvider.notifier).loadMoreJobs(),
                                         child: const Text('Load More'),
                                       ),
                               ),

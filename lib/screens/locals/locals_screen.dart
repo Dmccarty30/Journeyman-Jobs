@@ -27,7 +27,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(localsNotifierProvider.notifier).loadLocals();
+      ref.read(localsProvider.notifier).loadLocals();
     });
     _scrollController.addListener(_onScroll);
   }
@@ -41,7 +41,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
 
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      ref.read(localsNotifierProvider.notifier).loadLocals(loadMore: true);
+      ref.read(localsProvider.notifier).loadLocals(loadMore: true);
     }
   }
 
@@ -130,7 +130,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
                 setState(() {
                   _selectedState = value;
                 });
-                ref.read(localsNotifierProvider.notifier).loadLocals();
+                ref.read(localsProvider.notifier).loadLocals();
               },
             ),
           ),
@@ -139,7 +139,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
           Expanded(
             child: Consumer(
               builder: (context, ref, child) {
-                final localsState = ref.watch(localsNotifierProvider);
+                final localsState = ref.watch(localsProvider);
                 return _buildLocalsList(localsState);
               },
             ),
@@ -185,7 +185,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
             ),
             const SizedBox(height: AppTheme.spacingMd),
             ElevatedButton(
-              onPressed: () => ref.read(localsNotifierProvider.notifier).loadLocals(),
+              onPressed: () => ref.read(localsProvider.notifier).loadLocals(),
               child: const Text('Retry'),
             ),
           ],

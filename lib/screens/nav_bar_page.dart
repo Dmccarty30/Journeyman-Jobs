@@ -82,7 +82,11 @@ class _NavBarPageState extends State<NavBarPage> {
               label: 'Locals',
             ),
             BottomNavigationBarItem(
-              icon: _buildIcon(Icons.settings_outlined, Icons.settings, 4),
+              icon: _buildIcon(Icons.group_outlined, Icons.group, 4),
+              label: 'Crews',
+            ),
+            BottomNavigationBarItem(
+              icon: _buildIcon(Icons.settings_outlined, Icons.settings, 5),
               label: 'Settings',
             ),
           ],

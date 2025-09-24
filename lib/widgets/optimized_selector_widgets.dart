@@ -50,7 +50,7 @@ class JobsListStateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final jobsProviderState = ref.watch(jobsNotifierProvider);
+    final jobsProviderState = ref.watch(jobsProvider);
     final jobsState = JobsListState(
       jobs: jobsProviderState.jobs,
       isLoading: jobsProviderState.isLoading,
@@ -106,7 +106,7 @@ class LocalsListStateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final localsProviderState = ref.watch(localsNotifierProvider);
+    final localsProviderState = ref.watch(localsProvider);
     final localsState = LocalsListState(
       locals: localsProviderState.locals,
       isLoading: localsProviderState.isLoading,
@@ -162,7 +162,7 @@ class AuthStateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authProviderState = ref.watch(authNotifierProvider);
+    final authProviderState = ref.watch(authProvider);
     final authState = AuthState(
       isAuthenticated: authProviderState.isAuthenticated,
       isLoading: authProviderState.isLoading,
@@ -214,9 +214,9 @@ class CombinedAppStateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authProviderState = ref.watch(authNotifierProvider);
-    final jobsProviderState = ref.watch(jobsNotifierProvider);
-    final localsProviderState = ref.watch(localsNotifierProvider);
+    final authProviderState = ref.watch(authProvider);
+    final jobsProviderState = ref.watch(jobsProvider);
+    final localsProviderState = ref.watch(localsProvider);
     
     final combinedState = CombinedAppState(
       authState: AuthState(

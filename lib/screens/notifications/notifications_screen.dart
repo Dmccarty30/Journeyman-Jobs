@@ -6,8 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../services/notification_permission_service.dart';
-import '../../services/fcm_service.dart';
-import '../../electrical_components/jj_circuit_breaker_switch.dart';
 import '../../navigation/app_router.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -42,6 +40,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     'system',
     'applications',
     'storm',
+    'crews',
   ];
 
   final Map<String, String> _filterLabels = {
@@ -51,6 +50,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     'system': 'System',
     'applications': 'Applications',
     'storm': 'Storm Work',
+    'crews': 'Crews',
   };
   
   @override
@@ -294,6 +294,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
         return Icons.assignment;
       case 'storm':
         return Icons.flash_on;
+      case 'crews':
+        return Icons.group;
       default:
         return Icons.notifications_outlined;
     }
@@ -311,6 +313,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
         return AppTheme.successGreen;
       case 'storm':
         return AppTheme.warningYellow;
+      case 'crews':
+        return AppTheme.accentCopper;
       default:
         return AppTheme.textSecondary;
     }
@@ -348,6 +352,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
           context.go(AppRouter.locals);
         }
         break;
+      case 'crews':
+        // Navigate to crews screen
+        final crewId = data['crewId'] as String?;
+        if (crewId != null) {
+          context.go('${AppRouter.crews}/$crewId');
+        } else {
+          context.go(AppRouter.crews);
+        }
+        break;
       case 'safety':
         // Safety notifications might go to a safety resources screen
         // For now, stay on notifications
@@ -356,6 +369,159 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
       default:
         // System notifications stay on the notifications screen
         break;
+    }
+  }
+
+  Stream<QuerySnapshot> _buildNotificationsStream(String userId) {
+    Query query = FirebaseFirestore.instance
+        .collection('notifications')
+        .where('userId', isEqualTo: userId)
+        .orderBy('createdAt', descending: true);
+
+    if (_selectedFilter != 'all') {
+      query = query.where('type', isEqualTo: _selectedFilter);
+    }
+
+    return query.snapshots();
+  }
+
+  Widget _buildEmptyState(String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.notifications_none,
+            size: 64,
+            color: AppTheme.textSecondary,
+          ),
+          const SizedBox(height: AppTheme.spacingLg),
+          Text(
+            message,
+            style: AppTheme.bodyLarge.copyWith(
+              color: AppTheme.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNotificationCard(DocumentSnapshot notification) {
+    final data = notification.data() as Map<String, dynamic>;
+    final type = data['type'] as String? ?? 'system';
+    final title = data['title'] as String? ?? 'Notification';
+    final body = data['body'] as String? ?? '';
+    final isRead = data['isRead'] as bool? ?? false;
+    final createdAt = data['createdAt'] as Timestamp?;
+    final notificationData = data['data'] as Map<String, dynamic>? ?? {};
+
+    final timeAgo = createdAt != null
+        ? _formatTimeAgo(createdAt.toDate())
+        : '';
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        side: BorderSide(
+          color: AppTheme.borderLight,
+          width: 1,
+        ),
+      ),
+      child: InkWell(
+        onTap: () {
+          _markAsRead(notification.id);
+          _handleNotificationTap(type, notificationData);
+        },
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        child: Container(
+          padding: const EdgeInsets.all(AppTheme.spacingMd),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Notification icon
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: _getNotificationColor(type).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                ),
+                child: Icon(
+                  _getNotificationIcon(type),
+                  color: _getNotificationColor(type),
+                  size: AppTheme.iconSm,
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacingMd),
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: AppTheme.bodyLarge.copyWith(
+                              fontWeight: isRead ? FontWeight.normal : FontWeight.w600,
+                              color: isRead ? AppTheme.textSecondary : AppTheme.textPrimary,
+                            ),
+                          ),
+                        ),
+                        if (timeAgo.isNotEmpty)
+                          Text(
+                            timeAgo,
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                      ],
+                    ),
+                    if (body.isNotEmpty) ...[
+                      const SizedBox(height: AppTheme.spacingXs),
+                      Text(
+                        body,
+                        style: AppTheme.bodyMedium.copyWith(
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              // Unread indicator
+              if (!isRead)
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentCopper,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _formatTimeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inDays > 0) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return 'Just now';
     }
   }
 
@@ -480,12 +646,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                             itemCount: notifications.length,
                             itemBuilder: (context, index) {
                               final notification = notifications[index];
-                              final data = notification.data() as Map<String, dynamic>;
-                              
-                              return _buildNotificationCard(
-                                notificationId: notification.id,
-                                data: data,
-                              );
+                              return _buildNotificationCard(notification);
                             },
                           );
                         },
@@ -495,7 +656,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
           ),
           // Settings Tab
           _isLoadingSettings
-              ? Center(
+              ? const Center(
                   child: JJElectricalLoader(
                     message: 'Loading settings...',
                   ),
@@ -506,21 +667,250 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Master toggle
-                      _buildMasterToggleSection(),
+                      Card(
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                          side: BorderSide(
+                            color: AppTheme.borderLight,
+                            width: 1,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(AppTheme.spacingMd),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Notifications',
+                                      style: AppTheme.bodyLarge.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: AppTheme.spacingXs),
+                                    Text(
+                                      'Enable or disable all notifications',
+                                      style: AppTheme.bodySmall.copyWith(
+                                        color: AppTheme.textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Switch(
+                                value: _notificationsEnabled,
+                                onChanged: _handleMasterToggle,
+                                activeThumbColor: AppTheme.accentCopper,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: AppTheme.spacingLg),
-
-                      // Notification categories
-                      if (_notificationsEnabled) ...[
-                        _buildNotificationCategoriesSection(),
-                        const SizedBox(height: AppTheme.spacingLg),
-
-                        // Sound and vibration
-                        _buildSoundSection(),
-                        const SizedBox(height: AppTheme.spacingLg),
-
-                        // Quiet hours
-                        _buildQuietHoursSection(),
-                      ],
+                      // Notification types
+                      Text(
+                        'Notification Types',
+                        style: AppTheme.headlineSmall.copyWith(
+                          color: AppTheme.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacingMd),
+                      Card(
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                          side: BorderSide(
+                            color: AppTheme.borderLight,
+                            width: 1,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            _buildSettingsRow(
+                              'Job Alerts',
+                              'Get notified about new job opportunities',
+                              _jobAlertsEnabled,
+                              (value) {
+                                setState(() {
+                                  _jobAlertsEnabled = value;
+                                });
+                                _savePreference('job_alerts_enabled', value);
+                              },
+                            ),
+                            _buildDivider(),
+                            _buildSettingsRow(
+                              'Union Updates',
+                              'Important updates from your union',
+                              _unionUpdatesEnabled,
+                              (value) {
+                                setState(() {
+                                  _unionUpdatesEnabled = value;
+                                });
+                                _savePreference('union_updates_enabled', value);
+                              },
+                            ),
+                            _buildDivider(),
+                            _buildSettingsRow(
+                              'System Notifications',
+                              'App updates and system messages',
+                              _systemNotificationsEnabled,
+                              (value) {
+                                setState(() {
+                                  _systemNotificationsEnabled = value;
+                                });
+                                _savePreference('system_notifications_enabled', value);
+                              },
+                            ),
+                            _buildDivider(),
+                            _buildSettingsRow(
+                              'Storm Work',
+                              'Emergency storm work opportunities',
+                              _stormWorkEnabled,
+                              (value) {
+                                setState(() {
+                                  _stormWorkEnabled = value;
+                                });
+                                _savePreference('storm_work_enabled', value);
+                              },
+                            ),
+                            _buildDivider(),
+                            _buildSettingsRow(
+                              'Union Reminders',
+                              'Reminders for union events and deadlines',
+                              _unionRemindersEnabled,
+                              (value) {
+                                setState(() {
+                                  _unionRemindersEnabled = value;
+                                });
+                                _savePreference('union_reminders_enabled', value);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacingLg),
+                      // Sound & Vibration
+                      Text(
+                        'Sound & Vibration',
+                        style: AppTheme.headlineSmall.copyWith(
+                          color: AppTheme.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacingMd),
+                      Card(
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                          side: BorderSide(
+                            color: AppTheme.borderLight,
+                            width: 1,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            _buildSettingsRow(
+                              'Sound',
+                              'Play sound for notifications',
+                              _soundEnabled,
+                              (value) {
+                                setState(() {
+                                  _soundEnabled = value;
+                                });
+                                _savePreference('sound_enabled', value);
+                              },
+                            ),
+                            _buildDivider(),
+                            _buildSettingsRow(
+                              'Vibration',
+                              'Vibrate for notifications',
+                              _vibrationEnabled,
+                              (value) {
+                                setState(() {
+                                  _vibrationEnabled = value;
+                                });
+                                _savePreference('vibration_enabled', value);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacingLg),
+                      // Quiet Hours
+                      Text(
+                        'Quiet Hours',
+                        style: AppTheme.headlineSmall.copyWith(
+                          color: AppTheme.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacingMd),
+                      Card(
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                          side: BorderSide(
+                            color: AppTheme.borderLight,
+                            width: 1,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            _buildSettingsRow(
+                              'Quiet Hours',
+                              'Silence notifications during specified hours',
+                              _quietHoursEnabled,
+                              (value) {
+                                setState(() {
+                                  _quietHoursEnabled = value;
+                                });
+                                _savePreference('quiet_hours_enabled', value);
+                              },
+                            ),
+                            if (_quietHoursEnabled) ...[
+                              _buildDivider(),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppTheme.spacingMd,
+                                  vertical: AppTheme.spacingSm,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextButton(
+                                        onPressed: () => _selectQuietHoursTime(true),
+                                        child: Text(
+                                          'Start: ${_quietHoursStart.format(context)}',
+                                          style: AppTheme.bodyMedium,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      'to',
+                                      style: AppTheme.bodySmall.copyWith(
+                                        color: AppTheme.textSecondary,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: TextButton(
+                                        onPressed: () => _selectQuietHoursTime(false),
+                                        child: Text(
+                                          'End: ${_quietHoursEnd.format(context)}',
+                                          style: AppTheme.bodyMedium,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -529,552 +919,53 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     );
   }
 
-  Stream<QuerySnapshot> _buildNotificationsStream(String userId) {
-    Query query = FirebaseFirestore.instance
-        .collection('notifications')
-        .where('userId', isEqualTo: userId)
-        .orderBy('timestamp', descending: true);
-
-    if (_selectedFilter != 'all') {
-      query = query.where('type', isEqualTo: _selectedFilter);
-    }
-
-    return query.snapshots();
-  }
-
-  Widget _buildNotificationCard({
-    required String notificationId,
-    required Map<String, dynamic> data,
-  }) {
-    final isRead = data['isRead'] ?? false;
-    final type = data['type'] ?? 'system';
-    final title = data['title'] ?? 'Notification';
-    final message = data['message'] ?? '';
-    final timestamp = data['timestamp'] as Timestamp?;
-    final notificationData = data['data'] as Map<String, dynamic>? ?? {};
-    
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-      child: JJCard(
-        backgroundColor: isRead ? AppTheme.white : AppTheme.accentCopper.withValues(alpha: 0.05),
-        onTap: () {
-          _markAsRead(notificationId);
-          _handleNotificationTap(type, notificationData);
-        },
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingSm),
-              decoration: BoxDecoration(
-                color: _getNotificationColor(type).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-              ),
-              child: Icon(
-                _getNotificationIcon(type),
-                size: AppTheme.iconMd,
-                color: _getNotificationColor(type),
-              ),
-            ),
-            const SizedBox(width: AppTheme.spacingMd),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: AppTheme.headlineSmall.copyWith(
-                            color: AppTheme.primaryNavy,
-                            fontWeight: isRead ? FontWeight.normal : FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      if (!isRead)
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            color: AppTheme.accentCopper,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: AppTheme.spacingSm),
-                  Text(
-                    message,
-                    style: AppTheme.bodyMedium.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
-                  ),
-                  if (timestamp != null) ...[
-                    const SizedBox(height: AppTheme.spacingSm),
-                    Text(
-                      _formatTimestamp(timestamp),
-                      style: AppTheme.bodySmall.copyWith(
-                        color: AppTheme.textLight,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyState(String message) {
-    return JJEmptyState(
-      title: 'No Notifications',
-      subtitle: message,
-      icon: Icons.notifications_none,
-    );
-  }
-
-  String _formatTimestamp(Timestamp timestamp) {
-    final date = timestamp.toDate();
-    final now = DateTime.now();
-    final difference = now.difference(date);
-
-    if (difference.inDays > 0) {
-      return '${difference.inDays} day${difference.inDays == 1 ? '' : 's'} ago';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours} hour${difference.inHours == 1 ? '' : 's'} ago';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} minute${difference.inMinutes == 1 ? '' : 's'} ago';
-    } else {
-      return 'Just now';
-    }
-  }
-
-  Widget _buildMasterToggleSection() {
-    return JJCard(
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spacingSm),
-                decoration: BoxDecoration(
-                  color: _notificationsEnabled 
-                      ? AppTheme.successGreen.withValues(alpha: 0.1)
-                      : AppTheme.textSecondary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                ),
-                child: Icon(
-                  _notificationsEnabled 
-                      ? Icons.notifications_active
-                      : Icons.notifications_off,
-                  color: _notificationsEnabled 
-                      ? AppTheme.successGreen
-                      : AppTheme.textSecondary,
-                  size: AppTheme.iconMd,
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingMd),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Push Notifications',
-                      style: AppTheme.titleMedium.copyWith(
-                        color: AppTheme.primaryNavy,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: AppTheme.spacingXs),
-                    Text(
-                      _notificationsEnabled
-                          ? 'Get instant job alerts and union updates'
-                          : 'Enable to receive important notifications',
-                      style: AppTheme.bodySmall.copyWith(
-                        color: AppTheme.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              JJCircuitBreakerSwitch(
-                value: _notificationsEnabled,
-                onChanged: _handleMasterToggle,
-                size: JJCircuitBreakerSize.small,
-                showElectricalEffects: true,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNotificationCategoriesSection() {
-    return _buildSection(
-      'Notification Types',
-      [
-        _buildToggleItem(
-          icon: Icons.work_outline,
-          title: 'Job Alerts',
-          subtitle: 'New job postings matching your preferences',
-          value: _jobAlertsEnabled,
-          onChanged: (value) {
-            setState(() => _jobAlertsEnabled = value);
-            _savePreference('job_alerts_enabled', value);
-            if (value) {
-              FCMService.subscribeToTopic('job_alerts');
-            } else {
-              FCMService.unsubscribeFromTopic('job_alerts');
-            }
-          },
-        ),
-        _buildToggleItem(
-          icon: Icons.flash_on,
-          title: 'Storm Work',
-          subtitle: 'Emergency and storm restoration opportunities',
-          value: _stormWorkEnabled,
-          onChanged: (value) {
-            setState(() => _stormWorkEnabled = value);
-            _savePreference('storm_work_enabled', value);
-            if (value) {
-              FCMService.subscribeToTopic('storm_alerts');
-            } else {
-              FCMService.unsubscribeFromTopic('storm_alerts');
-            }
-          },
-        ),
-        _buildToggleItem(
-          icon: Icons.people_outline,
-          title: 'Union Updates',
-          subtitle: 'News and updates from your local',
-          value: _unionUpdatesEnabled,
-          onChanged: (value) {
-            setState(() => _unionUpdatesEnabled = value);
-            _savePreference('union_updates_enabled', value);
-            if (value) {
-              FCMService.subscribeToTopic('union_updates');
-            } else {
-              FCMService.unsubscribeFromTopic('union_updates');
-            }
-          },
-        ),
-        _buildToggleItem(
-          icon: Icons.event,
-          title: 'Union Meeting Reminders',
-          subtitle: 'Remind me about upcoming union meetings',
-          value: _unionRemindersEnabled,
-          onChanged: (value) {
-            setState(() => _unionRemindersEnabled = value);
-            _savePreference('union_reminders_enabled', value);
-            if (value) {
-              FCMService.subscribeToTopic('union_reminders');
-            } else {
-              FCMService.unsubscribeFromTopic('union_reminders');
-            }
-          },
-        ),
-        _buildToggleItem(
-          icon: Icons.info_outline,
-          title: 'System Notifications',
-          subtitle: 'App updates and important announcements',
-          value: _systemNotificationsEnabled,
-          onChanged: (value) {
-            setState(() => _systemNotificationsEnabled = value);
-            _savePreference('system_notifications_enabled', value);
-            if (value) {
-              FCMService.subscribeToTopic('system_updates');
-            } else {
-              FCMService.unsubscribeFromTopic('system_updates');
-            }
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSoundSection() {
-    return _buildSection(
-      'Sound & Vibration',
-      [
-        _buildToggleItem(
-          icon: Icons.volume_up,
-          title: 'Sound',
-          subtitle: 'Play sound for notifications',
-          value: _soundEnabled,
-          onChanged: (value) {
-            setState(() => _soundEnabled = value);
-            _savePreference('sound_enabled', value);
-          },
-        ),
-        _buildToggleItem(
-          icon: Icons.vibration,
-          title: 'Vibration',
-          subtitle: 'Vibrate for notifications',
-          value: _vibrationEnabled,
-          onChanged: (value) {
-            setState(() => _vibrationEnabled = value);
-            _savePreference('vibration_enabled', value);
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildQuietHoursSection() {
-    return _buildSection(
-      'Quiet Hours',
-      [
-        _buildToggleItem(
-          icon: Icons.bedtime,
-          title: 'Enable Quiet Hours',
-          subtitle: 'Silence notifications during specified times',
-          value: _quietHoursEnabled,
-          onChanged: (value) {
-            setState(() => _quietHoursEnabled = value);
-            _savePreference('quiet_hours_enabled', value);
-          },
-        ),
-        if (_quietHoursEnabled) ...[
-          const Divider(height: 1),
-          _buildTimePickerItem(
-            icon: Icons.bedtime,
-            title: 'Start Time',
-            time: _quietHoursStart,
-            onTap: () => _selectQuietHoursTime(true),
-          ),
-          const Divider(height: 1),
-          _buildTimePickerItem(
-            icon: Icons.wb_sunny,
-            title: 'End Time',
-            time: _quietHoursEnd,
-            onTap: () => _selectQuietHoursTime(false),
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildSection(String title, List<Widget> children) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: AppTheme.spacingSm),
-          child: Text(
-            title,
-            style: AppTheme.titleMedium.copyWith(
-              color: AppTheme.textSecondary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        JJCard(
-          child: Column(
-            children: children.asMap().entries.map((entry) {
-              final index = entry.key;
-              final child = entry.value;
-              final isLast = index == children.length - 1;
-              
-              return Column(
-                children: [
-                  child,
-                  if (!isLast) const Divider(height: 1),
-                ],
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildToggleItem({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
+  Widget _buildSettingsRow(String title, String subtitle, bool value, ValueChanged<bool> onChanged) {
     return Padding(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMd,
+        vertical: AppTheme.spacingSm,
+      ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(AppTheme.spacingSm),
-            decoration: BoxDecoration(
-              color: AppTheme.accentCopper.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-            ),
-            child: Icon(
-              icon,
-              color: AppTheme.accentCopper,
-              size: AppTheme.iconSm,
-            ),
-          ),
-          const SizedBox(width: AppTheme.spacingMd),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: AppTheme.titleMedium.copyWith(
-                    color: AppTheme.primaryNavy,
+                  style: AppTheme.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: AppTheme.spacingXs),
-                Text(
-                  subtitle,
-                  style: AppTheme.bodySmall.copyWith(
-                    color: AppTheme.textSecondary,
+                if (subtitle.isNotEmpty) ...[
+                  const SizedBox(height: AppTheme.spacingXs),
+                  Text(
+                    subtitle,
+                    style: AppTheme.bodySmall.copyWith(
+                      color: AppTheme.textSecondary,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
-          JJCircuitBreakerSwitch(
+          Switch(
             value: value,
             onChanged: onChanged,
-            size: JJCircuitBreakerSize.small,
-            showElectricalEffects: true,
+            activeThumbColor: AppTheme.accentCopper,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTimePickerItem({
-    required IconData icon,
-    required String title,
-    required TimeOfDay time,
-    required VoidCallback onTap,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingMd),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spacingSm),
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryNavy.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                ),
-                child: Icon(
-                  icon,
-                  color: AppTheme.primaryNavy,
-                  size: AppTheme.iconSm,
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingMd),
-              Expanded(
-                child: Text(
-                  title,
-                  style: AppTheme.titleMedium.copyWith(
-                    color: AppTheme.primaryNavy,
-                  ),
-                ),
-              ),
-              Text(
-                time.format(context),
-                style: AppTheme.titleMedium.copyWith(
-                  color: AppTheme.accentCopper,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingSm),
-              Icon(
-                Icons.chevron_right,
-                color: AppTheme.textLight,
-                size: AppTheme.iconSm,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Helper service to create notifications
-class NotificationService {
-  static Future<void> createNotification({
-    required String userId,
-    required String type,
-    required String title,
-    required String message,
-    Map<String, dynamic>? data,
-  }) async {
-    try {
-      await FirebaseFirestore.instance.collection('notifications').add({
-        'userId': userId,
-        'type': type,
-        'title': title,
-        'message': message,
-        'isRead': false,
-        'timestamp': FieldValue.serverTimestamp(),
-        'data': data ?? {},
-      });
-    } catch (e) {
-      // Handle error silently or log
-      debugPrint('Failed to create notification: $e');
-    }
-  }
-
-  static Future<void> createJobAlert({
-    required String userId,
-    required String jobTitle,
-    required String company,
-    required String location,
-  }) async {
-    await createNotification(
-      userId: userId,
-      type: 'jobs',
-      title: 'New Job Match',
-      message: '$jobTitle at $company in $location matches your preferences.',
-      data: {
-        'jobTitle': jobTitle,
-        'company': company,
-        'location': location,
-      },
-    );
-  }
-
-  static Future<void> createSafetyAlert({
-    required String userId,
-    required String title,
-    required String message,
-  }) async {
-    await createNotification(
-      userId: userId,
-      type: 'safety',
-      title: title,
-      message: message,
-    );
-  }
-
-  static Future<void> createApplicationUpdate({
-    required String userId,
-    required String jobTitle,
-    required String status,
-  }) async {
-    await createNotification(
-      userId: userId,
-      type: 'applications',
-      title: 'Application Update',
-      message: 'Your application for $jobTitle has been $status.',
-      data: {
-        'jobTitle': jobTitle,
-        'status': status,
-      },
+  Widget _buildDivider() {
+    return Divider(
+      height: 1,
+      thickness: 1,
+      color: AppTheme.borderLight,
+      indent: AppTheme.spacingMd,
+      endIndent: AppTheme.spacingMd,
     );
   }
 }

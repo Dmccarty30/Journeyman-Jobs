@@ -1,5 +1,10 @@
+// Required imports
+import 'package:flutter/material.dart';
+import 'circuit_board_background.dart';
+import 'jj_electrical_notifications.dart';
+
 /// Journeyman Jobs Electrical Theme - Complete Integration Package
-/// 
+///
 /// This file exports all electrical-themed components and utilities
 /// for easy integration throughout the app.
 
@@ -35,8 +40,10 @@ export 'circuit_pattern_painter.dart';
 export 'hard_hat_icon.dart';
 export 'transmission_tower_icon.dart';
 
-// Enhanced Backgrounds
-export 'enhanced_backgrounds.dart';
+// Enhanced Backgrounds - CircuitPatternPainter conflict resolved
+// Note: enhanced_backgrounds.dart contains an internal CircuitPatternPainter
+// that conflicts with the one in circuit_pattern_painter.dart
+// export 'enhanced_backgrounds.dart'; // Commented out to resolve naming conflict
 
 // Electrical Illustrations & Examples
 export 'electrical_illustrations_example.dart';
@@ -144,8 +151,3 @@ extension ElectricalThemeExtensions on Widget {
     );
   }
 }
-
-// Required imports
-import 'package:flutter/material.dart';
-import 'circuit_board_background.dart';
-import 'jj_electrical_notifications.dart';

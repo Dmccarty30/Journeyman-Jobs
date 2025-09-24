@@ -531,35 +531,35 @@ class QuickFilterSuggestion {
 
 /// Current filter provider (computed from state)
 @riverpod
-JobFilterCriteria currentJobFilter(Ref ref) => ref.watch(jobFilterNotifierProvider).currentFilter;
+JobFilterCriteria currentJobFilter(Ref ref) => ref.watch(jobFilterProvider).currentFilter;
 
 /// Presets provider (computed from state)
 @riverpod
-List<FilterPreset> filterPresets(Ref ref) => ref.watch(jobFilterNotifierProvider).presets;
+List<FilterPreset> filterPresets(Ref ref) => ref.watch(jobFilterProvider).presets;
 
 /// Recent searches provider (computed from state)
 @riverpod
-List<String> recentSearches(Ref ref) => ref.watch(jobFilterNotifierProvider).recentSearches;
+List<String> recentSearches(Ref ref) => ref.watch(jobFilterProvider).recentSearches;
 
 /// Pinned presets provider (computed from state)
 @riverpod
-List<FilterPreset> pinnedPresets(Ref ref) => ref.watch(jobFilterNotifierProvider).pinnedPresets;
+List<FilterPreset> pinnedPresets(Ref ref) => ref.watch(jobFilterProvider).pinnedPresets;
 
 /// Recent presets provider (computed from state)
 @riverpod
-List<FilterPreset> recentPresets(Ref ref) => ref.watch(jobFilterNotifierProvider).recentPresets;
+List<FilterPreset> recentPresets(Ref ref) => ref.watch(jobFilterProvider).recentPresets;
 
 /// Active filters status provider (computed from state)
 @riverpod
-bool hasActiveFilters(Ref ref) => ref.watch(jobFilterNotifierProvider).hasActiveFilters;
+bool hasActiveFilters(Ref ref) => ref.watch(jobFilterProvider).hasActiveFilters;
 
 /// Active filter count provider (computed from state)
 @riverpod
-int activeFilterCount(Ref ref) => ref.watch(jobFilterNotifierProvider).activeFilterCount;
+int activeFilterCount(Ref ref) => ref.watch(jobFilterProvider).activeFilterCount;
 
 /// Quick filter suggestions provider (computed from state)
 @riverpod
 List<QuickFilterSuggestion> quickFilterSuggestions(Ref ref) {
-  final notifier = ref.watch(jobFilterNotifierProvider.notifier);
+  final notifier = ref.watch(jobFilterProvider.notifier);
   return notifier.getQuickFilterSuggestions();
 }

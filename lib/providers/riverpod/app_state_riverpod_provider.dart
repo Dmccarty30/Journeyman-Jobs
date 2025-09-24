@@ -171,8 +171,8 @@ class AppStateNotifier extends _$AppStateNotifier {
   Future<void> _loadInitialData() async {
     try {
       await Future.wait(<Future<void>>[
-        ref.read(jobsNotifierProvider.notifier).loadJobs(),
-        ref.read(localsNotifierProvider.notifier).loadLocals(),
+        ref.read(jobsProvider.notifier).loadJobs(),
+        ref.read(localsProvider.notifier).loadLocals(),
       ]);
     } catch (e) {
       // Don't set global error for data loading failures
@@ -187,15 +187,15 @@ class AppStateNotifier extends _$AppStateNotifier {
       
       if (isAuthenticated) {
         await Future.wait<void>(<Future<void>>[
-          ref.read(jobsNotifierProvider.notifier).refreshJobs(),
-          ref.read(localsNotifierProvider.notifier).loadLocals(forceRefresh: true),
+          ref.read(jobsProvider.notifier).refreshJobs(),
+          ref.read(localsProvider.notifier).loadLocals(forceRefresh: true),
         ]);
       }
 
       // Update performance metrics
       final Map<String, Object> performanceMetrics = <String, Object>{
         'last_refresh': DateTime.now().toIso8601String(),
-        'jobs_metrics': ref.read(jobsNotifierProvider.notifier).getPerformanceMetrics(),
+        'jobs_metrics': ref.read(jobsProvider.notifier).getPerformanceMetrics(),
       };
 
       state = state.copyWith(performanceMetrics: performanceMetrics);
@@ -224,8 +224,8 @@ class AppStateNotifier extends _$AppStateNotifier {
   Future<void> handleUserSignOut() async {
     try {
       // Clear all provider states
-      ref.invalidate(jobsNotifierProvider);
-      ref.invalidate(localsNotifierProvider);
+      ref.invalidate(jobsProvider);
+      ref.invalidate(localsProvider);
       
       // Track sign out event
       AnalyticsService.logCustomEvent('user_signed_out', <String, dynamic>{});
@@ -250,10 +250,10 @@ class AppStateNotifier extends _$AppStateNotifier {
 /// Combined app status provider
 @riverpod
 Map<String, dynamic> appStatus(Ref ref) {
-  final appState = ref.watch(appStateNotifierProvider);
-  final authState = ref.watch(authNotifierProvider);
-  final jobsState = ref.watch(jobsNotifierProvider);
-  final localsState = ref.watch(localsNotifierProvider);
+  final appState = ref.watch(appStateProvider);
+  final authState = ref.watch(authProvider);
+  final jobsState = ref.watch(jobsProvider);
+  final localsState = ref.watch(localsProvider);
 
   return <String, dynamic>{
     'isInitialized': appState.isInitialized,
@@ -274,10 +274,10 @@ Map<String, dynamic> appStatus(Ref ref) {
 List<String> allErrors(Ref ref) {
   final List<String> errors = <String>[];
   
-  final appState = ref.watch(appStateNotifierProvider);
-  final authState = ref.watch(authNotifierProvider);
-  final jobsState = ref.watch(jobsNotifierProvider);
-  final localsState = ref.watch(localsNotifierProvider);
+  final appState = ref.watch(appStateProvider);
+  final authState = ref.watch(authProvider);
+  final jobsState = ref.watch(jobsProvider);
+  final localsState = ref.watch(localsProvider);
 
   if (appState.globalError != null) {
     errors.add('App: ${appState.globalError}');
@@ -298,10 +298,10 @@ List<String> allErrors(Ref ref) {
 /// Loading state aggregation provider
 @riverpod
 bool isAnyLoading(Ref ref) {
-  final appState = ref.watch(appStateNotifierProvider);
-  final authState = ref.watch(authNotifierProvider);
-  final jobsState = ref.watch(jobsNotifierProvider);
-  final localsState = ref.watch(localsNotifierProvider);
+  final appState = ref.watch(appStateProvider);
+  final authState = ref.watch(authProvider);
+  final jobsState = ref.watch(jobsProvider);
+  final localsState = ref.watch(localsProvider);
 
   return !appState.isInitialized ||
          authState.isLoading ||

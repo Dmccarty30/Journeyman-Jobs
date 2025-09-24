@@ -8,6 +8,9 @@ import '../screens/onboarding/welcome_screen.dart';
 import '../screens/onboarding/auth_screen.dart';
 import '../screens/onboarding/onboarding_steps_screen.dart';
 import '../screens/nav_bar_page.dart';
+import '../screens/crews/crews_screen.dart'; // New import for CrewsScreen
+import '../features/crews/screens/create_crew_screen.dart'; // New import for CreateCrewScreen
+import '../features/crews/screens/join_crew_screen.dart'; // New import for JoinCrewScreen
 
 // Placeholder screens for Phase 2
 import '../screens/home/home_screen.dart';
@@ -41,6 +44,9 @@ class AppRouter {
   static const String jobs = '/jobs';
   static const String storm = '/storm';
   static const String locals = '/locals';
+  static const String crews = '/crews'; // New route for Crews
+  static const String createCrew = '/crews/create'; // New route for Create Crew
+  static const String joinCrew = '/crews/join'; // New route for Join Crew
   static const String settings = '/settings';
   static const String profile = '/profile';
   static const String help = '/help';
@@ -113,6 +119,21 @@ class AppRouter {
             path: locals,
             name: 'locals',
             builder: (context, state) => const LocalsScreen(),
+          ),
+          GoRoute(
+            path: crews,
+            name: 'crews',
+            builder: (context, state) => const CrewsScreen(),
+          ),
+          GoRoute(
+            path: createCrew,
+            name: 'create-crew',
+            builder: (context, state) => const CreateCrewScreen(),
+          ),
+          GoRoute(
+            path: joinCrew,
+            name: 'join-crew',
+            builder: (context, state) => const JoinCrewScreen(),
           ),
           GoRoute(
             path: settings,
@@ -283,7 +304,7 @@ class AppRouter {
 
   /// Check if current route is in main navigation
   static bool isMainNavigationRoute(String location) {
-    return [home, jobs, storm, locals, settings].contains(location);
+    return [home, jobs, storm, locals, crews, settings].contains(location);
   }
 
   /// Get the index of the current tab for bottom navigation
@@ -297,8 +318,10 @@ class AppRouter {
         return 2;
       case locals:
         return 3;
-      case settings:
+      case crews: // New case for Crews
         return 4;
+      case settings:
+        return 5;
       default:
         return 0;
     }
@@ -316,6 +339,8 @@ class AppRouter {
       case 3:
         return locals;
       case 4:
+        return crews; // New case for Crews
+      case 5:
         return settings;
       default:
         return home;

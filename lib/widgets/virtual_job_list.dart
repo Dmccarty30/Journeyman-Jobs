@@ -135,7 +135,7 @@ class _VirtualJobListState extends ConsumerState<VirtualJobList> with AutomaticK
     if (totalItemCount == 0) {
       // If there are no jobs, ensure the visible range is reset
       if (_lastReportedStart != 0 || _lastReportedEnd != 0) {
-        ref.read(jobsNotifierProvider.notifier).updateVisibleJobsRange(0, 0);
+        ref.read(jobsProvider.notifier).updateVisibleJobsRange(0, 0);
         _lastReportedStart = 0;
         _lastReportedEnd = 0;
       }
@@ -158,7 +158,7 @@ class _VirtualJobListState extends ConsumerState<VirtualJobList> with AutomaticK
 
     // Only update if the range has actually changed
     if (start != _lastReportedStart || end != _lastReportedEnd) {
-      ref.read(jobsNotifierProvider.notifier).updateVisibleJobsRange(start, end);
+      ref.read(jobsProvider.notifier).updateVisibleJobsRange(start, end);
       _lastReportedStart = start;
       _lastReportedEnd = end;
     }
@@ -488,7 +488,7 @@ class _VirtualJobListState extends ConsumerState<VirtualJobList> with AutomaticK
 
   /// Refresh job list
   void _refreshJobs() {
-    ref.read(jobsNotifierProvider.notifier).refreshJobs();
+    ref.read(jobsProvider.notifier).refreshJobs();
   }
 }
 

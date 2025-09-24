@@ -6,11 +6,15 @@ part of 'app_state_riverpod_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 /// Connectivity service provider
+
 @ProviderFor(connectivityService)
 const connectivityServiceProvider = ConnectivityServiceProvider._();
 
 /// Connectivity service provider
+
 final class ConnectivityServiceProvider extends $FunctionalProvider<
     ConnectivityService,
     ConnectivityService,
@@ -141,10 +145,12 @@ final class AnalyticsServiceProvider extends $FunctionalProvider<
 String _$analyticsServiceHash() => r'4ccdc6ead800c7ff2969519a91583607d65cc34e';
 
 /// Connectivity state stream
+
 @ProviderFor(connectivityStream)
 const connectivityStreamProvider = ConnectivityStreamProvider._();
 
 /// Connectivity state stream
+
 final class ConnectivityStreamProvider
     extends $FunctionalProvider<AsyncValue<bool>, bool, Stream<bool>>
     with $FutureModifier<bool>, $StreamProvider<bool> {
@@ -178,8 +184,9 @@ String _$connectivityStreamHash() =>
     r'9a74892d7b82b588c7d9005b074e4b24858e44ef';
 
 /// App state notifier
+
 @ProviderFor(AppStateNotifier)
-const appStateNotifierProvider = AppStateNotifierProvider._();
+const appStateProvider = AppStateNotifierProvider._();
 
 /// App state notifier
 final class AppStateNotifierProvider
@@ -190,7 +197,7 @@ final class AppStateNotifierProvider
           from: null,
           argument: null,
           retry: null,
-          name: r'appStateNotifierProvider',
+          name: r'appStateProvider',
           isAutoDispose: true,
           dependencies: null,
           $allTransitiveDependencies: null,
@@ -212,7 +219,9 @@ final class AppStateNotifierProvider
   }
 }
 
-String _$appStateNotifierHash() => r'529169686853b3aeaad194b59fe8c85cd79eff93';
+String _$appStateNotifierHash() => r'ac6b90fec89b92d8ff4eadee9301adca6a0112fb';
+
+/// App state notifier
 
 abstract class _$AppStateNotifier extends $Notifier<AppState> {
   AppState build();
@@ -228,10 +237,12 @@ abstract class _$AppStateNotifier extends $Notifier<AppState> {
 }
 
 /// Combined app status provider
+
 @ProviderFor(appStatus)
 const appStatusProvider = AppStatusProvider._();
 
 /// Combined app status provider
+
 final class AppStatusProvider extends $FunctionalProvider<
     Map<String, dynamic>,
     Map<String, dynamic>,
@@ -271,13 +282,15 @@ final class AppStatusProvider extends $FunctionalProvider<
   }
 }
 
-String _$appStatusHash() => r'78bd39e084c1635b554d93b21c7ef0402ae9eea3';
+String _$appStatusHash() => r'2b8a98e1ff7821ac751a47031119ccddc53921bb';
 
 /// Error aggregation provider
+
 @ProviderFor(allErrors)
 const allErrorsProvider = AllErrorsProvider._();
 
 /// Error aggregation provider
+
 final class AllErrorsProvider
     extends $FunctionalProvider<List<String>, List<String>, List<String>>
     with $Provider<List<String>> {
@@ -315,13 +328,15 @@ final class AllErrorsProvider
   }
 }
 
-String _$allErrorsHash() => r'f35b135706826a39f3b58466fff3bde4edf4b474';
+String _$allErrorsHash() => r'db33f9c461727381281fcefbe4d0f919206db04d';
 
 /// Loading state aggregation provider
+
 @ProviderFor(isAnyLoading)
 const isAnyLoadingProvider = IsAnyLoadingProvider._();
 
 /// Loading state aggregation provider
+
 final class IsAnyLoadingProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
   /// Loading state aggregation provider
@@ -358,7 +373,4 @@ final class IsAnyLoadingProvider extends $FunctionalProvider<bool, bool, bool>
   }
 }
 
-String _$isAnyLoadingHash() => r'd690900773dbee154be5ac8d14aa25c8d2d1ede3';
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+String _$isAnyLoadingHash() => r'09c518b3c185e6a1331db32d987280ad5ee3b5b7';
