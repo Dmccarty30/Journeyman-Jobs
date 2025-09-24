@@ -189,27 +189,27 @@
 
 ### 8. UI - The Tailboard (`lib/features/crews/screens/`, `widgets/`)
 
-30. [ ]**Task**: Implement the main `TailboardScreen` layout with Header and Tab Selector.
+30. [X]**Task**: Implement the main `TailboardScreen` layout with Header and Tab Selector.
     * **Description**: Create the `TailboardScreen` with the `CrewSelector` header, quick actions bar, and the tab bar (Feed, Jobs, Chat, Members) as per `crews-feature.md`.
     * **Dependencies**: #19, #20, #22
     * **Est. Time**: 3.5h
 
-31. [ ]**Task**: Implement `Feed` tab content with `ActivityCard` and `AnnouncementCard`.
+31. [X]**Task**: Implement `Feed` tab content with `ActivityCard` and `AnnouncementCard`.
     * **Description**: Develop the UI for the "Feed" tab, displaying `ActivityItem`s and `TailboardPost`s from `tailboardProvider`.
     * **Dependencies**: #20, #30
     * **Est. Time**: 3.5h
 
-32. [ ]**Task**: Implement `Jobs` tab content with `JobMatchCard` and filters.
+32. [X]**Task**: Implement `Jobs` tab content with `JobMatchCard` and filters.
     * **Description**: Develop the UI for the "Jobs" tab, displaying AI-matched jobs using `JobMatchCard` components and basic filtering.
     * **Dependencies**: #20, #30
     * **Est. Time**: 4h
 
-33. [ ]**Task**: Implement `Chat` tab content for crew messaging and DM previews.
+33. [X]**Task**: Implement `Chat` tab content for crew messaging and DM previews.
     * **Description**: Develop the UI for the "Chat" tab, including the crew group chat interface and previews for direct messages.
     * **Dependencies**: #21, #30
     * **Est. Time**: 4h
 
-34. [ ]**Task**: Implement `Members` tab content with `CrewMemberAvatar` and member list.
+34. [X]**Task**: Implement `Members` tab content with `CrewMemberAvatar` and member list.
     * **Description**: Develop the UI for the "Members" tab, displaying crew statistics and a list of members with their roles and online status.
     * **Dependencies**: #19, #30
     * **Est. Time**: 3h

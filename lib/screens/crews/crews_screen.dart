@@ -5,6 +5,7 @@ import 'package:journeyman_jobs/features/crews/providers/crews_riverpod_provider
 
 import '../../design_system/app_theme.dart';
 import '../../navigation/app_router.dart';
+import 'tailboard_screen.dart';
 
 class CrewsScreen extends ConsumerWidget {
   const CrewsScreen({super.key});
@@ -104,9 +105,6 @@ class CrewsScreen extends ConsumerWidget {
   }
 
   Widget _buildCrewsList(BuildContext context) {
-    // This will be implemented in a later task
-    return const Center(
-      child: Text('Display list of crews here.'),
-    );
+    return const TailboardScreen();
   }
 }
