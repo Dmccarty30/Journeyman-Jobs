@@ -393,7 +393,7 @@ class _TransformerDiagramState extends State<TransformerDiagram>
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: Colors.blue.withOpacity(0.6),
+            color: Colors.blue.withValues(alpha: 0.6),
             width: 3,
           ),
         ),
@@ -500,7 +500,7 @@ class DragPreviewPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..color = Colors.blue.withOpacity(0.6)
+      ..color = Colors.blue.withValues(alpha: 0.6)
       ..strokeWidth = 3.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;

@@ -24,7 +24,7 @@ class ActivityCard extends ConsumerWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: isRead ? AppTheme.borderLight : AppTheme.accentCopper.withOpacity(0.3),
+          color: isRead ? AppTheme.borderLight : AppTheme.accentCopper.withValues(alpha: 0.3),
           width: isRead ? 1 : 2,
         ),
       ),
@@ -41,7 +41,7 @@ class ActivityCard extends ConsumerWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: _getActivityColor().withOpacity(0.1),
+                  color: _getActivityColor().withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(

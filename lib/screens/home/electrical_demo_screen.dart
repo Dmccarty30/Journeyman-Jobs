@@ -367,14 +367,14 @@ class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
 
   BoxDecoration _buildCardDecoration() {
     return BoxDecoration(
-      color: Colors.white.withOpacity(0.95),
+      color: Colors.white.withValues(alpha: 0.95),
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
-        color: AppTheme.accentCopper.withOpacity(0.3),
+        color: AppTheme.accentCopper.withValues(alpha: 0.3),
       ),
       boxShadow: [
         BoxShadow(
-          color: AppTheme.primaryNavy.withOpacity(0.08),
+          color: AppTheme.primaryNavy.withValues(alpha: 0.08),
           blurRadius: 8,
           spreadRadius: 2,
         ),

@@ -1,4 +1,5 @@
-import 'crew_preferences.dart';
+import 'package:journeyman_jobs/legacy/flutterflow/schema/index.dart';
+
 
 class CrewStats {
   final int totalJobsShared;           // All-time jobs shared
@@ -9,6 +10,8 @@ class CrewStats {
   final double responseTime;           // Avg time to apply (in hours)
   final Map<String, int> jobTypeBreakdown; // Applications by type
   final DateTime lastActivityAt;       // Last crew activity
+  final List<double> matchScores;      // Recent match scores (last 50)
+  final double successRate;            // Successful placements / total applications
 
   CrewStats({
     required this.totalJobsShared,
@@ -19,6 +22,8 @@ class CrewStats {
     required this.responseTime,
     required this.jobTypeBreakdown,
     required this.lastActivityAt,
+    this.matchScores = const [],
+    required this.successRate,
   });
 
   factory CrewStats.fromMap(Map<String, dynamic> map) {
@@ -33,10 +38,17 @@ class CrewStats {
         (map['jobTypeBreakdown'] as Map<String, dynamic>?) ?? {},
       ),
       lastActivityAt: map['lastActivityAt'] != null
-          ? DateTime.parse(map['lastActivityAt'] as String)
+          ? (map['lastActivityAt'] is Timestamp 
+              ? (map['lastActivityAt'] as Timestamp).toDate()
+              : DateTime.parse(map['lastActivityAt'] as String))
           : DateTime.now(),
+      matchScores: List<double>.from((map['matchScores'] as List<dynamic>?) ?? []),
+      successRate: (map['successRate'] ?? 0.0).toDouble(),
     );
   }
+
+  // Alias for JSON compatibility
+  factory CrewStats.fromJson(Map<String, dynamic> json) => CrewStats.fromMap(json);
 
   Map<String, dynamic> toMap() {
     return {
@@ -47,11 +59,16 @@ class CrewStats {
       'successfulPlacements': successfulPlacements,
       'responseTime': responseTime,
       'jobTypeBreakdown': jobTypeBreakdown.map(
-        (key, value) => MapEntry(key.toString().split('.').last, value),
+        (key, value) => MapEntry(key, value),
       ),
-      'lastActivityAt': lastActivityAt.toIso8601String(),
+      'lastActivityAt': Timestamp.fromDate(lastActivityAt),
+      'matchScores': matchScores,
+      'successRate': successRate,
     };
   }
+
+  // Alias for JSON compatibility
+  Map<String, dynamic> toJson() => toMap();
 
   CrewStats copyWith({
     int? totalJobsShared,
@@ -62,6 +79,8 @@ class CrewStats {
     double? responseTime,
     Map<String, int>? jobTypeBreakdown,
     DateTime? lastActivityAt,
+    List<double>? matchScores,
+    double? successRate,
   }) {
     return CrewStats(
       totalJobsShared: totalJobsShared ?? this.totalJobsShared,
@@ -72,6 +91,8 @@ class CrewStats {
       responseTime: responseTime ?? this.responseTime,
       jobTypeBreakdown: jobTypeBreakdown ?? this.jobTypeBreakdown,
       lastActivityAt: lastActivityAt ?? this.lastActivityAt,
+      matchScores: matchScores ?? this.matchScores,
+      successRate: successRate ?? this.successRate,
     );
   }
 
@@ -137,6 +158,8 @@ class CrewStats {
       responseTime: 0.0,
       jobTypeBreakdown: {},
       lastActivityAt: DateTime.now(),
+      matchScores: [],
+      successRate: 0.0,
     );
   }
 }

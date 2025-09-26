@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:journeyman_jobs/features/crews/widgets/job_match_card.dart';
 import '../../features/crews/providers/crews_riverpod_provider.dart';
 import '../../features/crews/providers/tailboard_riverpod_provider.dart';
@@ -10,7 +9,6 @@ import '../../features/crews/widgets/activity_card.dart';
 import '../../features/crews/widgets/announcement_card.dart';
 import '../../features/crews/widgets/message_bubble.dart';
 import '../../features/crews/widgets/chat_input.dart';
-import '../../features/crews/widgets/dm_preview_card.dart';
 import '../../features/crews/widgets/crew_member_avatar.dart';
 import '../../providers/riverpod/auth_riverpod_provider.dart';
 import '../../design_system/app_theme.dart';

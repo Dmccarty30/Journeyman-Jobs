@@ -11,6 +11,7 @@ Journeyman Jobs connects skilled electrical workers with job opportunities acros
 ## ✨ Key Features
 
 ### 📱 Core Functionality
+
 - **Job Board**: Browse and filter electrical work opportunities by classification, location, and type
 - **Storm Work Hub**: Priority listings for emergency power restoration with enhanced compensation
 - **Union Directory**: Complete directory of 797+ IBEW locals with contact integration
@@ -18,12 +19,14 @@ Journeyman Jobs connects skilled electrical workers with job opportunities acros
 - **Real-time Notifications**: Instant alerts for new job postings and storm work opportunities
 
 ### 🌩️ Weather Integration (NEW)
+
 - **NOAA Weather Radar**: Official US government weather data for storm tracking
 - **Live Weather Alerts**: Real-time severe weather warnings from National Weather Service
 - **Hurricane Tracking**: National Hurricane Center integration for tropical systems
 - **Storm Safety**: Integrated safety protocols and weather-based work recommendations
 
 ### 🔌 Electrical-Themed Design
+
 - Custom electrical components and animations
 - Circuit pattern backgrounds
 - Lightning bolt loading indicators
@@ -50,24 +53,27 @@ Journeyman Jobs connects skilled electrical workers with job opportunities acros
 ## 🚀 Getting Started
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/journeyman-jobs.git
    cd journeyman-jobs
    ```
 
 2. **Install dependencies**
+
    ```bash
    flutter pub get
    ```
 
 3. **Configure Firebase**
-   - Create a Firebase project at https://console.firebase.google.com
+   - Create a Firebase project at <https://console.firebase.google.com>
    - Add iOS and Android apps to your Firebase project
    - Download and add configuration files:
      - iOS: `ios/Runner/GoogleService-Info.plist`
      - Android: `android/app/google-services.json`
 
 4. **Set up environment**
+
    ```bash
    # Copy the example environment file
    cp .env.example .env
@@ -76,6 +82,7 @@ Journeyman Jobs connects skilled electrical workers with job opportunities acros
    ```
 
 5. **Run the app**
+
    ```bash
    # Run on iOS simulator
    flutter run -d ios
@@ -87,13 +94,17 @@ Journeyman Jobs connects skilled electrical workers with job opportunities acros
 ## 📱 Platform Configuration
 
 ### iOS Setup
+
 The following permissions are configured in `ios/Runner/Info.plist`:
+
 - Location Services (for weather radar and job proximity)
 - Camera/Photo Library (for profile pictures)
 - Push Notifications (for job alerts)
 
 ### Android Setup
+
 The following permissions are configured in `android/app/src/main/AndroidManifest.xml`:
+
 - Fine/Coarse Location
 - Internet Access
 - Notification permissions
@@ -163,11 +174,13 @@ flutter test integration_test/
 ## 📦 Building for Production
 
 ### iOS
+
 ```bash
 flutter build ios --release
 ```
 
 ### Android
+
 ```bash
 flutter build apk --release
 # or for app bundle
@@ -195,7 +208,8 @@ This project is proprietary software for IBEW use. All rights reserved.
 ## 📞 Support
 
 For support, please contact:
-- Technical Issues: support@journeymanjobs.com
+
+- Technical Issues: <support@journeymanjobs.com>
 - IBEW Questions: Contact your local union
 
 ## 🔒 Security

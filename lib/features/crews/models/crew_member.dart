@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'crew.dart';
+import 'package:journeyman_jobs/domain/enums/member_role.dart';
 
 class MemberPermissions {
   final bool canInviteMembers;
@@ -139,6 +139,23 @@ class CrewMember {
       'customTitle': customTitle,
       'lastActive': Timestamp.fromDate(lastActive),
     };
+  }
+
+  // fromMap alias
+  factory CrewMember.fromMap(Map<String, dynamic> map) {
+    return CrewMember(
+      userId: map['userId'] ?? '',
+      crewId: map['crewId'] ?? '',
+      role: MemberRole.values.firstWhere(
+        (r) => r.toString().split('.').last == (map['role'] ?? 'member'),
+        orElse: () => MemberRole.member,
+      ),
+      joinedAt: (map['joinedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      permissions: MemberPermissions.fromMap(map['permissions'] ?? {}),
+      isAvailable: map['isAvailable'] ?? true,
+      customTitle: map['customTitle'],
+      lastActive: (map['lastActive'] as Timestamp?)?.toDate() ?? DateTime.now(),
+    );
   }
 
   CrewMember copyWith({

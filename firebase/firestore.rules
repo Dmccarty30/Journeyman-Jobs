@@ -15,6 +15,71 @@ service cloud.firestore {
              exists(/databases/$(database)/documents/users/$(request.auth.uid));
     }
     
+    // Helper functions for crew rules
+    function isCrewMember(crewId) {
+      return request.auth != null && 
+             get(/databases/$(database)/documents/crews/$(crewId)).data.memberIds.hasAny([request.auth.uid]);
+    }
+
+    function isCrewForeman(crewId) {
+      return request.auth != null && 
+             get(/databases/$(database)/documents/crews/$(crewId)).data.foremanId == request.auth.uid;
+    }
+    
+    // Rate limiting helper
+    function isNotRateLimited(path) {
+      let oneHourAgo = request.time.toMillis() - duration.value(1, 'h');
+      let recentAttempts = getCountFromServer(/databases/$(database)/documents/$(path)/$(request.auth.uid))
+                          .where('timestamp', '>', oneHourAgo).count();
+      return recentAttempts < 10;
+    }
+
+    // Crews collection
+    match /crews/{crewId} {
+      // Only crew members can read crew documents
+      allow read: if isCrewMember(crewId);
+      
+      // Only foreman can update crew settings
+      allow update: if isCrewForeman(crewId) && 
+                      (!request.resource.data.diff(resource.data).affectedKeys()
+                        .hasAny(['foremanId', 'id', 'createdAt']));
+      
+      // Only foreman can delete (soft-delete) crews
+      allow delete: if false;  // Hard deletes not allowed
+      allow create: if isAuthenticated() && isNotRateLimited('crew_creation');
+      
+      // Members subcollection
+      match /members/{memberId} {
+        allow read: if isCrewMember(crewId) || isOwner(memberId);
+        allow write: if isCrewForeman(crewId);
+      }
+      
+      // Messages subcollection
+      match /messages/{messageId} {
+        allow read: if isCrewMember(crewId);
+        allow create: if isCrewMember(crewId) && isNotRateLimited('messages');
+        allow update, delete: if isCrewForeman(crewId);
+      }
+      
+      // Tailboard subcollections
+      match /tailboard/main/jobFeed/{jobId} {
+        allow read: if isCrewMember(crewId);
+        allow write: if false;  // Only system can write
+      }
+      
+      match /tailboard/main/activity/{activityId} {
+        allow read: if isCrewMember(crewId);
+        allow write: if false;  // Only system can write
+      }
+      
+      match /tailboard/main/posts/{postId} {
+        allow read: if isCrewMember(crewId);
+        allow create: if isCrewMember(crewId) && isNotRateLimited('posts');
+        allow update, delete: if isCrewForeman(crewId) || 
+                            (isCrewMember(crewId) && resource.data.authorId == request.auth.uid);
+      }
+    }
+
     // Jobs collection - read-only for authenticated users
     match /jobs/{jobId} {
       allow read: if isAuthenticated();

@@ -732,8 +732,8 @@ class _ShareModalState extends State<ShareModal> {
                       ),
                       decoration: BoxDecoration(
                         color: isUser 
-                            ? AppTheme.successGreen.withOpacity(0.1)
-                            : AppTheme.warningAmber.withOpacity(0.1),
+                            ? AppTheme.successGreen.withValues(alpha: 0.1)
+                            : AppTheme.warningAmber.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                       ),
                       child: Text(

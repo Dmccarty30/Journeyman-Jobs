@@ -131,7 +131,7 @@ class _JJElectricalButtonState extends State<JJElectricalButton>
                     ? [
                         BoxShadow(
                           color: (widget.glowColor ?? const Color(0xFF00D4FF))
-                              .withOpacity(_glowAnimation.value * 0.5),
+                              .withValues(alpha: _glowAnimation.value * 0.5),
                           blurRadius: 15,
                           spreadRadius: 2,
                         ),
@@ -270,7 +270,7 @@ class _JJElectricalTextFieldState extends State<JJElectricalTextField>
             ? [
                 BoxShadow(
                   color: (widget.currentColor ?? const Color(0xFF00D4FF))
-                      .withOpacity(0.3),
+                      .withValues(alpha: 0.3),
                   blurRadius: 8,
                   spreadRadius: 1,
                 ),
@@ -449,7 +449,7 @@ class _SparkEffectPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(1 - progress)
+      ..color = color.withValues(alpha: 1 - progress)
       ..style = PaintingStyle.fill;
 
     final random = math.Random(42);
@@ -488,13 +488,13 @@ class _TextFieldCurrentPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = currentColor.withOpacity(0.6)
+      ..color = currentColor.withValues(alpha: 0.6)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
     final glowPaint = Paint()
-      ..color = currentColor.withOpacity(0.3)
+      ..color = currentColor.withValues(alpha: 0.3)
       ..strokeWidth = 4
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
@@ -549,7 +549,7 @@ class _DropdownSparkPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(0.8 * (1 - progress))
+      ..color = color.withValues(alpha: 0.8 * (1 - progress))
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 

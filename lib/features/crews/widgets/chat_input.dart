@@ -64,13 +64,13 @@ class _ChatInputState extends State<ChatInput> {
         color: AppTheme.white,
         border: Border(
           top: BorderSide(
-            color: AppTheme.borderLight.withOpacity(0.5),
+            color: AppTheme.borderLight.withValues(alpha: 0.5),
             width: 1,
           ),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),

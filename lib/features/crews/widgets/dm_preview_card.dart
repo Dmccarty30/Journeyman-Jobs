@@ -27,10 +27,10 @@ class DMPreviewCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: unreadCount > 0 ? AppTheme.accentCopper.withOpacity(0.05) : AppTheme.white,
+          color: unreadCount > 0 ? AppTheme.accentCopper.withValues(alpha: 0.05) : AppTheme.white,
           border: Border(
             bottom: BorderSide(
-              color: AppTheme.borderLight.withOpacity(0.5),
+              color: AppTheme.borderLight.withValues(alpha: 0.5),
               width: 1,
             ),
           ),
@@ -42,7 +42,7 @@ class DMPreviewCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundColor: AppTheme.accentCopper.withOpacity(0.2),
+                  backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.2),
                   backgroundImage: otherUserAvatarUrl != null
                       ? NetworkImage(otherUserAvatarUrl!)
                       : null,

@@ -185,7 +185,7 @@ class _ConnectionPointWidgetState extends State<ConnectionPointWidget>
                   boxShadow: <BoxShadow>[
                     if (widget.isSelected || widget.isCompatible || _isPressed)
                       BoxShadow(
-                        color: _getGlowColor().withOpacity(
+                        color: _getGlowColor().withValues(alpha: 
                           widget.isCompatible
                             ? 0.3 + (_glowAnimation?.value ?? 0) * 0.4
                             : _isPressed ? 0.7 : 0.5,
@@ -207,7 +207,7 @@ class _ConnectionPointWidgetState extends State<ConnectionPointWidget>
           },
         ),
       ),
-    );
+    ) as Container;
 
     // For drag-drop mode, wrap with draggable/drag target
     if (widget.connectionMode == ConnectionMode.dragAndDrop) {
@@ -292,11 +292,11 @@ class _ConnectionPointWidgetState extends State<ConnectionPointWidget>
         width: _connectionVisualSize + 8, // Slightly larger for drag feedback
         height: _connectionVisualSize + 8,
         decoration: BoxDecoration(
-          color: _getConnectionPointColor().withOpacity(0.9),
+          color: _getConnectionPointColor().withValues(alpha: 0.9),
           shape: BoxShape.circle,
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: _getConnectionPointColor().withOpacity(0.6),
+              color: _getConnectionPointColor().withValues(alpha: 0.6),
               spreadRadius: 6,
               blurRadius: 16,
             ),
@@ -345,15 +345,15 @@ class _ConnectionPointWidgetState extends State<ConnectionPointWidget>
   /// Get connection point border color
   Color _getConnectionPointBorderColor() {
     if (widget.isCompatible) {
-      return AppTheme.warningYellow.withOpacity(0.8);
+      return AppTheme.warningYellow.withValues(alpha: 0.8);
     }
 
     if (widget.isSelected || widget.isDragSource) {
-      return AppTheme.infoBlue.withOpacity(0.8);
+      return AppTheme.infoBlue.withValues(alpha: 0.8);
     }
     
     if (widget.isConnected) {
-      return AppTheme.successGreen.withOpacity(0.8);
+      return AppTheme.successGreen.withValues(alpha: 0.8);
     }
     
     return AppTheme.darkGray;

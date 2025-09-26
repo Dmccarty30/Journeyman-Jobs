@@ -56,7 +56,6 @@ class _OptimizedJobCardState extends State<OptimizedJobCard>
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   
-  bool _isSwipeVisible = false;
 
   @override
   void initState() {
@@ -164,7 +163,7 @@ class _OptimizedJobCardState extends State<OptimizedJobCard>
               vertical: AppTheme.spacingXs,
             ),
             decoration: BoxDecoration(
-              color: AppTheme.accentCopper.withOpacity(0.1),
+              color: AppTheme.accentCopper.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(AppTheme.radiusSm),
               border: Border.all(
                 color: AppTheme.accentCopper,

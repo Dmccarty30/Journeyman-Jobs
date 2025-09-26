@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/job_model.dart';
 import '../models/locals_record.dart';
+import '../features/crews/models/crew.dart';
+import '../features/crews/models/crew_member.dart';
 import 'connectivity_service.dart';
 
 /// Offline data availability duration
@@ -88,6 +90,8 @@ class OfflineDataService {
   static const String _searchHistoryKey = 'offline_search_history';
   static const String _bookmarksKey = 'offline_bookmarks';
   static const String _preferencesKey = 'offline_preferences';
+  static const String _crewsKey = 'offline_crews';
+  static const String _crewMembersKey = 'offline_crew_members';
   static const String _syncStrategyKey = 'sync_strategy';
   static const String _lastSyncKey = 'last_sync';
   static const String _pendingChangesKey = 'pending_changes';
@@ -275,6 +279,58 @@ class OfflineDataService {
     return [];
   }
 
+  /// Store crews for offline access
+  Future<void> storeCrewsOffline(List<Crew> crews, {SyncPriority priority = SyncPriority.medium}) async {
+    final entries = crews.map((crew) => OfflineDataEntry(
+      key: 'crew_${crew.id}',
+      data: crew.toFirestore(), // Assuming toFirestore() returns Map<String, dynamic>
+      cachedAt: DateTime.now(),
+      expiresAt: DateTime.now().add(kOfflineDataRetention),
+      priority: priority,
+    )).toList();
+
+    await _storeDataEntries(_crewsKey, entries);
+    _dataUpdateController.add({'type': 'crews', 'count': crews.length});
+  }
+
+  /// Get crews from offline storage
+  Future<List<Crew>> getOfflineCrews({bool includeExpired = false}) async {
+    final entries = await _getDataEntries(_crewsKey);
+    final validEntries = includeExpired 
+        ? entries 
+        : entries.where((entry) => !entry.isExpired).toList();
+    
+    return validEntries
+        .map((entry) => Crew.fromMap(entry.data)) // Assuming fromFirestore takes Map<String, dynamic>
+        .toList();
+  }
+
+  /// Store crew members for offline access
+  Future<void> storeCrewMembersOffline(List<CrewMember> members, {SyncPriority priority = SyncPriority.medium}) async {
+    final entries = members.map((member) => OfflineDataEntry(
+      key: 'member_${member.userId}_${member.crewId}',
+      data: member.toFirestore(), // Assuming toFirestore() returns Map<String, dynamic>
+      cachedAt: DateTime.now(),
+      expiresAt: DateTime.now().add(kOfflineDataRetention),
+      priority: priority,
+    )).toList();
+
+    await _storeDataEntries(_crewMembersKey, entries);
+    _dataUpdateController.add({'type': 'crew_members', 'count': members.length});
+  }
+
+  /// Get crew members from offline storage
+  Future<List<CrewMember>> getOfflineCrewMembers({bool includeExpired = false}) async {
+    final entries = await _getDataEntries(_crewMembersKey);
+    final validEntries = includeExpired 
+        ? entries 
+        : entries.where((entry) => !entry.isExpired).toList();
+    
+    return validEntries
+        .map((entry) => CrewMember.fromMap(entry.data)) // Assuming fromFirestore takes Map<String, dynamic>
+        .toList();
+  }
+
   /// Mark data as needing sync (when modified offline)
   Future<void> markDataDirty(String key, Map<String, dynamic> changes) async {
     // Store the pending change
@@ -413,7 +469,7 @@ class OfflineDataService {
 
   /// Clear all offline data
   Future<void> clearOfflineData() async {
-    final keys = [_jobsKey, _localsKey, _userDataKey, _searchHistoryKey, _bookmarksKey];
+    final keys = [_jobsKey, _localsKey, _userDataKey, _searchHistoryKey, _bookmarksKey, _crewsKey, _crewMembersKey];
     
     for (final key in keys) {
       await _prefs?.remove(key);

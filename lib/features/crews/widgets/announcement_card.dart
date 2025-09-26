@@ -25,7 +25,7 @@ class AnnouncementCard extends ConsumerWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: isPinned ? AppTheme.accentCopper.withOpacity(0.5) : AppTheme.borderLight,
+          color: isPinned ? AppTheme.accentCopper.withValues(alpha: 0.5) : AppTheme.borderLight,
           width: isPinned ? 2 : 1,
         ),
       ),
@@ -38,7 +38,7 @@ class AnnouncementCard extends ConsumerWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: AppTheme.accentCopper.withOpacity(0.1),
+                color: AppTheme.accentCopper.withValues(alpha: 0.1),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
                   topRight: Radius.circular(12),
@@ -73,7 +73,7 @@ class AnnouncementCard extends ConsumerWidget {
                   children: [
                     CircleAvatar(
                       radius: 16,
-                      backgroundColor: AppTheme.accentCopper.withOpacity(0.2),
+                      backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.2),
                       child: Icon(
                         Icons.person,
                         size: 16,

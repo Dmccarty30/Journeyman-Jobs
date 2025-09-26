@@ -27,7 +27,7 @@ class MessageBubble extends StatelessWidget {
           if (!isCurrentUser && showAvatar) ...[
             CircleAvatar(
               radius: 16,
-              backgroundColor: AppTheme.accentCopper.withOpacity(0.2),
+              backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.2),
               child: Text(
                 _getInitials(senderName),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -69,7 +69,7 @@ class MessageBubble extends StatelessWidget {
                     boxShadow: isCurrentUser
                         ? [
                             BoxShadow(
-                              color: AppTheme.accentCopper.withOpacity(0.2),
+                              color: AppTheme.accentCopper.withValues(alpha: 0.2),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -140,7 +140,7 @@ class MessageBubble extends StatelessWidget {
         const SizedBox(height: 8),
         Container(
           height: 1,
-          color: Colors.white.withOpacity(0.3),
+          color: Colors.white.withValues(alpha: 0.3),
           margin: const EdgeInsets.symmetric(vertical: 8),
         ),
         Wrap(
@@ -150,7 +150,7 @@ class MessageBubble extends StatelessWidget {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(

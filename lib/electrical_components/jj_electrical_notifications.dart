@@ -197,8 +197,8 @@ class _ElectricalToastState extends State<ElectricalToast>
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
-            color: themeConfig['backgroundColor']?.withOpacity(AppTheme.opacityElectricalBackground) ??
-                   AppTheme.primaryNavy.withOpacity(AppTheme.opacityElectricalBackground),
+            color: themeConfig['backgroundColor']?.withValues(alpha: AppTheme.opacityElectricalBackground) ??
+                   AppTheme.primaryNavy.withValues(alpha: AppTheme.opacityElectricalBackground),
             borderRadius: BorderRadius.circular(themeConfig['borderRadius'] ?? AppTheme.radiusElectricalToast),
             border: Border.all(
               color: themeConfig['borderColor'] ?? JJElectricalNotifications._getTypeColor(widget.type),
@@ -206,7 +206,7 @@ class _ElectricalToastState extends State<ElectricalToast>
             ),
             boxShadow: [
               themeConfig['shadow'] ?? BoxShadow(
-                color: JJElectricalNotifications._getTypeColor(widget.type).withOpacity(AppTheme.opacityElectricalGlow),
+                color: JJElectricalNotifications._getTypeColor(widget.type).withValues(alpha: AppTheme.opacityElectricalGlow),
                 blurRadius: 15,
                 spreadRadius: 2,
                 offset: const Offset(0, 4),
@@ -283,7 +283,7 @@ class _ElectricalToastState extends State<ElectricalToast>
                         child: Icon(
                           Icons.close,
                           size: 16,
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withValues(alpha: 0.7),
                         ),
                       ),
                     ),
@@ -381,18 +381,18 @@ class _ElectricalSnackBarContentState extends State<ElectricalSnackBarContent>
       builder: (context, child) {
         return Container(
           decoration: BoxDecoration(
-            color: themeConfig['backgroundColor']?.withOpacity(AppTheme.opacityElectricalBackground) ??
-                   AppTheme.primaryNavy.withOpacity(AppTheme.opacityElectricalBackground),
+            color: themeConfig['backgroundColor']?.withValues(alpha: AppTheme.opacityElectricalBackground) ??
+                   AppTheme.primaryNavy.withValues(alpha: AppTheme.opacityElectricalBackground),
             borderRadius: BorderRadius.circular(themeConfig['borderRadius'] ?? AppTheme.radiusElectricalSnackBar),
             border: Border.all(
               color: (themeConfig['glowColor'] ?? JJElectricalNotifications._getTypeColor(widget.type))
-                  .withOpacity(_glowAnimation.value),
+                  .withValues(alpha: _glowAnimation.value),
               width: themeConfig['borderWidth'] ?? AppTheme.borderWidthMedium,
             ),
             boxShadow: [
               themeConfig['shadow'] ?? BoxShadow(
                 color: (themeConfig['glowColor'] ?? JJElectricalNotifications._getTypeColor(widget.type))
-                    .withOpacity(_glowAnimation.value * AppTheme.opacityElectricalGlow),
+                    .withValues(alpha: _glowAnimation.value * AppTheme.opacityElectricalGlow),
                 blurRadius: 12,
                 spreadRadius: 1,
                 offset: const Offset(0, 4),
@@ -500,8 +500,8 @@ class _ElectricalTooltipState extends State<ElectricalTooltip>
     return Tooltip(
       message: widget.message,
       decoration: BoxDecoration(
-        color: themeConfig['backgroundColor']?.withOpacity(AppTheme.opacityElectricalBackground) ??
-               AppTheme.primaryNavy.withOpacity(AppTheme.opacityElectricalBackground),
+        color: themeConfig['backgroundColor']?.withValues(alpha: AppTheme.opacityElectricalBackground) ??
+               AppTheme.primaryNavy.withValues(alpha: AppTheme.opacityElectricalBackground),
         borderRadius: BorderRadius.circular(themeConfig['borderRadius'] ?? AppTheme.radiusElectricalTooltip),
         border: Border.all(
           color: themeConfig['borderColor'] ?? JJElectricalNotifications._getTypeColor(widget.type),
@@ -510,7 +510,7 @@ class _ElectricalTooltipState extends State<ElectricalTooltip>
         boxShadow: [
           themeConfig['shadow'] ?? BoxShadow(
             color: (themeConfig['glowColor'] ?? JJElectricalNotifications._getTypeColor(widget.type))
-                .withOpacity(AppTheme.opacityElectricalGlow),
+                .withValues(alpha: AppTheme.opacityElectricalGlow),
             blurRadius: 8,
             spreadRadius: 1,
             offset: const Offset(0, 2),
@@ -625,13 +625,13 @@ class _LightningPainter extends CustomPainter {
     if (progress == 0) return;
     
     final paint = Paint()
-      ..color = color.withOpacity(0.8)
+      ..color = color.withValues(alpha: 0.8)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
     
     final glowPaint = Paint()
-      ..color = color.withOpacity(0.4)
+      ..color = color.withValues(alpha: 0.4)
       ..strokeWidth = 6
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
@@ -698,7 +698,7 @@ class _SparkEffectPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(1.0 - progress)
+      ..color = color.withValues(alpha: 1.0 - progress)
       ..style = PaintingStyle.fill;
     
     final random = math.Random(42);

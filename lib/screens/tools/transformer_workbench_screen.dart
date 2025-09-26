@@ -478,7 +478,7 @@ class _TransformerWorkbenchScreenState extends State<TransformerWorkbenchScreen>
                 });
               },
               style: SegmentedButton.styleFrom(
-                selectedBackgroundColor: AppTheme.accentCopper.withOpacity(0.2),
+                selectedBackgroundColor: AppTheme.accentCopper.withValues(alpha: 0.2),
                 selectedForegroundColor: AppTheme.accentCopper,
               ),
             ),
@@ -506,7 +506,7 @@ class _TransformerWorkbenchScreenState extends State<TransformerWorkbenchScreen>
                       _selectedWireColor = _wireColors[phase]!;
                     });
                   },
-                  selectedColor: _wireColors[phase]!.withOpacity(0.3),
+                  selectedColor: _wireColors[phase]!.withValues(alpha: 0.3),
                   checkmarkColor: _wireColors[phase],
                   side: BorderSide(color: _wireColors[phase]!),
                 );
@@ -607,7 +607,7 @@ class _TransformerWorkbenchScreenState extends State<TransformerWorkbenchScreen>
       builder: (BuildContext context, Widget? child) => Positioned.fill(
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.1 * _successAnimation.value),
+              color: Colors.green.withValues(alpha: 0.1 * _successAnimation.value),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
             child: Center(
@@ -1036,7 +1036,7 @@ class WireConnectionPainter extends CustomPainter {
       // Set wire color based on connection validity
       paint.color = connection.isCorrect 
         ? Colors.green 
-        : Colors.red.withOpacity(0.7);
+        : Colors.red.withValues(alpha: 0.7);
 
       // Draw curved wire
       final Path path = Path();

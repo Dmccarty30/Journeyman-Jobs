@@ -2,10 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
-import 'package:uuid/uuid.dart';
 
 import '../models/crew_preferences.dart';
-import '../services/crew_service.dart';
 import '../providers/crews_riverpod_provider.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
 
@@ -42,15 +40,13 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
           throw Exception('User not authenticated');
         }
 
-        final crewId = const Uuid().v4();
-
         await crewService.createCrew(
-          id: crewId,
           name: _crewNameController.text,
           foremanId: currentUser.uid,
           preferences: CrewPreferences(
             jobTypes: [_selectedJobType],
             minHourlyRate: _minHourlyRate.toDouble(),
+            autoShareEnabled: _autoShareEnabled,
           ),
         );
 

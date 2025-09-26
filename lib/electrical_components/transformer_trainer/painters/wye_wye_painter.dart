@@ -83,7 +83,7 @@ class WyeWyePainter extends BaseTransformerPainter {
   void _drawEnergizationEffects(Canvas canvas, Size size) {
     // Add visual effects for energized state
     final Paint glowPaint = Paint()
-      ..color = Colors.yellow.withOpacity(0.3)
+      ..color = Colors.yellow.withValues(alpha: 0.3)
       ..strokeWidth = 6.0
       ..style = PaintingStyle.stroke
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);

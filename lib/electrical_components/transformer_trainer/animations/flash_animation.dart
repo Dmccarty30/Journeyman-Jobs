@@ -69,11 +69,11 @@ class _FlashAnimationWidgetState extends State<FlashAnimationWidget>
               if (widget.enhanced) ...<Widget>[
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2 * widget.controller.value),
+                    color: Colors.white.withValues(alpha: 0.2 * widget.controller.value),
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                        color: widget.color.withOpacity(0.6 * widget.controller.value),
+                        color: widget.color.withValues(alpha: 0.6 * widget.controller.value),
                         blurRadius: 30,
                         spreadRadius: 10,
                       ),
@@ -83,10 +83,10 @@ class _FlashAnimationWidgetState extends State<FlashAnimationWidget>
               ],
               DecoratedBox(
                 decoration: BoxDecoration(
-                  color: widget.color.withOpacity(0.4 * widget.controller.value),
+                  color: widget.color.withValues(alpha: 0.4 * widget.controller.value),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: widget.color.withOpacity(0.8 * widget.controller.value),
+                    color: widget.color.withValues(alpha: 0.8 * widget.controller.value),
                     width: 3,
                   ),
                 ),
@@ -122,7 +122,7 @@ class LightningBoltPainter extends CustomPainter {
     if (progress <= 0) return;
 
     final Paint paint = Paint()
-      ..color = color.withOpacity(progress)
+      ..color = color.withValues(alpha: progress)
       ..strokeWidth = enhanced ? 5.0 : 4.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -130,7 +130,7 @@ class LightningBoltPainter extends CustomPainter {
     // Add glow effect for enhanced mode
     if (enhanced) {
       final Paint glowPaint = Paint()
-        ..color = color.withOpacity(progress * 0.5)
+        ..color = color.withValues(alpha: progress * 0.5)
         ..strokeWidth = 12.0
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round
@@ -210,7 +210,7 @@ class LightningBoltPainter extends CustomPainter {
   /// Draw enhanced electric arc effects
   void _drawElectricArcs(Canvas canvas, Paint paint, Size size) {
     final Paint arcPaint = Paint()
-      ..color = color.withOpacity(progress * 0.7)
+      ..color = color.withValues(alpha: progress * 0.7)
       ..strokeWidth = enhanced ? 3.0 : 2.0
       ..style = PaintingStyle.stroke;
 
@@ -246,7 +246,7 @@ class LightningBoltPainter extends CustomPainter {
   void _drawSparks(Canvas canvas, Size size, double progress) {
     final _SeededRandom random = _SeededRandom(100);
     final Paint sparkPaint = Paint()
-      ..color = Colors.white.withOpacity(progress * 0.9)
+      ..color = Colors.white.withValues(alpha: progress * 0.9)
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -317,7 +317,7 @@ class SuccessFlashWidget extends StatelessWidget {
       animation: controller,
       builder: (BuildContext context, Widget? child) => DecoratedBox(
           decoration: BoxDecoration(
-            color: Colors.green.withOpacity(0.2 * controller.value),
+            color: Colors.green.withValues(alpha: 0.2 * controller.value),
             borderRadius: BorderRadius.circular(8),
           ),
           child: CustomPaint(
@@ -341,7 +341,7 @@ class SuccessEffectPainter extends CustomPainter {
     if (progress <= 0) return;
 
     final Paint paint = Paint()
-      ..color = Colors.green.withOpacity(progress)
+      ..color = Colors.green.withValues(alpha: progress)
       ..strokeWidth = 3.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -379,7 +379,7 @@ class SuccessEffectPainter extends CustomPainter {
   /// Draw sparkle effects around the success indicator
   void _drawSparkles(Canvas canvas, Paint paint, Size size) {
     final Paint sparklePaint = Paint()
-      ..color = Colors.green.withOpacity(progress * 0.8)
+      ..color = Colors.green.withValues(alpha: progress * 0.8)
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke;
 

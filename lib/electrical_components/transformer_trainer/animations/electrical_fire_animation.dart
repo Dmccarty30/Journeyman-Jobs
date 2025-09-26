@@ -247,10 +247,10 @@ class _ElectricalFireAnimationState extends State<ElectricalFireAnimation>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: <Color>[
-                          Colors.white.withOpacity(_explosionOpacity.value),
-                          Colors.yellow.withOpacity(_explosionOpacity.value * 0.8),
-                          Colors.orange.withOpacity(_explosionOpacity.value * 0.5),
-                          Colors.red.withOpacity(_explosionOpacity.value * 0.3),
+                          Colors.white.withValues(alpha: _explosionOpacity.value),
+                          Colors.yellow.withValues(alpha: _explosionOpacity.value * 0.8),
+                          Colors.orange.withValues(alpha: _explosionOpacity.value * 0.5),
+                          Colors.red.withValues(alpha: _explosionOpacity.value * 0.3),
                           Colors.transparent,
                         ],
                         stops: const <double>[0, 0.2, 0.4, 0.6, 1],
@@ -403,7 +403,7 @@ class FirePainter extends CustomPainter {
       if (particle.isDead) continue;
       
       final Paint paint = Paint()
-        ..color = particle.color.withOpacity(particle.opacity * flicker)
+        ..color = particle.color.withValues(alpha: particle.opacity * flicker)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
       
       canvas.drawCircle(
@@ -450,7 +450,7 @@ class SparkPainter extends CustomPainter {
         }
         
         final Paint trailPaint = Paint()
-          ..color = Colors.yellow.withOpacity(particle.opacity * 0.5)
+          ..color = Colors.yellow.withValues(alpha: particle.opacity * 0.5)
           ..strokeWidth = particle.size * 0.5
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round;
@@ -460,7 +460,7 @@ class SparkPainter extends CustomPainter {
       
       // Draw spark
       final Paint paint = Paint()
-        ..color = Colors.white.withOpacity(particle.opacity)
+        ..color = Colors.white.withValues(alpha: particle.opacity)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
       
       canvas.drawCircle(
@@ -493,7 +493,7 @@ class SmokePainter extends CustomPainter {
       particle.update(0.016 * progress);
       
       final Paint paint = Paint()
-        ..color = Colors.grey.withOpacity(particle.opacity * (1 - progress * 0.5))
+        ..color = Colors.grey.withValues(alpha: particle.opacity * (1 - progress * 0.5))
         ..maskFilter = MaskFilter.blur(
           BlurStyle.normal,
           10 + particle.size * 0.5,
@@ -529,7 +529,7 @@ class ElectricArcPainter extends CustomPainter {
     final math.Random random = math.Random(42); // Seeded for consistency
     
     final Paint paint = Paint()
-      ..color = color.withOpacity(progress)
+      ..color = color.withValues(alpha: progress)
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;

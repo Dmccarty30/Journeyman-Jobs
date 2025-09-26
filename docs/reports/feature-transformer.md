@@ -68,7 +68,7 @@ Flutter's widget system allows for precise control over user interactions withou
   Draggable<String>(
     data: 'transformer',
     child: Icon(Icons.transform),
-    feedback: Icon(Icons.transform, color: Colors.blue.withOpacity(0.5)),
+    feedback: Icon(Icons.transform, color: Colors.blue.withValues(alpha: 0.5)),
     childWhenDragging: Icon(Icons.transform, color: Colors.grey),
   )
 

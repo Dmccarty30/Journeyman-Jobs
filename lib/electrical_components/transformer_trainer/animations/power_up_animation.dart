@@ -140,7 +140,7 @@ class _PowerUpAnimationState extends State<PowerUpAnimation>
           _random.nextDouble() * 2 - 1,
         ),
         size: _random.nextDouble() * 3 + 1,
-        color: Colors.cyan.withOpacity(0.8),
+        color: Colors.cyan.withValues(alpha: 0.8),
         phase: _random.nextDouble() * 2 * math.pi,
       ),);
     }
@@ -227,9 +227,9 @@ class _PowerUpAnimationState extends State<PowerUpAnimation>
                   gradient: RadialGradient(
                     colors: <Color>[
                       (_colorAnimation.value ?? Colors.blue)
-                          .withOpacity(0.3 * _glowAnimation.value),
+                          .withValues(alpha: 0.3 * _glowAnimation.value),
                       (_colorAnimation.value ?? Colors.blue)
-                          .withOpacity(0.1 * _glowAnimation.value),
+                          .withValues(alpha: 0.1 * _glowAnimation.value),
                       Colors.transparent,
                     ],
                     stops: const <double>[0, 0.5, 1],
@@ -237,7 +237,7 @@ class _PowerUpAnimationState extends State<PowerUpAnimation>
                   boxShadow: <BoxShadow>[
                     BoxShadow(
                       color: (_colorAnimation.value ?? Colors.blue)
-                          .withOpacity(0.5 * _glowAnimation.value),
+                          .withValues(alpha: 0.5 * _glowAnimation.value),
                       blurRadius: 40,
                       spreadRadius: 20,
                     ),
@@ -420,7 +420,7 @@ class ElectricFlowPainter extends CustomPainter {
     
     // Main flow line
     final Paint mainPaint = Paint()
-      ..color = color.withOpacity(0.8 * progress)
+      ..color = color.withValues(alpha: 0.8 * progress)
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -429,7 +429,7 @@ class ElectricFlowPainter extends CustomPainter {
     
     // Glow effect
     final Paint glowPaint = Paint()
-      ..color = color.withOpacity(0.3 * progress * glowIntensity)
+      ..color = color.withValues(alpha: 0.3 * progress * glowIntensity)
       ..strokeWidth = 8
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
@@ -446,7 +446,7 @@ class ElectricFlowPainter extends CustomPainter {
       )!;
       
       final Paint lightPaint = Paint()
-        ..color = Colors.white.withOpacity(0.8)
+        ..color = Colors.white.withValues(alpha: 0.8)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
       
       canvas.drawCircle(lightPosition, 5, lightPaint);
@@ -477,7 +477,7 @@ class EnergyParticlePainter extends CustomPainter {
       particle.update(0.016, powerLevel);
       
       final Paint paint = Paint()
-        ..color = particle.color.withOpacity(powerLevel * 0.8)
+        ..color = particle.color.withValues(alpha: powerLevel * 0.8)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
       
       canvas.drawCircle(
@@ -488,7 +488,7 @@ class EnergyParticlePainter extends CustomPainter {
       
       // Draw particle trail
       final Paint trailPaint = Paint()
-        ..color = particle.color.withOpacity(powerLevel * 0.3)
+        ..color = particle.color.withValues(alpha: powerLevel * 0.3)
         ..strokeWidth = 1
         ..style = PaintingStyle.stroke;
       
@@ -522,7 +522,7 @@ class TransformerCorePainter extends CustomPainter {
     
     // Draw transformer core with pulsing glow
     final Paint corePaint = Paint()
-      ..color = glowColor.withOpacity(0.3 * progress)
+      ..color = glowColor.withValues(alpha: 0.3 * progress)
       ..style = PaintingStyle.fill;
     
     // Draw core rectangles (simplified transformer representation)
@@ -539,7 +539,7 @@ class TransformerCorePainter extends CustomPainter {
     
     // Draw windings effect
     final Paint windingPaint = Paint()
-      ..color = glowColor.withOpacity(0.6 * progress)
+      ..color = glowColor.withValues(alpha: 0.6 * progress)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     
@@ -569,9 +569,9 @@ class TransformerCorePainter extends CustomPainter {
         center,
         40 * pulseValue,
         <Color>[
-          Colors.white.withOpacity(0.8 * progress),
-          glowColor.withOpacity(0.5 * progress),
-          glowColor.withOpacity(0.1 * progress),
+          Colors.white.withValues(alpha: 0.8 * progress),
+          glowColor.withValues(alpha: 0.5 * progress),
+          glowColor.withValues(alpha: 0.1 * progress),
           Colors.transparent,
         ],
         <double>[0, 0.3, 0.7, 1],
@@ -605,7 +605,7 @@ class PowerMeterPainter extends CustomPainter {
     
     // Draw meter background
     final Paint bgPaint = Paint()
-      ..color = Colors.black.withOpacity(0.3)
+      ..color = Colors.black.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill;
     
     canvas.drawCircle(center, radius, bgPaint);
@@ -650,7 +650,7 @@ class PowerMeterPainter extends CustomPainter {
       text: TextSpan(
         text: label,
         style: TextStyle(
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.white.withValues(alpha: 0.8),
           fontSize: 10,
           fontWeight: FontWeight.bold,
         ),

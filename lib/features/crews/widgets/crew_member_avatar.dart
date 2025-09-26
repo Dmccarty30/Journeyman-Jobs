@@ -26,10 +26,10 @@ class CrewMemberAvatar extends StatelessWidget {
           width: size,
           height: size,
           decoration: BoxDecoration(
-            color: AppTheme.accentCopper.withOpacity(0.1),
+            color: AppTheme.accentCopper.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(size / 2),
             border: Border.all(
-              color: AppTheme.accentCopper.withOpacity(0.3),
+              color: AppTheme.accentCopper.withValues(alpha: 0.3),
               width: 2,
             ),
           ),
@@ -118,7 +118,7 @@ class CrewMemberListItem extends StatelessWidget {
           color: AppTheme.white,
           border: Border(
             bottom: BorderSide(
-              color: AppTheme.borderLight.withOpacity(0.5),
+              color: AppTheme.borderLight.withValues(alpha: 0.5),
               width: 1,
             ),
           ),
@@ -182,7 +182,7 @@ class CrewMemberListItem extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppTheme.successGreen.withOpacity(0.1),
+                      color: AppTheme.successGreen.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -197,7 +197,7 @@ class CrewMemberListItem extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppTheme.mediumGray.withOpacity(0.1),
+                      color: AppTheme.mediumGray.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(

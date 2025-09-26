@@ -1,16 +1,30 @@
 // lib/features/crews/providers/crews_riverpod_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:journeyman_jobs/domain/enums/member_role.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
 import '../models/models.dart';
 import '../services/crew_service.dart' as crew_service;
+import '../services/job_sharing_service.dart';
+import '../services/job_matching_service.dart';
 
 part 'crews_riverpod_provider.g.dart';
 
+/// JobSharingService provider
+@riverpod
+JobSharingService jobSharingService(Ref ref) => JobSharingService();
+
+/// JobMatchingService provider
+@riverpod
+JobMatchingService jobMatchingService(Ref ref, ProviderListenable<JobSharingService> jobSharingServiceProvider) => JobMatchingService(ref.watch(jobSharingServiceProvider));
+
 /// CrewService provider
 @riverpod
-crew_service.CrewService crewService(Ref ref) => crew_service.CrewService();
+crew_service.CrewService crewService(Ref ref, ProviderListenable<JobMatchingService?> jobMatchingServiceProvider, ProviderListenable<JobSharingService> jobSharingServiceProvider) => crew_service.CrewService(
+  jobSharingService: ref.watch(jobSharingServiceProvider),
+  jobMatchingService: ref.watch(jobMatchingServiceProvider),
+);
 
 /// Stream of crews for the current user
 @riverpod
@@ -74,7 +88,7 @@ MemberRole? userRoleInCrew(Ref ref, String crewId) {
       createdAt: DateTime.now(),
       roles: {},
       stats: CrewStats.empty(),
-      isActive: false,
+      isActive: false, lastActivityAt: null,
     ),
   );
   
@@ -180,7 +194,7 @@ Crew? crewById(Ref ref, String crewId) {
       createdAt: DateTime.now(),
       roles: {},
       stats: CrewStats.empty(),
-      isActive: false,
+      isActive: false, lastActivityAt: null,
     ),
   );
 }
