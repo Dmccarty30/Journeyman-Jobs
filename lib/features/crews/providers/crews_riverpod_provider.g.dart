@@ -8,10 +8,155 @@ part of 'crews_riverpod_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// JobSharingService provider
+
+@ProviderFor(jobSharingService)
+const jobSharingServiceProvider = JobSharingServiceProvider._();
+
+/// JobSharingService provider
+
+final class JobSharingServiceProvider extends $FunctionalProvider<
+    JobSharingService,
+    JobSharingService,
+    JobSharingService> with $Provider<JobSharingService> {
+  /// JobSharingService provider
+  const JobSharingServiceProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'jobSharingServiceProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$jobSharingServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<JobSharingService> $createElement(
+          $ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  JobSharingService create(Ref ref) {
+    return jobSharingService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(JobSharingService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<JobSharingService>(value),
+    );
+  }
+}
+
+String _$jobSharingServiceHash() => r'2afec26ba06e06e5154bd86876c1ce2b5956f9bb';
+
+/// JobMatchingService provider
+
+@ProviderFor(jobMatchingService)
+const jobMatchingServiceProvider = JobMatchingServiceFamily._();
+
+/// JobMatchingService provider
+
+final class JobMatchingServiceProvider extends $FunctionalProvider<
+    JobMatchingService,
+    JobMatchingService,
+    JobMatchingService> with $Provider<JobMatchingService> {
+  /// JobMatchingService provider
+  const JobMatchingServiceProvider._(
+      {required JobMatchingServiceFamily super.from,
+      required ProviderListenable<JobSharingService> super.argument})
+      : super(
+          retry: null,
+          name: r'jobMatchingServiceProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$jobMatchingServiceHash();
+
+  @override
+  String toString() {
+    return r'jobMatchingServiceProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<JobMatchingService> $createElement(
+          $ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  JobMatchingService create(Ref ref) {
+    final argument = this.argument as ProviderListenable<JobSharingService>;
+    return jobMatchingService(
+      ref,
+      argument,
+    );
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(JobMatchingService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<JobMatchingService>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is JobMatchingServiceProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$jobMatchingServiceHash() =>
+    r'328ed1781a698f7983262f30d25c47048c765025';
+
+/// JobMatchingService provider
+
+final class JobMatchingServiceFamily extends $Family
+    with
+        $FunctionalFamilyOverride<JobMatchingService,
+            ProviderListenable<JobSharingService>> {
+  const JobMatchingServiceFamily._()
+      : super(
+          retry: null,
+          name: r'jobMatchingServiceProvider',
+          dependencies: null,
+          $allTransitiveDependencies: null,
+          isAutoDispose: true,
+        );
+
+  /// JobMatchingService provider
+
+  JobMatchingServiceProvider call(
+    ProviderListenable<JobSharingService> jobSharingServiceProvider,
+  ) =>
+      JobMatchingServiceProvider._(
+          argument: jobSharingServiceProvider, from: this);
+
+  @override
+  String toString() => r'jobMatchingServiceProvider';
+}
+
 /// CrewService provider
 
 @ProviderFor(crewService)
-const crewServiceProvider = CrewServiceProvider._();
+const crewServiceProvider = CrewServiceFamily._();
 
 /// CrewService provider
 
@@ -20,19 +165,30 @@ final class CrewServiceProvider extends $FunctionalProvider<
     crew_service.CrewService,
     crew_service.CrewService> with $Provider<crew_service.CrewService> {
   /// CrewService provider
-  const CrewServiceProvider._()
+  const CrewServiceProvider._(
+      {required CrewServiceFamily super.from,
+      required (
+        ProviderListenable<JobMatchingService?>,
+        ProviderListenable<JobSharingService>,
+      )
+          super.argument})
       : super(
-          from: null,
-          argument: null,
           retry: null,
           name: r'crewServiceProvider',
-          isAutoDispose: true,
+          isAutoDispose: false,
           dependencies: null,
           $allTransitiveDependencies: null,
         );
 
   @override
   String debugGetCreateSourceHash() => _$crewServiceHash();
+
+  @override
+  String toString() {
+    return r'crewServiceProvider'
+        ''
+        '$argument';
+  }
 
   @$internal
   @override
@@ -42,7 +198,15 @@ final class CrewServiceProvider extends $FunctionalProvider<
 
   @override
   crew_service.CrewService create(Ref ref) {
-    return crewService(ref);
+    final argument = this.argument as (
+      ProviderListenable<JobMatchingService?>,
+      ProviderListenable<JobSharingService>,
+    );
+    return crewService(
+      ref,
+      argument.$1,
+      argument.$2,
+    );
   }
 
   /// {@macro riverpod.override_with_value}
@@ -52,9 +216,53 @@ final class CrewServiceProvider extends $FunctionalProvider<
       providerOverride: $SyncValueProvider<crew_service.CrewService>(value),
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CrewServiceProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
-String _$crewServiceHash() => r'd14fc6bc890bc4d68cb7409d010d41f962c10ef8';
+String _$crewServiceHash() => r'58a15c868400fd717a285f8fdc0bb7d94067a5cf';
+
+/// CrewService provider
+
+final class CrewServiceFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+            crew_service.CrewService,
+            (
+              ProviderListenable<JobMatchingService?>,
+              ProviderListenable<JobSharingService>,
+            )> {
+  const CrewServiceFamily._()
+      : super(
+          retry: null,
+          name: r'crewServiceProvider',
+          dependencies: null,
+          $allTransitiveDependencies: null,
+          isAutoDispose: false,
+        );
+
+  /// CrewService provider
+
+  CrewServiceProvider call(
+    ProviderListenable<JobMatchingService?> jobMatchingServiceProvider,
+    ProviderListenable<JobSharingService> jobSharingServiceProvider,
+  ) =>
+      CrewServiceProvider._(argument: (
+        jobMatchingServiceProvider,
+        jobSharingServiceProvider,
+      ), from: this);
+
+  @override
+  String toString() => r'crewServiceProvider';
+}
 
 /// Stream of crews for the current user
 
@@ -339,7 +547,7 @@ final class UserRoleInCrewProvider
   }
 }
 
-String _$userRoleInCrewHash() => r'382f427871aa84463cf0e61497ce83edddfa69ff';
+String _$userRoleInCrewHash() => r'26f7e772187894e865db40329e9cd3b0028d2505';
 
 /// Provider to get user's role in a specific crew
 
@@ -981,7 +1189,7 @@ final class CrewByIdProvider extends $FunctionalProvider<Crew?, Crew?, Crew?>
   }
 }
 
-String _$crewByIdHash() => r'd8d5857aa0cd6fac3349b256aa82d637117ee871';
+String _$crewByIdHash() => r'ea75b962a9d2fbc9091972529f0d8c4c6914e531';
 
 /// Provider to get crew by ID
 

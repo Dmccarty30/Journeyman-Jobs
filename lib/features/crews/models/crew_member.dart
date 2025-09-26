@@ -100,6 +100,7 @@ class CrewMember {
   final bool isAvailable;              // Current availability status
   final String? customTitle;           // Optional role title
   final DateTime lastActive;           // Last interaction timestamp
+  final bool isActive;                 // Member active status
 
   CrewMember({
     required this.userId,
@@ -110,6 +111,7 @@ class CrewMember {
     required this.isAvailable,
     this.customTitle,
     required this.lastActive,
+    required this.isActive,
   });
 
   factory CrewMember.fromFirestore(DocumentSnapshot doc) {
@@ -126,6 +128,7 @@ class CrewMember {
       isAvailable: data['isAvailable'] ?? true,
       customTitle: data['customTitle'],
       lastActive: (data['lastActive'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      isActive: data['isActive'] ?? true,
     );
   }
 
@@ -138,6 +141,7 @@ class CrewMember {
       'isAvailable': isAvailable,
       'customTitle': customTitle,
       'lastActive': Timestamp.fromDate(lastActive),
+      'isActive': isActive,
     };
   }
 
@@ -155,6 +159,7 @@ class CrewMember {
       isAvailable: map['isAvailable'] ?? true,
       customTitle: map['customTitle'],
       lastActive: (map['lastActive'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      isActive: map['isActive'] ?? true,
     );
   }
 
@@ -167,6 +172,7 @@ class CrewMember {
     bool? isAvailable,
     String? customTitle,
     DateTime? lastActive,
+    bool? isActive,
   }) {
     return CrewMember(
       userId: userId ?? this.userId,
@@ -177,6 +183,7 @@ class CrewMember {
       isAvailable: isAvailable ?? this.isAvailable,
       customTitle: customTitle ?? this.customTitle,
       lastActive: lastActive ?? this.lastActive,
+      isActive: isActive ?? this.isActive,
     );
   }
 

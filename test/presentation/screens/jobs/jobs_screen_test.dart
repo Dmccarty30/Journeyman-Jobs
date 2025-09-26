@@ -13,8 +13,8 @@ import '../../../fixtures/test_constants.dart';
 import '../../../helpers/widget_test_helpers.dart';
 
 // Generate mocks
-@GenerateMocks([AppStateProvider, JobFilterProvider])
-import 'jobs_screen_test.mocks.dart';
+// @GenerateMocks([AppStateProvider, JobFilterProvider])
+// import 'jobs_screen_test.mocks.dart';
 
 void main() {
   late MockJobsProvider mockJobsProvider;

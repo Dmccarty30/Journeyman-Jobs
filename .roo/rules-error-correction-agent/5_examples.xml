@@ -1,0 +1,96 @@
+<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<examples>
+  <overview>
+    Complete workflow examples demonstrating the error correction process from activation to verification. Each shows tool usage, analysis, fixes, and tests.
+  </overview>
+
+  <example name="dart_null_safety_error">
+    <description>Fix null safety error in Flutter/Dart app</description>
+    <context>User request: "Debug: Null check failed in lib/service.dart line 45"</context>
+    <workflow>
+      <step1_activation>Confirm prefix; parse error (runtime Null check operator used on null)</step1_activation>
+      <step2_context>
+        Use Serena: <use_mcp_tool server="serena" tool="find_symbol" args='{"name_path": "Service/fetchData", "relative_path": "lib/services/"}'> to locate method.
+        read_file path="lib/services/auth_service.dart" line_range="40-50" for exact code.
+        Summary: "Dart app; error from unhandled null in async fetch; related to user model import."
+      </step2_context>
+      <step3_analysis>Mental sim: API returns null on 404; cross-ref with find_referencing_symbols shows 3 calls. High impact: Crashes auth flow.</step3_analysis>
+      <step4_corrections>Minimal fix: Add null-aware operator. Option1: if (data != null) { use data! }; Pros: Safe, simple.</step4_corrections>
+      <step5_implement>
+        apply_diff on lib/services/auth_service.dart:
+        <![CDATA[
+<<<<<<< SEARCH
+:line:45
+-------
+String name = userData!.name;
+=======
+String? name = userData?.name;
+if (name == null) {
+  logger.warn('User data null');
+  return null;
+}
+]]>
+        Generate test: test('handles null user', () async { expect(await fetchUser(999), isNull); });
+        Summary: Added null check; resolves crash; confidence 95%.
+      </step5_implement>
+    </workflow>
+    <explanation>Full context via Serena prevented broader breaks; batched if multiple files.</explanation>
+  </example>
+
+  <example name="python_import_error">
+    <description>Resolve circular import in Python module</description>
+    <context>User request: "Fix error in: ImportError in main.py from utils.py"</context>
+    <workflow>
+      <step1_activation>Confirm; categorize as dependency/syntax error.</step1_activation>
+      <step2_context>
+        Serena search_for_pattern pattern="ImportError|circular import" relative_path="src/".
+        read_file "src/main.py" and "src/utils.py".
+        Summary: "Python app; circular import between main and utils; affects startup."
+      </step2_context>
+      <step3_analysis>Trace: main imports Utils, Utils imports Main. Medium impact: Blocks execution.</step3_analysis>
+      <step4_corrections>Refactor: Move shared func to third module. Pros: Clean; Cons: New file.</step4_corrections>
+      <step5_implement>
+        write_to_file "src/shared.py" with shared code.
+        apply_diff on main.py/utils.py to import from shared.
+        Suggest: python -m pytest test_imports.py.
+        Summary: Broke cycle; verified no regressions; confidence 90%.
+      </step5_implement>
+    </workflow>
+    <explanation>Serena pattern search found root cause quickly; multi-file edit ensured consistency.</explanation>
+  </example>
+
+  <example name="js_logical_bug">
+    <description>Fix off-by-one in JS array processing</description>
+    <context>User request: "Debug: Array index error in app.js line 30"</context>
+    <workflow>
+      <step1_activation>Confirm; runtime logical bug.</step1_activation>
+      <step2_context>Serena find_symbol "processArray" in "src/app.js". read_file range="25-35".</step2_context>
+      <step3_analysis>Sim: Loop i=0 to arr.length (includes undefined); causes NaN in sum.</step3_analysis>
+      <step4_corrections>Pseudocode: for (let i = 0; i < arr.length; i++). Simple, no side effects.</step4_corrections>
+      <step5_implement>
+        apply_diff:
+        <![CDATA[
+<<<<<<< SEARCH
+:line:30
+-------
+for (let i = 0; i <= arr.length; i++) {
+  total += arr[i];
+}
+=======
+for (let i = 0; i < arr.length; i++) {
+  total += arr[i];
+}
+]]>
+        Test: expect(sumArray([1,2,3]), 6); Summary: Fixed bound; confidence 100%.
+      </step5_implement>
+    </workflow>
+    <explanation>Targeted read + simulation; quick fix with test verification.</explanation>
+  </example>
+</examples>
+
+<usage_notes>
+  <note>Adapt to language; always confirm context summary with user</note>
+  <note>For complex cases, iterate with ask_followup_question</note>
+  <note>End with attempt_completion only after verification</note>
+</usage_notes>
+]]>

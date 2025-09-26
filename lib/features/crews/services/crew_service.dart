@@ -258,6 +258,7 @@ class CrewService {
             successRate: 0.0,
           ),
           isActive: true,
+          lastActivityAt: DateTime.now(),
         );
         await _offlineDataService.storeCrewsOffline([crew]);
         await _offlineDataService.markDataDirty('crew_$crewId', crew.toFirestore());
@@ -287,6 +288,7 @@ class CrewService {
             successRate: 0.0,
           ),
           isActive: true,
+          lastActivityAt: DateTime.now(),
         );
 
         await _firestore.collection('crews').doc(crewId).set(crew.toFirestore());
@@ -691,6 +693,7 @@ class CrewService {
           permissions: MemberPermissions.fromRole(role),
           isAvailable: true,
           lastActive: DateTime.now(),
+          isActive: true,
         );
         await _offlineDataService.storeCrewMembersOffline([member]);
         await _offlineDataService.markDataDirty('member_${userId}_$crewId', {
@@ -749,6 +752,7 @@ class CrewService {
           permissions: MemberPermissions.fromRole(role),
           isAvailable: true,
           lastActive: DateTime.now(),
+          isActive: true,
         );
         final memberRef = _firestore.collection('crews').doc(crewId).collection('members').doc(userId);
         transaction.set(memberRef, member.toFirestore());
@@ -1148,15 +1152,15 @@ class CrewService {
       final statsData = data['stats'] as Map<String, dynamic>? ?? {};
       final currentStats = CrewStats.fromMap(statsData);
 
-      final totalApps = stats.totalApplications;
-      final successful = stats.successfulPlacements;
-      final shared = stats.totalJobsShared;
+      final totalApps = currentStats.totalApplications;
+      final successful = currentStats.successfulPlacements;
+      final shared = currentStats.totalJobsShared;
 
       if (successful > totalApps) return false;
-      if (stats.applicationRate > totalApps / (shared > 0 ? shared : 1)) return false;
-      if (stats.averageMatchScore < 0 || stats.averageMatchScore > 100) return false;
-      if (stats.responseTime < 0) return false;
-      if (stats.successRate < 0 || stats.successRate > 1) return false;
+      if (currentStats.applicationRate > totalApps / (shared > 0 ? shared : 1)) return false;
+      if (currentStats.averageMatchScore < 0 || currentStats.averageMatchScore > 100) return false;
+      if (currentStats.responseTime < 0) return false;
+      if (currentStats.successRate < 0 || currentStats.successRate > 1) return false;
 
       return true;
     } catch (e) {

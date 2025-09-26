@@ -1,0 +1,131 @@
+<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<best_practices>
+  <overview>
+    Guidelines for error correction: Focus on safe, minimal fixes with full context awareness, preserving project integrity and style.
+  </overview>
+
+  <general_principles>
+    <principle priority="high">
+      <name>Multi-File Context Awareness</name>
+      <description>Always treat codebases as interconnected; verify cross-file impacts before changes</description>
+      <rationale>Prevents regressions from isolated fixes (e.g., removing a function referenced elsewhere)</rationale>
+      <example>
+        <scenario>Fixing an import error</scenario>
+        <good>Use find_referencing_symbols to update all usages across files</good>
+        <bad>Change only the error file without checking dependents</bad>
+      </example>
+    </principle>
+
+    <principle priority="high">
+      <name>Minimal and Safe Changes</name>
+      <description>Prioritize smallest fixes that resolve the error without altering unrelated functionality</description>
+      <rationale>Reduces risk of introducing new bugs; higher fix-to-risk ratio</rationale>
+      <example>
+        <scenario>Null pointer exception</scenario>
+        <good>Add targeted null check</good>
+        <bad>Rewrite entire method unnecessarily</bad>
+      </example>
+    </principle>
+
+    <principle priority="medium">
+      <name>Preserve Project Style and Idioms</name>
+      <description>Match existing indentation, naming patterns, conventions (e.g., snake_case in Python, camelCase in JS)</description>
+      <rationale>Maintains readability and consistency for team collaboration</rationale>
+      <example>
+        <scenario>Dart/Flutter fix</scenario>
+        <good>Use async/await if project pattern; match 2-space indent</good>
+        <bad>Introduce inconsistent formatting</bad>
+      </example>
+    </principle>
+
+    <principle priority="high">
+      <name>Security and Vulnerability Mitigation</name>
+      <description>Flag and fix any security issues exposed by errors (e.g., injection risks in fixes)</description>
+      <rationale>Ensures fixes do not create new vulnerabilities</rationale>
+      <example>
+        <scenario>String concatenation in query</scenario>
+        <good>Use parameterized queries</good>
+        <bad>Simple string replace without sanitization</bad>
+      </example>
+    </principle>
+
+    <principle priority="medium">
+      <name>Efficiency in Analysis</name>
+      <description>Batch related fixes; time-box mental simulations (<5min/file); use Serena for targeted reads</description>
+      <rationale>Avoids unnecessary full-file reads; leverages symbolic tools for precision</rationale>
+      <example>
+        <scenario>Multiple import errors</scenario>
+        <good>Batch in one apply_diff with multiple blocks</good>
+        <bad>Separate operations for each</bad>
+      </example>
+    </principle>
+  </general_principles>
+
+  <code_conventions>
+    <convention category="style_matching">
+      <rule>Analyze existing code for patterns (e.g., via get_symbols_overview); replicate in fixes</rule>
+      <examples>
+        <good>Python: Use if __name__ == "__main__" if present elsewhere</good>
+        <bad>Mix tabs/spaces inconsistently</bad>
+      </examples>
+    </convention>
+
+    <convention category="error_handling">
+      <rule>Use project-preferred patterns (e.g., try-catch in JS, Result types in Rust)</rule>
+      <examples>
+        <good>Dart: Use try { } on Error catch (e) { logError(e); }</good>
+        <bad>Generic print() instead of structured logging</bad>
+      </examples>
+    </convention>
+
+    <convention category="testing">
+      <rule>Generate tests matching project framework (e.g., pytest, Jest, flutter_test)</rule>
+      <examples>
+        <good>Flutter: testWidgets('widget renders', (tester) async { ... });</good>
+        <bad>Non-runnable pseudocode</bad>
+      </examples>
+    </convention>
+  </code_conventions>
+
+  <common_pitfalls>
+    <pitfall>
+      <description>Assuming single-file isolation</description>
+      <why_problematic>Breaks dependencies; e.g., fixing a method without updating callers</why_problematic>
+      <correct_approach>Use find_referencing_symbols to trace and update all references</correct_approach>
+    </pitfall>
+
+    <pitfall>
+      <description>Over-engineering fixes</description>
+      <why_problematic>Introduces complexity/unintended side effects</why_problematic>
+      <correct_approach>Fix only the error; suggest refactoring separately if maintainability improves</correct_approach>
+    </pitfall>
+
+    <pitfall>
+      <description>Ignoring project-specific configs</description>
+      <why_problematic>Mismatches linter rules or build settings</why_problematic>
+      <correct_approach>Read analysis_options.yaml (Dart) or .eslintrc (JS) before fixes</correct_approach>
+    </pitfall>
+  </common_pitfalls>
+
+  <quality_checklist>
+    <category name="before_starting">
+      <item>Confirm activation prefix and error categorization</item>
+      <item>Gather full context summary and user confirmation</item>
+      <item>Use Serena to avoid unnecessary full-file reads</item>
+    </category>
+
+    <category name="during_implementation">
+      <item>Verify cross-file impacts with referencing tools</item>
+      <item>Match style/idioms from existing code</item>
+      <item>Batch changes for efficiency</item>
+      <item>Check for security implications</item>
+    </category>
+
+    <category name="before_completion">
+      <item>Provide diff-annotated code and explanation</item>
+      <item>Include 2-3 targeted tests</item>
+      <item>Assign confidence score; suggest verification commands</item>
+      <item>If unsolvable, explain and suggest alternatives</item>
+    </category>
+  </quality_checklist>
+</best_practices>]]>

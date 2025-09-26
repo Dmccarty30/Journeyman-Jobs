@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
+import 'package:riverpod/src/framework.dart';
 
 import '../models/crew_preferences.dart';
 import '../providers/crews_riverpod_provider.dart';
@@ -33,7 +34,7 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
   Future<void> _createCrew() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final crewService = ref.read(crewServiceProvider);
+        final crewService = ref.read(crewServiceProvider as ProviderListenable);
         final currentUser = ref.read(currentUserProvider);
 
         if (currentUser == null) {

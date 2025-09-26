@@ -1,0 +1,137 @@
+<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<common_patterns>
+  <overview>
+    Reusable patterns for diagnosing and fixing common errors. Use these as templates, adapting to project language/style. Leverage Serena MCP for detection (e.g., find_symbol for definitions, search_for_pattern for error indicators).
+  </overview>
+
+  <examples>
+    <example name="import_export_mismatch">
+      <description>Fix import/export errors across files</description>
+      <context>Common in modular codebases (JS modules, Python imports, Dart imports); detected via unresolved symbols</context>
+      <code language="dart">
+        <![CDATA[
+        // Original in lib/service.dart (error: undefined MyModel)
+        import 'models/my_model.dart';  // Wrong path
+
+        class Service {
+          MyModel getModel() => MyModel();  // Unresolved
+        }
+
+        // Fix: Correct path and verify references
+        import '../models/my_model.dart';
+
+        class Service {
+          MyModel getModel() => MyModel();
+        }
+        ]]>
+      </code>
+      <explanation>
+        Use search_for_pattern with regex for "unresolved import" or find_symbol("MyModel") to locate definition. Update all referencing files via find_referencing_symbols. Batch changes if multiple files affected.
+      </explanation>
+    </example>
+
+    <example name="null_undefined_handling">
+      <description>Add null/undefined checks to prevent runtime errors</description>
+      <context>Runtime crashes from unhandled nulls (e.g., API responses, user input); high-impact in async code</context>
+      <code language="javascript">
+        <![CDATA[
+        // Original in src/api.js (TypeError: Cannot read property 'id' of undefined)
+        async function fetchUser(id) {
+          const user = await api.get(`/users/${id}`);
+          return user.name;  // Crashes if user null
+        }
+
+        // Fix: Add null check with fallback
+        async function fetchUser(id) {
+          const user = await api.get(`/users/${id}`);
+          if (!user) {
+            logger.warn(`User ${id} not found`);
+            return null;
+          }
+          return user.name;
+        }
+        ]]>
+      </code>
+      <explanation>
+        Simulate execution mentally; use get_symbols_overview to check variable scopes. For Dart: Prefer ? operators or if (model != null). Generate test: expect(fetchUser(999)).toBeNull().
+      </explanation>
+    </example>
+
+    <example name="syntax_errors">
+      <description>Correct syntax issues like missing semicolons, brackets, or keywords</description>
+      <context>Compilation failures; quick fixes but verify no logic changes</context>
+      <code language="python">
+        <![CDATA[
+        # Original in main.py (SyntaxError: invalid syntax)
+        def calculate_total(items
+            total = sum(items)
+            return total
+
+        # Fix: Close parentheses, indent properly
+        def calculate_total(items):
+            total = sum(items)
+            return total
+        ]]>
+      </code>
+      <explanation>
+        Read full file with read_file; use execute_command('python -m py_compile main.py') for validation. Minimal change: Only fix syntax, preserve logic. Confidence: 100% for pure syntax.
+      </explanation>
+    </example>
+
+    <example name="dependency_conflicts">
+      <description>Resolve version mismatches or missing deps</description>
+      <context>Errors like "Module not found" or incompatible APIs; check manifests</context>
+      <code language="yaml">
+        <![CDATA[
+        # Original pubspec.yaml (Dart: firebase_core ^1.0.0 incompatible with ^2.0.0)
+        dependencies:
+          firebase_core: ^1.0.0
+          cloud_firestore: ^3.0.0  # Requires firebase_core ^2.0.0
+
+        # Fix: Update to compatible versions
+        dependencies:
+          firebase_core: ^2.24.2
+          cloud_firestore: ^4.13.6
+        ]]>
+      </code>
+      <explanation>
+        Read pubspec.yaml/package.json; use search_for_pattern for version errors. Suggest command: flutter pub get. Non-code fix if possible; test with flutter run.
+      </explanation>
+    </example>
+
+    <example name="logical_bugs">
+      <description>Fix algorithmic/logic errors like off-by-one or incorrect conditions</description>
+      <context>Subtle runtime issues; requires simulation</context>
+      <code language="java">
+        <![CDATA[
+        // Original in ArrayUtils.java (IndexOutOfBoundsException)
+        public int findMax(int[] arr) {
+          int max = arr[0];
+          for (int i = 1; i <= arr.length; i++) {  // Off-by-one: <= should be <
+            if (arr[i] > max) max = arr[i];
+          }
+          return max;
+        }
+
+        // Fix: Correct loop bound
+        public int findMax(int[] arr) {
+          int max = arr[0];
+          for (int i = 1; i < arr.length; i++) {
+            if (arr[i] > max) max = arr[i];
+          }
+          return max;
+        }
+        ]]>
+      </code>
+      <explanation>
+        Mental simulation with edge cases (empty array, single element). Pseudocode first: for i in 1 to len-1. Add unit test: assertEquals(5, findMax(new int[]{1,5,3})).
+      </explanation>
+    </example>
+  </examples>
+
+  <usage_guidelines>
+    <guideline>Adapt patterns to language: Use ?./! in Dart, Optional in Java</guideline>
+    <guideline>For cross-file patterns, always use Serena's find_referencing_symbols</guideline>
+    <guideline>After fix, verify with command tool (e.g., npm test, flutter analyze)</guideline>
+  </usage_guidelines>
+</common_patterns>]]>

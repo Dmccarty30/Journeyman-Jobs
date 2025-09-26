@@ -1,0 +1,260 @@
+<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<tool_usage_guide>
+  <overview>
+    Prioritize Serena MCP tools for token-efficient code analysis; use them to understand symbols/relations before reading files. Follow with targeted edits and verification.
+  </overview>
+
+  <tool_priorities>
+    <priority level="1">
+      <tool>Serena MCP tools (find_symbol, search_for_pattern, find_referencing_symbols)</tool>
+      <when>Always first for context gathering and cross-file analysis</when>
+      <why>Avoids reading entire files; provides precise symbol info and patterns</why>
+    </priority>
+    <priority level="2">
+      <tool>read_file</tool>
+      <when>After symbolic search identifies specific files/sections</when>
+      <why>Gets exact content for verification; use line_range for efficiency</why>
+    </priority>
+    <priority level="3">
+      <tool>apply_diff</tool>
+      <when>For implementing targeted fixes</when>
+      <why>Surgical changes; batch multi-file edits</why>
+    </priority>
+    <priority level="4">
+      <tool>execute_command</tool>
+      <when>For running linters, tests, or builds post-fix</when>
+      <why>Verifies fixes; e.g., flutter analyze or npm test</why>
+    </priority>
+    <priority level="5">
+      <tool>ask_followup_question</tool>
+      <when>Context insufficient (e.g., missing files/logs)</when>
+      <why>Gathers user input without assumptions</why>
+    </priority>
+  </tool_priorities>
+
+  <tool_specific_guidance>
+    <tool name="use_mcp_tool (Serena: find_symbol)">
+      <purpose>Locate symbols (functions/classes) by name_path without full reads</purpose>
+      <when_to_use>For tracing definitions/references in error traces</when_to_use>
+      <syntax>
+        <command><use_mcp_tool>
+  <server_name>serena</server_name>
+  <tool_name>find_symbol</tool_name>
+  <arguments>{"name_path": "Service/getUser", "include_body": false, "relative_path": "lib/services/"}</arguments>
+</use_mcp_tool></command>
+        <parameters>
+          <parameter name="name_path" required="true">
+            <description>Symbol path (e.g., "Class/method")</description>
+            <type>string</type>
+            <example>"MyService/fetchData"</example>
+          </parameter>
+          <parameter name="include_body" required="false">
+            <description>True for code body; false for overview</description>
+            <type>boolean</type>
+            <example>false</example>
+          </parameter>
+        </parameters>
+      </syntax>
+      <best_practices>
+        <practice>Use substring_matching=true for partial names</practice>
+        <practice>Combine with depth=1 for class methods</practice>
+        <practice>Restrict to relative_path for speed</practice>
+      </best_practices>
+      <examples>
+        <example scenario="Unresolved function call">
+          <code>Find "getUser" in auth service</code>
+          <output>Symbol location and children</output>
+        </example>
+      </examples>
+    </tool>
+
+    <tool name="use_mcp_tool (Serena: search_for_pattern)">
+      <purpose>Regex search for error patterns across codebase</purpose>
+      <when_to_use>For finding error indicators (e.g., TODOs, logs) or similar issues</when_to_use>
+      <syntax>
+        <command><use_mcp_tool>
+  <server_name>serena</server_name>
+  <tool_name>search_for_pattern</tool_name>
+  <arguments>{"substring_pattern": "NullPointerException|undefined", "relative_path": "lib/", "context_lines_before": 2}</arguments>
+</use_mcp_tool></command>
+        <parameters>
+          <parameter name="substring_pattern" required="true">
+            <description>Regex for error (DOTALL enabled)</description>
+            <type>string</type>
+            <example>"import error|module not found"</example>
+          </parameter>
+          <parameter name="context_lines_before" required="false">
+            <description>Lines of context</description>
+            <type>integer</type>
+            <example>2</example>
+          </parameter>
+        </parameters>
+      </syntax>
+      <best_practices>
+        <practice>Use restrict_search_to_code_files=true for symbols</practice>
+        <practice>Combine globs to limit scope (e.g., paths_include_glob="*.dart")</practice>
+        <practice>Avoid .* at start/end; use non-greedy ? for multi-line</practice>
+      </best_practices>
+      <examples>
+        <example scenario="Search for null errors">
+          <code>Pattern: "null check|NullPointer"</code>
+          <output>Files/lines with context</output>
+        </example>
+      </examples>
+    </tool>
+
+    <tool name="read_file">
+      <purpose>Read file contents with line numbers</purpose>
+      <when_to_use>After Serena identifies specific files; for exact content</when_to_use>
+      <syntax>
+        <command><read_file>
+  <args>
+    <file>
+      <path>lib/services/auth_service.dart</path>
+      <line_range>40-60</line_range>
+    </file>
+  </args>
+</read_file></command>
+      <parameters>
+        <parameter name="path" required="true">
+          <description>File path</description>
+          <type>string</type>
+          <example>"lib/main.dart"</example>
+        </parameter>
+        <parameter name="line_range" required="false">
+          <description>Specific lines (1-based)</description>
+          <type>string</type>
+          <example>"1-50"</example>
+        </parameter>
+      </parameters>
+      <best_practices>
+        <practice>Max 12 files; use ranges for large files (<10 lines apart)</practice>
+        <practice>Combine adjacent ranges; read related files together</practice>
+        <practice>Only after symbolic tools confirm need</practice>
+      </best_practices>
+      <examples>
+        <example scenario="Read error line">
+          <code>Path: src/error.js, range: 45-50</code>
+          <output>Line-numbered content</output>
+        </example>
+      </examples>
+    </tool>
+
+    <tool name="apply_diff">
+      <purpose>Surgical multi-file edits</purpose>
+      <when_to_use>For precise fixes after reading/verifying</when_to_use>
+      <syntax>
+        <command><apply_diff>
+  <args>
+    <file>
+      <path>lib/service.dart</path>
+      <diff>
+        <content><![CDATA[
+<<<<<<< SEARCH
+:line:20
+-------
+oldCode();
+=======
+newSafeCode();
+>>>>>>> REPLACE
+]]></content>
+      </diff>
+    </file>
+  </args>
+</apply_diff></command>
+      <parameters>
+        <parameter name="path" required="true">
+          <description>File path</description>
+          <type>string</type>
+          <example>"src/main.py"</example>
+        </parameter>
+        <parameter name="content" required="true">
+          <description>SEARCH/REPLACE block</description>
+          <type>string (CDATA)</type>
+          <example>Exact match with line</example>
+        </parameter>
+      </parameters>
+      <best_practices>
+        <practice>Read file first for exact SEARCH match (whitespace/indent)</practice>
+        <practice>Batch multiple diffs/files; include start_line</practice>
+        <practice>Verify closing syntax (brackets) in replacements</practice>
+      </best_practices>
+      <examples>
+        <example scenario="Fix null check">
+          <code>SEARCH old null access, REPLACE with if (obj != null)</code>
+          <output>Applied changes</output>
+        </example>
+      </examples>
+    </tool>
+
+    <tool name="execute_command">
+      <purpose>Run linters/tests for verification</purpose>
+      <when_to_use>Post-fix to confirm resolution</when_to_use>
+      <syntax>
+        <command><execute_command>
+  <command>flutter analyze lib/</command>
+  <cwd>./</cwd>
+</execute_command></command>
+      <parameters>
+        <parameter name="command" required="true">
+          <description>CLI command</description>
+          <type>string</type>
+          <example>"flutter test test/error_test.dart"</example>
+        </parameter>
+        <parameter name="cwd" required="false">
+          <description>Working directory</description>
+          <type>string</type>
+          <example>"."</example>
+        </parameter>
+      </parameters>
+      <best_practices>
+        <practice>Tailor to project (flutter analyze for Dart, pylint for Python)</practice>
+        <practice>Use for non-interactive: tests, linters; explain output</practice>
+        <practice>If output missing, ask user to paste</practice>
+      </best_practices>
+      <examples>
+        <example scenario="Verify Dart fix">
+          <code>flutter analyze --no-fatal-infos</code>
+          <output>Lint results</output>
+        </example>
+      </examples>
+    </tool>
+
+    <tool name="ask_followup_question">
+      <purpose>Clarify missing context</purpose>
+      <when_to_use>When files/logs unclear or options needed</when_to_use>
+      <syntax>
+        <command><ask_followup_question>
+  <question>Provide the stack trace or related files?</question>
+  <follow_up>
+    <suggest>Stack trace from console</suggest>
+    <suggest>lib/service.dart and lib/models.dart</suggest>
+    <suggest>pubspec.yaml for deps</suggest>
+  </follow_up>
+</ask_followup_question></command>
+      <parameters>
+        <parameter name="question" required="true">
+          <description>Clear question</description>
+          <type>string</type>
+          <example>"Missing import file?"</example>
+        </parameter>
+        <parameter name="follow_up" required="true">
+          <description>2-4 suggestions</description>
+          <type>array</type>
+          <example>Actionable paths/options</example>
+        </parameter>
+      </parameters>
+      <best_practices>
+        <practice>2-4 specific suggestions; ordered by priority</practice>
+        <practice>No placeholders; complete answers</practice>
+        <practice>Use only if tools insufficient</practice>
+      </best_practices>
+      <examples>
+        <example scenario="Need more files">
+          <code>Question: Which files for context?</code>
+          <output>User provides, proceed</output>
+        </example>
+      </examples>
+    </tool>
+  </tool_specific_guidance>
+</tool_usage_guide>]]>

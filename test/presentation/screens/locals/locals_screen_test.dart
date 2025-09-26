@@ -11,8 +11,8 @@ import '../../../fixtures/test_constants.dart';
 import '../../../helpers/widget_test_helpers.dart';
 
 // Generate mocks
-@GenerateMocks([AppStateProvider])
-import 'locals_screen_test.mocks.dart';
+// @GenerateMocks([AppStateProvider])
+// import 'locals_screen_test.mocks.dart';
 
 void main() {
   late MockLocalsProvider mockLocalsProvider;

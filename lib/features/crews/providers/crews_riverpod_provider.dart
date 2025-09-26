@@ -1,6 +1,7 @@
 // lib/features/crews/providers/crews_riverpod_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/domain/enums/member_role.dart';
+import 'package:journeyman_jobs/providers/riverpod/app_state_riverpod_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
@@ -20,16 +21,23 @@ JobSharingService jobSharingService(Ref ref) => JobSharingService();
 JobMatchingService jobMatchingService(Ref ref, ProviderListenable<JobSharingService> jobSharingServiceProvider) => JobMatchingService(ref.watch(jobSharingServiceProvider));
 
 /// CrewService provider
-@riverpod
-crew_service.CrewService crewService(Ref ref, ProviderListenable<JobMatchingService?> jobMatchingServiceProvider, ProviderListenable<JobSharingService> jobSharingServiceProvider) => crew_service.CrewService(
-  jobSharingService: ref.watch(jobSharingServiceProvider),
-  jobMatchingService: ref.watch(jobMatchingServiceProvider),
-);
+@Riverpod(keepAlive: true)
+crew_service.CrewService crewService(
+  Ref ref,
+  ProviderListenable<JobMatchingService?> jobMatchingServiceProvider,
+  ProviderListenable<JobSharingService> jobSharingServiceProvider,
+) =>
+    crew_service.CrewService(
+      jobSharingService: ref.watch(jobSharingServiceProvider),
+      jobMatchingService: ref.watch(jobMatchingServiceProvider),
+      offlineDataService: ref.watch(offlineDataServiceProvider),
+      connectivityService: ref.watch(connectivityServiceProvider),
+    );
 
 /// Stream of crews for the current user
 @riverpod
 Stream<List<Crew>> userCrewsStream(Ref ref) {
-  final crewService = ref.watch(crewServiceProvider);
+  final crewService = ref.watch(crewServiceProvider as ProviderListenable);
   final currentUser = ref.watch(currentUserProvider);
   
   if (currentUser == null) return Stream.value([]);
@@ -88,7 +96,9 @@ MemberRole? userRoleInCrew(Ref ref, String crewId) {
       createdAt: DateTime.now(),
       roles: {},
       stats: CrewStats.empty(),
-      isActive: false, lastActivityAt: null,
+      lastActivityAt: DateTime.now(),
+      // Added missing required parameter
+      isActive: true,
     ),
   );
   
@@ -125,7 +135,7 @@ bool hasCrewPermission(Ref ref, String crewId, String permission) {
 /// Provider to get crew members stream
 @riverpod
 Stream<List<CrewMember>> crewMembersStream(Ref ref, String crewId) {
-  final crewService = ref.watch(crewServiceProvider);
+  final crewService = ref.watch(crewServiceProvider as ProviderListenable);
   return crewService.getCrewMembersStream(crewId).map((snapshot) {
     return snapshot.docs.map((doc) => CrewMember.fromFirestore(doc)).toList();
   });
@@ -161,6 +171,7 @@ CrewMember? currentUserCrewMember(Ref ref, String crewId) {
       permissions: MemberPermissions.fromRole(MemberRole.member),
       isAvailable: false,
       lastActive: DateTime.now(),
+      isActive: false,
     ),
   );
 }
@@ -183,20 +194,11 @@ bool isCrewLead(Ref ref, String crewId) {
 @riverpod
 Crew? crewById(Ref ref, String crewId) {
   final crews = ref.watch(userCrewsProvider);
-  return crews.firstWhere(
-    (crew) => crew.id == crewId,
-    orElse: () => Crew(
-      id: '',
-      name: '',
-      foremanId: '',
-      memberIds: [],
-      preferences: CrewPreferences.empty(),
-      createdAt: DateTime.now(),
-      roles: {},
-      stats: CrewStats.empty(),
-      isActive: false, lastActivityAt: null,
-    ),
-  );
+  try {
+    return crews.firstWhere((crew) => crew.id == crewId);
+  } catch (e) {
+    return null;
+  }
 }
 
 /// Provider to get active crews only
