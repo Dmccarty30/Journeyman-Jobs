@@ -1,263 +1,74 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Helper functions
+
+    // === Helper Functions ===
     function isAuthenticated() {
       return request.auth != null;
     }
-    
+
     function isOwner(userId) {
-      return request.auth != null && request.auth.uid == userId;
+      return isAuthenticated() && request.auth.uid == userId;
     }
-    
-    function isValidUser() {
-      return request.auth != null && 
-             exists(/databases/$(database)/documents/users/$(request.auth.uid));
-    }
-    
-    // Helper functions for crew rules
+
+    // Checks if the requesting user is a member of a specific crew via the roles map.
     function isCrewMember(crewId) {
-      return request.auth != null && 
-             get(/databases/$(database)/documents/crews/$(crewId)).data.memberIds.hasAny([request.auth.uid]);
+      return isAuthenticated() && get(/databases/$(database)/documents/crews/$(crewId)).data.roles[request.auth.uid] != null;
     }
 
+    // Checks if the requesting user is the foreman of a specific crew.
     function isCrewForeman(crewId) {
-      return request.auth != null && 
-             get(/databases/$(database)/documents/crews/$(crewId)).data.foremanId == request.auth.uid;
-    }
-    
-    // Rate limiting helper
-    function isNotRateLimited(path) {
-      let oneHourAgo = request.time.toMillis() - duration.value(1, 'h');
-      let recentAttempts = getCountFromServer(/databases/$(database)/documents/$(path)/$(request.auth.uid))
-                          .where('timestamp', '>', oneHourAgo).count();
-      return recentAttempts < 10;
+      return isAuthenticated() && get(/databases/$(database)/documents/crews/$(crewId)).data.roles[request.auth.uid] == 'foreman';
     }
 
-    // NOTIFICATIONS COLLECTION - Added for notification access
-    match /notifications/{notificationId} {
-      // Users can read their own notifications
-      allow read: if isAuthenticated() && 
-                  (request.auth.uid == resource.data.userId || 
-                   request.auth.uid == resource.data.recipientId);
-      
-      // Users can create notifications for themselves (system generated)
-      allow create: if isAuthenticated() && 
-                    request.resource.data.userId == request.auth.uid;
-      
-      // Users can update their own notifications (mark as read)
-      allow update: if isAuthenticated() && 
-                    (request.auth.uid == resource.data.userId || 
-                     request.auth.uid == resource.data.recipientId) &&
-                    request.resource.data.userId == resource.data.userId; // Can't change owner
-      
-      // Users can delete their own notifications
-      allow delete: if isAuthenticated() && 
-                    (request.auth.uid == resource.data.userId || 
-                     request.auth.uid == resource.data.recipientId);
+    // === Collection Rules ===
+
+    // Users can only read/write their own data.
+    match /users/{userId} {
+      allow read, update: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.uid == userId;
     }
 
-    // Crews collection
+    // Crews collection rules
     match /crews/{crewId} {
-      // Only crew members can read crew documents
-      allow read: if isCrewMember(crewId);
-      
-      // Only foreman can update crew settings
-      allow update: if isCrewForeman(crewId) && 
-                      (!request.resource.data.diff(resource.data).affectedKeys()
-                        .hasAny(['foremanId', 'id', 'createdAt']));
-      
-      // Only foreman can delete (soft-delete) crews
-      allow delete: if false;  // Hard deletes not allowed
-      allow create: if isAuthenticated() && isNotRateLimited('crew_creation');
-      
-      // Members subcollection
-      match /members/{memberId} {
-        allow read: if isCrewMember(crewId) || isOwner(memberId);
-        allow write: if isCrewForeman(crewId);
-      }
-      
-      // Messages subcollection
-      match /messages/{messageId} {
-        allow read: if isCrewMember(crewId);
-        allow create: if isCrewMember(crewId) && isNotRateLimited('messages');
-        allow update, delete: if isCrewForeman(crewId);
-      }
-      
-      // Tailboard subcollections
-      match /tailboard/main/jobFeed/{jobId} {
-        allow read: if isCrewMember(crewId);
-        allow write: if false;  // Only system can write
-      }
-      
-      match /tailboard/main/activity/{activityId} {
-        allow read: if isCrewMember(crewId);
-        allow write: if false;  // Only system can write
-      }
-      
-      match /tailboard/main/posts/{postId} {
-        allow read: if isCrewMember(crewId);
-        allow create: if isCrewMember(crewId) && isNotRateLimited('posts');
-        allow update, delete: if isCrewForeman(crewId) || 
-                            (isCrewMember(crewId) && resource.data.authorId == request.auth.uid);
-      }
+      // Any authenticated user can create a crew if they are assigning themselves as the foreman.
+      allow create: if isAuthenticated() && request.resource.data.roles[request.auth.uid] == 'foreman';
+
+      // A user can get a specific crew document only if they are a member of that crew.
+      allow get: if isCrewMember(crewId);
+      // Any authenticated user can query/list the crews collection.
+      allow list: if isAuthenticated();
+
+      // Only the foreman can update a crew, and they cannot change the foreman role map directly.
+      allow update: if isCrewForeman(crewId)
+                    && request.resource.data.roles == resource.data.roles; // Prevent changing roles map directly
+
+      // Deletes are not allowed.
+      allow delete: if false;
     }
 
-    // Jobs collection - read-only for authenticated users
+    // Global counters - authenticated users can read/write global counter documents
+    match /counters/{counterDoc} {
+      allow read, write: if isAuthenticated();
+      allow delete: if false;
+    }
+
+    // Public, read-only collections
     match /jobs/{jobId} {
       allow read: if isAuthenticated();
-      allow write: if false; // Only admin through Cloud Functions
+      allow write: if false;
     }
-    
-    // Locals collection - read-only for all users (public information)
+
     match /locals/{localId} {
       allow read: if true;
-      allow write: if false; // Only admin through Cloud Functions
+      allow write: if false;
     }
-    
-    // Users collection - users can only read/write their own data
-    match /users/{userId} {
-      allow read: if isOwner(userId);
-      allow create: if isOwner(userId) && 
-                       request.resource.data.keys().hasAll(['email', 'uid']) &&
-                       request.resource.data.uid == userId;
-      allow update: if isOwner(userId) &&
-                       request.resource.data.uid == resource.data.uid && // Can't change UID
-                       request.resource.data.email == resource.data.email; // Can't change email through direct write
-      allow delete: if false; // Users can't delete their account directly
-    }
-    
-    // Test collection - for development only
-    match /test/{document=**} {
-      allow read, write: if isAuthenticated();
-    }
-    
-    // Crews collection - role-based access control
-    match /crews/{crewId} {
-      // Read: Only crew members can read crew data
-      allow read: if isAuthenticated() &&
-        exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid));
-      
-      // Create: Only authenticated users can create crews
-      allow create: if isAuthenticated() &&
-        request.resource.data.keys().hasAll(['name', 'foremanId', 'memberIds', 'preferences', 'createdAt', 'isActive']) &&
-        request.resource.data.foremanId == request.auth.uid &&
-        request.resource.data.memberIds.hasAny([request.auth.uid]);
-      
-      // Update: Only foremen can update crew info
-      allow update: if isAuthenticated() &&
-        exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role == 'foreman' &&
-        request.resource.data.foremanId == resource.data.foremanId && // Can't change foreman through this rule
-        request.resource.data.id == resource.data.id; // Can't change crew ID
-      
-      // Delete: Only foremen can delete crews (soft delete via isActive flag)
-      allow delete: if isAuthenticated() &&
-        exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role == 'foreman';
-    }
-    
-    // Crew members subcollection
-    match /crews/{crewId}/members/{userId} {
-      // Read: Only crew members can read member data
-      allow read: if isAuthenticated() &&
-        exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid));
-      
-      // Create: Users can add themselves (join) or foremen can invite
-      allow create: if isAuthenticated() &&
-        (request.auth.uid == userId || // User joining themselves
-        (exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
-         get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role == 'foreman')) &&
-        request.resource.data.keys().hasAll(['userId', 'crewId', 'role', 'joinedAt', 'permissions', 'isAvailable', 'lastActive']) &&
-        request.resource.data.userId == userId &&
-        request.resource.data.crewId == crewId;
-      
-      // Update: Users can update their own data, foremen can update any member
-      allow update: if isAuthenticated() &&
-        (request.auth.uid == userId || // User updating themselves
-        (exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
-         get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role == 'foreman')) &&
-        request.resource.data.userId == userId && // Can't change user ID
-        request.resource.data.crewId == crewId; // Can't change crew ID
-      
-      // Delete: Users can remove themselves, foremen can remove any member
-      allow delete: if isAuthenticated() &&
-        (request.auth.uid == userId || // User removing themselves
-        (exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
-         get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role == 'foreman'));
-    }
-    
-    // Tailboard activity subcollection
-    match /crews/{crewId}/tailboard/activity/{activityId} {
-      // Read: Only crew members can read activity
-      allow read: if isAuthenticated() &&
-        exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid));
-      
-      // Create: Crew members can create activity items
-      allow create: if isAuthenticated() &&
-        exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
-        request.resource.data.keys().hasAll(['actorId', 'type', 'timestamp', 'data']) &&
-        request.resource.data.actorId == request.auth.uid;
-      
-      // Update/Delete: Only the actor or foremen can modify
-      allow update, delete: if isAuthenticated() &&
-        (request.auth.uid == resource.data.actorId ||
-        (exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
-         get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role == 'foreman'));
-    }
-    
-    // Tailboard posts subcollection
-    match /crews/{crewId}/tailboard/posts/{postId} {
-      // Read: Only crew members can read posts
-      allow read: if isAuthenticated() &&
-        exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid));
-      
-      // Create: Crew members can create posts
-      allow create: if isAuthenticated() &&
-        exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
-        request.resource.data.keys().hasAll(['authorId', 'content', 'postedAt']) &&
-        request.resource.data.authorId == request.auth.uid;
-      
-      // Update: Only the author or foremen can update
-      allow update: if isAuthenticated() &&
-        (request.auth.uid == resource.data.authorId ||
-        (exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
-         get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role == 'foreman')) &&
-        request.resource.data.authorId == resource.data.authorId && // Can't change author
-        request.resource.data.postedAt == resource.data.postedAt; // Can't change post date
-      
-      // Delete: Only the author or foremen can delete
-      allow delete: if isAuthenticated() &&
-        (request.auth.uid == resource.data.authorId ||
-        (exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
-         get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role == 'foreman'));
-    }
-    
-    // Messages collection
-    match /messages/{messageId} {
-      // Read: Sender, recipient, or crew members can read messages
-      allow read: if isAuthenticated() &&
-        (request.auth.uid == resource.data.senderId ||
-        request.auth.uid == resource.data.recipientId ||
-        (resource.data.crewId != null &&
-         exists(/databases/$(database)/documents/crews/$(resource.data.crewId)/members/$(request.auth.uid))));
-      
-      // Create: Authenticated users can send messages
-      allow create: if isAuthenticated() &&
-        request.resource.data.keys().hasAll(['senderId', 'content', 'sentAt', 'type']) &&
-        request.resource.data.senderId == request.auth.uid &&
-        (request.resource.data.recipientId != null || request.resource.data.crewId != null) &&
-        (request.resource.data.recipientId == null || request.resource.data.crewId == null); // Either DM or crew message, not both
-      
-      // Update: Only sender can edit their messages
-      allow update: if isAuthenticated() &&
-        request.auth.uid == resource.data.senderId &&
-        request.resource.data.senderId == resource.data.senderId && // Can't change sender
-        request.resource.data.sentAt == resource.data.sentAt; // Can't change sent time
-      
-      // Delete: Only sender can delete their messages
-      allow delete: if isAuthenticated() &&
-        request.auth.uid == resource.data.senderId;
+
+    // Counters collection rules - users can only access their own counters
+    match /counters/{counterType}/{subType}/{userId} {
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      allow create, update: if isAuthenticated() && request.auth.uid == userId;
+      allow delete: if false;
     }
   }
 }

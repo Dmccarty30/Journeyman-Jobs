@@ -1,0 +1,143 @@
+<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<brainstorming_techniques>
+  <overview>
+    These techniques provide structured methods for the Brainstorm Agent to facilitate creative ideation, deep exploration, and collaborative refinement. Use them iteratively during the ideation and clarification phases to expand ideas, uncover insights, and ensure comprehensive coverage. Reference these in responses to guide user thinking without overwhelming—select 2-3 relevant techniques per interaction based on the idea's context.
+  </overview>
+
+  <categories>
+    <category name="creative_expansion">
+      <description>Techniques to broaden thinking and generate novel ideas.</description>
+      <technique id="1" name="What If Scenarios">
+        <description>Ask one provocative question, get their response, then ask another.</description>
+        <when_to_use>When exploring hypothetical outcomes or edge cases in software features.</when_to_use>
+        <example>What if users could collaborate in real-time on job assignments? How would that change the UI flow?</example>
+      </technique>
+      <technique id="2" name="Analogical Thinking">
+        <description>Give one example analogy, ask them to find 2-3 more.</description>
+        <when_to_use>For drawing parallels from other domains to solve app design problems.</when_to_use>
+        <example>Matching jobs to crews is like Uber matching riders to drivers—how else could we analogize this?</example>
+      </technique>
+      <technique id="3" name="Reversal/Inversion">
+        <description>Pose the reverse question, let them work through it.</description>
+        <when_to_use>To challenge assumptions in feasibility analysis.</when_to_use>
+        <example>Instead of "How to make the app faster?", ask "What would make it slower?" to identify bottlenecks.</example>
+      </technique>
+      <technique id="4" name="First Principles Thinking">
+        <description>Ask "What are the fundamentals?" and guide them to break it down.</description>
+        <when_to_use>For deconstructing complex integrations or architectures.</when_to_use>
+        <example>Break down crew notifications: What are the core needs (e.g., real-time, offline support)?</example>
+      </technique>
+    </category>
+
+    <category name="structured_frameworks">
+      <description>Systematic approaches to organize brainstorming.</description>
+      <technique id="5" name="SCAMPER Method">
+        <description>Go through one letter at a time (Substitute, Combine, Adapt, Modify, Put to another use, Eliminate, Reverse), wait for their ideas before moving to next.</description>
+        <when_to_use>For refining existing features like job cards or notifications.</when_to_use>
+        <example>Substitute: What if we replaced push notifications with in-app banners?</example>
+      </technique>
+      <technique id="6" name="Six Thinking Hats">
+        <description>Present one hat (e.g., white for facts, red for emotions), ask for their thoughts, then move to next hat.</description>
+        <when_to_use>To balance perspectives in planning (e.g., technical vs. user experience).</when_to_use>
+        <example>Wearing the green hat (creativity): What innovative ways to visualize power outages?</example>
+      </technique>
+      <technique id="7" name="Mind Mapping">
+        <description>Start with central concept, ask them to suggest branches.</description>
+        <when_to_use>For mapping out app features or user flows.</when_to_use>
+        <example>Central: Crew Management. Branches: Matching, Messaging, Tailboards—what sub-branches?</example>
+      </technique>
+    </category>
+
+    <category name="collaborative_techniques">
+      <description>Methods to build ideas together interactively.</description>
+      <technique id="8" name="Yes, And... Building">
+        <description>They give idea, you "yes and" it, they "yes and" back—alternate.</description>
+        <when_to_use>For live refinement during conversations.</when_to_use>
+        <example>User: Add weather integration. You: Yes, and tie it to job risk assessments.</example>
+      </technique>
+      <technique id="9" name="Brainwriting/Round Robin">
+        <description>They suggest idea, you build on it, ask them to build on yours.</description>
+        <when_to_use>To alternate contributions in back-and-forth ideation.</when_to_use>
+        <example>Your build: Offline mode for crews. User builds next.</example>
+      </technique>
+      <technique id="10" name="Random Stimulation">
+        <description>Give one random prompt/word, ask them to make connections.</description>
+        <when_to_use>To spark creativity when stuck on UI/UX ideas.</when_to_use>
+        <example>Random word: "Circuit." How does it connect to job matching?</example>
+      </technique>
+    </category>
+
+    <category name="deep_exploration">
+      <description>Tools for probing underlying issues and assumptions.</description>
+      <technique id="11" name="Five Whys">
+        <description>Ask "why" and wait for their answer before asking next "why."</description>
+        <when_to_use>For root cause analysis in troubleshooting potential risks.</when_to_use>
+        <example>Why do notifications fail offline? Why isn't data syncing? (Continue to root.)</example>
+      </technique>
+      <technique id="12" name="Morphological Analysis">
+        <description>Ask them to list parameters first, then explore combinations together.</description>
+        <when_to_use>For generating feature variations (e.g., notification types).</when_to_use>
+        <example>Parameters: Channel (push/email), Trigger (job match/weather), Content (text/image).</example>
+      </technique>
+      <technique id="13" name="Provocation Technique (PO)">
+        <description>Give one provocative statement, ask them to extract useful ideas.</description>
+        <when_to_use>To challenge status quo in architecture planning.</when_to_use>
+        <example>PO: "Crews don't need real-time updates." What useful ideas emerge?</example>
+      </technique>
+    </category>
+
+    <category name="advanced_techniques">
+      <description>Sophisticated methods for complex software ideation.</description>
+      <technique id="14" name="Forced Relationships">
+        <description>Connect two unrelated concepts and ask them to find the bridge.</description>
+        <when_to_use>For innovative integrations (e.g., weather + job safety).</when_to_use>
+        <example>Connect "Transformer Training" to "Crew Scheduling"—what bridges?</example>
+      </technique>
+      <technique id="15" name="Assumption Reversal">
+        <description>Challenge their core assumptions and ask them to build from there.</description>
+        <when_to_use>To validate feasibility assumptions.</when_to_use>
+        <example>Assumption: Users always online. Reverse: Always offline—what changes?</example>
+      </technique>
+      <technique id="16" name="Role Playing">
+        <description>Ask them to brainstorm from different stakeholder perspectives.</description>
+        <when_to_use>For user-centric design in app features.</when_to_use>
+        <example>As a lineman: How would you want job matches presented?</example>
+      </technique>
+      <technique id="17" name="Time Shifting">
+        <description>"How would you solve this in 1995? 2030?"</description>
+        <when_to_use>To explore evolution of ideas like scalability.</when_to_use>
+        <example>In 2030, how might AR integrate with field service apps?</example>
+      </technique>
+      <technique id="18" name="Resource Constraints">
+        <description>"What if you had only $10 and 1 hour?"</description>
+        <when_to_use>For prioritizing in MVP planning.</when_to_use>
+        <example>Build core crew feature with minimal resources—what's essential?</example>
+      </technique>
+      <technique id="19" name="Metaphor Mapping">
+        <description>Use extended metaphors to explore solutions.</description>
+        <when_to_use>For visualizing complex back-end flows.</when_to_use>
+        <example>Job matching as an electrical grid: Nodes (jobs/crews), connections (matches).</example>
+      </technique>
+      <technique id="20" name="Question Storming">
+        <description>Generate questions instead of answers first.</description>
+        <when_to_use>Early in ideation to clarify needs.</when_to_use>
+        <example>Questions about notifications: Who receives? When? How to handle failures?</example>
+      </technique>
+    </category>
+  </categories>
+
+  <usage_guidelines>
+    <guideline priority="high">
+      <rule>Integrate techniques naturally into responses; don't list all at once.</rule>
+      <rationale>Keeps collaboration engaging and focused.</rationale>
+    </guideline>
+    <guideline priority="medium">
+      <rule>Adapt techniques to software context (e.g., front-end UX, back-end security).</rule>
+      <rationale>Ensures relevance to app building and feasibility.</rationale>
+    </guideline>
+    <guideline priority="low">
+      <rule>Track which techniques were used in a session for variety in follow-ups.</rule>
+      <rationale>Prevents repetition and builds deeper exploration.</rationale>
+    </guideline>
+  </usage_guidelines>
+</brainstorming_techniques>]]>

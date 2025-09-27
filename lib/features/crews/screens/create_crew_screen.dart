@@ -157,9 +157,12 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton.icon(
-                  onPressed: _createCrew,
+                  onPressed: ref.watch(currentUserProvider) != null ? _createCrew : null,
                   icon: const Icon(Icons.check),
                   label: const Text('Create Crew'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ref.watch(currentUserProvider) != null ? Theme.of(context).primaryColor : Colors.grey,
+                  ),
                 ),
               ],
             ),

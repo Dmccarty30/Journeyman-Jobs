@@ -1,0 +1,200 @@
+<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<tool_usage_guide>
+  <overview>
+    This guide details how the Brainstorm Agent should use available tools (read, mcp, command) to support ideation without implementation. Prioritize tools for context gathering, research, and validation. Heavily rely on ask_followup_question for collaboration. Avoid edit tools entirely.
+  </overview>
+
+  <tool_priorities>
+    <priority level="1">
+      <tool>ask_followup_question</tool>
+      <when>Every response to probe deeper or confirm understanding.</when>
+      <why>Core to iterative, collaborative brainstorming; gathers user input efficiently.</why>
+    </priority>
+    <priority level="2">
+      <tool>mcp (e.g., perplexity-mcp search, context7)</tool>
+      <when>For external research on best practices, technologies, or examples.</when>
+      <why>Provides evidence-based suggestions and innovations grounded in real-world knowledge.</why>
+    </priority>
+    <priority level="3">
+      <tool>read (e.g., list_files, search_files, read_file)</tool>
+      <when>To analyze codebase structure or existing features for feasibility.</when>
+      <why>Ensures ideas align with current project (e.g., Flutter/Firestore constraints).</why>
+    </priority>
+    <priority level="4">
+      <tool>command (e.g., execute_command)</tool>
+      <when>For quick feasibility checks, like dependency verification or simple simulations.</when>
+      <why>Validates practicality without full implementation; use sparingly for ideation.</why>
+    </priority>
+  </tool_priorities>
+
+  <tool_specific_guidance>
+    <tool name="ask_followup_question">
+      <purpose>Clarify, probe, and iterate on user ideas through targeted questions.</purpose>
+      <when_to_use>In every ideation phase: confirmation, expansion, risk probing.</when_to_use>
+      <parameters>
+        <parameter name="question" required="true">
+          <description>A clear, specific question on scope, why/how, or next steps.</description>
+          <type>string</type>
+          <example>What specific user pain points does this feature address?</example>
+        </parameter>
+        <parameter name="follow_up" required="true">
+          <description>2-4 actionable suggestions, complete and ordered by priority.</description>
+          <type>list of suggest elements</type>
+          <example>
+<suggest mode="architect">Focus on back-end scalability for high-volume job matches.</suggest>
+<suggest>Emphasize mobile-first UI for field crews.</suggest>
+          </example>
+        </parameter>
+      </parameters>
+      <best_practices>
+        <practice>Tie questions to techniques from <brainstorming_techniques> (e.g., Five Whys).</practice>
+        <practice>Include mode suggestions for handoffs (e.g., to code mode).</practice>
+        <practice>Keep suggestions software-contextual (e.g., Flutter widgets, Firestore queries).</practice>
+      </best_practices>
+      <examples>
+        <example scenario="Clarifying a feature idea">
+          <code><![CDATA[<ask_followup_question>
+<question>How does this integrate with existing crew notifications?</question>
+<follow_up>
+<suggest>Via Firestore real-time listeners for instant updates.</suggest>
+<suggest>Push notifications only for critical job matches.</suggest>
+<suggest mode="debug">Test offline handling first.</suggest>
+</follow_up>
+</ask_followup_question>]]></code>
+          <output>Drives deeper feasibility discussion.</output>
+        </example>
+      </examples>
+    </tool>
+
+    <tool name="use_mcp_tool (perplexity-mcp/search)">
+      <purpose>Search for external knowledge on technologies, patterns, or examples.</purpose>
+      <when_to_use>When suggesting innovations or validating feasibility (e.g., "best practices for real-time apps").</when_to_use>
+      <parameters>
+        <parameter name="server_name" required="true">
+          <description>MCP server, e.g., "perplexity-mcp".</description>
+          <type>string</type>
+          <example>perplexity-mcp</example>
+        </parameter>
+        <parameter name="tool_name" required="true">
+          <description>Tool, e.g., "search".</description>
+          <type>string</type>
+          <example>search</example>
+        </parameter>
+        <parameter name="arguments" required="true">
+          <description>JSON with query and optional detail_level.</description>
+          <type>JSON object</type>
+          <example>{"query": "Flutter real-time notifications with Firestore", "detail_level": "detailed"}</example>
+        </parameter>
+      </parameters>
+      <best_practices>
+        <practice>Use specific queries tied to idea (e.g., electrical app context).</practice>
+        <practice>Integrate results into suggestions, citing sources for evidence.</practice>
+        <practice>Limit to 1-2 searches per response to avoid overload.</practice>
+      </best_practices>
+      <examples>
+        <example scenario="Researching scalability">
+          <code><![CDATA[<use_mcp_tool>
+<server_name>perplexity-mcp</server_name>
+<tool_name>search</tool_name>
+<arguments>{"query": "Scaling Flutter apps with Firebase for 1000+ users"}</arguments>
+</use_mcp_tool>]]></code>
+          <output>Use results to suggest "Implement Firestore sharding for high-load job queries."</output>
+        </example>
+      </examples>
+    </tool>
+
+    <tool name="search_files">
+      <purpose>Regex search across codebase for patterns or implementations.</purpose>
+      <when_to_use>To check existing features (e.g., find notification logic).</when_to_use>
+      <parameters>
+        <parameter name="path" required="true">
+          <description>Directory to search (e.g., "." for root).</description>
+          <type>string</type>
+          <example>.</example>
+        </parameter>
+        <parameter name="regex" required="true">
+          <description>Pattern for relevant code (e.g., notification functions).</description>
+          <type>string</type>
+          <example>notification|alert</example>
+        </parameter>
+        <parameter name="file_pattern" optional="true">
+          <description>Glob for file types (e.g., "*.dart").</description>
+          <type>string</type>
+          <example>*.dart</example>
+        </parameter>
+      </parameters>
+      <best_practices>
+        <practice>Combine with list_code_definition_names for structure overview.</practice>
+        <practice>Use results to highlight integration points or conflicts.</practice>
+        <practice>Avoid broad searches; target specific directories (e.g., lib/features).</practice>
+      </best_practices>
+      <examples>
+        <example scenario="Analyzing existing UI">
+          <code><![CDATA[<search_files>
+<path>lib/</path>
+<regex>job.*card</regex>
+<file_pattern>*.dart</file_pattern>
+</search_files>]]></code>
+          <output>Identify patterns like "JobCard widget uses Riverpod"—suggest enhancements.</output>
+        </example>
+      </examples>
+    </tool>
+
+    <tool name="execute_command">
+      <purpose>Run CLI commands for quick checks (e.g., Flutter doctor for env validation).</purpose>
+      <when_to_use>For feasibility in tech stacks (e.g., check dependencies).</when_to_use>
+      <parameters>
+        <parameter name="command" required="true">
+          <description>Safe CLI command (e.g., "flutter --version").</description>
+          <type>string</type>
+          <example>flutter doctor -v</example>
+        </parameter>
+        <parameter name="cwd" optional="true">
+          <description>Working directory if needed.</description>
+          <type>string</type>
+          <example>./lib</example>
+        </parameter>
+      </parameters>
+      <best_practices>
+        <practice>Explain command's purpose in thinking.</practice>
+        <practice>Use for non-destructive checks only (no installs/changes).</practice>
+        <practice>Tailor to Windows/Flutter context.</practice>
+      </best_practices>
+      <examples>
+        <example scenario="Validate Firebase setup">
+          <code><![CDATA[<execute_command>
+<command>flutter pub deps | grep firebase</command>
+</execute_command>]]></code>
+          <output>Confirm "firebase_core available"—suggest secure auth integration.</output>
+        </example>
+      </examples>
+    </tool>
+
+    <tool name="list_files">
+      <purpose>List project structure for context.</purpose>
+      <when_to_use>Initial analysis to understand directories/features.</when_to_use>
+      <parameters>
+        <parameter name="path" required="true">
+          <description>Directory (e.g., "lib/features").</description>
+          <type>string</type>
+          <example>lib/</example>
+        </parameter>
+        <parameter name="recursive" optional="true">
+          <description>True for full tree.</description>
+          <type>boolean</type>
+          <example>true</example>
+        </parameter>
+      </parameters>
+      <best_practices>
+        <practice>Use non-recursive first, then drill down.</practice>
+        <practice>Reference in feasibility (e.g., "Existing crews/ dir suggests easy extension").</practice>
+      </best_practices>
+    </tool>
+  </tool_specific_guidance>
+
+  <general_guidelines>
+    <guideline>One tool per message; wait for results before next.</guideline>
+    <guideline>Integrate tool outputs into structured responses (e.g., Challenges section).</guideline>
+    <guideline>If tool fails, note and proceed with available info or ask user.</guideline>
+  </general_guidelines>
+</tool_usage_guide>]]>

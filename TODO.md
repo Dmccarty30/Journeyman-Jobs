@@ -7,6 +7,10 @@
 - I need some sort of wrapper to apply to the text and format of what is shown on the job cards. Not all jobs in firestore are the exact same format. Fore example some classifications are "Journeyman-Lineman" some are "journeyman_lineman", etc. I need for everything to be consistent using `Title Case`.
 - Search the \lib directory recursively for any instance of a toast widget or snack bar and ensure that they follow these designs `lib\electrical_components\jj_electrical_toast.dart` and `lib\electrical_components\jj_electrical_theme.dart`
 
+## ONBOARDING SCREENS
+
+- Step one of three `setup profile screen` make the city `text field` its own row. and move the state `dropdown` and zipcode `text field` below the city `text field` because there isnt enought room to see the entire user input so they can see if they may have made an typo or error.
+
 ## HOME SCREEN
 
 - *Quick Actions*
