@@ -1,0 +1,124 @@
+# **Project Brief: Jouryman Jobs - Crews Feature**
+
+## **1. Executive Summary**
+
+The "Crews" feature is a new social and professional enhancement for the Jouryman Jobs application. It provides a digital service for traveling groups of IBEW members to collaboratively discover and discuss job opportunities that match their shared preferences. The primary problem it solves is the current inefficient, manual, and unreliable "word-of-mouth" method of coordinating group job searches. By creating a centralized hub for communication and job matching, the "Crews" feature aims to increase the speed and success rate at which these groups find employment, while empowering each member to apply for jobs individually.
+
+### **2. Problem Statement**
+
+Currently, traveling groups of IBEW members lack an efficient, centralized tool for coordinating job searches. The process is manual, fragmented, and unreliable, leading to missed opportunities and significant administrative overhead for each group member.
+
+**Key Pain Points:**
+
+* **Fragmented Information:** Each member must independently monitor various local union job boards, creating redundant effort and a high risk of overlooking relevant postings.
+* **Inefficient Communication:** Job discovery is shared via a "word-of-mouth" system using phone calls and disorganized group chats. This often results in information being lost, delayed, or forgotten.
+* **Sequential Application Process:** When a job is found, each interested member must individually repeat the entire search and application process. This time lag can lead to the job being filled before the entire group can apply.
+* **Coordination Failures:** There is no single source of truth for the group's job-seeking criteria or for tracking who is interested in which opportunity. This makes coordinating a unified effort nearly impossible.
+
+### **3. Proposed Solution**
+
+We propose the "Crews" feature, a dedicated social and professional tool integrated within the Jouryman Jobs application. This feature will provide a centralized hub where groups of traveling workers can form a "Crew," define their collective job preferences, and receive automated notifications about matching opportunities.
+
+**Core Concept:** The solution shifts the job discovery model from a fragmented, individual effort to a streamlined, collaborative one. It is important to note that the feature's role ends at providing information and facilitating the application; it does not manage or interfere with union hiring rules, out-of-work lists, or precedence, which remain the final authority on employment.
+
+**Key Differentiators:**
+
+* **Group-Level Job Matching:** "Crews" actively filters and pushes relevant jobs to the entire group based on a single, Foreman-defined set of preferences.
+* **Integrated Communication Hub:** The feature includes a private, in-app chat for each Crew, keeping all opportunity-related discussions in one place.
+* **Empowerment through Information:** While discovery is collaborative, the final decision to apply remains with the individual. The feature facilitates coordination but never blocks a member from pursuing a job.
+
+### **4. Target Users**
+
+**Primary User Segment: The Traveling IBEW Member**
+
+* **Profile:** Union members (IBEW) who travel for work, often moving from job to job in groups.
+* **Behaviors:** They actively seek jobs with specific criteria and rely heavily on their professional network.
+* **Needs:** A reliable way to share opportunities, a dedicated space to discuss them, and a method to reduce redundant search efforts.
+* **Goals:** To find and secure their next job as quickly and efficiently as possible as a team.
+
+### **5. Goals & Success Metrics**
+
+**Business Objectives:**
+
+* Increase User Engagement
+* Enhance Feature "Stickiness" and Retention
+* Drive User Growth via the invitation system
+
+**User Success Metrics:**
+
+* Time-to-Application Reduction
+* Increased Opportunity Awareness
+* Improved Coordination and less stress
+
+**Key Performance Indicators (KPIs):**
+
+* Number of Crews created
+* Average members per Crew
+* CTR on Crew job notifications
+* New user sign-ups from Crew invitations
+
+### **6. MVP Scope**
+
+**Core Features (Must Have):**
+
+* **Crew Creation:** A user can create a Crew and become the "Foreman."
+* **Member Invitation System:** The Foreman can invite others via link or in-app notification.
+* **Preference Setting:** The Foreman can set and edit Crew job preferences.
+* **Job Matching & Notification:** The system matches jobs and sends push notifications.
+* **Centralized "Tailboard" Hub:** A screen with matched jobs and a private chat.
+* **Crew Switching Mechanism:** A user in multiple Crews can easily switch between them from the Tailboard screen (e.g., via a dropdown menu).
+* **Individual Application:** The "Apply" button uses the existing individual application function.
+
+**Out of Scope for MVP:**
+
+* Detailed member profiles.
+* Advanced Foreman tools.
+* Advanced chat features (polls, threads, reactions).
+* A global "Feed."
+
+### **7. Post-MVP Vision**
+
+**Phase 2 Features:**
+
+* Global "Feed" Tab
+* Enhanced Member Profiles
+* Advanced Foreman Tools
+* **Foreman Role Transfer:** Allow the Foreman to initiate a vote to transfer their role.
+* Advanced Chat Features
+
+**Long-term Vision:** Evolve "Crews" into a reputation-based system, potentially with employer-managed crews and skill-based matching.
+
+### **8. Technical Considerations**
+
+* **Frontend:** Must be built in the existing **Flutter** application, reusing components.
+* **Backend:** Must use the existing **Firebase** platform (Firestore, Cloud Functions, Auth).
+* **Integrations:** Will require an SMS service like **Twilio** for external invites.
+* **Security:** Firestore Security Rules must be carefully designed to handle "Foreman" vs. "member" permissions.
+
+### **9. Constraints & Assumptions**
+
+* **Constraint:** The feature must be built within the existing Flutter/Firebase technical stack.
+* **Assumption:** The existing job matching logic can be extended for group-level matching.
+* **Assumption:** Firebase's infrastructure can scale to handle the real-time chat and notification load.
+
+### **10. Risks & Open Questions**
+
+* **Risk: Low User Adoption.** (Mitigation: Strong in-app onboarding and marketing).
+* **Risk: Notification Overload.** (Mitigation: Consider notification settings post-MVP).
+* **Risk: Scalability Issues.** (Mitigation: Careful architectural review of Firestore queries).
+
+---
+
+### **Next Step: Handoff to the Product Manager**
+
+Our work on the Project Brief is complete. My role as the Business Analyst in this initial phase is now done.
+
+According to the BMad workflow, the next step is to hand this document off to the **Product Manager (John)**. He will use this brief to create the detailed **Product Requirements Document (PRD)**, which will break this feature down into epics and user stories for the development team.
+
+Here is what you should do:
+
+1. **Save this document** in your project as `docs/brief.md`.
+2. Switch to the Product Manager by typing: `*agent pm`
+3. When he introduces himself, tell him: **"Here is the completed Project Brief for the 'Crews' feature. Please use it to create the PRD."**
+
+This will ensure a smooth and clean handoff. I'm here if you have any last-minute questions before you proceed. Otherwise, you're ready for the next phase
