@@ -117,6 +117,33 @@ class MessageService {
     });
   }
 
+  // Get stream of user IDs for direct message conversations
+  Stream<List<String>> getDirectMessageConversationsStream(String currentUserId) {
+    return messagesCollection
+        .where('participants', arrayContains: currentUserId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        final participants = List<String>.from(data['participants'] ?? []);
+        // Return the other participant's ID
+        return participants.firstWhere((id) => id != currentUserId, orElse: () => '');
+      }).where((id) => id.isNotEmpty).toList();
+    });
+  }
+
+  // Get global messages stream
+  Stream<List<Message>> getGlobalMessagesStream() {
+    return _firestore
+        .collection('global_messages')
+        .orderBy('sentAt', descending: true)
+        .limit(100)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => Message.fromFirestore(doc)).toList();
+    });
+  }
+
   // Mark message as read
   Future<void> markAsRead({
     required String messageId,
@@ -385,27 +412,30 @@ class MessageService {
   }
 
   // Create or update conversation metadata
-  Future<void> _updateConversationMetadata({
-    required String conversationId,
+  Future<void> sendGlobalMessage({
     required String senderId,
-    required String recipientId,
-    required Message message,
+    required String content,
+    MessageType type = MessageType.text,
+    List<Attachment>? attachments,
   }) async {
     try {
-      final conversationData = {
-        'participants': [senderId, recipientId],
-        'lastMessage': {
-          'senderId': senderId,
-          'content': message.content,
-          'sentAt': Timestamp.fromDate(message.sentAt),
-          'type': message.type.toString().split('.').last,
-        },
-        'updatedAt': Timestamp.fromDate(DateTime.now()),
-      };
+      final message = Message(
+        id: '', // Will be set by Firestore
+        senderId: senderId,
+        crewId: 'global', // A special ID for global chat
+        content: content,
+        type: type,
+        attachments: attachments,
+        sentAt: DateTime.now(),
+        readBy: {},
+        isEdited: false,
+      );
 
-      await messagesCollection.doc(conversationId).set(conversationData);
+      await _firestore
+          .collection('global_messages')
+          .add(message.toFirestore());
     } catch (e) {
-      print('Error updating conversation metadata: $e');
+      throw Exception('Error sending global message: $e');
     }
   }
 }

@@ -300,7 +300,7 @@ final class UserCrewsStreamProvider extends $FunctionalProvider<
   }
 }
 
-String _$userCrewsStreamHash() => r'45f76110109b34977a0bde860b878521bca0bb90';
+String _$userCrewsStreamHash() => r'a172481e681d40d6e306f0301a13e2ac31bcd131';
 
 /// Current user's crews provider
 
@@ -547,7 +547,7 @@ final class UserRoleInCrewProvider
   }
 }
 
-String _$userRoleInCrewHash() => r'26f7e772187894e865db40329e9cd3b0028d2505';
+String _$userRoleInCrewHash() => r'a73e143d932db2f300825a10ea2d348ba37c098d';
 
 /// Provider to get user's role in a specific crew
 
@@ -741,7 +741,7 @@ final class CrewMembersStreamProvider extends $FunctionalProvider<
   }
 }
 
-String _$crewMembersStreamHash() => r'7896f7dcc34e70f8fdfafa4b6c264514baa05da0';
+String _$crewMembersStreamHash() => r'386af9e5c0bd43488a2d2e55d5448df9f890124c';
 
 /// Provider to get crew members stream
 
@@ -922,7 +922,7 @@ final class CurrentUserCrewMemberProvider
 }
 
 String _$currentUserCrewMemberHash() =>
-    r'0e5b9b7043e03cee0fece697451bf11ba30aa456';
+    r'82e30b9d12a33d0ef1ae75be717ed7456cf4f9a1';
 
 /// Provider to get current user's crew member data
 
@@ -1189,7 +1189,7 @@ final class CrewByIdProvider extends $FunctionalProvider<Crew?, Crew?, Crew?>
   }
 }
 
-String _$crewByIdHash() => r'ea75b962a9d2fbc9091972529f0d8c4c6914e531';
+String _$crewByIdHash() => r'7dfbdb4f0e6292ccf36f0ee068b316295f6de322';
 
 /// Provider to get crew by ID
 

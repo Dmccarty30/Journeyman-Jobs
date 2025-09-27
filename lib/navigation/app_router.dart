@@ -8,9 +8,11 @@ import '../screens/onboarding/welcome_screen.dart';
 import '../screens/onboarding/auth_screen.dart';
 import '../screens/onboarding/onboarding_steps_screen.dart';
 import '../screens/nav_bar_page.dart';
-import '../screens/crews/crews_screen.dart'; // New import for CrewsScreen
-import '../features/crews/screens/create_crew_screen.dart'; // New import for CreateCrewScreen
-import '../features/crews/screens/join_crew_screen.dart'; // New import for JoinCrewScreen
+// import '../screens/crews/crews_screen.dart'; // Deprecated
+import '../screens/crews/tailboard_screen.dart'; // New import for TailboardScreen
+import '../features/crews/screens/create_crew_screen.dart'; // Import for CreateCrewScreen
+import '../features/crews/screens/join_crew_screen.dart'; // Import for JoinCrewScreen
+import '../features/crews/screens/crew_onboarding_screen.dart'; // Import for CrewOnboardingScreen
 
 // Placeholder screens for Phase 2
 import '../screens/home/home_screen.dart';
@@ -44,9 +46,10 @@ class AppRouter {
   static const String jobs = '/jobs';
   static const String storm = '/storm';
   static const String locals = '/locals';
-  static const String crews = '/crews'; // New route for Crews
-  static const String createCrew = '/crews/create'; // New route for Create Crew
-  static const String joinCrew = '/crews/join'; // New route for Join Crew
+  static const String crews = '/crews'; // Route for TailboardScreen
+  static const String createCrew = '/crews/create'; // Kept for onboarding
+  static const String joinCrew = '/crews/join'; // Kept for onboarding
+  static const String crewOnboarding = '/crews/onboarding'; // New route for Crew Onboarding
   static const String settings = '/settings';
   static const String profile = '/profile';
   static const String help = '/help';
@@ -123,7 +126,7 @@ class AppRouter {
           GoRoute(
             path: crews,
             name: 'crews',
-            builder: (context, state) => const CrewsScreen(),
+            builder: (context, state) => const TailboardScreen(),
           ),
           GoRoute(
             path: createCrew,
@@ -134,6 +137,11 @@ class AppRouter {
             path: joinCrew,
             name: 'join-crew',
             builder: (context, state) => const JoinCrewScreen(),
+          ),
+          GoRoute(
+            path: crewOnboarding,
+            name: 'crew-onboarding',
+            builder: (context, state) => const CrewOnboardingScreen(),
           ),
           GoRoute(
             path: settings,

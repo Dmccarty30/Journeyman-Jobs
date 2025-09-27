@@ -105,7 +105,7 @@ class ActivityCard extends ConsumerWidget {
       case ActivityType.milestoneReached:
         return AppTheme.secondaryCopper;
     }
-    return AppTheme.mediumGray; // Default fallback
+// Default fallback
   }
 
   IconData _getActivityIcon() {
@@ -123,7 +123,7 @@ class ActivityCard extends ConsumerWidget {
       case ActivityType.milestoneReached:
         return Icons.celebration;
     }
-    return Icons.info_outline; // Default fallback
+// Default fallback
   }
 
   String _getActivityText() {
@@ -145,7 +145,6 @@ class ActivityCard extends ConsumerWidget {
       case ActivityType.milestoneReached:
         return 'Crew reached $milestone milestone';
     }
-    return 'Unknown activity';
   }
 
   String _formatTimeAgo(DateTime timestamp) {

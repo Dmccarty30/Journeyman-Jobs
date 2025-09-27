@@ -1,34 +1,38 @@
 # TODO
 
-## JJElectricalComponents
+## APP WIDE CHANGES
 
-- ALL backgrounds are to be the 'high' density electrical curcuit back ground
+- ALL backgrounds are to be the 'high' density electrical circuit back ground exactly as the jobs screen background is.
+
+- I need some sort of wrapper to apply to the text and format of what is shown on the job cards. Not all jobs in firestore are the exact same format. Fore example some classifications are "Journeyman-Lineman" some are "journeyman_lineman", etc. I need for everything to be consistent using `Title Case`.
+- Search the \lib directory recursively for any instance of a toast widget or snack bar and ensure that they follow these designs `lib\electrical_components\jj_electrical_toast.dart` and `lib\electrical_components\jj_electrical_theme.dart`
 
 ## HOME SCREEN
 
-- REMOVE the `electrical demo FAB`
-
 - *Quick Actions*
-
-- ADD copper border around the `electrical calc` and `condensed_job_card`
 
 - *Suggested Jobs*
 
-- REMOVE all the colored font in the `condensed_job_card`
-- The DialogPopup for the job details must follow the theme of @lib\design_system\popup_theme.dart. Just as the dialogpopup for the locals card looks
+- When the user presses on a job card i need for the dialog popup to be formatted exactly like lib\widgets\dialogs\job_details_dialog.dart. There must be consistancy throughout the entire app.
 
 ## JOB SCREEN
 
-- MODIFY the job cards to fill the screen more just like the condensed job card on the home screen.
-- MODIFY  the `app bar` to match the same size and consistancy of the  `app bar` on the home sceen
-- The DialogPopup for the job details must follow the theme of @lib\design_system\popup_theme.dart. Just as the dialogpopup for the locals card looks
+- REMOVE the search and filter `FAB` buttons
 
 ## STORM SCREEN
 
-## CREWS SCREEN
+- REMOVE the `Active Storm Event` and the `Current Storm Activity` sections.
+- CREATE a new card called `contractor_card`. The card will have the exact same format as lib\widgets\rich_text_job_card.dart. Except the data will be pulled from a new fire store collection that has yet been created however the data from docs\storm_roster.json Will be the data written to this new collection so you can go ahead and format the span one Of each rich rich text according to the Storm roster. json file and Populate the rest of the card with dummy data. Also create this card as an independent component not directly written into the Storm screen
+- ADD `Contractors` section with a list view for `contractor cards`
 
-- When you create a new crew, once you hit the `create crew` button, this needs to create a new document in the 'crews' collection. The documents UID will be the name the user input+a numerical counter to keep track of how many crews have been created+timestamp so to keep track of how long and when the crew was created.
-- When create a crew Navigate back to the original creator crew or join a crew screen but whenever I navigate elsewhere in the app and then come back to the create crews screen, It's like the screen flickers back and forth between the creator crew and what I think is the tail board screen i'm not sure but another screen so it makes me think that conditional formatting or conditional builder is involved. So I need for you to investigate why this is and how to correct it
+## TAILBOARD SCREEN
+
+- CREATE a new tab to the left of the `Feed` tab called `Home` tab. This As well has the ability to send and read messages to any other user regardless of whether they are affiliated with a crew or not. This is like a general message board for anyone. I would imagine this entire feature would be something similar to how Facebook operates or any other popular messaging app where an individual can host anything and other people can read it as well as They can be affiliated with a crew and that crew is a private group where only the members of that crew can interact
+
+## CREATE CREWS SCREEN
+
+- When i tried to create a new crew, when i pressed the `Create Crew Button` an error `snack bar` appeared stating that i was not "Authenticated" I need For you to analyze this authentication function. Because if I am signed in and authenticated through fire store during login what other authentication process must participate in to create a new crew I don't understand.
+- Also that snack bar does not follow the consistent At for these widgets. All of the snack bars and all of the Toasts widgets must follow the electrical component widgets from the lib\electrical_components\jj_electrical_theme.dart and lib\electrical_components\jj_electrical_toast.dart files
 
 ## LOCALS SCREEN
 

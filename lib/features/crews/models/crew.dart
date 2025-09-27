@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'crew_location.dart';
 import 'crew_preferences.dart';
 import 'crew_stats.dart';
-import '../services/crew_service.dart'; // Import MemberRole from here
 import 'package:journeyman_jobs/domain/enums/member_role.dart';
 
 class Crew {

@@ -708,7 +708,7 @@ class CrewService {
         final updatedCrew = existingCrews[crewIndex].copyWith(
           memberIds: updatedMemberIds,
           roles: updatedRoles,
-          memberCount: (existingCrews[crewIndex].memberCount ?? 0) + 1,
+          memberCount: (existingCrews[crewIndex].memberCount) + 1,
         );
         existingCrews[crewIndex] = updatedCrew;
         await _offlineDataService.storeCrewsOffline(existingCrews);
@@ -856,7 +856,6 @@ class CrewService {
           'inviterId': inviterId,
         });
 
-        final userId = data['inviteeId'] as String;
         // For offline, we might also need to remove the invitation from the user's local cache
         // This is a simplification for now.
         return;
@@ -1010,7 +1009,6 @@ class CrewService {
       // Background aggregation
       _scheduleBackgroundAggregation(crewId);
     } catch (e) {
-      print('Error updating crew stats: $e');
       throw Exception('Failed to update crew statistics: $e');
     }
   }
@@ -1139,7 +1137,6 @@ class CrewService {
   }
 
   void _scheduleBackgroundAggregation(String crewId) {
-    print('Background aggregation scheduled for crew: $crewId');
     // TODO: Implement Cloud Function trigger
   }
 
@@ -1164,7 +1161,6 @@ class CrewService {
 
       return true;
     } catch (e) {
-      print('Stats validation error: $e');
       return false;
     }
   }
@@ -1281,7 +1277,6 @@ class CrewService {
       rethrow; // Rethrow custom exceptions
     } catch (e) {
       // Log unexpected errors but return false for existence check
-      print('Error checking if user is in crew: $e');
       return false;
     }
   }
@@ -1294,7 +1289,6 @@ class CrewService {
       rethrow; // Rethrow custom exceptions
     } catch (e) {
       // Log unexpected errors but return null for role
-      print('Error getting user role in crew: $e');
       return null;
     }
   }
@@ -1312,11 +1306,9 @@ class CrewService {
       return RolePermissions.hasPermission(role, permission);
     } on AppException {
       rethrow; // Rethrow custom exceptions
-    } on FirebaseException catch (e) {
-      print('Permission check error: $e');
+    } on FirebaseException {
       return false;
     } catch (e) {
-      print('Permission check error: $e');
       return false;
     }
   }

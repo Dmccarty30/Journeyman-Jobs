@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart'; // Add for context.go
 
 import '../../../design_system/app_theme.dart';
+import '../../../navigation/app_router.dart'; // Add for AppRouter
 
 class JoinCrewScreen extends ConsumerStatefulWidget {
   const JoinCrewScreen({super.key});
@@ -38,7 +40,7 @@ class JoinCrewScreenState extends ConsumerState<JoinCrewScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          Navigator.of(context).pop(); // Go back to crews screen
+          context.go(AppRouter.crews); // Navigate to TailboardScreen
         }
       } catch (e) {
         if (mounted) {

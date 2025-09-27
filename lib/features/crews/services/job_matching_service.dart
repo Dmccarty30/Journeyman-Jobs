@@ -119,12 +119,10 @@ class JobMatchingService {
     
     // Crew performance history (10%)
     final stats = crew.stats;
-    if (stats != null) {
-      // Score based on application success rate
-      final successRate = stats.successfulPlacements / (stats.totalApplications > 0 ? stats.totalApplications : 1);
-      score += successRate * 10.0;
-    }
-    
+    // Score based on application success rate
+    final successRate = stats.successfulPlacements / (stats.totalApplications > 0 ? stats.totalApplications : 1);
+    score += successRate * 10.0;
+      
     return score;
   }
   

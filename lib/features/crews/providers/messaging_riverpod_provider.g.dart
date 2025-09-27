@@ -441,6 +441,182 @@ final class DirectMessagesFamily extends $Family
   String toString() => r'directMessagesProvider';
 }
 
+/// Stream of user IDs for direct message conversations
+
+@ProviderFor(directMessageConversationsStream)
+const directMessageConversationsStreamProvider =
+    DirectMessageConversationsStreamProvider._();
+
+/// Stream of user IDs for direct message conversations
+
+final class DirectMessageConversationsStreamProvider
+    extends $FunctionalProvider<AsyncValue<List<String>>, List<String>,
+        Stream<List<String>>>
+    with $FutureModifier<List<String>>, $StreamProvider<List<String>> {
+  /// Stream of user IDs for direct message conversations
+  const DirectMessageConversationsStreamProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'directMessageConversationsStreamProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$directMessageConversationsStreamHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<List<String>> $createElement(
+          $ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<String>> create(Ref ref) {
+    return directMessageConversationsStream(ref);
+  }
+}
+
+String _$directMessageConversationsStreamHash() =>
+    r'378ae6b2666422fcc819de29f1127758aacccd69';
+
+/// List of user IDs for direct message conversations
+
+@ProviderFor(directMessageConversations)
+const directMessageConversationsProvider =
+    DirectMessageConversationsProvider._();
+
+/// List of user IDs for direct message conversations
+
+final class DirectMessageConversationsProvider
+    extends $FunctionalProvider<List<String>, List<String>, List<String>>
+    with $Provider<List<String>> {
+  /// List of user IDs for direct message conversations
+  const DirectMessageConversationsProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'directMessageConversationsProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$directMessageConversationsHash();
+
+  @$internal
+  @override
+  $ProviderElement<List<String>> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  List<String> create(Ref ref) {
+    return directMessageConversations(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<String> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<String>>(value),
+    );
+  }
+}
+
+String _$directMessageConversationsHash() =>
+    r'1ac61118a08b4f2a50db610612be78cd4f4f56f1';
+
+/// Stream of global messages
+
+@ProviderFor(globalMessagesStream)
+const globalMessagesStreamProvider = GlobalMessagesStreamProvider._();
+
+/// Stream of global messages
+
+final class GlobalMessagesStreamProvider extends $FunctionalProvider<
+        AsyncValue<List<Message>>, List<Message>, Stream<List<Message>>>
+    with $FutureModifier<List<Message>>, $StreamProvider<List<Message>> {
+  /// Stream of global messages
+  const GlobalMessagesStreamProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'globalMessagesStreamProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$globalMessagesStreamHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<List<Message>> $createElement(
+          $ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Message>> create(Ref ref) {
+    return globalMessagesStream(ref);
+  }
+}
+
+String _$globalMessagesStreamHash() =>
+    r'f0d9de586d9510fee818c92728a8bad15f9adf06';
+
+/// Global messages
+
+@ProviderFor(globalMessages)
+const globalMessagesProvider = GlobalMessagesProvider._();
+
+/// Global messages
+
+final class GlobalMessagesProvider
+    extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
+    with $Provider<List<Message>> {
+  /// Global messages
+  const GlobalMessagesProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'globalMessagesProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$globalMessagesHash();
+
+  @$internal
+  @override
+  $ProviderElement<List<Message>> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  List<Message> create(Ref ref) {
+    return globalMessages(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<Message> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<Message>>(value),
+    );
+  }
+}
+
+String _$globalMessagesHash() => r'ab50198c26eb20f5ec83ad064dc16dfca4c80d77';
+
 /// Provider to get unread crew messages count for current user
 
 @ProviderFor(unreadCrewMessagesCount)

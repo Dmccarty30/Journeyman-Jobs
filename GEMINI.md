@@ -60,5 +60,6 @@ Journeyman Jobs is a Flutter mobile application for IBEW electrical professional
 ## 📝 Task Management
 
 * **Update `TASK.md`**: Reflect progress, completion, and any new discoveries.
+* **Troubleshoot**: After completing any task run "Flutter Analyze" on the files that you have modified to identify any errors and correct them BEFORE marking that tasks as complete.
 
 This `GEMINI.md` will serve as my primary reference for understanding and contributing to the Journeyman Jobs project.

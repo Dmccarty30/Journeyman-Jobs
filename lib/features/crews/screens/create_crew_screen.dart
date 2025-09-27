@@ -2,7 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
-import 'package:riverpod/src/framework.dart';
+import 'package:go_router/go_router.dart';
+import '../../../navigation/app_router.dart';
 
 import '../models/crew_preferences.dart';
 import '../providers/crews_riverpod_provider.dart';
@@ -34,7 +35,7 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
   Future<void> _createCrew() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final crewService = ref.read(crewServiceProvider as ProviderListenable);
+        final crewService = ref.read(crewServiceProvider(jobMatchingServiceProvider(jobSharingServiceProvider), jobSharingServiceProvider));
         final currentUser = ref.read(currentUserProvider);
 
         if (currentUser == null) {
@@ -51,8 +52,9 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
           ),
         );
 
-        // Navigate back to crews overview
-        Navigator.of(context).pop();
+        if (context.mounted) {
+          context.go(AppRouter.crews); // Navigates to TailboardScreen
+        }
 
       } catch (e) {
         // Show error snackbar

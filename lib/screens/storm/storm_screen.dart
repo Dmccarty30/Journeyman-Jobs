@@ -7,6 +7,7 @@ import '../../services/location_service.dart';
 import '../../services/power_outage_service.dart';
 import '../../widgets/storm/power_outage_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../electrical_components/circuit_board_background.dart'; // Added import for electrical background
 
 // import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
@@ -195,9 +196,9 @@ class _StormScreenState extends State<StormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.offWhite,
+      backgroundColor: Colors.transparent, // Transparent for circuit background
       appBar: AppBar(
-        backgroundColor: AppTheme.warningYellow,
+        backgroundColor: AppTheme.primaryNavy, // Blue app bar per theme
         elevation: 0,
         title: Row(
           children: [
@@ -233,257 +234,218 @@ class _StormScreenState extends State<StormScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppTheme.spacingMd),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Emergency alert banner
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppTheme.warningYellow, AppTheme.errorRed],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                boxShadow: [AppTheme.shadowMd],
-              ),
+      body: ElectricalCircuitBackground(
+        child: Padding(
+          padding: const EdgeInsets.all(AppTheme.spacingMd),
+          child: Container(
+            decoration: BoxDecoration(
+              // Removed copper border from primary container
+              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+            ),
+            child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Emergency alert banner
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AppTheme.spacingLg),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [AppTheme.warningYellow, AppTheme.errorRed],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                      boxShadow: [AppTheme.shadowMd],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.warning,
+                              color: AppTheme.white,
+                              size: AppTheme.iconLg,
+                            ),
+                            const SizedBox(width: AppTheme.spacingSm),
+                            Expanded(
+                              child: Text(
+                                'EMERGENCY WORK AVAILABLE',
+                                style: AppTheme.titleLarge.copyWith(
+                                  color: AppTheme.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppTheme.spacingSm),
+                        Text(
+                          'Storm restoration work is currently available. These are high-priority assignments with enhanced compensation and rapid deployment.',
+                          style: AppTheme.bodyLarge.copyWith(
+                            color: AppTheme.white,
+                          ),
+                        ),
+                        const SizedBox(height: AppTheme.spacingMd),
+                        JJPrimaryButton(
+                          text: 'View Live Weather Radar',
+                          icon: FontAwesomeIcons.cloudBolt,
+                          onPressed: () => _showWeatherRadar(context),
+                          isFullWidth: false,
+                          variant: JJButtonVariant.primary,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: AppTheme.spacingLg),
+
+                  // Storm work stats
+                  Text(
+                    'Current Storm Activity',
+                    style: AppTheme.headlineSmall.copyWith(
+                      color: AppTheme.primaryNavy,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+                  
                   Row(
                     children: [
-                      const Icon(
-                        Icons.warning,
-                        color: AppTheme.white,
-                        size: AppTheme.iconLg,
-                      ),
-                      const SizedBox(width: AppTheme.spacingSm),
                       Expanded(
-                        child: Text(
-                          'EMERGENCY WORK AVAILABLE',
-                          style: AppTheme.titleLarge.copyWith(
+                        child: _buildStormStatCard(
+                          'Active Storms',
+                          '${_activeStorms.length}',
+                          Icons.storm_outlined,
+                          AppTheme.errorRed,
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: _buildStormStatCard(
+                          'Open Positions',
+                          '${_activeStorms.fold(0, (sum, storm) => sum + storm.openPositions)}',
+                          Icons.flash_on_outlined,
+                          AppTheme.warningYellow,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppTheme.spacingMd),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildStormStatCard(
+                          'Avg Pay Rate',
+                          '\$65/hr',
+                          Icons.attach_money,
+                          AppTheme.successGreen,
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: _buildStormStatCard(
+                          'Avg Per Diem',
+                          '\$110/day',
+                          Icons.hotel,
+                          AppTheme.accentCopper,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppTheme.spacingLg),
+
+                  // Power outage section
+                  if (_powerOutages.isNotEmpty) ...[
+                    PowerOutageSummary(outages: _powerOutages),
+                    const SizedBox(height: AppTheme.spacingLg),
+                    
+                    Text(
+                      'Major Power Outages by State',
+                      style: AppTheme.headlineSmall.copyWith(
+                        color: AppTheme.primaryNavy,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingMd),
+                    
+                    if (_isLoadingOutages)
+                      Center(
+                        child: CircularProgressIndicator(
+                          color: AppTheme.accentCopper,
+                        ),
+                      )
+                    else
+                      ..._powerOutages.map((outage) => PowerOutageCard(
+                        outageData: outage,
+                        onTap: () => _showOutageDetails(context, outage),
+                      )),
+                    
+                    const SizedBox(height: AppTheme.spacingLg),
+                  ],
+
+                  // Region filter
+                  Row(
+                    children: [
+                      Text(
+                        'Filter by Region:',
+                        style: AppTheme.bodyMedium.copyWith(
+                          color: AppTheme.textSecondary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                          decoration: BoxDecoration(
                             color: AppTheme.white,
-                            fontWeight: FontWeight.bold,
+                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                            border: Border.all(color: AppTheme.lightGray),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: _selectedRegion,
+                              isExpanded: true,
+                              items: _regions.map((region) {
+                                return DropdownMenuItem<String>(
+                                  value: region,
+                                  child: Text(region),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    _selectedRegion = value;
+                                  });
+                                }
+                              },
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppTheme.spacingSm),
+                  const SizedBox(height: AppTheme.spacingMd),
+
                   Text(
-                    'Storm restoration work is currently available. These are high-priority assignments with enhanced compensation and rapid deployment.',
-                    style: AppTheme.bodyLarge.copyWith(
-                      color: AppTheme.white,
+                    'Active Storm Events',
+                    style: AppTheme.headlineSmall.copyWith(
+                      color: AppTheme.primaryNavy,
                     ),
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
-                  JJPrimaryButton(
-                    text: 'View Live Weather Radar',
-                    icon: FontAwesomeIcons.cloudBolt,
-                    onPressed: () => _showWeatherRadar(context),
-                    isFullWidth: false,
-                    variant: JJButtonVariant.primary,
-                  ),
+
+                  ..._filteredStorms.map((storm) => StormEventCard(storm: storm)),
+
+                  const SizedBox(height: AppTheme.spacingLg),
                 ],
               ),
             ),
-
-            const SizedBox(height: AppTheme.spacingLg),
-
-            // Storm work stats
-            Text(
-              'Current Storm Activity',
-              style: AppTheme.headlineSmall.copyWith(
-                color: AppTheme.primaryNavy,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingMd),
-            
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStormStatCard(
-                    'Active Storms',
-                    '${_activeStorms.length}',
-                    Icons.storm_outlined,
-                    AppTheme.errorRed,
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: _buildStormStatCard(
-                    'Open Positions',
-                    '${_activeStorms.fold(0, (sum, storm) => sum + storm.openPositions)}',
-                    Icons.flash_on_outlined,
-                    AppTheme.warningYellow,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: AppTheme.spacingMd),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStormStatCard(
-                    'Avg Pay Rate',
-                    '\$65/hr',
-                    Icons.attach_money,
-                    AppTheme.successGreen,
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: _buildStormStatCard(
-                    'Avg Per Diem',
-                    '\$110/day',
-                    Icons.hotel,
-                    AppTheme.accentCopper,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: AppTheme.spacingLg),
-
-            // Power outage section
-            if (_powerOutages.isNotEmpty) ...[
-              PowerOutageSummary(outages: _powerOutages),
-              const SizedBox(height: AppTheme.spacingLg),
-              
-              Text(
-                'Major Power Outages by State',
-                style: AppTheme.headlineSmall.copyWith(
-                  color: AppTheme.primaryNavy,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingMd),
-              
-              if (_isLoadingOutages)
-                Center(
-                  child: CircularProgressIndicator(
-                    color: AppTheme.accentCopper,
-                  ),
-                )
-              else
-                ..._powerOutages.map((outage) => PowerOutageCard(
-                  outageData: outage,
-                  onTap: () => _showOutageDetails(context, outage),
-                )),
-              
-              const SizedBox(height: AppTheme.spacingLg),
-            ],
-
-            // Region filter
-            Row(
-              children: [
-                Text(
-                  'Filter by Region:',
-                  style: AppTheme.bodyMedium.copyWith(
-                    color: AppTheme.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
-                    decoration: BoxDecoration(
-                      color: AppTheme.white,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                      border: Border.all(color: AppTheme.lightGray),
-                    ),
-                    child: DropdownButton<String>(
-                      value: _selectedRegion,
-                      isExpanded: true,
-                      underline: const SizedBox(),
-                      items: _regions.map((region) {
-                        return DropdownMenuItem(
-                          value: region,
-                          child: Text(region),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedRegion = value!;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: AppTheme.spacingLg),
-
-            // Storm events list
-            Text(
-              'Emergency Assignments',
-              style: AppTheme.headlineSmall.copyWith(
-                color: AppTheme.primaryNavy,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingMd),
-
-            if (_filteredStorms.isEmpty)
-              JJEmptyState(
-                title: 'No Active Storms',
-                subtitle: 'No storm restoration work available in the selected region.',
-                context: 'jobs', // Uses electrical illustration instead of sun icon
-              )
-            else
-              ..._filteredStorms.map((storm) => StormEventCard(storm: storm)),
-
-            const SizedBox(height: AppTheme.spacingLg),
-
-            // Safety information
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                color: AppTheme.infoBlue.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(color: AppTheme.infoBlue.withValues(alpha: 0.3)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.safety_check,
-                        color: AppTheme.infoBlue,
-                        size: AppTheme.iconMd,
-                      ),
-                      const SizedBox(width: AppTheme.spacingSm),
-                      Text(
-                        'Storm Work Safety Reminder',
-                        style: AppTheme.headlineSmall.copyWith(
-                          color: AppTheme.infoBlue,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppTheme.spacingMd),
-                  Text(
-                    '• Always follow proper safety protocols and use appropriate PPE\n'
-                    '• Be aware of hazardous conditions including downed lines and debris\n'
-                    '• Maintain situational awareness in emergency work environments\n'
-                    '• Report unsafe conditions immediately to supervisors',
-                    style: AppTheme.bodyMedium.copyWith(
-                      color: AppTheme.textPrimary,
-                      height: 1.6,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:journeyman_jobs/features/crews/widgets/job_match_card.dart';
+import 'package:riverpod/src/framework.dart';
 import '../../features/crews/providers/crews_riverpod_provider.dart';
 import '../../features/crews/providers/tailboard_riverpod_provider.dart';
 import '../../features/crews/providers/messaging_riverpod_provider.dart';
@@ -12,6 +14,7 @@ import '../../features/crews/widgets/chat_input.dart';
 import '../../features/crews/widgets/crew_member_avatar.dart';
 import '../../providers/riverpod/auth_riverpod_provider.dart';
 import '../../design_system/app_theme.dart';
+import '../../navigation/app_router.dart';
 
 class TailboardScreen extends ConsumerStatefulWidget {
   const TailboardScreen({super.key});
@@ -50,15 +53,14 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
   Widget build(BuildContext context) {
     final selectedCrew = ref.watch(selectedCrewProvider);
     
-    if (selectedCrew == null) {
-      return _buildNoCrewSelected(context);
-    }
-
     return Scaffold(
       backgroundColor: AppTheme.offWhite,
       body: Column(
         children: [
-          _buildHeader(context, selectedCrew),
+          // Header - conditional based on crew
+          selectedCrew != null 
+            ? _buildHeader(context, selectedCrew)
+            : _buildNoCrewHeader(context),
           _buildTabBar(),
           Expanded(
             child: TabBarView(
@@ -73,40 +75,59 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
           ),
         ],
       ),
-      floatingActionButton: _buildFloatingActionButton(),
+      floatingActionButton: selectedCrew != null ? _buildFloatingActionButton() : null,
     );
   }
 
-  Widget _buildNoCrewSelected(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.group_outlined,
-              size: 64,
+  Widget _buildNoCrewHeader(BuildContext context) {
+    return Container(
+      color: AppTheme.white,
+      padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
+      child: Column(
+        children: [
+          Icon(
+            Icons.group_outlined,
+            size: 64,
+            color: AppTheme.mediumGray,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Welcome to the Tailboard',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              color: AppTheme.darkGray,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'This is your crew hub for messaging, job sharing, and team coordination. You can access direct messaging even without a crew.',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: AppTheme.mediumGray,
             ),
-            const SizedBox(height: 16),
-            Text(
-              'No Crew Selected',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: AppTheme.darkGray,
-                fontWeight: FontWeight.bold,
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                context.go(AppRouter.crewOnboarding);
+              },
+              icon: const Icon(Icons.add, color: AppTheme.white),
+              label: const Text('Create or Join a Crew', style: TextStyle(color: AppTheme.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryNavy,
+                foregroundColor: AppTheme.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Please select a crew from your crews list to view the tailboard.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.mediumGray,
-              ),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+        ],
       ),
     );
   }
@@ -635,18 +656,23 @@ class ChatTab extends ConsumerStatefulWidget {
 }
 
 class _ChatTabState extends ConsumerState<ChatTab> {
-  bool _showCrewChat = true; // Toggle between crew chat and DMs
+  bool _showCrewChat = true; // Toggle between crew chat and DMs/Global
 
   @override
   Widget build(BuildContext context) {
     final selectedCrew = ref.watch(selectedCrewProvider);
     final currentUser = ref.watch(currentUserProvider);
 
-    if (selectedCrew == null || currentUser == null) {
+    if (currentUser == null) {
       return const Center(
-        child: Text('No crew selected'),
+        child: Text('User not authenticated'),
       );
     }
+
+    // Adjust toggle labels based on crew
+    final isCrewSelected = selectedCrew != null;
+    final leftToggleLabel = isCrewSelected ? 'Crew Chat' : 'Direct Messages';
+    final rightToggleLabel = isCrewSelected ? 'Direct Messages' : 'Global Chat';
 
     return Column(
       children: [
@@ -666,7 +692,7 @@ class _ChatTabState extends ConsumerState<ChatTab> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'Crew Chat',
+                      leftToggleLabel,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: _showCrewChat ? AppTheme.white : AppTheme.textSecondary,
@@ -687,7 +713,7 @@ class _ChatTabState extends ConsumerState<ChatTab> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'Direct Messages',
+                      rightToggleLabel,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: !_showCrewChat ? AppTheme.white : AppTheme.textSecondary,
@@ -702,9 +728,13 @@ class _ChatTabState extends ConsumerState<ChatTab> {
         ),
         // Chat Content
         Expanded(
-          child: _showCrewChat
-              ? _buildCrewChat(selectedCrew.id, currentUser.uid)
-              : _buildDirectMessages(selectedCrew.id, currentUser.uid),
+          child: isCrewSelected 
+            ? (_showCrewChat 
+                ? _buildCrewChat(selectedCrew!.id, currentUser.uid)
+                : _buildDirectMessages(selectedCrew.id, currentUser.uid))
+            : (_showCrewChat 
+                ? _buildDirectMessages(null, currentUser.uid)  // Direct messages when no crew
+                : _buildGlobalChat(currentUser.uid)),  // Global chat placeholder
         ),
       ],
     );
@@ -744,7 +774,6 @@ class _ChatTabState extends ConsumerState<ChatTab> {
 
     return Column(
       children: [
-        // Messages List
         Expanded(
           child: ListView.builder(
             reverse: true,
@@ -757,16 +786,14 @@ class _ChatTabState extends ConsumerState<ChatTab> {
               return MessageBubble(
                 message: message,
                 isCurrentUser: isCurrentUser,
-                senderName: 'Crew Member', // Would get from user profile
+                senderName: 'Crew Member',
                 showAvatar: true,
               );
             },
           ),
         ),
-        // Chat Input
         ChatInput(
           onSendMessage: (text) {
-            // Would send message through message service
             debugPrint('Sending message: $text');
           },
           hintText: 'Message crew...',
@@ -775,28 +802,77 @@ class _ChatTabState extends ConsumerState<ChatTab> {
     );
   }
 
-  Widget _buildDirectMessages(String crewId, String currentUserId) {
-    // For now, show a placeholder for DMs
-    // In a real implementation, this would show a list of DM conversations
+  Widget _buildDirectMessages(String? crewId, String currentUserId) {
+    // Temporary synchronous provider for demo - shows empty DM list
+    final directMessages = ref.watch(directMessagesProvider ?? Provider((ref) => <Message>[]));
+
+    if (directMessages.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.message_outlined,
+              size: 64,
+              color: AppTheme.mediumGray,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No direct messages yet',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: AppTheme.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Start a conversation with another user',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: AppTheme.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Placeholder for DM list
+    return ListView.builder(
+      itemCount: directMessages.length,
+      itemBuilder: (context, index) {
+        final message = directMessages[index];
+        return ListTile(
+          leading: const CircleAvatar(child: Icon(Icons.person)),
+          title: Text('User ${message.senderId.substring(0, 6)}'),
+          subtitle: Text(message.content),
+          onTap: () {
+            debugPrint('Open DM with ${message.senderId}');
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildGlobalChat(String currentUserId) {
+    // Placeholder for global chat
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.message_outlined,
+            Icons.chat_outlined,
             size: 64,
             color: AppTheme.mediumGray,
           ),
           const SizedBox(height: 16),
           Text(
-            'Direct Messages',
+            'Global Chat',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: AppTheme.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'DM conversations will appear here',
+            'Global announcements and discussions coming soon',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: AppTheme.textSecondary,
             ),

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/popup_theme.dart';
+import '../../electrical_components/circuit_board_background.dart';
 import '../../navigation/app_router.dart';
 import '../../providers/riverpod/jobs_riverpod_provider.dart';
 import '../../providers/riverpod/auth_riverpod_provider.dart';
@@ -70,62 +71,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () => ref.read(jobsProvider.notifier).refreshJobs(),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppTheme.spacingMd),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Consumer(
-                builder: (context, ref, child) {
-                  final authState = ref.watch(authProvider);
-                  if (!authState.isAuthenticated) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Welcome back!',
-                          style: AppTheme.headlineMedium.copyWith(
-                            color: AppTheme.primaryNavy,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: AppTheme.spacingSm),
-                        Text(
-                          'Guest User',
-                          style: AppTheme.bodyLarge.copyWith(
-                            color: AppTheme.textSecondary,
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-
-                  final displayName = authState.user?.displayName ?? 'User';
-                  final photoUrl = authState.user?.photoURL;
-                  final userInitial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
-
-                  return Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: AppTheme.primaryNavy,
-                        backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
-                        child: photoUrl == null
-                            ? Text(
-                                userInitial,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            : null,
-                      ),
-                      const SizedBox(width: AppTheme.spacingMd),
-                      Expanded(
-                        child: Column(
+      body: Stack(
+        children: [
+          ElectricalCircuitBackground(
+            opacity: 0.35,
+            componentDensity: ComponentDensity.high,
+          ),
+          RefreshIndicator(
+            onRefresh: () => ref.read(jobsProvider.notifier).refreshJobs(),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppTheme.spacingMd),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final authState = ref.watch(authProvider);
+                      if (!authState.isAuthenticated) {
+                        return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -137,179 +100,225 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                             const SizedBox(height: AppTheme.spacingSm),
                             Text(
-                              displayName,
+                              'Guest User',
                               style: AppTheme.bodyLarge.copyWith(
                                 color: AppTheme.textSecondary,
                               ),
                             ),
                           ],
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
+                        );
+                      }
 
-              const SizedBox(height: AppTheme.spacingLg),
+                      final displayName = authState.user?.displayName ?? 'User';
+                      final photoUrl = authState.user?.photoURL;
+                      final userInitial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
 
-              Text(
-                'Quick Actions',
-                style: AppTheme.headlineSmall.copyWith(
-                  color: AppTheme.primaryNavy,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
-
-              Consumer(
-                builder: (context, ref, child) {
-                  final userCrews = ref.watch(userCrewsProvider);
-                  if (userCrews.isNotEmpty) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Active Crews',
-                          style: AppTheme.headlineSmall.copyWith(
-                            color: AppTheme.primaryNavy,
+                      return Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundColor: AppTheme.primaryNavy,
+                            backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+                            child: photoUrl == null
+                                ? Text(
+                                    userInitial,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                : null,
                           ),
-                        ),
-                        const SizedBox(height: AppTheme.spacingMd),
-                        _buildActiveCrewsWidget(userCrews),
-                        const SizedBox(height: AppTheme.spacingLg),
-                      ],
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
-              ),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildElectricalActionCard(
-                      'Electrical calc',
-                      Icons.calculate_outlined,
-                      () {
-                        context.push(AppRouter.electricalCalculators);
-                      },
-                    ),
+                          const SizedBox(width: AppTheme.spacingMd),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Welcome back!',
+                                  style: AppTheme.headlineMedium.copyWith(
+                                    color: AppTheme.primaryNavy,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: AppTheme.spacingSm),
+                                Text(
+                                  displayName,
+                                  style: AppTheme.bodyLarge.copyWith(
+                                    color: AppTheme.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                ],
-              ),
 
-              const SizedBox(height: AppTheme.spacingLg),
+                  const SizedBox(height: AppTheme.spacingLg),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
                   Text(
-                    'Suggested Jobs',
+                    'Quick Actions',
                     style: AppTheme.headlineSmall.copyWith(
                       color: AppTheme.primaryNavy,
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      context.push(AppRouter.jobs);
-                    },
-                    child: Text(
-                      'View All',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.accentCopper,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppTheme.spacingMd),
+                  const SizedBox(height: AppTheme.spacingLg),
 
-              Consumer(
-                builder: (context, ref, child) {
-                  final jobsState = ref.watch(jobsProvider);
-                  if (jobsState.isLoading) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(AppTheme.spacingLg),
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
-                        ),
-                      ),
-                    );
-                  }
-
-                  if (jobsState.error != null) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppTheme.spacingLg),
-                        child: Column(
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final userCrews = ref.watch(userCrewsProvider);
+                      if (userCrews.isNotEmpty) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Error loading jobs',
-                              style: AppTheme.bodyLarge.copyWith(
-                                color: AppTheme.errorRed,
+                              'Active Crews',
+                              style: AppTheme.headlineSmall.copyWith(
+                                color: AppTheme.primaryNavy,
                               ),
-                            ),
-                            const SizedBox(height: AppTheme.spacingSm),
-                            ElevatedButton(
-                              onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
-                              child: const Text('Retry'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-
-                  if (jobsState.jobs.isEmpty) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppTheme.spacingLg),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.work_off_outlined,
-                              size: 48,
-                              color: AppTheme.textSecondary,
                             ),
                             const SizedBox(height: AppTheme.spacingMd),
-                            Text(
-                              'No jobs available at the moment',
-                              style: AppTheme.bodyLarge.copyWith(
-                                color: AppTheme.textSecondary,
-                              ),
-                            ),
-                            const SizedBox(height: AppTheme.spacingSm),
-                            TextButton(
-                              onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
-                              child: Text(
-                                'Refresh',
-                                style: AppTheme.bodyMedium.copyWith(
-                                  color: AppTheme.accentCopper,
-                                ),
-                              ),
-                            ),
+                            _buildActiveCrewsWidget(userCrews),
+                            const SizedBox(height: AppTheme.spacingLg),
                           ],
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildElectricalActionCard(
+                          'Electrical calc',
+                          Icons.calculate_outlined,
+                          () {
+                            context.push(AppRouter.electricalCalculators);
+                          },
                         ),
                       ),
-                    );
-                  }
+                    ],
+                  ),
 
-                  return Column(
-                    children: jobsState.jobs.take(5).map((job) {
-                      return CondensedJobCard(
-                        job: job,
-                        onTap: () => _showJobDetailsDialog(context, job),
+                  const SizedBox(height: AppTheme.spacingLg),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Suggested Jobs',
+                        style: AppTheme.headlineSmall.copyWith(
+                          color: AppTheme.primaryNavy,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.push(AppRouter.jobs);
+                        },
+                        child: Text(
+                          'View All',
+                          style: AppTheme.bodyMedium.copyWith(
+                            color: AppTheme.accentCopper,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final jobsState = ref.watch(jobsProvider);
+                      if (jobsState.isLoading) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(AppTheme.spacingLg),
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (jobsState.error != null) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppTheme.spacingLg),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Error loading jobs',
+                                  style: AppTheme.bodyLarge.copyWith(
+                                    color: AppTheme.errorRed,
+                                  ),
+                                ),
+                                const SizedBox(height: AppTheme.spacingSm),
+                                ElevatedButton(
+                                  onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
+                                  child: const Text('Retry'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (jobsState.jobs.isEmpty) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppTheme.spacingLg),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.work_off_outlined,
+                                  size: 48,
+                                  color: AppTheme.textSecondary,
+                                ),
+                                const SizedBox(height: AppTheme.spacingMd),
+                                Text(
+                                  'No jobs available at the moment',
+                                  style: AppTheme.bodyLarge.copyWith(
+                                    color: AppTheme.textSecondary,
+                                  ),
+                                ),
+                                const SizedBox(height: AppTheme.spacingSm),
+                                TextButton(
+                                  onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
+                                  child: Text(
+                                    'Refresh',
+                                    style: AppTheme.bodyMedium.copyWith(
+                                      color: AppTheme.accentCopper,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      return Column(
+                        children: jobsState.jobs.take(5).map((job) {
+                          return CondensedJobCard(
+                            job: job,
+                            onTap: () => _showJobDetailsDialog(context, job),
+                          );
+                        }).toList(),
                       );
-                    }).toList(),
-                  );
-                },
-              ),
+                    },
+                  ),
 
-              const SizedBox(height: AppTheme.spacingXxl),
-            ],
+                  const SizedBox(height: AppTheme.spacingXxl),
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -453,7 +462,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 _buildDetailRow('Classification', jobModel.classification ?? 'N/A'),
                 _buildDetailRow('Location', jobModel.location),
                 _buildDetailRow('Hours', '${jobModel.hours ?? 'N/A'} hours/week'),
-                _buildDetailRow('Wage', jobModel.wage != null ? '\$${jobModel.wage}/hr' : 'N/A'),
+                _buildDetailRow('Wage', jobModel.wage != null ? '\${jobModel.wage}/hr' : 'N/A'),
                 _buildDetailRow('Per Diem', jobModel.perDiem?.isNotEmpty == true ? 'Yes' : 'No'),
                 _buildDetailRow('Start Date', jobModel.startDate ?? 'N/A'),
                 _buildDetailRow('Duration', jobModel.duration ?? 'N/A'),
