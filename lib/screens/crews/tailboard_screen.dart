@@ -5,7 +5,6 @@ import 'package:journeyman_jobs/features/crews/widgets/job_match_card.dart';
 import 'package:riverpod/src/framework.dart';
 import '../../features/crews/providers/crews_riverpod_provider.dart';
 import '../../features/crews/providers/tailboard_riverpod_provider.dart';
-import '../../features/crews/providers/messaging_riverpod_provider.dart';
 import '../../features/crews/models/models.dart';
 import '../../features/crews/widgets/activity_card.dart';
 import '../../features/crews/widgets/announcement_card.dart';
@@ -741,114 +740,62 @@ class _ChatTabState extends ConsumerState<ChatTab> {
   }
 
   Widget _buildCrewChat(String crewId, String currentUserId) {
-    final messages = ref.watch(crewMessagesProvider(crewId));
-
-    if (messages.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.chat_bubble_outline,
-              size: 64,
-              color: AppTheme.mediumGray,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No messages yet',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppTheme.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Start the conversation in your crew chat',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.textSecondary,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            reverse: true,
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            itemCount: messages.length,
-            itemBuilder: (context, index) {
-              final message = messages[messages.length - 1 - index];
-              final isCurrentUser = message.senderId == currentUserId;
-              
-              return MessageBubble(
-                message: message,
-                isCurrentUser: isCurrentUser,
-                senderName: 'Crew Member',
-                showAvatar: true,
-              );
-            },
+    // For now, return empty state since we need to implement the crew messages provider
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.chat_bubble_outline,
+            size: 64,
+            color: AppTheme.mediumGray,
           ),
-        ),
-        ChatInput(
-          onSendMessage: (text) {
-            debugPrint('Sending message: $text');
-          },
-          hintText: 'Message crew...',
-        ),
-      ],
+          const SizedBox(height: 16),
+          Text(
+            'No messages yet',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: AppTheme.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Start the conversation in your crew chat',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: AppTheme.textSecondary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildDirectMessages(String? crewId, String currentUserId) {
-    // Temporary synchronous provider for demo - shows empty DM list
-    final directMessages = ref.watch(directMessagesProvider ?? Provider((ref) => <Message>[]));
-
-    if (directMessages.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.message_outlined,
-              size: 64,
-              color: AppTheme.mediumGray,
+    // For now, return empty state since we don't have DM providers set up yet
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.message_outlined,
+            size: 64,
+            color: AppTheme.mediumGray,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No direct messages yet',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: AppTheme.textPrimary,
             ),
-            const SizedBox(height: 16),
-            Text(
-              'No direct messages yet',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppTheme.textPrimary,
-              ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Start a conversation with another user',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: AppTheme.textSecondary,
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Start a conversation with another user',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.textSecondary,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    // Placeholder for DM list
-    return ListView.builder(
-      itemCount: directMessages.length,
-      itemBuilder: (context, index) {
-        final message = directMessages[index];
-        return ListTile(
-          leading: const CircleAvatar(child: Icon(Icons.person)),
-          title: Text('User ${message.senderId.substring(0, 6)}'),
-          subtitle: Text(message.content),
-          onTap: () {
-            debugPrint('Open DM with ${message.senderId}');
-          },
-        );
-      },
+          ),
+        ],
+      ),
     );
   }
 

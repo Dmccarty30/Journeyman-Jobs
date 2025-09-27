@@ -260,31 +260,3 @@ List<Message> lastWeekMessages(Ref ref, String crewId) {
     return message.sentAt.isAfter(oneWeekAgo);
   }).toList();
 }
-
-// Placeholder Message model
-class Message {
-  final String id;
-  final String senderId;
-  final String content;
-  final DateTime timestamp;
-
-  Message({required this.id, required this.senderId, required this.content, required this.timestamp});
-}
-
-// Simple synchronous provider for demo
-final directMessagesProvider = Provider<List<Message>>((ref) => []);
-
-// Global Messages Provider - alias to directMessages for non-crew
-final globalMessagesProvider = directMessagesProvider;
-
-// Recent Conversations Provider - placeholder
-final recentConversationsProvider = Provider<List<String>>((ref) => []);
-
-// Crew Messages Provider (family for crewId)
-final crewMessagesProvider = FutureProvider.family<List<Message>, String>((ref, crewId) async {
-  // Placeholder
-  return [];
-});
-
-// Message Service Provider (placeholder)
-final messageServiceProvider = Provider((ref) => null);
