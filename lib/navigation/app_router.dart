@@ -9,7 +9,7 @@ import '../screens/onboarding/auth_screen.dart';
 import '../screens/onboarding/onboarding_steps_screen.dart';
 import '../screens/nav_bar_page.dart';
 // import '../screens/crews/crews_screen.dart'; // Deprecated
-import '../screens/crews/tailboard_screen.dart'; // New import for TailboardScreen
+import '../features/crews/screens/tailboard_screen.dart'; // New import for TailboardScreen
 import '../features/crews/screens/create_crew_screen.dart'; // Import for CreateCrewScreen
 import '../features/crews/screens/join_crew_screen.dart'; // Import for JoinCrewScreen
 import '../features/crews/screens/crew_onboarding_screen.dart'; // Import for CrewOnboardingScreen

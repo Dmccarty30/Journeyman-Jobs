@@ -52,18 +52,20 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
           ),
         );
 
-        if (context.mounted) {
+        if (mounted) {
           context.go(AppRouter.crews); // Navigates to TailboardScreen
         }
 
       } catch (e) {
-        // Show error snackbar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to create crew: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        if (mounted) {
+          // Show error snackbar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to create crew: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }
@@ -80,85 +82,87 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _crewNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Crew Name',
-                  hintText: 'Enter crew name',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Crew name is required';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                initialValue: _selectedJobType,
-                items: const [
-                  DropdownMenuItem(value: 'Inside Wireman', child: Text('Inside Wireman')),
-                  DropdownMenuItem(value: 'Journeyman Lineman', child: Text('Journeyman Lineman')),
-                ],
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedJobType = newValue!;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  hintText: 'Brief crew description',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Description is required';
-                  }
-                  return null;
-                },
-                maxLines: 3,
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Minimum Hourly Rate: \$$_minHourlyRate'),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        onPressed: () => setState(() => _minHourlyRate = max(15, _minHourlyRate - 5)),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () => setState(() => _minHourlyRate = min(100, _minHourlyRate + 5)),
-                      ),
-                    ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _crewNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Crew Name',
+                    hintText: 'Enter crew name',
                   ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              SwitchListTile(
-                title: const Text('Auto-share matching jobs'),
-                value: _autoShareEnabled,
-                onChanged: (value) {
-                  setState(() {
-                    _autoShareEnabled = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton.icon(
-                onPressed: _createCrew,
-                icon: const Icon(Icons.check),
-                label: const Text('Create Crew'),
-              ),
-            ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Crew name is required';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  initialValue: _selectedJobType,
+                  items: const [
+                    DropdownMenuItem(value: 'Inside Wireman', child: Text('Inside Wireman')),
+                    DropdownMenuItem(value: 'Journeyman Lineman', child: Text('Journeyman Lineman')),
+                  ],
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedJobType = newValue!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _descriptionController,
+                  decoration: const InputDecoration(
+                    labelText: 'Description',
+                    hintText: 'Brief crew description',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Description is required';
+                    }
+                    return null;
+                  },
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Minimum Hourly Rate: \$$_minHourlyRate'),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed: () => setState(() => _minHourlyRate = max(15, _minHourlyRate - 5)),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () => setState(() => _minHourlyRate = min(100, _minHourlyRate + 5)),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                SwitchListTile(
+                  title: const Text('Auto-share matching jobs'),
+                  value: _autoShareEnabled,
+                  onChanged: (value) {
+                    setState(() {
+                      _autoShareEnabled = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 32),
+                ElevatedButton.icon(
+                  onPressed: _createCrew,
+                  icon: const Icon(Icons.check),
+                  label: const Text('Create Crew'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

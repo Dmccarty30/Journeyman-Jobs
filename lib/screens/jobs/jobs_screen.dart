@@ -490,29 +490,6 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
           ),
         ],
       ),
-      // Add floating action button for search and filters since they were removed from app bar
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton.small(
-            heroTag: "search",
-            onPressed: _showSearchDialog,
-            backgroundColor: AppTheme.accentCopper,
-            child: const Icon(Icons.search, color: AppTheme.white),
-          ),
-          const SizedBox(width: 8),
-          FloatingActionButton.small(
-            heroTag: "filter",
-            onPressed: () {
-              setState(() {
-                _showAdvancedFilters = !_showAdvancedFilters;
-              });
-            },
-            backgroundColor: AppTheme.primaryNavy,
-            child: const Icon(Icons.tune, color: AppTheme.white),
-          ),
-        ],
-      ),
     );
   }
 }

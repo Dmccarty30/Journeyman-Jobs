@@ -34,6 +34,29 @@ service cloud.firestore {
       return recentAttempts < 10;
     }
 
+    // NOTIFICATIONS COLLECTION - Added for notification access
+    match /notifications/{notificationId} {
+      // Users can read their own notifications
+      allow read: if isAuthenticated() && 
+                  (request.auth.uid == resource.data.userId || 
+                   request.auth.uid == resource.data.recipientId);
+      
+      // Users can create notifications for themselves (system generated)
+      allow create: if isAuthenticated() && 
+                    request.resource.data.userId == request.auth.uid;
+      
+      // Users can update their own notifications (mark as read)
+      allow update: if isAuthenticated() && 
+                    (request.auth.uid == resource.data.userId || 
+                     request.auth.uid == resource.data.recipientId) &&
+                    request.resource.data.userId == resource.data.userId; // Can't change owner
+      
+      // Users can delete their own notifications
+      allow delete: if isAuthenticated() && 
+                    (request.auth.uid == resource.data.userId || 
+                     request.auth.uid == resource.data.recipientId);
+    }
+
     // Crews collection
     match /crews/{crewId} {
       // Only crew members can read crew documents

@@ -2,18 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:journeyman_jobs/features/crews/widgets/job_match_card.dart';
-import 'package:riverpod/src/framework.dart';
-import '../../features/crews/providers/crews_riverpod_provider.dart';
-import '../../features/crews/providers/tailboard_riverpod_provider.dart';
-import '../../features/crews/models/models.dart';
-import '../../features/crews/widgets/activity_card.dart';
-import '../../features/crews/widgets/announcement_card.dart';
-import '../../features/crews/widgets/message_bubble.dart';
-import '../../features/crews/widgets/chat_input.dart';
-import '../../features/crews/widgets/crew_member_avatar.dart';
-import '../../providers/riverpod/auth_riverpod_provider.dart';
-import '../../design_system/app_theme.dart';
-import '../../navigation/app_router.dart';
+import '../providers/crews_riverpod_provider.dart';
+import '../providers/tailboard_riverpod_provider.dart';
+import '../models/models.dart';
+import '../widgets/activity_card.dart';
+import '../widgets/announcement_card.dart';
+import '../widgets/crew_member_avatar.dart';
+import '../../../providers/riverpod/auth_riverpod_provider.dart';
+import '../../../design_system/app_theme.dart';
+import '../../../navigation/app_router.dart';
 
 class TailboardScreen extends ConsumerStatefulWidget {
   const TailboardScreen({super.key});
@@ -729,7 +726,7 @@ class _ChatTabState extends ConsumerState<ChatTab> {
         Expanded(
           child: isCrewSelected 
             ? (_showCrewChat 
-                ? _buildCrewChat(selectedCrew!.id, currentUser.uid)
+                ? _buildCrewChat(selectedCrew.id, currentUser.uid)
                 : _buildDirectMessages(selectedCrew.id, currentUser.uid))
             : (_showCrewChat 
                 ? _buildDirectMessages(null, currentUser.uid)  // Direct messages when no crew
