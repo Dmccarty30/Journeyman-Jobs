@@ -8,6 +8,7 @@ import 'dart:io' show Platform;
 import '../../widgets/notification_badge.dart';
 import 'package:go_router/go_router.dart';
 import '../../navigation/app_router.dart';
+import '../../utils/string_formatter.dart';
 
 class LocalsScreen extends ConsumerStatefulWidget {
   const LocalsScreen({super.key});
@@ -307,7 +308,7 @@ class LocalCard extends StatelessWidget {
                         ),
                         const SizedBox(height: AppTheme.spacingXs),
                         Text(
-                          '${local.city}, ${local.state}',
+                          '${toTitleCase(local.city)}, ${local.state.toUpperCase()}',
                           style: AppTheme.bodyMedium.copyWith(
                             color: AppTheme.textLight,
                           ),
@@ -384,7 +385,7 @@ class LocalCard extends StatelessWidget {
                   _buildInfoRow(
                     context,
                     'Classification',
-                    local.classification ?? 'Unknown',
+                    toTitleCase(local.classification ?? 'Unknown'),
                     Icons.work_outline,
                   ),
                 ],
@@ -546,7 +547,7 @@ class LocalDetailsDialog extends StatelessWidget {
                         ),
                         const SizedBox(height: AppTheme.spacingXs),
                         Text(
-                          '${local.city}, ${local.state}',
+                          '${toTitleCase(local.city)}, ${local.state.toUpperCase()}',
                           style: AppTheme.bodyLarge.copyWith(
                             color: AppTheme.white.withAlpha(204),
                           ),
@@ -563,7 +564,7 @@ class LocalDetailsDialog extends StatelessWidget {
                               borderRadius: BorderRadius.circular(AppTheme.radiusRound),
                             ),
                             child: Text(
-                              local.classification!,
+                              toTitleCase(local.classification!),
                               style: AppTheme.labelMedium.copyWith(
                                 color: AppTheme.white,
                                 fontWeight: FontWeight.w600,

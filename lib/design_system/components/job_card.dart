@@ -83,7 +83,7 @@ class JobCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  job.company,
+                  JobFormatting.formatJobTitle(job.company),
                   style: AppTheme.titleMedium.copyWith(
                     color: AppTheme.primaryNavy,
                     fontWeight: FontWeight.w600,
@@ -108,7 +108,7 @@ class JobCard extends StatelessWidget {
           // Job title or classification
           if (job.jobTitle != null || job.classification != null)
             Text(
-              job.jobTitle ?? job.classification ?? '',
+              JobFormatting.formatJobTitle(job.jobTitle ?? job.classification ?? ''),
               style: AppTheme.bodyMedium.copyWith(
                 color: AppTheme.textPrimary,
                 fontWeight: FontWeight.w500,
@@ -254,7 +254,7 @@ class JobCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  job.company,
+                  JobFormatting.formatJobTitle(job.company),
                   style: AppTheme.headlineSmall.copyWith(
                     color: AppTheme.primaryNavy,
                     fontWeight: FontWeight.w600,
@@ -294,7 +294,7 @@ class JobCard extends StatelessWidget {
                 child: _buildDetailItem(
                   icon: Icons.location_on_outlined,
                   label: 'Location',
-                  value: job.location,
+                  value: JobFormatting.formatLocation(job.location),
                 ),
               ),
               if (job.local != null)

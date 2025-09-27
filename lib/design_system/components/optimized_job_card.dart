@@ -171,7 +171,7 @@ class _OptimizedJobCardState extends State<OptimizedJobCard>
               ),
             ),
             child: Text(
-              widget.job.classification!,
+              JobFormatting.formatClassification(widget.job.classification!),
               style: AppTheme.labelSmall.copyWith(
                 color: AppTheme.accentCopper,
                 fontWeight: FontWeight.w600,
@@ -188,7 +188,7 @@ class _OptimizedJobCardState extends State<OptimizedJobCard>
       children: [
         // Company name
         Text(
-          widget.job.company,
+          JobFormatting.formatJobTitle(widget.job.company),
           style: AppTheme.titleMedium.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -199,7 +199,7 @@ class _OptimizedJobCardState extends State<OptimizedJobCard>
         if (widget.job.jobTitle != null) ...[
           const SizedBox(height: AppTheme.spacingXs),
           Text(
-            widget.job.jobTitle!,
+            JobFormatting.formatJobTitle(widget.job.jobTitle!),
             style: AppTheme.bodyMedium,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -225,7 +225,7 @@ class _OptimizedJobCardState extends State<OptimizedJobCard>
               const SizedBox(width: AppTheme.spacingXs),
               Flexible(
                 child: Text(
-                  widget.job.location,
+                  JobFormatting.formatLocation(widget.job.location),
                   style: AppTheme.bodySmall.copyWith(
                     color: AppTheme.textSecondary,
                   ),

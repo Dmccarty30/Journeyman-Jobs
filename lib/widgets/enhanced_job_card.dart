@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/string_formatter.dart';
 
 import '../design_system/app_theme.dart';
 import '../electrical_components/enhanced_backgrounds.dart' show VoltageLevel, EnhancedBackgrounds;
@@ -273,7 +274,7 @@ class EnhancedJobCard extends StatelessWidget {
         children: <Widget>[
           if (job.classification != null)
             Text(
-              job.classification!,
+              toTitleCase(job.classification!),
               style: AppTheme.bodyMedium.copyWith(
                 color: AppTheme.primaryNavy,
                 fontWeight: FontWeight.w600,
@@ -308,7 +309,7 @@ class EnhancedJobCard extends StatelessWidget {
                 const SizedBox(width: AppTheme.spacingSm),
                 Expanded(
                   child: Text(
-                    job.classification!,
+                    toTitleCase(job.classification!),
                     style: AppTheme.headlineSmall.copyWith(
                       color: AppTheme.primaryNavy,
                       fontWeight: FontWeight.bold,
@@ -331,7 +332,7 @@ class EnhancedJobCard extends StatelessWidget {
                 const SizedBox(width: AppTheme.spacingXs),
                 Expanded(
                   child: Text(
-                    job.location,
+                    toTitleCase(job.location),
                     style: AppTheme.bodyMedium.copyWith(
                       color: AppTheme.textSecondary,
                     ),

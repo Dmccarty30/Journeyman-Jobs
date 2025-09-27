@@ -1,3 +1,4 @@
+import '../../utils/string_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -554,14 +555,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Job(
       id: jobsRecord.reference.id,
       reference: jobsRecord.reference,
-      company: jobsRecord.company,
-      location: jobsRecord.location,
-      classification: jobsRecord.classification,
+      company: toTitleCase(jobsRecord.company),
+      location: toTitleCase(jobsRecord.location),
+      classification: toTitleCase(jobsRecord.classification),
       local: jobsRecord.local,
       wage: jobsRecord.wage,
       hours: jobsRecord.hours,
       perDiem: jobsRecord.perDiem,
-      typeOfWork: jobsRecord.typeOfWork,
+      typeOfWork: toTitleCase(jobsRecord.typeOfWork),
       startDate: jobsRecord.startDate,
       duration: jobsRecord.duration,
       jobDescription: jobsRecord.jobDescription,

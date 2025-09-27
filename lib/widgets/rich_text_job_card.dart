@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
 import '../models/job_model.dart';
 import 'job_details_dialog.dart';
+import '../utils/string_formatter.dart';
 
 /// A card widget displaying job details using RichText with icons
 /// Shows job information in a two-span format: bold labels and bracketed values
@@ -42,17 +43,17 @@ class RichTextJobCard extends StatelessWidget {
               leftLabel: 'Local',
               leftValue: job.localNumber?.toString() ?? job.local?.toString() ?? 'N/A',
               rightLabel: 'Classification',
-              rightValue: job.classification ?? 'N/A',
+              rightValue: toTitleCase(job.classification ?? 'N/A'),
             ),
             const SizedBox(height: 8),
 
             // Row 2: Contractor | Wages
             _buildTwoColumnRow(
               leftLabel: 'Contractor',
-              leftValue: job.company.isNotEmpty ? job.company : 'N/A',
+              leftValue: toTitleCase(job.company.isNotEmpty ? job.company : 'N/A'),
               rightLabel: 'Wages',
               rightValue: job.wage != null && job.wage! > 0 
-                  ? '\$${job.wage!.toStringAsFixed(2)}/hr' 
+                  ? '\${job.wage!.toStringAsFixed(2)}/hr' 
                   : 'N/A',
               rightValueColor: job.wage != null && job.wage! > 0 ? AppTheme.successGreen : null,
             ),
@@ -61,7 +62,7 @@ class RichTextJobCard extends StatelessWidget {
             // Row 3: Location | Hours
             _buildTwoColumnRow(
               leftLabel: 'Location',
-              leftValue: job.location.isNotEmpty ? job.location : 'N/A',
+              leftValue: toTitleCase(job.location.isNotEmpty ? job.location : 'N/A'),
               rightLabel: 'Hours',
               rightValue: job.hours != null ? '${job.hours}/week' : 'N/A',
             ),
@@ -79,7 +80,7 @@ class RichTextJobCard extends StatelessWidget {
             // Row 5: Type of Work (full width)
             _buildInfoRow(
               label: 'Type of Work',
-              value: job.typeOfWork ?? 'N/A',
+              value: toTitleCase(job.typeOfWork ?? 'N/A'),
             ),
             const SizedBox(height: 8),
 

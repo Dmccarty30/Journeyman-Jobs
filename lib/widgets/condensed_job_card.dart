@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/job_model.dart';
 import '../design_system/app_theme.dart';
+import '../utils/string_formatter.dart';
 
 /// Condensed job card for home screen display
 /// Shows only essential information: local, classification, location, hours, and per diem
@@ -57,7 +58,7 @@ class CondensedJobCard extends StatelessWidget {
                 // Classification
                 Expanded(
                   child: Text(
-                    job.classification ?? job.jobClass ?? 'General Electrical',
+                    toTitleCase(job.classification ?? job.jobClass ?? 'General Electrical'),
                     style: AppTheme.bodyMedium.copyWith(
                       color: AppTheme.textPrimary,
                       fontWeight: FontWeight.w600,
@@ -91,7 +92,7 @@ class CondensedJobCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
-                    job.location,
+                    toTitleCase(job.location),
                     style: AppTheme.bodySmall.copyWith(
                       color: AppTheme.textSecondary,
                     ),
