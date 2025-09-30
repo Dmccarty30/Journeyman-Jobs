@@ -1,12 +1,15 @@
 import 'dart:async'; // Required for Timer
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:journeyman_jobs/features/crews/providers/tailboard_providers.dart';
+import 'package:riverpod/src/framework.dart';
+import 'package:riverpod/src/providers/stream_provider.dart';
 import 'dart:math'; // Required for max/min
 import '../design_system/app_theme.dart';
 import '../design_system/components/job_card.dart';
 import '../models/job_model.dart';
 import '../providers/riverpod/app_state_riverpod_provider.dart';
-import '../providers/riverpod/jobs_riverpod_provider.dart'; // Required for jobsProvider
 
 /// High-performance virtual scrolling job list with mobile optimizations
 ///
@@ -178,7 +181,7 @@ class _OptimizedVirtualJobListState extends ConsumerState<OptimizedVirtualJobLis
     if (totalItemCount == 0) {
       // If there are no jobs, ensure the visible range is reset
       if (_lastReportedStart != 0 || _lastReportedEnd != 0) {
-        ref.read(jobsProvider.notifier).updateVisibleJobsRange(0, 0);
+        ref.read(jobsProvider.notifier!).updateVisibleJobsRange(0, 0);
         _lastReportedStart = 0;
         _lastReportedEnd = 0;
       }
@@ -202,7 +205,7 @@ class _OptimizedVirtualJobListState extends ConsumerState<OptimizedVirtualJobLis
 
     // Only update if the range has actually changed
     if (start != _lastReportedStart || end != _lastReportedEnd) {
-      ref.read(jobsProvider.notifier).updateVisibleJobsRange(start, end);
+      ref.read(jobsProvider.notifier!).updateVisibleJobsRange(start, end);
       _lastReportedStart = start;
       _lastReportedEnd = end;
     }
@@ -511,4 +514,8 @@ class _OptimizedVirtualJobListState extends ConsumerState<OptimizedVirtualJobLis
       curve: Curves.easeOutQuart,
     );
   }
+}
+
+extension on StreamProviderFamily<List<Job>, ({String crewId, int limit, DocumentSnapshot<Object?>? startAfter})> {
+  ProviderListenable? get notifier => null;
 }

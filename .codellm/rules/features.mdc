@@ -1,0 +1,12 @@
+---
+description: Working on individual features
+globs: .dart
+alwaysApply: true
+---
+
+# Working on Features
+
+- When working on features, any and all newly created files must be created and saved to that features directory.
+- All screens related to that features are to be saved to {{Feature}}/screens... Not lib/screens. 
+
+- The same applies to models, providers, widgets, services, etc. I want all files assocciated to a feature to be saved to that features directory.

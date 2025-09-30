@@ -1,333 +1,234 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// User Model for IBEW Electrical Workers
-/// 
-/// Represents a complete user profile for the Journeyman Jobs app,
-/// including personal information, professional details, and preferences.
 class UserModel {
-  /// Unique user identifier (Firebase Auth UID)
   final String uid;
-  
-  /// Personal Information
+  final String username;
+  final String classification;
+  final int homeLocal;
+  final String role;
+  final List<String> crewIds;
+  final String email;
+  final String? avatarUrl;
+  final bool onlineStatus;
+  final Timestamp lastActive;
   final String firstName;
   final String lastName;
   final String phoneNumber;
-  final String email;
-  
-  /// Profile Information
-  final String? photoUrl;
-  
-  /// Address Information
   final String address1;
   final String? address2;
   final String city;
   final String state;
-  final String zipcode;
-  
-  /// Professional Details
-  final String homeLocal;
+  final int zipcode;
   final String ticketNumber;
-  final String classification;
   final bool isWorking;
-  final String? booksOn;
-  
-  /// Job Preferences
+  final bool booksOn;
   final List<String> constructionTypes;
-  final String? hoursPerWeek;
-  final String? perDiemRequirement;
-  final String? preferredLocals;
-  
-  /// Career Goals
-  final bool networkWithOthers;
-  final bool careerAdvancements;
-  final bool betterBenefits;
-  final bool higherPayRate;
-  final bool learnNewSkill;
-  final bool travelToNewLocation;
-  final bool findLongTermWork;
-  final String? careerGoals;
-  
-  /// App Experience
-  final String? howHeardAboutUs;
-  final String? lookingToAccomplish;
-  
-  /// System Fields
-  final String onboardingStatus;
-  final DateTime createdTime;
-  final DateTime? updatedTime;
+  final int hoursPerWeek;
+  final double perDiemRequirement;
+  final List<String> preferredLocals;
+  final String? fcmToken;
+  final String displayName;
+  final bool isActive;
+  final DateTime? createdTime;
+  final List<String> certifications;
+  final int yearsExperience;
+  final int preferredDistance;
+  final String localNumber;
 
-  const UserModel({
+  UserModel({
     required this.uid,
+    required this.username,
+    required this.classification,
+    required this.homeLocal,
+    required this.role,
+    this.crewIds = const [],
+    required this.email,
+    this.avatarUrl,
+    this.onlineStatus = false,
+    required this.lastActive,
     required this.firstName,
     required this.lastName,
-    required this.phoneNumber,
-    required this.email,
-    this.photoUrl,
-    required this.address1,
+    this.phoneNumber = '',
+    this.address1 = '',
     this.address2,
-    required this.city,
-    required this.state,
-    required this.zipcode,
-    required this.homeLocal,
-    required this.ticketNumber,
-    required this.classification,
-    required this.isWorking,
-    this.booksOn,
-    required this.constructionTypes,
-    this.hoursPerWeek,
-    this.perDiemRequirement,
-    this.preferredLocals,
-    required this.networkWithOthers,
-    required this.careerAdvancements,
-    required this.betterBenefits,
-    required this.higherPayRate,
-    required this.learnNewSkill,
-    required this.travelToNewLocation,
-    required this.findLongTermWork,
-    this.careerGoals,
-    this.howHeardAboutUs,
-    this.lookingToAccomplish,
-    required this.onboardingStatus,
-    required this.createdTime,
-    this.updatedTime,
+    this.city = '',
+    this.state = '',
+    this.zipcode = 0,
+    this.ticketNumber = '',
+    this.isWorking = false,
+    this.booksOn = false,
+    this.constructionTypes = const [],
+    this.hoursPerWeek = 0,
+    this.perDiemRequirement = 0.0,
+    this.preferredLocals = const [],
+    this.fcmToken,
+    this.displayName = '',
+    this.isActive = true,
+    this.createdTime,
+    this.certifications = const [],
+    this.yearsExperience = 0,
+    this.preferredDistance = 0,
+    this.localNumber = '',
   });
 
-  /// Get full name
-  String get fullName => '$firstName $lastName';
+  String get displayNameStr => displayName.isEmpty ? '$firstName $lastName'.trim() : displayName;
 
-  /// Get display name (alias for fullName)
-  String get displayName => fullName;
+  bool get isActiveGetter => isActive;
 
-  /// Get formatted address
-  String get fullAddress {
-    final address = address2?.isNotEmpty == true 
-        ? '$address1, $address2' 
-        : address1;
-    return '$address, $city, $state $zipcode';
+  factory UserModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return UserModel(
+      uid: doc.id,
+      username: data['username'] ?? '',
+      classification: data['classification'] ?? '',
+      homeLocal: data['homeLocal'] ?? 0,
+      role: data['role'] ?? '',
+      crewIds: List<String>.from(data['crewIds'] ?? []),
+      email: data['email'] ?? '',
+      avatarUrl: data['avatarUrl'],
+      onlineStatus: data['onlineStatus'] ?? false,
+      lastActive: data['lastActive'] ?? Timestamp.now(),
+      firstName: data['firstName'] ?? '',
+      lastName: data['lastName'] ?? '',
+      phoneNumber: data['phoneNumber'] ?? '',
+      address1: data['address1'] ?? '',
+      address2: data['address2'],
+      city: data['city'] ?? '',
+      state: data['state'] ?? '',
+      zipcode: data['zipcode'] ?? 0,
+      ticketNumber: data['ticketNumber'] ?? '',
+      isWorking: data['isWorking'] ?? false,
+      booksOn: data['booksOn'] ?? false,
+      constructionTypes: List<String>.from(data['constructionTypes'] ?? []),
+      hoursPerWeek: data['hoursPerWeek'] ?? 0,
+      perDiemRequirement: (data['perDiemRequirement'] ?? 0.0).toDouble(),
+      preferredLocals: List<String>.from(data['preferredLocals'] ?? []),
+      fcmToken: data['fcmToken'],
+      displayName: data['displayName'] ?? '',
+      isActive: data['isActive'] ?? true,
+      createdTime: data['createdTime'],
+      certifications: List<String>.from(data['certifications'] ?? []),
+      yearsExperience: data['yearsExperience'] ?? 0,
+      preferredDistance: data['preferredDistance'] ?? 0,
+      localNumber: data['localNumber'] ?? '',
+    );
   }
 
-  /// Check if onboarding is complete
-  bool get isOnboardingComplete => onboardingStatus == 'completed';
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      uid: json['uid'] ?? '',
+      username: json['username'] ?? '',
+      classification: json['classification'] ?? '',
+      homeLocal: json['homeLocal'] ?? 0,
+      role: json['role'] ?? '',
+      crewIds: List<String>.from(json['crewIds'] ?? []),
+      email: json['email'] ?? '',
+      avatarUrl: json['avatarUrl'],
+      onlineStatus: json['onlineStatus'] ?? false,
+      lastActive: Timestamp.fromDate(DateTime.parse(json['lastActive'] ?? DateTime.now().toIso8601String())),
+      firstName: json['firstName'] ?? '',
+      lastName: json['lastName'] ?? '',
+      phoneNumber: json['phoneNumber'] ?? '',
+      address1: json['address1'] ?? '',
+      address2: json['address2'],
+      city: json['city'] ?? '',
+      state: json['state'] ?? '',
+      zipcode: json['zipcode'] ?? 0,
+      ticketNumber: json['ticketNumber'] ?? '',
+      isWorking: json['isWorking'] ?? false,
+      booksOn: json['booksOn'] ?? false,
+      constructionTypes: List<String>.from(json['constructionTypes'] ?? []),
+      hoursPerWeek: json['hoursPerWeek'] ?? 0,
+      perDiemRequirement: (json['perDiemRequirement'] ?? 0.0).toDouble(),
+      preferredLocals: List<String>.from(json['preferredLocals'] ?? []),
+      fcmToken: json['fcmToken'],
+      displayName: json['displayName'] ?? '',
+      isActive: json['isActive'] ?? true,
+      createdTime: json['createdTime'] != null ? DateTime.parse(json['createdTime']) : null,
+      certifications: List<String>.from(json['certifications'] ?? []),
+      yearsExperience: json['yearsExperience'] ?? 0,
+      preferredDistance: json['preferredDistance'] ?? 0,
+      localNumber: json['localNumber'] ?? '',
+    );
+  }
 
-  /// Convert to Firestore document data
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
+      'username': username,
+      'classification': classification,
+      'homeLocal': homeLocal,
+      'role': role,
+      'crewIds': crewIds,
+      'email': email,
+      'avatarUrl': avatarUrl,
+      'onlineStatus': onlineStatus,
+      'lastActive': lastActive.toDate().toIso8601String(),
       'firstName': firstName,
       'lastName': lastName,
       'phoneNumber': phoneNumber,
-      'email': email,
-      'photoUrl': photoUrl,
       'address1': address1,
       'address2': address2,
       'city': city,
       'state': state,
       'zipcode': zipcode,
-      'homeLocal': homeLocal,
       'ticketNumber': ticketNumber,
-      'classification': classification,
       'isWorking': isWorking,
       'booksOn': booksOn,
       'constructionTypes': constructionTypes,
       'hoursPerWeek': hoursPerWeek,
       'perDiemRequirement': perDiemRequirement,
       'preferredLocals': preferredLocals,
-      'networkWithOthers': networkWithOthers,
-      'careerAdvancements': careerAdvancements,
-      'betterBenefits': betterBenefits,
-      'higherPayRate': higherPayRate,
-      'learnNewSkill': learnNewSkill,
-      'travelToNewLocation': travelToNewLocation,
-      'findLongTermWork': findLongTermWork,
-      'careerGoals': careerGoals,
-      'howHeardAboutUs': howHeardAboutUs,
-      'lookingToAccomplish': lookingToAccomplish,
-      'onboardingStatus': onboardingStatus,
-      'createdTime': createdTime.toIso8601String(),
-      'updatedTime': updatedTime?.toIso8601String(),
+      'fcmToken': fcmToken,
+      'displayName': displayName,
+      'isActive': isActive,
+      'createdTime': createdTime?.toIso8601String(),
+      'certifications': certifications,
+      'yearsExperience': yearsExperience,
+      'preferredDistance': preferredDistance,
+      'localNumber': localNumber,
     };
   }
 
-  /// Create from Firestore document data
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      uid: json['uid'] as String,
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
-      phoneNumber: json['phoneNumber'] as String,
-      email: json['email'] as String,
-      photoUrl: json['photoUrl'] as String?,
-      address1: json['address1'] as String,
-      address2: json['address2'] as String?,
-      city: json['city'] as String,
-      state: json['state'] as String,
-      zipcode: json['zipcode'] as String,
-      homeLocal: json['homeLocal'] as String,
-      ticketNumber: json['ticketNumber'] as String,
-      classification: json['classification'] as String,
-      isWorking: json['isWorking'] as bool,
-      booksOn: json['booksOn'] as String?,
-      constructionTypes: List<String>.from(json['constructionTypes'] as List),
-      hoursPerWeek: json['hoursPerWeek'] as String?,
-      perDiemRequirement: json['perDiemRequirement'] as String?,
-      preferredLocals: json['preferredLocals'] as String?,
-      networkWithOthers: json['networkWithOthers'] as bool,
-      careerAdvancements: json['careerAdvancements'] as bool,
-      betterBenefits: json['betterBenefits'] as bool,
-      higherPayRate: json['higherPayRate'] as bool,
-      learnNewSkill: json['learnNewSkill'] as bool,
-      travelToNewLocation: json['travelToNewLocation'] as bool,
-      findLongTermWork: json['findLongTermWork'] as bool,
-      careerGoals: json['careerGoals'] as String?,
-      howHeardAboutUs: json['howHeardAboutUs'] as String?,
-      lookingToAccomplish: json['lookingToAccomplish'] as String?,
-      onboardingStatus: json['onboardingStatus'] as String,
-      createdTime: DateTime.parse(json['createdTime'] as String),
-      updatedTime: json['updatedTime'] != null 
-          ? DateTime.parse(json['updatedTime'] as String) 
-          : null,
-    );
+  Map<String, dynamic> toFirestore() {
+    return {
+      'username': username,
+      'classification': classification,
+      'homeLocal': homeLocal,
+      'role': role,
+      'crewIds': crewIds,
+      'email': email,
+      'avatarUrl': avatarUrl,
+      'onlineStatus': onlineStatus,
+      'lastActive': lastActive,
+      'firstName': firstName,
+      'lastName': lastName,
+      'phoneNumber': phoneNumber,
+      'address1': address1,
+      'address2': address2,
+      'city': city,
+      'state': state,
+      'zipcode': zipcode,
+      'ticketNumber': ticketNumber,
+      'isWorking': isWorking,
+      'booksOn': booksOn,
+      'constructionTypes': constructionTypes,
+      'hoursPerWeek': hoursPerWeek,
+      'perDiemRequirement': perDiemRequirement,
+      'preferredLocals': preferredLocals,
+      'fcmToken': fcmToken,
+      'displayName': displayName,
+      'isActive': isActive,
+      'createdTime': createdTime,
+      'certifications': certifications,
+      'yearsExperience': yearsExperience,
+      'preferredDistance': preferredDistance,
+      'localNumber': localNumber,
+    };
   }
 
-  /// Create from Firestore DocumentSnapshot
-  factory UserModel.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return UserModel.fromJson({
-      'uid': doc.id,
-      ...data,
-    });
+  bool isValid() {
+    return username.isNotEmpty && email.isNotEmpty && classification.isNotEmpty;
   }
-
-  /// Create a copy with updated fields
-  UserModel copyWith({
-    String? uid,
-    String? firstName,
-    String? lastName,
-    String? phoneNumber,
-    String? email,
-    String? photoUrl,
-    String? address1,
-    String? address2,
-    String? city,
-    String? state,
-    String? zipcode,
-    String? homeLocal,
-    String? ticketNumber,
-    String? classification,
-    bool? isWorking,
-    String? booksOn,
-    List<String>? constructionTypes,
-    String? hoursPerWeek,
-    String? perDiemRequirement,
-    String? preferredLocals,
-    bool? networkWithOthers,
-    bool? careerAdvancements,
-    bool? betterBenefits,
-    bool? higherPayRate,
-    bool? learnNewSkill,
-    bool? travelToNewLocation,
-    bool? findLongTermWork,
-    String? careerGoals,
-    String? howHeardAboutUs,
-    String? lookingToAccomplish,
-    String? onboardingStatus,
-    DateTime? createdTime,
-    DateTime? updatedTime,
-  }) {
-    return UserModel(
-      uid: uid ?? this.uid,
-      firstName: firstName ?? this.firstName,
-      lastName: lastName ?? this.lastName,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      email: email ?? this.email,
-      photoUrl: photoUrl ?? this.photoUrl,
-      address1: address1 ?? this.address1,
-      address2: address2 ?? this.address2,
-      city: city ?? this.city,
-      state: state ?? this.state,
-      zipcode: zipcode ?? this.zipcode,
-      homeLocal: homeLocal ?? this.homeLocal,
-      ticketNumber: ticketNumber ?? this.ticketNumber,
-      classification: classification ?? this.classification,
-      isWorking: isWorking ?? this.isWorking,
-      booksOn: booksOn ?? this.booksOn,
-      constructionTypes: constructionTypes ?? this.constructionTypes,
-      hoursPerWeek: hoursPerWeek ?? this.hoursPerWeek,
-      perDiemRequirement: perDiemRequirement ?? this.perDiemRequirement,
-      preferredLocals: preferredLocals ?? this.preferredLocals,
-      networkWithOthers: networkWithOthers ?? this.networkWithOthers,
-      careerAdvancements: careerAdvancements ?? this.careerAdvancements,
-      betterBenefits: betterBenefits ?? this.betterBenefits,
-      higherPayRate: higherPayRate ?? this.higherPayRate,
-      learnNewSkill: learnNewSkill ?? this.learnNewSkill,
-      travelToNewLocation: travelToNewLocation ?? this.travelToNewLocation,
-      findLongTermWork: findLongTermWork ?? this.findLongTermWork,
-      careerGoals: careerGoals ?? this.careerGoals,
-      howHeardAboutUs: howHeardAboutUs ?? this.howHeardAboutUs,
-      lookingToAccomplish: lookingToAccomplish ?? this.lookingToAccomplish,
-      onboardingStatus: onboardingStatus ?? this.onboardingStatus,
-      createdTime: createdTime ?? this.createdTime,
-      updatedTime: updatedTime ?? DateTime.now(),
-    );
-  }
-
-  @override
-  String toString() => 'UserModel(uid: $uid, name: $fullName, local: $homeLocal)';
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is UserModel &&
-          runtimeType == other.runtimeType &&
-          uid == other.uid;
-
-  @override
-  int get hashCode => uid.hashCode;
-}
-
-/// Classification options for IBEW workers
-class Classification {
-  static const String journeymanLineman = 'Journeyman Lineman';
-  static const String journeymanElectrician = 'Journeyman Electrician';
-  static const String journeymanWireman = 'Journeyman Wireman';
-  static const String journeymanTreeTrimmer = 'Journeyman Tree Trimmer';
-  static const String operator = 'Operator';
-
-  static const List<String> all = [
-    journeymanLineman,
-    journeymanElectrician,
-    journeymanWireman,
-    journeymanTreeTrimmer,
-    operator,
-  ];
-}
-
-/// Construction type options
-class ConstructionType {
-  static const String distribution = 'Distribution';
-  static const String transmission = 'Transmission';
-  static const String subStation = 'SubStation';
-  static const String residential = 'Residential';
-  static const String industrial = 'Industrial';
-  static const String dataCenter = 'Data Center';
-  static const String commercial = 'Commercial';
-  static const String underground = 'Underground';
-
-  static const List<String> all = [
-    distribution,
-    transmission,
-    subStation,
-    residential,
-    industrial,
-    dataCenter,
-    commercial,
-    underground,
-  ];
-}
-
-/// Onboarding status options
-class OnboardingStatus {
-  static const String pending = 'pending';
-  static const String inProgress = 'in_progress';
-  static const String completed = 'completed';
 }

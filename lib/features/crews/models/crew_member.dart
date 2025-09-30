@@ -20,6 +20,15 @@ class MemberPermissions {
 
   factory MemberPermissions.fromRole(MemberRole role) {
     switch (role) {
+      case MemberRole.admin:
+        return MemberPermissions(
+          canInviteMembers: true,
+          canRemoveMembers: true,
+          canShareJobs: true,
+          canPostAnnouncements: true,
+          canEditCrewInfo: true,
+          canViewAnalytics: true,
+        );
       case MemberRole.foreman:
         return MemberPermissions(
           canInviteMembers: true,

@@ -1,0 +1,10 @@
+---
+description: Analyze after completing any and all code modification, generation, refatoring, or creation
+globs: *.dart
+alwaysApply: true
+---
+
+# Due Diligance
+
+- Without exception, you are to perform, at minumum either flutter analyze or dart analyze on all of the file that have been modified or created.
+- This step must be repeated until all issues have been resolved. This promotes quality and clean code. Not to mention good work ethic.

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/riverpod/auth_riverpod_provider.dart';
-import '../providers/riverpod/jobs_riverpod_provider.dart';
+import '../providers/riverpod/jobs_riverpod_provider.dart' as app_jobs_provider;
 import '../providers/riverpod/locals_riverpod_provider.dart';
 import '../models/job_model.dart';
 
@@ -50,7 +50,7 @@ class JobsListStateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final jobsProviderState = ref.watch(jobsProvider);
+    final jobsProviderState = ref.watch(app_jobs_provider.jobsProvider);
     final jobsState = JobsListState(
       jobs: jobsProviderState.jobs,
       isLoading: jobsProviderState.isLoading,
@@ -215,7 +215,7 @@ class CombinedAppStateSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authProviderState = ref.watch(authProvider);
-    final jobsProviderState = ref.watch(jobsProvider);
+    final jobsProviderState = ref.watch(app_jobs_provider.jobsProvider);
     final localsProviderState = ref.watch(localsProvider);
     
     final combinedState = CombinedAppState(

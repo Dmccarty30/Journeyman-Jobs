@@ -42,7 +42,7 @@ class JobRepositoryImpl implements JobRepository {
   @override
   Future<void> addJob(Job job) async {
     try {
-      await firestore.collection('jobs').add(job.toJson());
+      await firestore.collection('jobs').add(job.toFirestore());
     } catch (e) {
       throw Exception('Failed to add job: $e');
     }
@@ -51,7 +51,7 @@ class JobRepositoryImpl implements JobRepository {
   @override
   Future<void> updateJob(Job job) async {
     try {
-      await firestore.collection('jobs').doc(job.id).update(job.toJson());
+      await firestore.collection('jobs').doc(job.id).update(job.toFirestore());
     } catch (e) {
       throw Exception('Failed to update job: $e');
     }

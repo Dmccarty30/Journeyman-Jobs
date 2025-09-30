@@ -252,32 +252,67 @@ class AnalyticsService {
       },
     };
   }
+static Map<String, dynamic> _getDefaultCostData() {
+  return {
+    'firestoreReads': 8000000,
+    'firestoreWrites': 250000,
+    'storageUsage': 1.8,
+    'bandwidthUsage': 95.2,
+    'estimatedMonthlyCost': 145.75,
+    'costBreakdown': {
+      'firestore_reads': 80.00,
+      'firestore_writes': 25.00,
+      'storage': 0.05,
+      'bandwidth': 15.70,
+      'analytics': 0.00,
+      'performance': 0.00,
+      'hosting': 25.00,
+    },
+    'costTrends': {
+      'last_30_days': 145.75,
+      'previous_30_days': 198.34,
+      'savings': 52.59,
+      'optimization_impact': 26.5,
+    },
+    'projectedAnnualCost': 1749.00,
+    'baselineCost': 3756.00,
+    'totalSavings': 2007.00,
+  };
+}
 
-  static Map<String, dynamic> _getDefaultCostData() {
-    return {
-      'firestoreReads': 8000000,
-      'firestoreWrites': 250000,
-      'storageUsage': 1.8,
-      'bandwidthUsage': 95.2,
-      'estimatedMonthlyCost': 145.75,
-      'costBreakdown': {
-        'firestore_reads': 80.00,
-        'firestore_writes': 25.00,
-        'storage': 0.05,
-        'bandwidth': 15.70,
-        'analytics': 0.00,
-        'performance': 0.00,
-        'hosting': 25.00,
-      },
-      'costTrends': {
-        'last_30_days': 145.75,
-        'previous_30_days': 198.34,
-        'savings': 52.59,
-        'optimization_impact': 26.5,
-      },
-      'projectedAnnualCost': 1749.00,
-      'baselineCost': 3756.00,
-      'totalSavings': 2007.00,
-    };
+/// Tailboard-specific analytics events
+static Future<void> logPostCreated({
+  String? postId,
+  String? crewId,
+}) async {
+  try {
+    await _analytics.logEvent(
+      name: 'post_created',
+      parameters: {
+        if (postId != null) 'post_id': postId,
+        if (crewId != null) 'crew_id': crewId,
+      }.cast<String, Object>(),
+    );
+  } catch (e) {
+    debugPrint('Error logging post created event: $e');
   }
+}
+
+static Future<void> logJobShared({
+  String? jobId,
+  String? sharedWith,
+}) async {
+  try {
+    await _analytics.logEvent(
+      name: 'job_shared',
+      parameters: {
+        if (jobId != null) 'job_id': jobId,
+        if (sharedWith != null) 'shared_with': sharedWith,
+      }.cast<String, Object>(),
+    );
+  } catch (e) {
+    debugPrint('Error logging job shared event: $e');
+  }
+}
+}
 }

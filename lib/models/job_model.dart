@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
 /// Model class representing a Job posting
@@ -8,8 +9,12 @@ class Job {
   // Document reference
   final String id;
   final DocumentReference? reference;
+  final String sharerId;
+  final Map<String, dynamic> jobDetails; // Nested details: hours, payRate, perDiem, contractor, location (GeoPoint)
+  final bool matchesCriteria;
+  final bool deleted;
   
-  // Core job fields
+  // Core job fields (legacy/flat fields for compatibility)
   final int? local;
   final String? classification;
   final String company;
@@ -38,6 +43,10 @@ class Job {
   const Job({
     required this.id,
     this.reference,
+    required this.sharerId,
+    required this.jobDetails,
+    this.matchesCriteria = false,
+    this.deleted = false,
     this.local,
     this.classification,
     required this.company,
@@ -67,6 +76,10 @@ class Job {
   Job copyWith({
     String? id,
     DocumentReference? reference,
+    String? sharerId,
+    Map<String, dynamic>? jobDetails,
+    bool? matchesCriteria,
+    bool? deleted,
     int? local,
     String? classification,
     String? company,
@@ -94,6 +107,10 @@ class Job {
     return Job(
       id: id ?? this.id,
       reference: reference ?? this.reference,
+      sharerId: sharerId ?? this.sharerId,
+      jobDetails: jobDetails ?? this.jobDetails,
+      matchesCriteria: matchesCriteria ?? this.matchesCriteria,
+      deleted: deleted ?? this.deleted,
       local: local ?? this.local,
       classification: classification ?? this.classification,
       company: company ?? this.company,
@@ -143,7 +160,6 @@ class Job {
       throw FormatException('Unable to parse DateTime from $value');
     }
 
-
     // Helper function to safely parse integers
     int? parseInt(dynamic value) {
       if (value == null) return null;
@@ -175,7 +191,6 @@ class Job {
     }
 
 
-
     // Helper function to parse list of integers
     List<int>? parseIntList(dynamic value) {
       if (value == null) return null;
@@ -183,6 +198,22 @@ class Job {
         return value.map((e) => parseInt(e) ?? 0).toList();
       }
       return null;
+    }
+
+    // Helper to build jobDetails map
+    Map<String, dynamic> buildJobDetails(Map<String, dynamic> json) {
+      final details = <String, dynamic>{};
+      details['hours'] = parseInt(json['hours']) ?? parseInt(json['Shift']);
+      details['payRate'] = parseDouble(json['wage']) ?? parseDouble(json['hourlyWage']);
+      details['perDiem'] = json['per_diem']?.toString() ?? json['perDiem']?.toString() ?? json['Benefits']?.toString();
+      details['contractor'] = json['company']?.toString() ?? json['employer']?.toString() ?? '';
+      // location as GeoPoint if available, else string
+      if (json['location'] is GeoPoint) {
+        details['location'] = json['location'];
+      } else {
+        details['location'] = GeoPoint(0, 0); // Default if not GeoPoint
+      }
+      return details;
     }
 
     try {
@@ -211,16 +242,22 @@ class Job {
           hoursInt = parseInt(hoursValue);
         }
       }
+
+      final jobDetailsMap = buildJobDetails(json);
       
       return Job(
         id: json['id']?.toString() ?? '',
         reference: json['reference'] as DocumentReference?,
+        sharerId: json['sharerId']?.toString() ?? '',
+        jobDetails: jobDetailsMap,
+        matchesCriteria: json['matchesCriteria'] ?? false,
+        deleted: json['deleted'] ?? false,
         local: parseInt(json['local']) ?? parseInt(json['localNumber']),
         classification: extractedClassification ?? json['jobClass']?.toString(),
         company: json['company']?.toString() ?? json['employer']?.toString() ?? '',
         location: json['location']?.toString() ?? json['Location']?.toString() ?? '',
         hours: hoursInt ?? parseInt(json['Shift']),
-        wage: parseDouble(json['wage']) ?? parseDouble(json['hourlyWage']),
+        wage: jobDetailsMap['payRate'] ?? parseDouble(json['wage']) ?? parseDouble(json['hourlyWage']),
         sub: json['sub']?.toString(),
         jobClass: json['jobClass']?.toString() ?? certifications,
         localNumber: parseInt(json['localNumber']) ?? parseInt(json['local']),
@@ -228,7 +265,7 @@ class Job {
         datePosted: json['date_posted']?.toString() ?? json['datePosted']?.toString(),
         jobDescription: json['description']?.toString() ?? json['job_description']?.toString(),
         jobTitle: extractedJobTitle ?? json['title']?.toString(),
-        perDiem: json['per_diem']?.toString() ?? json['perDiem']?.toString() ?? json['Benefits']?.toString(),
+        perDiem: jobDetailsMap['perDiem'] ?? json['per_diem']?.toString() ?? json['perDiem']?.toString() ?? json['Benefits']?.toString(),
         agreement: json['agreement']?.toString(),
         numberOfJobs: json['numberOfJobs']?.toString() ?? json['positionsAvailable']?.toString() ?? json['Men Needed']?.toString(),
         timestamp: json['timestamp'] != null ? parseDateTime(json['timestamp']) : null,
@@ -262,6 +299,9 @@ class Job {
 
     // Required fields (always included)
     data['id'] = id;
+    data['sharerId'] = sharerId;
+    data['jobDetails'] = jobDetails;
+    data['matchesCriteria'] = matchesCriteria;
     data['company'] = company;
     data['location'] = location;
     
@@ -278,6 +318,8 @@ class Job {
         data['timestamp'] = timestamp!.toIso8601String();
       }
     }
+
+    data['deleted'] = deleted;
 
     // Optional fields
     addIfNotNull('local', local);
@@ -318,6 +360,8 @@ class Job {
     return Job.fromJson(data);
   }
 
+  bool isValid() => id.isNotEmpty && sharerId.isNotEmpty && jobDetails.isNotEmpty;
+
   @override
   String toString() {
     return 'Job('
@@ -338,6 +382,7 @@ class Job {
     return other is Job &&
         other.id == id &&
         other.reference == reference &&
+        other.deleted == deleted &&
         other.local == local &&
         other.classification == classification &&
         other.company == company &&
@@ -367,6 +412,7 @@ class Job {
   int get hashCode => Object.hashAll([
         id,
         reference,
+        deleted,
         local,
         classification,
         company,

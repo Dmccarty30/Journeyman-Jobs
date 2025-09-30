@@ -1,0 +1,12 @@
+---
+description: Identify all related, effected, or otherwise assocciated files to the script being corrected.
+globs: *.dart, *.json
+alwaysApply: true
+---
+
+# Considerable Awareness
+
+- If I assigned you troubleshoot an error in a given file, you must consider, search, and identify everything that is influenced by the error to prevent unforseen collateral errors.
+- Just because an error is in one file doesn't mean the solution is in the same file.
+
+- Properly understanding and having context about the codebase will provide significant advantage and efficiency when properly resolving erros.

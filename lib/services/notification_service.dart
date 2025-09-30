@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import '../models/notification/notification_preferences_model.dart';
 import 'fcm_service.dart';
 
@@ -394,5 +397,120 @@ class NotificationService {
       debugPrint('Error checking quiet hours: $e');
       return false;
     }
+  }
+
+  /// Initialize FCM and request permissions
+  static Future<void> init() async {
+    try {
+      // Request permission
+      final settings = await FirebaseMessaging.instance.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+        provisional: false,
+        carPlay: false,
+        criticalAlert: false,
+      );
+
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        debugPrint('User granted permission');
+      } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+        debugPrint('User granted provisional permission');
+      } else {
+        debugPrint('User declined or has not accepted permission');
+      }
+
+      // Get token
+      await getToken();
+
+      // Setup listeners (delegate to FCMService if not already set)
+      await FCMService.initialize(null); // Context not needed for basic setup; adjust if required
+    } catch (e) {
+      debugPrint('Error initializing notifications: $e');
+    }
+  }
+
+  /// Get FCM token
+  static Future<String?> getToken() async {
+    try {
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        // Store in Firestore via FCMService
+        await FCMService._storeTokenInFirestore(token);
+      }
+      return token;
+    } catch (e) {
+      debugPrint('Error getting FCM token: $e');
+      return null;
+    }
+  }
+
+  /// Send push notification via FCM HTTP API
+  static Future<void> sendNotification({
+    required String token,
+    required String title,
+    required String body,
+    Map<String, dynamic> data = const {},
+  }) async {
+    if (token.isEmpty) {
+      debugPrint('No token provided for notification');
+      return;
+    }
+
+    try {
+      final serverKey = Platform.environment['FCM_SERVER_KEY'];
+      if (serverKey == null || serverKey.isEmpty) {
+        debugPrint('FCM server key not found in environment variables. Add FCM_SERVER_KEY to your environment.');
+        return;
+      }
+
+      final response = await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'key=$serverKey',
+        },
+        body: jsonEncode({
+          'to': token,
+          'notification': {
+            'title': title,
+            'body': body,
+          },
+          'data': {
+            ...data,
+            'type': data['type'] ?? 'general', // Ensure type for deep linking
+            'timestamp': DateTime.now().toIso8601String(),
+          },
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('Notification sent successfully to $token');
+      } else {
+        debugPrint('Failed to send notification: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error sending notification: $e');
+    }
+  }
+
+  /// Listen for foreground messages (call this in your app's main listener setup)
+  static void listenForForegroundMessages(Function(RemoteMessage) onMessage) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      debugPrint('Received foreground message: ${message.notification?.title}');
+      // Show local notification or in-app UI
+      if (FCMService._localNotifications != null) {
+        // Delegate to FCMService or local_notification_service
+      }
+      onMessage(message);
+    });
+  }
+
+  /// Listen for messages when app is opened from background/terminated
+  static void listenForMessageOpenedApp(Function(RemoteMessage) onOpened) {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      debugPrint('App opened from notification: ${message.notification?.title}');
+      onOpened(message);
+    });
   }
 }

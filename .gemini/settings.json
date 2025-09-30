@@ -1,0 +1,21 @@
+{
+  "mcpServers": [
+    {
+      "name": "context7",
+      "path": ".gemini/mcp-servers/context7",
+      "command": "node dist/index.js --transport http"
+    },
+    {
+      "name": "sequentialthinking",
+      "path": ".gemini/mcp-servers/sequentialthinking/src/sequentialthinking",
+      "command": "node dist/index.js"
+    }
+  ],
+  "mcp": {
+    "serverCommand": "npm run start",
+    "allowed": [
+      "context7",
+      "sequentialthinking"
+    ]
+  }
+}

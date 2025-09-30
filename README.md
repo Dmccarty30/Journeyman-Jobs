@@ -187,6 +187,80 @@ flutter build apk --release
 flutter build appbundle --release
 ```
 
+## 🚀 Deployment
+
+### Manual Deployment
+
+To deploy the Flutter web app to Firebase Hosting:
+
+1. **Install Firebase CLI** (if not already installed):
+   ```
+   npm install -g firebase-tools
+   ```
+
+2. **Login to Firebase**:
+   ```
+   firebase login
+   ```
+
+3. **Build the web app**:
+   ```
+   flutter build web --web-renderer canvaskit --release
+   ```
+
+4. **Deploy to Firebase Hosting**:
+   ```
+   firebase deploy --only hosting
+   ```
+
+5. **Full deployment** (includes Cloud Functions, Firestore indexes, and Hosting):
+   ```
+   firebase deploy
+   ```
+
+**Prerequisites**:
+- Ensure `firebase.json` is configured with hosting settings.
+- For full deploys, have Cloud Functions and Firestore indexes ready.
+- User must set up Firebase project and install dependencies.
+
+### CI/CD with GitHub Actions
+
+The project includes automated deployment workflows:
+
+- **Production Deploy**: `.github/workflows/firebase-hosting-merge.yml`
+  - Triggers on push to `main` branch.
+  - Runs tests, builds web app, deploys to Firebase Hosting (live channel).
+
+- **PR Previews**: `.github/workflows/firebase-hosting-pull-request.yml`
+  - Triggers on pull request open/synchronize.
+  - Runs tests, builds web app, deploys to preview channel for review.
+
+**Setup Instructions**:
+1. In your GitHub repository, go to **Settings > Secrets and variables > Actions**.
+2. Add the following repository secret:
+   - `FIREBASE_SERVICE_ACCOUNT_JOURNEYMAN_JOBS`: Paste your Firebase service account JSON key (generate from Firebase Console > Project Settings > Service Accounts).
+3. Commit and push changes to trigger workflows.
+4. For PR previews, Firebase will provide a unique URL in the Actions tab.
+
+**Notes**:
+- No `FIREBASE_TOKEN` needed; uses service account for authentication.
+- Ensure Flutter cache is enabled for faster builds.
+- Monitor workflow runs in GitHub Actions tab.
+
+### Monitoring and Analytics
+
+- **Firebase Performance Monitoring**: Integrated in `main.dart` to track app performance (network requests, screen rendering).
+- **Firebase Crashlytics**: Set up for automatic error reporting; records fatal/non-fatal errors in services.
+- **Firebase Analytics**: Logs key events (e.g., post created, job shared) via `analytics_service.dart`.
+- **Dashboards**: Access via Firebase Console:
+  - Performance tab for traces and metrics.
+  - Crashlytics for crash reports.
+  - Analytics for user events and conversions.
+
+**Additional Setup**:
+- Enable Performance Monitoring and Crashlytics in Firebase Console if not already.
+- For production, review Firebase quotas and billing.
+
 ## 🤝 Contributing
 
 1. Fork the repository

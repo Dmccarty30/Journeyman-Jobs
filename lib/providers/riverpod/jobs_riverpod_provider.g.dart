@@ -117,8 +117,8 @@ const filteredJobsProvider = FilteredJobsFamily._();
 /// Filtered jobs provider using family for auto-dispose
 
 final class FilteredJobsProvider extends $FunctionalProvider<
-        AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
-    with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
+        AsyncValue<List<dynamic>>, List<dynamic>, FutureOr<List<dynamic>>>
+    with $FutureModifier<List<dynamic>>, $FutureProvider<List<dynamic>> {
   /// Filtered jobs provider using family for auto-dispose
   const FilteredJobsProvider._(
       {required FilteredJobsFamily super.from,
@@ -143,11 +143,12 @@ final class FilteredJobsProvider extends $FunctionalProvider<
 
   @$internal
   @override
-  $FutureProviderElement<List<Job>> $createElement($ProviderPointer pointer) =>
+  $FutureProviderElement<List<dynamic>> $createElement(
+          $ProviderPointer pointer) =>
       $FutureProviderElement(pointer);
 
   @override
-  FutureOr<List<Job>> create(Ref ref) {
+  FutureOr<List<dynamic>> create(Ref ref) {
     final argument = this.argument as JobFilterCriteria;
     return filteredJobs(
       ref,
@@ -171,7 +172,7 @@ String _$filteredJobsHash() => r'f34109b3e9daa3e8f76eee9badfa2c7817cc0ada';
 /// Filtered jobs provider using family for auto-dispose
 
 final class FilteredJobsFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<List<Job>>, JobFilterCriteria> {
+    with $FunctionalFamilyOverride<FutureOr<List<dynamic>>, JobFilterCriteria> {
   const FilteredJobsFamily._()
       : super(
           retry: null,
@@ -200,8 +201,8 @@ const searchJobsProvider = SearchJobsFamily._();
 /// Auto-dispose provider for job search
 
 final class SearchJobsProvider extends $FunctionalProvider<
-        AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
-    with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
+        AsyncValue<List<dynamic>>, List<dynamic>, FutureOr<List<dynamic>>>
+    with $FutureModifier<List<dynamic>>, $FutureProvider<List<dynamic>> {
   /// Auto-dispose provider for job search
   const SearchJobsProvider._(
       {required SearchJobsFamily super.from, required String super.argument})
@@ -225,11 +226,12 @@ final class SearchJobsProvider extends $FunctionalProvider<
 
   @$internal
   @override
-  $FutureProviderElement<List<Job>> $createElement($ProviderPointer pointer) =>
+  $FutureProviderElement<List<dynamic>> $createElement(
+          $ProviderPointer pointer) =>
       $FutureProviderElement(pointer);
 
   @override
-  FutureOr<List<Job>> create(Ref ref) {
+  FutureOr<List<dynamic>> create(Ref ref) {
     final argument = this.argument as String;
     return searchJobs(
       ref,
@@ -253,7 +255,7 @@ String _$searchJobsHash() => r'ddc3acadff3d73c6ab9b471f80bdbc3b95ee5097';
 /// Auto-dispose provider for job search
 
 final class SearchJobsFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<List<Job>>, String> {
+    with $FunctionalFamilyOverride<FutureOr<List<dynamic>>, String> {
   const SearchJobsFamily._()
       : super(
           retry: null,
@@ -282,8 +284,8 @@ const jobByIdProvider = JobByIdFamily._();
 /// Job by ID provider
 
 final class JobByIdProvider
-    extends $FunctionalProvider<AsyncValue<Job?>, Job?, FutureOr<Job?>>
-    with $FutureModifier<Job?>, $FutureProvider<Job?> {
+    extends $FunctionalProvider<AsyncValue<dynamic>, dynamic, FutureOr<dynamic>>
+    with $FutureModifier<dynamic>, $FutureProvider<dynamic> {
   /// Job by ID provider
   const JobByIdProvider._(
       {required JobByIdFamily super.from, required String super.argument})
@@ -307,11 +309,11 @@ final class JobByIdProvider
 
   @$internal
   @override
-  $FutureProviderElement<Job?> $createElement($ProviderPointer pointer) =>
+  $FutureProviderElement<dynamic> $createElement($ProviderPointer pointer) =>
       $FutureProviderElement(pointer);
 
   @override
-  FutureOr<Job?> create(Ref ref) {
+  FutureOr<dynamic> create(Ref ref) {
     final argument = this.argument as String;
     return jobById(
       ref,
@@ -335,7 +337,7 @@ String _$jobByIdHash() => r'fe0b6ad481434b99b4f2dd06952e724f38be0922';
 /// Job by ID provider
 
 final class JobByIdFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<Job?>, String> {
+    with $FunctionalFamilyOverride<FutureOr<dynamic>, String> {
   const JobByIdFamily._()
       : super(
           retry: null,
@@ -364,8 +366,8 @@ const recentJobsProvider = RecentJobsProvider._();
 /// Recent jobs provider
 
 final class RecentJobsProvider extends $FunctionalProvider<
-        AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
-    with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
+        AsyncValue<List<dynamic>>, List<dynamic>, FutureOr<List<dynamic>>>
+    with $FutureModifier<List<dynamic>>, $FutureProvider<List<dynamic>> {
   /// Recent jobs provider
   const RecentJobsProvider._()
       : super(
@@ -383,11 +385,12 @@ final class RecentJobsProvider extends $FunctionalProvider<
 
   @$internal
   @override
-  $FutureProviderElement<List<Job>> $createElement($ProviderPointer pointer) =>
+  $FutureProviderElement<List<dynamic>> $createElement(
+          $ProviderPointer pointer) =>
       $FutureProviderElement(pointer);
 
   @override
-  FutureOr<List<Job>> create(Ref ref) {
+  FutureOr<List<dynamic>> create(Ref ref) {
     return recentJobs(ref);
   }
 }
@@ -401,9 +404,9 @@ const stormJobsProvider = StormJobsProvider._();
 
 /// Storm jobs provider (high priority jobs)
 
-final class StormJobsProvider extends $FunctionalProvider<AsyncValue<List<Job>>,
-        List<Job>, FutureOr<List<Job>>>
-    with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
+final class StormJobsProvider extends $FunctionalProvider<
+        AsyncValue<List<dynamic>>, List<dynamic>, FutureOr<List<dynamic>>>
+    with $FutureModifier<List<dynamic>>, $FutureProvider<List<dynamic>> {
   /// Storm jobs provider (high priority jobs)
   const StormJobsProvider._()
       : super(
@@ -421,11 +424,12 @@ final class StormJobsProvider extends $FunctionalProvider<AsyncValue<List<Job>>,
 
   @$internal
   @override
-  $FutureProviderElement<List<Job>> $createElement($ProviderPointer pointer) =>
+  $FutureProviderElement<List<dynamic>> $createElement(
+          $ProviderPointer pointer) =>
       $FutureProviderElement(pointer);
 
   @override
-  FutureOr<List<Job>> create(Ref ref) {
+  FutureOr<List<dynamic>> create(Ref ref) {
     return stormJobs(ref);
   }
 }

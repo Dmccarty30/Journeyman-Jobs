@@ -131,7 +131,7 @@ final class SendGlobalMessageNotifierProvider
 }
 
 String _$sendGlobalMessageNotifierHash() =>
-    r'a1b74e3dfaa789c8df9b21c024ba779cfea2d392';
+    r'd6e10a03ac55f1e115bd2a43e979e847495c7fac';
 
 /// Provider to send a global message
 

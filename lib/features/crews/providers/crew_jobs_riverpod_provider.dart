@@ -11,7 +11,7 @@ part 'crew_jobs_riverpod_provider.g.dart';
 @riverpod
 Stream<List<Job>> crewFilteredJobsStream(Ref ref, String crewId) {
   final currentUser = ref.watch(currentUserProvider);
-  final jobMatchingService = ref.watch(jobMatchingServiceProvider);
+  final jobMatchingService = ref.watch(jobMatchingServiceProvider as ProviderListenable);
   final crew = ref.watch(crewByIdProvider(crewId));
 
   if (currentUser == null || crew == null) {

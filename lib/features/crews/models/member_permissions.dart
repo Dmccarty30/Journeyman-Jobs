@@ -77,7 +77,7 @@ class MemberPermissions {
 
   factory MemberPermissions.fromRole(MemberRole role) {
     switch (role) {
-      case MemberRole.foreman:
+      case MemberRole.admin:
         return const MemberPermissions(
           canShareJob: true,
           canDeletePost: true,
@@ -89,30 +89,14 @@ class MemberPermissions {
           canPostAnnouncements: true,
           canEditCrewInfo: true,
         );
-      case MemberRole.lead:
+      case MemberRole.foreman:
         return const MemberPermissions(
           canShareJob: true,
-          canDeletePost: false,
-          canEditMessages: false,
+          canDeletePost: true,
+          canEditMessages: true,
           canInviteMembers: true,
-          canViewAnalytics: false,
+          canViewAnalytics: true,
           canShareJobs: true,
-          canRemoveMembers: false,
-          canPostAnnouncements: true,
-          canEditCrewInfo: false,
-        );
-      case MemberRole.member:
-        return const MemberPermissions(
-          canShareJob: true,
-          canDeletePost: false,
-          canEditMessages: false,
-          canInviteMembers: false,
-          canViewAnalytics: false,
-          canShareJobs: true,
-          canRemoveMembers: false,
-          canPostAnnouncements: false,
-          canEditCrewInfo: false,
-        );
-    }
-  }
+          canRemoveMembers: true,
+          canPostAnnouncements: true
 }

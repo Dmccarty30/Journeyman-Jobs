@@ -1,2 +1,6 @@
-/// Defines the roles a member can have within a crew.
-enum MemberRole { foreman, lead, member }
+enum MemberRole {
+  admin,
+  member,
+  foreman,
+  lead,
+}
