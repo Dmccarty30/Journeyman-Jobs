@@ -66,7 +66,6 @@ class ContractorCard extends StatelessWidget {
                 child: _buildInfoRow(
                   label: 'Phone',
                   value: formatPhoneNumber(contractor.phoneNumber),
-                  isLink: true,
                 ),
               ),
               const SizedBox(height: 8),

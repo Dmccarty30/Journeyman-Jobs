@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
-import '../../design_system/popup_theme.dart';
 import '../../electrical_components/circuit_board_background.dart';
 import '../../navigation/app_router.dart';
 import '../../providers/riverpod/jobs_riverpod_provider.dart';
@@ -431,79 +430,130 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   void _showJobDetailsDialog(BuildContext context, dynamic job) {
     final jobModel = job is JobsRecord ? _convertJobsRecordToJob(job) : job as Job;
-    
+
     showDialog(
       context: context,
-      barrierColor: PopupThemeData.alertDialog().barrierColor,
-      builder: (BuildContext context) => PopupTheme(
-        data: PopupThemeData.alertDialog(),
-        child: AlertDialog(
-          backgroundColor: PopupThemeData.alertDialog().backgroundColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: PopupThemeData.alertDialog().borderRadius,
-            side: BorderSide(
-              color: PopupThemeData.alertDialog().borderColor,
-              width: PopupThemeData.alertDialog().borderWidth,
-            ),
+      builder: (BuildContext context) => Dialog(
+        backgroundColor: AppTheme.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          side: const BorderSide(
+            color: AppTheme.accentCopper,
+            width: AppTheme.borderWidthThin,
           ),
-          elevation: PopupThemeData.alertDialog().elevation,
-          contentPadding: PopupThemeData.alertDialog().padding,
-          title: Text(
-            jobModel.company,
-            style: AppTheme.headlineSmall.copyWith(
-              color: AppTheme.primaryNavy,
-            ),
+        ),
+        child: Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.85,
+            maxWidth: MediaQuery.of(context).size.width * 0.95,
           ),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildDetailRow('Local', jobModel.local?.toString() ?? 'N/A'),
-                _buildDetailRow('Classification', jobModel.classification ?? 'N/A'),
-                _buildDetailRow('Location', jobModel.location),
-                _buildDetailRow('Hours', '${jobModel.hours ?? 'N/A'} hours/week'),
-                _buildDetailRow('Wage', jobModel.wage != null ? '\${jobModel.wage}/hr' : 'N/A'),
-                _buildDetailRow('Per Diem', jobModel.perDiem?.isNotEmpty == true ? 'Yes' : 'No'),
-                _buildDetailRow('Start Date', jobModel.startDate ?? 'N/A'),
-                _buildDetailRow('Duration', jobModel.duration ?? 'N/A'),
-                if (jobModel.jobDescription?.isNotEmpty == true) ...[
-                  const SizedBox(height: AppTheme.spacingMd),
-                  Text(
-                    'Description',
-                    style: AppTheme.bodyLarge.copyWith(
-                      fontWeight: FontWeight.bold,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header with Navy background
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingLg),
+                decoration: const BoxDecoration(
+                  color: AppTheme.primaryNavy,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(AppTheme.radiusLg),
+                    topRight: Radius.circular(AppTheme.radiusLg),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        jobModel.company,
+                        style: AppTheme.headlineSmall.copyWith(
+                          color: AppTheme.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close),
+                      color: AppTheme.white,
+                      style: IconButton.styleFrom(
+                        backgroundColor: AppTheme.white.withAlpha(26),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Content
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(AppTheme.spacingLg),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDetailRow('Local', jobModel.local?.toString() ?? 'N/A'),
+                      _buildDetailRow('Classification', jobModel.classification ?? 'N/A'),
+                      _buildDetailRow('Location', jobModel.location),
+                      _buildDetailRow('Hours', '${jobModel.hours ?? 'N/A'} hours/week'),
+                      _buildDetailRow('Wage', jobModel.wage != null ? '\$${jobModel.wage}/hr' : 'N/A'),
+                      _buildDetailRow('Per Diem', jobModel.perDiem?.isNotEmpty == true ? 'Yes' : 'No'),
+                      _buildDetailRow('Start Date', jobModel.startDate ?? 'N/A'),
+                      _buildDetailRow('Duration', jobModel.duration ?? 'N/A'),
+                      if (jobModel.jobDescription?.isNotEmpty == true) ...[
+                        const SizedBox(height: AppTheme.spacingMd),
+                        Text(
+                          'Description',
+                          style: AppTheme.bodyLarge.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primaryNavy,
+                          ),
+                        ),
+                        const SizedBox(height: AppTheme.spacingSm),
+                        Text(
+                          jobModel.jobDescription!,
+                          style: AppTheme.bodyMedium,
+                        ),
+                      ],
+                    ],
                   ),
-                  const SizedBox(height: AppTheme.spacingSm),
-                  Text(
-                    jobModel.jobDescription!,
-                    style: AppTheme.bodyMedium,
+                ),
+              ),
+              // Actions
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  color: AppTheme.offWhite,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(AppTheme.radiusLg),
+                    bottomRight: Radius.circular(AppTheme.radiusLg),
                   ),
-                ],
-              ],
-            ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(
+                        'Close',
+                        style: TextStyle(color: AppTheme.textSecondary),
+                      ),
+                    ),
+                    const SizedBox(width: AppTheme.spacingMd),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _submitJobApplication(jobModel);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryNavy,
+                        foregroundColor: AppTheme.white,
+                      ),
+                      child: const Text('Apply'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Close',
-                style: TextStyle(color: AppTheme.textSecondary),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _submitJobApplication(jobModel);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryNavy,
-                foregroundColor: AppTheme.white,
-              ),
-              child: const Text('Apply'),
-            ),
-          ],
         ),
       ),
     );
