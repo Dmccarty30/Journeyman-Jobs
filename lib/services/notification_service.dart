@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -400,7 +401,7 @@ class NotificationService {
   }
 
   /// Initialize FCM and request permissions
-  static Future<void> init() async {
+  static Future<void> init(BuildContext context) async {
     try {
       // Request permission
       final settings = await FirebaseMessaging.instance.requestPermission(
@@ -424,7 +425,7 @@ class NotificationService {
       await getToken();
 
       // Setup listeners (delegate to FCMService if not already set)
-      await FCMService.initialize(null); // Context not needed for basic setup; adjust if required
+      await FCMService.initialize(context);
     } catch (e) {
       debugPrint('Error initializing notifications: $e');
     }
@@ -435,8 +436,17 @@ class NotificationService {
     try {
       final token = await FirebaseMessaging.instance.getToken();
       if (token != null) {
-        // Store in Firestore via FCMService
-        await FCMService._storeTokenInFirestore(token);
+        // Store in Firestore
+        final user = _auth.currentUser;
+        if (user != null) {
+          await _firestore.collection('users').doc(user.uid).set(
+            {
+              'fcmToken': token,
+              'updatedAt': FieldValue.serverTimestamp(),
+            },
+            SetOptions(merge: true),
+          );
+        }
       }
       return token;
     } catch (e) {
@@ -499,9 +509,6 @@ class NotificationService {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('Received foreground message: ${message.notification?.title}');
       // Show local notification or in-app UI
-      if (FCMService._localNotifications != null) {
-        // Delegate to FCMService or local_notification_service
-      }
       onMessage(message);
     });
   }

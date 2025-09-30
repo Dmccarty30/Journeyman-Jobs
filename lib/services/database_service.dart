@@ -2,19 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
+import 'package:journeyman_jobs/services/storage_service.dart';
 import 'dart:io';
 import 'cache_service.dart';
 import '../models/user_model.dart';
 import '../models/crew_model.dart';
 import '../models/post_model.dart';
 import '../models/job_model.dart';
-import '../models/conversation_model.dart';
-import '../models/message_model.dart';
-import '../services/storage_service.dart';
+import '../models/conversation_model.dart' as conv;
+import '../models/contractor_model.dart';
+import '../features/crews/models/message.dart';
 import '../services/notification_service.dart';
 import '../services/connectivity_service.dart';
 import '../domain/exceptions/app_exception.dart';
-import '../utils/error_handling.dart';
 
 class DatabaseService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -188,7 +188,7 @@ class DatabaseService {
   }
 
   // Feed Posts
-  Stream<List<Post>> streamFeedPosts(String crewId, {int limit = 20, DocumentSnapshot? startAfter}) {
+  Stream<List<PostModel>> streamFeedPosts(String crewId, {int limit = 20, DocumentSnapshot? startAfter}) {
     Query<Map<String, dynamic>> query = _db.collection('crews').doc(crewId).collection('feedPosts')
         .where('deleted', isEqualTo: false)
         .orderBy('timestamp', descending: true)
@@ -197,22 +197,23 @@ class DatabaseService {
       query = query.startAfterDocument(startAfter);
     }
     return query.snapshots()
-        .map((snap) => snap.docs.map((doc) => Post.fromFirestore(doc)).toList());
+        .map((snap) => snap.docs.map((doc) => PostModel.fromFirestore(doc)).toList());
   }
 
-  Future<void> createPost(String crewId, Post post, {List<File>? mediaFiles}) async {
+  Future<void> createPost(String crewId, PostModel post, {List<File>? mediaFiles}) async {
     List<String> mediaUrls = [];
     if (mediaFiles != null && mediaFiles.isNotEmpty) {
+      final connectivity = ConnectivityService();
       try {
         for (var file in mediaFiles) {
           final timestamp = DateTime.now().millisecondsSinceEpoch;
-          final path = 'crews/$crewId/posts/${post.id ?? timestamp}/media/$timestamp';
-          final url = await StorageService().uploadMedia(file, path);
+          final path = 'crews/$crewId/posts/${post.id}/media/$timestamp';
+          final url = await StorageService(connectivityService: connectivity).uploadMedia(file, path);
           if (url != null) {
             mediaUrls.add(url);
           }
         }
-        post.mediaUrls = mediaUrls;
+        post = post.copyWith(mediaUrls: mediaUrls);
       } on AppException {
         // Log error, continue without media
       } catch (e) {
@@ -277,37 +278,37 @@ class DatabaseService {
 
   Future<void> shareJob(String crewId, Job job) async {
     final crew = await getCrew(crewId);
-    job.matchesCriteria = _computeJobMatch(job.jobDetails, crew?.jobPreferences ?? {});
+    final jobToShare = job.copyWith(matchesCriteria: _computeJobMatch(job.jobDetails, crew?.jobPreferences ?? {}));
 
     // Calculate match score as weighted average of individual criteria
     double score = 0.0;
 
     // Hours match
-    double jobHours = job.jobDetails['hours']?.toDouble() ?? 0.0;
+    double jobHours = jobToShare.jobDetails['hours']?.toDouble() ?? 0.0;
     double prefHours = crew?.jobPreferences['hoursWorked']?.toDouble() ?? 0.0;
     bool hoursMatch = jobHours >= prefHours;
     score += hoursMatch ? 0.3 : 0.0;
 
     // Pay rate match
-    double jobPay = job.jobDetails['payRate']?.toDouble() ?? 0.0;
+    double jobPay = jobToShare.jobDetails['payRate']?.toDouble() ?? 0.0;
     double prefPay = crew?.jobPreferences['payRate']?.toDouble() ?? 0.0;
     bool payMatch = jobPay >= prefPay;
     score += payMatch ? 0.3 : 0.0;
 
     // Per diem match
-    double jobPerDiem = job.jobDetails['perDiem']?.toDouble() ?? 0.0;
+    double jobPerDiem = jobToShare.jobDetails['perDiem']?.toDouble() ?? 0.0;
     double prefPerDiem = crew?.jobPreferences['perDiem']?.toDouble() ?? 0.0;
     bool perDiemMatch = jobPerDiem >= prefPerDiem;
     score += perDiemMatch ? 0.2 : 0.0;
 
     // Contractor match
-    bool jobContractor = job.jobDetails['contractor'] ?? false;
+    bool jobContractor = jobToShare.jobDetails['contractor'] ?? false;
     bool prefContractor = crew?.jobPreferences['contractor'] ?? false;
     bool contractorMatch = jobContractor == prefContractor;
     score += contractorMatch ? 0.1 : 0.0;
 
     // Location match
-    GeoPoint? jobLoc = job.jobDetails['location'];
+    GeoPoint? jobLoc = jobToShare.jobDetails['location'];
     GeoPoint? prefLoc = crew?.jobPreferences['location'];
     bool locationMatch = true;
     if (jobLoc != null && prefLoc != null) {
@@ -323,7 +324,7 @@ class DatabaseService {
 
     final batch = _db.batch();
     final jobRef = _db.collection('crews').doc(crewId).collection('jobs').doc();
-    batch.set(jobRef, job.toFirestore());
+    batch.set(jobRef, jobToShare.toFirestore());
 
     // Always increment total jobs shared
     Map<String, dynamic> crewUpdates = {
@@ -331,7 +332,7 @@ class DatabaseService {
     };
 
     // If matches criteria, update match stats
-    if (job.matchesCriteria) {
+    if (jobToShare.matchesCriteria) {
       crewUpdates['stats.totalMatchScore'] = FieldValue.increment(score);
       crewUpdates['stats.matchCount'] = FieldValue.increment(1);
     }
@@ -353,7 +354,7 @@ class DatabaseService {
             await NotificationService.sendNotification(
               token: token,
               title: 'New Job Shared in Crew',
-              body: '${job.jobTitle} at ${job.company}',
+              body: '${jobToShare.jobTitle} at ${jobToShare.company}',
               data: {
                 'type': 'job',
                 'jobId': jobId,
@@ -383,7 +384,7 @@ class DatabaseService {
     return convId;
   }
 
-  Stream<List<Message>> streamMessages(String crewId, String conversationId, {int limit = 20, DocumentSnapshot? startAfter}) {
+Stream<List<Message>> streamMessages(String crewId, String conversationId, {int limit = 20, DocumentSnapshot? startAfter}) {
     Query<Map<String, dynamic>> query = _db.collection('crews').doc(crewId).collection('conversations').doc(conversationId)
         .collection('messages')
         .where('deleted', isEqualTo: false)
@@ -392,23 +393,32 @@ class DatabaseService {
     if (startAfter != null) {
       query = query.startAfterDocument(startAfter);
     }
-    return query.snapshots()
+return query.snapshots()
         .map((snap) => snap.docs.map((doc) => Message.fromFirestore(doc)).toList());
   }
 
   Future<void> sendMessage(String crewId, String conversationId, Message message, {List<File>? mediaFiles}) async {
-    List<String> mediaUrls = [];
     if (mediaFiles != null && mediaFiles.isNotEmpty) {
+      final connectivity = ConnectivityService();
       try {
+        List<Attachment> attachments = [];
         for (var file in mediaFiles) {
           final timestamp = DateTime.now().millisecondsSinceEpoch;
-          final path = 'crews/$crewId/conversations/$conversationId/messages/${message.id ?? timestamp}/media/$timestamp';
-          final url = await StorageService().uploadMedia(file, path);
+          final path = 'crews/$crewId/conversations/$conversationId/messages/${message.id}/media/$timestamp';
+          final url = await StorageService(connectivityService: connectivity).uploadMedia(file, path);
           if (url != null) {
-            mediaUrls.add(url);
+            // Create an Attachment object instead of just storing the URL
+            final attachment = Attachment(
+              url: url,
+              filename: file.path.split('/').last,
+              type: _getAttachmentTypeFromFile(file),
+              sizeBytes: await file.length(),
+            );
+            attachments.add(attachment);
           }
         }
-        message.mediaUrls = mediaUrls;
+        // Update message with attachments instead of mediaUrls
+        message = message.copyWith(attachments: attachments);
       } on AppException {
         // Log error, continue without media
       } catch (e) {
@@ -495,11 +505,11 @@ class DatabaseService {
     return _db.collection('crews').doc(crewId).collection('conversations').doc(convId).snapshots();
   }
 
-  Stream<List<Conversation>> streamConversations(String crewId) {
+Stream<List<conv.Conversation>> streamConversations(String crewId) {
     return _db.collection('crews').doc(crewId).collection('conversations')
         .where('deleted', isEqualTo: false)
         .snapshots()
-        .map((snap) => snap.docs.map((doc) => Conversation.fromFirestore(doc)).toList());
+        .map((snap) => snap.docs.map((doc) => conv.Conversation.fromFirestore(doc)).toList());
   }
 
   Future<void> updateTyping(String crewId, String convId, String userId, bool typing) async {
@@ -515,19 +525,20 @@ class DatabaseService {
     }
   }
 
-  Future<void> batchCreatePostAndNotify(String crewId, Post post, {List<File>? mediaFiles}) async {
+  Future<void> batchCreatePostAndNotify(String crewId, PostModel post, {List<File>? mediaFiles}) async {
     List<String> mediaUrls = [];
     if (mediaFiles != null && mediaFiles.isNotEmpty) {
+      final connectivity = ConnectivityService();
       try {
         for (var file in mediaFiles) {
           final timestamp = DateTime.now().millisecondsSinceEpoch;
-          final path = 'crews/$crewId/posts/${post.id ?? timestamp}/media/$timestamp';
-          final url = await StorageService().uploadMedia(file, path);
+          final path = 'crews/$crewId/posts/${post.id}/media/$timestamp';
+          final url = await StorageService(connectivityService: connectivity).uploadMedia(file, path);
           if (url != null) {
             mediaUrls.add(url);
           }
         }
-        post.mediaUrls = mediaUrls;
+        post = post.copyWith(mediaUrls: mediaUrls);
       } on AppException {
         // Log error, continue without media
       } catch (e) {
@@ -541,5 +552,137 @@ class DatabaseService {
       'stats.totalPosts': FieldValue.increment(1),
     });
     await batch.commit();
+  }
+
+  // ==================== Contractor Methods ====================
+
+  /// Streams a list of contractors for storm work
+  Stream<List<Contractor>> streamContractors({
+    int limit = 50,
+    DocumentSnapshot? startAfter,
+  }) {
+    try {
+      Query query = _db.collection('contractors')
+          .orderBy('company')
+          .limit(limit);
+
+      if (startAfter != null) {
+        query = query.startAfterDocument(startAfter);
+      }
+
+      return query.snapshots().map((snapshot) {
+        return snapshot.docs.map((doc) {
+          return Contractor.fromJson(doc.data() as Map<String, dynamic>);
+        }).toList();
+      });
+    } catch (e) {
+      throw AppException('Failed to stream contractors: ${e.toString()}');
+    }
+  }
+
+  /// Gets a single contractor by ID
+  Future<Contractor?> getContractor(String contractorId) async {
+    try {
+      final doc = await _db.collection('contractors').doc(contractorId).get();
+      if (!doc.exists) return null;
+      return Contractor.fromJson(doc.data() as Map<String, dynamic>);
+    } on FirebaseException catch (e) {
+      throw AppException('Failed to get contractor: ${e.message}');
+    } catch (e) {
+      throw AppException('Database error: ${e.toString()}');
+    }
+  }
+
+  /// Searches contractors by company name
+  Stream<List<Contractor>> searchContractors(String searchQuery) {
+    try {
+      if (searchQuery.isEmpty) {
+        return streamContractors();
+      }
+
+      // Firestore doesn't support full-text search, so we'll get all and filter
+      return _db.collection('contractors')
+          .orderBy('company')
+          .snapshots()
+          .map((snapshot) {
+        return snapshot.docs
+            .map((doc) => Contractor.fromJson(doc.data()))
+            .where((contractor) =>
+                contractor.company.toLowerCase().contains(searchQuery.toLowerCase()))
+            .toList();
+      });
+    } catch (e) {
+      throw AppException('Failed to search contractors: ${e.toString()}');
+    }
+  }
+
+  /// Creates a new contractor (admin function)
+  Future<String> createContractor(Contractor contractor) async {
+    try {
+      final docRef = _db.collection('contractors').doc();
+      final newContractor = contractor.copyWith(id: docRef.id);
+      await docRef.set(newContractor.toFirestore());
+      return docRef.id;
+    } on FirebaseException catch (e) {
+      throw AppException('Failed to create contractor: ${e.message}');
+    } catch (e) {
+      throw AppException('Database error: ${e.toString()}');
+    }
+  }
+
+  /// Updates an existing contractor (admin function)
+  Future<void> updateContractor(Contractor contractor) async {
+    try {
+      await _db.collection('contractors')
+          .doc(contractor.id)
+          .update(contractor.toFirestore());
+    } on FirebaseException catch (e) {
+      throw AppException('Failed to update contractor: ${e.message}');
+    } catch (e) {
+      throw AppException('Database error: ${e.toString()}');
+    }
+  }
+
+  /// Deletes a contractor (admin function)
+  Future<void> deleteContractor(String contractorId) async {
+    try {
+      await _db.collection('contractors').doc(contractorId).delete();
+    } on FirebaseException catch (e) {
+      throw AppException('Failed to delete contractor: ${e.message}');
+    } catch (e) {
+      throw AppException('Database error: ${e.toString()}');
+    }
+  }
+
+  /// Helper method to determine attachment type from file
+  AttachmentType _getAttachmentTypeFromFile(File file) {
+    final extension = file.path.split('.').last.toLowerCase();
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+      case 'webp':
+        return AttachmentType.image;
+      case 'mp4':
+      case 'mov':
+      case 'avi':
+      case 'mkv':
+        return AttachmentType.video;
+      case 'mp3':
+      case 'wav':
+      case 'aac':
+      case 'm4a':
+        return AttachmentType.audio;
+      case 'pdf':
+      case 'doc':
+      case 'docx':
+      case 'txt':
+      case 'xls':
+      case 'xlsx':
+        return AttachmentType.document;
+      default:
+        return AttachmentType.file;
+    }
   }
 }

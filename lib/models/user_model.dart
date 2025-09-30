@@ -1,5 +1,5 @@
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:journeyman_jobs/domain/enums/onboarding_status.dart';
 
 class UserModel {
   final String uid;
@@ -22,11 +22,11 @@ class UserModel {
   final int zipcode;
   final String ticketNumber;
   final bool isWorking;
-  final bool booksOn;
+  final String? booksOn;
   final List<String> constructionTypes;
-  final int hoursPerWeek;
-  final double perDiemRequirement;
-  final List<String> preferredLocals;
+  final String? hoursPerWeek;
+  final String? perDiemRequirement;
+  final String? preferredLocals;
   final String? fcmToken;
   final String displayName;
   final bool isActive;
@@ -35,6 +35,17 @@ class UserModel {
   final int yearsExperience;
   final int preferredDistance;
   final String localNumber;
+  final bool networkWithOthers;
+  final bool careerAdvancements;
+  final bool betterBenefits;
+  final bool higherPayRate;
+  final bool learnNewSkill;
+  final bool travelToNewLocation;
+  final bool findLongTermWork;
+  final String? careerGoals;
+  final String? howHeardAboutUs;
+  final String? lookingToAccomplish;
+  final OnboardingStatus? onboardingStatus;
 
   UserModel({
     required this.uid,
@@ -57,11 +68,11 @@ class UserModel {
     this.zipcode = 0,
     this.ticketNumber = '',
     this.isWorking = false,
-    this.booksOn = false,
+    this.booksOn,
     this.constructionTypes = const [],
-    this.hoursPerWeek = 0,
-    this.perDiemRequirement = 0.0,
-    this.preferredLocals = const [],
+    this.hoursPerWeek,
+    this.perDiemRequirement,
+    this.preferredLocals,
     this.fcmToken,
     this.displayName = '',
     this.isActive = true,
@@ -70,6 +81,17 @@ class UserModel {
     this.yearsExperience = 0,
     this.preferredDistance = 0,
     this.localNumber = '',
+    required this.networkWithOthers,
+    required this.careerAdvancements,
+    required this.betterBenefits,
+    required this.higherPayRate,
+    required this.learnNewSkill,
+    required this.travelToNewLocation,
+    required this.findLongTermWork,
+    this.careerGoals,
+    this.howHeardAboutUs,
+    this.lookingToAccomplish,
+    this.onboardingStatus,
   });
 
   String get displayNameStr => displayName.isEmpty ? '$firstName $lastName'.trim() : displayName;
@@ -99,11 +121,11 @@ class UserModel {
       zipcode: data['zipcode'] ?? 0,
       ticketNumber: data['ticketNumber'] ?? '',
       isWorking: data['isWorking'] ?? false,
-      booksOn: data['booksOn'] ?? false,
+      booksOn: data['booksOn'],
       constructionTypes: List<String>.from(data['constructionTypes'] ?? []),
-      hoursPerWeek: data['hoursPerWeek'] ?? 0,
-      perDiemRequirement: (data['perDiemRequirement'] ?? 0.0).toDouble(),
-      preferredLocals: List<String>.from(data['preferredLocals'] ?? []),
+      hoursPerWeek: data['hoursPerWeek'],
+      perDiemRequirement: data['perDiemRequirement'],
+      preferredLocals: data['preferredLocals'],
       fcmToken: data['fcmToken'],
       displayName: data['displayName'] ?? '',
       isActive: data['isActive'] ?? true,
@@ -112,6 +134,17 @@ class UserModel {
       yearsExperience: data['yearsExperience'] ?? 0,
       preferredDistance: data['preferredDistance'] ?? 0,
       localNumber: data['localNumber'] ?? '',
+      networkWithOthers: data['networkWithOthers'] ?? false,
+      careerAdvancements: data['careerAdvancements'] ?? false,
+      betterBenefits: data['betterBenefits'] ?? false,
+      higherPayRate: data['higherPayRate'] ?? false,
+      learnNewSkill: data['learnNewSkill'] ?? false,
+      travelToNewLocation: data['travelToNewLocation'] ?? false,
+      findLongTermWork: data['findLongTermWork'] ?? false,
+      careerGoals: data['careerGoals'],
+      howHeardAboutUs: data['howHeardAboutUs'],
+      lookingToAccomplish: data['lookingToAccomplish'],
+      onboardingStatus: data['onboardingStatus'] != null ? OnboardingStatus.values.firstWhere((e) => e.name == data['onboardingStatus']) : null,
     );
   }
 
@@ -137,11 +170,11 @@ class UserModel {
       zipcode: json['zipcode'] ?? 0,
       ticketNumber: json['ticketNumber'] ?? '',
       isWorking: json['isWorking'] ?? false,
-      booksOn: json['booksOn'] ?? false,
+      booksOn: json['booksOn'],
       constructionTypes: List<String>.from(json['constructionTypes'] ?? []),
-      hoursPerWeek: json['hoursPerWeek'] ?? 0,
-      perDiemRequirement: (json['perDiemRequirement'] ?? 0.0).toDouble(),
-      preferredLocals: List<String>.from(json['preferredLocals'] ?? []),
+      hoursPerWeek: json['hoursPerWeek'],
+      perDiemRequirement: json['perDiemRequirement'],
+      preferredLocals: json['preferredLocals'],
       fcmToken: json['fcmToken'],
       displayName: json['displayName'] ?? '',
       isActive: json['isActive'] ?? true,
@@ -150,6 +183,17 @@ class UserModel {
       yearsExperience: json['yearsExperience'] ?? 0,
       preferredDistance: json['preferredDistance'] ?? 0,
       localNumber: json['localNumber'] ?? '',
+      networkWithOthers: json['networkWithOthers'] ?? false,
+      careerAdvancements: json['careerAdvancements'] ?? false,
+      betterBenefits: json['betterBenefits'] ?? false,
+      higherPayRate: json['higherPayRate'] ?? false,
+      learnNewSkill: json['learnNewSkill'] ?? false,
+      travelToNewLocation: json['travelToNewLocation'] ?? false,
+      findLongTermWork: json['findLongTermWork'] ?? false,
+      careerGoals: json['careerGoals'],
+      howHeardAboutUs: json['howHeardAboutUs'],
+      lookingToAccomplish: json['lookingToAccomplish'],
+      onboardingStatus: json['onboardingStatus'] != null ? OnboardingStatus.values.firstWhere((e) => e.name == json['onboardingStatus']) : null,
     );
   }
 
@@ -188,6 +232,17 @@ class UserModel {
       'yearsExperience': yearsExperience,
       'preferredDistance': preferredDistance,
       'localNumber': localNumber,
+      'networkWithOthers': networkWithOthers,
+      'careerAdvancements': careerAdvancements,
+      'betterBenefits': betterBenefits,
+      'higherPayRate': higherPayRate,
+      'learnNewSkill': learnNewSkill,
+      'travelToNewLocation': travelToNewLocation,
+      'findLongTermWork': findLongTermWork,
+      'careerGoals': careerGoals,
+      'howHeardAboutUs': howHeardAboutUs,
+      'lookingToAccomplish': lookingToAccomplish,
+      'onboardingStatus': onboardingStatus,
     };
   }
 
@@ -225,6 +280,17 @@ class UserModel {
       'yearsExperience': yearsExperience,
       'preferredDistance': preferredDistance,
       'localNumber': localNumber,
+      'networkWithOthers': networkWithOthers,
+      'careerAdvancements': careerAdvancements,
+      'betterBenefits': betterBenefits,
+      'higherPayRate': higherPayRate,
+      'learnNewSkill': learnNewSkill,
+      'travelToNewLocation': travelToNewLocation,
+      'findLongTermWork': findLongTermWork,
+      'careerGoals': careerGoals,
+      'howHeardAboutUs': howHeardAboutUs,
+      'lookingToAccomplish': lookingToAccomplish,
+      'onboardingStatus': onboardingStatus,
     };
   }
 

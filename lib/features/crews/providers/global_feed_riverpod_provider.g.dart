@@ -46,7 +46,7 @@ final class GlobalMessagesStreamProvider extends $FunctionalProvider<
 }
 
 String _$globalMessagesStreamHash() =>
-    r'67b57d395d8d7a23e01109126683f26a52e2edcf';
+    r'049d535b34ae95f81dc651445652368b4b881bf2';
 
 /// Global messages
 
@@ -131,7 +131,7 @@ final class SendGlobalMessageNotifierProvider
 }
 
 String _$sendGlobalMessageNotifierHash() =>
-    r'd6e10a03ac55f1e115bd2a43e979e847495c7fac';
+    r'0992cb5a3cfad925dccb94edc8789e2aa255b0bd';
 
 /// Provider to send a global message
 

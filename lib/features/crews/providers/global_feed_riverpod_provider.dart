@@ -3,11 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../models/message.dart';
-import '../models/message_type.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
 
 part 'global_feed_riverpod_provider.g.dart';
-
 /// Stream of global messages
 @riverpod
 Stream<List<Message>> globalMessagesStream(Ref ref) {
@@ -17,7 +15,7 @@ Stream<List<Message>> globalMessagesStream(Ref ref) {
       .limit(50)
       .snapshots()
       .map((snapshot) {
-        return snapshot.docs.map((doc) => Message.fromMap(doc.data())).toList();
+        return snapshot.docs.map((doc) => Message.fromFirestore(doc)).toList();
       });
 }
 
@@ -50,7 +48,7 @@ class SendGlobalMessageNotifier extends _$SendGlobalMessageNotifier {
         'text': text,
         'senderId': currentUser.uid,
         'sentAt': FieldValue.serverTimestamp(),
-        'type': MessageType.text.value,
+        'type': MessageType.text.name,
         'readBy': {}, // Initialize with empty readBy map
       });
     } catch (e) {

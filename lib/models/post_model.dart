@@ -44,4 +44,24 @@ class PostModel {
   }
 
   bool isValid() => authorId.isNotEmpty && content.isNotEmpty;
+
+  PostModel copyWith({
+    String? id,
+    String? authorId,
+    String? content,
+    Timestamp? timestamp,
+    List<String>? likes,
+    List<String>? mediaUrls,
+    bool? deleted,
+  }) {
+    return PostModel(
+      id: id ?? this.id,
+      authorId: authorId ?? this.authorId,
+      content: content ?? this.content,
+      timestamp: timestamp ?? this.timestamp,
+      likes: likes ?? this.likes,
+      mediaUrls: mediaUrls ?? this.mediaUrls,
+      deleted: deleted ?? this.deleted,
+    );
+  }
 }

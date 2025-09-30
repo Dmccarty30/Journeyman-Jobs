@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/job_model.dart';
+import '../utils/string_formatter.dart';
 
 class OptimizedJobCard extends StatelessWidget {
   final Job job;
@@ -17,35 +18,64 @@ class OptimizedJobCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              job.jobTitle ?? 'Job Position',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.location_on, size: 16),
-                const SizedBox(width: 4),
-                Text(job.location),
-              ],
-            ),
-            if ((job.typeOfWork?.toLowerCase().contains('storm') ?? false) && showStormBadge)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Row(
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                toTitleCase(job.jobTitle ?? 'Job Position'),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Icon(Icons.location_on, size: 16),
+                  const SizedBox(width: 4),
+                  Text(formatLocation(job.location)),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.business, size: 16),
+                  const SizedBox(width: 4),
+                  Text(formatCompanyName(job.company)),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.work, size: 16),
+                  const SizedBox(width: 4),
+                  Text(formatClassification(job.classification)),
+                ],
+              ),
+              if (job.wage != null) ...[
+                const SizedBox(height: 4),
+                Row(
                   children: [
-                    const Icon(Icons.flash_on, color: Colors.red, size: 16),
+                    const Icon(Icons.attach_money, size: 16),
                     const SizedBox(width: 4),
-                    const Text('Storm Work', style: TextStyle(color: Colors.red)),
+                    Text(formatWage(job.wage)),
                   ],
                 ),
-              ),
-          ],
+              ],
+              if ((job.typeOfWork?.toLowerCase().contains('storm') ?? false) && showStormBadge)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.flash_on, color: Colors.red, size: 16),
+                      const SizedBox(width: 4),
+                      const Text('Storm Work', style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -61,6 +91,7 @@ class JobCardSkeleton extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _DetailChip extends StatelessWidget {
   final IconData icon;
   final String label;

@@ -27,6 +27,7 @@ class FCMService {
   static String? _currentToken;
   static BuildContext? _appContext;
 
+
   /// Initialize FCM service
   static Future<void> initialize(BuildContext appContext) async {
     _appContext = appContext;

@@ -5,8 +5,9 @@ enum Classification {
   journeymanWireman,
   journeymanElectrician,
   journeymanTreeTrimmer,
-  operator,
+  operator;
 
+  static List<String> get all => Classification.values.map((e) => e.name).toList();
 }
 
 enum ConstructionTypes {
@@ -17,7 +18,9 @@ enum ConstructionTypes {
   industrial,
   dataCenter,
   commercial,
-  underground,
+  underground;
+
+  static List<String> get all => ConstructionTypes.values.map((e) => e.name).toList();
 }
 
 extension EnumExtensions<T extends Enum> on T {

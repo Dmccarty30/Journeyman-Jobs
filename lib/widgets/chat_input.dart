@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:journeyman_jobs/providers/core_providers.dart';
 import 'dart:async';
-import '../../../features/crews/providers/tailboard_providers.dart';
-import '../../../services/database_service.dart';
-import '../../../models/message_model.dart';
-import '../../../models/user_model.dart';
+
 
 class ChatInput extends ConsumerStatefulWidget {
   final String crewId;
@@ -51,7 +49,7 @@ class _ChatInputState extends ConsumerState<ChatInput> {
     _typingTimer = Timer(const Duration(milliseconds: 400), () {
       final dbService = ref.read(databaseServiceProvider);
       final currentUserAsync = ref.read(currentUserProvider);
-      final userId = currentUserAsync.value?.uid ?? '';
+      final userId = currentUserAsync?.uid ?? '';
       if (userId.isNotEmpty) {
         dbService.updateTyping(widget.crewId, widget.convId, userId, true);
       }
@@ -62,7 +60,7 @@ class _ChatInputState extends ConsumerState<ChatInput> {
     _typingTimer?.cancel();
     final dbService = ref.read(databaseServiceProvider);
     final currentUserAsync = ref.read(currentUserProvider);
-    final userId = currentUserAsync.value?.uid ?? '';
+    final userId = currentUserAsync?.uid ?? '';
     if (userId.isNotEmpty) {
       dbService.updateTyping(widget.crewId, widget.convId, userId, false);
     }

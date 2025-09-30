@@ -190,6 +190,10 @@ class MessageBubble extends StatelessWidget {
         return Icons.audiotrack;
       case AttachmentType.certification:
         return Icons.verified;
+      case AttachmentType.file:
+        return Icons.insert_drive_file;
+      case AttachmentType.audio:
+        return Icons.audiotrack;
     }
   }
 

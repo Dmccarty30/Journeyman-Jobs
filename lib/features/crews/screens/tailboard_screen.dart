@@ -3,27 +3,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:journeyman_jobs/features/crews/providers/tailboard_providers.dart';
 import 'package:journeyman_jobs/features/crews/widgets/job_match_card.dart';
-import 'package:journeyman_jobs/models/crew_model.dart'; // Assuming Crew model is here
-import 'package:journeyman_jobs/models/user_model.dart'; // Assuming UserModel is here
-import 'package:journeyman_jobs/models/jobs_record.dart'; // Assuming JobsRecord is here
-import 'package:journeyman_jobs/models/users_record.dart'; // Assuming UsersRecord is here
-import 'package:journeyman_jobs/providers/riverpod/selected_crew_provider.dart'; // Assuming selectedCrewProvider is here
-import 'package:journeyman_jobs/providers/riverpod/current_user_provider.dart'; // Assuming currentUserProvider is here
+import 'package:journeyman_jobs/models/crew_model.dart' as crew_model;
+import 'package:journeyman_jobs/models/user_model.dart';
+import 'package:journeyman_jobs/models/jobs_record.dart';
+import 'package:journeyman_jobs/models/users_record.dart';
 import '../providers/crews_riverpod_provider.dart';
 import '../providers/tailboard_riverpod_provider.dart';
-import '../models/models.dart'; // This might be a barrel file, but specific imports are better
+import '../models/models.dart';
 import 'package:flutter/foundation.dart';
 import '../widgets/activity_card.dart';
 import '../widgets/announcement_card.dart';
 import '../widgets/crew_member_avatar.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
 import '../../../design_system/app_theme.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../navigation/app_router.dart';
-import '../providers/tailboard_providers.dart';
+import '../../../providers/core_providers.dart' hide selectedCrewProvider, currentUserProvider;
+import '../../../models/job_model.dart';
+import '../../../widgets/electrical_circuit_background.dart';
 
 // Extension method to add divide functionality to List
 extension ListExtensions<T> on List<T> {
@@ -98,8 +97,8 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
+    return StreamBuilder<firebase_auth.User?>(
+      stream: firebase_auth.FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Scaffold(
@@ -115,7 +114,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
 
         if (snapshot.data == null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.go(AppRouter.login);
+            context.go(AppRouter.auth);
           });
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
@@ -123,49 +122,30 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
         }
 
         final selectedCrew = ref.watch(selectedCrewProvider);
-        
+
         return Scaffold(
           backgroundColor: AppTheme.offWhite,
-          body: Consumer(
-            builder: (context, ref, child) {
-              final connectivityAsync = ref.watch(connectivityServiceProvider);
-              return connectivityAsync.when(
-                data: (connectivity) {
-                  return Column(
-                    children: [
-                      // Header - conditional based on crew
-                      selectedCrew != null
-                        ? _buildHeader(context, selectedCrew)
-                        : _buildNoCrewHeader(context),
-                      _buildTabBar(),
-                      Expanded(
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: const [
-                            FeedTab(),
-                            JobsTab(),
-                            ChatTab(),
-                            MembersTab(),
-                          ],
-                        ),
-                      ),
+          body: ElectricalCircuitBackground(
+            child: Column(
+              children: [
+                // Header - conditional based on crew
+                selectedCrew != null
+                  ? _buildHeader(context, selectedCrew)
+                  : _buildNoCrewHeader(context),
+                _buildTabBar(),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: const [
+                      FeedTab(),
+                      JobsTab(),
+                      ChatTab(),
+                      MembersTab(),
                     ],
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stack) {
-                  return OfflineIndicator(
-                    isOffline: true,
-                    child: Center(
-                      child: ErrorCard(
-                        message: error.toString(),
-                        onRetry: () => ref.refresh(connectivityServiceProvider),
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
+                  ),
+                ),
+              ],
+            ),
           ),
           floatingActionButton: selectedCrew != null ? _buildFloatingActionButton() : null,
         );
@@ -276,7 +256,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
                   shape: BoxShape.circle,
                 ),
                 child: CircleAvatar(
-                  backgroundColor: AppTheme.accentCopper.withOpacity(0.1),
+                  backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.1),
                   child: Icon(
                     Icons.group,
                     color: AppTheme.accentCopper,
@@ -549,8 +529,7 @@ class _FeedTabState extends ConsumerState<FeedTab> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
-      final notifier = ref.read(feedPostsNotifierProvider(ref.watch(selectedCrewProvider)?.id ?? ''));
-      notifier.loadMore();
+      // Load more posts if needed - currently using stream provider which auto-updates
     }
   }
 
@@ -565,28 +544,22 @@ class _FeedTabState extends ConsumerState<FeedTab> {
       );
     }
 
-    final postsAsync = ref.watch(feedPostsNotifierProvider(selectedCrew.id));
+    final postsAsync = ref.watch(tailboardPostsStreamProvider(selectedCrew.id));
 
     return postsAsync.when(
       data: (posts) => posts.isEmpty
           ? const Center(child: Text('No posts yet'))
           : ListView.builder(
               controller: _scrollController,
-              itemCount: posts.length + (ref.read(feedPostsNotifierProvider(selectedCrew.id).notifier).isLoadingMore ? 1 : 0),
+              itemCount: posts.length,
               itemBuilder: (context, index) {
-                if (index == posts.length) {
-                  return const Center(child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: CircularProgressIndicator(),
-                  ));
-                }
                 final post = posts[index];
                 return Card(
                   child: ListTile(
                     leading: const CircleAvatar(child: Icon(Icons.person)),
-                    title: Text(post.authorName),
+                    title: Text('User ${post.authorId}'), // TODO: Fetch user name
                     subtitle: Text(post.content),
-                    trailing: Text(post.timestamp.toString()),
+                    trailing: Text(post.postedAt.toString()),
                   ),
                 );
               },
@@ -623,8 +596,9 @@ class _JobsTabState extends ConsumerState<JobsTab> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
-      final notifier = ref.read(jobsNotifierProvider(ref.watch(selectedCrewProvider)?.id ?? ''));
-      notifier.loadMore();
+      // Load more jobs if needed - currently using stream/provider logic which auto-updates.
+      // The previous implementation referenced a non-existent jobsNotifierProvider.
+      // If pagination is needed later, implement a proper notifier/provider and call it here.
     }
   }
 
@@ -638,7 +612,7 @@ class _JobsTabState extends ConsumerState<JobsTab> {
           _selectedFilter = value;
         });
       },
-      selectedColor: AppTheme.accentCopper.withOpacity(0.2),
+      selectedColor: AppTheme.accentCopper.withValues(alpha: 0.2),
       backgroundColor: AppTheme.offWhite,
       labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
         color: isSelected ? AppTheme.accentCopper : AppTheme.textSecondary,
@@ -662,29 +636,25 @@ class _JobsTabState extends ConsumerState<JobsTab> {
       );
     }
 
-    final jobsAsync = ref.watch(jobsNotifierProvider(selectedCrew.id));
+    final jobsAsync = ref.watch(suggestedJobsStreamProvider(selectedCrew.id));
 
-    List<Job> filteredJobs = [];
+    List<SuggestedJob> filteredJobs = [];
+    final String? currentUid = currentUser?.uid;
     if (jobsAsync.value != null) {
-      filteredJobs = jobsAsync.value!.where((job) {
-        // Search filter - assuming job has title or company field
-        if (_searchQuery.isNotEmpty) {
-          final searchLower = _searchQuery.toLowerCase();
-          if (!(job.jobTitle.toLowerCase().contains(searchLower) || job.company.toLowerCase().contains(searchLower))) {
-            return false;
-          }
-        }
-
-        // Category filters
+      filteredJobs = jobsAsync.value!.where((suggestedJob) {
+        // Category filters with null-safety for current user ID
         switch (_selectedFilter) {
           case 'high':
-            return job.matchScore >= 80;
+            return suggestedJob.matchScore >= 80;
           case 'unviewed':
-            return !job.viewedByMemberIds.contains(currentUser.uid);
+            if (currentUid == null) return false;
+            return !suggestedJob.viewedByMemberIds.contains(currentUid);
           case 'applied':
-            return job.appliedMemberIds.contains(currentUser.uid);
+            if (currentUid == null) return false;
+            return suggestedJob.appliedMemberIds.contains(currentUid);
           case 'saved':
-            return job.isSavedByMemberIds.contains(currentUser.uid); // Assuming this field
+            // TODO: Add saved functionality to SuggestedJob model
+            return false;
           case 'all':
           default:
             return true;
@@ -774,7 +744,7 @@ class _JobsTabState extends ConsumerState<JobsTab> {
             data: (jobs) => ListView.builder(
               controller: _scrollController,
               padding: EdgeInsets.zero,
-              itemCount: filteredJobs.length + (ref.read(jobsNotifierProvider(selectedCrew.id).notifier).isLoadingMore ? 1 : 0),
+              itemCount: filteredJobs.length,
               itemBuilder: (context, index) {
                 if (index == filteredJobs.length) {
                   return const Center(child: Padding(
@@ -782,7 +752,7 @@ class _JobsTabState extends ConsumerState<JobsTab> {
                     child: CircularProgressIndicator(),
                   ));
                 }
-                final job = filteredJobs[index];
+                final suggestedJob = filteredJobs[index];
                 return Padding(
                   padding: EdgeInsets.all(10),
                   child: Container(
@@ -809,14 +779,14 @@ class _JobsTabState extends ConsumerState<JobsTab> {
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: 'Local:',
+                                      text: 'Job ID: ',
                                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                         color: AppTheme.textPrimary,
                                         fontSize: 14,
                                       ),
                                     ),
                                     TextSpan(
-                                      text: job.local ?? 'N/A',
+                                      text: suggestedJob.jobId.substring(0, 8),
                                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
@@ -836,7 +806,7 @@ class _JobsTabState extends ConsumerState<JobsTab> {
                                 ),
                               ),
                               Text(
-                                job.classification ?? 'N/A',
+                                'Match: ${suggestedJob.matchScore}%',
                                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
@@ -895,13 +865,13 @@ class _JobsTabState extends ConsumerState<JobsTab> {
                                     text: TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: 'Location:',
+                                          text: 'Suggested: ',
                                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                             color: AppTheme.textPrimary,
                                           ),
                                         ),
                                         TextSpan(
-                                          text: job.location ?? 'N/A',
+                                          text: suggestedJob.suggestedAt.toString().substring(0, 10),
                                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -943,11 +913,11 @@ class _JobsTabState extends ConsumerState<JobsTab> {
                                     text: TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: 'Hours: ',
+                                          text: 'Match Reasons: ',
                                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(),
                                         ),
                                         TextSpan(
-                                          text: job.hours.toString(),
+                                          text: suggestedJob.matchReasons.isNotEmpty ? suggestedJob.matchReasons.first : 'N/A',
                                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -979,11 +949,11 @@ class _JobsTabState extends ConsumerState<JobsTab> {
                                     text: TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: 'Per Diem: ',
+                                          text: 'Source: ',
                                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(),
                                         ),
                                         TextSpan(
-                                          text: '\$${job.perDiem}',
+                                          text: suggestedJob.source.toString().split('.').last,
                                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                             fontWeight: FontWeight.bold,
                                           ),

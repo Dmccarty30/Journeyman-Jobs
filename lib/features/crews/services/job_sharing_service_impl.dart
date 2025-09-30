@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:journeyman_jobs/features/crews/models/suggested_job.dart';
+import 'package:journeyman_jobs/features/crews/models/shared_job.dart';
 import 'package:journeyman_jobs/features/crews/services/crew_service.dart';
 import 'package:journeyman_jobs/features/jobs/models/job.dart';
 
@@ -132,7 +132,7 @@ class JobSharingService {
   }
 
   /// Get shared jobs for a crew
-  Stream<List<SuggestedJob>> getSharedJobsStream(String crewId) {
+  Stream<List<SharedJob>> getSharedJobsStream(String crewId) {
     return _firestore
         .collection('crews')
         .doc(crewId)
@@ -140,7 +140,7 @@ class JobSharingService {
         .orderBy('sharedAt', descending: true)
         .snapshots()
         .asyncMap((snapshot) async {
-      final sharedJobs = <SuggestedJob>[];
+      final sharedJobs = <SharedJob>[];
       for (final doc in snapshot.docs) {
         final data = doc.data();
         final jobId = data['jobId'] as String;
@@ -150,7 +150,7 @@ class JobSharingService {
         if (jobDoc.exists) {
           final job = Job.fromFirestore(jobDoc);
           
-          sharedJobs.add(SuggestedJob(
+          sharedJobs.add(SharedJob(
             id: doc.id,
             job: job,
             sharedByUserId: data['sharedByUserId'],

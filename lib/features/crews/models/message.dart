@@ -14,7 +14,7 @@ enum AttachmentType {
   document,
   voiceNote,
   video,
-  certification
+  certification, file, audio
 }
 
 class Attachment {

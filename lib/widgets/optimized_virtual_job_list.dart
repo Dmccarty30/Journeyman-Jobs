@@ -2,8 +2,8 @@ import 'dart:async'; // Required for Timer
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journeyman_jobs/features/crews/providers/tailboard_providers.dart';
-import 'package:riverpod/src/framework.dart';
+import 'package:journeyman_jobs/providers/core_providers.dart';
+// ignore: depend_on_referenced_packages
 import 'package:riverpod/src/providers/stream_provider.dart';
 import 'dart:math'; // Required for max/min
 import '../design_system/app_theme.dart';
@@ -517,5 +517,4 @@ class _OptimizedVirtualJobListState extends ConsumerState<OptimizedVirtualJobLis
 }
 
 extension on StreamProviderFamily<List<Job>, ({String crewId, int limit, DocumentSnapshot<Object?>? startAfter})> {
-  ProviderListenable? get notifier => null;
 }

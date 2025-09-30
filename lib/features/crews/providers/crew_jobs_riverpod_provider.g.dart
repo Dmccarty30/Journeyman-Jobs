@@ -67,7 +67,7 @@ final class CrewFilteredJobsStreamProvider extends $FunctionalProvider<
 }
 
 String _$crewFilteredJobsStreamHash() =>
-    r'a26f1999a55dfacd4361591b5e0beaf0edb62722';
+    r'82c2918b8696d2698143f3ae09785c3dd4c66be7';
 
 /// Crew filtered jobs stream provider - uses JobMatchingService to get jobs filtered by crew preferences
 

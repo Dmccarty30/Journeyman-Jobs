@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initialize notifications after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await NotificationService.init();
+      await NotificationService.init(context);
     });
 
     return MaterialApp.router(

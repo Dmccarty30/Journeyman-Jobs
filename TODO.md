@@ -18,6 +18,9 @@
 - *Suggested Jobs*
 
 - ***When the user presses on a job card i need for the dialog popup to be formatted exactly like lib\widgets\dialogs\job_details_dialog.dart. There must be consistancy throughout the entire app.***
+- MODIFY the `condensed job card` to ensure it adheres to the formatting and consistency guidelines outlined in lib\widgets\rich_text_.dart. i regards to using the rich text widget. Where span 1 is 'Bold' and hard coded with the data name and span 2 is the variable from the backend query.
+- Ensure the `condensed job card` adheres to the formatting and consistency guidelines outlined in lib\widgets\rich_text_.dart, where the layout consists of only two (2) columns each with several rows containing the data values. The first condensed card has three (3) colums with the local, classification, and wages. This is unacceptable.
+- ADD a horizontal divider to separate the first row from the rest of the rows for better visual clarity. so `local` and `classification` on top, then divider in the copper accent color then the remaining rows.
 
 ## JOB SCREEN
 

@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:journeyman_jobs/domain/enums/enums.dart';
+import 'package:journeyman_jobs/domain/enums/onboarding_status.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/user_model.dart';
@@ -84,7 +87,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
   // Data options
   final List<String> _classifications = Classification.all;
 
-  final List<String> _constructionTypes = ConstructionType.all;
+  final List<String> _constructionTypes = ConstructionTypes.all;
 
   final List<String> _usStates = [
     'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
@@ -177,16 +180,19 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
       // Create user model from form data
       final userModel = UserModel(
         uid: user.uid,
+        username: user.email?.split('@')[0] ?? 'user',
         firstName: _firstNameController.text.trim(),
         lastName: _lastNameController.text.trim(),
         phoneNumber: _phoneController.text.trim(),
         email: user.email ?? '',
+        role: 'electrician',
+        lastActive: Timestamp.now(),
         address1: _address1Controller.text.trim(),
         address2: _address2Controller.text.trim().isEmpty ? null : _address2Controller.text.trim(),
         city: _cityController.text.trim(),
         state: _stateController.text.trim(),
-        zipcode: _zipcodeController.text.trim(),
-        homeLocal: _homeLocalController.text.trim(),
+        zipcode: int.parse(_zipcodeController.text.trim()),
+        homeLocal: int.parse(_homeLocalController.text.trim()),
         ticketNumber: _ticketNumberController.text.trim(),
         classification: _selectedClassification ?? '',
         isWorking: _isWorking,
@@ -205,7 +211,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
         careerGoals: _careerGoalsController.text.trim().isEmpty ? null : _careerGoalsController.text.trim(),
         howHeardAboutUs: _howHeardAboutUsController.text.trim().isEmpty ? null : _howHeardAboutUsController.text.trim(),
         lookingToAccomplish: _lookingToAccomplishController.text.trim().isEmpty ? null : _lookingToAccomplishController.text.trim(),
-        onboardingStatus: OnboardingStatus.completed,
+        onboardingStatus: OnboardingStatus.complete,
         createdTime: DateTime.now(),
       );
 

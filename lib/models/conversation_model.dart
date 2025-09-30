@@ -1,3 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+enum MessageType {
+  text,
+  image,
+  voiceNote,
+}
+
 class Conversation {
   final String id;
   final List<String> participantIds;
@@ -84,16 +92,4 @@ class Message {
   Map<String, dynamic> toFirestore() {
     return toJson();
   }
-
-  void set mediaUrls(List<String> urls) {
-    this.mediaUrls = urls;
-  }
-}
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-enum MessageType {
-  text,
-  image,
-  voiceNote,
 }

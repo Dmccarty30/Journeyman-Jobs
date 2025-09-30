@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:journeyman_jobs/features/crews/providers/global_feed_riverpod_provider.dart';
 import 'package:journeyman_jobs/features/crews/providers/messaging_riverpod_provider.dart';
 import 'package:journeyman_jobs/providers/riverpod/auth_riverpod_provider.dart';
 import 'package:journeyman_jobs/widgets/chat_input.dart';

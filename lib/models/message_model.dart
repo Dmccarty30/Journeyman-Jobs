@@ -44,4 +44,24 @@ class MessageModel {
   }
 
   bool isValid() => authorId.isNotEmpty && content.isNotEmpty;
+
+  MessageModel copyWith({
+    String? id,
+    String? authorId,
+    String? content,
+    Timestamp? timestamp,
+    List<String>? readBy,
+    List<String>? mediaUrls,
+    bool? deleted,
+  }) {
+    return MessageModel(
+      id: id ?? this.id,
+      authorId: authorId ?? this.authorId,
+      content: content ?? this.content,
+      timestamp: timestamp ?? this.timestamp,
+      readBy: readBy ?? this.readBy,
+      mediaUrls: mediaUrls ?? this.mediaUrls,
+      deleted: deleted ?? this.deleted,
+    );
+  }
 }

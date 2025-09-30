@@ -555,6 +555,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Job(
       id: jobsRecord.reference.id,
       reference: jobsRecord.reference,
+      sharerId: jobsRecord.reference.id, // Using the document ID as sharerId
+      jobDetails: {
+        'company': jobsRecord.company,
+        'location': jobsRecord.location,
+        'classification': jobsRecord.classification,
+        'local': jobsRecord.local,
+        'wage': jobsRecord.wage,
+        'hours': jobsRecord.hours,
+        'perDiem': jobsRecord.perDiem,
+        'typeOfWork': jobsRecord.typeOfWork,
+        'startDate': jobsRecord.startDate,
+        'duration': jobsRecord.duration,
+        'jobDescription': jobsRecord.jobDescription,
+      },
       company: toTitleCase(jobsRecord.company),
       location: toTitleCase(jobsRecord.location),
       classification: toTitleCase(jobsRecord.classification),
