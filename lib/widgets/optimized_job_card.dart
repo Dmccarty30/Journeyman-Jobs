@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/job_model.dart';
-import '../utils/string_formatter.dart';
+import '../utils/text_formatting_wrapper.dart';
 
 class OptimizedJobCard extends StatelessWidget {
   final Job job;
@@ -34,7 +34,7 @@ class OptimizedJobCard extends StatelessWidget {
                 children: [
                   const Icon(Icons.location_on, size: 16),
                   const SizedBox(width: 4),
-                  Text(formatLocation(job.location)),
+                  Text(JobDataFormatter.formatLocation(job.location)),
                 ],
               ),
               const SizedBox(height: 4),
@@ -42,7 +42,7 @@ class OptimizedJobCard extends StatelessWidget {
                 children: [
                   const Icon(Icons.business, size: 16),
                   const SizedBox(width: 4),
-                  Text(formatCompanyName(job.company)),
+                  Text(JobDataFormatter.formatCompany(job.company)),
                 ],
               ),
               const SizedBox(height: 4),
@@ -50,7 +50,7 @@ class OptimizedJobCard extends StatelessWidget {
                 children: [
                   const Icon(Icons.work, size: 16),
                   const SizedBox(width: 4),
-                  Text(formatClassification(job.classification)),
+                  Text(JobDataFormatter.formatClassification(job.classification)),
                 ],
               ),
               if (job.wage != null) ...[
@@ -59,7 +59,7 @@ class OptimizedJobCard extends StatelessWidget {
                   children: [
                     const Icon(Icons.attach_money, size: 16),
                     const SizedBox(width: 4),
-                    Text(formatWage(job.wage)),
+                    Text('\$${job.wage}/hr'),
                   ],
                 ),
               ],

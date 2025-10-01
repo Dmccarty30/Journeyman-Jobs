@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/contractor_model.dart';
 import '../design_system/app_theme.dart';
-import '../utils/string_formatter.dart';
+import '../utils/text_formatting_wrapper.dart';
 
 /// A card widget that displays contractor information with interactive links
 /// for phone, email, and website contact methods.
@@ -65,7 +65,7 @@ class ContractorCard extends StatelessWidget {
                 onTap: () => _launchPhone(contractor.phoneNumber!),
                 child: _buildInfoRow(
                   label: 'Phone',
-                  value: formatPhoneNumber(contractor.phoneNumber),
+                  value: contractor.phoneNumber!,
                 ),
               ),
               const SizedBox(height: 8),

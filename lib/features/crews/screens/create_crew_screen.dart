@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
 import 'package:go_router/go_router.dart';
 import '../../../navigation/app_router.dart';
+import '../../../electrical_components/jj_electrical_toast.dart';
 
 import '../models/crew_preferences.dart';
 import '../providers/crews_riverpod_provider.dart';
@@ -58,13 +59,7 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
 
       } catch (e) {
         if (mounted) {
-          // Show error snackbar
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to create crew: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          JJElectricalToast.showError(context: context, message: 'Failed to create crew: $e');
         }
       }
     }

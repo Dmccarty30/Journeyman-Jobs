@@ -462,21 +462,18 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
           const SizedBox(height: AppTheme.spacingMd),
           
           // City, State, Zip
+          JJTextField(
+            label: 'City',
+            controller: _cityController,
+            focusNode: _cityFocus,
+            textInputAction: TextInputAction.next,
+            onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_zipcodeFocus),
+            prefixIcon: Icons.location_city_outlined,
+            hintText: 'Enter city',
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
           Row(
             children: [
-              Expanded(
-                flex: 3,
-                child: JJTextField(
-                  label: 'City',
-                  controller: _cityController,
-                  focusNode: _cityFocus,
-                  textInputAction: TextInputAction.next,
-                  onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_zipcodeFocus),
-                  prefixIcon: Icons.location_city_outlined,
-                  hintText: 'Enter city',
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingSm),
               Expanded(
                 flex: 2,
                 child: Column(

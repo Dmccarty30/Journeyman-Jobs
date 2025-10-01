@@ -94,7 +94,7 @@ final class FeedPostsNotifierProvider
   }
 }
 
-String _$feedPostsNotifierHash() => r'32978463489749b34665d112b38f071a07cd2659';
+String _$feedPostsNotifierHash() => r'c28ccdb46569c46d1177d5733299f6ae3673d39f';
 
 final class FeedPostsNotifierFamily extends $Family
     with
@@ -182,7 +182,7 @@ final class JobsNotifierProvider
   }
 }
 
-String _$jobsNotifierHash() => r'5b5feb52d9e6088abad6a86cda653b6840a8b549';
+String _$jobsNotifierHash() => r'66820b3d77a6373e2f16bcab44b22069d660e4ec';
 
 final class JobsNotifierFamily extends $Family
     with

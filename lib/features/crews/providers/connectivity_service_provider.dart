@@ -1,6 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:journeyman_jobs/services/connectivity_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:journeyman_jobs/features/crews/services/connectivity_service.dart';
 
 part 'connectivity_service_provider.g.dart';
 
@@ -20,7 +20,6 @@ class ConnectivityServiceAdapter extends ConnectivityService {
 
   ConnectivityServiceAdapter(this._appService) : super();
 
-  @override
   Stream<List<ConnectivityResult>> get connectivityStream => _appService.onConnectivityChanged;
 
   @override
@@ -31,7 +30,6 @@ class ConnectivityServiceAdapter extends ConnectivityService {
     return false;
   }
 
-  @override
   Future<List<ConnectivityResult>> getConnection() async {
     return await _appService.isConnected ? await Connectivity().checkConnectivity() : [ConnectivityResult.none];
   }
@@ -51,12 +49,12 @@ class AppConnectivityService {
   Stream<List<ConnectivityResult>> get onConnectivityChanged => _ref.watch(connectivityStreamProvider as ProviderListenable<Stream<List<ConnectivityResult>>>);
 
   Future<bool> get isConnected async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    return connectivityResult != ConnectivityResult.none;
+    final connectivityResults = await Connectivity().checkConnectivity();
+    return connectivityResults != ConnectivityResult.none;
   }
 
   Future<bool> get isOnline async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    return connectivityResult != ConnectivityResult.none;
+    final connectivityResults = await Connectivity().checkConnectivity();
+    return connectivityResults != ConnectivityResult.none;
   }
 }

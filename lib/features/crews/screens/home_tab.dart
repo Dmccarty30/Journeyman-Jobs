@@ -11,7 +11,7 @@ class HomeTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final globalMessagesAsync = ref.watch(globalMessagesProvider);
+    final globalMessages = ref.watch(globalMessagesProvider);
     final currentUser = ref.watch(currentUserProvider);
     final messageService = ref.watch(messageServiceProvider);
 
@@ -22,25 +22,23 @@ class HomeTab extends ConsumerWidget {
     return Column(
       children: [
         Expanded(
-          child: globalMessagesAsync.when(
-            data: (messages) {
-              return ListView.builder(
-                reverse: true,
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  final message = messages[index];
-                  return MessageBubble(
-                    message: message,
-                    isMe: message.senderId == currentUser.uid,
-                  );
-                },
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Center(child: Text('Error: $error')),
-          ),
+          child: globalMessages.isEmpty
+              ? const Center(child: Text('No messages yet.'))
+              : ListView.builder(
+                  reverse: true,
+                  itemCount: globalMessages.length,
+                  itemBuilder: (context, index) {
+                    final message = globalMessages[index];
+                    return MessageBubble(
+                      message: message,
+                      isMe: message.senderId == currentUser.uid,
+                    );
+                  },
+                ),
         ),
         ChatInput(
+          crewId: 'default',
+          convId: 'global',
           onSendMessage: (content) {
             messageService.sendGlobalMessage(
               senderId: currentUser.uid,

@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:journeyman_jobs/features/crews/models/crew.dart';
-import 'package:journeyman_jobs/features/crews/models/crew_member.dart';
-import 'package:journeyman_jobs/features/crews/models/crew_preferences.dart';
-import 'package:journeyman_jobs/features/crews/models/crew_stats.dart';
-import 'package:journeyman_jobs/features/crews/services/job_sharing_service.dart';
-import 'package:journeyman_jobs/features/crews/services/job_matching_service.dart';
+import '../models/crew.dart';
+import '../models/crew_member.dart';
+import '../models/crew_preferences.dart';
+import '../models/crew_stats.dart';
+import 'job_matching_service_impl.dart';
+import 'job_sharing_service_impl.dart';
 import 'package:journeyman_jobs/utils/validation.dart';
 import 'package:journeyman_jobs/domain/exceptions/app_exception.dart';
 import 'package:journeyman_jobs/domain/exceptions/crew_exception.dart';
 import 'package:journeyman_jobs/domain/exceptions/member_exception.dart';
 import 'package:journeyman_jobs/domain/exceptions/messaging_exception.dart';
-import 'package:journeyman_jobs/services/offline_data_service.dart';
-import 'package:journeyman_jobs/services/connectivity_service.dart';
+import '../../../services/offline_data_service.dart';
+import '../../../services/connectivity_service.dart';
 
 import 'package:journeyman_jobs/domain/enums/member_role.dart';
 import 'package:journeyman_jobs/domain/enums/permission.dart';
@@ -54,7 +54,7 @@ class CrewService {
   final JobSharingService jobSharingService;
   final OfflineDataService _offlineDataService;
   final ConnectivityService _connectivityService;
-  JobMatchingService? _jobMatchingService;
+  final JobMatchingService? _jobMatchingService;
 
   // Collections
   CollectionReference get crewsCollection => _firestore.collection('crews');

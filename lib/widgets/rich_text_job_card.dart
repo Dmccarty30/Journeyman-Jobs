@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
 import '../models/job_model.dart';
 import 'job_details_dialog.dart';
-import '../utils/string_formatter.dart';
+import '../utils/text_formatting_wrapper.dart';
 
 /// A card widget displaying job details using RichText with icons
 /// Shows job information in a two-span format: bold labels and bracketed values
@@ -111,7 +111,7 @@ class RichTextJobCard extends StatelessWidget {
                     child: const Text(
                       'Details',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -154,7 +154,7 @@ class RichTextJobCard extends StatelessWidget {
                           Text(
                             'Bid Now',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 15,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -190,14 +190,14 @@ class RichTextJobCard extends StatelessWidget {
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: AppTheme.textDark,
-                    fontSize: 12,
+                    fontSize: 13,
                   ),
                 ),
                 TextSpan(
                   text: leftValue,
                   style: TextStyle(
                     color: leftValueColor ?? AppTheme.textLight,
-                    fontSize: 12,
+                    fontSize: 13,
                   ),
                 ),
               ],
@@ -215,14 +215,14 @@ class RichTextJobCard extends StatelessWidget {
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: AppTheme.textDark,
-                    fontSize: 12,
+                    fontSize: 13,
                   ),
                 ),
                 TextSpan(
                   text: rightValue,
                   style: TextStyle(
                     color: rightValueColor ?? AppTheme.textLight,
-                    fontSize: 12,
+                    fontSize: 13,
                   ),
                 ),
               ],
@@ -245,14 +245,14 @@ class RichTextJobCard extends StatelessWidget {
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: AppTheme.textDark,
-              fontSize: 12,
+              fontSize: 13,
             ),
           ),
           TextSpan(
             text: value,
             style: TextStyle(
               color: valueColor ?? AppTheme.textLight,
-              fontSize: 12,
+              fontSize: 13,
             ),
           ),
         ],

@@ -1,9 +1,10 @@
-import '../../utils/string_formatter.dart';
+import '../../utils/text_formatting_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
 import '../../electrical_components/circuit_board_background.dart';
+import '../../electrical_components/jj_electrical_toast.dart';
 import '../../navigation/app_router.dart';
 import '../../providers/riverpod/jobs_riverpod_provider.dart';
 import '../../providers/riverpod/auth_riverpod_provider.dart';
@@ -12,6 +13,7 @@ import '../../models/job_model.dart';
 import '../../legacy/flutterflow/schema/jobs_record.dart';
 import '../../widgets/notification_badge.dart';
 import '../../widgets/condensed_job_card.dart';
+import '../../widgets/dialogs/job_details_dialog.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -430,132 +432,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   void _showJobDetailsDialog(BuildContext context, dynamic job) {
     final jobModel = job is JobsRecord ? _convertJobsRecordToJob(job) : job as Job;
-
     showDialog(
       context: context,
-      builder: (BuildContext context) => Dialog(
-        backgroundColor: AppTheme.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-          side: const BorderSide(
-            color: AppTheme.accentCopper,
-            width: AppTheme.borderWidthThin,
-          ),
-        ),
-        child: Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.85,
-            maxWidth: MediaQuery.of(context).size.width * 0.95,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header with Navy background
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spacingLg),
-                decoration: const BoxDecoration(
-                  color: AppTheme.primaryNavy,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(AppTheme.radiusLg),
-                    topRight: Radius.circular(AppTheme.radiusLg),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        jobModel.company,
-                        style: AppTheme.headlineSmall.copyWith(
-                          color: AppTheme.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close),
-                      color: AppTheme.white,
-                      style: IconButton.styleFrom(
-                        backgroundColor: AppTheme.white.withAlpha(26),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Content
-              Flexible(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppTheme.spacingLg),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildDetailRow('Local', jobModel.local?.toString() ?? 'N/A'),
-                      _buildDetailRow('Classification', jobModel.classification ?? 'N/A'),
-                      _buildDetailRow('Location', jobModel.location),
-                      _buildDetailRow('Hours', '${jobModel.hours ?? 'N/A'} hours/week'),
-                      _buildDetailRow('Wage', jobModel.wage != null ? '\$${jobModel.wage}/hr' : 'N/A'),
-                      _buildDetailRow('Per Diem', jobModel.perDiem?.isNotEmpty == true ? 'Yes' : 'No'),
-                      _buildDetailRow('Start Date', jobModel.startDate ?? 'N/A'),
-                      _buildDetailRow('Duration', jobModel.duration ?? 'N/A'),
-                      if (jobModel.jobDescription?.isNotEmpty == true) ...[
-                        const SizedBox(height: AppTheme.spacingMd),
-                        Text(
-                          'Description',
-                          style: AppTheme.bodyLarge.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryNavy,
-                          ),
-                        ),
-                        const SizedBox(height: AppTheme.spacingSm),
-                        Text(
-                          jobModel.jobDescription!,
-                          style: AppTheme.bodyMedium,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-              // Actions
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spacingMd),
-                decoration: BoxDecoration(
-                  color: AppTheme.offWhite,
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(AppTheme.radiusLg),
-                    bottomRight: Radius.circular(AppTheme.radiusLg),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text(
-                        'Close',
-                        style: TextStyle(color: AppTheme.textSecondary),
-                      ),
-                    ),
-                    const SizedBox(width: AppTheme.spacingMd),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        _submitJobApplication(jobModel);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryNavy,
-                        foregroundColor: AppTheme.white,
-                      ),
-                      child: const Text('Apply'),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      builder: (context) => JobDetailsDialog(job: jobModel),
     );
   }
 
@@ -586,19 +465,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _submitJobApplication(Job job) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Application submitted for ${job.classification ?? 'the position'}!',
-          style: const TextStyle(color: Colors.white),
-        ),
-        backgroundColor: AppTheme.primaryNavy,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-    );
+    JJElectricalToast.showSuccess(context: context, message: 'Application submitted for ${job.classification ?? 'the position'}!');
   }
 
   Job _convertJobsRecordToJob(JobsRecord jobsRecord) {

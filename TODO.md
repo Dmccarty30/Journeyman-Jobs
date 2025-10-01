@@ -2,14 +2,7 @@
 
 ## APP WIDE CHANGES
 
-- ALL backgrounds are to be the 'high' density electrical circuit back ground exactly as the jobs screen background is.
-
-- I need some sort of wrapper to apply to the text and format of what is shown on the job cards. Not all jobs in firestore are the exact same format. Fore example some classifications are "Journeyman-Lineman" some are "journeyman_lineman", etc. I need for everything to be consistent using `Title Case`.
-- Search the \lib directory recursively for any instance of a toast widget or snack bar and ensure that they follow these designs `lib\electrical_components\jj_electrical_toast.dart` and `lib\electrical_components\jj_electrical_theme.dart`
-
 ## ONBOARDING SCREENS
-
-- Step one of three `setup profile screen` make the city `text field` its own row. and move the state `dropdown` and zipcode `text field` below the city `text field` because there isnt enought room to see the entire user input so they can see if they may have made an typo or error.
 
 ## HOME SCREEN
 
@@ -17,47 +10,21 @@
 
 - *Suggested Jobs*
 
-- ***When the user presses on a job card i need for the dialog popup to be formatted exactly like lib\widgets\dialogs\job_details_dialog.dart. There must be consistancy throughout the entire app.***
-- MODIFY the `condensed job card` to ensure it adheres to the formatting and consistency guidelines outlined in lib\widgets\rich_text_.dart. i regards to using the rich text widget. Where span 1 is 'Bold' and hard coded with the data name and span 2 is the variable from the backend query.
-- Ensure the `condensed job card` adheres to the formatting and consistency guidelines outlined in lib\widgets\rich_text_.dart, where the layout consists of only two (2) columns each with several rows containing the data values. The first condensed card has three (3) colums with the local, classification, and wages. This is unacceptable.
-- ADD a horizontal divider to separate the first row from the rest of the rows for better visual clarity. so `local` and `classification` on top, then divider in the copper accent color then the remaining rows.
-
 ## JOB SCREEN
-
-- INCREASE the font size of the cards by 10%
 
 ## STORM SCREEN
 
-- CREATE a new card called `contractor_card`. The card will have the exact same format as lib\widgets\rich_text_job_card.dart. Except the data will be pulled from a new fire store collection that has yet been created however the data from docs\storm_roster.json Will be the data written to this new collection so you can go ahead and format the span one Of each rich rich text according to the Storm roster. json file and Populate the rest of the card with dummy data. Also create this card as an independent component not directly written into the Storm screen
-- ADD `Contractors` section with a list view for `contractor cards`
-
 ## TAILBOARD SCREEN
-
-- The `dropdown menu` is where the user can select which crew they want to interact with. So there needs to be a backend query to the `crews`and `users` collections and check if the user is a member of a crew then that crew is to be displayed in teh dropdown menu.
-- Whatever crew the user selects determins the data displayed to the user
-- The `feed tab` is the only tab on this screen that is permanent regardless of which `crew` a user selects.
 
 ### CREATE CREWS SCREEN
 
-- Also that `snack bar` does not follow the consistent At for these widgets. All of the snack bars and all of the `toasts` widgets must follow the electrical component widgets from the lib\electrical_components\jj_electrical_theme.dart and lib\electrical_components\jj_electrical_toast.dart files
-- Imediately after a user creates a new crew, they will be given the title of `foreman` and a `dialog popup` will apear that has all of the job sort and filter preferences. Once the `preferences` have been set, then the user will navigate to the `tailboard screen`
-
 ### MESSAGES
-
-- I need to design the style and color theme of the message bubbles for the chat window
 
 ### FEED
 
-- This is where any user will be able to post anything for everyone to see.
-- Each post will have the traditional `like`, `comment`, and `share, emoji`.
-
 ### CHAT
 
-- I need to design the style and color theme of the message bubbles for the chat window
-
 ### MEMBERS
-
-- This is where all of the members of the crew willl be displayed
 
 ## LOCALS SCREEN
 

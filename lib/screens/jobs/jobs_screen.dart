@@ -8,6 +8,7 @@ import '../../widgets/rich_text_job_card.dart';
 import '../../widgets/job_card_skeleton.dart';
 import '../../widgets/dialogs/job_details_dialog.dart';
 import '../../electrical_components/circuit_board_background.dart';
+import '../../electrical_components/jj_electrical_toast.dart';
 import '../../navigation/app_router.dart';
 
 class JobsScreen extends ConsumerStatefulWidget {
@@ -140,12 +141,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
 
   void _handleBidAction(Job job) {
     // TODO: Handle bid action
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Bidding on job at ${job.company}'),
-        backgroundColor: AppTheme.accentCopper,
-      ),
-    );
+    JJElectricalToast.showInfo(context: context, message: 'Bidding on job at ${job.company}');
   }
 
   List<Job> _getFilteredJobs(List<Job> jobs) {

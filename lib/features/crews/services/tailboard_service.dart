@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:journeyman_jobs/features/crews/models/tailboard.dart';
+import '../models/tailboard.dart';
 
 class TailboardService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -451,7 +451,6 @@ class TailboardService {
       await batch.commit();
     } catch (e) {
       // Log error but don't throw - cleanup is not critical
-      print('Error cleaning up old suggested jobs: $e');
     }
   }
 }

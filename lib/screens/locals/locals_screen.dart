@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '/models/locals_record.dart';
-import '/design_system/app_theme.dart';
-import '/providers/riverpod/locals_riverpod_provider.dart';
+import '../../models/locals_record.dart';
+import '../../design_system/app_theme.dart';
+import '../../providers/riverpod/locals_riverpod_provider.dart';
 import 'dart:io' show Platform;
 import '../../widgets/notification_badge.dart';
 import 'package:go_router/go_router.dart';
 import '../../navigation/app_router.dart';
-import '../../utils/string_formatter.dart';
+import '../../utils/text_formatting_wrapper.dart';
+import '../../electrical_components/circuit_board_background.dart';
 
 class LocalsScreen extends ConsumerStatefulWidget {
   const LocalsScreen({super.key});
@@ -105,45 +106,56 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
           ),
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // State filter dropdown
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
-            child: DropdownButton<String>(
-              value: _selectedState,
-              hint: const Text('Filter by State'),
-              isExpanded: true,
-              items: [
-                const DropdownMenuItem<String>(
-                  value: null,
-                  child: Text('All States'),
-                ),
-                // Common states - you can expand this list
-                ...['CA', 'TX', 'NY', 'FL', 'PA', 'IL', 'OH', 'GA', 'NC', 'MI']
-                    .map((state) => DropdownMenuItem<String>(
-                          value: state,
-                          child: Text(state),
-                        )),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedState = value;
-                });
-                ref.read(localsProvider.notifier).loadLocals();
-              },
-            ),
+          const ElectricalCircuitBackground(
+            opacity: 0.35,
+            animationSpeed: 4.0,
+            componentDensity: ComponentDensity.high,
+            enableCurrentFlow: true,
+            enableInteractiveComponents: true,
           ),
-          const SizedBox(height: AppTheme.spacingSm),
-          // Locals list
-          Expanded(
-            child: Consumer(
-              builder: (context, ref, child) {
-                final localsState = ref.watch(localsProvider);
-                return _buildLocalsList(localsState);
-              },
-            ),
+          Column(
+            children: [
+              // State filter dropdown
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                child: DropdownButton<String>(
+                  value: _selectedState,
+                  hint: const Text('Filter by State'),
+                  isExpanded: true,
+                  items: [
+                    const DropdownMenuItem<String>(
+                      value: null,
+                      child: Text('All States'),
+                    ),
+                    // Common states - you can expand this list
+                    ...['CA', 'TX', 'NY', 'FL', 'PA', 'IL', 'OH', 'GA', 'NC', 'MI']
+                        .map((state) => DropdownMenuItem<String>(
+                              value: state,
+                              child: Text(state),
+                            )),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedState = value;
+                    });
+                    ref.read(localsProvider.notifier).loadLocals();
+                  },
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingSm),
+              // Locals list
+              Expanded(
+                child: Consumer(
+                  builder: (context, ref, child) {
+                    final localsState = ref.watch(localsProvider);
+                    return _buildLocalsList(localsState);
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),

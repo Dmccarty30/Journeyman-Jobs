@@ -1,16 +1,14 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:journeyman_jobs/features/crews/models/crew.dart';
 import 'package:journeyman_jobs/features/crews/models/shared_job.dart';
-import 'package:journeyman_jobs/features/crews/services/crew_service.dart';
 import 'package:journeyman_jobs/features/jobs/models/job.dart';
 
 
-/// Service for handling job sharing between crews
 class JobSharingService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final CrewService _crewService;
 
-  JobSharingService(this._crewService);
+  JobSharingService();
 
   /// Share a job with specific crews
   Future<void> shareToCrews({
@@ -177,16 +175,17 @@ class JobSharingService {
 
   /// Get sharing analytics for a crew
   Future<Map<String, dynamic>> getCrewSharingAnalytics(String crewId) async {
-    final stats = await _crewService.getCrew(crewId);
-    if (stats == null) return {};
+    final crewDoc = await _firestore.collection('crews').doc(crewId).get();
+    if (!crewDoc.exists) return {};
 
-    final sortedBreakdown = stats.stats.jobTypeBreakdown.entries
+    final crew = Crew.fromFirestore(crewDoc);
+    final sortedBreakdown = crew.stats.jobTypeBreakdown.entries
         .toList()
-        ..sort((a, b) => b.value.compareTo(a.value));
+      ..sort((a, b) => b.value.compareTo(a.value));
 
     return {
-      'totalShares': stats.stats.totalJobsShared,
-      'uniqueJobsShared': stats.stats.jobTypeBreakdown.length,
+      'totalShares': crew.stats.totalJobsShared,
+      'uniqueJobsShared': crew.stats.jobTypeBreakdown.length,
       'mostSharedJobTypes': sortedBreakdown.take(3).toList(),
     };
   }

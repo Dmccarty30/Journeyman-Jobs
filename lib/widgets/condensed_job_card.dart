@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/job_model.dart';
 import '../design_system/app_theme.dart';
-import '../utils/string_formatter.dart';
+import '../utils/text_formatting_wrapper.dart';
 
 /// Condensed job card for home screen display
 /// Shows only essential information: local, classification, location, hours, and per diem
@@ -64,7 +64,7 @@ class CondensedJobCard extends StatelessWidget {
                 // Classification
                 Expanded(
                   child: Text(
-                    toTitleCase(job.classification ?? job.jobClass ?? 'General Electrical'),
+                    JobDataFormatter.formatClassification(job.classification ?? job.jobClass),
                     style: AppTheme.bodyMedium.copyWith(
                       color: AppTheme.textPrimary,
                       fontWeight: FontWeight.w600,
@@ -79,85 +79,42 @@ class CondensedJobCard extends StatelessWidget {
             // Horizontal divider
             Divider(
               height: 1,
-              color: AppTheme.textLight,
+              color: AppTheme.accentCopper,
             ),
             const SizedBox(height: AppTheme.spacingSm),
 
-            // Location row
-            Row(
-              children: [
-                Icon(
-                  Icons.location_on,
-                  size: 16,
-                  color: AppTheme.textSecondary,
-                ),
-                const SizedBox(width: AppTheme.spacingXs),
-                Expanded(
-                  child: Text(
-                    toTitleCase(job.location),
-                    style: AppTheme.bodySmall.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
+            // Contractor | Wages
+            _buildTwoColumnRow(
+              leftLabel: 'Contractor',
+              leftValue: JobDataFormatter.formatCompany(job.company),
+              rightLabel: 'Wages',
+              rightValue: job.wage != null ? '\$${job.wage!.toStringAsFixed(2)}/hr' : 'N/A',
+              rightValueColor: job.wage != null && job.wage! > 0 ? AppTheme.successGreen : null,
+            ),
+            const SizedBox(height: 8),
+
+            // Location | Hours
+            _buildTwoColumnRow(
+              leftLabel: 'Location',
+              leftValue: JobDataFormatter.formatLocation(job.location),
+              rightLabel: 'Hours',
+              rightValue: job.hours != null ? '${job.hours}/week' : 'N/A',
+            ),
+            const SizedBox(height: 8),
+
+            // Start Date | Per Diem
+            _buildTwoColumnRow(
+              leftLabel: 'Start Date',
+              leftValue: job.startDate ?? 'N/A',
+              rightLabel: 'Per Diem',
+              rightValue: job.perDiem ?? 'N/A',
             ),
             const SizedBox(height: AppTheme.spacingSm),
 
-            // Hours, Per Diem, and Wage row
+            // Arrow indicator row
             Row(
               children: [
-                // Hours
-                if (job.hours != null) ...[
-                  Icon(
-                    Icons.access_time,
-                    size: 16,
-                    color: AppTheme.textSecondary,
-                  ),
-                  const SizedBox(width: AppTheme.spacingXs),
-                  Text(
-                    '${job.hours} hrs/week',
-                    style: AppTheme.bodySmall.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(width: AppTheme.spacingMd),
-                ],
-
-                // Per Diem
-                if (job.perDiem != null && job.perDiem!.isNotEmpty) ...[
-                  Icon(
-                    Icons.hotel,
-                    size: 16,
-                    color: AppTheme.textSecondary,
-                  ),
-                  const SizedBox(width: AppTheme.spacingXs),
-                  Text(
-                    'Per Diem: ${job.perDiem}',
-                    style: AppTheme.bodySmall.copyWith(
-                      color: AppTheme.textSecondary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(width: AppTheme.spacingMd),
-                ],
-
-                // Wage
-                if (job.wage != null) ...[
-                  Text(
-                    '\$${job.wage!.toStringAsFixed(2)}/hr',
-                    style: AppTheme.bodySmall.copyWith(
-                      color: AppTheme.textSecondary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-
                 const Spacer(),
-
-                // Arrow indicator
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 16,
@@ -170,4 +127,66 @@ class CondensedJobCard extends StatelessWidget {
       ),
     );
   }
+
+  /// Helper method to build two-column info rows
+  Widget _buildTwoColumnRow({
+    required String leftLabel,
+    required String leftValue,
+    required String rightLabel,
+    required String rightValue,
+    Color? leftValueColor,
+    Color? rightValueColor,
+  }) => Row(
+        children: [
+          // Left column
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  const TextSpan(
+                    text: 'Contractor: ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textDark,
+                      fontSize: 12,
+                    ),
+                  ),
+                  TextSpan(
+                    text: leftValue,
+                    style: TextStyle(
+                      color: leftValueColor ?? AppTheme.textLight,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          // Right column
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: '$rightLabel: ',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textDark,
+                      fontSize: 12,
+                    ),
+                  ),
+                  TextSpan(
+                    text: rightValue,
+                    style: TextStyle(
+                      color: rightValueColor ?? AppTheme.textLight,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
 }

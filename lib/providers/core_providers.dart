@@ -2,11 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../services/database_service.dart';
-import '../features/crews/services/connectivity_service.dart';
-import '../models/user_model.dart';
-import '../features/crews/models/crew.dart';
-import '../features/crews/models/tailboard.dart';
-import '../models/job_model.dart';
+import 'package:journeyman_jobs/services/connectivity_service.dart';
+import 'package:journeyman_jobs/models/user_model.dart';
+import 'package:journeyman_jobs/features/crews/models/crew.dart';
+import 'package:journeyman_jobs/features/crews/models/tailboard.dart';
+import 'package:journeyman_jobs/models/job_model.dart';
 
 part 'core_providers.g.dart';
 
@@ -54,6 +54,7 @@ final currentUserProvider = Provider<UserModel?>((ref) => null);
 // Feed Posts Notifier Provider
 @riverpod
 class FeedPostsNotifier extends _$FeedPostsNotifier {
+  @override
   Future<List<TailboardPost>> build(String crewId) async {
     // Load initial posts
     return [];
@@ -77,6 +78,7 @@ class FeedPostsNotifier extends _$FeedPostsNotifier {
 class JobsNotifier extends _$JobsNotifier {
   bool isLoadingMore = false;
 
+  @override
   Future<List<Job>> build(String crewId) async {
     // Load initial jobs
     return [];

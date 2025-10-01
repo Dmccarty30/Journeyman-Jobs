@@ -1,4 +1,4 @@
-import '../utils/string_formatter.dart';
+import '../utils/text_formatting_wrapper.dart';
 
 /// Utility class for formatting job-related data
 class JobFormatting {

@@ -84,4 +84,18 @@ class JJSnackBar {
       duration: duration,
     );
   }
+
+  static void showWarning({
+    required BuildContext context,
+    required String message,
+    Duration duration = const Duration(seconds: 4),
+  }) {
+    _show(
+      context,
+      message: message,
+      backgroundColor: Colors.amber,
+      icon: Icons.warning_amber,
+      duration: duration,
+    );
+  }
 }

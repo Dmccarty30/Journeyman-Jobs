@@ -1,15 +1,15 @@
 // lib/features/crews/providers/crews_riverpod_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/domain/enums/member_role.dart';
-import 'package:journeyman_jobs/providers/riverpod/app_state_riverpod_provider.dart';
+import 'package:journeyman_jobs/features/crews/services/job_matching_service_impl.dart';
+import 'package:journeyman_jobs/features/crews/services/job_sharing_service_impl.dart';
+import '../../../providers/riverpod/app_state_riverpod_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:state_notifier/state_notifier.dart';
 
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
 import '../models/models.dart';
-import '../services/crew_service.dart' as crew_service;
-import '../services/job_sharing_service.dart';
-import '../services/job_matching_service.dart';
+import '../services/crew_service.dart';
 
 part 'crews_riverpod_provider.g.dart';
 
@@ -19,26 +19,30 @@ JobSharingService jobSharingService(Ref ref) => JobSharingService();
 
 /// JobMatchingService provider
 @riverpod
-JobMatchingService jobMatchingService(Ref ref, ProviderListenable<JobSharingService> jobSharingServiceProvider) => JobMatchingService(ref.watch(jobSharingServiceProvider));
+JobMatchingService jobMatchingService(Ref ref) {
+  final jobSharingService = ref.watch(jobSharingServiceProvider);
+  return JobMatchingService(jobSharingService);
+}
 
 /// CrewService provider
 @Riverpod(keepAlive: true)
-crew_service.CrewService crewService(
-  Ref ref,
-  ProviderListenable<JobMatchingService?> jobMatchingServiceProvider,
-  ProviderListenable<JobSharingService> jobSharingServiceProvider,
-) =>
-    crew_service.CrewService(
-      jobSharingService: ref.watch(jobSharingServiceProvider),
-      jobMatchingService: ref.watch(jobMatchingServiceProvider),
-      offlineDataService: ref.watch(offlineDataServiceProvider),
-      connectivityService: ref.watch(connectivityServiceProvider),
-    );
+CrewService crewService(Ref ref) {
+  final jobSharingService = ref.watch(jobSharingServiceProvider);
+  final jobMatchingService = ref.watch(jobMatchingServiceProvider);
+  final offlineDataService = ref.watch(offlineDataServiceProvider);
+  final connectivityService = ref.watch(connectivityServiceProvider);
+  return CrewService(
+    jobSharingService: jobSharingService,
+    jobMatchingService: jobMatchingService,
+    offlineDataService: offlineDataService,
+    connectivityService: connectivityService,
+  );
+}
 
 /// Stream of crews for the current user
 @riverpod
 Stream<List<Crew>> userCrewsStream(Ref ref) {
-  final crewService = ref.watch(crewServiceProvider as ProviderListenable);
+  final crewService = ref.watch(crewServiceProvider);
   final currentUser = ref.watch(currentUserProvider);
   
   if (currentUser == null) return Stream.value([]);
@@ -58,6 +62,7 @@ List<Crew> userCrews(Ref ref) {
     error: (_, __) => [],
   );
 }
+
 /// Selected crew notifier
 class SelectedCrewNotifier extends StateNotifier<Crew?> {
   SelectedCrewNotifier() : super(null);
@@ -84,7 +89,6 @@ Crew? selectedCrew(Ref ref) {
 SelectedCrewNotifier selectedCrewNotifierProvider(Ref ref) {
   return SelectedCrewNotifier();
 }
-
 
 /// Provider to check if current user is in a specific crew
 @riverpod
@@ -155,7 +159,7 @@ bool hasCrewPermission(Ref ref, String crewId, String permission) {
 /// Provider to get crew members stream
 @riverpod
 Stream<List<CrewMember>> crewMembersStream(Ref ref, String crewId) {
-  final crewService = ref.watch(crewServiceProvider as ProviderListenable);
+  final crewService = ref.watch(crewServiceProvider);
   return crewService.getCrewMembersStream(crewId).map((snapshot) {
     return snapshot.docs.map((doc) => CrewMember.fromFirestore(doc)).toList();
   });

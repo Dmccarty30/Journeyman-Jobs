@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
-import 'package:journeyman_jobs/services/storage_service.dart';
+import '../services/storage_service.dart';
 import 'dart:io';
 import 'cache_service.dart';
 import '../models/user_model.dart';

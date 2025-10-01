@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/string_formatter.dart';
+import '../utils/text_formatting_wrapper.dart';
 
 import '../design_system/app_theme.dart';
 import '../electrical_components/enhanced_backgrounds.dart' show VoltageLevel, EnhancedBackgrounds;

@@ -59,7 +59,7 @@ String _$jobSharingServiceHash() => r'2afec26ba06e06e5154bd86876c1ce2b5956f9bb';
 /// JobMatchingService provider
 
 @ProviderFor(jobMatchingService)
-const jobMatchingServiceProvider = JobMatchingServiceFamily._();
+const jobMatchingServiceProvider = JobMatchingServiceProvider._();
 
 /// JobMatchingService provider
 
@@ -68,10 +68,10 @@ final class JobMatchingServiceProvider extends $FunctionalProvider<
     JobMatchingService,
     JobMatchingService> with $Provider<JobMatchingService> {
   /// JobMatchingService provider
-  const JobMatchingServiceProvider._(
-      {required JobMatchingServiceFamily super.from,
-      required ProviderListenable<JobSharingService> super.argument})
+  const JobMatchingServiceProvider._()
       : super(
+          from: null,
+          argument: null,
           retry: null,
           name: r'jobMatchingServiceProvider',
           isAutoDispose: true,
@@ -82,13 +82,6 @@ final class JobMatchingServiceProvider extends $FunctionalProvider<
   @override
   String debugGetCreateSourceHash() => _$jobMatchingServiceHash();
 
-  @override
-  String toString() {
-    return r'jobMatchingServiceProvider'
-        ''
-        '($argument)';
-  }
-
   @$internal
   @override
   $ProviderElement<JobMatchingService> $createElement(
@@ -97,11 +90,7 @@ final class JobMatchingServiceProvider extends $FunctionalProvider<
 
   @override
   JobMatchingService create(Ref ref) {
-    final argument = this.argument as ProviderListenable<JobSharingService>;
-    return jobMatchingService(
-      ref,
-      argument,
-    );
+    return jobMatchingService(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -111,68 +100,26 @@ final class JobMatchingServiceProvider extends $FunctionalProvider<
       providerOverride: $SyncValueProvider<JobMatchingService>(value),
     );
   }
-
-  @override
-  bool operator ==(Object other) {
-    return other is JobMatchingServiceProvider && other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
 }
 
 String _$jobMatchingServiceHash() =>
-    r'328ed1781a698f7983262f30d25c47048c765025';
-
-/// JobMatchingService provider
-
-final class JobMatchingServiceFamily extends $Family
-    with
-        $FunctionalFamilyOverride<JobMatchingService,
-            ProviderListenable<JobSharingService>> {
-  const JobMatchingServiceFamily._()
-      : super(
-          retry: null,
-          name: r'jobMatchingServiceProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
-
-  /// JobMatchingService provider
-
-  JobMatchingServiceProvider call(
-    ProviderListenable<JobSharingService> jobSharingServiceProvider,
-  ) =>
-      JobMatchingServiceProvider._(
-          argument: jobSharingServiceProvider, from: this);
-
-  @override
-  String toString() => r'jobMatchingServiceProvider';
-}
+    r'2759b5cec59520714ca12c4c2d8cda70892ac617';
 
 /// CrewService provider
 
 @ProviderFor(crewService)
-const crewServiceProvider = CrewServiceFamily._();
+const crewServiceProvider = CrewServiceProvider._();
 
 /// CrewService provider
 
-final class CrewServiceProvider extends $FunctionalProvider<
-    crew_service.CrewService,
-    crew_service.CrewService,
-    crew_service.CrewService> with $Provider<crew_service.CrewService> {
+final class CrewServiceProvider
+    extends $FunctionalProvider<CrewService, CrewService, CrewService>
+    with $Provider<CrewService> {
   /// CrewService provider
-  const CrewServiceProvider._(
-      {required CrewServiceFamily super.from,
-      required (
-        ProviderListenable<JobMatchingService?>,
-        ProviderListenable<JobSharingService>,
-      )
-          super.argument})
+  const CrewServiceProvider._()
       : super(
+          from: null,
+          argument: null,
           retry: null,
           name: r'crewServiceProvider',
           isAutoDispose: false,
@@ -183,86 +130,26 @@ final class CrewServiceProvider extends $FunctionalProvider<
   @override
   String debugGetCreateSourceHash() => _$crewServiceHash();
 
-  @override
-  String toString() {
-    return r'crewServiceProvider'
-        ''
-        '$argument';
-  }
-
   @$internal
   @override
-  $ProviderElement<crew_service.CrewService> $createElement(
-          $ProviderPointer pointer) =>
+  $ProviderElement<CrewService> $createElement($ProviderPointer pointer) =>
       $ProviderElement(pointer);
 
   @override
-  crew_service.CrewService create(Ref ref) {
-    final argument = this.argument as (
-      ProviderListenable<JobMatchingService?>,
-      ProviderListenable<JobSharingService>,
-    );
-    return crewService(
-      ref,
-      argument.$1,
-      argument.$2,
-    );
+  CrewService create(Ref ref) {
+    return crewService(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(crew_service.CrewService value) {
+  Override overrideWithValue(CrewService value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<crew_service.CrewService>(value),
+      providerOverride: $SyncValueProvider<CrewService>(value),
     );
   }
-
-  @override
-  bool operator ==(Object other) {
-    return other is CrewServiceProvider && other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
 }
 
-String _$crewServiceHash() => r'58a15c868400fd717a285f8fdc0bb7d94067a5cf';
-
-/// CrewService provider
-
-final class CrewServiceFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-            crew_service.CrewService,
-            (
-              ProviderListenable<JobMatchingService?>,
-              ProviderListenable<JobSharingService>,
-            )> {
-  const CrewServiceFamily._()
-      : super(
-          retry: null,
-          name: r'crewServiceProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: false,
-        );
-
-  /// CrewService provider
-
-  CrewServiceProvider call(
-    ProviderListenable<JobMatchingService?> jobMatchingServiceProvider,
-    ProviderListenable<JobSharingService> jobSharingServiceProvider,
-  ) =>
-      CrewServiceProvider._(argument: (
-        jobMatchingServiceProvider,
-        jobSharingServiceProvider,
-      ), from: this);
-
-  @override
-  String toString() => r'crewServiceProvider';
-}
+String _$crewServiceHash() => r'9e698e95231d8d3c25fac5543d79e52c3735bf12';
 
 /// Stream of crews for the current user
 
@@ -300,7 +187,7 @@ final class UserCrewsStreamProvider extends $FunctionalProvider<
   }
 }
 
-String _$userCrewsStreamHash() => r'a172481e681d40d6e306f0301a13e2ac31bcd131';
+String _$userCrewsStreamHash() => r'45f76110109b34977a0bde860b878521bca0bb90';
 
 /// Current user's crews provider
 
@@ -791,7 +678,7 @@ final class CrewMembersStreamProvider extends $FunctionalProvider<
   }
 }
 
-String _$crewMembersStreamHash() => r'386af9e5c0bd43488a2d2e55d5448df9f890124c';
+String _$crewMembersStreamHash() => r'7896f7dcc34e70f8fdfafa4b6c264514baa05da0';
 
 /// Provider to get crew members stream
 
