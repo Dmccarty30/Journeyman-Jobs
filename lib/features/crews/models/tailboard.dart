@@ -30,6 +30,7 @@ class SuggestedJob {
   final List<String> matchReasons;     // Why this job matches
   final List<String> viewedByMemberIds; // Who has seen it
   final List<String> appliedMemberIds; // Who has applied
+  final List<String> savedByMemberIds; // Who has saved it
   final DateTime suggestedAt;          // When suggested
   final JobSuggestionSource source;    // How it was found
 
@@ -39,6 +40,7 @@ class SuggestedJob {
     required this.matchReasons,
     required this.viewedByMemberIds,
     required this.appliedMemberIds,
+    required this.savedByMemberIds,
     required this.suggestedAt,
     required this.source,
   });
@@ -50,6 +52,7 @@ class SuggestedJob {
       matchReasons: List<String>.from(map['matchReasons'] ?? []),
       viewedByMemberIds: List<String>.from(map['viewedByMemberIds'] ?? []),
       appliedMemberIds: List<String>.from(map['appliedMemberIds'] ?? []),
+      savedByMemberIds: List<String>.from(map['savedByMemberIds'] ?? []),
       suggestedAt: map['suggestedAt'] != null
           ? DateTime.parse(map['suggestedAt'] as String)
           : DateTime.now(),
@@ -67,6 +70,7 @@ class SuggestedJob {
       'matchReasons': matchReasons,
       'viewedByMemberIds': viewedByMemberIds,
       'appliedMemberIds': appliedMemberIds,
+      'savedByMemberIds': savedByMemberIds,
       'suggestedAt': suggestedAt.toIso8601String(),
       'source': source.toString().split('.').last,
     };
@@ -78,6 +82,7 @@ class SuggestedJob {
     List<String>? matchReasons,
     List<String>? viewedByMemberIds,
     List<String>? appliedMemberIds,
+    List<String>? savedByMemberIds,
     DateTime? suggestedAt,
     JobSuggestionSource? source,
   }) {
@@ -87,6 +92,7 @@ class SuggestedJob {
       matchReasons: matchReasons ?? this.matchReasons,
       viewedByMemberIds: viewedByMemberIds ?? this.viewedByMemberIds,
       appliedMemberIds: appliedMemberIds ?? this.appliedMemberIds,
+      savedByMemberIds: savedByMemberIds ?? this.savedByMemberIds,
       suggestedAt: suggestedAt ?? this.suggestedAt,
       source: source ?? this.source,
     );
@@ -107,6 +113,15 @@ class SuggestedJob {
     
     return copyWith(
       appliedMemberIds: [...appliedMemberIds, memberId],
+    );
+  }
+
+  // Helper method to mark job as saved by member
+  SuggestedJob markAsSaved(String memberId) {
+    if (savedByMemberIds.contains(memberId)) return this;
+    
+    return copyWith(
+      savedByMemberIds: [...savedByMemberIds, memberId],
     );
   }
 }

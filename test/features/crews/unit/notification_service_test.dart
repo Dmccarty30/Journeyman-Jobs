@@ -55,13 +55,10 @@ class MockDocumentSnapshot implements DocumentSnapshot {
 
 class MockDocumentReference implements DocumentReference {
   @override
-  CollectionReference parent => throw UnimplementedError();
+  CollectionReference get parent => throw UnimplementedError();
 
   @override
   String get id => '';
-
-  @override
-  DocumentReference get parent as DocumentReference => throw UnimplementedError();
 
   @override
   DocumentSnapshot get snapshot => throw UnimplementedError();

@@ -22,4 +22,12 @@
 - With crew: Full functionality preserved.
 - Build and run: No errors, smooth navigation.
 
+
+## Medium Priority Updates
+
+- Added persistent dropdown to header for crew switching (Issue #1)
+- Implemented error dialogs with retry functionality for crew loading failures (Issue #4)
+- Added default selection of first crew when available (Issue #4)
+- Added widget tests for CrewSelectionDropdown (Issue #10)
+- Added documentation for medium priority changes (Issue #10)
 For full implementation details, see `TASK.md`.

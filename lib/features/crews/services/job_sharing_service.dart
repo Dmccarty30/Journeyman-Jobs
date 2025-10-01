@@ -48,6 +48,7 @@ class JobSharingService {
           ],
           viewedByMemberIds: [],
           appliedMemberIds: [],
+          savedByMemberIds: [],
           suggestedAt: DateTime.now(),
           source: JobSuggestionSource.memberShare,
         );

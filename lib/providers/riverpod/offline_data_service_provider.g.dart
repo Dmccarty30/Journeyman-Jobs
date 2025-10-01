@@ -51,4 +51,4 @@ final class OfflineDataServiceProvider extends $FunctionalProvider<
 }
 
 String _$offlineDataServiceHash() =>
-    r'7ff475bcff93f81de22c2da9e6db3608cdc8b47e';
+    r'efe01f82a531e288eeab4b2691236ad1e4b522d9';

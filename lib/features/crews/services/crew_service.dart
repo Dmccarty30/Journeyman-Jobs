@@ -1198,6 +1198,8 @@ class CrewService {
             .collection('crews')
             .where('memberIds', arrayContains: userId)
             .where('isActive', isEqualTo: true)
+            .orderBy('lastActivityAt', descending: true)
+            .limit(10)
             .get());
 
         final crews = snapshot.docs.map((doc) => Crew.fromFirestore(doc)).toList();

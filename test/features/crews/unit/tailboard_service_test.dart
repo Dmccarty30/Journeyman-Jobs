@@ -1,7 +1,117 @@
 import 'package:test/test.dart';
 import 'package:journeyman_jobs/features/crews/models/tailboard.dart';
+import 'package:journeyman_jobs/features/crews/services/tailboard_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
+  group('Tailboard Service Tests', () {
+    test('markJobAsSaved should add member to saved list', () async {
+      // Arrange
+      final service = TailboardService();
+      final crewId = 'crew-123';
+      final jobId = 'job-456';
+      final memberId = 'member-789';
+      
+      // Create a test document in Firestore
+      final testJob = SuggestedJob(
+        jobId: jobId,
+        matchScore: 85,
+        matchReasons: ['Test reason'],
+        viewedByMemberIds: [],
+        appliedMemberIds: [],
+        savedByMemberIds: [],
+        suggestedAt: DateTime.now(),
+        source: JobSuggestionSource.aiMatch,
+      );
+      
+      // Add test job to Firestore
+      await FirebaseFirestore.instance
+          .collection('crews')
+          .doc(crewId)
+          .collection('tailboard')
+          .doc('main')
+          .collection('jobFeed')
+          .add(testJob.toMap());
+      
+      // Act
+      await service.markJobAsSaved(
+        crewId: crewId,
+        jobId: jobId,
+        memberId: memberId,
+      );
+      
+      // Verify - get the updated job
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('crews')
+          .doc(crewId)
+          .collection('tailboard')
+          .doc('main')
+          .collection('jobFeed')
+          .where('jobId', isEqualTo: jobId)
+          .get();
+      
+      expect(querySnapshot.docs, isNotEmpty);
+      final updatedJob = SuggestedJob.fromMap(querySnapshot.docs.first.data());
+      expect(updatedJob.savedByMemberIds, contains(memberId));
+      expect(updatedJob.savedByMemberIds.length, equals(1));
+      
+      // Cleanup
+      await FirebaseFirestore.instance
+          .collection('crews')
+          .doc(crewId)
+          .collection('tailboard')
+          .doc('main')
+          .collection('jobFeed')
+          .doc(querySnapshot.docs.first.id)
+          .delete();
+    });
+
+    test('markJobAsSaved should not duplicate member', () async {
+      // Arrange
+      final service = TailboardService();
+      final crewId = 'crew-123';
+      final jobId = 'job-456';
+      final memberId = 'member-789';
+      
+      // Create a test document in Firestore
+      final testJob = SuggestedJob(
+        jobId: jobId,
+        matchScore: 85,
+        matchReasons: ['Test reason'],
+        viewedByMemberIds: [],
+        appliedMemberIds: [],
+        savedByMemberIds: [memberId], // Already saved
+        suggestedAt: DateTime.now(),
+        source: JobSuggestionSource.aiMatch,
+      );
+      
+      // Add test job to Firestore
+      final docRef = await FirebaseFirestore.instance
+          .collection('crews')
+          .doc(crewId)
+          .collection('tailboard')
+          .doc('main')
+          .collection('jobFeed')
+          .add(testJob.toMap());
+      
+      // Act
+      await service.markJobAsSaved(
+        crewId: crewId,
+        jobId: jobId,
+        memberId: memberId,
+      );
+      
+      // Verify - get the updated job
+      final doc = await docRef.get();
+      final updatedJob = SuggestedJob.fromMap(doc.data()!);
+      expect(updatedJob.savedByMemberIds.length, equals(1));
+      expect(updatedJob.savedByMemberIds, contains(memberId));
+      
+      // Cleanup
+      await docRef.delete();
+    });
+  });
+
   group('Tailboard Model Tests', () {
     test('SuggestedJob should be created with correct properties', () {
       // Arrange
@@ -324,6 +434,7 @@ void main() {
         matchReasons: [],
         viewedByMemberIds: [],
         appliedMemberIds: [],
+        savedByMemberIds: [],
         suggestedAt: DateTime.now(),
         source: JobSuggestionSource.aiMatch,
       );
@@ -364,6 +475,7 @@ SuggestedJob _createTestSuggestedJob() {
     matchReasons: ['Good location match', 'Skills match'],
     viewedByMemberIds: [],
     appliedMemberIds: [],
+    savedByMemberIds: [],
     suggestedAt: DateTime.now(),
     source: JobSuggestionSource.aiMatch,
   );

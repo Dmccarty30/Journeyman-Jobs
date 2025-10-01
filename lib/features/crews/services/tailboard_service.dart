@@ -93,6 +93,7 @@ class TailboardService {
         matchReasons: matchReasons,
         viewedByMemberIds: [],
         appliedMemberIds: [],
+        savedByMemberIds: [],
         suggestedAt: DateTime.now(),
         source: source,
       );
@@ -155,6 +156,31 @@ class TailboardService {
       }
     } catch (e) {
       throw Exception('Error marking job as applied: $e');
+    }
+  }
+
+  // Mark a suggested job as saved by a member
+  Future<void> markJobAsSaved({
+    required String crewId,
+    required String jobId,
+    required String memberId,
+  }) async {
+    try {
+      final querySnapshot = await crewsCollection
+          .doc(crewId)
+          .collection('tailboard')
+          .doc('main')
+          .collection('jobFeed')
+          .where('jobId', isEqualTo: jobId)
+          .get();
+
+      for (final doc in querySnapshot.docs) {
+        final suggestedJob = SuggestedJob.fromMap(doc.data());
+        final updatedJob = suggestedJob.markAsSaved(memberId);
+        await doc.reference.update(updatedJob.toMap());
+      }
+    } catch (e) {
+      throw Exception('Error marking job as saved: $e');
     }
   }
 

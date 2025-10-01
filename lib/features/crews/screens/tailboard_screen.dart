@@ -3,26 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:journeyman_jobs/features/crews/widgets/job_match_card.dart';
-import 'package:journeyman_jobs/models/crew_model.dart' as crew_model;
-import 'package:journeyman_jobs/models/user_model.dart';
-import 'package:journeyman_jobs/models/jobs_record.dart';
-import 'package:journeyman_jobs/models/users_record.dart';
 import '../providers/crews_riverpod_provider.dart';
 import '../providers/tailboard_riverpod_provider.dart';
 import '../models/models.dart';
-import 'package:flutter/foundation.dart';
-import '../widgets/activity_card.dart';
-import '../widgets/announcement_card.dart';
-import '../widgets/crew_member_avatar.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
 import '../../../design_system/app_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../navigation/app_router.dart';
 import '../../../providers/core_providers.dart' hide selectedCrewProvider, currentUserProvider;
-import '../../../models/job_model.dart';
 import '../../../widgets/electrical_circuit_background.dart';
+import '../widgets/crew_selection_dropdown.dart';
 
 // Extension method to add divide functionality to List
 extension ListExtensions<T> on List<T> {
@@ -204,7 +194,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(30, 0, 30, 0),
             child: DropdownButtonFormField<String>(
-              value: _selectedCrewDisplay,
+              initialValue: _selectedCrewDisplay,
               hint: const Text('Select your Crew...'),
               items: const [
                 DropdownMenuItem<String>(
@@ -269,12 +259,20 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      crew.name,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.textPrimary,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          crew.name,
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: CrewSelectionDropdown(),
+                        ),
+                      ],
                     ),
                     Text(
                       '${crew.memberIds.length} members',
@@ -580,7 +578,6 @@ class JobsTab extends ConsumerStatefulWidget {
 class _JobsTabState extends ConsumerState<JobsTab> {
   final ScrollController _scrollController = ScrollController();
   String _selectedFilter = 'all';
-  String _searchQuery = '';
 
   @override
   void initState() {
@@ -653,8 +650,8 @@ class _JobsTabState extends ConsumerState<JobsTab> {
             if (currentUid == null) return false;
             return suggestedJob.appliedMemberIds.contains(currentUid);
           case 'saved':
-            // TODO: Add saved functionality to SuggestedJob model
-            return false;
+            if (currentUid == null) return false;
+            return suggestedJob.savedByMemberIds.contains(currentUid);
           case 'all':
           default:
             return true;
@@ -713,7 +710,6 @@ class _JobsTabState extends ConsumerState<JobsTab> {
                 ),
                 onChanged: (value) {
                   setState(() {
-                    _searchQuery = value.toLowerCase();
                   });
                 },
               ),

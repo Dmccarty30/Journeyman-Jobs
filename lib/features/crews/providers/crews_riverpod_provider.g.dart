@@ -393,6 +393,56 @@ final class SelectedCrewProvider
 
 String _$selectedCrewHash() => r'7da0b10ed7a33ed8b2da2d60178785710934bea5';
 
+/// Selected crew notifier provider
+
+@ProviderFor(selectedCrewNotifierProvider)
+const selectedCrewNotifierProviderProvider =
+    SelectedCrewNotifierProviderProvider._();
+
+/// Selected crew notifier provider
+
+final class SelectedCrewNotifierProviderProvider extends $FunctionalProvider<
+    SelectedCrewNotifier,
+    SelectedCrewNotifier,
+    SelectedCrewNotifier> with $Provider<SelectedCrewNotifier> {
+  /// Selected crew notifier provider
+  const SelectedCrewNotifierProviderProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'selectedCrewNotifierProviderProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$selectedCrewNotifierProviderHash();
+
+  @$internal
+  @override
+  $ProviderElement<SelectedCrewNotifier> $createElement(
+          $ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  SelectedCrewNotifier create(Ref ref) {
+    return selectedCrewNotifierProvider(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SelectedCrewNotifier value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SelectedCrewNotifier>(value),
+    );
+  }
+}
+
+String _$selectedCrewNotifierProviderHash() =>
+    r'e720cf8f7f08eee41dcaea57ac90d459ec62f4a1';
+
 /// Provider to check if current user is in a specific crew
 
 @ProviderFor(isUserInCrew)

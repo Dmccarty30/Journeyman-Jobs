@@ -1,12 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'lib/models/jobs_record.dart';
-import 'lib/models/users_record.dart';
+import '../models/jobs_record.dart';
+import '../models/users_record.dart';
 
 enum AnimationTrigger { onPageLoad, onPageEnd, inherited }
 
 class AnimationInfo {
   final AnimationTrigger trigger;
   final String effect;
+
   final Duration duration;
 
   const AnimationInfo({
@@ -96,7 +98,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
       setState(() => _isLoading = true);
     }
     try {
-      await widget.onPressed?.call();
+      widget.onPressed?.call();
     } finally {
       if (widget.showLoading) {
         setState(() => _isLoading = false);
@@ -169,11 +171,11 @@ class _FlutterFlowIconButtonState extends State<FlutterFlowIconButton> {
     );
   }
 }
-
 class TailboardModel extends ChangeNotifier {
   AnimationInfo? animationInfo;
   JobsRecord? selectedJob;
   UsersRecord? user;
+  bool _mounted = true;
 
   TailboardModel();
 
@@ -187,12 +189,14 @@ class TailboardModel extends ChangeNotifier {
     return model;
   }
 
+  bool get mounted => _mounted;
+
   void safeSetState(VoidCallback fn) {
-    if (mounted) setState(fn);
+    if (_mounted) setState(fn);
   }
 
   void setState(VoidCallback fn) {
-    if (mounted) {
+    if (_mounted) {
       fn();
       notifyListeners();
     }
@@ -200,9 +204,11 @@ class TailboardModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    _mounted = false;
     super.dispose();
   }
 }
+
 
 // Stubs for query functions used in tailboard
 Future<List<JobsRecord>> queryJobsRecord({DocumentReference? Function(DocumentSnapshot Function(BuildContext))? getDocument}) async {

@@ -9,7 +9,7 @@ import '../design_system/app_theme.dart';
 /// Electrical button with spark animation on tap
 class JJElectricalButton extends StatefulWidget {
   const JJElectricalButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.child,
     this.style,
@@ -17,7 +17,7 @@ class JJElectricalButton extends StatefulWidget {
     this.glowColor,
     this.enableSparks = true,
     this.enableGlow = true,
-  }) : super(key: key);
+  });
 
   final VoidCallback? onPressed;
   final Widget child;
@@ -184,7 +184,7 @@ class _JJElectricalButtonState extends State<JJElectricalButton>
 /// Electrical text field with current flow animation
 class JJElectricalTextField extends StatefulWidget {
   const JJElectricalTextField({
-    Key? key,
+    super.key,
     this.controller,
     this.decoration,
     this.onChanged,
@@ -196,7 +196,7 @@ class JJElectricalTextField extends StatefulWidget {
     this.keyboardType,
     this.textInputAction,
     this.validator,
-  }) : super(key: key);
+  });
 
   final TextEditingController? controller;
   final InputDecoration? decoration;
@@ -335,14 +335,14 @@ class _JJElectricalTextFieldState extends State<JJElectricalTextField>
 /// Electrical dropdown with spark selection effects
 class JJElectricalDropdown<T> extends StatefulWidget {
   const JJElectricalDropdown({
-    Key? key,
+    super.key,
     required this.items,
     required this.onChanged,
     this.value,
     this.hint,
     this.sparkColor,
     this.enableSparks = true,
-  }) : super(key: key);
+  });
 
   final List<DropdownMenuItem<T>> items;
   final ValueChanged<T?> onChanged;
@@ -401,7 +401,7 @@ class _JJElectricalDropdownState<T> extends State<JJElectricalDropdown<T>>
             borderRadius: BorderRadius.circular(8),
           ),
           child: DropdownButtonFormField<T>(
-            value: widget.value,
+            initialValue: widget.value,
             items: widget.items,
             onChanged: _handleChanged,
             hint: widget.hint,

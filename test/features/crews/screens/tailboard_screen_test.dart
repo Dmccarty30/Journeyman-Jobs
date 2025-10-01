@@ -388,4 +388,14 @@ void main() {
       expect(find.byType(TailboardScreen), findsOneWidget);
     });
   });
+
+  group('CrewSelectionDropdown Tests', () {
+    testWidgets('selection updates state', (WidgetTester tester) async {
+      // TODO: Implement test for dropdown selection updating state
+    });
+
+    testWidgets('error dialog appears on load failure', (WidgetTester tester) async {
+      // TODO: Implement test for error dialog
+    });
+  });
 }

@@ -28,7 +28,7 @@ import '../design_system/app_theme.dart';
 /// ```
 class ElectricalCircuitBackground extends StatefulWidget {
   const ElectricalCircuitBackground({
-    Key? key,
+    super.key,
     this.opacity = 0.15,
     this.animationSpeed = 4.0,
     this.componentDensity = ComponentDensity.medium,
@@ -38,7 +38,7 @@ class ElectricalCircuitBackground extends StatefulWidget {
     this.currentColor,
     this.copperColor,
     this.child,
-  }) : super(key: key);
+  });
 
   /// Overall opacity of the circuit pattern (0.0 - 1.0)
   final double opacity;

@@ -9,46 +9,6 @@ part of 'core_providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(databaseService)
-const databaseServiceProvider = DatabaseServiceProvider._();
-
-final class DatabaseServiceProvider extends $FunctionalProvider<DatabaseService,
-    DatabaseService, DatabaseService> with $Provider<DatabaseService> {
-  const DatabaseServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'databaseServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$databaseServiceHash();
-
-  @$internal
-  @override
-  $ProviderElement<DatabaseService> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  DatabaseService create(Ref ref) {
-    return databaseService(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(DatabaseService value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<DatabaseService>(value),
-    );
-  }
-}
-
-String _$databaseServiceHash() => r'766f41a8fb8947216fae68bbc31fa62d037f6899';
-
 @ProviderFor(connectivityService)
 const connectivityServiceProvider = ConnectivityServiceProvider._();
 
@@ -91,7 +51,7 @@ final class ConnectivityServiceProvider extends $FunctionalProvider<
 }
 
 String _$connectivityServiceHash() =>
-    r'2514faa3d7f3227d473e300af7d0188339855ef3';
+    r'727a38c43053e3ab88d851490a50df4cabdeb29e';
 
 @ProviderFor(FeedPostsNotifier)
 const feedPostsProvider = FeedPostsNotifierFamily._();
@@ -134,7 +94,7 @@ final class FeedPostsNotifierProvider
   }
 }
 
-String _$feedPostsNotifierHash() => r'c28ccdb46569c46d1177d5733299f6ae3673d39f';
+String _$feedPostsNotifierHash() => r'32978463489749b34665d112b38f071a07cd2659';
 
 final class FeedPostsNotifierFamily extends $Family
     with
@@ -222,7 +182,7 @@ final class JobsNotifierProvider
   }
 }
 
-String _$jobsNotifierHash() => r'66820b3d77a6373e2f16bcab44b22069d660e4ec';
+String _$jobsNotifierHash() => r'5b5feb52d9e6088abad6a86cda653b6840a8b549';
 
 final class JobsNotifierFamily extends $Family
     with
@@ -236,8 +196,6 @@ final class JobsNotifierFamily extends $Family
           $allTransitiveDependencies: null,
           isAutoDispose: true,
         );
-
-  get notifier => null;
 
   JobsNotifierProvider call(
     String crewId,

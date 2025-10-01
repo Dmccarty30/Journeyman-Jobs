@@ -33,9 +33,31 @@
 
 ## TAILBOARD SCREEN
 
-## CREATE CREWS SCREEN
+- The `dropdown menu` is where the user can select which crew they want to interact with. So there needs to be a backend query to the `crews`and `users` collections and check if the user is a member of a crew then that crew is to be displayed in teh dropdown menu.
+- Whatever crew the user selects determins the data displayed to the user
+- The `feed tab` is the only tab on this screen that is permanent regardless of which `crew` a user selects.
 
-- Also that snack bar does not follow the consistent At for these widgets. All of the snack bars and all of the Toasts widgets must follow the electrical component widgets from the lib\electrical_components\jj_electrical_theme.dart and lib\electrical_components\jj_electrical_toast.dart files
+### CREATE CREWS SCREEN
+
+- Also that `snack bar` does not follow the consistent At for these widgets. All of the snack bars and all of the `toasts` widgets must follow the electrical component widgets from the lib\electrical_components\jj_electrical_theme.dart and lib\electrical_components\jj_electrical_toast.dart files
+- Imediately after a user creates a new crew, they will be given the title of `foreman` and a `dialog popup` will apear that has all of the job sort and filter preferences. Once the `preferences` have been set, then the user will navigate to the `tailboard screen`
+
+### MESSAGES
+
+- I need to design the style and color theme of the message bubbles for the chat window
+
+### FEED
+
+- This is where any user will be able to post anything for everyone to see.
+- Each post will have the traditional `like`, `comment`, and `share, emoji`.
+
+### CHAT
+
+- I need to design the style and color theme of the message bubbles for the chat window
+
+### MEMBERS
+
+- This is where all of the members of the crew willl be displayed
 
 ## LOCALS SCREEN
 

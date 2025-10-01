@@ -90,6 +90,7 @@ dependencies:
   latlong2: ^0.9.1
   dio: ^5.7.0
   geolocator: ^14.0.2
+  state_notifier: ^1.0.0
 
 dev_dependencies:
   flutter_test:

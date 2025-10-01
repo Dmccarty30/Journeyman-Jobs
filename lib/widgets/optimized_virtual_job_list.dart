@@ -2,7 +2,6 @@ import 'dart:async'; // Required for Timer
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journeyman_jobs/providers/core_providers.dart';
 // ignore: depend_on_referenced_packages
 import 'package:riverpod/src/providers/stream_provider.dart';
 import 'dart:math'; // Required for max/min
@@ -10,6 +9,7 @@ import '../design_system/app_theme.dart';
 import '../design_system/components/job_card.dart';
 import '../models/job_model.dart';
 import '../providers/riverpod/app_state_riverpod_provider.dart';
+import '../providers/riverpod/jobs_riverpod_provider.dart';
 
 /// High-performance virtual scrolling job list with mobile optimizations
 ///
@@ -179,11 +179,11 @@ class _OptimizedVirtualJobListState extends ConsumerState<OptimizedVirtualJobLis
     final position = _scrollController.position;
     final totalItemCount = widget.jobs.length;
     if (totalItemCount == 0) {
-      // If there are no jobs, ensure the visible range is reset
-      if (_lastReportedStart != 0 || _lastReportedEnd != 0) {
-        ref.read(jobsProvider.notifier!).updateVisibleJobsRange(0, 0);
-        _lastReportedStart = 0;
-        _lastReportedEnd = 0;
+      // If there are no jobs, ensure the visible range is reset to indicate no items
+      if (_lastReportedStart != -1 || _lastReportedEnd != -1) {
+        ref.read(jobsProvider.notifier).updateVisibleJobsRange(-1, -1);
+        _lastReportedStart = -1;
+        _lastReportedEnd = -1;
       }
       return;
     }
@@ -205,7 +205,7 @@ class _OptimizedVirtualJobListState extends ConsumerState<OptimizedVirtualJobLis
 
     // Only update if the range has actually changed
     if (start != _lastReportedStart || end != _lastReportedEnd) {
-      ref.read(jobsProvider.notifier!).updateVisibleJobsRange(start, end);
+      ref.read(jobsProvider.notifier).updateVisibleJobsRange(start, end);
       _lastReportedStart = start;
       _lastReportedEnd = end;
     }

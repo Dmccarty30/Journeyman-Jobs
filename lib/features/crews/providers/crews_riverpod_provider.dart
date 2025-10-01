@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/domain/enums/member_role.dart';
 import 'package:journeyman_jobs/providers/riverpod/app_state_riverpod_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:state_notifier/state_notifier.dart';
 
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
 import '../models/models.dart';
@@ -57,6 +58,18 @@ List<Crew> userCrews(Ref ref) {
     error: (_, __) => [],
   );
 }
+/// Selected crew notifier
+class SelectedCrewNotifier extends StateNotifier<Crew?> {
+  SelectedCrewNotifier() : super(null);
+
+  void setCrew(Crew crew) {
+    state = crew;
+  }
+
+  void clearCrew() {
+    state = null;
+  }
+}
 
 /// Selected crew provider
 @riverpod
@@ -65,6 +78,13 @@ Crew? selectedCrew(Ref ref) {
   // For now, return the first crew or null
   return crews.isNotEmpty ? crews.first : null;
 }
+
+/// Selected crew notifier provider
+@riverpod
+SelectedCrewNotifier selectedCrewNotifierProvider(Ref ref) {
+  return SelectedCrewNotifier();
+}
+
 
 /// Provider to check if current user is in a specific crew
 @riverpod
