@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/post_model.dart';
 import '../../../design_system/app_theme.dart';
+import '../../../widgets/emoji_reaction_picker.dart';
+import '../../../widgets/reaction_animation.dart';
+import '../../../widgets/like_animation.dart';
+import '../../../widgets/comment_animation.dart';
 import 'crew_member_avatar.dart';
+import '../../../widgets/comment_input.dart';
+import '../../../widgets/comment_thread.dart';
+import '../models/tailboard.dart';
 
 class PostCard extends StatefulWidget {
   final PostModel post;
@@ -12,6 +20,17 @@ class PostCard extends StatefulWidget {
   final Function(String, PostModel)? onShare;
   final Function(String, PostModel)? onDelete;
   final Function(String, PostModel)? onEdit;
+  final Function(String, String, PostModel)? onReaction;
+  final Function(String, String)? onAddComment;
+  final Function(String, String)? onLikeComment;
+  final Function(String, String)? onUnlikeComment;
+  final Function(String, String)? onEditComment;
+  final Function(String, String)? onDeleteComment;
+  final Function(String, String)? onReplyToComment;
+  final String commentUserId;
+  final String? currentUserName;
+  final List<Comment>? comments;
+  final bool showCommentInput;
 
   const PostCard({
     super.key,
@@ -22,6 +41,17 @@ class PostCard extends StatefulWidget {
     this.onShare,
     this.onDelete,
     this.onEdit,
+    this.onReaction,
+    this.onAddComment,
+    this.onLikeComment,
+    this.onUnlikeComment,
+    this.onEditComment,
+    this.onDeleteComment,
+    this.onReplyToComment,
+    required this.commentUserId,
+    this.currentUserName,
+    this.comments,
+    this.showCommentInput = true,
   });
 
   @override
@@ -33,12 +63,42 @@ class _PostCardState extends State<PostCard> {
   bool _isBookmarked = false;
   int _likeCount = 0;
   bool _showComments = false;
+  bool _showReactionPicker = false;
+  String? _userReaction;
+  Map<String, int> _reactions = {};
+  bool _isAddingComment = false;
 
   @override
   void initState() {
     super.initState();
     _isLiked = widget.post.likes.contains(widget.currentUserId);
     _likeCount = widget.post.likes.length;
+    _reactions = widget.post.reactions;
+    _userReaction = widget.post.userReactions[widget.currentUserId];
+  }
+
+  void _showReactionAnimation(String emoji) {
+    final overlay = Overlay.of(context);
+    final renderBox = context.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero);
+
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        left: position.dx + renderBox.size.width / 2 - 18,
+        top: position.dy + renderBox.size.height / 2 - 18,
+        child: Material(
+          color: Colors.transparent,
+          child: ReactionAnimation(
+            emoji: emoji,
+            onComplete: () {
+              // Animation will complete and remove itself
+            },
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
   }
 
   void _toggleLike() {
@@ -46,15 +106,78 @@ class _PostCardState extends State<PostCard> {
       _isLiked = !_isLiked;
       _likeCount += _isLiked ? 1 : -1;
     });
-    
+
     if (widget.onLike != null) {
       widget.onLike!(widget.currentUserId, widget.post);
+    }
+  }
+
+  void _toggleReactionPicker() {
+    setState(() {
+      _showReactionPicker = !_showReactionPicker;
+    });
+  }
+
+  void _handleReactionSelected(String emoji) {
+    setState(() {
+      _showReactionPicker = false;
+
+      // Update local state
+      if (_userReaction == emoji) {
+        // Remove reaction if same emoji selected again
+        _reactions[emoji] = (_reactions[emoji] ?? 1) - 1;
+        if (_reactions[emoji]! <= 0) {
+          _reactions.remove(emoji);
+        }
+        _userReaction = null;
+      } else {
+        // Remove previous reaction if exists
+        if (_userReaction != null) {
+          _reactions[_userReaction!] = (_reactions[_userReaction!] ?? 1) - 1;
+          if (_reactions[_userReaction!]! <= 0) {
+            _reactions.remove(_userReaction!);
+          }
+        }
+
+        // Add new reaction
+        _reactions[emoji] = (_reactions[emoji] ?? 0) + 1;
+        _userReaction = emoji;
+      }
+    });
+
+    // Trigger animation
+    if (_userReaction == null || _userReaction != emoji) {
+      _showReactionAnimation(emoji);
+    }
+
+    // Notify parent
+    if (widget.onReaction != null) {
+      widget.onReaction!(widget.currentUserId, emoji, widget.post);
     }
   }
 
   void _toggleComments() {
     setState(() {
       _showComments = !_showComments;
+      if (_showComments && widget.onComment != null) {
+        widget.onComment!(widget.post.id, widget.post);
+      }
+    });
+  }
+
+  void _handleCommentAdded() {
+    setState(() {
+      _isAddingComment = true;
+    });
+
+    // In a real implementation, this would trigger a refresh of comments
+    // For now, we'll just simulate the action
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        setState(() {
+          _isAddingComment = false;
+        });
+      }
     });
   }
 
@@ -103,13 +226,29 @@ class _PostCardState extends State<PostCard> {
     }
   }
 
+  String _formatTimestamp(Timestamp timestamp) {
+    final DateTime dateTime = timestamp.toDate();
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inDays > 0) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
   Widget _buildPostHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
           CrewMemberAvatar(
-            memberName: 'Author Name', // TODO: Replace with actual user name
+            memberName: widget.post.authorName ?? 'Unknown User',
             size: 40,
             showStatus: false,
           ),
@@ -119,7 +258,7 @@ class _PostCardState extends State<PostCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Author Name', // TODO: Replace with actual user name from user service
+                  widget.post.authorName ?? 'Unknown User',
                   style: AppTheme.titleMedium.copyWith(
                     color: AppTheme.textPrimary,
                     fontWeight: FontWeight.w600,
@@ -294,13 +433,12 @@ class _PostCardState extends State<PostCard> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          IconButton(
-            onPressed: _toggleLike,
-            icon: Icon(
-              _isLiked ? Icons.favorite : Icons.favorite_border,
-              color: _isLiked ? AppTheme.errorRed : AppTheme.textSecondary,
-              size: 24,
-            ),
+          LikeAnimation(
+            isLiked: _isLiked,
+            onLike: _toggleLike,
+            size: 24,
+            likedColor: AppTheme.errorRed,
+            unlikedColor: AppTheme.textSecondary,
           ),
           Text(
             '$_likeCount',
@@ -318,7 +456,7 @@ class _PostCardState extends State<PostCard> {
             ),
           ),
           Text(
-            '0', // TODO: Replace with actual comment count
+            '${widget.post.commentCount ?? widget.post.comments.length}',
             style: AppTheme.bodySmall.copyWith(
               color: AppTheme.textSecondary,
             ),
@@ -352,69 +490,99 @@ class _PostCardState extends State<PostCard> {
 
   Widget _buildCommentsSection() {
     if (!_showComments) return const SizedBox.shrink();
-    
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Comments',
-            style: AppTheme.titleMedium.copyWith(
-              color: AppTheme.textPrimary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          // TODO: Replace with actual comments from comments service
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppTheme.offWhite,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              border: Border.all(
-                color: AppTheme.borderLight,
-                width: AppTheme.borderWidthThin,
+
+    return CommentAnimation(
+      isVisible: _showComments,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Comment input field
+            if (widget.showCommentInput)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: CommentInput(
+                  postId: widget.post.id,
+                  currentUserId: widget.commentUserId,
+                  currentUserName: widget.currentUserName,
+                  onCommentAdded: () {
+                    setState(() {
+                      _isAddingComment = true;
+                    });
+                  },
+                ),
               ),
-            ),
-            child: Text(
-              'No comments yet. Be the first to comment!',
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textSecondary,
-                fontStyle: FontStyle.italic,
+
+            const SizedBox(height: 8),
+
+            // Comment thread
+            if (widget.comments != null && widget.comments!.isNotEmpty)
+              CommentThread(
+                comments: widget.comments!,
+                postId: widget.post.id,
+                currentUserId: widget.commentUserId,
+                onLikeComment: (postId, commentId) {
+                  widget.onLikeComment?.call(commentId, postId);
+                },
+                onUnlikeComment: (postId, commentId) {
+                  widget.onUnlikeComment?.call(commentId, postId);
+                },
+                onEditComment: (postId, commentId) {
+                  widget.onEditComment?.call(commentId, postId);
+                },
+                onDeleteComment: (postId, commentId) {
+                  widget.onDeleteComment?.call(commentId, postId);
+                },
+                onReplyToComment: (commentId) {
+                  widget.onReplyToComment?.call(widget.post.id, commentId);
+                },
+              )
+            else if (_isAddingComment)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppTheme.offWhite,
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    border: Border.all(
+                      color: AppTheme.borderLight,
+                      width: AppTheme.borderWidthThin,
+                    ),
+                  ),
+                  child: Text(
+                    'No comments yet. Be the first to comment!',
+                    style: AppTheme.bodyMedium.copyWith(
+                      color: AppTheme.textSecondary,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
-  }
-
-  String _formatTimestamp(Timestamp timestamp) {
-    final DateTime dateTime = timestamp.toDate();
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-
-    if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
-    } else {
-      return 'just now';
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: AppTheme.shadowCard.first.blurRadius * 0.5,
+      elevation: 0,
+      color: AppTheme.electricalSurface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         side: BorderSide(
-          color: AppTheme.borderCopperLight.withValues(alpha: 0.3),
+          color: AppTheme.borderCopperLight,
           width: AppTheme.borderWidthThin,
         ),
       ),

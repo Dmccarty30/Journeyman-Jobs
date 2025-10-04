@@ -52,6 +52,7 @@ class AppTheme {
   // Surface Colors
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceElevated = Color(0xFFF7FAFC);
+  static const Color dividerColor = Color(0xFFD1D5DB);
   
   // Text Colors
   static const Color textPrimary = Color(0xFF1A202C);

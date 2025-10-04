@@ -9,6 +9,14 @@ enum MessageType {
   systemNotification
 }
 
+enum MessageStatus {
+  sending,    // Message is being sent
+  sent,       // Message sent to server
+  delivered,  // Message delivered to recipients
+  read,       // Message read by recipients
+  failed      // Message failed to send
+}
+
 enum AttachmentType {
   image,
   document,
@@ -98,8 +106,14 @@ class Message {
   final List<Attachment>? attachments; // Files, images, voice notes
   final DateTime sentAt;               // Timestamp
   final Map<String, DateTime> readBy;  // Read receipts
+  final MessageStatus status;          // Message delivery status
   final bool isEdited;                 // If message was edited
   final DateTime? editedAt;            // When edited
+  final DateTime? deliveredAt;         // When message was delivered to server
+  final DateTime? readAt;              // When message was first read
+  final Map<String, DateTime> deliveredTo; // Individual delivery timestamps per user
+  final Map<String, DateTime> readStatus; //Individual read timestamps per user (new name for clarity)
+  final List<String> readByList;       // List of user IDs who have read the message
 
   Message({
     required this.id,
@@ -111,9 +125,16 @@ class Message {
     this.attachments,
     required this.sentAt,
     required this.readBy,
+    this.status = MessageStatus.sent, // Default status
     required this.isEdited,
     this.editedAt,
-  });
+    this.deliveredAt,
+    this.readAt,
+    this.deliveredTo = const {},
+    Map<String, DateTime>? readStatus,
+    List<String>? readByList,
+  }) : readStatus = readStatus ?? readBy,
+        readByList = readByList ?? readBy.keys.toList();
 
   factory Message.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
@@ -126,6 +147,30 @@ class Message {
           readByMap[key] = value.toDate();
         } else if (value is String) {
           readByMap[key] = DateTime.parse(value);
+        }
+      });
+    }
+
+    // Parse deliveredTo map
+    final deliveredToMap = <String, DateTime>{};
+    if (data['deliveredTo'] != null) {
+      (data['deliveredTo'] as Map<String, dynamic>).forEach((key, value) {
+        if (value is Timestamp) {
+          deliveredToMap[key] = value.toDate();
+        } else if (value is String) {
+          deliveredToMap[key] = DateTime.parse(value);
+        }
+      });
+    }
+
+    // Parse readStatus map
+    final readStatusMap = <String, DateTime>{};
+    if (data['readStatus'] != null) {
+      (data['readStatus'] as Map<String, dynamic>).forEach((key, value) {
+        if (value is Timestamp) {
+          readStatusMap[key] = value.toDate();
+        } else if (value is String) {
+          readStatusMap[key] = DateTime.parse(value);
         }
       });
     }
@@ -148,8 +193,17 @@ class Message {
           : null,
       sentAt: (data['sentAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       readBy: readByMap,
+      status: MessageStatus.values.firstWhere(
+        (s) => s.toString().split('.').last == (data['status'] ?? 'sent'),
+        orElse: () => MessageStatus.sent,
+      ),
       isEdited: data['isEdited'] ?? false,
       editedAt: (data['editedAt'] as Timestamp?)?.toDate(),
+      deliveredAt: (data['deliveredAt'] as Timestamp?)?.toDate(),
+      readAt: (data['readAt'] as Timestamp?)?.toDate(),
+      deliveredTo: deliveredToMap,
+      readStatus: readStatusMap,
+      readByList: data['readByList'] != null ? List<String>.from(data['readByList']) : null,
     );
   }
 
@@ -163,8 +217,14 @@ class Message {
       'attachments': attachments?.map((attachment) => attachment.toMap()).toList(),
       'sentAt': Timestamp.fromDate(sentAt),
       'readBy': readBy.map((key, value) => MapEntry(key, Timestamp.fromDate(value))),
+      'status': status.toString().split('.').last,
       'isEdited': isEdited,
       'editedAt': editedAt != null ? Timestamp.fromDate(editedAt!) : null,
+      'deliveredAt': deliveredAt != null ? Timestamp.fromDate(deliveredAt!) : null,
+      'readAt': readAt != null ? Timestamp.fromDate(readAt!) : null,
+      'deliveredTo': deliveredTo.map((key, value) => MapEntry(key, Timestamp.fromDate(value))),
+      'readStatus': readStatus.map((key, value) => MapEntry(key, Timestamp.fromDate(value))),
+      'readByList': readByList,
     };
   }
 
@@ -178,8 +238,14 @@ class Message {
     List<Attachment>? attachments,
     DateTime? sentAt,
     Map<String, DateTime>? readBy,
+    MessageStatus? status,
     bool? isEdited,
     DateTime? editedAt,
+    DateTime? deliveredAt,
+    DateTime? readAt,
+    Map<String, DateTime>? deliveredTo,
+    Map<String, DateTime>? readStatus,
+    List<String>? readByList,
   }) {
     return Message(
       id: id ?? this.id,
@@ -191,8 +257,14 @@ class Message {
       attachments: attachments ?? this.attachments,
       sentAt: sentAt ?? this.sentAt,
       readBy: readBy ?? this.readBy,
+      status: status ?? this.status,
       isEdited: isEdited ?? this.isEdited,
       editedAt: editedAt ?? this.editedAt,
+      deliveredAt: deliveredAt ?? this.deliveredAt,
+      readAt: readAt ?? this.readAt,
+      deliveredTo: deliveredTo ?? this.deliveredTo,
+      readStatus: readStatus ?? this.readStatus,
+      readByList: readByList ?? this.readByList,
     );
   }
 

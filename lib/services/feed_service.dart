@@ -184,7 +184,7 @@ class FeedService {
   Future<void> addReaction({
     required String postId,
     required String memberId,
-    required ReactionType reactionType,
+    required String emoji,
   }) async {
     try {
       final postRef = _postsCollection.doc(postId);
@@ -194,31 +194,36 @@ class FeedService {
         if (!postDoc.exists) throw AppException('Post not found');
 
         final data = postDoc.data() as Map<String, dynamic>;
-        final reactions = Map<String, String>.from(data['reactions'] ?? {});
+        final reactions = Map<String, int>.from(data['reactions'] ?? {});
+        final userReactions = Map<String, String>.from(data['userReactions'] ?? {});
         final likes = List<String>.from(data['likes'] ?? []);
 
-        // Update reactions map
-        reactions[memberId] = reactionType.toString().split('.').last;
+        // Update user reactions map
+        userReactions[memberId] = emoji;
 
-        // Update likes list based on reaction type
-        if (reactionType == ReactionType.like) {
+        // Update reactions count
+        reactions[emoji] = (reactions[emoji] ?? 0) + 1;
+
+        // Update likes list based on emoji
+        if (emoji == '👍') {
           if (!likes.contains(memberId)) {
             likes.add(memberId);
           }
         } else {
-          // For other reactions, remove from likes if present
+          // For other emojis, remove from likes if present
           likes.remove(memberId);
         }
 
         transaction.update(postRef, {
           'reactions': reactions,
+          'userReactions': userReactions,
           'likes': likes,
           'updatedAt': FieldValue.serverTimestamp(),
         });
       });
 
       if (kDebugMode) {
-        print('👍 Added ${reactionType.name} reaction to post $postId by $memberId');
+        print('👍 Added $emoji reaction to post $postId by $memberId');
       }
     } catch (e) {
       throw AppException('Failed to add reaction: $e');
@@ -238,17 +243,30 @@ class FeedService {
         if (!postDoc.exists) throw AppException('Post not found');
 
         final data = postDoc.data() as Map<String, dynamic>;
-        final reactions = Map<String, String>.from(data['reactions'] ?? {});
+        final reactions = Map<String, int>.from(data['reactions'] ?? {});
+        final userReactions = Map<String, String>.from(data['userReactions'] ?? {});
         final likes = List<String>.from(data['likes'] ?? []);
 
-        // Remove reaction
-        reactions.remove(memberId);
+        // Get the emoji that was removed
+        final removedEmoji = userReactions[memberId];
+
+        // Remove user reaction
+        userReactions.remove(memberId);
+
+        // Decrement reaction count if exists
+        if (removedEmoji != null) {
+          reactions[removedEmoji] = (reactions[removedEmoji] ?? 1) - 1;
+          if (reactions[removedEmoji]! <= 0) {
+            reactions.remove(removedEmoji);
+          }
+        }
 
         // Remove from likes if present
         likes.remove(memberId);
 
         transaction.update(postRef, {
           'reactions': reactions,
+          'userReactions': userReactions,
           'likes': likes,
           'updatedAt': FieldValue.serverTimestamp(),
         });
@@ -263,19 +281,8 @@ class FeedService {
   }
 
   /// Get reaction counts for a post
-  Map<ReactionType, int> getReactionCounts(Map<String, String> reactions) {
-    final counts = <ReactionType, int>{};
-
-    for (final reactionStr in reactions.values) {
-      final reactionType = ReactionType.values.firstWhere(
-        (r) => r.toString().split('.').last == reactionStr,
-        orElse: () => ReactionType.like,
-      );
-
-      counts[reactionType] = (counts[reactionType] ?? 0) + 1;
-    }
-
-    return counts;
+  Map<String, int> getReactionCounts(Map<String, int> reactions) {
+    return reactions;
   }
 
   // Comments
