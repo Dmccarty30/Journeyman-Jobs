@@ -47,29 +47,43 @@ class MessageBubble extends StatelessWidget {
               children: [
                 if (!isCurrentUser && showAvatar)
                   Padding(
-                    padding: const EdgeInsets.only(left: 8, bottom: 4),
-                    child: Text(
-                      senderName,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.textLight,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    padding: const EdgeInsets.only(left: 8, bottom: 2),
+                    child: Row(
+                      children: [
+                        Text(
+                          senderName,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppTheme.textLight,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (message.type != MessageType.text) ...[
+                          const SizedBox(width: 4),
+                          _buildMessageTypeIcon(context),
+                        ],
+                      ],
                     ),
                   ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: message.type == MessageType.systemNotification ? 12 : 16,
+                    vertical: message.type == MessageType.systemNotification ? 8 : 12
+                  ),
                   decoration: BoxDecoration(
-                    color: isCurrentUser ? AppTheme.accentCopper : AppTheme.offWhite,
+                    color: _getBubbleColor(),
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(isCurrentUser ? 16 : 4),
-                      topRight: Radius.circular(isCurrentUser ? 4 : 16),
+                      topLeft: Radius.circular(isCurrentUser ? 16 : message.type == MessageType.systemNotification ? 12 : 4),
+                      topRight: Radius.circular(isCurrentUser ? message.type == MessageType.systemNotification ? 12 : 4 : 16),
                       bottomLeft: const Radius.circular(16),
                       bottomRight: const Radius.circular(16),
                     ),
-                    boxShadow: isCurrentUser
+                    border: message.type == MessageType.systemNotification
+                        ? Border.all(color: AppTheme.accentCopper, width: AppTheme.borderWidthCopperThin)
+                        : null,
+                    boxShadow: message.type == MessageType.systemNotification || isCurrentUser
                         ? [
                             BoxShadow(
-                              color: AppTheme.accentCopper.withValues(alpha: 0.2),
+                              color: _getBubbleColor().withValues(alpha: 0.2),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -79,15 +93,38 @@ class MessageBubble extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        message.content,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: isCurrentUser ? AppTheme.white : AppTheme.textPrimary,
+                      if (message.type == MessageType.systemNotification) ...[
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.notifications_active,
+                              size: 16,
+                              color: AppTheme.accentCopper,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                message.content,
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: AppTheme.textPrimary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      if (message.hasAttachments) ...[
-                        const SizedBox(height: 8),
-                        _buildAttachments(context),
+                      ] else ...[
+                        Text(
+                          message.content,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: _getTextColor(),
+                            fontWeight: message.type == MessageType.jobShare ? FontWeight.w600 : FontWeight.normal,
+                          ),
+                        ),
+                        if (message.hasAttachments) ...[
+                          const SizedBox(height: 8),
+                          _buildAttachments(context),
+                        ],
                       ],
                     ],
                   ),
@@ -140,7 +177,7 @@ class MessageBubble extends StatelessWidget {
         const SizedBox(height: 8),
         Container(
           height: 1,
-          color: Colors.white.withValues(alpha: 0.3),
+          color: _getTextColor().withValues(alpha: 0.2),
           margin: const EdgeInsets.symmetric(vertical: 8),
         ),
         Wrap(
@@ -148,10 +185,14 @@ class MessageBubble extends StatelessWidget {
           runSpacing: 4,
           children: message.attachments!.map((attachment) {
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: _getBubbleColor(),
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: _getTextColor().withValues(alpha: 0.3),
+                  width: AppTheme.borderWidthThin
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -159,14 +200,17 @@ class MessageBubble extends StatelessWidget {
                   Icon(
                     _getAttachmentIcon(attachment.type),
                     size: 14,
-                    color: Colors.white,
+                    color: _getTextColor(),
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    attachment.filename,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.white,
-                      fontSize: 10,
+                  Flexible(
+                    child: Text(
+                      attachment.filename,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: _getTextColor(),
+                        fontSize: 10,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -218,5 +262,66 @@ class MessageBubble extends StatelessWidget {
     } else {
       return 'now';
     }
+  }
+
+  Color _getBubbleColor() {
+    switch (message.type) {
+      case MessageType.systemNotification:
+        return AppTheme.electricalSurface;
+      case MessageType.jobShare:
+        return AppTheme.accentCopper.withValues(alpha: 0.1);
+      case MessageType.text:
+      default:
+        return isCurrentUser ? AppTheme.accentCopper : AppTheme.offWhite;
+    }
+  }
+
+  Color _getTextColor() {
+    switch (message.type) {
+      case MessageType.systemNotification:
+        return AppTheme.accentCopper;
+      case MessageType.jobShare:
+        return AppTheme.accentCopper;
+      case MessageType.text:
+      default:
+        return isCurrentUser ? AppTheme.white : AppTheme.textPrimary;
+    }
+  }
+
+  Widget _buildMessageTypeIcon(BuildContext context) {
+    IconData iconData;
+    Color iconColor;
+    
+    switch (message.type) {
+      case MessageType.image:
+        iconData = Icons.image;
+        iconColor = AppTheme.infoBlue;
+        break;
+      case MessageType.voice:
+        iconData = Icons.mic;
+        iconColor = AppTheme.successGreen;
+        break;
+      case MessageType.document:
+        iconData = Icons.description;
+        iconColor = AppTheme.warningYellow;
+        break;
+      case MessageType.jobShare:
+        iconData = Icons.work;
+        iconColor = AppTheme.accentCopper;
+        break;
+      case MessageType.systemNotification:
+        iconData = Icons.notifications_active;
+        iconColor = AppTheme.accentCopper;
+        break;
+      case MessageType.text:
+      default:
+        return const SizedBox.shrink();
+    }
+    
+    return Icon(
+      iconData,
+      size: 14,
+      color: iconColor,
+    );
   }
 }

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Tab Bar with App Colors</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f7fafc;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #1a202c; /* primaryNavy */
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 24px;
+        }
+        
+        .subtitle {
+            color: #4a5568; /* textSecondary */
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        /* Tab Bar Styles */
+        .tab-bar-container {
+            margin: 0 20px 30px;
+            background: #e2e8f0; /* lightGray */
+            border-radius: 12px;
+            position: relative;
+            height: 52px;
+        }
+        
+        .tab-bar {
+            display: flex;
+            position: relative;
+            height: 100%;
+            border-radius: 12px;
+        }
+        
+        .tab-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, #b45309, #d69e2e); /* copper gradient */
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+            z-index: 1;
+        }
+        
+        .tab {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            color: #718096; /* textLight */
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        
+        .tab.active {
+            color: #1a202c; /* primaryNavy */
+        }
+        
+        /* Content Area */
+        .content {
+            background: #f7fafc; /* offWhite */
+            border-radius: 12px;
+            padding: 40px 20px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #4a5568; /* textSecondary */
+            border: 2px solid #d69e2e; /* secondaryCopper */
+        }
+        
+        .content.active {
+            display: flex;
+        }
+        
+        /* Logo */
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(to right, #b45309, #d69e2e); /* copper gradient */
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo i {
+            font-size: 40px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <i>⚡</i>
+        </div>
+        <h1>Join Journeyman Jobs</h1>
+        <p class="subtitle">Connect with electrical opportunities</p>
+        
+        <div class="tab-bar-container">
+            <div class="tab-bar">
+                <div class="tab-indicator" id="indicator"></div>
+                <div class="tab active" data-tab="0">Sign Up</div>
+                <div class="tab" data-tab="1">Sign In</div>
+            </div>
+        </div>
+        
+        <div class="content active" id="content0">Sign Up Form Content</div>
+        <div class="content" id="content1">Sign In Form Content</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab');
+            const indicator = document.getElementById('indicator');
+            const contents = document.querySelectorAll('.content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabIndex = parseInt(tab.getAttribute('data-tab'));
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Move indicator
+                    indicator.style.transform = `translateX(${tabIndex * 100}%)`;
+                    
+                    // Show corresponding content
+                    contents.forEach((content, index) => {
+                        if (index === tabIndex) {
+                            content.classList.add('active');
+                        } else {
+                            content.classList.remove('active');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

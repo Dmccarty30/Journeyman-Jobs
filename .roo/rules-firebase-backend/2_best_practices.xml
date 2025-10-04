@@ -1,0 +1,166 @@
+<best_practices>
+  <general_principles>
+    <principle priority="high">
+      <name>Always scan project files before answering</name>
+      <description>Always scan project files listed in customInstructions before answering to build proper context</description>
+      <rationale>Ensures comprehensive understanding of the Firebase backend structure and current implementation</rationale>
+      <example>
+        <scenario>When analyzing a Firebase project</scenario>
+        <good>Read firebase.json, firestore.rules, functions source, and package.json</good>
+        <bad>Make assumptions about project structure without reading files</bad>
+      </example>
+    </principle>
+
+    <principle priority="high">
+      <name>Prefer minimal scoped commits</name>
+      <description>When recommending edits, prefer minimal scoped commits and clear PR titles</description>
+      <rationale>Reduces risk of introducing bugs and makes rollbacks easier</rationale>
+      <example>
+        <scenario>Updating Firestore security rules</scenario>
+        <good>One commit per rule change with descriptive title</good>
+        <bad>Massive commit affecting multiple unrelated rules</bad>
+      </example>
+    </principle>
+
+    <principle priority="high">
+      <name>Never assume production access</name>
+      <description>Never assume access to production logs unless user provides them</description>
+      <rationale>Prevents security risks and ensures user consent for production data access</rationale>
+      <example>
+        <scenario>Debugging production issues</scenario>
+        <good>Ask user to provide relevant logs or error messages</good>
+        <bad>Attempt to access production logs directly</bad>
+      </example>
+    </principle>
+
+    <principle priority="high">
+      <name>Require explicit confirmation for destructive actions</name>
+      <description>If user asks for a production deploy, require explicit confirmation and a checklist</description>
+      <rationale>Prevents accidental production deployments that could cause downtime</rationale>
+      <example>
+        <scenario>Production deployment request</scenario>
+        <good>Present checklist: backup, monitoring, rollback plan, and require user confirmation</good>
+        <bad>Deploy directly without user verification</bad>
+      </example>
+    </principle>
+  </general_principles>
+
+  <firebase_specific_practices>
+    <practice category="data_modeling">
+      <name>Choose appropriate data modeling strategy</name>
+      <description>Consider collection-per-entity vs subcollections vs hybrid approaches based on query patterns</description>
+      <trade_offs>
+        <trade_off>Collection-per-entity: Better for simple queries, higher read costs for relationships</trade_off>
+        <trade_off>Subcollections: Better for hierarchical data, complex queries</trade_off>
+        <trade_off>Hybrid: Balances both approaches for optimal performance</trade_off>
+      </trade_offs>
+    </practice>
+
+    <practice category="performance">
+      <name>Use sharded counters for hot documents</name>
+      <description>Implement distributed counters to handle high-frequency writes to single documents</description>
+      <implementation>Distribute writes across multiple counter documents and aggregate on read</implementation>
+    </practice>
+
+    <practice category="pagination">
+      <name>Implement proper pagination strategies</name>
+      <description>Use cursor-based pagination with documentSnapshot for reliable ordering</description>
+      <avoid>Offset-based pagination which becomes inefficient at scale</avoid>
+    </practice>
+
+    <practice category="consistency">
+      <name>Handle denormalization with transactions</name>
+      <description>Use batched writes and transactions to keep denormalized data consistent</description>
+      <pattern>Maintain data integrity across multiple documents during updates</pattern>
+    </practice>
+
+    <practice category="security">
+      <name>Implement custom claim-based role checks</name>
+      <description>Use Firebase Auth custom claims for role-based access control in security rules</description>
+      <validation>Validate field-level access based on user roles and data ownership</validation>
+    </practice>
+
+    <practice category="functions">
+      <name>Optimize Cloud Functions</name>
+      <description>Select appropriate regions, size memory, avoid cold starts with minInstances</description>
+      <techniques>Use background work with Pub/Sub for long-running tasks, implement idempotency</techniques>
+    </practice>
+
+    <practice category="queries">
+      <name>Design efficient queries</name>
+      <description>Use composite indexes, index-only queries, understand collectionGroup costs</description>
+      <optimization>Avoid unbounded queries requiring collectionGroup without indexes</optimization>
+    </practice>
+
+    <practice category="multitenancy">
+      <name>Choose appropriate multitenancy model</name>
+      <description>Single-project with tenant-id scoping vs multi-project isolation based on requirements</description>
+      <considerations>Security, cost, complexity, and operational overhead</considerations>
+    </practice>
+
+    <practice category="migrations">
+      <name>Plan atomic migrations</name>
+      <description>Use exported/backfill + transform + atomic swap or feature flags for safe migrations</description>
+      <rollback>Always have rollback strategies and checkpointing for large data migrations</rollback>
+    </practice>
+
+    <practice category="observability">
+      <name>Implement comprehensive monitoring</name>
+      <description>Use structured logs, Cloud Trace spans, monitoring alerts, and usage quotas</description>
+      <metrics>Track invocations, duration, memory, error rates, cold starts, and egress</metrics>
+    </practice>
+
+    <practice category="cost_control">
+      <name>Implement cost controls</name>
+      <description>Use Cloud Billing usage caps, shard hot paths, limit unbounded client queries</description>
+      <optimization>Design data models and queries to minimize document reads and writes</optimization>
+    </practice>
+  </firebase_specific_practices>
+
+  <common_pitfalls>
+    <pitfall>
+      <description>Using synchronous external calls in Cloud Functions</description>
+      <why_problematic>Causes cold starts and increases function execution time</why_problematic>
+      <correct_approach>Use Pub/Sub for background processing or async/await with proper error handling</correct_approach>
+    </pitfall>
+
+    <pitfall>
+      <description>Over-denormalization without consistency guarantees</description>
+      <why_problematic>Leads to data inconsistencies and complex debugging</why_problematic>
+      <correct_approach>Use transactions or batched writes to maintain consistency across denormalized fields</correct_approach>
+    </pitfall>
+
+    <pitfall>
+      <description>Unbounded Firestore queries in client code</description>
+      <why_problematic>High costs and potential performance issues at scale</why_problematic>
+      <correct_approach>Always implement pagination and limit clauses</correct_approach>
+    </pitfall>
+
+    <pitfall>
+      <description>Storing secrets in environment variables without proper handling</description>
+      <why_problematic>Security risks and potential exposure in logs</why_problematic>
+      <correct_approach>Use Secret Manager or encrypted environment variables with proper access controls</correct_approach>
+    </pitfall>
+  </common_pitfalls>
+
+  <quality_checklist>
+    <category name="security_review">
+      <item>Validate Firestore security rules for oversights</item>
+      <item>Check for unscoped read/write permissions</item>
+      <item>Review authentication and authorization patterns</item>
+      <item>Verify custom claims usage in security rules</item>
+    </category>
+    <category name="performance_review">
+      <item>Analyze query patterns and index requirements</item>
+      <item>Check function cold start risks</item>
+      <item>Review data modeling for query efficiency</item>
+      <item>Assess memory and timeout configurations</item>
+    </category>
+    <category name="deployment_readiness">
+      <item>Test with local emulators</item>
+      <item>Verify CI/CD pipeline configuration</item>
+      <item>Prepare rollback procedures</item>
+      <item>Document monitoring and alerting setup</item>
+    </category>
+  </quality_checklist>
+</best_practices>

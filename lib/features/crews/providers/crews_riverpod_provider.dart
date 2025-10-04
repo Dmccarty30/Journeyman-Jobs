@@ -69,10 +69,13 @@ class SelectedCrewNotifier extends StateNotifier<Crew?> {
 
   void setCrew(Crew crew) {
     state = crew;
+    // Additional logic can be added here if needed when a crew is selected
+    // For example, loading crew-specific data for tabs
   }
 
   void clearCrew() {
     state = null;
+    // Additional logic can be added here if needed when a crew is cleared
   }
 }
 
@@ -259,4 +262,66 @@ bool hasReachedCrewLimit(Ref ref) {
   final crewCount = ref.watch(crewCountProvider);
   final limit = ref.watch(crewCreationLimitProvider);
   return crewCount >= limit;
+}
+
+/// Notifier for creating crews with preferences
+class CrewCreationNotifier extends StateNotifier<AsyncValue<void>> {
+  CrewCreationNotifier(this._ref) : super(const AsyncValue.data(null));
+
+  final Ref _ref;
+
+  Future<void> createCrewWithPreferences({
+    required String name,
+    required String foremanId,
+    required CrewPreferences preferences,
+    String? logoUrl,
+  }) async {
+    state = const AsyncValue.loading();
+    try {
+      final crewService = _ref.read(crewServiceProvider);
+      await crewService.createCrew(
+        name: name,
+        foremanId: foremanId,
+        preferences: preferences,
+        logoUrl: logoUrl,
+      );
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stackTrace: stack);
+    }
+  }
+
+  Future<void> updateCrewPreferences({
+    required String crewId,
+    required CrewPreferences preferences,
+  }) async {
+    state = const AsyncValue.loading();
+    try {
+      final crewService = _ref.read(crewServiceProvider);
+      await crewService.updateCrew(
+        crewId: crewId,
+        preferences: preferences,
+      );
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stackTrace: stack);
+    }
+  }
+
+  void reset() {
+    state = const AsyncValue.data(null);
+  }
+}
+
+/// Provider for crew creation notifier
+@riverpod
+CrewCreationNotifier crewCreationNotifier(Ref ref) {
+  return CrewCreationNotifier(ref);
+}
+
+/// Stream of crew creation state
+@riverpod
+AsyncValue<void> crewCreationState(Ref ref) {
+  final notifier = ref.watch(crewCreationNotifierProvider);
+  return notifier.state;
 }

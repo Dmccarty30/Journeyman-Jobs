@@ -1,0 +1,184 @@
+<common_patterns>
+  <pattern category="security_rules">
+    <name>Custom claims-based access control</name>
+    <description>Use Firebase Auth custom claims for role-based security rules</description>
+    <example>
+      <![CDATA[
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function for role checking
+    function isAdmin() {
+      return request.auth.token.admin == true;
+    }
+
+    function hasRole(role) {
+      return request.auth.token.roles.hasAny([role]);
+    }
+
+    match /sensitive/{document} {
+      allow read: if hasRole('viewer') || isAdmin();
+      allow write: if hasRole('editor') || isAdmin();
+    }
+  }
+}
+      ]]>
+    </example>
+    <when_to_use>When implementing role-based access control in Firestore security rules</when_to_use>
+  </pattern>
+
+  <pattern category="functions">
+    <name>Idempotent Cloud Functions</name>
+    <description>Implement idempotency for retry-safe function execution</description>
+    <example>
+      <![CDATA[
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp();
+
+exports.processPayment = functions.firestore
+  .document('payments/{paymentId}')
+  .onCreate(async (snap, context) => {
+    const payment = snap.data();
+
+    // Check if already processed
+    if (payment.status === 'processed') {
+      console.log('Payment already processed');
+      return;
+    }
+
+    // Use transaction for atomic updates
+    const paymentRef = snap.ref;
+    await admin.firestore().runTransaction(async (transaction) => {
+      const currentDoc = await transaction.get(paymentRef);
+      if (currentDoc.data().status === 'processed') {
+        return; // Already processed
+      }
+
+      // Process payment logic here
+      // ...
+
+      transaction.update(paymentRef, {
+        status: 'processed',
+        processedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+    });
+  });
+      ]]>
+    </example>
+    <when_to_use>For functions that handle payments, orders, or other critical operations</when_to_use>
+  </pattern>
+
+  <pattern category="data_modeling">
+    <name>Sharded counters</name>
+    <description>Distribute write load across multiple counter documents</description>
+    <example>
+      <![CDATA[
+const SHARD_COUNT = 10;
+
+async function incrementCounter(counterId) {
+  const shardId = Math.floor(Math.random() * SHARD_COUNT);
+  const shardRef = admin.firestore()
+    .collection('counters')
+    .doc(counterId)
+    .collection('shards')
+    .doc(shardId.toString());
+
+  await shardRef.set({
+    count: admin.firestore.FieldValue.increment(1)
+  }, { merge: true });
+}
+
+async function getCounter(counterId) {
+  const shardsRef = admin.firestore()
+    .collection('counters')
+    .doc(counterId)
+    .collection('shards');
+
+  const snapshot = await shardsRef.get();
+  let total = 0;
+  snapshot.forEach(doc => {
+    total += doc.data().count || 0;
+  });
+
+  return total;
+}
+      ]]>
+    </example>
+    <when_to_use>For high-frequency counters like likes, views, or inventory counts</when_to_use>
+  </pattern>
+
+  <pattern category="pagination">
+    <name>Cursor-based pagination</name>
+    <description>Use document snapshots for reliable pagination ordering</description>
+    <example>
+      <![CDATA[
+async function getPaginatedPosts(lastDoc = null, limit = 10) {
+  let query = admin.firestore()
+    .collection('posts')
+    .orderBy('createdAt', 'desc')
+    .limit(limit);
+
+  if (lastDoc) {
+    query = query.startAfter(lastDoc);
+  }
+
+  const snapshot = await query.get();
+  const posts = [];
+  let newLastDoc = null;
+
+  snapshot.forEach(doc => {
+    posts.push({ id: doc.id, ...doc.data() });
+    newLastDoc = doc;
+  });
+
+  return {
+    posts,
+    lastDoc: newLastDoc,
+    hasMore: snapshot.size === limit
+  };
+}
+
+// Usage
+const result = await getPaginatedPosts();
+if (result.hasMore) {
+  const nextPage = await getPaginatedPosts(result.lastDoc);
+}
+      ]]>
+    </example>
+    <when_to_use>For lists that need consistent ordering and performance</when_to_use>
+  </pattern>
+
+  <pattern category="denormalization">
+    <name>Consistent denormalization with transactions</name>
+    <description>Maintain data consistency across denormalized fields</description>
+    <example>
+      <![CDATA[
+async function updateUserProfile(userId, profileData) {
+  const userRef = admin.firestore().collection('users').doc(userId);
+  const postsRef = admin.firestore().collection('posts');
+
+  await admin.firestore().runTransaction(async (transaction) => {
+    // Update main user document
+    transaction.update(userRef, {
+      displayName: profileData.displayName,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    // Update denormalized data in posts
+    const userPosts = await transaction.get(
+      postsRef.where('authorId', '==', userId)
+    );
+
+    userPosts.forEach(postDoc => {
+      transaction.update(postDoc.ref, {
+        authorDisplayName: profileData.displayName
+      });
+    });
+  });
+}
+      ]]>
+    </example>
+    <when_to_use>When denormalizing data for read performance while maintaining consistency</when_to_use>
+  </pattern>
+</common_patterns>

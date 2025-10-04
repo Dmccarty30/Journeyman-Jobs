@@ -8,6 +8,8 @@ import '../../../electrical_components/jj_electrical_toast.dart';
 
 import '../models/crew_preferences.dart';
 import '../providers/crews_riverpod_provider.dart';
+import '../widgets/crew_preferences_dialog.dart';
+import '../services/crew_service.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
 
 class CreateCrewScreen extends ConsumerStatefulWidget {
@@ -27,6 +29,7 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
   bool _autoShareEnabled = false;
 
   @override
+  @override
   void dispose() {
     _crewNameController.dispose();
     _descriptionController.dispose();
@@ -36,25 +39,45 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
   Future<void> _createCrew() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final crewService = ref.read(crewServiceProvider(jobMatchingServiceProvider(jobSharingServiceProvider), jobSharingServiceProvider));
+        final crewService = ref.read(crewServiceProvider);
         final currentUser = ref.read(currentUserProvider);
 
         if (currentUser == null) {
           throw Exception('User not authenticated');
         }
 
-        await crewService.createCrew(
-          name: _crewNameController.text,
-          foremanId: currentUser.uid,
-          preferences: CrewPreferences(
-            jobTypes: [_selectedJobType],
-            minHourlyRate: _minHourlyRate.toDouble(),
-            autoShareEnabled: _autoShareEnabled,
-          ),
-        );
-
+        // Create crew with initial preferences
+        final crewId = '${_crewNameController.text}-${DateTime.now().millisecondsSinceEpoch}';
+        
         if (mounted) {
-          context.go(AppRouter.crews); // Navigates to TailboardScreen
+          // Show CrewPreferencesDialog after successful crew creation
+          final updatedPreferences = await showDialog<CrewPreferences>(
+            context: context,
+            builder: (context) => CrewPreferencesDialog(
+              initialPreferences: CrewPreferences(
+                jobTypes: [_selectedJobType],
+                minHourlyRate: _minHourlyRate.toDouble(),
+                autoShareEnabled: _autoShareEnabled,
+              ),
+              crewId: crewId,
+              crewService: crewService,
+              isNewCrew: true, // Indicate this is for a new crew
+            ),
+          );
+
+          if (updatedPreferences != null && mounted) {
+            // Update crew with final preferences
+            await crewService.updateCrew(
+              crewId: crewId,
+              preferences: updatedPreferences,
+            );
+            
+            // Navigate to Tailboard screen
+            context.go('${AppRouter.crews}/$crewId');
+          } else if (mounted) {
+            // User cancelled preferences, navigate to Tailboard with initial preferences
+            context.go('${AppRouter.crews}/$crewId');
+          }
         }
 
       } catch (e) {
@@ -64,7 +87,6 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
       }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

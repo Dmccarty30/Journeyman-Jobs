@@ -1378,3 +1378,99 @@ final class HasReachedCrewLimitProvider
 
 String _$hasReachedCrewLimitHash() =>
     r'6c6cb512f0d8e6bf943cfa282f23b8a09ade7736';
+
+/// Provider for crew creation notifier
+
+@ProviderFor(crewCreationNotifier)
+const crewCreationProvider = CrewCreationNotifierProvider._();
+
+/// Provider for crew creation notifier
+
+final class CrewCreationNotifierProvider extends $FunctionalProvider<
+    CrewCreationNotifier,
+    CrewCreationNotifier,
+    CrewCreationNotifier> with $Provider<CrewCreationNotifier> {
+  /// Provider for crew creation notifier
+  const CrewCreationNotifierProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'crewCreationProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$crewCreationNotifierHash();
+
+  @$internal
+  @override
+  $ProviderElement<CrewCreationNotifier> $createElement(
+          $ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  CrewCreationNotifier create(Ref ref) {
+    return crewCreationNotifier(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(CrewCreationNotifier value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<CrewCreationNotifier>(value),
+    );
+  }
+}
+
+String _$crewCreationNotifierHash() =>
+    r'28a17361d065e3366282ec119e670c8bde834bdb';
+
+/// Stream of crew creation state
+
+@ProviderFor(crewCreationState)
+const crewCreationStateProvider = CrewCreationStateProvider._();
+
+/// Stream of crew creation state
+
+final class CrewCreationStateProvider extends $FunctionalProvider<
+    AsyncValue<void>,
+    AsyncValue<void>,
+    AsyncValue<void>> with $Provider<AsyncValue<void>> {
+  /// Stream of crew creation state
+  const CrewCreationStateProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'crewCreationStateProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$crewCreationStateHash();
+
+  @$internal
+  @override
+  $ProviderElement<AsyncValue<void>> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  AsyncValue<void> create(Ref ref) {
+    return crewCreationState(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<void> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<void>>(value),
+    );
+  }
+}
+
+String _$crewCreationStateHash() => r'9d452cf330fcf0324394923a80017132cd822bbc';

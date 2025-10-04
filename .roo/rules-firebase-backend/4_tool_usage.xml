@@ -1,0 +1,166 @@
+<tool_usage_guide>
+  <tool_priorities>
+    <priority level="1">
+      <tool>read</tool>
+      <when>Always scan all project files to build context</when>
+      <why>Comprehensive understanding of Firebase backend structure and current implementation</why>
+    </priority>
+    <priority level="2">
+      <tool>edit</tool>
+      <when>Propose and apply patches only to files matching the mode's fileRegex</when>
+      <why>Always show diffs and require user approval to commit changes</why>
+    </priority>
+    <priority level="3">
+      <tool>command</tool>
+      <when>User authorizes command execution</when>
+      <why>Run Firebase CLI commands with exact flags for CI and dry-run</why>
+    </priority>
+    <priority level="4">
+      <tool>mcp</tool>
+      <when>Running emulators, migration scripts, or integration tests</when>
+      <why>Isolated server for longer-running tasks and heavy data operations</why>
+    </priority>
+    <priority level="5">
+      <tool>browser</tool>
+      <when>Fetching Firebase docs, NPM packages, or release notes</when>
+      <why>Access up-to-date documentation and advanced suggestions</why>
+    </priority>
+  </tool_priorities>
+
+  <tool_specific_guidance>
+    <tool name="read">
+      <purpose>Scan all project files to build comprehensive context</purpose>
+      <when_to_use>Before any analysis or changes</when_to_use>
+      <best_practices>
+        <practice>If any file is large, summarize key sections (package.json scripts, function triggers, rules)</practice>
+        <practice>Focus on firebase.json, firestore.rules, functions source, and configuration files</practice>
+        <practice>Build complete understanding of project structure and current implementation</practice>
+      </best_practices>
+    </tool>
+
+    <tool name="edit">
+      <purpose>Apply targeted changes to Firebase backend files</purpose>
+      <when_to_use>When proposing security rule updates, function modifications, or configuration changes</when_to_use>
+      <restrictions>
+        <restriction>Only edit files matching the mode's fileRegex pattern</restriction>
+        <restriction>Always show unified diffs before applying changes</restriction>
+        <restriction>Require explicit user approval for destructive changes</restriction>
+      </restrictions>
+      <examples>
+        <example scenario="firestore_rules_update">
+          <description>Updating Firestore security rules</description>
+          <code>Apply diff to firestore.rules with allow/deny changes</code>
+        </example>
+        <example scenario="function_deployment">
+          <description>Modifying Cloud Function source code</description>
+          <code>Update functions/src/index.js with new triggers or logic</code>
+        </example>
+      </examples>
+    </tool>
+
+    <tool name="command">
+      <purpose>Execute Firebase CLI commands and development tools</purpose>
+      <when_to_use>When running emulators, deploying functions, or managing Firebase projects</when_to_use>
+      <syntax>
+        <command>firebase emulators:start --only firestore,functions,auth</command>
+        <parameters>
+          <parameter name="--project" required="false">
+            <description>Specify Firebase project ID</description>
+            <type>string</type>
+            <example>my-firebase-project</example>
+          </parameter>
+          <parameter name="--only" required="false">
+            <description>Specify which emulators to start</description>
+            <type>string</type>
+            <example>firestore,functions,auth</example>
+          </parameter>
+        </parameters>
+      </syntax>
+      <best_practices>
+        <practice>Recommend exact CLI flags for CI and dry-run modes</practice>
+        <practice>Use --project flag to specify target environment</practice>
+        <practice>Test commands locally before suggesting for production</practice>
+      </best_practices>
+    </tool>
+
+    <tool name="mcp">
+      <purpose>Run isolated Firebase operations in dedicated server environment</purpose>
+      <when_to_use>For emulator suites, migration scripts, integration tests, and heavy data operations</when_to_use>
+      <server_requirements>
+        <requirement>Node 16/18+ runtime with npm/yarn</requirement>
+        <requirement>Docker & docker-compose for reproducible environments</requirement>
+        <requirement>Firebase CLI pinned to project-supported version</requirement>
+        <requirement>gcloud SDK for GCP service integration</requirement>
+        <requirement>4GB+ RAM and swap for emulator operations</requirement>
+      </server_requirements>
+      <docker_setup>
+        <![CDATA[
+version: "3.8"
+services:
+  firebase-emulator:
+    image: node:18-buster
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace:cached
+    command: >
+      /bin/sh -c "npm install -g firebase-tools@latest &&
+                  npm ci || true &&
+                  firebase emulators:start --project $FIREBASE_PROJECT_ID --only firestore,functions,auth,hosting --import=./emulator-import --export-on-exit"
+    environment:
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+    ports:
+      - "4000:4000"  # functions emulator
+      - "8080:8080"  # firestore emulator
+      - "9099:9099"  # auth emulator
+    shm_size: '1gb'
+        ]]>
+      </docker_setup>
+      <usage_patterns>
+        <pattern>Running emulator suite for testing</pattern>
+        <pattern>Executing migration scripts that touch many documents</pattern>
+        <pattern>Running integration tests that talk to local emulators</pattern>
+        <pattern>Heavy data migration with batching and checkpointing</pattern>
+      </usage_patterns>
+      <security_notes>
+        <note>Do not use MCP to access production credentials</note>
+        <note>Use service account with restricted rights for migrations</note>
+        <note>Expose only required emulator ports to Roo's MCP process</note>
+      </security_notes>
+    </tool>
+
+    <tool name="browser">
+      <purpose>Access Firebase documentation, release notes, and external resources</purpose>
+      <when_to_use>When providing advanced suggestions or checking compatibility</when_to_use>
+      <common_uses>
+        <use>Fetch Firebase release notes for new features</use>
+        <use>Check NPM package documentation</use>
+        <use>Access Google Cloud Platform documentation</use>
+        <use>Review Firebase pricing and quotas</use>
+      </common_uses>
+    </tool>
+  </tool_specific_guidance>
+
+  <safety_protocols>
+    <protocol name="destructive_actions">
+      <description>Always confirm destructive actions with user</description>
+      <actions>
+        <action>Production deployments</action>
+        <action>Data migrations</action>
+        <action>Security rule changes</action>
+        <action>Function deletions</action>
+      </actions>
+    </protocol>
+
+    <protocol name="secrets_handling">
+      <description>Never expose secrets in commands or logs</description>
+      <approach>Use placeholders like $SECRET_NAME with environment variables</approach>
+      <approach>Reference Secret Manager or encrypted environment variables</approach>
+    </protocol>
+
+    <protocol name="production_access">
+      <description>Never assume access to production resources</description>
+      <requirement>Require explicit user confirmation for production operations</requirement>
+      <requirement>Provide rollback plans and monitoring checklists</requirement>
+    </protocol>
+  </safety_protocols>
+</tool_usage_guide>

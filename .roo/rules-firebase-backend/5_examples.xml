@@ -1,0 +1,163 @@
+<examples>
+  <example name="security_audit_response">
+    <description>Complete response format for Firebase backend security audit</description>
+    <context>When analyzing Firebase backend for security issues and providing fixes</context>
+    <request>
+      Analyze this repo's Firebase backend for potential security gaps and missing indexes. List the top 5 issues and provide patches to fix them. Use emulators and explain test steps.
+    </request>
+    <response_format>
+      <section name="summary">
+        <title>TL;DR</title>
+        <content>One-paragraph summary of findings and risk assessment</content>
+      </section>
+
+      <section name="files_analyzed">
+        <title>Files Read</title>
+        <content>
+          - firebase.json
+          - firestore.rules
+          - functions/src/index.js
+          - .firebaserc
+        </content>
+      </section>
+
+      <section name="findings">
+        <title>Findings</title>
+        <finding number="1">
+          <issue>Unscoped read access in Firestore rules</issue>
+          <severity>High</severity>
+          <description>Rules allow reading all documents in users collection without authentication</description>
+          <impact>Potential data exposure to unauthorized users</impact>
+        </finding>
+        <finding number="2">
+          <issue>Missing composite index</issue>
+          <severity>Medium</severity>
+          <description>Query filtering by status and createdAt requires composite index</description>
+          <impact>Query failures in production</impact>
+        </finding>
+        <finding number="3">
+          <issue>Weak security rules for user profiles</issue>
+          <severity>High</severity>
+          <description>Users can read other users' profile data</description>
+          <impact>Privacy violation and data leakage</impact>
+        </finding>
+        <finding number="4">
+          <issue>Synchronous external API calls in functions</issue>
+          <severity>Medium</severity>
+          <description>Payment processing function makes blocking HTTP calls</description>
+          <impact>Cold start delays and timeout risks</impact>
+        </finding>
+        <finding number="5">
+          <issue>Missing input validation</issue>
+          <severity>Low</severity>
+          <description>Functions don't validate input parameters</description>
+          <impact>Potential runtime errors</impact>
+        </finding>
+      </section>
+
+      <section name="risk_assessment">
+        <title>Risk</title>
+        <level>High</level>
+        <justification>Multiple security vulnerabilities including data exposure and weak access controls</justification>
+      </section>
+
+      <section name="proposed_fixes">
+        <title>Suggested Changes</title>
+        <fix number="1">
+          <description>Restrict users collection access to authenticated users only</description>
+          <diff>
+            <![CDATA[
+--- a/firestore.rules
++++ b/firestore.rules
+@@ -5,7 +5,7 @@ service cloud.firestore {
+   match /databases/{database}/documents {
+     match /users/{userId} {
+-      allow read: if true;
++      allow read: if request.auth != null && request.auth.uid == userId;
+       allow write: if request.auth != null && request.auth.uid == userId;
+     }
+   }
+ }
+            ]]>
+          </diff>
+        </fix>
+        <fix number="2">
+          <description>Add composite index for status and createdAt query</description>
+          <diff>
+            <![CDATA[
+--- a/firestore.indexes.json
++++ b/firestore.indexes.json
+@@ -0,0 +1,15 @@
+ {
+   "indexes": [
+     {
+       "collectionGroup": "tasks",
+       "queryScope": "COLLECTION",
+       "fields": [
+         {"fieldPath": "status", "order": "ASCENDING"},
+         {"fieldPath": "createdAt", "order": "DESCENDING"}
+       ]
+     }
+   ],
+   "fieldOverrides": []
+ }
+            ]]>
+          </diff>
+        </fix>
+      </section>
+
+      <section name="testing_instructions">
+        <title>Emulator Test Steps</title>
+        <step number="1">Start Firebase emulators: firebase emulators:start --only firestore,functions</step>
+        <step number="2">Deploy rules to emulator: firebase deploy --only firestore:rules</step>
+        <step number="3">Test security rules with Firebase emulator UI at http://localhost:4000</step>
+        <step number="4">Verify access restrictions by attempting unauthorized reads</step>
+        <step number="5">Test query performance with the new index</step>
+      </section>
+
+      <section name="deployment_plan">
+        <title>Deploy & Rollback Commands</title>
+        <deployment>
+          <command>firebase deploy --only firestore:rules,firestore:indexes</command>
+          <verification>Monitor Firebase console for deployment status</verification>
+        </deployment>
+        <rollback>
+          <command>firebase firestore:indexes</command>
+          <command>git revert HEAD~1 && firebase deploy --only firestore:rules</command>
+          <note>Rollback requires manual index deletion via Firebase console</note>
+        </rollback>
+      </section>
+
+      <section name="impact_assessment">
+        <title>Performance and Cost Impact</title>
+        <performance>
+          <improvement>Security rules will prevent unauthorized access</improvement>
+          <improvement>Composite index will improve query performance by ~50%</improvement>
+        </performance>
+        <cost>
+          <impact>Index will increase storage costs by ~$0.50/month</impact>
+          <impact>No significant change in read/write costs</impact>
+        </cost>
+      </section>
+    </response_format>
+  </example>
+
+  <example name="prompt_structure">
+    <description>How to structure effective prompts for Firebase backend analysis</description>
+    <context>When requesting Firebase backend analysis or changes</context>
+    <good_prompt>
+      Analyze the Firestore security rules in this project. Check for:
+      - Unscoped read/write permissions
+      - Missing authentication checks
+      - Insecure data access patterns
+
+      Provide specific rule fixes with unified diffs and explain how to test each change using emulators.
+    </good_prompt>
+    <bad_prompt>
+      Fix my Firebase security issues.
+    </bad_prompt>
+    <explanation>
+      Good prompts are specific about what to analyze, provide clear requirements, and request actionable outputs with testing instructions.
+    </explanation>
+  </example>
+</examples>

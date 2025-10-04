@@ -9,6 +9,7 @@ class CrewSelectionDropdown extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final crewsAsync = ref.watch(userCrewsStreamProvider);
+    final selectedCrew = ref.watch(selectedCrewProvider);
 
     return crewsAsync.when(
       loading: () => const CircularProgressIndicator(),
@@ -40,7 +41,7 @@ class CrewSelectionDropdown extends ConsumerWidget {
       },
       data: (crews) {
         // Auto-select first crew if none selected and crews available
-        if (crews.isNotEmpty && ref.watch(selectedCrewProvider) == null) {
+        if (crews.isNotEmpty && selectedCrew == null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             final firstCrew = crews.first;
             ref.read(selectedCrewNotifierProviderProvider).setCrew(firstCrew);
@@ -49,11 +50,11 @@ class CrewSelectionDropdown extends ConsumerWidget {
         
         return DropdownButtonFormField<String>(
           decoration: InputDecoration(
-            labelText: 'Select Crew',
+            labelText: selectedCrew == null ? 'Select Crew' : 'Selected Crew',
             border: const OutlineInputBorder(),
             hintText: crews.isEmpty ? 'No crews available' : 'Select a crew',
           ),
-          initialValue: ref.watch(selectedCrewProvider)?.id,
+          value: selectedCrew?.id,
           items: crews.map((Crew crew) {
             return DropdownMenuItem<String>(
               value: crew.id,
@@ -64,7 +65,18 @@ class CrewSelectionDropdown extends ConsumerWidget {
             if (value != null) {
               final crew = crews.firstWhere((c) => c.id == value);
               ref.read(selectedCrewNotifierProviderProvider).setCrew(crew);
+              
+              // Notify tabs about the crew change
+              // This will trigger a rebuild of the TabBarView and all its tabs
+              if (context.mounted) {
+                // Focus the dropdown to close it after selection
+                FocusScope.of(context).unfocus();
+              }
             }
+          },
+          onTap: () {
+            // This callback is called when the dropdown is opened
+            // It can be used to perform any actions needed when the dropdown is opened
           },
         );
       },

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/storm_event.dart';
+import '../../models/contractor_model.dart';
 import '../../widgets/weather/noaa_radar_map.dart';
+import '../../widgets/contractor_card.dart';
 import '../../services/location_service.dart';
 import '../../services/power_outage_service.dart';
 import '../../widgets/storm/power_outage_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../electrical_components/circuit_board_background.dart'; // Added import for electrical background
+import '../../providers/riverpod/contractor_provider.dart'; // Added import for contractor provider
 
 // import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
@@ -191,6 +195,51 @@ class _StormScreenState extends State<StormScreen> {
         });
       }
     }
+  }
+
+  Widget _buildStormDetailCard(String title, String description, IconData icon, Color iconColor) {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        border: Border.all(
+          color: AppTheme.lightGray,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icon,
+                color: iconColor,
+                size: AppTheme.iconMd,
+              ),
+              const SizedBox(width: AppTheme.spacingSm),
+              Expanded(
+                child: Text(
+                  title,
+                  style: AppTheme.bodyMedium.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spacingSm),
+          Text(
+            description,
+            style: AppTheme.bodySmall.copyWith(
+              color: AppTheme.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -431,6 +480,7 @@ class _StormScreenState extends State<StormScreen> {
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
 
+                  // Active Storm Events Section
                   Text(
                     'Active Storm Events',
                     style: AppTheme.headlineSmall.copyWith(
@@ -440,6 +490,157 @@ class _StormScreenState extends State<StormScreen> {
                   const SizedBox(height: AppTheme.spacingMd),
 
                   ..._filteredStorms.map((storm) => StormEventCard(storm: storm)),
+
+                  const SizedBox(height: AppTheme.spacingLg),
+
+                  // Storm Contractors Section
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AppTheme.spacingLg),
+                    decoration: BoxDecoration(
+                      color: AppTheme.white,
+                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                      boxShadow: [AppTheme.shadowMd],
+                      border: Border.all(
+                        color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.group_outlined,
+                              color: AppTheme.primaryNavy,
+                              size: AppTheme.iconMd,
+                            ),
+                            const SizedBox(width: AppTheme.spacingSm),
+                            Text(
+                              'Storm Contractors',
+                              style: AppTheme.headlineSmall.copyWith(
+                                color: AppTheme.primaryNavy,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppTheme.spacingMd),
+                        SizedBox(
+                          height: 200, // Fixed height for the list
+                          child: Consumer(
+                            builder: (context, ref, child) {
+                              final asyncContractors = ref.watch(contractorsStreamProvider);
+                              return asyncContractors.when(
+                                data: (contractors) {
+                                  if (contractors.isEmpty) {
+                                    return Center(
+                                      child: Text(
+                                        'No contractors available',
+                                        style: AppTheme.bodyMedium.copyWith(
+                                          color: AppTheme.textSecondary,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return ListView.builder(
+                                    itemCount: contractors.length,
+                                    itemBuilder: (context, index) {
+                                      final contractor = contractors[index];
+                                      return ContractorCard(contractor: contractor);
+                                    },
+                                  );
+                                },
+                                loading: () => const Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppTheme.accentCopper,
+                                  ),
+                                ),
+                                error: (error, stack) => Center(
+                                  child: Text(
+                                    'Error loading contractors: $error',
+                                    style: AppTheme.bodyMedium.copyWith(
+                                      color: AppTheme.errorRed,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: AppTheme.spacingXl),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: AppTheme.spacingLg),
+
+                  // Storm Work Details Section
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AppTheme.spacingLg),
+                    decoration: BoxDecoration(
+                      color: AppTheme.white,
+                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                      boxShadow: [AppTheme.shadowMd],
+                      border: Border.all(
+                        color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.work_outline,
+                              color: AppTheme.primaryNavy,
+                              size: AppTheme.iconMd,
+                            ),
+                            const SizedBox(width: AppTheme.spacingSm),
+                            Text(
+                              'Storm Work Details',
+                              style: AppTheme.headlineSmall.copyWith(
+                                color: AppTheme.primaryNavy,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppTheme.spacingMd),
+                        Text(
+                          'Storm restoration work is critical and time-sensitive. Positions offer competitive pay rates, per diem, and the opportunity to help communities recover from natural disasters.',
+                          style: AppTheme.bodyLarge.copyWith(
+                            color: AppTheme.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: AppTheme.spacingMd),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildStormDetailCard(
+                                'What to Expect',
+                                'Extended hours, challenging conditions, and a rewarding experience making a difference.',
+                                Icons.info_outline,
+                                AppTheme.primaryNavy,
+                              ),
+                            ),
+                            const SizedBox(width: AppTheme.spacingMd),
+                            Expanded(
+                              child: _buildStormDetailCard(
+                                'Requirements',
+                                'Valid Journeyman card, storm work experience preferred, ability to travel.',
+                                Icons.checklist_outlined,
+                                AppTheme.successGreen,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
 
                   const SizedBox(height: AppTheme.spacingLg),
                 ],
@@ -1106,7 +1307,7 @@ class _StormScreenState extends State<StormScreen> {
                   Expanded(
                     child: JJPrimaryButton(
                       text: 'View Unions',
-                      icon: FontAwesomeIcons.users,
+                      icon: FontAwesomeIcon.sUsers,
                       onPressed: () {
                         Navigator.pop(context);
                         // Navigate to unions filtered by state
@@ -1485,199 +1686,3 @@ class StormDetailsSheet extends StatelessWidget {
                       children: [
                         Text(
                           'Open Positions',
-                          style: AppTheme.labelMedium.copyWith(
-                            color: AppTheme.successGreen,
-                          ),
-                        ),
-                        Text(
-                          '${storm.openPositions}',
-                          style: AppTheme.headlineLarge.copyWith(
-                            color: AppTheme.successGreen,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingMd),
-                    decoration: BoxDecoration(
-                      color: AppTheme.lightGray,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Duration',
-                          style: AppTheme.labelMedium.copyWith(
-                            color: AppTheme.textSecondary,
-                          ),
-                        ),
-                        Text(
-                          storm.estimatedDuration,
-                          style: AppTheme.headlineSmall.copyWith(
-                            color: AppTheme.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            
-            const SizedBox(height: AppTheme.spacingLg),
-            
-            // Pay information
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingMd),
-                    decoration: BoxDecoration(
-                      color: AppTheme.successGreen.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Pay Rate',
-                          style: AppTheme.labelMedium.copyWith(
-                            color: AppTheme.successGreen,
-                          ),
-                        ),
-                        Text(
-                          storm.payRate,
-                          style: AppTheme.headlineMedium.copyWith(
-                            color: AppTheme.successGreen,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingMd),
-                    decoration: BoxDecoration(
-                      color: AppTheme.accentCopper.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Per Diem',
-                          style: AppTheme.labelMedium.copyWith(
-                            color: AppTheme.accentCopper,
-                          ),
-                        ),
-                        Text(
-                          storm.perDiem,
-                          style: AppTheme.headlineMedium.copyWith(
-                            color: AppTheme.accentCopper,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            
-            const SizedBox(height: AppTheme.spacingLg),
-            
-            // Description
-            Text(
-              'Storm Details',
-              style: AppTheme.headlineSmall.copyWith(
-                color: AppTheme.primaryNavy,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingMd),
-            Text(
-              storm.description,
-              style: AppTheme.bodyLarge.copyWith(
-                color: AppTheme.textPrimary,
-                height: 1.6,
-              ),
-            ),
-            
-            const SizedBox(height: AppTheme.spacingLg),
-            
-            // Affected utilities
-            Text(
-              'Affected Utilities',
-              style: AppTheme.headlineSmall.copyWith(
-                color: AppTheme.primaryNavy,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingMd),
-            Wrap(
-              spacing: AppTheme.spacingSm,
-              runSpacing: AppTheme.spacingSm,
-              children: storm.affectedUtilities.map((utility) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingMd,
-                    vertical: AppTheme.spacingSm,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryNavy.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  ),
-                  child: Text(
-                    utility,
-                    style: AppTheme.bodyMedium.copyWith(
-                      color: AppTheme.primaryNavy,
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            
-            const SizedBox(height: AppTheme.spacingXl),
-            
-            // Action buttons
-            JJPrimaryButton(
-              text: 'Express Interest',
-              icon: Icons.flash_on,
-              onPressed: () {
-                Navigator.pop(context);
-                JJSnackBar.showSuccess(
-                  context: context,
-                  message: 'Interest submitted! You will be contacted with deployment details.',
-                );
-              },
-              isFullWidth: true,
-              variant: JJButtonVariant.primary,
-            ),
-            
-            const SizedBox(height: AppTheme.spacingMd),
-            
-            JJSecondaryButton(
-              'Get Alerts for Similar Events', // Added required positional argument
-              text: 'Get Alerts for Similar Events',
-              icon: Icons.notifications_active,
-              onPressed: () {
-                JJSnackBar.showSuccess(
-                  context: context,
-                  message: 'Alert preferences updated',
-                );
-              },
-              isFullWidth: true,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

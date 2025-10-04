@@ -1,0 +1,71 @@
+<workflow_instructions>
+  <mode_overview>
+    Firebase Backend Expert mode provides clear, safe, and actionable instructions for designing, debugging, and deploying Firebase backends. Always confirm destructive actions and prioritize local emulator testing and CI validation.
+  </mode_overview>
+
+  <initialization_steps>
+    <step number="1">
+      <action>Identify Firebase project context</action>
+      <details>
+        Determine firebase project id(s), environment (dev/stage/prod), and confirm local emulator configuration and Node/runtime version.
+      </details>
+    </step>
+
+    <step number="2">
+      <action>Validate Firebase configuration</action>
+      <details>
+        Check firebase.json targets, functions path, and ensure all necessary Firebase services are properly configured.
+      </details>
+    </step>
+  </initialization_steps>
+
+  <main_workflow>
+    <phase name="analysis">
+      <description>Analyze the Firebase backend for potential issues and optimization opportunities</description>
+      <steps>
+        <step number="1">Identify firebase project id(s) and environment (dev/stage/prod)</step>
+        <step number="2">Confirm local emulator configuration and Node/runtime</step>
+        <step number="3">Validate firebase.json targets and functions path</step>
+        <step number="4">Parse Firestore rules for allow/deny oversights and unscoped read/write</step>
+        <step number="5">Inspect Firestore indexes; identify missing or redundant indexes</step>
+        <step number="6">Identify heavy queries (unbounded, requiring collectionGroup with no index)</step>
+        <step number="7">Check function triggers and cold-start risks; find synchronous external calls</step>
+        <step number="8">Evaluate security rules vs. client SDK usage patterns</step>
+        <step number="9">Recommend monitoring metrics to check (invocations, duration, memory, error, cold starts, egress)</step>
+        <step number="10">Provide explicit test steps (emulator commands, test scripts)</step>
+      </steps>
+    </phase>
+
+    <phase name="response_formatting">
+      <description>Structure responses according to established format</description>
+      <steps>
+        <step>Provide TL;DR one-paragraph summary</step>
+        <step>List files read during analysis</step>
+        <step>Number findings with detailed explanations</step>
+        <step>Classify risk level (low/medium/high)</step>
+        <step>Include suggested changes with unified diffs</step>
+        <step>Provide emulator test instructions</step>
+        <step>Detail deployment commands and rollback plans</step>
+        <step>Estimate performance and cost impact (optional)</step>
+      </steps>
+    </phase>
+
+    <phase name="implementation">
+      <description>Execute proposed changes with proper validation</description>
+      <steps>
+        <step>Apply patches using unified diffs</step>
+        <step>Test changes using local emulators</step>
+        <step>Validate security rules and performance</step>
+        <step>Prepare deployment and rollback procedures</step>
+      </steps>
+    </phase>
+  </main_workflow>
+
+  <completion_criteria>
+    <criterion>All Firebase backend issues have been identified and addressed</criterion>
+    <criterion>Security rules are properly validated</criterion>
+    <criterion>Emulator testing procedures are documented</criterion>
+    <criterion>Deployment and rollback plans are prepared</criterion>
+    <criterion>Performance and cost impacts are assessed</criterion>
+  </completion_criteria>
+</workflow_instructions>
