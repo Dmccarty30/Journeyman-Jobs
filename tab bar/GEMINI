@@ -1,0 +1,43 @@
+This is a great request! I can definitely pull all the essential tasks from your `TODO.md` and the comprehensive plan (`plan-journeyman-job-tasks-0.md`) into one detailed, actionable list for your coding assistant. I'll make sure to prioritize the implementation based on the plan you provided and include the explicit instruction for the tab bar replacement.
+
+Here is the comprehensive task list for your coding assistant:
+
+## Development Task List: Onboarding & UI Enhancements 🛠️
+
+The following tasks are derived from the `TODO.md` and the detailed implementation plan in `plan-journeyman-job-tasks-0.md`. Please implement all proposed file changes first.
+
+---
+
+### Task 1: Component & Theme Updates (App-Wide Impact)
+
+| File | Description | Details |
+| :--- | :--- | :--- |
+| `lib\design_system\components\reusable_components.dart` | **Update JJTextField for Copper Borders** | Modify the `JJTextField` widget to apply **copper borders** (`AppTheme.accentCopper`) to all states (`enabledBorder`, `focusedBorder`, `errorBorder`, `focusedErrorBorder`) to match the electrical theme. Use `AppTheme.borderWidthCopper` (2.5) for the focused state. |
+
+---
+
+### Task 2: Auth Screen Enhancements
+
+| File | Description | Details |
+| :--- | :--- | :--- |
+| `lib\screens\onboarding\auth_screen.dart` | **Replace Tab Bar with Enhanced Widget** | **Replace the existing TabBar widget** (lines 195-210) with the provided custom **`SegmentedTabBar`** widget code found in `tab-bar-enhancement.md`. |
+| `lib\screens\onboarding\auth_screen.dart` | **Add Electrical Circuit Background** | Wrap the entire screen body (`Scaffold` body) with **`ElectricalCircuitBackground`** (imported from `lib/electrical_components/circuit_board_background.dart`). Set `opacity: 0.08` and `density: ComponentDensity.high`. Update `Scaffold`'s `backgroundColor` to `Colors.transparent`. |
+| *Verification* | Copper Borders | Verify that text fields now have copper borders (this is handled by Task 1). |
+
+---
+
+### Task 3: Onboarding Steps Screen Fixes & Functionality
+
+| File | Description | Details |
+| :--- | :--- | :--- |
+| `lib\screens\onboarding\onboarding_steps_screen.dart` | **Add Electrical Circuit Background** | Wrap the entire screen body (`Scaffold` body) with **`ElectricalCircuitBackground`** (imported from `lib/electrical_components/circuit_board_background.dart`). Set `opacity: 0.08` and `density: ComponentDensity.high`. Update `Scaffold`'s `backgroundColor` to `Colors.transparent`. |
+| `lib\screens\onboarding\onboarding_steps_screen.dart` | **Fix Step 1 Header Alignment** | **Center the `_buildStepHeader` widget** call (lines 386-390) by wrapping it in a `Center` widget, or modify the `_buildStepHeader` method to ensure the content is centered. |
+| `lib\screens\onboarding\onboarding_steps_screen.dart` | **Fix Step 1 Layout** | In the `Row` for State and Zip Code (lines 475-536): set the **State dropdown `Expanded` flex to `1`** (half-width) and the **Zip Code field `Expanded` flex to `2`** (expand to fill remaining space). |
+| `lib\screens\onboarding\onboarding_steps_screen.dart` | **Implement Step 1 'Next' Action** | Create and use a private method, `_saveStep1Data()`, within `_nextStep` logic for step 0. This method must: retrieve the current user, create/update the user document in Firestore with Step 1 data (firstName, lastName, phone, address1, address2, city, state, zipcode), handle loading/errors, and only proceed to the next page on success. |
+| `lib\screens\onboarding\onboarding_steps_screen.dart` | **Implement Step 2 'Next' Action** | Create and use a private method, `_saveStep2Data()`, within `_nextStep` logic for step 1. This method must: update the user document in Firestore with Step 2 data (homeLocal, ticketNumber, classification, isWorking, booksOn), handle loading/errors, and only proceed to the next page on success. |
+| `lib\screens\onboarding\onboarding_steps_screen.dart` | **Implement Step 3 'Complete' Action** | Review and ensure **`_completeOnboarding`** (called for step 2) correctly: gathers all data, creates the final `UserModel`, saves to Firestore using `FirestoreService().createUser()`, marks onboarding as complete, and navigates to the **home screen** (`AppRouter.home`). |
+| *Verification* | Copper Borders | Verify that all text fields in all steps have copper borders (handled by Task 1). |
+
+---
+
+**Note on Implementation Pattern:** For the save functionality in Tasks 3.4 and 3.5, you should follow the `_saveStep1Data()` pattern provided in the plan for error handling and data structure.
