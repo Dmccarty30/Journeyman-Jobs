@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'social_animations.dart';
 import '../design_system/app_theme.dart';
 
@@ -126,6 +125,7 @@ class _ElectricalPullToRefreshState extends State<ElectricalPullToRefresh>
         } else if (notification is ScrollUpdateNotification) {
           _handleDragUpdate(DragUpdateDetails(
             primaryDelta: notification.metrics.pixels,
+            globalPosition: Offset.zero,
           ));
         } else if (notification is ScrollEndNotification) {
           _handleDragEnd(DragEndDetails(

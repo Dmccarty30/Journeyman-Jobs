@@ -36,7 +36,7 @@ class MessageStatusIndicator extends StatelessWidget {
         return Icon(
           Icons.access_time,
           size: AppTheme.iconXs,
-          color: AppTheme.textLight.withOpacity(0.7),
+          color: AppTheme.textLight.withValues(alpha: 0.7),
         );
       case MessageStatus.sent:
         return Icon(
@@ -72,7 +72,7 @@ class MessageStatusIndicator extends StatelessWidget {
         vertical: 2.0, // Small vertical padding
       ),
       decoration: BoxDecoration(
-        color: AppTheme.accentCopper.withOpacity(0.2),
+        color: AppTheme.accentCopper.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(AppTheme.radiusSm),
       ),
       child: Text(

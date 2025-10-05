@@ -92,6 +92,6 @@ class PostModel {
       comments: comments ?? this.comments, // Added to copyWith
       reactions: reactions ?? this.reactions,
       userReactions: userReactions ?? this.userReactions,
-    }) {
+    );
   }
 }

@@ -261,7 +261,6 @@ class _OhmsLawCalculatorState extends State<_OhmsLawCalculator> {
             children: [
               Expanded(
                 child: JJSecondaryButton(
-                  'Clear', // Added required positional argument
                   text: 'Clear',
                   onPressed: _clear,
                 ),

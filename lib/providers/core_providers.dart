@@ -22,6 +22,16 @@ class AuthService {
   String? get currentUserId => 'mock_user';
 }
 
+/// Simple error reporter used by providers to surface/report errors.
+class ErrorReporter {
+  void report(String key, Object error, StackTrace? stack, [String? context]) {
+    // Minimal implementation: in real app this would log/send to monitoring
+    // Keep silent here to avoid noise during analysis.
+  }
+}
+
+final coreErrorReporterProvider = Provider<ErrorReporter>((ref) => ErrorReporter());
+
 // Legacy providers (keeping for backward compatibility)
 final firestoreServiceProvider = Provider<FirestoreService>((ref) => FirestoreService());
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());

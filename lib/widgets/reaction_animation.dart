@@ -29,7 +29,6 @@ class EnhancedReactionAnimation extends StatefulWidget {
 class _EnhancedReactionAnimationState extends State<EnhancedReactionAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _bounceAnimation;
   late Animation<double> _scaleAnimation;
   late Animation<double> _rotationAnimation;
   late Animation<double> _glowAnimation;
@@ -44,13 +43,6 @@ class _EnhancedReactionAnimationState extends State<EnhancedReactionAnimation>
     );
     
     // Bounce animation on selection
-    _bounceAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.3,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: SocialAnimations.reactionCurve,
-    ));
     
     // Scale animation
     _scaleAnimation = Tween<double>(
@@ -130,7 +122,7 @@ class _EnhancedReactionAnimationState extends State<EnhancedReactionAnimation>
                   height: widget.size * 2 * _glowAnimation.value,
                   decoration: BoxDecoration(
                     color: (widget.glowColor ?? SocialAnimations.reactionGlowColor)
-                        .withOpacity(0.3 * _glowAnimation.value),
+                        .withValues(alpha: 0.3 * _glowAnimation.value),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -148,7 +140,7 @@ class _EnhancedReactionAnimationState extends State<EnhancedReactionAnimation>
                       border: widget.isSelected
                           ? Border.all(
                               color: (widget.glowColor ?? SocialAnimations.reactionGlowColor)
-                                  .withOpacity(0.8 * _glowAnimation.value),
+                                  .withValues(alpha: 0.8 * _glowAnimation.value),
                               width: 2.0,
                             )
                           : null,
@@ -217,7 +209,8 @@ class AnimatedReactionPicker extends StatefulWidget {
   State<AnimatedReactionPicker> createState() => _AnimatedReactionPickerState();
 }
 
-class _AnimatedReactionPickerState extends State<AnimatedReactionPicker> {
+class _AnimatedReactionPickerState extends State<AnimatedReactionPicker>
+    with SingleTickerProviderStateMixin {
   late List<AnimationController> _controllers;
   late List<Animation<double>> _animations;
   
@@ -328,7 +321,7 @@ class AnimatedReactionButton extends StatelessWidget {
                 border: isSelected
                     ? Border.all(
                         color: (glowColor ?? SocialAnimations.reactionGlowColor)
-                            .withOpacity(0.8 * (animation?.value ?? 1.0)),
+                            .withValues(alpha: 0.8 * (animation?.value ?? 1.0)),
                         width: 2.0,
                       )
                     : null,
@@ -440,7 +433,7 @@ class _ReactionPopupState extends State<ReactionPopup>
                 boxShadow: [
                   BoxShadow(
                     color: (widget.glowColor ?? SocialAnimations.reactionGlowColor)
-                        .withOpacity(0.3),
+                        .withValues(alpha: 0.3),
                     blurRadius: 10,
                     spreadRadius: 5,
                   ),

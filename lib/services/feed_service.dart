@@ -280,9 +280,31 @@ class FeedService {
     }
   }
 
-  /// Get reaction counts for a post
-  Map<String, int> getReactionCounts(Map<String, int> reactions) {
-    return reactions;
+  /// Get reaction counts for a post from Firestore
+  Future<Map<String, int>> getPostReactionCounts(String postId) async {
+    try {
+      final doc = await _postsCollection.doc(postId).get();
+      if (!doc.exists) return {};
+
+      final data = doc.data() as Map<String, dynamic>;
+      return Map<String, int>.from(data['reactions'] ?? {});
+    } catch (e) {
+      throw AppException('Failed to get reaction counts: $e');
+    }
+  }
+
+  /// Check if a user has reacted to a post with a specific emoji
+  Future<bool> hasUserReacted(String postId, String userId, String emoji) async {
+    try {
+      final doc = await _postsCollection.doc(postId).get();
+      if (!doc.exists) return false;
+
+      final data = doc.data() as Map<String, dynamic>;
+      final userReactions = Map<String, String>.from(data['userReactions'] ?? {});
+      return userReactions[userId] == emoji;
+    } catch (e) {
+      throw AppException('Failed to check user reaction: $e');
+    }
   }
 
   // Comments

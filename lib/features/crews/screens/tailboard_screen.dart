@@ -217,7 +217,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
                   shape: BoxShape.circle,
                 ),
                 child: CircleAvatar(
-                  backgroundColor: AppTheme.accentCopper.withOpacity(0.1),
+                  backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.1),
                   child: Icon(
                     Icons.group,
                     color: AppTheme.accentCopper,
@@ -488,7 +488,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please select a crew first'),
-          backgroundColor: AppTheme.errorRed.withOpacity(0.8),
+          backgroundColor: AppTheme.errorRed.withValues(alpha: 0.8),
         ),
       );
       return;
@@ -501,7 +501,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Selected crew not found'),
-            backgroundColor: AppTheme.errorRed.withOpacity(0.8),
+            backgroundColor: AppTheme.errorRed.withValues(alpha: 0.8),
           ),
         );
         return;
@@ -522,7 +522,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error loading crew data: ${e.toString()}'),
-          backgroundColor: AppTheme.errorRed.withOpacity(0.8),
+          backgroundColor: AppTheme.errorRed.withValues(alpha: 0.8),
         ),
       );
     }

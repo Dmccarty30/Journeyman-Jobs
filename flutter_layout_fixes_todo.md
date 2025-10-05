@@ -2,10 +2,10 @@
 
 ## High Priority Fixes
 
-### 1. Fix Deprecated Color.withOpacity() Calls
+### 1. Fix Deprecated Color.withValues(alpha: ) Calls
 
 - [x] Update message_bubble.dart to use withValues() instead of withOpacity()
-  - [x] Replace all instances of `.withOpacity()` with `.withValues(alpha:)`
+  - [x] Replace all instances of `.withValues(alpha: )` with `.withValues(alpha:)`
   - [x] Ensure proper alpha values (0.0 to 1.0) are used
   - [x] Test visual appearance after changes
 

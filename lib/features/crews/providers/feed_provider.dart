@@ -2,8 +2,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:state_notifier/state_notifier.dart';
 
-import '../../../providers/riverpod/auth_riverpod_provider.dart';
+import '../../../providers/core_providers.dart' as core_providers;
+import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
 import '../../../services/feed_service.dart';
 import '../../../models/post_model.dart';
 import '../models/tailboard.dart';
@@ -26,13 +28,19 @@ Stream<List<PostModel>> crewPostsStream(Ref ref, String crewId) {
 
 /// Posts for a specific crew
 @riverpod
-List<PostModel> crewPosts(Ref ref, String crewId) {
+AsyncValue<List<PostModel>> crewPosts(Ref ref, String crewId) {
   final postsAsync = ref.watch(crewPostsStreamProvider(crewId));
 
   return postsAsync.when(
-    data: (posts) => posts.where((post) => !post.deleted).toList(),
-    loading: () => [],
-    error: (_, __) => [],
+    data: (posts) {
+      final filteredPosts = posts.where((post) => !post.deleted).toList();
+      return AsyncValue.data(filteredPosts);
+    },
+    loading: () => const AsyncValue.loading(),
+    error: (error, stack) {
+  ref.read(core_providers.coreErrorReporterProvider).report('crewPosts', error, stack, 'crewId: $crewId');
+      return AsyncValue.error(error, stack);
+    },
   );
 }
 
@@ -56,47 +64,62 @@ Stream<List<Comment>> postCommentsStream(Ref ref, String postId) {
 
 /// Comments for a specific post
 @riverpod
-List<Comment> postComments(Ref ref, String postId) {
+AsyncValue<List<Comment>> postComments(Ref ref, String postId) {
   final commentsAsync = ref.watch(postCommentsStreamProvider(postId));
 
   return commentsAsync.when(
-    data: (comments) => comments,
-    loading: () => [],
-    error: (_, __) => [],
+    data: (comments) => AsyncValue.data(comments),
+    loading: () => const AsyncValue.loading(),
+    error: (error, stack) {
+  ref.read(core_providers.coreErrorReporterProvider).report('postComments', error, stack, 'postId: $postId');
+      return AsyncValue.error(error, stack);
+    },
   );
 }
 
 /// Provider to get posts for selected crew
 @riverpod
-List<PostModel> selectedCrewPosts(Ref ref) {
-  final selectedCrew = ref.watch(selectedCrewProvider);
-  if (selectedCrew == null) return [];
+AsyncValue<List<PostModel>> selectedCrewPosts(Ref ref) {
+  final selectedCrew = ref.watch(core_providers.selectedCrewProvider);
+  if (selectedCrew == null) return const AsyncValue.data([]);
 
   return ref.watch(crewPostsProvider(selectedCrew.id));
 }
 
 /// Provider to get pinned posts for a crew
 @riverpod
-List<PostModel> pinnedPosts(Ref ref, String crewId) {
-  final posts = ref.watch(crewPostsProvider(crewId));
+AsyncValue<List<PostModel>> pinnedPosts(Ref ref, String crewId) {
+  final postsAsync = ref.watch(crewPostsProvider(crewId));
   // Note: PostModel doesn't have isPinned field, this would need to be added
   // For now, return empty list
-  return [];
+  return postsAsync.when(
+    data: (_) => const AsyncValue.data([]),
+    loading: () => const AsyncValue.loading(),
+    error: (error, stack) => AsyncValue.error(error, stack),
+  );
 }
 
 /// Provider to get recent posts (non-pinned) for a crew
 @riverpod
-List<PostModel> recentPosts(Ref ref, String crewId) {
-  final posts = ref.watch(crewPostsProvider(crewId));
+AsyncValue<List<PostModel>> recentPosts(Ref ref, String crewId) {
+  final postsAsync = ref.watch(crewPostsProvider(crewId));
   // Sort by timestamp descending and return all (since no pinned field)
-  return posts..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+  return postsAsync.when(
+    data: (posts) => AsyncValue.data(posts..sort((a, b) => b.timestamp.compareTo(a.timestamp))),
+    loading: () => const AsyncValue.loading(),
+    error: (error, stack) => AsyncValue.error(error, stack),
+  );
 }
 
 /// Provider to get posts by a specific author
 @riverpod
-List<PostModel> postsByAuthor(Ref ref, String crewId, String authorId) {
-  final posts = ref.watch(crewPostsProvider(crewId));
-  return posts.where((post) => post.authorId == authorId).toList();
+AsyncValue<List<PostModel>> postsByAuthor(Ref ref, String crewId, String authorId) {
+  final postsAsync = ref.watch(crewPostsProvider(crewId));
+  return postsAsync.when(
+    data: (posts) => AsyncValue.data(posts.where((post) => post.authorId == authorId).toList()),
+    loading: () => const AsyncValue.loading(),
+    error: (error, stack) => AsyncValue.error(error, stack),
+  );
 }
 
 /// Notifier for post creation
@@ -110,7 +133,8 @@ class PostCreationNotifier extends StateNotifier<AsyncValue<String?>> {
     required String content,
     List<String> mediaUrls = const [],
   }) async {
-    final currentUser = _ref.read(currentUserProvider);
+  // Read current user from auth provider alias
+  final currentUser = _ref.read(auth_providers.currentUserProvider);
     if (currentUser == null) {
       state = const AsyncValue.error('User not authenticated', StackTrace.empty);
       return;
@@ -127,7 +151,7 @@ class PostCreationNotifier extends StateNotifier<AsyncValue<String?>> {
       );
       state = AsyncValue.data(postId);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stackTrace: stack);
+      state = AsyncValue.error(e, stack);
     }
   }
 
@@ -145,8 +169,7 @@ PostCreationNotifier postCreationNotifier(Ref ref) {
 /// Stream of post creation state
 @riverpod
 AsyncValue<String?> postCreationState(Ref ref) {
-  final notifier = ref.watch(postCreationNotifierProvider);
-  return notifier.state;
+  return ref.watch(postCreationStateProvider);
 }
 
 /// Notifier for post updates
@@ -160,7 +183,7 @@ class PostUpdateNotifier extends StateNotifier<AsyncValue<void>> {
     required String content,
     List<String>? mediaUrls,
   }) async {
-    final currentUser = _ref.read(currentUserProvider);
+  final currentUser = _ref.read(auth_providers.currentUserProvider);
     if (currentUser == null) {
       state = const AsyncValue.error('User not authenticated', StackTrace.empty);
       return;
@@ -177,7 +200,7 @@ class PostUpdateNotifier extends StateNotifier<AsyncValue<void>> {
       );
       state = const AsyncValue.data(null);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stackTrace: stack);
+      state = AsyncValue.error(e, stack);
     }
   }
 
@@ -188,7 +211,7 @@ class PostUpdateNotifier extends StateNotifier<AsyncValue<void>> {
       await feedService.deletePost(postId);
       state = const AsyncValue.data(null);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stackTrace: stack);
+      state = AsyncValue.error(e, stack);
     }
   }
 
@@ -199,7 +222,7 @@ class PostUpdateNotifier extends StateNotifier<AsyncValue<void>> {
       await feedService.togglePinPost(postId, isPinned);
       state = const AsyncValue.data(null);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stackTrace: stack);
+      state = AsyncValue.error(e, stack);
     }
   }
 
@@ -217,8 +240,7 @@ PostUpdateNotifier postUpdateNotifier(Ref ref) {
 /// Stream of post update state
 @riverpod
 AsyncValue<void> postUpdateState(Ref ref) {
-  final notifier = ref.watch(postUpdateNotifierProvider);
-  return notifier.state;
+  return ref.watch(postUpdateStateProvider);
 }
 
 /// Notifier for reactions
@@ -227,11 +249,26 @@ class ReactionNotifier extends StateNotifier<AsyncValue<void>> {
 
   final Ref _ref;
 
+  String _reactionTypeToEmoji(ReactionType reactionType) {
+    switch (reactionType) {
+      case ReactionType.like:
+        return '👍';
+      case ReactionType.love:
+        return '❤️';
+      case ReactionType.celebrate:
+        return '🎉';
+      case ReactionType.thumbsUp:
+        return '👍';
+      case ReactionType.thumbsDown:
+        return '👎';
+    }
+  }
+
   Future<void> addReaction({
     required String postId,
     required ReactionType reactionType,
   }) async {
-    final currentUser = _ref.read(currentUserProvider);
+  final currentUser = _ref.read(auth_providers.currentUserProvider);
     if (currentUser == null) {
       state = const AsyncValue.error('User not authenticated', StackTrace.empty);
       return;
@@ -243,16 +280,16 @@ class ReactionNotifier extends StateNotifier<AsyncValue<void>> {
       await feedService.addReaction(
         postId: postId,
         memberId: currentUser.uid,
-        reactionType: reactionType,
+        emoji: _reactionTypeToEmoji(reactionType),
       );
       state = const AsyncValue.data(null);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stackTrace: stack);
+      state = AsyncValue.error(e, stack);
     }
   }
 
   Future<void> removeReaction(String postId) async {
-    final currentUser = _ref.read(currentUserProvider);
+  final currentUser = _ref.read(auth_providers.currentUserProvider);
     if (currentUser == null) {
       state = const AsyncValue.error('User not authenticated', StackTrace.empty);
       return;
@@ -267,7 +304,7 @@ class ReactionNotifier extends StateNotifier<AsyncValue<void>> {
       );
       state = const AsyncValue.data(null);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stackTrace: stack);
+      state = AsyncValue.error(e, stack);
     }
   }
 
@@ -285,8 +322,7 @@ ReactionNotifier reactionNotifier(Ref ref) {
 /// Stream of reaction state
 @riverpod
 AsyncValue<void> reactionState(Ref ref) {
-  final notifier = ref.watch(reactionNotifierProvider);
-  return notifier.state;
+  return ref.watch(reactionStateProvider);
 }
 
 /// Notifier for comments
@@ -299,7 +335,7 @@ class CommentNotifier extends StateNotifier<AsyncValue<String?>> {
     required String postId,
     required String content,
   }) async {
-    final currentUser = _ref.read(currentUserProvider);
+  final currentUser = _ref.read(auth_providers.currentUserProvider);
     if (currentUser == null) {
       state = const AsyncValue.error('User not authenticated', StackTrace.empty);
       return;
@@ -315,7 +351,7 @@ class CommentNotifier extends StateNotifier<AsyncValue<String?>> {
       );
       state = AsyncValue.data(commentId);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stackTrace: stack);
+      state = AsyncValue.error(e, stack);
     }
   }
 
@@ -324,7 +360,7 @@ class CommentNotifier extends StateNotifier<AsyncValue<String?>> {
     required String commentId,
     required String content,
   }) async {
-    final currentUser = _ref.read(currentUserProvider);
+  final currentUser = _ref.read(auth_providers.currentUserProvider);
     if (currentUser == null) {
       state = const AsyncValue.error('User not authenticated', StackTrace.empty);
       return;
@@ -341,7 +377,7 @@ class CommentNotifier extends StateNotifier<AsyncValue<String?>> {
       );
       state = const AsyncValue.data(null);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stackTrace: stack);
+      state = AsyncValue.error(e, stack);
     }
   }
 
@@ -358,7 +394,7 @@ class CommentNotifier extends StateNotifier<AsyncValue<String?>> {
       );
       state = const AsyncValue.data(null);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stackTrace: stack);
+      state = AsyncValue.error(e, stack);
     }
   }
 
@@ -376,8 +412,7 @@ CommentNotifier commentNotifier(Ref ref) {
 /// Stream of comment state
 @riverpod
 AsyncValue<String?> commentState(Ref ref) {
-  final notifier = ref.watch(commentNotifierProvider);
-  return notifier.state;
+  return ref.watch(commentStateProvider);
 }
 
 /// Provider to get crew post statistics
@@ -387,21 +422,65 @@ Future<Map<String, dynamic>> crewPostStats(Ref ref, String crewId) async {
   return await feedService.getCrewPostStats(crewId);
 }
 
+// Helper function to convert ReactionType to emoji
+String _reactionTypeToEmoji(ReactionType reactionType) {
+  switch (reactionType) {
+    case ReactionType.like:
+      return '👍';
+    case ReactionType.love:
+      return '❤️';
+    case ReactionType.celebrate:
+      return '🎉';
+    case ReactionType.thumbsUp:
+      return '👍';
+    case ReactionType.thumbsDown:
+      return '👎';
+  }
+}
+
 /// Provider to get reaction counts for a post
 @riverpod
-Map<ReactionType, int> postReactionCounts(Ref ref, String postId) {
-  // This would need to be implemented with a stream of the post
-  // For now, return empty map
-  return {};
+Future<Map<ReactionType, int>> postReactionCounts(Ref ref, String postId) async {
+  try {
+    final emojiCounts = await ref.watch(feedServiceProvider).getPostReactionCounts(postId);
+
+    // Convert Firestore data to ReactionType map
+    final reactionCounts = <ReactionType, int>{};
+    final emojiMap = {
+      '👍': ReactionType.like,
+      '❤️': ReactionType.love,
+      '🎉': ReactionType.celebrate,
+      '👎': ReactionType.thumbsDown,
+    };
+
+    emojiCounts.forEach((emoji, count) {
+      final reactionType = emojiMap[emoji];
+      if (reactionType != null) {
+        reactionCounts[reactionType] = count;
+      }
+    });
+
+    return reactionCounts;
+  } catch (e, stack) {
+  ref.read(core_providers.coreErrorReporterProvider).report('postReactionCounts', e, stack, 'postId: $postId');
+    rethrow;
+  }
 }
 
 /// Provider to check if current user has reacted to a post
 @riverpod
-bool userReactionToPost(Ref ref, String postId, ReactionType reactionType) {
-  final currentUser = ref.watch(currentUserProvider);
+Future<bool> userReactionToPost(Ref ref, String postId, ReactionType reactionType) async {
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   if (currentUser == null) return false;
 
-  // This would need access to the post's reactions data
-  // For now, return false
-  return false;
+  try {
+    return await ref.watch(feedServiceProvider).hasUserReacted(
+      postId,
+      currentUser.uid,
+      _reactionTypeToEmoji(reactionType),
+    );
+  } catch (e, stack) {
+  ref.read(core_providers.coreErrorReporterProvider).report('userReactionToPost', e, stack, 'postId: $postId, reactionType: $reactionType');
+    rethrow;
+  }
 }

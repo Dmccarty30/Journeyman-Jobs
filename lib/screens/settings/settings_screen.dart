@@ -237,7 +237,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 children: [
                   JJSecondaryButton(
-                    'Sign Out', // Added required positional argument
                     text: 'Sign Out',
                     icon: Icons.logout,
                     onPressed: _signOut,

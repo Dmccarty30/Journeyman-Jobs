@@ -145,8 +145,10 @@ const crewPostsProvider = CrewPostsFamily._();
 
 /// Posts for a specific crew
 
-final class CrewPostsProvider extends $FunctionalProvider<List<PostModel>,
-    List<PostModel>, List<PostModel>> with $Provider<List<PostModel>> {
+final class CrewPostsProvider extends $FunctionalProvider<
+    AsyncValue<List<PostModel>>,
+    AsyncValue<List<PostModel>>,
+    AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
   /// Posts for a specific crew
   const CrewPostsProvider._(
       {required CrewPostsFamily super.from, required String super.argument})
@@ -170,11 +172,12 @@ final class CrewPostsProvider extends $FunctionalProvider<List<PostModel>,
 
   @$internal
   @override
-  $ProviderElement<List<PostModel>> $createElement($ProviderPointer pointer) =>
+  $ProviderElement<AsyncValue<List<PostModel>>> $createElement(
+          $ProviderPointer pointer) =>
       $ProviderElement(pointer);
 
   @override
-  List<PostModel> create(Ref ref) {
+  AsyncValue<List<PostModel>> create(Ref ref) {
     final argument = this.argument as String;
     return crewPosts(
       ref,
@@ -183,10 +186,10 @@ final class CrewPostsProvider extends $FunctionalProvider<List<PostModel>,
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<PostModel> value) {
+  Override overrideWithValue(AsyncValue<List<PostModel>> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<List<PostModel>>(value),
+      providerOverride: $SyncValueProvider<AsyncValue<List<PostModel>>>(value),
     );
   }
 
@@ -201,12 +204,12 @@ final class CrewPostsProvider extends $FunctionalProvider<List<PostModel>,
   }
 }
 
-String _$crewPostsHash() => r'0c949d27dfd0d9bff6ff13c8a4df676666e15413';
+String _$crewPostsHash() => r'f27f988593fd702fb6bd26681da7cef7a6e53d6a';
 
 /// Posts for a specific crew
 
 final class CrewPostsFamily extends $Family
-    with $FunctionalFamilyOverride<List<PostModel>, String> {
+    with $FunctionalFamilyOverride<AsyncValue<List<PostModel>>, String> {
   const CrewPostsFamily._()
       : super(
           retry: null,
@@ -319,9 +322,10 @@ const postCommentsProvider = PostCommentsFamily._();
 
 /// Comments for a specific post
 
-final class PostCommentsProvider
-    extends $FunctionalProvider<List<Comment>, List<Comment>, List<Comment>>
-    with $Provider<List<Comment>> {
+final class PostCommentsProvider extends $FunctionalProvider<
+    AsyncValue<List<Comment>>,
+    AsyncValue<List<Comment>>,
+    AsyncValue<List<Comment>>> with $Provider<AsyncValue<List<Comment>>> {
   /// Comments for a specific post
   const PostCommentsProvider._(
       {required PostCommentsFamily super.from, required String super.argument})
@@ -345,11 +349,12 @@ final class PostCommentsProvider
 
   @$internal
   @override
-  $ProviderElement<List<Comment>> $createElement($ProviderPointer pointer) =>
+  $ProviderElement<AsyncValue<List<Comment>>> $createElement(
+          $ProviderPointer pointer) =>
       $ProviderElement(pointer);
 
   @override
-  List<Comment> create(Ref ref) {
+  AsyncValue<List<Comment>> create(Ref ref) {
     final argument = this.argument as String;
     return postComments(
       ref,
@@ -358,10 +363,10 @@ final class PostCommentsProvider
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<Comment> value) {
+  Override overrideWithValue(AsyncValue<List<Comment>> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<List<Comment>>(value),
+      providerOverride: $SyncValueProvider<AsyncValue<List<Comment>>>(value),
     );
   }
 
@@ -376,12 +381,12 @@ final class PostCommentsProvider
   }
 }
 
-String _$postCommentsHash() => r'cad9b27b842d60097dfb39bc36f7237b689993d8';
+String _$postCommentsHash() => r'64e15609d41dfb557b5333a4cb80b38a8473744e';
 
 /// Comments for a specific post
 
 final class PostCommentsFamily extends $Family
-    with $FunctionalFamilyOverride<List<Comment>, String> {
+    with $FunctionalFamilyOverride<AsyncValue<List<Comment>>, String> {
   const PostCommentsFamily._()
       : super(
           retry: null,
@@ -410,9 +415,9 @@ const selectedCrewPostsProvider = SelectedCrewPostsProvider._();
 /// Provider to get posts for selected crew
 
 final class SelectedCrewPostsProvider extends $FunctionalProvider<
-    List<PostModel>,
-    List<PostModel>,
-    List<PostModel>> with $Provider<List<PostModel>> {
+    AsyncValue<List<PostModel>>,
+    AsyncValue<List<PostModel>>,
+    AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
   /// Provider to get posts for selected crew
   const SelectedCrewPostsProvider._()
       : super(
@@ -430,24 +435,25 @@ final class SelectedCrewPostsProvider extends $FunctionalProvider<
 
   @$internal
   @override
-  $ProviderElement<List<PostModel>> $createElement($ProviderPointer pointer) =>
+  $ProviderElement<AsyncValue<List<PostModel>>> $createElement(
+          $ProviderPointer pointer) =>
       $ProviderElement(pointer);
 
   @override
-  List<PostModel> create(Ref ref) {
+  AsyncValue<List<PostModel>> create(Ref ref) {
     return selectedCrewPosts(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<PostModel> value) {
+  Override overrideWithValue(AsyncValue<List<PostModel>> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<List<PostModel>>(value),
+      providerOverride: $SyncValueProvider<AsyncValue<List<PostModel>>>(value),
     );
   }
 }
 
-String _$selectedCrewPostsHash() => r'6ddf7494c30e1a5834db03f4904e6eb09caa0b77';
+String _$selectedCrewPostsHash() => r'551e1b4b1f97a21c2094112698e495093eb4ea30';
 
 /// Provider to get pinned posts for a crew
 
@@ -456,8 +462,10 @@ const pinnedPostsProvider = PinnedPostsFamily._();
 
 /// Provider to get pinned posts for a crew
 
-final class PinnedPostsProvider extends $FunctionalProvider<List<PostModel>,
-    List<PostModel>, List<PostModel>> with $Provider<List<PostModel>> {
+final class PinnedPostsProvider extends $FunctionalProvider<
+    AsyncValue<List<PostModel>>,
+    AsyncValue<List<PostModel>>,
+    AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
   /// Provider to get pinned posts for a crew
   const PinnedPostsProvider._(
       {required PinnedPostsFamily super.from, required String super.argument})
@@ -481,11 +489,12 @@ final class PinnedPostsProvider extends $FunctionalProvider<List<PostModel>,
 
   @$internal
   @override
-  $ProviderElement<List<PostModel>> $createElement($ProviderPointer pointer) =>
+  $ProviderElement<AsyncValue<List<PostModel>>> $createElement(
+          $ProviderPointer pointer) =>
       $ProviderElement(pointer);
 
   @override
-  List<PostModel> create(Ref ref) {
+  AsyncValue<List<PostModel>> create(Ref ref) {
     final argument = this.argument as String;
     return pinnedPosts(
       ref,
@@ -494,10 +503,10 @@ final class PinnedPostsProvider extends $FunctionalProvider<List<PostModel>,
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<PostModel> value) {
+  Override overrideWithValue(AsyncValue<List<PostModel>> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<List<PostModel>>(value),
+      providerOverride: $SyncValueProvider<AsyncValue<List<PostModel>>>(value),
     );
   }
 
@@ -512,12 +521,12 @@ final class PinnedPostsProvider extends $FunctionalProvider<List<PostModel>,
   }
 }
 
-String _$pinnedPostsHash() => r'22cb2b07bb0e668982183bdcac5c549501ca8d75';
+String _$pinnedPostsHash() => r'45530e9922de57a2b4135ebcaa3959c9e425e2e0';
 
 /// Provider to get pinned posts for a crew
 
 final class PinnedPostsFamily extends $Family
-    with $FunctionalFamilyOverride<List<PostModel>, String> {
+    with $FunctionalFamilyOverride<AsyncValue<List<PostModel>>, String> {
   const PinnedPostsFamily._()
       : super(
           retry: null,
@@ -545,8 +554,10 @@ const recentPostsProvider = RecentPostsFamily._();
 
 /// Provider to get recent posts (non-pinned) for a crew
 
-final class RecentPostsProvider extends $FunctionalProvider<List<PostModel>,
-    List<PostModel>, List<PostModel>> with $Provider<List<PostModel>> {
+final class RecentPostsProvider extends $FunctionalProvider<
+    AsyncValue<List<PostModel>>,
+    AsyncValue<List<PostModel>>,
+    AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
   /// Provider to get recent posts (non-pinned) for a crew
   const RecentPostsProvider._(
       {required RecentPostsFamily super.from, required String super.argument})
@@ -570,11 +581,12 @@ final class RecentPostsProvider extends $FunctionalProvider<List<PostModel>,
 
   @$internal
   @override
-  $ProviderElement<List<PostModel>> $createElement($ProviderPointer pointer) =>
+  $ProviderElement<AsyncValue<List<PostModel>>> $createElement(
+          $ProviderPointer pointer) =>
       $ProviderElement(pointer);
 
   @override
-  List<PostModel> create(Ref ref) {
+  AsyncValue<List<PostModel>> create(Ref ref) {
     final argument = this.argument as String;
     return recentPosts(
       ref,
@@ -583,10 +595,10 @@ final class RecentPostsProvider extends $FunctionalProvider<List<PostModel>,
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<PostModel> value) {
+  Override overrideWithValue(AsyncValue<List<PostModel>> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<List<PostModel>>(value),
+      providerOverride: $SyncValueProvider<AsyncValue<List<PostModel>>>(value),
     );
   }
 
@@ -601,12 +613,12 @@ final class RecentPostsProvider extends $FunctionalProvider<List<PostModel>,
   }
 }
 
-String _$recentPostsHash() => r'b5c902ee9c81f010cb8cf78dd95fa61d844c6781';
+String _$recentPostsHash() => r'396cb352efe2e8153a43836fef7f17a6a51804e6';
 
 /// Provider to get recent posts (non-pinned) for a crew
 
 final class RecentPostsFamily extends $Family
-    with $FunctionalFamilyOverride<List<PostModel>, String> {
+    with $FunctionalFamilyOverride<AsyncValue<List<PostModel>>, String> {
   const RecentPostsFamily._()
       : super(
           retry: null,
@@ -634,8 +646,10 @@ const postsByAuthorProvider = PostsByAuthorFamily._();
 
 /// Provider to get posts by a specific author
 
-final class PostsByAuthorProvider extends $FunctionalProvider<List<PostModel>,
-    List<PostModel>, List<PostModel>> with $Provider<List<PostModel>> {
+final class PostsByAuthorProvider extends $FunctionalProvider<
+    AsyncValue<List<PostModel>>,
+    AsyncValue<List<PostModel>>,
+    AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
   /// Provider to get posts by a specific author
   const PostsByAuthorProvider._(
       {required PostsByAuthorFamily super.from,
@@ -664,11 +678,12 @@ final class PostsByAuthorProvider extends $FunctionalProvider<List<PostModel>,
 
   @$internal
   @override
-  $ProviderElement<List<PostModel>> $createElement($ProviderPointer pointer) =>
+  $ProviderElement<AsyncValue<List<PostModel>>> $createElement(
+          $ProviderPointer pointer) =>
       $ProviderElement(pointer);
 
   @override
-  List<PostModel> create(Ref ref) {
+  AsyncValue<List<PostModel>> create(Ref ref) {
     final argument = this.argument as (
       String,
       String,
@@ -681,10 +696,10 @@ final class PostsByAuthorProvider extends $FunctionalProvider<List<PostModel>,
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<PostModel> value) {
+  Override overrideWithValue(AsyncValue<List<PostModel>> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<List<PostModel>>(value),
+      providerOverride: $SyncValueProvider<AsyncValue<List<PostModel>>>(value),
     );
   }
 
@@ -699,14 +714,14 @@ final class PostsByAuthorProvider extends $FunctionalProvider<List<PostModel>,
   }
 }
 
-String _$postsByAuthorHash() => r'94523172b090bbc482f0193b136f72b0de4a5741';
+String _$postsByAuthorHash() => r'641b0b7f78df32dbb9b2dbfa6bd21f2cd2a0f6dc';
 
 /// Provider to get posts by a specific author
 
 final class PostsByAuthorFamily extends $Family
     with
         $FunctionalFamilyOverride<
-            List<PostModel>,
+            AsyncValue<List<PostModel>>,
             (
               String,
               String,
@@ -830,7 +845,7 @@ final class PostCreationStateProvider extends $FunctionalProvider<
   }
 }
 
-String _$postCreationStateHash() => r'4abf3cc72137c3ba6ff0c208203d4a5ea1b3c7bb';
+String _$postCreationStateHash() => r'9997f65f544786b4c7bd0e6e1b9be4ccc2243ef2';
 
 /// Provider for post update notifier
 
@@ -926,7 +941,7 @@ final class PostUpdateStateProvider extends $FunctionalProvider<
   }
 }
 
-String _$postUpdateStateHash() => r'891150164b0a1fba3fdb79798a2a09351e7b9edf';
+String _$postUpdateStateHash() => r'91768fdfd08fc6415f28efa1f4c674ae400c53e6';
 
 /// Provider for reaction notifier
 
@@ -1018,7 +1033,7 @@ final class ReactionStateProvider extends $FunctionalProvider<AsyncValue<void>,
   }
 }
 
-String _$reactionStateHash() => r'bfad753898de78e38b25cd32ab919878443b835d';
+String _$reactionStateHash() => r'83bb289e2d6c0450731d2153f1a2fdceca3cfbf9';
 
 /// Provider for comment notifier
 
@@ -1111,7 +1126,7 @@ final class CommentStateProvider extends $FunctionalProvider<
   }
 }
 
-String _$commentStateHash() => r'ed50389c1f8fb3a1e0af7bcabe5fe4813e2b960d';
+String _$commentStateHash() => r'f5ac4687a41432e786a4e6fb2078f0b7e126de99';
 
 /// Provider to get crew post statistics
 
@@ -1208,9 +1223,12 @@ const postReactionCountsProvider = PostReactionCountsFamily._();
 /// Provider to get reaction counts for a post
 
 final class PostReactionCountsProvider extends $FunctionalProvider<
-    Map<ReactionType, int>,
-    Map<ReactionType, int>,
-    Map<ReactionType, int>> with $Provider<Map<ReactionType, int>> {
+        AsyncValue<Map<ReactionType, int>>,
+        Map<ReactionType, int>,
+        FutureOr<Map<ReactionType, int>>>
+    with
+        $FutureModifier<Map<ReactionType, int>>,
+        $FutureProvider<Map<ReactionType, int>> {
   /// Provider to get reaction counts for a post
   const PostReactionCountsProvider._(
       {required PostReactionCountsFamily super.from,
@@ -1235,24 +1253,16 @@ final class PostReactionCountsProvider extends $FunctionalProvider<
 
   @$internal
   @override
-  $ProviderElement<Map<ReactionType, int>> $createElement(
+  $FutureProviderElement<Map<ReactionType, int>> $createElement(
           $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+      $FutureProviderElement(pointer);
 
   @override
-  Map<ReactionType, int> create(Ref ref) {
+  FutureOr<Map<ReactionType, int>> create(Ref ref) {
     final argument = this.argument as String;
     return postReactionCounts(
       ref,
       argument,
-    );
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(Map<ReactionType, int> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<Map<ReactionType, int>>(value),
     );
   }
 
@@ -1268,12 +1278,12 @@ final class PostReactionCountsProvider extends $FunctionalProvider<
 }
 
 String _$postReactionCountsHash() =>
-    r'e4a4ded429820b262633faf28142bedf7bb10037';
+    r'346cd5a3505d7399259f619c747f04e4205c5dcd';
 
 /// Provider to get reaction counts for a post
 
 final class PostReactionCountsFamily extends $Family
-    with $FunctionalFamilyOverride<Map<ReactionType, int>, String> {
+    with $FunctionalFamilyOverride<FutureOr<Map<ReactionType, int>>, String> {
   const PostReactionCountsFamily._()
       : super(
           retry: null,
@@ -1302,7 +1312,8 @@ const userReactionToPostProvider = UserReactionToPostFamily._();
 /// Provider to check if current user has reacted to a post
 
 final class UserReactionToPostProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
+    extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
+    with $FutureModifier<bool>, $FutureProvider<bool> {
   /// Provider to check if current user has reacted to a post
   const UserReactionToPostProvider._(
       {required UserReactionToPostFamily super.from,
@@ -1331,11 +1342,11 @@ final class UserReactionToPostProvider
 
   @$internal
   @override
-  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $FutureProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
-  bool create(Ref ref) {
+  FutureOr<bool> create(Ref ref) {
     final argument = this.argument as (
       String,
       ReactionType,
@@ -1344,14 +1355,6 @@ final class UserReactionToPostProvider
       ref,
       argument.$1,
       argument.$2,
-    );
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
     );
   }
 
@@ -1367,14 +1370,14 @@ final class UserReactionToPostProvider
 }
 
 String _$userReactionToPostHash() =>
-    r'f7a1695e7ae1664c5eef73e75f299facaee2d6a4';
+    r'9bc5c86bae25de0f4ab70b78d441513706c9bc5b';
 
 /// Provider to check if current user has reacted to a post
 
 final class UserReactionToPostFamily extends $Family
     with
         $FunctionalFamilyOverride<
-            bool,
+            FutureOr<bool>,
             (
               String,
               ReactionType,

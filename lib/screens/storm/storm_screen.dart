@@ -622,631 +622,7 @@ class _StormScreenState extends State<StormScreen> {
                             Expanded(
                               child: _buildStormDetailCard(
                                 'What to Expect',
-                                'Extended hours, challenging conditions, and a rewarding experience making a difference.',
-                                Icons.info_outline,
-                                AppTheme.primaryNavy,
-                              ),
-                            ),
-                            const SizedBox(width: AppTheme.spacingMd),
-                            Expanded(
-                              child: _buildStormDetailCard(
-                                'Requirements',
-                                'Valid Journeyman card, storm work experience preferred, ability to travel.',
-                                Icons.checklist_outlined,
-                                AppTheme.successGreen,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: AppTheme.spacingLg),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showWeatherRadar(BuildContext context) async {
-    // Check location permission first
-    final locationService = LocationService();
-    final permissionResult = await locationService.requestLocationForRadar();
-    
-    if (!context.mounted) return;
-    
-    // Show permission status if needed
-    if (!permissionResult['permitted']) {
-      final canRetry = permissionResult['canRetry'] ?? false;
-      final status = permissionResult['status'];
-      
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Row(
-            children: [
-              Icon(
-                FontAwesomeIcons.locationCrosshairs,
-                color: AppTheme.warningYellow,
-              ),
-              const SizedBox(width: AppTheme.spacingSm),
-              Text('Location Permission Needed'),
-            ],
-          ),
-          content: Text(
-            permissionResult['message'] ?? 'Location permission is required to center the radar on your location.',
-            style: AppTheme.bodyMedium,
-          ),
-          actions: [
-            if (status == 'deniedForever')
-              TextButton(
-                onPressed: () async {
-                  await locationService.openAppSettings();
-                  Navigator.pop(context);
-                },
-                child: Text('Open Settings'),
-              ),
-            if (canRetry)
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _showWeatherRadar(context); // Retry
-                },
-                child: Text('Retry'),
-              ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _showRadarWithoutLocation(context);
-              },
-              child: Text('Continue Without Location'),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
-    
-    // Permission granted, show radar with user location
-    _showRadarWithLocation(
-      context,
-      permissionResult['latitude'] ?? 39.8283,
-      permissionResult['longitude'] ?? -98.5795,
-    );
-  }
-  
-  void _showRadarWithLocation(BuildContext context, double lat, double lon) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          backgroundColor: AppTheme.primaryNavy,
-          appBar: AppBar(
-            backgroundColor: AppTheme.primaryNavy,
-            elevation: 0,
-            title: Row(
-              children: [
-                Icon(
-                  FontAwesomeIcons.cloudBolt,
-                  color: AppTheme.accentCopper,
-                  size: 20,
-                ),
-                const SizedBox(width: AppTheme.spacingSm),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'NOAA Weather Radar',
-                      style: AppTheme.headlineMedium.copyWith(color: AppTheme.white),
-                    ),
-                    Text(
-                      'Official US Government Data',
-                      style: AppTheme.bodySmall.copyWith(
-                        color: AppTheme.textLight.withValues(alpha: 0.8),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.info_outline, color: AppTheme.white),
-                onPressed: () => _showRadarInfo(context),
-              ),
-            ],
-          ),
-          body: NoaaRadarMap(
-            initialLatitude: lat,
-            initialLongitude: lon,
-            initialZoom: 8.0,
-            showAlerts: true,
-            showHurricanes: true,
-            onAlertTap: (alert) {
-              // Show alert details and affected storm work
-              _showAlertDetails(context, alert);
-            },
-          ),
-        ),
-      ),
-    );
-  }
-  
-  void _showRadarWithoutLocation(BuildContext context) {
-    _showRadarWithLocation(context, 39.8283, -98.5795); // US center
-  }
-  
-  void _showRadarInfo(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(
-              FontAwesomeIcons.satelliteDish,
-              color: AppTheme.accentCopper,
-              size: 20,
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text('NOAA Radar Guide'),
-          ],
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Official NOAA/NWS Radar Data',
-                style: AppTheme.headlineSmall.copyWith(
-                  color: AppTheme.primaryNavy,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingMd),
-              Text(
-                'Precipitation Intensity:',
-                style: AppTheme.bodyMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingSm),
-              _buildInfoRow(Colors.green, 'Light rain (< 0.1"/hr)'),
-              _buildInfoRow(Colors.yellow, 'Moderate rain (0.1-0.3"/hr)'),
-              _buildInfoRow(Colors.orange, 'Heavy rain (0.3-2.0"/hr)'),
-              _buildInfoRow(Colors.red, 'Extreme rain (> 2.0"/hr)'),
-              _buildInfoRow(Color(0xFFD8006D), 'Severe/Hail possible'),
-              const SizedBox(height: AppTheme.spacingMd),
-              Text(
-                'Alert Severity Levels:',
-                style: AppTheme.bodyMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingSm),
-              _buildInfoRow(Color(0xFFD8006D), 'Extreme - Take Action!'),
-              _buildInfoRow(AppTheme.errorRed, 'Severe - Prepare Now'),
-              _buildInfoRow(AppTheme.warningYellow, 'Moderate - Be Ready'),
-              _buildInfoRow(Colors.orange, 'Minor - Stay Informed'),
-              const SizedBox(height: AppTheme.spacingMd),
-              Text(
-                'Radar Products:',
-                style: AppTheme.bodyMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingSm),
-              Text('\u2022 Base Reflectivity - Precipitation intensity'),
-              Text('\u2022 Base Velocity - Storm rotation detection'),
-              Text('\u2022 Storm Total - Accumulated rainfall'),
-              Text('\u2022 Composite - Full atmosphere scan'),
-              const SizedBox(height: AppTheme.spacingMd),
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spacingSm),
-                decoration: BoxDecoration(
-                  color: AppTheme.infoBlue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      color: AppTheme.infoBlue,
-                      size: 16,
-                    ),
-                    const SizedBox(width: AppTheme.spacingSm),
-                    Expanded(
-                      child: Text(
-                        'NOAA radar updates every 4-10 minutes',
-                        style: AppTheme.bodySmall.copyWith(
-                          color: AppTheme.infoBlue,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Got it'),
-          ),
-        ],
-      ),
-    );
-  }
-  
-  void _showAlertDetails(BuildContext context, dynamic alert) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.white,
-        title: Container(
-          padding: const EdgeInsets.all(AppTheme.spacingMd),
-          decoration: BoxDecoration(
-            color: _getAlertColorForSeverity(alert.severity),
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                FontAwesomeIcons.triangleExclamation,
-                color: Colors.white,
-                size: 24,
-              ),
-              const SizedBox(width: AppTheme.spacingSm),
-              Expanded(
-                child: Text(
-                  alert.event,
-                  style: AppTheme.headlineSmall.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingSm,
-                  vertical: AppTheme.spacingXs,
-                ),
-                decoration: BoxDecoration(
-                  color: _getAlertColorForSeverity(alert.severity).withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                ),
-                child: Text(
-                  '${alert.severity} - ${alert.urgency}',
-                  style: AppTheme.labelSmall.copyWith(
-                    color: _getAlertColorForSeverity(alert.severity),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingMd),
-              Text(
-                alert.headline,
-                style: AppTheme.headlineSmall.copyWith(
-                  color: AppTheme.primaryNavy,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingMd),
-              Text(
-                'Description:',
-                style: AppTheme.bodyMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingSm),
-              Text(
-                alert.description,
-                style: AppTheme.bodyMedium.copyWith(
-                  color: AppTheme.textPrimary,
-                ),
-              ),
-              if (alert.instruction != null && alert.instruction.isNotEmpty) ...[
-                const SizedBox(height: AppTheme.spacingMd),
-                Text(
-                  'Instructions:',
-                  style: AppTheme.bodyMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: AppTheme.spacingSm),
-                Container(
-                  padding: const EdgeInsets.all(AppTheme.spacingSm),
-                  decoration: BoxDecoration(
-                    color: AppTheme.warningYellow.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                    border: Border.all(
-                      color: AppTheme.warningYellow.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Text(
-                    alert.instruction,
-                    style: AppTheme.bodyMedium.copyWith(
-                      color: AppTheme.textPrimary,
-                    ),
-                  ),
-                ),
-              ],
-              const SizedBox(height: AppTheme.spacingMd),
-              Row(
-                children: [
-                  Icon(
-                    Icons.access_time,
-                    size: 16,
-                    color: AppTheme.textSecondary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Expires: ${_formatAlertTime(alert.expires)}',
-                    style: AppTheme.bodySmall.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spacingMd),
-                decoration: BoxDecoration(
-                  color: AppTheme.infoBlue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  border: Border.all(
-                    color: AppTheme.infoBlue.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          FontAwesomeIcons.hardHat,
-                          color: AppTheme.infoBlue,
-                          size: 16,
-                        ),
-                        const SizedBox(width: AppTheme.spacingSm),
-                        Text(
-                          'Storm Work Safety',
-                          style: AppTheme.headlineSmall.copyWith(
-                            color: AppTheme.infoBlue,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppTheme.spacingSm),
-                    Text(
-                      'This alert may affect power restoration work. Always follow safety protocols and check with supervisors before deployment.',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
-          ),
-          ElevatedButton.icon(
-            onPressed: () {
-              Navigator.pop(context);
-              // Could navigate to relevant storm work opportunities
-            },
-            icon: Icon(FontAwesomeIcons.bolt),
-            label: Text('View Storm Work'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.accentCopper,
-              foregroundColor: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-  
-  Color _getAlertColorForSeverity(String severity) {
-    switch (severity) {
-      case 'Extreme':
-        return Color(0xFFD8006D);
-      case 'Severe':
-        return AppTheme.errorRed;
-      case 'Moderate':
-        return AppTheme.warningYellow;
-      case 'Minor':
-        return Colors.orange;
-      default:
-        return AppTheme.infoBlue;
-    }
-  }
-  
-  String _formatAlertTime(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = dateTime.difference(now);
-    
-    if (difference.inHours.abs() < 24) {
-      if (difference.isNegative) {
-        return '${difference.inHours.abs()} hours ago';
-      } else {
-        return 'in ${difference.inHours} hours';
-      }
-    }
-    
-    return '${dateTime.month}/${dateTime.day} at ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
-  }
-  
-  Widget _buildInfoRow(Color color, String label) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-          const SizedBox(width: AppTheme.spacingSm),
-          Text(label),
-        ],
-      ),
-    );
-  }
-
-  void _showOutageDetails(BuildContext context, PowerOutageState outage) {
-    final percentage = _powerOutageService.getOutagePercentage(outage);
-    
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppTheme.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppTheme.radiusLg),
-        ),
-      ),
-      builder: (context) {
-        return Container(
-          padding: EdgeInsets.only(
-            left: AppTheme.spacingLg,
-            right: AppTheme.spacingLg,
-            top: AppTheme.spacingLg,
-            bottom: MediaQuery.of(context).viewInsets.bottom + AppTheme.spacingLg,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Handle
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppTheme.textLight,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
-              
-              // Header
-              Row(
-                children: [
-                  Icon(
-                    FontAwesomeIcons.bolt,
-                    color: AppTheme.errorRed,
-                    size: 32,
-                  ),
-                  const SizedBox(width: AppTheme.spacingMd),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          outage.stateName,
-                          style: AppTheme.headlineMedium.copyWith(
-                            color: AppTheme.primaryNavy,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'Power Outage Emergency',
-                          style: AppTheme.bodyMedium.copyWith(
-                            color: AppTheme.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: AppTheme.spacingLg),
-              
-              // Stats grid
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(AppTheme.spacingMd),
-                      decoration: BoxDecoration(
-                        color: AppTheme.errorRed.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            _powerOutageService.formatOutageCount(outage.outageCount),
-                            style: AppTheme.displaySmall.copyWith(
-                              color: AppTheme.errorRed,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            'Without Power',
-                            style: AppTheme.bodySmall.copyWith(
-                              color: AppTheme.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: AppTheme.spacingMd),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(AppTheme.spacingMd),
-                      decoration: BoxDecoration(
-                        color: AppTheme.warningYellow.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            '${percentage.toStringAsFixed(1)}%',
-                            style: AppTheme.displaySmall.copyWith(
-                              color: AppTheme.warningYellow,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            'Affected',
-                            style: AppTheme.bodySmall.copyWith(
-                              color: AppTheme.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: AppTheme.spacingLg),
-              
-              // Info section
-              Container(
+                                'Extended hours, challenging conditions, and a rewarding
                 padding: const EdgeInsets.all(AppTheme.spacingMd),
                 decoration: BoxDecoration(
                   color: AppTheme.infoBlue.withValues(alpha: 0.1),
@@ -1307,7 +683,7 @@ class _StormScreenState extends State<StormScreen> {
                   Expanded(
                     child: JJPrimaryButton(
                       text: 'View Unions',
-                      icon: FontAwesomeIcon.sUsers,
+                      icon: FontAwesomeIcon.user,
                       onPressed: () {
                         Navigator.pop(context);
                         // Navigate to unions filtered by state
@@ -1686,3 +1062,123 @@ class StormDetailsSheet extends StatelessWidget {
                       children: [
                         Text(
                           'Open Positions',
+                          style: AppTheme.bodyMedium.copyWith(
+                            color: AppTheme.textPrimary,
+                          ),
+                        ),
+                        Text(
+                          '${storm.openPositions}',
+                          style: AppTheme.headlineMedium.copyWith(
+                            color: AppTheme.successGreen,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingMd),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentCopper.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Avg. Pay Rate',
+                          style: AppTheme.bodyMedium.copyWith(
+                            color: AppTheme.textPrimary,
+                          ),
+                        ),
+                        Text(
+                          storm.payRate,
+                          style: AppTheme.headlineMedium.copyWith(
+                            color: AppTheme.successGreen,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: AppTheme.spacingMd),
+            
+            // Description
+            Text(
+              'Description',
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingSm),
+            Text(
+              storm.description,
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.textPrimary,
+              ),
+            ),
+            
+            const SizedBox(height: AppTheme.spacingMd),
+            
+            // What to Expect
+            Text(
+              'What to Expect',
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingSm),
+            Text(
+              'Extended hours, challenging conditions, and a rewarding experience helping communities recover.',
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.textPrimary,
+              ),
+            ),
+            
+            const SizedBox(height: AppTheme.spacingMd),
+            
+            // Action buttons
+            Row(
+              children: [
+                Expanded(
+                  child: JJSecondaryButton(
+                    'View Jobs', // Added required positional argument
+                    text: 'View Jobs',
+                    icon: FontAwesomeIcons.briefcase,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      // Navigate to jobs filtered by state
+                    },
+                    isFullWidth: true,
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: JJPrimaryButton(
+                    text: 'View Unions',
+                    icon: FontAwesomeIcon.user,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      // Navigate to unions filtered by state
+                    },
+                    isFullWidth: true,
+                    variant: JJButtonVariant.primary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

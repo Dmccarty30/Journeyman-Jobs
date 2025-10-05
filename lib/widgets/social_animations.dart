@@ -23,7 +23,7 @@ class SocialAnimations {
   static Color get likeColor => AppTheme.errorRed;
   static Color get likeColorStart => AppTheme.mediumGray;
   static Color get likeColorTransition => AppTheme.accentCopper;
-  static Color get reactionGlowColor => AppTheme.accentCopper.withOpacity(0.6);
+  static Color get reactionGlowColor => AppTheme.accentCopper.withValues(alpha: 0.6);
   static Color get particleCopperColor => AppTheme.accentCopper;
   static Color get particleGoldColor => AppTheme.secondaryCopper;
   static Color get commentBorderColor => AppTheme.accentCopper;
@@ -122,7 +122,7 @@ class AnimatedParticle extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: SocialAnimations.particleCopperColor.withOpacity(0.5),
+                color: SocialAnimations.particleCopperColor.withValues(alpha: 0.5),
                 blurRadius: particle.size * 0.5,
                 spreadRadius: particle.size * 0.2,
               ),
@@ -170,7 +170,7 @@ class AnimatedHeart extends StatelessWidget {
         ),
         child: Icon(
           Icons.favorite,
-          color: color.withOpacity(opacity),
+          color: color.withValues(alpha: opacity),
           size: 28,
         ),
       ),
@@ -233,7 +233,7 @@ class _TypingIndicatorState extends State<TypingIndicator>
               width: widget.size,
               height: widget.size,
               decoration: BoxDecoration(
-                color: widget.color.withOpacity(opacity),
+                color: widget.color.withValues(alpha: opacity),
                 shape: BoxShape.circle,
               ),
             );
@@ -311,7 +311,7 @@ class ElectricalArcPainter extends CustomPainter {
     // Add electrical sparks
     if (progress > 0.5) {
       final sparkPaint = Paint()
-        ..color = arcColor.withOpacity(0.7)
+        ..color = arcColor.withValues(alpha: 0.7)
         ..strokeWidth = strokeWidth * 0.5
         ..style = PaintingStyle.stroke;
       

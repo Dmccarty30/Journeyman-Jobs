@@ -36,7 +36,7 @@ class MessageBubble extends StatelessWidget {
           if (!isCurrentUser && showAvatar && !isSystemNotification) ...[
             CircleAvatar(
               radius: AppTheme.radiusLg,
-              backgroundColor: AppTheme.accentCopper.withOpacity(AppTheme.opacityElectricalCircuitTrace),
+              backgroundColor: AppTheme.accentCopper.withValues(alpha: AppTheme.opacityElectricalCircuitTrace),
               child: Text(
                 _getInitials(senderName),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -85,7 +85,7 @@ class MessageBubble extends StatelessWidget {
                     boxShadow: isCurrentUser
                         ? [
                             BoxShadow(
-                              color: AppTheme.accentCopper.withOpacity(AppTheme.opacityElectricalGlow),
+                              color: AppTheme.accentCopper.withValues(alpha: AppTheme.opacityElectricalGlow),
                               blurRadius: AppTheme.spacingMd,
                               offset: const Offset(0, AppTheme.spacingXs),
                             ),
@@ -97,8 +97,8 @@ class MessageBubble extends StatelessWidget {
                       Positioned.fill(
                         child: CustomPaint(
                           painter: CircuitPatternPainter(
-                            primaryColor: AppTheme.electricalCircuitTrace.withOpacity(AppTheme.opacityElectricalCircuitTrace),
-                            secondaryColor: AppTheme.electricalCircuitTraceLight.withOpacity(AppTheme.opacityElectricalCircuitTraceLight),
+                            primaryColor: AppTheme.electricalCircuitTrace.withValues(alpha: AppTheme.opacityElectricalCircuitTrace),
+                            secondaryColor: AppTheme.electricalCircuitTraceLight.withValues(alpha: AppTheme.opacityElectricalCircuitTraceLight),
                             animate: false, // No animation for static background
                           ),
                         ),
@@ -200,7 +200,7 @@ class MessageBubble extends StatelessWidget {
         const SizedBox(height: AppTheme.spacingSm),
         Container(
           height: AppTheme.borderWidthThin,
-          color: _getTextColor().withOpacity(AppTheme.opacityElectricalCircuitTrace),
+          color: _getTextColor().withValues(alpha: AppTheme.opacityElectricalCircuitTrace),
           margin: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
         ),
         Wrap(
@@ -213,7 +213,7 @@ class MessageBubble extends StatelessWidget {
                 color: _getBubbleColor(),
                 borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 border: Border.all(
-                  color: _getTextColor().withOpacity(AppTheme.opacityElectricalCircuitTraceLight),
+                  color: _getTextColor().withValues(alpha: AppTheme.opacityElectricalCircuitTraceLight),
                   width: AppTheme.borderWidthThin,
                 ),
               ),
@@ -292,7 +292,7 @@ class MessageBubble extends StatelessWidget {
       case MessageType.systemNotification:
         return AppTheme.electricalSurface;
       case MessageType.jobShare:
-        return AppTheme.accentCopper.withOpacity(AppTheme.opacityElectricalCircuitTrace);
+        return AppTheme.accentCopper.withValues(alpha: AppTheme.opacityElectricalCircuitTrace);
       case MessageType.text:
       default:
         return isCurrentUser ? AppTheme.primaryNavy : AppTheme.electricalSurface;

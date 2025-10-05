@@ -81,6 +81,44 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
 
   @override
   Widget build(BuildContext context) {
+    Widget _buildHeader() {
+      return Container(
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppTheme.radiusLg),
+          ),
+          gradient: AppTheme.electricalGradient,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.settings_applications,
+              color: AppTheme.white,
+              size: AppTheme.iconMd,
+            ),
+            const SizedBox(width: AppTheme.spacingSm),
+            Text(
+              widget.isNewCrew ? 'Set Crew Preferences' : 'Crew Job Preferences',
+              style: AppTheme.headlineMedium.copyWith(
+                color: AppTheme.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Spacer(),
+            IconButton(
+              onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+              icon: Icon(
+                Icons.close,
+                color: AppTheme.white,
+                size: AppTheme.iconMd,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
@@ -134,44 +172,6 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
           ],
         ),
       ),
-    );
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppTheme.radiusLg),
-        ),
-        gradient: AppTheme.electricalGradient,
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.settings_applications,
-            color: AppTheme.white,
-            size: AppTheme.iconMd,
-          ),
-          const SizedBox(width: AppTheme.spacingSm),
-          Text(
-            widget.isNewCrew ? 'Set Crew Preferences' : 'Crew Job Preferences',
-            style: AppTheme.headlineMedium.copyWith(
-              color: AppTheme.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Spacer(),
-          IconButton(
-            onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-            icon: Icon(
-              Icons.close,
-              color: AppTheme.white,
-              size: AppTheme.iconMd,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
     );
   }
 
@@ -657,6 +657,8 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
         ],
       ),
     );
+  }
+
   Future<void> _savePreferences() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -709,8 +711,6 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
           _isLoading = false;
         });
       }
-    }
-  }
     }
   }
 }

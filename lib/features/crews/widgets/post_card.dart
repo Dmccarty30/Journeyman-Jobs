@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/post_model.dart';
 import '../../../design_system/app_theme.dart';
-import '../../../widgets/emoji_reaction_picker.dart';
 import '../../../widgets/reaction_animation.dart';
 import '../../../widgets/like_animation.dart';
 import '../../../widgets/comment_animation.dart';
@@ -88,11 +86,11 @@ class _PostCardState extends State<PostCard> {
         top: position.dy + renderBox.size.height / 2 - 18,
         child: Material(
           color: Colors.transparent,
-          child: ReactionAnimation(
+          child: EnhancedReactionAnimation(
             emoji: emoji,
-            onComplete: () {
-              // Animation will complete and remove itself
-            },
+            isSelected: true,
+            onTap: () {},
+            size: 36.0,
           ),
         ),
       ),

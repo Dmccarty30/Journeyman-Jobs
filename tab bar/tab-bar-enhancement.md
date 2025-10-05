@@ -110,12 +110,12 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
                     border: Border.all(color: AppTheme.accentCopper, width: 2),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primaryNavy.withOpacity(0.18),
+                        color: AppTheme.primaryNavy.withValues(alpha: 0.18),
                         blurRadius: 30,
                         offset: const Offset(0, 10),
                       ),
                       BoxShadow(
-                        color: AppTheme.accentCopper.withOpacity(0.12),
+                        color: AppTheme.accentCopper.withValues(alpha: 0.12),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -141,7 +141,7 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
                         ? AppTheme.labelLarge.copyWith(
                             color: AppTheme.white,
                             fontWeight: FontWeight.bold,
-                            shadows: [Shadow(color: Colors.black.withOpacity(0.18), offset: const Offset(0, 1))],
+                            shadows: [Shadow(color: Colors.black.withValues(alpha: 0.18), offset: const Offset(0, 1))],
                           )
                         : AppTheme.labelLarge.copyWith(color: AppTheme.textSecondary),
                 ),
@@ -155,8 +155,8 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.white.withOpacity(0.08),
-                      Colors.black.withOpacity(0.06),
+                      Colors.white.withValues(alpha: 0.08),
+                      Colors.black.withValues(alpha: 0.06),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(4),
@@ -174,7 +174,7 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
                         ? AppTheme.labelLarge.copyWith(
                             color: AppTheme.white,
                             fontWeight: FontWeight.bold,
-                            shadows: [Shadow(color: Colors.black.withOpacity(0.18), offset: const Offset(0, 1))],
+                            shadows: [Shadow(color: Colors.black.withValues(alpha: 0.18), offset: const Offset(0, 1))],
                           )
                         : AppTheme.labelLarge.copyWith(color: AppTheme.textSecondary),
                   ),
@@ -873,12 +873,12 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
                     border: Border.all(color: AppTheme.accentCopper, width: 2),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primaryNavy.withOpacity(0.18),
+                        color: AppTheme.primaryNavy.withValues(alpha: 0.18),
                         blurRadius: 30,
                         offset: const Offset(0, 10),
                       ),
                       BoxShadow(
-                        color: AppTheme.accentCopper.withOpacity(0.12),
+                        color: AppTheme.accentCopper.withValues(alpha: 0.12),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -904,7 +904,7 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
                         ? AppTheme.labelLarge.copyWith(
                             color: AppTheme.white,
                             fontWeight: FontWeight.bold,
-                            shadows: [Shadow(color: Colors.black.withOpacity(0.18), offset: const Offset(0, 1))],
+                            shadows: [Shadow(color: Colors.black.withValues(alpha: 0.18), offset: const Offset(0, 1))],
                           )
                         : AppTheme.labelLarge.copyWith(color: AppTheme.textSecondary),
                 ),
@@ -918,8 +918,8 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.white.withOpacity(0.08),
-                      Colors.black.withOpacity(0.06),
+                      Colors.white.withValues(alpha: 0.08),
+                      Colors.black.withValues(alpha: 0.06),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(4),
@@ -937,7 +937,7 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
                         ? AppTheme.labelLarge.copyWith(
                             color: AppTheme.white,
                             fontWeight: FontWeight.bold,
-                            shadows: [Shadow(color: Colors.black.withOpacity(0.18), offset: const Offset(0, 1))],
+                            shadows: [Shadow(color: Colors.black.withValues(alpha: 0.18), offset: const Offset(0, 1))],
                           )
                         : AppTheme.labelLarge.copyWith(color: AppTheme.textSecondary),
                   ),

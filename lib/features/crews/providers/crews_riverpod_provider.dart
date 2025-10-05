@@ -1,5 +1,4 @@
 // lib/features/crews/providers/crews_riverpod_provider.dart
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/domain/enums/member_role.dart';
 import 'package:journeyman_jobs/features/crews/services/job_matching_service_impl.dart';
 import 'package:journeyman_jobs/features/crews/services/job_sharing_service_impl.dart';
@@ -287,7 +286,7 @@ class CrewCreationNotifier extends StateNotifier<AsyncValue<void>> {
       );
       state = const AsyncValue.data(null);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stackTrace: stack);
+      state = AsyncValue.error(e, stack);
     }
   }
 
@@ -304,7 +303,7 @@ class CrewCreationNotifier extends StateNotifier<AsyncValue<void>> {
       );
       state = const AsyncValue.data(null);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stackTrace: stack);
+      state = AsyncValue.error(e, stack);
     }
   }
 
@@ -322,6 +321,5 @@ CrewCreationNotifier crewCreationNotifier(Ref ref) {
 /// Stream of crew creation state
 @riverpod
 AsyncValue<void> crewCreationState(Ref ref) {
-  final notifier = ref.watch(crewCreationNotifierProvider);
-  return notifier.state;
+  return ref.watch(crewCreationStateProvider);
 }

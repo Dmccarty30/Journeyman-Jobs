@@ -141,7 +141,7 @@ class JJSecondaryButton extends StatelessWidget {
   final double? width;
   final double? height;
 
-  const JJSecondaryButton(String s, {
+  const JJSecondaryButton({
     super.key,
     required this.text,
     this.onPressed,
@@ -285,6 +285,34 @@ class JJTextField extends StatelessWidget {
                     onPressed: onSuffixIconPressed,
                   )
                 : null,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              borderSide: const BorderSide(
+                color: AppTheme.accentCopper,
+                width: AppTheme.borderWidthMedium,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              borderSide: const BorderSide(
+                color: AppTheme.accentCopper,
+                width: AppTheme.borderWidthCopper,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              borderSide: const BorderSide(
+                color: AppTheme.errorRed,
+                width: AppTheme.borderWidthMedium,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              borderSide: const BorderSide(
+                color: AppTheme.errorRed,
+                width: AppTheme.borderWidthCopper,
+              ),
+            ),
           ),
         ),
       ],

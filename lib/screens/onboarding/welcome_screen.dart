@@ -240,7 +240,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       if (_currentPage > 0)
                         Expanded(
                           child: JJSecondaryButton(
-                            'Back', // Added required positional argument
                             text: 'Back',
                             onPressed: () {
                               _pageController.previousPage(

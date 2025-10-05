@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod/src/framework.dart';
 import '../../design_system/app_theme.dart';
 import '../../models/job_model.dart';
 import '../../providers/riverpod/jobs_riverpod_provider.dart';
@@ -40,13 +41,15 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     'Storm Work',
   ];
 
+  ProviderOrFamily get jobsProvider => null;
+
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
     // Manually trigger initial load if not already loading
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!ref.read(jobsProvider).isLoading && ref.read(jobsProvider).jobs.isEmpty) {
+      if (!ref.read(jobsProvider as ProviderListenable).isLoading && ref.read(jobsProvider as ProviderListenable).jobs.isEmpty) {
         ref.read(jobsProvider.notifier).loadJobs(isRefresh: true);
       }
     });
@@ -379,7 +382,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final jobsState = ref.watch(jobsProvider);
+    final jobsState = ref.watch(jobsProvider as ProviderListenable);
     
     return Scaffold(
       backgroundColor: AppTheme.offWhite,

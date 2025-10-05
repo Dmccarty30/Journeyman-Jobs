@@ -14,6 +14,7 @@ import '../../services/onboarding_service.dart';
 import '../../services/firestore_service.dart';
 import '../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
+import '../../electrical_components/circuit_board_background.dart';
 
 class OnboardingStepsScreen extends StatefulWidget {
   const OnboardingStepsScreen({super.key});
@@ -63,6 +64,9 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
 
   // Step 2: Additional Professional Details
   final _booksOnController = TextEditingController();
+
+  // Loading state for save operations
+  bool _isSaving = false;
 
   // Step 3: Preferences and Feedback
   final Set<String> _selectedConstructionTypes = <String>{};
@@ -149,14 +153,29 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     super.dispose();
   }
 
-  void _nextStep() {
-    if (_currentStep < _totalSteps - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      _completeOnboarding();
+  void _nextStep() async {
+    if (_isSaving) return;
+
+    try {
+      if (_currentStep == 0) {
+        // Save Step 1 data before proceeding
+        await _saveStep1Data();
+      } else if (_currentStep == 1) {
+        // Save Step 2 data before proceeding
+        await _saveStep2Data();
+      }
+
+      if (_currentStep < _totalSteps - 1) {
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      } else {
+        _completeOnboarding();
+      }
+    } catch (e) {
+      // Error already handled in save methods
+      debugPrint('Error in _nextStep: $e');
     }
   }
 
@@ -166,6 +185,91 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
+    }
+  }
+
+  Future<void> _saveStep1Data() async {
+    setState(() => _isSaving = true);
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw Exception('No authenticated user');
+
+      final firestoreService = FirestoreService();
+      await firestoreService.updateUser(
+        uid: user.uid,
+        userData: {
+          'firstName': _firstNameController.text.trim(),
+          'lastName': _lastNameController.text.trim(),
+          'phoneNumber': _phoneController.text.trim(),
+          'address1': _address1Controller.text.trim(),
+          'address2': _address2Controller.text.trim(),
+          'city': _cityController.text.trim(),
+          'state': _stateController.text.trim(),
+          'zipcode': int.parse(_zipcodeController.text.trim()),
+        },
+      );
+
+      if (mounted) {
+        JJSnackBar.showSuccess(
+          context: context,
+          message: 'Basic information saved',
+        );
+      }
+    } catch (e) {
+      debugPrint('Error saving Step 1 data: $e');
+      if (mounted) {
+        JJSnackBar.showError(
+          context: context,
+          message: 'Error saving data. Please try again.',
+        );
+      }
+      rethrow;
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
+  }
+
+  Future<void> _saveStep2Data() async {
+    setState(() => _isSaving = true);
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw Exception('No authenticated user');
+
+      final firestoreService = FirestoreService();
+      await firestoreService.updateUser(
+        uid: user.uid,
+        userData: {
+          'homeLocal': int.parse(_homeLocalController.text.trim()),
+          'ticketNumber': _ticketNumberController.text.trim(),
+          'classification': _selectedClassification ?? '',
+          'isWorking': _isWorking,
+          'booksOn': _booksOnController.text.trim().isEmpty ? null : _booksOnController.text.trim(),
+        },
+      );
+
+      if (mounted) {
+        JJSnackBar.showSuccess(
+          context: context,
+          message: 'Professional details saved',
+        );
+      }
+    } catch (e) {
+      debugPrint('Error saving Step 2 data: $e');
+      if (mounted) {
+        JJSnackBar.showError(
+          context: context,
+          message: 'Error saving data. Please try again.',
+        );
+      }
+      rethrow;
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
     }
   }
 
@@ -274,7 +378,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.white,
+      backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: AppTheme.white,
@@ -291,10 +395,16 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
         ),
         centerTitle: true,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Progress indicator
-          Container(
+          ElectricalCircuitBackground(
+            opacity: 0.08,
+            density: ComponentDensity.high,
+          ),
+          Column(
+            children: [
+              // Progress indicator
+              Container(
             padding: const EdgeInsets.all(AppTheme.spacingMd),
             child: Column(
               children: [
@@ -327,6 +437,8 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
               ],
             ),
           ),
+            ],
+          ),
         ],
       ),
       bottomNavigationBar: Container(
@@ -348,7 +460,6 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
                 if (_currentStep > 0)
                   Expanded(
                     child: JJSecondaryButton(
-                      'Back', // Added required positional argument
                       text: 'Back',
                       onPressed: _previousStep,
                     ),
@@ -361,7 +472,8 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
                 Expanded(
                   child: JJPrimaryButton(
                     text: _currentStep == _totalSteps - 1 ? 'Complete' : 'Next',
-                    onPressed: _canProceed() ? _nextStep : null,
+                    onPressed: (_canProceed() && !_isSaving) ? _nextStep : null,
+                    isLoading: _isSaving,
                     icon: _currentStep == _totalSteps - 1
                         ? Icons.check
                         : Icons.arrow_forward,
@@ -383,10 +495,12 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          _buildStepHeader(
-            icon: Icons.person_outline,
-            title: 'Basic Information',
-            subtitle: 'Let\'s start with your essential details',
+          Center(
+            child: _buildStepHeader(
+              icon: Icons.person_outline,
+              title: 'Basic Information',
+              subtitle: 'Let\'s start with your essential details',
+            ),
           ),
           
           const SizedBox(height: AppTheme.spacingMd),
@@ -475,7 +589,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
           Row(
             children: [
               Expanded(
-                flex: 2,
+                flex: 1,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -519,7 +633,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
               ),
               const SizedBox(width: AppTheme.spacingSm),
               Expanded(
-                flex: 1,
+                flex: 2,
                 child: JJTextField(
                   label: 'Zip Code',
                   controller: _zipcodeController,

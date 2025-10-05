@@ -22,7 +22,7 @@ class EmojiReactionPicker extends StatelessWidget {
         border: Border.all(color: AppTheme.accentCopper, width: 2.0), // Copper accent border
         boxShadow: [
           BoxShadow(
-            color: AppTheme.accentCopper.withOpacity(0.3),
+            color: AppTheme.accentCopper.withValues(alpha: 0.3),
             blurRadius: 10,
             spreadRadius: 2,
           ),
