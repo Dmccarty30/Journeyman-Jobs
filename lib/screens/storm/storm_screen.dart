@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/storm_event.dart';
-import '../../models/contractor_model.dart';
 import '../../widgets/weather/noaa_radar_map.dart';
 import '../../widgets/contractor_card.dart';
-import '../../services/location_service.dart';
 import '../../services/power_outage_service.dart';
 import '../../widgets/storm/power_outage_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -574,130 +572,13 @@ class _StormScreenState extends State<StormScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: AppTheme.spacingLg),
 
-                  // Storm Work Details Section
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(AppTheme.spacingLg),
-                    decoration: BoxDecoration(
-                      color: AppTheme.white,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                      boxShadow: [AppTheme.shadowMd],
-                      border: Border.all(
-                        color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                        width: 1,
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.work_outline,
-                              color: AppTheme.primaryNavy,
-                              size: AppTheme.iconMd,
-                            ),
-                            const SizedBox(width: AppTheme.spacingSm),
-                            Text(
-                              'Storm Work Details',
-                              style: AppTheme.headlineSmall.copyWith(
-                                color: AppTheme.primaryNavy,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppTheme.spacingMd),
-                        Text(
-                          'Storm restoration work is critical and time-sensitive. Positions offer competitive pay rates, per diem, and the opportunity to help communities recover from natural disasters.',
-                          style: AppTheme.bodyLarge.copyWith(
-                            color: AppTheme.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: AppTheme.spacingMd),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildStormDetailCard(
-                                'What to Expect',
-                                'Extended hours, challenging conditions, and a rewarding
-                padding: const EdgeInsets.all(AppTheme.spacingMd),
-                decoration: BoxDecoration(
-                  color: AppTheme.infoBlue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  border: Border.all(
-                    color: AppTheme.infoBlue.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          FontAwesomeIcons.circleInfo,
-                          color: AppTheme.infoBlue,
-                          size: 16,
-                        ),
-                        const SizedBox(width: AppTheme.spacingSm),
-                        Text(
-                          'Storm Work Opportunity',
-                          style: AppTheme.headlineSmall.copyWith(
-                            color: AppTheme.infoBlue,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppTheme.spacingSm),
-                    Text(
-                      'This state has significant power outages requiring immediate restoration crews. '
-                      'Contact local IBEW unions in ${outage.stateName} for deployment opportunities.',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              
-              const SizedBox(height: AppTheme.spacingLg),
-              
-              // Action buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: JJSecondaryButton(
-                      'View Jobs', // Added required positional argument
-                      text: 'View Jobs',
-                      icon: FontAwesomeIcons.briefcase,
-                      onPressed: () {
-                        Navigator.pop(context);
-                        // Navigate to jobs filtered by state
-                      },
-                      isFullWidth: true,
-                    ),
-                  ),
-                  const SizedBox(width: AppTheme.spacingMd),
-                  Expanded(
-                    child: JJPrimaryButton(
-                      text: 'View Unions',
-                      icon: FontAwesomeIcon.user,
-                      onPressed: () {
-                        Navigator.pop(context);
-                        // Navigate to unions filtered by state
-                      },
-                      isFullWidth: true,
-                      variant: JJButtonVariant.primary,
-                    ),
-                  ),
                 ],
               ),
-            ],
+            ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -740,6 +621,176 @@ class _StormScreenState extends State<StormScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showWeatherRadar(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          appBar: AppBar(
+            backgroundColor: AppTheme.primaryNavy,
+            title: Text(
+              'Live Weather Radar',
+              style: AppTheme.headlineMedium.copyWith(color: AppTheme.white),
+            ),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: AppTheme.white),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          body: const NoaaRadarMap(),
+        ),
+      ),
+    );
+  }
+
+  void _showOutageDetails(BuildContext context, PowerOutageState outage) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.radiusLg)),
+      ),
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          maxChildSize: 0.9,
+          minChildSize: 0.3,
+          builder: (context, scrollController) {
+            return Padding(
+              padding: const EdgeInsets.all(AppTheme.spacingLg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppTheme.textLight,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingLg),
+                  // Title
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          outage.stateName,
+                          style: AppTheme.displaySmall.copyWith(
+                            color: AppTheme.primaryNavy,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppTheme.spacingMd),
+                  // Outage info
+                  Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingMd),
+                    decoration: BoxDecoration(
+                      color: AppTheme.infoBlue.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      border: Border.all(
+                        color: AppTheme.infoBlue.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              FontAwesomeIcons.circleInfo,
+                              color: AppTheme.infoBlue,
+                              size: 16,
+                            ),
+                            const SizedBox(width: AppTheme.spacingSm),
+                            Text(
+                              'Storm Work Opportunity',
+                              style: AppTheme.headlineSmall.copyWith(
+                                color: AppTheme.infoBlue,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppTheme.spacingSm),
+                        Text(
+                          'This state has significant power outages requiring immediate restoration crews. '
+                          'Contact local IBEW unions in ${outage.stateName} for deployment opportunities.',
+                          style: AppTheme.bodyMedium.copyWith(
+                            color: AppTheme.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacingLg),
+                  // Action buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: JJSecondaryButton(
+                          text: 'View Jobs',
+                          icon: FontAwesomeIcons.briefcase,
+                          onPressed: () {
+                            Navigator.pop(context);
+                            // Navigate to jobs filtered by state
+                          },
+                          isFullWidth: true,
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: JJPrimaryButton(
+                          text: 'View Unions',
+                          icon: FontAwesomeIcons.userGroup,
+                          onPressed: () {
+                            Navigator.pop(context);
+                            // Navigate to unions filtered by state
+                          },
+                          isFullWidth: true,
+                          variant: JJButtonVariant.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showStormDetails(BuildContext context, StormEvent storm) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.radiusLg)),
+      ),
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.9,
+          maxChildSize: 0.9,
+          minChildSize: 0.5,
+          builder: (context, scrollController) {
+            return StormDetailsSheet(storm: storm, scrollController: scrollController);
+          },
+        );
+      },
     );
   }
 }
@@ -939,7 +990,7 @@ class StormEventCard extends StatelessWidget {
     );
   }
 
-  void _showStormDetails(BuildContext context, StormEvent storm) {
+  static void _showStormDetails(BuildContext context, StormEvent storm) {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppTheme.white,
@@ -1151,7 +1202,6 @@ class StormDetailsSheet extends StatelessWidget {
               children: [
                 Expanded(
                   child: JJSecondaryButton(
-                    'View Jobs', // Added required positional argument
                     text: 'View Jobs',
                     icon: FontAwesomeIcons.briefcase,
                     onPressed: () {
@@ -1165,7 +1215,7 @@ class StormDetailsSheet extends StatelessWidget {
                 Expanded(
                   child: JJPrimaryButton(
                     text: 'View Unions',
-                    icon: FontAwesomeIcon.user,
+                    icon: FontAwesomeIcons.userGroup,
                     onPressed: () {
                       Navigator.pop(context);
                       // Navigate to unions filtered by state

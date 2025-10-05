@@ -215,7 +215,6 @@ class JobCard extends StatelessWidget {
             children: [
               Expanded(
                 child: JJSecondaryButton(
-                  'Details', // Added required positional argument
                   text: 'Details',
                   onPressed: onViewDetails,
                   height: 36,
@@ -389,7 +388,6 @@ class JobCard extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: JJSecondaryButton(
-                  'View Details', // Added required positional argument
                   text: 'View Details',
                   onPressed: onViewDetails,
                   icon: Icons.info_outline,

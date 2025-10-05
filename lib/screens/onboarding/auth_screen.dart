@@ -268,7 +268,7 @@ class _AuthScreenState extends State<AuthScreen>
         children: [
           ElectricalCircuitBackground(
             opacity: 0.08,
-            density: ComponentDensity.high,
+            componentDensity: ComponentDensity.high,
           ),
           SafeArea(
         child: Column(

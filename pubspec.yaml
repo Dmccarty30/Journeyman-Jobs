@@ -74,7 +74,7 @@ dependencies:
   
   # Utilities
   collection: ^1.18.0
-  meta: ^1.15.0
+  meta: ^1.16.0
   from_css_color: ^2.0.0
   url_launcher: ^6.2.4
   font_awesome_flutter: ^10.8.0

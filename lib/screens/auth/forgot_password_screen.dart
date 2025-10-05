@@ -286,7 +286,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       const SizedBox(height: AppTheme.spacingMd),
 
                       JJSecondaryButton(
-                        'Resend Email', // Added required positional argument
                         text: 'Resend Email',
                         icon: Icons.refresh,
                         onPressed: _isLoading ? null : () {

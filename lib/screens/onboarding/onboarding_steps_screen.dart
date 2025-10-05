@@ -198,7 +198,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
       final firestoreService = FirestoreService();
       await firestoreService.updateUser(
         uid: user.uid,
-        userData: {
+        data: {
           'firstName': _firstNameController.text.trim(),
           'lastName': _lastNameController.text.trim(),
           'phoneNumber': _phoneController.text.trim(),
@@ -242,7 +242,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
       final firestoreService = FirestoreService();
       await firestoreService.updateUser(
         uid: user.uid,
-        userData: {
+        data: {
           'homeLocal': int.parse(_homeLocalController.text.trim()),
           'ticketNumber': _ticketNumberController.text.trim(),
           'classification': _selectedClassification ?? '',
@@ -399,7 +399,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
         children: [
           ElectricalCircuitBackground(
             opacity: 0.08,
-            density: ComponentDensity.high,
+            componentDensity: ComponentDensity.high,
           ),
           Column(
             children: [
