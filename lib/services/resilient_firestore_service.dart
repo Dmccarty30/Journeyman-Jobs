@@ -85,10 +85,23 @@ class ResilientFirestoreService extends FirestoreService {
   Future<void> createUser({
     required String uid,
     required Map<String, dynamic> userData,
-  }) {
-    return _executeWithRetryFuture(
+  }) async {
+    await _executeWithRetryFuture<void>(
       () => super.createUser(uid: uid, userData: userData),
       operationName: 'createUser',
+    );
+  }
+
+  @override
+  Future<void> setUserWithMerge({
+    required String uid,
+    required Map<String, dynamic> data,
+  }) async {
+    return await _executeWithRetryFuture<void>(
+      () async {
+        return await super.setUserWithMerge(uid: uid, data: data);
+      },
+      operationName: 'setUserWithMerge',
     );
   }
 

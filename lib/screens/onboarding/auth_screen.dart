@@ -3,10 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
 import '../../electrical_components/circuit_board_background.dart';
+import '../../services/firestore_service.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -94,12 +96,30 @@ class _AuthScreenState extends State<AuthScreen>
     setState(() => _isSignUpLoading = true);
 
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _signUpEmailController.text.trim(),
         password: _signUpPasswordController.text,
       );
 
-      // User profile will be set up in onboarding steps
+      final User? user = userCredential.user;
+      if (user != null) {
+        try {
+          final FirestoreService firestoreService = FirestoreService();
+          await firestoreService.createUser(
+            uid: user.uid,
+            userData: {
+              'email': user.email,
+            },
+          );
+        } catch (firestoreError) {
+          if (mounted) {
+            JJSnackBar.showError(
+              context: context,
+              message: 'Account created but profile setup failed. Please complete onboarding.',
+            );
+          }
+        }
+      }
 
       if (mounted) {
         _navigateToOnboarding();
@@ -141,8 +161,43 @@ class _AuthScreenState extends State<AuthScreen>
         password: _signInPasswordController.text,
       );
 
-      if (mounted) {
-        _navigateToOnboarding();
+      final User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        try {
+          final FirestoreService firestoreService = FirestoreService();
+          final DocumentSnapshot userDoc = await firestoreService.getUser(user.uid);
+          
+          if (!userDoc.exists) {
+            await firestoreService.createUser(
+              uid: user.uid,
+              userData: {
+                'email': user.email,
+              },
+            );
+            if (mounted) {
+              _navigateToOnboarding();
+            }
+          } else {
+            final String? onboardingStatus = userDoc.get('onboardingStatus');
+            if (onboardingStatus == 'incomplete' || onboardingStatus == null) {
+              if (mounted) {
+                _navigateToOnboarding();
+              }
+            } else if (onboardingStatus == 'complete') {
+              if (mounted) {
+                context.go(AppRouter.home);
+              }
+            }
+          }
+        } catch (firestoreError) {
+          if (mounted) {
+            JJSnackBar.showError(
+              context: context,
+              message: 'Sign in successful but profile check failed. Please complete onboarding.',
+            );
+            _navigateToOnboarding();
+          }
+        }
       }
     } on FirebaseAuthException catch (e) {
       if (mounted) {
@@ -187,7 +242,31 @@ class _AuthScreenState extends State<AuthScreen>
         idToken: googleAuth.idToken,
       );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        try {
+          final FirestoreService firestoreService = FirestoreService();
+          final bool userExists = await firestoreService.userProfileExists(user.uid);
+          
+          if (!userExists) {
+            await firestoreService.createUser(
+              uid: user.uid,
+              userData: {
+                'email': user.email,
+              },
+            );
+          }
+        } catch (firestoreError) {
+          if (mounted) {
+            JJSnackBar.showError(
+              context: context,
+              message: 'Google sign in successful but profile setup failed. Please complete onboarding.',
+            );
+          }
+        }
+      }
 
       if (mounted) {
         _navigateToOnboarding();
@@ -237,7 +316,31 @@ class _AuthScreenState extends State<AuthScreen>
         accessToken: credential.authorizationCode,
       );
 
-      await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        try {
+          final FirestoreService firestoreService = FirestoreService();
+          final bool userExists = await firestoreService.userProfileExists(user.uid);
+          
+          if (!userExists) {
+            await firestoreService.createUser(
+              uid: user.uid,
+              userData: {
+                'email': user.email,
+              },
+            );
+          }
+        } catch (firestoreError) {
+          if (mounted) {
+            JJSnackBar.showError(
+              context: context,
+              message: 'Apple sign in successful but profile setup failed. Please complete onboarding.',
+            );
+          }
+        }
+      }
 
       if (mounted) {
         _navigateToOnboarding();

@@ -25,7 +25,7 @@ class FirestoreService {
       await usersCollection.doc(uid).set({
         ...userData,
         'createdTime': FieldValue.serverTimestamp(),
-        'onboardingStatus': 'pending',
+        'onboardingStatus': 'incomplete',
       });
     } catch (e) {
       throw Exception('Error creating user: $e');
@@ -84,6 +84,17 @@ class FirestoreService {
       await usersCollection.doc(uid).update(data);
     } catch (e) {
       throw Exception('Error updating user: $e');
+    }
+  }
+
+  Future<void> setUserWithMerge({
+    required String uid,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      await usersCollection.doc(uid).set(data, SetOptions(merge: true));
+    } catch (e) {
+      throw Exception('Error setting user with merge: $e');
     }
   }
 

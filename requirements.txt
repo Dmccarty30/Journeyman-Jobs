@@ -1,0 +1,5 @@
+crawl4ai
+google-cloud-firestore
+tenacity
+google-cloud-storage
+google-cloud

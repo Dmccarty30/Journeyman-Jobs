@@ -1,0 +1,10 @@
+[project]
+name = "journeyman-jobs"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11.9"
+dependencies = [
+    "google-cloud>=0.34.0",
+    "google-cloud-firestore>=2.21.0",
+]

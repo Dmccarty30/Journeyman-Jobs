@@ -1,61 +1,25 @@
-#!/usr/bin/env python3
-"""Scrape IBEW Local 111 dispatch page and save job listings as JSON.
-
-Requirements
-------------
-- Python 3.9+ (the environment already has a virtual‑env activated)
-- Crawl4AI library (`pip install crawl4ai`)
-
-The script:
-1. Loads the dispatch page (`https://www.ibew111.org/dispatch`).
-2. Uses Crawl4AI's adaptive crawler to extract the job table.
-3. Normalises each row into a dictionary with the same keys that were used for the
-   Local 111 example you approved earlier.
-4. Writes the list of jobs to `/a0/work zone/Jobs/111/ibew111_jobs.json`.
-"""
-
 import asyncio
 import json
-import os
+import logging
 from pathlib import Path
+from html.parser import HTMLParser
 
 from crawl4ai import AsyncWebCrawler
+from google.cloud import firestore
+from google.cloud.firestore_v1 import FieldValue
+from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
 
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
 DISPATCH_URL = "https://www.ibew111.org/dispatch"
 OUTPUT_DIR = Path("/a0/work zone/Jobs/111")
 OUTPUT_FILE = OUTPUT_DIR / "ibew111_jobs.json"
+FIREBASE_CREDENTIALS_PATH = "android/app/google-services.json"  # <-- fill in your service‑account JSON path
 
-# Ensure the output directory exists (it should already, but just in case)
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s – %(message)s")
+logger = logging.getLogger(__name__)
 
-# ---------------------------------------------------------------------------
-# Helper: transform a raw HTML table row into a clean dict
-# ---------------------------------------------------------------------------
-def parse_job_row(cells: list) -> dict:
-    """Map the list of <td> elements to the expected fields.
-
-    The exact column order on the IBEW 111 page (as of the last scrape) is:
-    0 – Company / Employer
-    1 – Class
-    2 – Number of Jobs
-    3 – Location / City
-    4 – Hours
-    5 – Starting Date
-    6 – Wage
-    7 – Starting Time
-    8 – Sub (if any)
-    9 – Special Qualifications
-    10 – Agreement
-    11 – Notes
-    """
-    # Guard against malformed rows
+def parse_job_row(cells):
     if len(cells) < 12:
-        # Pad missing columns with empty strings
         cells += [""] * (12 - len(cells))
-
     return {
         "Employer": cells[0].strip(),
         "JobClass": cells[1].strip(),
@@ -71,87 +35,144 @@ def parse_job_row(cells: list) -> dict:
         "Notes": cells[11].strip(),
     }
 
-# ---------------------------------------------------------------------------
-# Main async crawler
-# ---------------------------------------------------------------------------
-async def scrape_ibew111() -> None:
-    async with AsyncWebCrawler() as crawler:
-        # Crawl the page – we ask Crawl4AI to return the raw HTML so we can parse it ourselves.
-        result = await crawler.arun(
-            url=DISPATCH_URL,
-            # We only need the main content; Crawl4AI will strip navigation, ads, etc.
-            extract_schema="html",
-            # A short timeout keeps the run cheap; the page is lightweight.
-            timeout=30,
-        )
+class TableParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.in_table = False
+        self.in_row = False
+        self.in_cell = False
+        self.current_cells = []
+        self.jobs = []
+        self.current_data = ""
+    def handle_starttag(self, tag, attrs):
+        if tag == "table":
+            if not self.in_table:
+                self.in_table = True
+        if self.in_table:
+            if tag == "tr":
+                self.in_row = True
+                self.current_cells = []
+            if tag in ("td", "th"):
+                self.in_cell = True
+                self.current_data = ""
+    def handle_endtag(self, tag):
+        if tag == "table" and self.in_table:
+            self.in_table = False
+        if self.in_table:
+            if tag == "tr" and self.in_row:
+                if any(cell.lower().startswith("employer") for cell in self.current_cells):
+                    pass
+                else:
+                    self.jobs.append(parse_job_row(self.current_cells))
+                self.in_row = False
+            if tag in ("td", "th") and self.in_cell:
+                self.current_cells.append(self.current_data.strip())
+                self.in_cell = False
+    def handle_data(self, data):
+        if self.in_cell:
+            self.current_data += data
 
+async def scrape_ibew111():
+    async with AsyncWebCrawler() as crawler:
+        result = await crawler.arun(url=DISPATCH_URL, extract_schema="html", timeout=30)
         if not result.success:
             raise RuntimeError(f"Crawl failed: {result.error_message}")
-
         html = result.html
-        # -------------------------------------------------------------------
-        # Simple HTML parsing – we avoid heavy dependencies (BeautifulSoup) by
-        # using the built‑in html.parser library which is sufficient for the
-        # straightforward table on the dispatch page.
-        # -------------------------------------------------------------------
-        from html.parser import HTMLParser
-
-        class TableParser(HTMLParser):
-            def __init__(self):
-                super().__init__()
-                self.in_table = False
-                self.in_row = False
-                self.in_cell = False
-                self.current_cells = []
-                self.jobs = []
-
-            def handle_starttag(self, tag, attrs):
-                if tag == "table":
-                    # The dispatch page contains a single job table – we capture the first one.
-                    if not self.in_table:
-                        self.in_table = True
-                if self.in_table:
-                    if tag == "tr":
-                        self.in_row = True
-                        self.current_cells = []
-                    if tag in ("td", "th"):
-                        self.in_cell = True
-                        self.current_data = ""
-
-            def handle_endtag(self, tag):
-                if tag == "table" and self.in_table:
-                    self.in_table = False
-                if self.in_table:
-                    if tag == "tr" and self.in_row:
-                        # Skip header rows that contain column titles (they usually have <th>)
-                        if any(cell.lower().startswith("employer") for cell in self.current_cells):
-                            pass
-                        else:
-                            self.jobs.append(parse_job_row(self.current_cells))
-                        self.in_row = False
-                    if tag in ("td", "th") and self.in_cell:
-                        # Store the collected text for this cell
-                        self.current_cells.append(self.current_data.strip())
-                        self.in_cell = False
-
-            def handle_data(self, data):
-                if self.in_cell:
-                    self.current_data += data
-
         parser = TableParser()
         parser.feed(html)
         jobs = parser.jobs
-
-        # -------------------------------------------------------------------
-        # Write results to JSON file
-        # -------------------------------------------------------------------
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
             json.dump(jobs, f, indent=2, ensure_ascii=False)
+        logger.info(f"Scraped {len(jobs)} job entries and saved to {OUTPUT_FILE}")
 
-        print(f"✅ Scraped {len(jobs)} job entries and saved to {OUTPUT_FILE}")
+def sanitize_job_data(job):
+    sanitized = {k: (v.strip() if isinstance(v, str) else v) for k, v in job.items()}
+    for key in ["employer", "jobClass", "location", "wage", "startDate", "description"]:
+        sanitized.setdefault(key, "")
+    return sanitized
 
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
+def generate_job_id(local_number, classification, job):
+    import hashlib
+    base = f"{local_number}_{classification}_{job.get('employer','')}_{job.get('startDate','')}"
+    return hashlib.sha256(base.encode()).hexdigest()[:20]
+
+def validate_job_data(job_data):
+    required = ["jobId", "localNumber", "employer", "jobClass", "location", "startDate"]
+    return all(bool(job_data.get(k)) for k in required)
+
+@retry(stop=stop_after_attempt(3), wait=wait_fixed(2), retry=retry_if_exception_type(Exception), reraise=True)
+def firestore_operation(fn, *args, **kwargs):
+    return fn(*args, **kwargs)
+
+def update_database_with_jobs(classification, jobs, local_number):
+    if FIREBASE_CREDENTIALS_PATH:
+        db = firestore.Client.from_service_account_json(FIREBASE_CREDENTIALS_PATH)
+    else:
+        db = firestore.Client()
+    logger.info(f"Updating Firestore with {len(jobs)} jobs for classification '{classification}' (Local {local_number})")
+    def fetch_existing():
+        return (
+            db.collection("jobs")
+            .where("localNumber", "==", local_number)
+            .where("classification", "==", classification)
+            .stream()
+        )
+    existing_jobs_snapshot = firestore_operation(fetch_existing)
+    existing_jobs = {doc.id: doc.to_dict() for doc in existing_jobs_snapshot}
+    logger.info(f"Found {len(existing_jobs)} existing jobs in Firestore for classification '{classification}'")
+    valid_job_ids = set()
+    for job in jobs:
+        sanitized = sanitize_job_data(job)
+        job_id = generate_job_id(local_number, classification, sanitized)
+        valid_job_ids.add(job_id)
+        job_data = {
+            "jobId": job_id,
+            "localNumber": local_number,
+            "classification": classification,
+            "employer": sanitized.get("employer"),
+            "jobClass": sanitized.get("jobClass") or classification.replace("-", " "),
+            "location": sanitized.get("location"),
+            "wage": sanitized.get("wage"),
+            "startDate": sanitized.get("startDate"),
+            "description": sanitized.get("description"),
+            "timestamp": existing_jobs.get(job_id, {}).get("timestamp", FieldValue.server_timestamp()),
+        }
+        if not validate_job_data(job_data):
+            logger.warning(f"Invalid job data for {job_id}. Skipping.")
+            continue
+        doc_ref = db.collection("jobs").document(job_id)
+        try:
+            if job_id in existing_jobs:
+                def update_fn():
+                    doc_ref.update({
+                        **job_data,
+                        "timestamp": existing_jobs[job_id].get("timestamp", FieldValue.server_timestamp()),
+                    })
+                firestore_operation(update_fn)
+                logger.info(f"Updated job {job_id}")
+            else:
+                def set_fn():
+                    doc_ref.set(job_data)
+                firestore_operation(set_fn)
+                logger.info(f"Added new job {job_id}")
+        except Exception as e:
+            logger.error(f"Error updating/creating job {job_id}: {e}")
+    for existing_id in list(existing_jobs.keys()):
+        if existing_id not in valid_job_ids:
+            try:
+                def delete_fn():
+                    db.collection("jobs").document(existing_id).delete()
+                firestore_operation(delete_fn)
+                logger.info(f"Deleted outdated job {existing_id}")
+            except Exception as e:
+                logger.error(f"Error deleting job {existing_id}: {e}")
+    logger.info(f"Firestore update completed for classification '{classification}'")
+
 if __name__ == "__main__":
     asyncio.run(scrape_ibew111())
+    with open(OUTPUT_FILE, "r", encoding="utf-8") as f:
+        scraped_jobs = json.load(f)
+    for job in scraped_jobs:
+        classification = job.get("JobClass", "unknown")
+        update_database_with_jobs(classification, [job], local_number="111")

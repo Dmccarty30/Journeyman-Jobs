@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
@@ -9,7 +8,6 @@ import '../../../electrical_components/jj_electrical_toast.dart';
 import '../models/crew_preferences.dart';
 import '../providers/crews_riverpod_provider.dart';
 import '../widgets/crew_preferences_dialog.dart';
-import '../services/crew_service.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
 
 class CreateCrewScreen extends ConsumerStatefulWidget {
@@ -25,7 +23,6 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
   final _descriptionController = TextEditingController();
 
   String _selectedJobType = 'Inside Wireman';
-  int _minHourlyRate = 25;
   bool _autoShareEnabled = false;
 
   @override
@@ -56,7 +53,6 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
             builder: (context) => CrewPreferencesDialog(
               initialPreferences: CrewPreferences(
                 jobTypes: [_selectedJobType],
-                minHourlyRate: _minHourlyRate.toDouble(),
                 autoShareEnabled: _autoShareEnabled,
               ),
               crewId: crewId,
@@ -71,9 +67,11 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
               crewId: crewId,
               preferences: updatedPreferences,
             );
-            
+
             // Navigate to Tailboard screen
-            context.go('${AppRouter.crews}/$crewId');
+            if (mounted) {
+              context.go('${AppRouter.crews}/$crewId');
+            }
           } else if (mounted) {
             // User cancelled preferences, navigate to Tailboard with initial preferences
             context.go('${AppRouter.crews}/$crewId');
@@ -144,24 +142,6 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
                   maxLines: 3,
                 ),
                 const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Minimum Hourly Rate: \$$_minHourlyRate'),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.remove),
-                          onPressed: () => setState(() => _minHourlyRate = max(15, _minHourlyRate - 5)),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: () => setState(() => _minHourlyRate = min(100, _minHourlyRate + 5)),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 24),
                 SwitchListTile(
                   title: const Text('Auto-share matching jobs'),

@@ -196,7 +196,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
       if (user == null) throw Exception('No authenticated user');
 
       final firestoreService = FirestoreService();
-      await firestoreService.updateUser(
+      await firestoreService.setUserWithMerge(
         uid: user.uid,
         data: {
           'firstName': _firstNameController.text.trim(),
@@ -240,7 +240,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
       if (user == null) throw Exception('No authenticated user');
 
       final firestoreService = FirestoreService();
-      await firestoreService.updateUser(
+      await firestoreService.setUserWithMerge(
         uid: user.uid,
         data: {
           'homeLocal': int.parse(_homeLocalController.text.trim()),
@@ -281,50 +281,32 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
         throw Exception('No authenticated user found');
       }
 
-      // Create user model from form data
-      final userModel = UserModel(
-        uid: user.uid,
-        username: user.email?.split('@')[0] ?? 'user',
-        firstName: _firstNameController.text.trim(),
-        lastName: _lastNameController.text.trim(),
-        phoneNumber: _phoneController.text.trim(),
-        email: user.email ?? '',
-        role: 'electrician',
-        lastActive: Timestamp.now(),
-        address1: _address1Controller.text.trim(),
-        address2: _address2Controller.text.trim().isEmpty ? null : _address2Controller.text.trim(),
-        city: _cityController.text.trim(),
-        state: _stateController.text.trim(),
-        zipcode: int.parse(_zipcodeController.text.trim()),
-        homeLocal: int.parse(_homeLocalController.text.trim()),
-        ticketNumber: _ticketNumberController.text.trim(),
-        classification: _selectedClassification ?? '',
-        isWorking: _isWorking,
-        booksOn: _booksOnController.text.trim().isEmpty ? null : _booksOnController.text.trim(),
-        constructionTypes: _selectedConstructionTypes.toList(),
-        hoursPerWeek: _selectedHoursPerWeek,
-        perDiemRequirement: _selectedPerDiem,
-        preferredLocals: _preferredLocalsController.text.trim().isEmpty ? null : _preferredLocalsController.text.trim(),
-        networkWithOthers: _networkWithOthers,
-        careerAdvancements: _careerAdvancements,
-        betterBenefits: _betterBenefits,
-        higherPayRate: _higherPayRate,
-        learnNewSkill: _learnNewSkill,
-        travelToNewLocation: _travelToNewLocation,
-        findLongTermWork: _findLongTermWork,
-        careerGoals: _careerGoalsController.text.trim().isEmpty ? null : _careerGoalsController.text.trim(),
-        howHeardAboutUs: _howHeardAboutUsController.text.trim().isEmpty ? null : _howHeardAboutUsController.text.trim(),
-        lookingToAccomplish: _lookingToAccomplishController.text.trim().isEmpty ? null : _lookingToAccomplishController.text.trim(),
-        onboardingStatus: OnboardingStatus.complete,
-        createdTime: DateTime.now(),
-      );
+      // Build data map containing only Step 3 fields plus onboardingStatus
+      final dataMap = <String, dynamic>{
+        'constructionTypes': _selectedConstructionTypes.toList(),
+        'hoursPerWeek': _selectedHoursPerWeek,
+        'perDiemRequirement': _selectedPerDiem,
+        'preferredLocals': _preferredLocalsController.text.trim().isEmpty ? null : _preferredLocalsController.text.trim(),
+        'networkWithOthers': _networkWithOthers,
+        'careerAdvancements': _careerAdvancements,
+        'betterBenefits': _betterBenefits,
+        'higherPayRate': _higherPayRate,
+        'learnNewSkill': _learnNewSkill,
+        'travelToNewLocation': _travelToNewLocation,
+        'findLongTermWork': _findLongTermWork,
+        'careerGoals': _careerGoalsController.text.trim().isEmpty ? null : _careerGoalsController.text.trim(),
+        'howHeardAboutUs': _howHeardAboutUsController.text.trim().isEmpty ? null : _howHeardAboutUsController.text.trim(),
+        'lookingToAccomplish': _lookingToAccomplishController.text.trim().isEmpty ? null : _lookingToAccomplishController.text.trim(),
+        'onboardingStatus': 'complete',
+        'username': user.email?.split('@')[0] ?? 'user',
+        'role': 'electrician',
+        'displayName': '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}'.trim(),
+        'lastActive': FieldValue.serverTimestamp(),
+      };
 
-      // Save to Firestore
+      // Save to Firestore with merge semantics
       final firestoreService = FirestoreService();
-      await firestoreService.createUser(
-        uid: user.uid,
-        userData: userModel.toJson(),
-      );
+      await firestoreService.setUserWithMerge(uid: user.uid, data: dataMap);
 
       // Mark onboarding as complete in local storage
       final onboardingService = OnboardingService();
@@ -378,7 +360,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.offWhite,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: AppTheme.white,

@@ -1,0 +1,78 @@
+application:
+  title: "IBEW Local Union 71 Membership Application"
+  note: "Note that ALL fields are required."
+  personal_info:
+    first_name: "John"
+    mi: "A"
+    last_name: "Doe"
+    address: "123 Dummy Street"
+    city: "Dummy City"
+    state: "CA"
+    zip: "12345"
+    race: "White (Not Hispanic Origin)"
+    veteran_status: "Not a Veteran"
+    sex: "Male"
+    last_4_ssn: "1234"
+    years_at_address: 5
+    phone_number: "555-123-4567"
+    date_of_birth: "01/01/1990"
+    email_address: "dummy@example.com"
+  position_applying_for: "Lineman"
+  employed_by_electrical_contractor: true
+  years_in_industry: 10
+  emergency_contact_name: "Jane Doe"
+  emergency_contact_phone: "555-987-6543"
+  employment_history:
+    - employer: "Dummy Company 1"
+      start_date: "01/01/2010"
+      end_date: "12/31/2015"
+    - employer: "Dummy Company 2"
+      start_date: "01/01/2016"
+      end_date: "12/31/2020"
+    - employer: "Dummy Company 3"
+      start_date: "01/01/2021"
+      end_date: "12/31/2022"
+    - employer: "Dummy Company 4"
+      start_date: "01/01/2023"
+      end_date: "Present"
+  member_of_ibew: false
+  ibew_local: ""
+  ibew_card_number: ""
+  completed_certified_apprenticeship: true
+  apprenticeship_details: "Dummy Apprenticeship Program, 2010"
+  experience:
+    climb_wood: true
+    climb_steel: false
+    transformers: true
+    ncco: false
+    distribution: true
+    substations: false
+    transmission: true
+    underground: false
+    cable_splicing: true
+    h1: false
+    h2: true
+    h3: false
+    barehanding: true
+    welding: false
+    operate_equipment: true
+    concrete_slab_installation: false
+    matting: true
+    fencing: false
+    directional_boring: true
+    teledata_fiber: false
+    osha_10: true
+    osha_20: false
+    osha_30: true
+    traffic_street_lighting: false
+    cdl: true
+    other: false
+    supervision: true
+  operating_equipment_type: "Crane"
+  cdl_type: "A"
+  willing_to_travel_within_60_miles: true
+  willing_to_travel_60_90_miles: false
+  willing_to_travel_out_of_state: true
+  how_heard_about_us: "Word of Mouth"
+  paperwork_upload: "dummy_file.pdf"
+  dues_ticket_upload: "dummy_dues.pdf"

@@ -68,67 +68,6 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     }
   }
 
-  void _showSearchDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Search Jobs',
-          style: AppTheme.headlineSmall.copyWith(
-            color: AppTheme.primaryNavy,
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search by company, location, or classification...',
-                prefixIcon: Icon(Icons.search, color: AppTheme.primaryNavy),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  borderSide: BorderSide(color: AppTheme.primaryNavy, width: 2),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              setState(() {
-                _searchQuery = '';
-                _searchController.clear();
-              });
-            },
-            child: Text('Clear', style: TextStyle(color: AppTheme.textSecondary)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _applyFilters();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryNavy,
-              foregroundColor: AppTheme.white,
-            ),
-            child: const Text('Search'),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _applyFilters() {
     // Trigger a new search with current filters
     ref.invalidate(jobsProvider);
