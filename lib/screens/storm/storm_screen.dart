@@ -286,9 +286,15 @@ class _StormScreenState extends State<StormScreen> {
           padding: const EdgeInsets.all(AppTheme.spacingMd),
           child: Container(
             decoration: BoxDecoration(
-              // Removed copper border from primary container
-              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-            ),
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(
+                  color: AppTheme.accentCopper,
+                  width: AppTheme.borderWidthCopper,
+                ),
+                boxShadow: [
+                  AppTheme.shadowElectricalInfo,
+                ],
+              ),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -451,7 +457,13 @@ class _StormScreenState extends State<StormScreen> {
                           decoration: BoxDecoration(
                             color: AppTheme.white,
                             borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                            border: Border.all(color: AppTheme.lightGray),
+                            border: Border.all(
+                  color: AppTheme.accentCopper,
+                  width: AppTheme.borderWidthCopper,
+                ),
+                boxShadow: [
+                  AppTheme.shadowElectricalInfo,
+                ],
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(

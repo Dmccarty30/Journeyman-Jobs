@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../design_system/app_theme.dart';
+import 'circuit_board_background.dart';
 
 /// Enum for different toast types with electrical themes
 enum JJToastType {
@@ -240,43 +241,52 @@ class JJElectricalToast extends StatelessWidget {
   _ToastTheme _getToastTheme() {
     switch (type) {
       case JJToastType.success:
-        return const _ToastTheme(
-          backgroundColor: AppTheme.successGreen,
+        return _ToastTheme(
+          backgroundColor: AppTheme.electricalBackground,
+          borderColor: AppTheme.electricalSuccess,
+          glowColor: AppTheme.electricalGlowSuccess,
           iconColor: AppTheme.white,
-          textColor: AppTheme.white,
+          textColor: AppTheme.textOnDark,
           icon: Icons.check_circle,
-          // Using a generic icon as placeholder; replace with appropriate illustration if needed.
           illustration: Icons.flash_on,
         );
       case JJToastType.error:
-        return const _ToastTheme(
-          backgroundColor: AppTheme.errorRed,
+        return _ToastTheme(
+          backgroundColor: AppTheme.electricalBackground,
+          borderColor: AppTheme.electricalError,
+          glowColor: AppTheme.electricalGlowError,
           iconColor: AppTheme.white,
-          textColor: AppTheme.white,
+          textColor: AppTheme.textOnDark,
           icon: Icons.error,
           illustration: Icons.build,
         );
       case JJToastType.warning:
-        return const _ToastTheme(
-          backgroundColor: AppTheme.warningYellow,
+        return _ToastTheme(
+          backgroundColor: AppTheme.electricalBackground,
+          borderColor: AppTheme.electricalWarning,
+          glowColor: AppTheme.electricalGlowWarning,
           iconColor: AppTheme.white,
-          textColor: AppTheme.white,
+          textColor: AppTheme.textOnDark,
           icon: Icons.warning,
           illustration: Icons.bolt,
         );
       case JJToastType.info:
-        return const _ToastTheme(
-          backgroundColor: AppTheme.primaryNavy,
+        return _ToastTheme(
+          backgroundColor: AppTheme.electricalBackground,
+          borderColor: AppTheme.electricalInfo,
+          glowColor: AppTheme.electricalGlowInfo,
           iconColor: AppTheme.white,
-          textColor: AppTheme.white,
+          textColor: AppTheme.textOnDark,
           icon: Icons.info,
           illustration: Icons.memory,
         );
       case JJToastType.power:
-        return const _ToastTheme(
-          backgroundColor: AppTheme.accentCopper,
+        return _ToastTheme(
+          backgroundColor: AppTheme.electricalBackground,
+          borderColor: AppTheme.accentCopper,
+          glowColor: AppTheme.accentCopper,
           iconColor: AppTheme.white,
-          textColor: AppTheme.white,
+          textColor: AppTheme.textOnDark,
           icon: Icons.flash_on,
           illustration: Icons.power,
         );
@@ -310,63 +320,89 @@ class JJElectricalToast extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: theme.backgroundColor,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        borderRadius: BorderRadius.circular(AppTheme.radiusElectricalToast),
+        border: Border.all(
+          color: theme.borderColor,
+          width: AppTheme.borderWidthCopper,
+        ),
         boxShadow: <BoxShadow>[
-          AppTheme.shadowLg,
-          // Add an electrical glow effect
           BoxShadow(
-            color: theme.backgroundColor.withValues(alpha: 0.3),
+            color: theme.glowColor.withValues(alpha: AppTheme.opacityElectricalGlow),
+            blurRadius: 15,
+            spreadRadius: 2,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: theme.borderColor.withValues(alpha: 0.2),
             blurRadius: 8,
+            spreadRadius: 1,
           ),
         ],
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (showIcon || customIcon != null) ...<Widget>[
-            iconWidget,
-            const SizedBox(width: AppTheme.spacingMd),
-          ],
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  message,
-                  style: AppTheme.bodyMedium.copyWith(
-                    color: theme.textColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                if (actionLabel != null) ...<Widget>[
-                  const SizedBox(height: AppTheme.spacingSm),
-                  TextButton(
-                    onPressed: onActionPressed,
-                    style: TextButton.styleFrom(
-                      foregroundColor: theme.textColor,
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(0, 0),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(
-                      actionLabel!,
-                      style: AppTheme.labelMedium.copyWith(
-                        color: theme.textColor,
-                        fontWeight: FontWeight.w600,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                ],
-              ],
+      child: Stack(
+        children: [
+          // Circuit board background
+          Positioned.fill(
+            child: ElectricalCircuitBackground(
+              opacity: 0.08,
+              componentDensity: ComponentDensity.high,
+              enableCurrentFlow: true,
+              enableInteractiveComponents: true,
+              traceColor: theme.borderColor,
+              currentColor: theme.glowColor,
+              copperColor: AppTheme.accentCopper,
             ),
           ),
-          const SizedBox(width: AppTheme.spacingSm),
-          // Electrical-themed progress indicator
-          _ElectricalProgressIndicator(
-            color: theme.textColor,
-            duration: duration ?? _getDefaultDuration(type),
+          // Content
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              if (showIcon || customIcon != null) ...<Widget>[
+                iconWidget,
+                const SizedBox(width: AppTheme.spacingMd),
+              ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      message,
+                      style: AppTheme.bodyMedium.copyWith(
+                        color: theme.textColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    if (actionLabel != null) ...<Widget>[
+                      const SizedBox(height: AppTheme.spacingSm),
+                      TextButton(
+                        onPressed: onActionPressed,
+                        style: TextButton.styleFrom(
+                          foregroundColor: theme.textColor,
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(0, 0),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: Text(
+                          actionLabel!,
+                          style: AppTheme.labelMedium.copyWith(
+                            color: theme.textColor,
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacingSm),
+              // Electrical-themed progress indicator
+              _ElectricalProgressIndicator(
+                color: theme.textColor,
+                duration: duration ?? _getDefaultDuration(type),
+              ),
+            ],
           ),
         ],
       ),
@@ -379,12 +415,16 @@ class _ToastTheme {
 
   const _ToastTheme({
     required this.backgroundColor,
+    required this.borderColor,
+    required this.glowColor,
     required this.iconColor,
     required this.textColor,
     required this.icon,
     required this.illustration,
   });
   final Color backgroundColor;
+  final Color borderColor;
+  final Color glowColor;
   final Color iconColor;
   final Color textColor;
   final IconData icon;
@@ -408,16 +448,24 @@ class _ElectricalToastIcon extends StatelessWidget {
       width: 32,
       height: 32,
       decoration: BoxDecoration(
-        color: theme.iconColor.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        color: theme.borderColor.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(AppTheme.radiusElectricalToast),
         border: Border.all(
-          color: theme.iconColor.withValues(alpha: 0.3),
+          color: theme.borderColor,
+          width: AppTheme.borderWidthCopper,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: theme.glowColor.withValues(alpha: AppTheme.opacityElectricalGlow),
+            blurRadius: 8,
+            spreadRadius: 1,
+          ),
+        ],
       ),
       child: Center(
         child: Icon(
           theme.icon,
-          size: AppTheme.iconSm,
+          size: AppTheme.iconElectricalToast,
           color: theme.iconColor,
         ),
       ),
@@ -435,7 +483,7 @@ class _ElectricalToastIcon extends StatelessWidget {
           .then()
           .shimmer(
             duration: const Duration(milliseconds: 800),
-            color: theme.iconColor.withValues(alpha: 0.3),
+            color: theme.glowColor.withValues(alpha: 0.3),
           );
     }
 
@@ -460,7 +508,7 @@ class _ElectricalProgressIndicator extends StatefulWidget {
 
 class _ElectricalProgressIndicatorState
     extends State<_ElectricalProgressIndicator>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -485,7 +533,7 @@ class _ElectricalProgressIndicatorState
 
   @override
   Widget build(BuildContext context) => SizedBox(
-      width: 4,
+      width: AppTheme.borderWidthCopper,
       height: 40,
       child: AnimatedBuilder(
         animation: _animation,
@@ -493,6 +541,7 @@ class _ElectricalProgressIndicatorState
             painter: _ElectricalProgressPainter(
               progress: _animation.value,
               color: widget.color,
+              borderColor: AppTheme.accentCopper,
             ),
           ),
       ),
@@ -501,40 +550,55 @@ class _ElectricalProgressIndicatorState
 
 /// Custom painter for electrical-themed progress indicator
 class _ElectricalProgressPainter extends CustomPainter {
-
   _ElectricalProgressPainter({
     required this.progress,
     required this.color,
+    required this.borderColor,
   });
+
   final double progress;
   final Color color;
+  final Color borderColor;
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Background track
-    final Paint trackPaint = Paint()
-      ..color = color.withValues(alpha: 0.3)
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
+    // Draw copper border
+    final Paint borderPaint = Paint()
+      ..color = borderColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = AppTheme.borderWidthCopper;
 
-    canvas.drawLine(
-      Offset(size.width / 2, 0),
-      Offset(size.width / 2, size.height),
-      trackPaint,
+    final Rect borderRect = Rect.fromPoints(
+      Offset.zero,
+      Offset(size.width, size.height),
     );
+    canvas.drawRect(borderRect, borderPaint);
 
-    // Progress indicator with electrical styling
-    final Paint progressPaint = Paint()
+    // Draw electrical progress
+    final Paint paint = Paint()
       ..color = color
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
+      ..style = PaintingStyle.fill
+      ..maskFilter = const MaskFilter.blur(BlurStyle.solid, 2);
 
-    final double progressHeight = size.height * progress;
-    canvas.drawLine(
-      Offset(size.width / 2, 0),
-      Offset(size.width / 2, progressHeight),
-      progressPaint,
+    final double height = size.height * progress;
+    final Rect rect = Rect.fromPoints(
+      Offset(0, size.height - height),
+      Offset(size.width, size.height),
     );
+
+    canvas.drawRect(rect, paint);
+
+    // Add electrical glow effect
+    final Paint glowPaint = Paint()
+      ..color = color.withValues(alpha: AppTheme.opacityElectricalGlow)
+      ..style = PaintingStyle.fill
+      ..maskFilter = const MaskFilter.blur(BlurStyle.solid, 4);
+
+    final Rect glowRect = Rect.fromPoints(
+      Offset(-1, size.height - height - 1),
+      Offset(size.width + 1, size.height + 1),
+    );
+    canvas.drawRect(glowRect, glowPaint);
 
     // Add electrical sparks effect
     if (progress > 0.1) {
@@ -543,7 +607,7 @@ class _ElectricalProgressPainter extends CustomPainter {
         ..strokeWidth = 1;
 
       for (int i = 0; i < 3; i++) {
-        final double sparkY = progressHeight + (i * 2);
+        final double sparkY = size.height - height + (i * 2);
         if (sparkY < size.height) {
           canvas.drawCircle(
             Offset(size.width / 2, sparkY),
@@ -556,7 +620,10 @@ class _ElectricalProgressPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _ElectricalProgressPainter oldDelegate) => oldDelegate.progress != progress || oldDelegate.color != color;
+  bool shouldRepaint(covariant _ElectricalProgressPainter oldDelegate) =>
+      oldDelegate.progress != progress ||
+      oldDelegate.color != color ||
+      oldDelegate.borderColor != borderColor;
 }
 
 /// Overlay widget to position and animate the toast

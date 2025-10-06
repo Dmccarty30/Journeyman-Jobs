@@ -365,7 +365,6 @@ class ReactionPopup extends StatefulWidget {
 class _ReactionPopupState extends State<ReactionPopup>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   
@@ -377,13 +376,6 @@ class _ReactionPopupState extends State<ReactionPopup>
       vsync: this,
     );
     
-    _scaleAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.elasticOut,
-    ));
     
     _fadeAnimation = Tween<double>(
       begin: 0.0,

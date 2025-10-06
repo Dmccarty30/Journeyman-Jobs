@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:journeyman_jobs/electrical_components/jj_electrical_notifications.dart';
 import '../app_theme.dart';
 import '../../electrical_components/electrical_components.dart';
 import '../illustrations/electrical_illustrations.dart';
@@ -1059,37 +1060,11 @@ class JJSnackBar {
     required String message,
     Duration duration = const Duration(seconds: 3),
   }) {
-    return ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            SizedBox(
-              width: 24,
-              height: 24,
-              child: ElectricalIllustrationWidget(
-                illustration: ElectricalIllustration.success,
-                width: 24,
-                height: 24,
-                color: AppTheme.white,
-                animate: false,
-              ),
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Expanded(
-              child: Text(
-                message,
-                style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: AppTheme.successGreen,
-        duration: duration,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        ),
-      ),
+    return JJElectricalNotifications.showElectricalSnackBar(
+      context: context,
+      message: message,
+      type: ElectricalNotificationType.success,
+      duration: duration,
     );
   }
 
@@ -1098,27 +1073,11 @@ class JJSnackBar {
     required String message,
     Duration duration = const Duration(seconds: 4),
   }) {
-    return ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.error, color: AppTheme.white),
-            const SizedBox(width: AppTheme.spacingSm),
-            Expanded(
-              child: Text(
-                message,
-                style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: AppTheme.errorRed,
-        duration: duration,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        ),
-      ),
+    return JJElectricalNotifications.showElectricalSnackBar(
+      context: context,
+      message: message,
+      type: ElectricalNotificationType.error,
+      duration: duration,
     );
   }
 
@@ -1127,27 +1086,24 @@ class JJSnackBar {
     required String message,
     Duration duration = const Duration(seconds: 3),
   }) {
-    return ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.info, color: AppTheme.white),
-            const SizedBox(width: AppTheme.spacingSm),
-            Expanded(
-              child: Text(
-                message,
-                style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: AppTheme.primaryNavy,
-        duration: duration,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        ),
-      ),
+    return JJElectricalNotifications.showElectricalSnackBar(
+      context: context,
+      message: message,
+      type: ElectricalNotificationType.info,
+      duration: duration,
+    );
+  }
+
+  static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showWarning({
+    required BuildContext context,
+    required String message,
+    Duration duration = const Duration(seconds: 3),
+  }) {
+    return JJElectricalNotifications.showElectricalSnackBar(
+      context: context,
+      message: message,
+      type: ElectricalNotificationType.warning,
+      duration: duration,
     );
   }
 }

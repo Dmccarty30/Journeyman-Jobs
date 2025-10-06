@@ -15,6 +15,7 @@ import '../../services/firestore_service.dart';
 import '../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
 import '../../electrical_components/circuit_board_background.dart';
+import '../../electrical_components/jj_electrical_notifications.dart';
 
 class OnboardingStepsScreen extends StatefulWidget {
   const OnboardingStepsScreen({super.key});
@@ -211,17 +212,19 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
       );
 
       if (mounted) {
-        JJSnackBar.showSuccess(
+        JJElectricalNotifications.showElectricalToast(
           context: context,
           message: 'Basic information saved',
+          type: ElectricalNotificationType.success,
         );
       }
     } catch (e) {
       debugPrint('Error saving Step 1 data: $e');
       if (mounted) {
-        JJSnackBar.showError(
+        JJElectricalNotifications.showElectricalToast(
           context: context,
           message: 'Error saving data. Please try again.',
+          type: ElectricalNotificationType.error,
         );
       }
       rethrow;
@@ -252,17 +255,19 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
       );
 
       if (mounted) {
-        JJSnackBar.showSuccess(
+        JJElectricalNotifications.showElectricalToast(
           context: context,
           message: 'Professional details saved',
+          type: ElectricalNotificationType.success,
         );
       }
     } catch (e) {
       debugPrint('Error saving Step 2 data: $e');
       if (mounted) {
-        JJSnackBar.showError(
+        JJElectricalNotifications.showElectricalToast(
           context: context,
           message: 'Error saving data. Please try again.',
+          type: ElectricalNotificationType.error,
         );
       }
       rethrow;
@@ -313,9 +318,10 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
       await onboardingService.markOnboardingComplete();
 
       if (mounted) {
-        JJSnackBar.showSuccess(
+        JJElectricalNotifications.showElectricalToast(
           context: context,
           message: 'Profile setup complete! Welcome to Journeyman Jobs.',
+          type: ElectricalNotificationType.success,
         );
 
         // Navigate to home after successful save
@@ -328,9 +334,10 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     } catch (e) {
       debugPrint('Error completing onboarding: $e');
       if (mounted) {
-        JJSnackBar.showError(
+        JJElectricalNotifications.showElectricalToast(
           context: context,
           message: 'Error saving profile. Please try again.',
+          type: ElectricalNotificationType.error,
         );
       }
     }
@@ -360,77 +367,146 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.offWhite,
+      backgroundColor: AppTheme.primaryNavy,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        backgroundColor: AppTheme.white,
+        backgroundColor: AppTheme.primaryNavy.withValues(alpha: 0.9),
         elevation: 0,
         leading: _currentStep > 0
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: AppTheme.primaryNavy),
-                onPressed: _previousStep,
+            ? Container(
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: AppTheme.accentCopper,
+                    width: AppTheme.borderWidthCopperThin,
+                  ),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  boxShadow: [
+                    AppTheme.shadowElectricalInfo,
+                  ],
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: AppTheme.white),
+                  onPressed: _previousStep,
+                ),
               )
             : null,
         title: Text(
           'Setup Profile',
-          style: AppTheme.headlineMedium.copyWith(color: AppTheme.primaryNavy),
+          style: AppTheme.headlineMedium.copyWith(
+            color: AppTheme.white,
+            shadows: [
+              Shadow(
+                color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
         ),
         centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            height: 1,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppTheme.accentCopper.withValues(alpha: 0.0),
+                  AppTheme.accentCopper.withValues(alpha: 0.5),
+                  AppTheme.accentCopper.withValues(alpha: 0.0),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
       body: Stack(
         children: [
-          ElectricalCircuitBackground(
-            opacity: 0.08,
-            componentDensity: ComponentDensity.high,
+          // Enhanced electrical circuit background
+          const Positioned.fill(
+            child: ElectricalCircuitBackground(
+              opacity: 0.08,
+              componentDensity: ComponentDensity.high,
+              enableCurrentFlow: true,
+              enableInteractiveComponents: true,
+            ),
           ),
           Column(
             children: [
-              // Progress indicator
+              // Enhanced progress indicator with electrical theming
               Container(
-            padding: const EdgeInsets.all(AppTheme.spacingMd),
-            child: Column(
-              children: [
-                JJProgressIndicator(
-                  currentStep: _currentStep + 1,
-                  totalSteps: _totalSteps,
+                margin: const EdgeInsets.all(AppTheme.spacingMd),
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  color: AppTheme.white.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                  border: Border.all(
+                    color: AppTheme.accentCopper,
+                    width: AppTheme.borderWidthCopperThin,
+                  ),
+                  boxShadow: [
+                    AppTheme.shadowElectricalInfo,
+                    BoxShadow(
+                      color: AppTheme.primaryNavy.withValues(alpha: 0.1),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: AppTheme.spacingXs),
-                Text(
-                  'Step ${_currentStep + 1} of $_totalSteps',
-                  style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary),
+                child: Column(
+                  children: [
+                    JJProgressIndicator(
+                      currentStep: _currentStep + 1,
+                      totalSteps: _totalSteps,
+                    ),
+                    const SizedBox(height: AppTheme.spacingXs),
+                    Text(
+                      'Step ${_currentStep + 1} of $_totalSteps',
+                      style: AppTheme.bodySmall.copyWith(
+                        color: AppTheme.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          
-          // Page content
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (page) {
-                setState(() {
-                  _currentStep = page;
-                });
-              },
-              children: [
-                _buildStep1(),
-                _buildStep2(),
-                _buildStep3(),
-              ],
-            ),
-          ),
+              ),
+
+              // Page content
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (page) {
+                    setState(() {
+                      _currentStep = page;
+                    });
+                  },
+                  children: [
+                    _buildStep1(),
+                    _buildStep2(),
+                    _buildStep3(),
+                  ],
+                ),
+              ),
             ],
           ),
         ],
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: AppTheme.white,
+          color: AppTheme.primaryNavy.withValues(alpha: 0.9),
+          border: Border(
+            top: BorderSide(
+              color: AppTheme.accentCopper,
+              width: AppTheme.borderWidthCopper,
+            ),
+          ),
           boxShadow: [
+            AppTheme.shadowElectricalSuccess,
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 4,
-              offset: const Offset(0, -2),
+              color: AppTheme.primaryNavy.withValues(alpha: 0.3),
+              blurRadius: 20,
+              offset: const Offset(0, -8),
             ),
           ],
         ),
@@ -441,25 +517,51 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
               children: [
                 if (_currentStep > 0)
                   Expanded(
-                    child: JJSecondaryButton(
-                      text: 'Back',
-                      onPressed: _previousStep,
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: AppTheme.accentCopper,
+                          width: AppTheme.borderWidthCopperThin,
+                        ),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        boxShadow: [
+                          AppTheme.shadowElectricalWarning,
+                        ],
+                      ),
+                      child: JJSecondaryButton(
+                        text: 'Back',
+                        onPressed: _previousStep,
+                      ),
                     ),
                   )
                 else
                   const Expanded(child: SizedBox()),
-                
+
                 const SizedBox(width: AppTheme.spacingMd),
-                
+
                 Expanded(
-                  child: JJPrimaryButton(
-                    text: _currentStep == _totalSteps - 1 ? 'Complete' : 'Next',
-                    onPressed: (_canProceed() && !_isSaving) ? _nextStep : null,
-                    isLoading: _isSaving,
-                    icon: _currentStep == _totalSteps - 1
-                        ? Icons.check
-                        : Icons.arrow_forward,
-                    variant: JJButtonVariant.primary,
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: AppTheme.accentCopper,
+                        width: AppTheme.borderWidthCopper,
+                      ),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      boxShadow: [
+                        AppTheme.shadowElectricalSuccess,
+                      ],
+                    ),
+                    child: JJPrimaryButton(
+                      text: _currentStep == _totalSteps - 1 ? 'Complete' : 'Next',
+                      onPressed: (_canProceed() && !_isSaving) ? _nextStep : null,
+                      isLoading: _isSaving,
+                      icon: _currentStep == _totalSteps - 1
+                          ? Icons.check
+                          : Icons.arrow_forward,
+                      variant: JJButtonVariant.primary,
+                    ),
                   ),
                 ),
               ],
@@ -1073,33 +1175,65 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     return Column(
       children: [
         Container(
-          width: 60,
-          height: 60,
+          width: 80,
+          height: 80,
           decoration: BoxDecoration(
             gradient: AppTheme.buttonGradient,
             shape: BoxShape.circle,
-            boxShadow: [AppTheme.shadowMd],
+            border: Border.all(
+              color: AppTheme.accentCopper,
+              width: AppTheme.borderWidthCopper,
+            ),
+            boxShadow: [
+              AppTheme.shadowElectricalSuccess,
+              BoxShadow(
+                color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                blurRadius: 20,
+                spreadRadius: 2,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Icon(
             icon,
-            size: 28,
+            size: 36,
             color: AppTheme.white,
+            shadows: [
+              Shadow(
+                color: AppTheme.accentCopper.withValues(alpha: 0.5),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
         ),
-        
-        const SizedBox(height: AppTheme.spacingSm),
-        
+
+        const SizedBox(height: AppTheme.spacingMd),
+
         Text(
           title,
-          style: AppTheme.headlineSmall.copyWith(color: AppTheme.primaryNavy),
+          style: AppTheme.headlineMedium.copyWith(
+            color: AppTheme.white,
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: AppTheme.primaryNavy.withValues(alpha: 0.8),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
           textAlign: TextAlign.center,
         ),
-        
-        const SizedBox(height: AppTheme.spacingXs),
-        
+
+        const SizedBox(height: AppTheme.spacingSm),
+
         Text(
           subtitle,
-          style: AppTheme.bodyMedium.copyWith(color: AppTheme.textSecondary),
+          style: AppTheme.bodyLarge.copyWith(
+            color: AppTheme.white.withValues(alpha: 0.9),
+            fontWeight: FontWeight.w500,
+          ),
           textAlign: TextAlign.center,
         ),
       ],

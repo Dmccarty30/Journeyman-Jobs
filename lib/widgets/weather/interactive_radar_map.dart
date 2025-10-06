@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../services/weather_radar_service.dart';
 import '../../services/location_service.dart';
 import '../../design_system/app_theme.dart';
@@ -26,14 +25,14 @@ class InteractiveRadarMap extends StatefulWidget {
   final Function(LatLng)? onLocationTap;
   
   const InteractiveRadarMap({
-    Key? key,
+    super.key,
     this.initialLatitude = 39.8283, // US center
     this.initialLongitude = -98.5795,
     this.initialZoom = 5.0,
     this.showControls = true,
     this.animateRadar = false,
     this.onLocationTap,
-  }) : super(key: key);
+  });
 
   @override
   State<InteractiveRadarMap> createState() => _InteractiveRadarMapState();
@@ -59,8 +58,9 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
   
   // Radar settings
   double _radarOpacity = 0.7;
+  // ignore: prefer_final_fields
   RadarColorScheme _colorScheme = RadarColorScheme.universal;
-  bool _showSatellite = false;
+  final bool _showSatellite = false;
   
   @override
   void initState() {

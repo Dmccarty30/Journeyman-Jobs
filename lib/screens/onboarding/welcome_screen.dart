@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
+import '../../electrical_components/circuit_board_background.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -68,25 +68,107 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     context.go(AppRouter.auth);
   }
 
+  Widget _buildCustomPrimaryButton({
+    required String text,
+    required IconData icon,
+    required VoidCallback onPressed,
+    required double fontSize,
+  }) {
+    return Container(
+      width: double.infinity,
+      height: 56,
+      decoration: BoxDecoration(
+        gradient: AppTheme.buttonGradient,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        border: Border.all(
+          color: AppTheme.accentCopper,
+          width: AppTheme.borderWidthCopper,
+        ),
+        boxShadow: [
+          AppTheme.shadowElectricalSuccess,
+          BoxShadow(
+            color: AppTheme.accentCopper.withValues(alpha: 0.2),
+            blurRadius: 15,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingLg,
+              vertical: AppTheme.spacingMd,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  color: AppTheme.white,
+                  size: AppTheme.iconSm,
+                ),
+                const SizedBox(width: AppTheme.spacingSm),
+                Expanded(
+                  child: Text(
+                    text,
+                    style: AppTheme.buttonMedium.copyWith(color: AppTheme.white, fontSize: fontSize),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.white,
-      body: SafeArea(
-        child: Column(
-          children: [
+      backgroundColor: AppTheme.primaryNavy,
+      body: Stack(
+        children: [
+          // Electrical circuit background
+          const Positioned.fill(
+            child: ElectricalCircuitBackground(
+              opacity: 0.08,
+              componentDensity: ComponentDensity.high,
+              enableCurrentFlow: true,
+              enableInteractiveComponents: true,
+            ),
+          ),
+          // Main content
+          SafeArea(
+            child: Column(
+              children: [
             // Skip button
             Padding(
               padding: const EdgeInsets.all(AppTheme.spacingMd),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: _skipToAuth,
-                    child: Text(
-                      'Skip',
-                      style: AppTheme.labelLarge.copyWith(
-                        color: AppTheme.textSecondary,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.white.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                      border: Border.all(
+                        color: AppTheme.accentCopper.withValues(alpha: 0.5),
+                        width: AppTheme.borderWidthCopperThin,
+                      ),
+                    ),
+                    child: TextButton(
+                      onPressed: _skipToAuth,
+                      child: Text(
+                        'Skip',
+                        style: AppTheme.labelLarge.copyWith(
+                          color: AppTheme.accentCopper,
+                        ),
                       ),
                     ),
                   ),
@@ -114,7 +196,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           decoration: BoxDecoration(
                             gradient: AppTheme.buttonGradient,
                             shape: BoxShape.circle,
-                            boxShadow: [AppTheme.shadowMd],
+                            border: Border.all(
+                              color: AppTheme.accentCopper,
+                              width: AppTheme.borderWidthCopper,
+                            ),
+                            boxShadow: [
+                              AppTheme.shadowElectricalSuccess,
+                              BoxShadow(
+                                color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                                blurRadius: 20,
+                                spreadRadius: 2,
+                              ),
+                            ],
                           ),
                           child: Icon(
                             page.icon,
@@ -135,7 +228,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         Text(
                           page.title,
                           style: AppTheme.displaySmall.copyWith(
-                            color: AppTheme.primaryNavy,
+                            color: AppTheme.white,
                           ),
                           textAlign: TextAlign.center,
                         )
@@ -220,8 +313,23 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         decoration: BoxDecoration(
                           color: _currentPage == index
                               ? AppTheme.accentCopper
-                              : AppTheme.lightGray,
+                              : AppTheme.lightGray.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(4),
+                          border: _currentPage == index
+                              ? Border.all(
+                                  color: AppTheme.accentCopper,
+                                  width: AppTheme.borderWidthCopperThin,
+                                )
+                              : null,
+                          boxShadow: _currentPage == index
+                              ? [
+                                  BoxShadow(
+                                    color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                                    blurRadius: 8,
+                                    spreadRadius: 1,
+                                  ),
+                                ]
+                              : null,
                         ),
                       )
                       .animate()
@@ -239,14 +347,59 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       // Back button (hidden on first page)
                       if (_currentPage > 0)
                         Expanded(
-                          child: JJSecondaryButton(
-                            text: 'Back',
-                            onPressed: () {
-                              _pageController.previousPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            },
+                          child: Container(
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryNavy.withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                              border: Border.all(
+                                color: AppTheme.accentCopper,
+                                width: AppTheme.borderWidthCopperThin,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppTheme.primaryNavy.withValues(alpha: 0.2),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  _pageController.previousPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppTheme.spacingLg,
+                                    vertical: AppTheme.spacingMd,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.arrow_back_ios,
+                                        color: AppTheme.accentCopper,
+                                        size: AppTheme.iconSm,
+                                      ),
+                                      const SizedBox(width: AppTheme.spacingSm),
+                                      Text(
+                                        'Back',
+                                        style: AppTheme.buttonMedium.copyWith(
+                                          color: AppTheme.accentCopper,
+                                          fontSize: AppTheme.buttonMedium.fontSize,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         )
                       else
@@ -256,24 +409,73 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       
                       // Next/Get Started button
                       Expanded(
-                        child: JJPrimaryButton(
-                          text: _currentPage == _pages.length - 1
-                              ? 'Get Started'
-                              : 'Next',
-                          icon: _currentPage == _pages.length - 1
-                              ? Icons.arrow_forward
-                              : Icons.arrow_forward_ios,
-                          onPressed: _nextPage,
-                          variant: JJButtonVariant.primary,
-                        ),
+                        child: _currentPage == _pages.length - 1
+                            ? _buildCustomPrimaryButton(
+                                text: 'Get Started',
+                                icon: Icons.arrow_forward,
+                                onPressed: _nextPage,
+                                fontSize: AppTheme.buttonMedium.fontSize! * 0.85,
+                              )
+                            : Container(
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  gradient: AppTheme.buttonGradient,
+                                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                  border: Border.all(
+                                    color: AppTheme.accentCopper,
+                                    width: AppTheme.borderWidthCopper,
+                                  ),
+                                  boxShadow: [
+                                    AppTheme.shadowElectricalInfo,
+                                    BoxShadow(
+                                      color: AppTheme.accentCopper.withValues(alpha: 0.2),
+                                      blurRadius: 15,
+                                      spreadRadius: 2,
+                                    ),
+                                  ],
+                                ),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: _nextPage,
+                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: AppTheme.spacingLg,
+                                        vertical: AppTheme.spacingMd,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.arrow_forward_ios,
+                                            color: AppTheme.white,
+                                            size: AppTheme.iconSm,
+                                          ),
+                                          const SizedBox(width: AppTheme.spacingSm),
+                                          Text(
+                                            'Next',
+                                            style: AppTheme.buttonMedium.copyWith(
+                                              color: AppTheme.white,
+                                              fontSize: AppTheme.buttonMedium.fontSize,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

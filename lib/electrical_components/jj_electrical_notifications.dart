@@ -505,15 +505,21 @@ class _ElectricalTooltipState extends State<ElectricalTooltip>
         borderRadius: BorderRadius.circular(themeConfig['borderRadius'] ?? AppTheme.radiusElectricalTooltip),
         border: Border.all(
           color: themeConfig['borderColor'] ?? JJElectricalNotifications._getTypeColor(widget.type),
-          width: AppTheme.borderWidthThin,
+          width: AppTheme.borderWidthCopper,
         ),
         boxShadow: [
           themeConfig['shadow'] ?? BoxShadow(
             color: (themeConfig['glowColor'] ?? JJElectricalNotifications._getTypeColor(widget.type))
                 .withValues(alpha: AppTheme.opacityElectricalGlow),
+            blurRadius: 15,
+            spreadRadius: 2,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: (themeConfig['borderColor'] ?? JJElectricalNotifications._getTypeColor(widget.type))
+                .withValues(alpha: 0.2),
             blurRadius: 8,
             spreadRadius: 1,
-            offset: const Offset(0, 2),
           ),
         ],
       ),

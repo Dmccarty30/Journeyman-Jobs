@@ -366,69 +366,115 @@ class _AuthScreenState extends State<AuthScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.primaryNavy,
       body: Stack(
         children: [
-          ElectricalCircuitBackground(
-            opacity: 0.08,
-            componentDensity: ComponentDensity.high,
+          // Enhanced electrical circuit background
+          const Positioned.fill(
+            child: ElectricalCircuitBackground(
+              opacity: 0.08,
+              componentDensity: ComponentDensity.high,
+              enableCurrentFlow: true,
+              enableInteractiveComponents: true,
+            ),
           ),
           SafeArea(
         child: Column(
           children: [
-            // Header
+            // Enhanced header with electrical theming
             Container(
               padding: const EdgeInsets.all(AppTheme.spacingLg),
               child: Column(
                 children: [
-                  // Logo
+                  // Enhanced logo with copper borders and glow
                   Container(
-                    width: 80,
-                    height: 80,
+                    width: 100,
+                    height: 100,
                     decoration: BoxDecoration(
                       gradient: AppTheme.buttonGradient,
                       shape: BoxShape.circle,
-                      boxShadow: [AppTheme.shadowMd],
+                      border: Border.all(
+                        color: AppTheme.accentCopper,
+                        width: AppTheme.borderWidthCopper,
+                      ),
+                      boxShadow: [
+                        AppTheme.shadowElectricalSuccess,
+                        BoxShadow(
+                          color: AppTheme.accentCopper.withValues(alpha: 0.4),
+                          blurRadius: 25,
+                          spreadRadius: 3,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.electrical_services,
-                      size: 40,
+                      size: 50,
                       color: AppTheme.white,
+                      shadows: [
+                        Shadow(
+                          color: AppTheme.accentCopper.withValues(alpha: 0.6),
+                          blurRadius: 12,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: AppTheme.spacingMd),
-                  
+
                   Text(
                     'Join Journeyman Jobs',
                     style: AppTheme.displaySmall.copyWith(
-                      color: AppTheme.primaryNavy,
+                      color: AppTheme.white,
+                      fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          color: AppTheme.primaryNavy.withValues(alpha: 0.8),
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: AppTheme.spacingSm),
-                  
+
                   Text(
                     'Connect with electrical opportunities',
                     style: AppTheme.bodyLarge.copyWith(
-                      color: AppTheme.textSecondary,
+                      color: AppTheme.white.withValues(alpha: 0.9),
+                      fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,
                   ),
                 ],
               ),
             ),
-            
-            // Tab bar
-            SegmentedTabBar(
-              controller: _tabController,
-              onTabChanged: (index) {
-                setState(() {
-                  // Update any state if needed
-                });
-              },
+
+            // Enhanced tab bar
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: AppTheme.accentCopper,
+                  width: AppTheme.borderWidthCopperThin,
+                ),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                boxShadow: [
+                  AppTheme.shadowElectricalInfo,
+                ],
+              ),
+              child: SegmentedTabBar(
+                controller: _tabController,
+                onTabChanged: (index) {
+                  setState(() {
+                    // Update any state if needed
+                  });
+                },
+              ),
             ),
-            
+
             // Tab content
             Expanded(
               child: TabBarView(
@@ -450,75 +496,107 @@ class _AuthScreenState extends State<AuthScreen>
   Widget _buildSignUpForm() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
-      child: Form(
-        key: _signUpFormKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: AppTheme.spacingXl),
-            
-            // Email
-            JJTextField(
-              label: 'Email',
-              controller: _signUpEmailController,
-              validator: _validateEmail,
-              keyboardType: TextInputType.emailAddress,
-              prefixIcon: Icons.email_outlined,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+        padding: const EdgeInsets.all(AppTheme.spacingLg),
+        decoration: BoxDecoration(
+          color: AppTheme.white.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          border: Border.all(
+            color: AppTheme.accentCopper,
+            width: AppTheme.borderWidthCopperThin,
+          ),
+          boxShadow: [
+            AppTheme.shadowElectricalInfo,
+            BoxShadow(
+              color: AppTheme.primaryNavy.withValues(alpha: 0.1),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
             ),
-            
-            const SizedBox(height: AppTheme.spacingLg),
-            
-            // Password
-            JJTextField(
-              label: 'Password',
-              controller: _signUpPasswordController,
-              validator: _validatePassword,
-              obscureText: _obscureSignUpPassword,
-              prefixIcon: Icons.lock_outline,
-              suffixIcon: _obscureSignUpPassword
-                  ? Icons.visibility_outlined
-                  : Icons.visibility_off_outlined,
-              onSuffixIconPressed: () {
-                setState(() {
-                  _obscureSignUpPassword = !_obscureSignUpPassword;
-                });
-              },
-            ),
-            
-            const SizedBox(height: AppTheme.spacingLg),
-            
-            // Confirm Password
-            JJTextField(
-              label: 'Confirm Password',
-              controller: _signUpConfirmPasswordController,
-              validator: _validateConfirmPassword,
-              obscureText: _obscureSignUpConfirmPassword,
-              prefixIcon: Icons.lock_outline,
-              suffixIcon: _obscureSignUpConfirmPassword
-                  ? Icons.visibility_outlined
-                  : Icons.visibility_off_outlined,
-              onSuffixIconPressed: () {
-                setState(() {
-                  _obscureSignUpConfirmPassword = !_obscureSignUpConfirmPassword;
-                });
-              },
-            ),
-            
-            const SizedBox(height: AppTheme.spacingXl),
-            
-            // Sign Up Button
-            JJPrimaryButton(
-              text: 'Create Account',
-              onPressed: _signUpWithEmail,
-              isLoading: _isSignUpLoading,
-              isFullWidth: true,
-              variant: JJButtonVariant.primary,
-            ),
-            
-            const SizedBox(height: AppTheme.spacingLg),
-            
-            _buildSocialSignInButtons(),
           ],
+        ),
+        child: Form(
+          key: _signUpFormKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: AppTheme.spacingXl),
+
+              // Email
+              JJTextField(
+                label: 'Email',
+                controller: _signUpEmailController,
+                validator: _validateEmail,
+                keyboardType: TextInputType.emailAddress,
+                prefixIcon: Icons.email_outlined,
+              ),
+
+              const SizedBox(height: AppTheme.spacingLg),
+
+              // Password
+              JJTextField(
+                label: 'Password',
+                controller: _signUpPasswordController,
+                validator: _validatePassword,
+                obscureText: _obscureSignUpPassword,
+                prefixIcon: Icons.lock_outline,
+                suffixIcon: _obscureSignUpPassword
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+                onSuffixIconPressed: () {
+                  setState(() {
+                    _obscureSignUpPassword = !_obscureSignUpPassword;
+                  });
+                },
+              ),
+
+              const SizedBox(height: AppTheme.spacingLg),
+
+              // Confirm Password
+              JJTextField(
+                label: 'Confirm Password',
+                controller: _signUpConfirmPasswordController,
+                validator: _validateConfirmPassword,
+                obscureText: _obscureSignUpConfirmPassword,
+                prefixIcon: Icons.lock_outline,
+                suffixIcon: _obscureSignUpConfirmPassword
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+                onSuffixIconPressed: () {
+                  setState(() {
+                    _obscureSignUpConfirmPassword = !_obscureSignUpConfirmPassword;
+                  });
+                },
+              ),
+
+              const SizedBox(height: AppTheme.spacingXl),
+
+              // Sign Up Button with electrical theming
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: AppTheme.accentCopper,
+                    width: AppTheme.borderWidthCopper,
+                  ),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  boxShadow: [
+                    AppTheme.shadowElectricalSuccess,
+                  ],
+                ),
+                child: JJPrimaryButton(
+                  text: 'Create Account',
+                  onPressed: _signUpWithEmail,
+                  isLoading: _isSignUpLoading,
+                  isFullWidth: true,
+                  variant: JJButtonVariant.primary,
+                ),
+              ),
+
+              const SizedBox(height: AppTheme.spacingLg),
+
+              _buildSocialSignInButtons(),
+            ],
+          ),
         ),
       ),
     );
@@ -527,78 +605,120 @@ class _AuthScreenState extends State<AuthScreen>
   Widget _buildSignInForm() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
-      child: Form(
-        key: _signInFormKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: AppTheme.spacingXl),
-            
-            // Email
-            JJTextField(
-              label: 'Email',
-              controller: _signInEmailController,
-              validator: _validateEmail,
-              keyboardType: TextInputType.emailAddress,
-              prefixIcon: Icons.email_outlined,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+        padding: const EdgeInsets.all(AppTheme.spacingLg),
+        decoration: BoxDecoration(
+          color: AppTheme.white.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          border: Border.all(
+            color: AppTheme.accentCopper,
+            width: AppTheme.borderWidthCopperThin,
+          ),
+          boxShadow: [
+            AppTheme.shadowElectricalInfo,
+            BoxShadow(
+              color: AppTheme.primaryNavy.withValues(alpha: 0.1),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
             ),
-            
-            const SizedBox(height: AppTheme.spacingLg),
-            
-            // Password
-            JJTextField(
-              label: 'Password',
-              controller: _signInPasswordController,
-              validator: _validatePassword,
-              obscureText: _obscureSignInPassword,
-              prefixIcon: Icons.lock_outline,
-              suffixIcon: _obscureSignInPassword
-                  ? Icons.visibility_outlined
-                  : Icons.visibility_off_outlined,
-              onSuffixIconPressed: () {
-                setState(() {
-                  _obscureSignInPassword = !_obscureSignInPassword;
-                });
-              },
-            ),
-            
-            const SizedBox(height: AppTheme.spacingMd),
-            
-            // Forgot Password
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {
-                  // TODO: Implement forgot password
-                  JJSnackBar.showError(
-                    context: context,
-                    message: 'Forgot password feature coming soon',
-                  );
+          ],
+        ),
+        child: Form(
+          key: _signInFormKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: AppTheme.spacingXl),
+
+              // Email
+              JJTextField(
+                label: 'Email',
+                controller: _signInEmailController,
+                validator: _validateEmail,
+                keyboardType: TextInputType.emailAddress,
+                prefixIcon: Icons.email_outlined,
+              ),
+
+              const SizedBox(height: AppTheme.spacingLg),
+
+              // Password
+              JJTextField(
+                label: 'Password',
+                controller: _signInPasswordController,
+                validator: _validatePassword,
+                obscureText: _obscureSignInPassword,
+                prefixIcon: Icons.lock_outline,
+                suffixIcon: _obscureSignInPassword
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+                onSuffixIconPressed: () {
+                  setState(() {
+                    _obscureSignInPassword = !_obscureSignInPassword;
+                  });
                 },
-                child: Text(
-                  'Forgot Password?',
-                  style: AppTheme.labelMedium.copyWith(
-                    color: AppTheme.accentCopper,
+              ),
+
+              const SizedBox(height: AppTheme.spacingMd),
+
+              // Forgot Password
+              Align(
+                alignment: Alignment.centerRight,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: AppTheme.accentCopper.withValues(alpha: 0.5),
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: TextButton(
+                    onPressed: () {
+                      // TODO: Implement forgot password
+                      JJSnackBar.showError(
+                        context: context,
+                        message: 'Forgot password feature coming soon',
+                      );
+                    },
+                    child: Text(
+                      'Forgot Password?',
+                      style: AppTheme.labelMedium.copyWith(
+                        color: AppTheme.accentCopper,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-            
-            const SizedBox(height: AppTheme.spacingLg),
-            
-            // Sign In Button
-            JJPrimaryButton(
-              text: 'Sign In',
-              onPressed: _signInWithEmail,
-              isLoading: _isSignInLoading,
-              isFullWidth: true,
-              variant: JJButtonVariant.primary,
-            ),
-            
-            const SizedBox(height: AppTheme.spacingLg),
-            
-            _buildSocialSignInButtons(),
-          ],
+
+              const SizedBox(height: AppTheme.spacingLg),
+
+              // Sign In Button with electrical theming
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: AppTheme.accentCopper,
+                    width: AppTheme.borderWidthCopper,
+                  ),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  boxShadow: [
+                    AppTheme.shadowElectricalSuccess,
+                  ],
+                ),
+                child: JJPrimaryButton(
+                  text: 'Sign In',
+                  onPressed: _signInWithEmail,
+                  isLoading: _isSignInLoading,
+                  isFullWidth: true,
+                  variant: JJButtonVariant.primary,
+                ),
+              ),
+
+              const SizedBox(height: AppTheme.spacingLg),
+
+              _buildSocialSignInButtons(),
+            ],
+          ),
         ),
       ),
     );
@@ -727,12 +847,19 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
-      height: 56,
+      height: 60,
       decoration: BoxDecoration(
-        color: AppTheme.lightGray,
+        color: AppTheme.primaryNavy.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(color: AppTheme.accentCopper, width: 2),
+        border: Border.all(color: AppTheme.accentCopper, width: AppTheme.borderWidthCopper),
+        boxShadow: [
+          AppTheme.shadowElectricalInfo,
+          BoxShadow(
+            color: AppTheme.accentCopper.withValues(alpha: 0.2),
+            blurRadius: 15,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Stack(
         children: [
@@ -740,35 +867,35 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
           Container(
             margin: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: AppTheme.lightGray,
+              color: AppTheme.primaryNavy.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd - 4),
             ),
           ),
-          
+
           // Animated indicator
           AnimatedBuilder(
             animation: _animation,
             builder: (context, child) {
               final double position = _currentIndex.toDouble();
               return Transform.translate(
-                offset: Offset(position * (MediaQuery.of(context).size.width - 56) / 2, 0),
+                offset: Offset(position * (MediaQuery.of(context).size.width - 72) / 2, 0),
                 child: Container(
-                  width: (MediaQuery.of(context).size.width - 56) / 2,
-                  height: 48,
+                  width: (MediaQuery.of(context).size.width - 72) / 2,
+                  height: 56,
                   decoration: BoxDecoration(
                     gradient: _getGradient(_currentIndex),
                     borderRadius: BorderRadius.circular(AppTheme.radiusMd - 4),
-                    border: Border.all(color: AppTheme.accentCopper, width: 2),
+                    border: Border.all(color: AppTheme.accentCopper, width: AppTheme.borderWidthCopper),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primaryNavy.withValues(alpha: 0.18),
-                        blurRadius: 30,
-                        offset: const Offset(0, 10),
+                        color: AppTheme.primaryNavy.withValues(alpha: 0.3),
+                        blurRadius: 35,
+                        offset: const Offset(0, 12),
                       ),
                       BoxShadow(
-                        color: AppTheme.accentCopper.withValues(alpha: 0.12),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                        color: AppTheme.accentCopper.withValues(alpha: 0.25),
+                        blurRadius: 18,
+                        offset: const Offset(0, 6),
                       ),
                     ],
                   ),
@@ -776,7 +903,7 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
               );
             },
           ),
-          
+
           // Tab buttons
           Row(
             children: [
@@ -792,22 +919,31 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
                         ? AppTheme.labelLarge.copyWith(
                             color: AppTheme.white,
                             fontWeight: FontWeight.bold,
-                            shadows: [Shadow(color: Colors.black.withValues(alpha: 0.18), offset: const Offset(0, 1))],
+                            shadows: [
+                              Shadow(
+                                color: AppTheme.primaryNavy.withValues(alpha: 0.5),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           )
-                        : AppTheme.labelLarge.copyWith(color: AppTheme.textSecondary),
+                        : AppTheme.labelLarge.copyWith(
+                            color: AppTheme.white.withValues(alpha: 0.7),
+                            fontWeight: FontWeight.w500,
+                          ),
                   ),
                 ),
               ),
               Container(
-                width: 1,
-                height: 0.44,
+                width: 2,
+                height: 0.6,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.white.withValues(alpha: 0.08),
-                      Colors.black.withValues(alpha: 0.06),
+                      AppTheme.accentCopper.withValues(alpha: 0.3),
+                      AppTheme.accentCopper.withValues(alpha: 0.1),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(4),
@@ -825,9 +961,18 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
                         ? AppTheme.labelLarge.copyWith(
                             color: AppTheme.white,
                             fontWeight: FontWeight.bold,
-                            shadows: [Shadow(color: Colors.black.withValues(alpha: 0.18), offset: const Offset(0, 1))],
+                            shadows: [
+                              Shadow(
+                                color: AppTheme.primaryNavy.withValues(alpha: 0.5),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           )
-                        : AppTheme.labelLarge.copyWith(color: AppTheme.textSecondary),
+                        : AppTheme.labelLarge.copyWith(
+                            color: AppTheme.white.withValues(alpha: 0.7),
+                            fontWeight: FontWeight.w500,
+                          ),
                   ),
                 ),
               ),

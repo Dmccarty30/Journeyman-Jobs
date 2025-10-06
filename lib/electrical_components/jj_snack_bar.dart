@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../design_system/app_theme.dart';
+import 'circuit_board_background.dart';
 
 /// Simple, project-wide snack bar helper used by multiple screens.
 /// Provides consistent styling and three convenience methods:
@@ -13,28 +14,77 @@ class JJSnackBar {
   static void _show(
     BuildContext context, {
     required String message,
-    required Color backgroundColor,
+    required Color borderColor,
     required IconData icon,
+    required String type,
     Duration duration = const Duration(seconds: 3),
   }) {
     final SnackBar snackBar = SnackBar(
       behavior: SnackBarBehavior.floating,
       duration: duration,
-      backgroundColor: backgroundColor,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppTheme.radiusElectricalSnackBar),
       ),
-      content: Row(
-        children: <Widget>[
-          Icon(icon, color: AppTheme.white),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              message,
-              style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
-            ),
+      content: Container(
+        decoration: BoxDecoration(
+          color: AppTheme.electricalBackground.withValues(alpha: AppTheme.opacityElectricalBackground),
+          borderRadius: BorderRadius.circular(AppTheme.radiusElectricalSnackBar),
+          border: Border.all(
+            color: borderColor,
+            width: AppTheme.borderWidthCopper,
           ),
-        ],
+          boxShadow: [
+            BoxShadow(
+              color: borderColor.withValues(alpha: AppTheme.opacityElectricalGlow),
+              blurRadius: 15,
+              spreadRadius: 2,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Circuit board background
+            Positioned.fill(
+              child: ElectricalCircuitBackground(
+                opacity: 0.08,
+                componentDensity: ComponentDensity.high,
+                enableCurrentFlow: true,
+                enableInteractiveComponents: true,
+                traceColor: AppTheme.electricalBackground,
+                currentColor: borderColor,
+                copperColor: AppTheme.accentCopper,
+              ),
+            ),
+            // Content
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: borderColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    size: AppTheme.iconElectricalSnackBar,
+                    color: AppTheme.white,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    message,
+                    style: AppTheme.bodyMedium.copyWith(color: AppTheme.textOnDark),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
 
@@ -51,8 +101,9 @@ class JJSnackBar {
     _show(
       context,
       message: message,
-      backgroundColor: AppTheme.successGreen,
+      borderColor: AppTheme.electricalSuccess,
       icon: Icons.check_circle,
+      type: 'success',
       duration: duration,
     );
   }
@@ -65,8 +116,9 @@ class JJSnackBar {
     _show(
       context,
       message: message,
-      backgroundColor: AppTheme.errorRed,
+      borderColor: AppTheme.electricalError,
       icon: Icons.error_outline,
+      type: 'error',
       duration: duration,
     );
   }
@@ -79,8 +131,9 @@ class JJSnackBar {
     _show(
       context,
       message: message,
-      backgroundColor: AppTheme.primaryNavy,
+      borderColor: AppTheme.electricalInfo,
       icon: Icons.info_outline,
+      type: 'info',
       duration: duration,
     );
   }
@@ -93,8 +146,9 @@ class JJSnackBar {
     _show(
       context,
       message: message,
-      backgroundColor: Colors.amber,
+      borderColor: AppTheme.electricalWarning,
       icon: Icons.warning_amber,
+      type: 'warning',
       duration: duration,
     );
   }

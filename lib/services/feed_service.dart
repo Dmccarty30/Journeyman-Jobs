@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 
 import '../domain/exceptions/app_exception.dart';
-import '../features/crews/models/tailboard.dart';
 import '../models/post_model.dart';
 
 class FeedService {
@@ -14,7 +13,6 @@ class FeedService {
 
   // Collections
   CollectionReference get _postsCollection => _firestore.collection('posts');
-  CollectionReference get _crewsCollection => _firestore.collection('crews');
 
   // Get Firestore instance
   FirebaseFirestore get firestore => _firestore;
@@ -517,21 +515,5 @@ class FeedService {
 
   // Validation Helpers
 
-  /// Validate post data
-  bool _isValidPostData({
-    required String content,
-    List<String>? mediaUrls,
-  }) {
-    if (content.trim().isEmpty) return false;
-    if (content.length > 10000) return false; // Reasonable content limit
-    if (mediaUrls != null && mediaUrls.length > 10) return false; // Media limit
-    return true;
-  }
 
-  /// Validate comment data
-  bool _isValidCommentData(String content) {
-    if (content.trim().isEmpty) return false;
-    if (content.length > 2000) return false; // Reasonable comment limit
-    return true;
-  }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 import 'social_animations.dart';
 import '../design_system/app_theme.dart';
 
@@ -227,7 +226,6 @@ class _AnimatedCommentListState extends State<AnimatedCommentList> {
   Widget build(BuildContext context) {
     return Column(
       children: widget.comments.asMap().entries.map((entry) {
-        final index = entry.key;
         final comment = entry.value;
         
         return CommentAnimation(
@@ -274,7 +272,6 @@ class _AnimatedCommentInputState extends State<AnimatedCommentInput>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _borderAnimation;
-  late Animation<double> _scaleAnimation;
   bool _isFocused = false;
   
   @override
@@ -293,13 +290,6 @@ class _AnimatedCommentInputState extends State<AnimatedCommentInput>
       curve: Curves.easeOut,
     ));
     
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
     
     // Listen to focus changes
     widget.focusNode?.addListener(_onFocusChange);
@@ -532,7 +522,6 @@ class _AnimatedCommentCounterState extends State<AnimatedCommentCounter>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<int> _countAnimation;
-  int _displayedCount = 0;
   
   @override
   void initState() {

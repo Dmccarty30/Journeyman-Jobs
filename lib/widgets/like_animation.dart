@@ -172,7 +172,6 @@ class _AnimatedLikeButtonState extends State<AnimatedLikeButton>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<Color?> _colorAnimation;
-  late Animation<double> _countAnimation;
   bool _isAnimating = false;
   
   @override
@@ -199,10 +198,6 @@ class _AnimatedLikeButtonState extends State<AnimatedLikeButton>
     ));
     
     // Count animation
-    _countAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.elasticOut,
-    ));
   }
   
   @override

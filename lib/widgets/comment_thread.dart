@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
 import '../../features/crews/models/tailboard.dart';
 import 'comment_item.dart';

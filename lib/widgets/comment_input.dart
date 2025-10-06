@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
-import '../../features/crews/providers/feed_provider.dart';
 
 class CommentInput extends StatefulWidget {
   final String postId;

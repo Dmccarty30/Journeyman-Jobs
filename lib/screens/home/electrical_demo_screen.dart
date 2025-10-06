@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../electrical_components/circuit_board_background.dart';
 import '../../electrical_components/jj_electrical_notifications.dart';
@@ -59,9 +60,9 @@ class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
           // Animated circuit board background
           const Positioned.fill(
             child: ElectricalCircuitBackground(
-              opacity: 0.12,
+              opacity: 0.08,
               animationSpeed: 2.0,
-              componentDensity: ComponentDensity.medium,
+              componentDensity: ComponentDensity.high,
               enableCurrentFlow: true,
               enableInteractiveComponents: true,
             ),
@@ -93,6 +94,12 @@ class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
                               color: Colors.white,
                               size: 20,
                             ),
+                          )
+                          .animate()
+                          .scale(
+                            delay: const Duration(milliseconds: 200),
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.elasticOut,
                           ),
                           const SizedBox(width: 12),
                           const Expanded(
@@ -106,6 +113,17 @@ class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
                             ),
                           ),
                         ],
+                      )
+                      .animate()
+                      .fadeIn(
+                        delay: const Duration(milliseconds: 100),
+                        duration: const Duration(milliseconds: 500),
+                      )
+                      .slideY(
+                        begin: -0.2,
+                        end: 0,
+                        delay: const Duration(milliseconds: 100),
+                        duration: const Duration(milliseconds: 500),
                       ),
                       const SizedBox(height: 12),
                       const Text(
@@ -114,9 +132,26 @@ class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
                           fontSize: 14,
                           color: Colors.black87,
                         ),
+                      )
+                      .animate()
+                      .fadeIn(
+                        delay: const Duration(milliseconds: 300),
+                        duration: const Duration(milliseconds: 500),
                       ),
                     ],
                   ),
+                )
+                .animate()
+                .fadeIn(
+                  delay: const Duration(milliseconds: 50),
+                  duration: const Duration(milliseconds: 600),
+                )
+                .slideY(
+                  begin: 0.1,
+                  end: 0,
+                  delay: const Duration(milliseconds: 50),
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.easeOut,
                 ),
                 
                 const SizedBox(height: 20),
@@ -135,6 +170,11 @@ class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
                           fontWeight: FontWeight.bold,
                           color: AppTheme.primaryNavy,
                         ),
+                      )
+                      .animate()
+                      .fadeIn(
+                        delay: const Duration(milliseconds: 400),
+                        duration: const Duration(milliseconds: 500),
                       ),
                       const SizedBox(height: 16),
                       
@@ -210,8 +250,20 @@ class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
                       ),
                     ],
                   ),
+                )
+                .animate()
+                .fadeIn(
+                  delay: const Duration(milliseconds: 350),
+                  duration: const Duration(milliseconds: 600),
+                )
+                .slideY(
+                  begin: 0.1,
+                  end: 0,
+                  delay: const Duration(milliseconds: 350),
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.easeOut,
                 ),
-                
+
                 const SizedBox(height: 20),
                 
                 // Loading animation showcase
@@ -227,9 +279,14 @@ class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
                           fontWeight: FontWeight.bold,
                           color: AppTheme.primaryNavy,
                         ),
+                      )
+                      .animate()
+                      .fadeIn(
+                        delay: const Duration(milliseconds: 600),
+                        duration: const Duration(milliseconds: 500),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -241,11 +298,29 @@ class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
                               label: 'System Load',
                               duration: Duration(seconds: 3),
                             ),
+                          )
+                          .animate()
+                          .scale(
+                            delay: const Duration(milliseconds: 700),
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.elasticOut,
                           ),
                         ],
                       ),
                     ],
                   ),
+                )
+                .animate()
+                .fadeIn(
+                  delay: const Duration(milliseconds: 550),
+                  duration: const Duration(milliseconds: 600),
+                )
+                .slideY(
+                  begin: 0.1,
+                  end: 0,
+                  delay: const Duration(milliseconds: 550),
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.easeOut,
                 ),
                 
                 const SizedBox(height: 20),
@@ -263,6 +338,11 @@ class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
                           fontWeight: FontWeight.bold,
                           color: AppTheme.primaryNavy,
                         ),
+                      )
+                      .animate()
+                      .fadeIn(
+                        delay: const Duration(milliseconds: 800),
+                        duration: const Duration(milliseconds: 500),
                       ),
                       const SizedBox(height: 16),
                       
@@ -368,16 +448,14 @@ class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
   BoxDecoration _buildCardDecoration() {
     return BoxDecoration(
       color: Colors.white.withValues(alpha: 0.95),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
       border: Border.all(
-        color: AppTheme.accentCopper.withValues(alpha: 0.3),
+        color: AppTheme.accentCopper,
+        width: AppTheme.borderWidthCopper,
       ),
       boxShadow: [
-        BoxShadow(
-          color: AppTheme.primaryNavy.withValues(alpha: 0.08),
-          blurRadius: 8,
-          spreadRadius: 2,
-        ),
+        AppTheme.shadowSm,
+        AppTheme.shadowElectricalInfo,
       ],
     );
   }

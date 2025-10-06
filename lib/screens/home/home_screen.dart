@@ -76,7 +76,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: Stack(
         children: [
           ElectricalCircuitBackground(
-            opacity: 0.35,
+            opacity: 0.08,
             componentDensity: ComponentDensity.high,
           ),
           RefreshIndicator(
@@ -237,11 +237,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     builder: (context, ref, child) {
                       final jobsState = ref.watch(jobsProvider);
                       if (jobsState.isLoading) {
-                        return const Center(
+                        return Center(
                           child: Padding(
-                            padding: EdgeInsets.all(AppTheme.spacingLg),
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
+                            padding: const EdgeInsets.all(AppTheme.spacingLg),
+                            child: Container(
+                              padding: const EdgeInsets.all(AppTheme.spacingMd),
+                              decoration: BoxDecoration(
+                                color: AppTheme.white.withValues(alpha: 0.9),
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                border: Border.all(
+                                  color: AppTheme.accentCopper,
+                                  width: AppTheme.borderWidthCopper,
+                                ),
+                                boxShadow: [
+                                  AppTheme.shadowElectricalInfo,
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    width: 40,
+                                    height: 40,
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentCopper),
+                                      strokeWidth: 3,
+                                    ),
+                                  ),
+                                  const SizedBox(height: AppTheme.spacingSm),
+                                  Text(
+                                    'Loading electrical opportunities...',
+                                    style: AppTheme.bodyMedium.copyWith(
+                                      color: AppTheme.primaryNavy,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -251,20 +283,77 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         return Center(
                           child: Padding(
                             padding: const EdgeInsets.all(AppTheme.spacingLg),
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Error loading jobs',
-                                  style: AppTheme.bodyLarge.copyWith(
+                            child: Container(
+                              padding: const EdgeInsets.all(AppTheme.spacingLg),
+                              decoration: BoxDecoration(
+                                color: AppTheme.white.withValues(alpha: 0.9),
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                border: Border.all(
+                                  color: AppTheme.errorRed,
+                                  width: AppTheme.borderWidthCopper,
+                                ),
+                                boxShadow: [
+                                  AppTheme.shadowElectricalError,
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.error_outline,
+                                    size: 48,
                                     color: AppTheme.errorRed,
                                   ),
-                                ),
-                                const SizedBox(height: AppTheme.spacingSm),
-                                ElevatedButton(
-                                  onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
-                                  child: const Text('Retry'),
-                                ),
-                              ],
+                                  const SizedBox(height: AppTheme.spacingMd),
+                                  Text(
+                                    'Circuit malfunction detected',
+                                    style: AppTheme.headlineSmall.copyWith(
+                                      color: AppTheme.primaryNavy,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: AppTheme.spacingSm),
+                                  Text(
+                                    'Unable to load electrical opportunities. Please check your connection and try again.',
+                                    style: AppTheme.bodyMedium.copyWith(
+                                      color: AppTheme.textSecondary,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: AppTheme.spacingLg),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                      gradient: AppTheme.buttonGradient,
+                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                      border: Border.all(
+                                        color: AppTheme.accentCopper,
+                                        width: AppTheme.borderWidthCopper,
+                                      ),
+                                      boxShadow: [
+                                        AppTheme.shadowElectricalInfo,
+                                      ],
+                                    ),
+                                    child: ElevatedButton(
+                                      onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.transparent,
+                                        shadowColor: Colors.transparent,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        '🔄 Reconnect Power',
+                                        style: AppTheme.buttonMedium.copyWith(
+                                          color: AppTheme.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -274,31 +363,76 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         return Center(
                           child: Padding(
                             padding: const EdgeInsets.all(AppTheme.spacingLg),
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.work_off_outlined,
-                                  size: 48,
-                                  color: AppTheme.textSecondary,
+                            child: Container(
+                              padding: const EdgeInsets.all(AppTheme.spacingLg),
+                              decoration: BoxDecoration(
+                                color: AppTheme.white.withValues(alpha: 0.9),
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                border: Border.all(
+                                  color: AppTheme.warningYellow,
+                                  width: AppTheme.borderWidthCopper,
                                 ),
-                                const SizedBox(height: AppTheme.spacingMd),
-                                Text(
-                                  'No jobs available at the moment',
-                                  style: AppTheme.bodyLarge.copyWith(
-                                    color: AppTheme.textSecondary,
+                                boxShadow: [
+                                  AppTheme.shadowElectricalWarning,
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.flash_off_outlined,
+                                    size: 48,
+                                    color: AppTheme.warningYellow,
                                   ),
-                                ),
-                                const SizedBox(height: AppTheme.spacingSm),
-                                TextButton(
-                                  onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
-                                  child: Text(
-                                    'Refresh',
-                                    style: AppTheme.bodyMedium.copyWith(
-                                      color: AppTheme.accentCopper,
+                                  const SizedBox(height: AppTheme.spacingMd),
+                                  Text(
+                                    'Power Grid Status: Standby',
+                                    style: AppTheme.headlineSmall.copyWith(
+                                      color: AppTheme.primaryNavy,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(height: AppTheme.spacingSm),
+                                  Text(
+                                    'No electrical opportunities available right now. Check back soon for new connections.',
+                                    style: AppTheme.bodyMedium.copyWith(
+                                      color: AppTheme.textSecondary,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: AppTheme.spacingLg),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                      gradient: AppTheme.buttonGradient,
+                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                      border: Border.all(
+                                        color: AppTheme.accentCopper,
+                                        width: AppTheme.borderWidthCopper,
+                                      ),
+                                      boxShadow: [
+                                        AppTheme.shadowElectricalInfo,
+                                      ],
+                                    ),
+                                    child: TextButton(
+                                      onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: AppTheme.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        '🔄 Scan for Power',
+                                        style: AppTheme.buttonMedium.copyWith(
+                                          color: AppTheme.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -333,10 +467,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         decoration: BoxDecoration(
           color: AppTheme.white,
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          boxShadow: [AppTheme.shadowSm],
+          boxShadow: [
+            AppTheme.shadowSm,
+            AppTheme.shadowElectricalInfo,
+          ],
           border: Border.all(
             color: AppTheme.accentCopper,
-            width: AppTheme.borderWidthCopperThin,
+            width: AppTheme.borderWidthCopper,
           ),
         ),
         child: Column(
@@ -368,10 +505,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       decoration: BoxDecoration(
         color: AppTheme.white,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        boxShadow: [AppTheme.shadowSm],
+        boxShadow: [
+          AppTheme.shadowSm,
+          AppTheme.shadowElectricalInfo,
+        ],
         border: Border.all(
-          color: AppTheme.lightGray,
-          width: 1,
+          color: AppTheme.accentCopper,
+          width: AppTheme.borderWidthCopper,
         ),
       ),
       child: Column(
