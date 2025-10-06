@@ -8,13 +8,23 @@ import '../../design_system/components/reusable_components.dart';
 import '../../services/notification_permission_service.dart';
 import '../../navigation/app_router.dart';
 
+/// A screen that displays a user's notifications and provides settings to manage them.
+///
+/// This screen is organized into two tabs:
+/// 1. A list of notifications, filterable by category.
+/// 2. A settings panel for toggling notification types, sounds, and quiet hours.
 class NotificationsScreen extends StatefulWidget {
+  /// Creates a [NotificationsScreen].
   const NotificationsScreen({super.key});
 
   @override
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
+/// The state for the [NotificationsScreen].
+///
+/// Manages the tab controller, notification filter, and all user-facing settings.
+/// It loads and saves preferences using [SharedPreferences].
 class _NotificationsScreenState extends State<NotificationsScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String _selectedFilter = 'all';
@@ -77,6 +87,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     super.dispose();
   }
   
+  /// Loads notification settings from [SharedPreferences].
   Future<void> _loadSettings() async {
     try {
       _notificationsEnabled = await NotificationPermissionService.areNotificationsEnabled();
@@ -105,6 +116,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     }
   }
   
+  /// Saves a boolean preference to [SharedPreferences].
   Future<void> _savePreference(String key, bool value) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -114,6 +126,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     }
   }
 
+  /// Saves a [TimeOfDay] preference (as an hour integer) to [SharedPreferences].
   Future<void> _saveTimePreference(String key, TimeOfDay time) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -123,6 +136,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     }
   }
 
+  /// Handles the master notification toggle switch.
+  ///
+  /// If enabling, it may trigger the OS permission dialog. If disabling, it
+  /// shows a confirmation dialog to the user.
   Future<void> _handleMasterToggle(bool enabled) async {
     if (enabled && !_notificationsEnabled) {
       final granted = await NotificationPermissionService.handleInitialPermissionFlow(context);
@@ -154,6 +171,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     }
   }
 
+  /// Displays a confirmation dialog to the user before disabling all notifications.
   Future<bool> _showDisableConfirmationDialog() async {
     return await showDialog<bool>(
       context: context,
@@ -205,6 +223,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     ) ?? false;
   }
 
+  /// Shows a time picker dialog to allow the user to select the start or end
+  /// time for the quiet hours period.
   Future<void> _selectQuietHoursTime(bool isStart) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -237,6 +257,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     }
   }
 
+  /// Marks a single notification as read in Firestore.
   Future<void> _markAsRead(String notificationId) async {
     try {
       await FirebaseFirestore.instance
@@ -248,6 +269,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     }
   }
 
+  /// Marks all of the user's unread notifications as read in a single batch operation.
   Future<void> _markAllAsRead() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -282,6 +304,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     }
   }
 
+  /// Returns an appropriate [IconData] for a given notification [type].
   IconData _getNotificationIcon(String type) {
     switch (type) {
       case 'jobs':
@@ -301,6 +324,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     }
   }
 
+  /// Returns a theme-appropriate [Color] for a given notification [type].
   Color _getNotificationColor(String type) {
     switch (type) {
       case 'jobs':
@@ -320,6 +344,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     }
   }
 
+  /// Handles the navigation logic when a user taps on a notification.
+  ///
+  /// Navigates to the relevant screen based on the notification [type] and
+  /// any associated [data].
   void _handleNotificationTap(String type, Map<String, dynamic> data) {
     // Navigate based on notification type
     switch (type) {
@@ -372,6 +400,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     }
   }
 
+  /// Constructs a Firestore query stream for notifications based on the
+  /// current user and the selected filter.
   Stream<QuerySnapshot> _buildNotificationsStream(String userId) {
     Query query = FirebaseFirestore.instance
         .collection('notifications')
@@ -385,6 +415,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     return query.snapshots();
   }
 
+  /// Builds a standard widget to display when a list is empty.
   Widget _buildEmptyState(String message) {
     return Center(
       child: Column(
@@ -407,6 +438,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     );
   }
 
+  /// Builds a card widget to display a single notification.
   Widget _buildNotificationCard(DocumentSnapshot notification) {
     final data = notification.data() as Map<String, dynamic>;
     final type = data['type'] as String? ?? 'system';
@@ -510,6 +542,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     );
   }
 
+  /// Formats a [DateTime] into a human-readable "time ago" string.
   String _formatTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
@@ -919,6 +952,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     );
   }
 
+  /// A helper widget to build a consistent row for a setting item.
+  ///
+  /// Includes a title, subtitle, and a trailing `Switch`.
   Widget _buildSettingsRow(String title, String subtitle, bool value, ValueChanged<bool> onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -959,6 +995,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     );
   }
 
+  /// A helper widget to build a themed divider for separating settings items.
   Widget _buildDivider() {
     return Divider(
       height: 1,

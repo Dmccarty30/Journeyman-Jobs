@@ -3,16 +3,25 @@ import 'package:flutter/services.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
 
+/// A screen for users to view and manage their training certificates, browse
+/// available courses, and review their training history.
+///
+/// This screen uses a tabbed layout to separate the different sections.
 class TrainingCertificatesScreen extends StatefulWidget {
+  /// Creates a [TrainingCertificatesScreen].
   const TrainingCertificatesScreen({super.key});
 
   @override
   State<TrainingCertificatesScreen> createState() => _TrainingCertificatesScreenState();
 }
 
+/// The state for the [TrainingCertificatesScreen].
+///
+/// Manages the [TabController] and holds the mock data for display.
 class _TrainingCertificatesScreenState extends State<TrainingCertificatesScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
+  /// Mock data for the user's current certificates.
   final List<Certificate> _certificates = [
     Certificate(
       title: 'IBEW Journeyman Wireman',
@@ -56,6 +65,7 @@ class _TrainingCertificatesScreenState extends State<TrainingCertificatesScreen>
     ),
   ];
 
+  /// Mock data for available training courses.
   final List<Course> _availableCourses = [
     Course(
       title: 'Advanced PLC Programming',
@@ -107,6 +117,7 @@ class _TrainingCertificatesScreenState extends State<TrainingCertificatesScreen>
     ),
   ];
 
+  /// Mock data for the user's completed training records.
   final List<TrainingRecord> _trainingHistory = [
     TrainingRecord(
       courseName: 'Conduit Bending Mastery',
@@ -184,6 +195,8 @@ class _TrainingCertificatesScreenState extends State<TrainingCertificatesScreen>
     );
   }
 
+  /// Builds the "Certificates" tab, which displays a summary and a categorized
+  /// list of the user's certificates.
   Widget _buildCertificatesTab() {
     final groupedCertificates = <String, List<Certificate>>{};
     for (final cert in _certificates) {
@@ -261,6 +274,7 @@ class _TrainingCertificatesScreenState extends State<TrainingCertificatesScreen>
     );
   }
 
+  /// A helper widget to build a small summary card for certificate status.
   Widget _buildStatusCard(String label, int count, Color color) {
     return Expanded(
       child: Container(
@@ -292,6 +306,7 @@ class _TrainingCertificatesScreenState extends State<TrainingCertificatesScreen>
     );
   }
 
+  /// Builds the "Courses" tab, showing a categorized list of available training courses.
   Widget _buildCoursesTab() {
     final groupedCourses = <String, List<Course>>{};
     for (final course in _availableCourses) {
@@ -361,6 +376,7 @@ class _TrainingCertificatesScreenState extends State<TrainingCertificatesScreen>
     );
   }
 
+  /// Builds the "History" tab, displaying statistics and a list of completed training.
   Widget _buildHistoryTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -432,6 +448,7 @@ class _TrainingCertificatesScreenState extends State<TrainingCertificatesScreen>
     );
   }
 
+  /// A helper widget to build a single statistic item for the history tab header.
   Widget _buildStatItem(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -454,19 +471,45 @@ class _TrainingCertificatesScreenState extends State<TrainingCertificatesScreen>
   }
 }
 
-enum CertificateStatus { active, expiringSoon, expired }
-enum CourseFormat { inPerson, online, hybrid }
+/// An enumeration of the possible statuses for a user's certificate.
+enum CertificateStatus {
+  /// The certificate is current and valid.
+  active,
+  /// The certificate is still valid but will expire soon.
+  expiringSoon,
+  /// The certificate is no longer valid.
+  expired
+}
+/// An enumeration of the possible formats for a training course.
+enum CourseFormat {
+  /// The course is conducted in person.
+  inPerson,
+  /// The course is conducted online.
+  online,
+  /// The course is a mix of in-person and online components.
+  hybrid
+}
 
+/// A data model representing a professional certificate.
 class Certificate {
+  /// The title of the certificate.
   final String title;
+  /// The organization that issued the certificate.
   final String issuer;
+  /// The date the certificate was issued.
   final DateTime issueDate;
+  /// The date the certificate expires, if applicable.
   final DateTime? expiryDate;
+  /// The current status of the certificate (e.g., active, expired).
   final CertificateStatus status;
+  /// The unique ID or number for the credential.
   final String credentialId;
+  /// A brief description of what the certificate covers.
   final String description;
+  /// The category of the certificate (e.g., 'Safety Certifications').
   final String category;
 
+  /// Creates an instance of [Certificate].
   Certificate({
     required this.title,
     required this.issuer,
@@ -479,18 +522,30 @@ class Certificate {
   });
 }
 
+/// A data model representing an available training course.
 class Course {
+  /// The title of the course.
   final String title;
+  /// The organization providing the course.
   final String provider;
+  /// The total duration of the course (e.g., "40 hours").
   final String duration;
+  /// The format of the course (e.g., in-person, online).
   final CourseFormat format;
+  /// The cost of the course.
   final String cost;
+  /// A brief description of the course content.
   final String description;
+  /// The category of the course (e.g., 'Technical Training').
   final String category;
+  /// The start date of the course.
   final DateTime startDate;
+  /// The location where the course is held (or "Online").
   final String location;
+  /// A list of prerequisites for enrolling in the course.
   final List<String> prerequisites;
 
+  /// Creates an instance of [Course].
   Course({
     required this.title,
     required this.provider,
@@ -505,14 +560,22 @@ class Course {
   });
 }
 
+/// A data model representing a record of a completed training course.
 class TrainingRecord {
+  /// The name of the completed course.
   final String courseName;
+  /// The date the course was completed.
   final DateTime completionDate;
+  /// The organization that provided the training.
   final String provider;
+  /// The number of hours the course was worth.
   final int hoursCompleted;
+  /// The final grade or result (e.g., "A+", "Pass").
   final String grade;
+  /// A flag indicating if a certificate was earned upon completion.
   final bool certificateEarned;
 
+  /// Creates an instance of [TrainingRecord].
   TrainingRecord({
     required this.courseName,
     required this.completionDate,
@@ -523,9 +586,12 @@ class TrainingRecord {
   });
 }
 
+/// A card widget for displaying a summary of a single [Certificate].
 class CertificateCard extends StatelessWidget {
+  /// The certificate data to display.
   final Certificate certificate;
 
+  /// Creates a [CertificateCard].
   const CertificateCard({super.key, required this.certificate});
 
   @override
@@ -617,6 +683,7 @@ class CertificateCard extends StatelessWidget {
     );
   }
 
+  /// Returns a color based on the certificate's status.
   Color _getStatusColor() {
     switch (certificate.status) {
       case CertificateStatus.active:
@@ -628,6 +695,7 @@ class CertificateCard extends StatelessWidget {
     }
   }
 
+  /// Returns a display string for the certificate's status.
   String _getStatusText() {
     switch (certificate.status) {
       case CertificateStatus.active:
@@ -639,10 +707,12 @@ class CertificateCard extends StatelessWidget {
     }
   }
 
+  /// Formats a [DateTime] object into a "MM/DD/YYYY" string.
   String _formatDate(DateTime date) {
     return '${date.month}/${date.day}/${date.year}';
   }
 
+  /// Shows a dialog with the full details of the certificate.
   void _showCertificateDetails(BuildContext context) {
     showDialog(
       context: context,
@@ -684,6 +754,7 @@ class CertificateCard extends StatelessWidget {
     );
   }
 
+  /// A helper widget to build a labeled detail row for the details dialog.
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
@@ -709,9 +780,12 @@ class CertificateCard extends StatelessWidget {
   }
 }
 
+/// A card widget for displaying a summary of an available [Course].
 class CourseCard extends StatelessWidget {
+  /// The course data to display.
   final Course course;
 
+  /// Creates a [CourseCard].
   const CourseCard({super.key, required this.course});
 
   @override
@@ -807,6 +881,7 @@ class CourseCard extends StatelessWidget {
     );
   }
 
+  /// Returns a color based on the course format.
   Color _getFormatColor() {
     switch (course.format) {
       case CourseFormat.inPerson:
@@ -818,6 +893,7 @@ class CourseCard extends StatelessWidget {
     }
   }
 
+  /// Returns a display string for the course format.
   String _getFormatText() {
     switch (course.format) {
       case CourseFormat.inPerson:
@@ -829,10 +905,12 @@ class CourseCard extends StatelessWidget {
     }
   }
 
+  /// Formats a [DateTime] object into a "MM/DD" string.
   String _formatDate(DateTime date) {
     return '${date.month}/${date.day}';
   }
 
+  /// Shows a dialog with the full details of the course.
   void _showCourseDetails(BuildContext context) {
     showDialog(
       context: context,
@@ -901,6 +979,7 @@ class CourseCard extends StatelessWidget {
     );
   }
 
+  /// A helper widget to build a labeled detail row for the details dialog.
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
@@ -931,9 +1010,12 @@ class CourseCard extends StatelessWidget {
   }
 }
 
+/// A card widget for displaying a single [TrainingRecord] from the user's history.
 class TrainingHistoryCard extends StatelessWidget {
+  /// The training record data to display.
   final TrainingRecord record;
 
+  /// Creates a [TrainingHistoryCard].
   const TrainingHistoryCard({super.key, required this.record});
 
   @override

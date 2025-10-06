@@ -5,17 +5,28 @@ import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
 
+/// A screen that presents a multi-page, animated introduction to the application
+/// for first-time users.
+///
+/// This screen uses a [PageView] to walk the user through the key features
+/// and value propositions of the app before prompting them to sign up or sign in.
 class WelcomeScreen extends StatefulWidget {
+  /// Creates a [WelcomeScreen].
   const WelcomeScreen({super.key});
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
+/// The state for the [WelcomeScreen].
+///
+/// Manages the [PageController] for the welcome carousel, tracks the current page,
+/// and handles navigation to the next page or to the authentication screen.
 class _WelcomeScreenState extends State<WelcomeScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
+  /// The data for each page in the welcome carousel.
   final List<WelcomePageData> _pages = [
     WelcomePageData(
       icon: Icons.electrical_services,
@@ -43,12 +54,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     super.dispose();
   }
 
+  /// Updates the current page index when the user swipes the [PageView].
   void _onPageChanged(int page) {
     setState(() {
       _currentPage = page;
     });
   }
 
+  /// Navigates to the next page in the carousel or to the authentication screen
+  /// if it's the last page.
   void _nextPage() {
     if (_currentPage < _pages.length - 1) {
       _pageController.nextPage(
@@ -60,10 +74,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     }
   }
 
+  /// Skips the welcome carousel and navigates directly to the authentication screen.
   void _skipToAuth() {
     _navigateToAuth();
   }
 
+  /// A helper method to perform the navigation to the authentication screen.
   void _navigateToAuth() {
     context.go(AppRouter.auth);
   }
@@ -279,12 +295,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 }
 
+/// A simple data class to hold the content for a single page in the welcome screen carousel.
 class WelcomePageData {
+  /// The icon to be displayed at the top of the page.
   final IconData icon;
+  /// The main title text for the page.
   final String title;
+  /// The subtitle text displayed below the title.
   final String subtitle;
+  /// The detailed description text for the page.
   final String description;
 
+  /// Creates an instance of [WelcomePageData].
   WelcomePageData({
     required this.icon,
     required this.title,

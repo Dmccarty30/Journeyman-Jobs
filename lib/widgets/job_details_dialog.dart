@@ -5,14 +5,19 @@ import '../design_system/app_theme.dart';
 import '../models/job_model.dart';
 import '../features/crews/providers/crews_riverpod_provider.dart';
 
-/// A comprehensive dialog displaying detailed job information
-/// Follows the PopupTheme guidelines for consistent styling
+/// A dialog widget that displays a comprehensive, scrollable view of a job's details.
+///
+/// This dialog is styled according to the application's [PopupTheme] and includes
+/// sections for the job title, a grid of key details, qualifications, description,
+/// and action buttons in the footer.
 class JobDetailsDialog extends ConsumerWidget {
+  /// Creates an instance of [JobDetailsDialog].
   const JobDetailsDialog({
     required this.job,
     super.key,
   });
 
+  /// The [Job] object containing the details to be displayed.
   final Job job;
 
   @override
@@ -76,6 +81,7 @@ class JobDetailsDialog extends ConsumerWidget {
     );
   }
 
+  /// Builds the header section of the dialog.
   Widget _buildHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -114,6 +120,7 @@ class JobDetailsDialog extends ConsumerWidget {
     );
   }
 
+  /// Builds the section displaying the job title and company name.
   Widget _buildJobTitleSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,6 +147,7 @@ class JobDetailsDialog extends ConsumerWidget {
     );
   }
 
+  /// Builds a grid-like layout of the primary job details.
   Widget _buildDetailsGrid() {
     return Column(
       children: [
@@ -163,6 +171,7 @@ class JobDetailsDialog extends ConsumerWidget {
     );
   }
 
+  /// A helper widget to build a single row in the details grid.
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -194,6 +203,7 @@ class JobDetailsDialog extends ConsumerWidget {
     );
   }
 
+  /// Builds the section for displaying job qualifications and requirements.
   Widget _buildQualificationsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,6 +231,7 @@ class JobDetailsDialog extends ConsumerWidget {
     );
   }
 
+  /// Builds the section for displaying the detailed job description.
   Widget _buildDescriptionSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,6 +259,7 @@ class JobDetailsDialog extends ConsumerWidget {
     );
   }
 
+  /// Builds a section for any additional, miscellaneous job details.
   Widget _buildAdditionalDetails() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,6 +274,7 @@ class JobDetailsDialog extends ConsumerWidget {
     );
   }
 
+  /// Builds the footer section of the dialog, containing action buttons.
   Widget _buildFooter(BuildContext context, WidgetRef ref) {
     final userCrews = ref.watch(userCrewsProvider);
     
@@ -369,6 +382,7 @@ class JobDetailsDialog extends ConsumerWidget {
     );
   }
 
+  /// Shows a nested dialog allowing the user to select crews to share the job with.
   void _showShareToCrewsDialog(BuildContext context, WidgetRef ref) {
     final userCrews = ref.watch(userCrewsProvider);
     

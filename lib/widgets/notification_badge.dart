@@ -4,20 +4,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../design_system/app_theme.dart';
 import 'notification_popup.dart';
 
-/// A notification icon with badge counter that can be used in app bars
+/// A notification icon widget that displays a badge with the count of unread notifications.
+///
+/// This widget listens to a Firestore stream to get the real-time count of
+/// unread notifications for the current user. It's typically used in an `AppBar`.
 class NotificationBadge extends StatelessWidget {
-  /// Optional color for the icon
+  /// The color of the notification icon.
   final Color? iconColor;
   
-  /// Size of the icon
+  /// The size of the notification icon.
   final double iconSize;
   
-  /// Whether to show the popup on tap
+  /// If `true`, tapping the badge will show the [NotificationPopup].
+  /// This is overridden if [onTap] is provided.
   final bool showPopupOnTap;
   
-  /// Custom onTap callback (overrides showPopupOnTap)
+  /// An optional custom callback to execute when the badge is tapped.
+  /// If provided, this will be used instead of the default popup behavior.
   final VoidCallback? onTap;
 
+  /// Creates a [NotificationBadge].
   const NotificationBadge({
     super.key,
     this.iconColor,
@@ -84,6 +90,7 @@ class NotificationBadge extends StatelessWidget {
     );
   }
 
+  /// A private helper to build the circular badge with the notification count.
   Widget _buildBadge(int count) {
     return Container(
       padding: const EdgeInsets.all(2),
@@ -121,13 +128,22 @@ class NotificationBadge extends StatelessWidget {
   }
 }
 
-/// A larger notification button with label for use in custom app bars
+/// A larger, labeled button for accessing notifications.
+///
+/// This widget includes an icon, a text label, and a badge for the unread count,
+/// making it suitable for prominent placement in a UI.
 class NotificationButtonWithLabel extends StatelessWidget {
+  /// The text label to display on the button.
   final String label;
+  /// The background color of the button.
   final Color? backgroundColor;
+  /// The color of the icon and text on the button.
   final Color? textColor;
+  /// An optional callback to execute when the button is tapped. Defaults to
+  /// showing the [NotificationPopup].
   final VoidCallback? onTap;
 
+  /// Creates a [NotificationButtonWithLabel].
   const NotificationButtonWithLabel({
     super.key,
     this.label = 'Notifications',
@@ -162,6 +178,7 @@ class NotificationButtonWithLabel extends StatelessWidget {
     );
   }
 
+  /// A private helper to build the button's UI with the given [unreadCount].
   Widget _buildButton(BuildContext context, int unreadCount) {
     return Material(
       color: backgroundColor ?? AppTheme.accentCopper.withValues(alpha: 0.1),

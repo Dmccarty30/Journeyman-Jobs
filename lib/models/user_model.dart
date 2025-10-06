@@ -1,52 +1,101 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:journeyman_jobs/domain/enums/onboarding_status.dart';
 
+/// A comprehensive data model representing an application user.
+///
+/// It includes personal information, professional details, job preferences,
+/// and app-specific settings.
 class UserModel {
+  /// The unique identifier for the user, typically from Firebase Auth.
   final String uid;
+  /// The user's chosen username.
   final String username;
+  /// The user's primary IBEW classification (e.g., 'Journeyman Lineman').
   final String classification;
+  /// The user's home IBEW local union number.
   final int homeLocal;
+  /// The user's role within the app (e.g., 'journeyman', 'foreman', 'admin').
   final String role;
+  /// A list of IDs for the crews the user is a member of.
   final List<String> crewIds;
+  /// The user's email address.
   final String email;
+  /// The URL for the user's profile picture.
   final String? avatarUrl;
+  /// A boolean indicating if the user is currently online.
   final bool onlineStatus;
+  /// A timestamp of the user's last activity.
   final Timestamp lastActive;
+  /// The user's first name.
   final String firstName;
+  /// The user's last name.
   final String lastName;
+  /// The user's phone number.
   final String phoneNumber;
+  /// The first line of the user's address.
   final String address1;
+  /// The second line of the user's address.
   final String? address2;
+  /// The city of the user's address.
   final String city;
+  /// The state of the user's address.
   final String state;
+  /// The postal code of the user's address.
   final int zipcode;
+  /// The user's IBEW ticket or card number.
   final String ticketNumber;
+  /// A flag indicating if the user is currently employed.
   final bool isWorking;
+  /// A string indicating which union books the user is signed on.
   final String? booksOn;
+  /// A list of construction types the user is interested in.
   final List<String> constructionTypes;
+  /// The user's preferred number of hours per week.
   final String? hoursPerWeek;
+  /// The user's requirement for per diem.
   final String? perDiemRequirement;
+  /// A string listing the user's preferred IBEW locals to work out of.
   final String? preferredLocals;
+  /// The Firebase Cloud Messaging token for push notifications.
   final String? fcmToken;
+  /// The user's display name, which might differ from their full name.
   final String displayName;
+  /// A flag indicating if the user's account is active.
   final bool isActive;
+  /// The timestamp when the user account was created.
   final DateTime? createdTime;
+  /// A list of the user's professional certifications.
   final List<String> certifications;
+  /// The user's years of experience in their trade.
   final int yearsExperience;
+  /// The maximum distance the user is willing to travel for work.
   final int preferredDistance;
+  /// The user's IBEW local number (potentially redundant with `homeLocal`).
   final String localNumber;
+  /// A career goal flag for networking.
   final bool networkWithOthers;
+  /// A career goal flag for seeking advancements.
   final bool careerAdvancements;
+  /// A career goal flag for finding better benefits.
   final bool betterBenefits;
+  /// A career goal flag for seeking higher pay.
   final bool higherPayRate;
+  /// A career goal flag for learning new skills.
   final bool learnNewSkill;
+  /// A career goal flag for traveling.
   final bool travelToNewLocation;
+  /// A career goal flag for finding long-term employment.
   final bool findLongTermWork;
+  /// A free-text field for other career goals.
   final String? careerGoals;
+  /// How the user heard about the app.
   final String? howHeardAboutUs;
+  /// What the user is looking to accomplish with the app.
   final String? lookingToAccomplish;
+  /// The user's current status in the onboarding process.
   final OnboardingStatus? onboardingStatus;
 
+  /// Creates an instance of [UserModel].
   UserModel({
     required this.uid,
     required this.username,
@@ -94,10 +143,14 @@ class UserModel {
     this.onboardingStatus,
   });
 
+  /// A computed property that returns the `displayName` if available,
+  /// otherwise constructs a full name from `firstName` and `lastName`.
   String get displayNameStr => displayName.isEmpty ? '$firstName $lastName'.trim() : displayName;
 
+  /// A getter for the `isActive` status.
   bool get isActiveGetter => isActive;
 
+  /// Creates a [UserModel] instance from a Firestore [DocumentSnapshot].
   factory UserModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return UserModel(
@@ -148,6 +201,7 @@ class UserModel {
     );
   }
 
+  /// Creates a [UserModel] instance from a JSON map.
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       uid: json['uid'] ?? '',
@@ -197,6 +251,7 @@ class UserModel {
     );
   }
 
+  /// Converts the [UserModel] instance to a JSON map, suitable for serialization.
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
@@ -246,6 +301,7 @@ class UserModel {
     };
   }
 
+  /// Converts the [UserModel] instance to a map suitable for writing to Firestore.
   Map<String, dynamic> toFirestore() {
     return {
       'username': username,
@@ -294,6 +350,7 @@ class UserModel {
     };
   }
 
+  /// Checks if the user model has the minimum required data to be considered valid.
   bool isValid() {
     return username.isNotEmpty && email.isNotEmpty && classification.isNotEmpty;
   }

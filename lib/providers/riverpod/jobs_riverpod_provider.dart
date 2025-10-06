@@ -11,9 +11,11 @@ import '../../utils/concurrent_operations.dart';
 
 part 'jobs_riverpod_provider.g.dart';
 
-/// Jobs state model for Riverpod
+/// Represents the state for the jobs feature, including lists of jobs,
+/// loading status, and pagination details.
 class JobsState {
 
+  /// Creates an instance of the jobs state.
   const JobsState({
     this.jobs = const <Job>[],
     this.visibleJobs = const <Job>[],
@@ -25,16 +27,26 @@ class JobsState {
     this.loadTimes = const <Duration>[],
     this.totalJobsLoaded = 0,
   });
+  /// The complete list of all jobs loaded so far.
   final List<Job> jobs;
+  /// The sub-list of jobs currently visible in the UI, used for virtual scrolling.
   final List<Job> visibleJobs;
+  /// The filter criteria currently applied to the job list.
   final JobFilterCriteria activeFilter;
+  /// `true` if a job loading operation is in progress.
   final bool isLoading;
+  /// A string description of the last error that occurred.
   final String? error;
+  /// `true` if there are more jobs to be loaded from the backend.
   final bool hasMoreJobs;
+  /// The last Firestore document from the previous fetch, used for pagination.
   final DocumentSnapshot? lastDocument;
+  /// A list of recent load times for performance monitoring.
   final List<Duration> loadTimes;
+  /// The total number of jobs currently loaded in the state.
   final int totalJobsLoaded;
 
+  /// Creates a new [JobsState] instance with updated field values.
   JobsState copyWith({
     List<Job>? jobs,
     List<Job>? visibleJobs,
@@ -57,14 +69,19 @@ class JobsState {
       totalJobsLoaded: totalJobsLoaded ?? this.totalJobsLoaded,
     );
 
-  JobsState clearError() => copyWith();
+  /// Returns a new [JobsState] instance with the `error` field cleared.
+  JobsState clearError() => copyWith(error: null);
 }
 
-/// Firestore service provider
+/// Provides an app-wide instance of [ResilientFirestoreService].
 @riverpod
 ResilientFirestoreService firestoreService(Ref ref) => ResilientFirestoreService();
 
-/// Jobs notifier for managing job data and operations
+/// The state notifier for managing the [JobsState].
+///
+/// This class handles all logic for fetching, filtering, and paginating job data.
+/// It is designed to be resilient and performant, with placeholders for future
+/// optimizations like advanced memory management and filter performance engines.
 @riverpod
 class JobsNotifier extends _$JobsNotifier {
   late final ConcurrentOperationManager _operationManager;
@@ -84,7 +101,11 @@ class JobsNotifier extends _$JobsNotifier {
     return const JobsState();
   }
 
-  /// Load jobs with pagination
+  /// Loads a list of jobs from Firestore, with support for pagination and filtering.
+  ///
+  /// - [filter]: The [JobFilterCriteria] to apply to the query.
+  /// - [isRefresh]: If `true`, clears the existing job list before fetching.
+  /// - [limit]: The number of jobs to fetch per page.
   Future<void> loadJobs({
     JobFilterCriteria? filter,
     bool isRefresh = false,
@@ -174,7 +195,12 @@ class JobsNotifier extends _$JobsNotifier {
     }
   }
 
-  /// Apply filter to jobs
+  /// Applies a new filter to the job list.
+  ///
+  /// This will clear the current job list and reload data from Firestore
+  /// using the new filter criteria.
+  ///
+  /// - [filter]: The [JobFilterCriteria] to apply.
   Future<void> applyFilter(JobFilterCriteria filter) async {
     if (_operationManager.isOperationInProgress(OperationType.loadJobs)) {
       return;
@@ -198,7 +224,7 @@ class JobsNotifier extends _$JobsNotifier {
     }
   }
 
-  /// Load more jobs (pagination)
+  /// Loads the next page of jobs if available.
   Future<void> loadMoreJobs() async {
     if (!state.hasMoreJobs || state.isLoading) {
       return;
@@ -207,12 +233,18 @@ class JobsNotifier extends _$JobsNotifier {
     await loadJobs();
   }
 
-  /// Refresh jobs
+  /// Clears the current job list and re-fetches the first page.
   Future<void> refreshJobs() async {
     await loadJobs(isRefresh: true);
   }
 
-  /// Update visible jobs for virtual scrolling
+  /// Updates the `visibleJobs` list to support UI virtualization.
+  ///
+  /// This allows the UI to render only a small subset of the full job list,
+  /// improving performance for very long lists.
+  ///
+  /// - [startIndex]: The starting index of the visible range.
+  /// - [endIndex]: The ending index of the visible range.
   void updateVisibleJobsRange(int startIndex, int endIndex) {
     // Basic implementation: filter the visible jobs based on the range
     if (startIndex < 0 || endIndex < 0 || startIndex > endIndex) {
@@ -230,7 +262,9 @@ class JobsNotifier extends _$JobsNotifier {
     state = state.copyWith(visibleJobs: visibleJobs);
   }
 
-  /// Get job by ID
+  /// Retrieves a single job from the currently loaded state by its ID.
+  ///
+  /// Returns the [Job] if found, otherwise `null`.
   Job? getJobById(String jobId) {
     try {
       return state.jobs.firstWhere((Job job) => job.id == jobId);
@@ -239,12 +273,12 @@ class JobsNotifier extends _$JobsNotifier {
     }
   }
 
-  /// Clear error
+  /// Clears any error message from the state.
   void clearError() {
     state = state.clearError();
   }
 
-  /// Get performance metrics
+  /// Returns a map of performance metrics related to job loading.
   Map<String, dynamic> getPerformanceMetrics() => <String, dynamic>{
       'averageLoadTime': state.loadTimes.isEmpty
           ? Duration.zero
@@ -260,7 +294,10 @@ class JobsNotifier extends _$JobsNotifier {
       // 'filterPerformance': _filterEngine.getAverageFilterTime(),
     };
 
-  /// Dispose resources
+  /// Disposes of managed resources.
+  ///
+  /// This is currently a placeholder for future implementations of more
+  /// complex state management utilities.
   void dispose() {
     // TODO: Implement dispose when utility classes are ready
     // _operationManager.dispose();
@@ -269,7 +306,12 @@ class JobsNotifier extends _$JobsNotifier {
   }
 }
 
-/// Filtered jobs provider using family for auto-dispose
+/// An auto-disposing provider that fetches a filtered list of jobs.
+///
+/// This provider is useful for one-off filtered queries where the state does not
+/// need to be preserved after the UI component is unmounted.
+///
+/// - [filter]: The [JobFilterCriteria] to apply.
 @riverpod
 Future<List<Job>> filteredJobs(
   Ref ref,
@@ -290,7 +332,9 @@ Future<List<Job>> filteredJobs(
   }).toList();
 }
 
-/// Auto-dispose provider for job search
+/// An auto-disposing provider for performing a text-based job search.
+///
+/// - [searchTerm]: The text query to search for.
 @riverpod
 Future<List<Job>> searchJobs(
   Ref ref,
@@ -319,7 +363,7 @@ Future<List<Job>> searchJobs(
   }).toList();
 }
 
-/// Job by ID provider
+/// A provider that fetches a single job by its unique ID.
 @riverpod
 Future<Job?> jobById(Ref ref, String jobId) async {
   final firestoreService = ref.watch(firestoreServiceProvider);
@@ -339,7 +383,7 @@ Future<Job?> jobById(Ref ref, String jobId) async {
   return null;
 }
 
-/// Recent jobs provider
+/// A provider that fetches the 10 most recently posted jobs.
 @riverpod
 Future<List<Job>> recentJobs(Ref ref) async {
   final firestoreService = ref.watch(firestoreServiceProvider);
@@ -362,7 +406,7 @@ Future<List<Job>> recentJobs(Ref ref) async {
   }).toList();
 }
 
-/// Storm jobs provider (high priority jobs)
+/// A provider that fetches a list of high-priority storm and emergency jobs.
 @riverpod
 Future<List<Job>> stormJobs(Ref ref) async {
   final firestoreService = ref.watch(firestoreServiceProvider);

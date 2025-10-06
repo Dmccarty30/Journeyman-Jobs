@@ -1,14 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// Represents a single message within a chat conversation.
 class MessageModel {
+  /// The unique identifier for the message document.
   final String id;
+  /// The user ID of the message's author.
   final String authorId;
+  /// The text content of the message.
   final String content;
+  /// The Firestore timestamp when the message was sent.
   final Timestamp timestamp;
+  /// A list of user IDs who have read this message.
   final List<String> readBy;
+  /// A list of URLs for any media (images, videos) attached to the message.
   final List<String> mediaUrls;
+  /// A flag indicating if the message has been soft-deleted.
   final bool deleted;
 
+  /// Creates an instance of [MessageModel].
   MessageModel({
     required this.id,
     required this.authorId,
@@ -19,6 +28,7 @@ class MessageModel {
     this.deleted = false,
   });
 
+  /// Creates a [MessageModel] instance from a Firestore [DocumentSnapshot].
   factory MessageModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return MessageModel(
@@ -32,6 +42,7 @@ class MessageModel {
     );
   }
 
+  /// Converts the [MessageModel] instance to a map suitable for Firestore.
   Map<String, dynamic> toFirestore() {
     return {
       'authorId': authorId,
@@ -43,8 +54,10 @@ class MessageModel {
     };
   }
 
+  /// Checks if the message has valid essential data.
   bool isValid() => authorId.isNotEmpty && content.isNotEmpty;
 
+  /// Creates a new [MessageModel] instance with updated field values.
   MessageModel copyWith({
     String? id,
     String? authorId,

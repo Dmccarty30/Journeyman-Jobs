@@ -7,98 +7,53 @@ import 'package:crypto/crypto.dart';
 import '../models/filter_criteria.dart';
 import '../models/user_model.dart';
 
-/// Manages compressed and encrypted state persistence with versioning support
+/// A utility class for advanced state management that provides compression,
+/// encryption, and versioning for data persisted in [SharedPreferences].
 ///
-/// This utility class provides advanced state management capabilities for the
-/// Journeyman Jobs application, enabling efficient storage and retrieval of
-/// application state with significant storage optimization.
+/// This manager is designed to optimize storage space and secure sensitive data
+/// while ensuring backward compatibility through state versioning and migration.
 ///
-/// ## Core Features:
+/// ### Core Features:
 ///
-/// **Compression:**
-/// - Uses gzip compression to achieve 80%+ storage reduction
-/// - Automatic compression ratio tracking and reporting
-/// - Optimized for JSON-serializable state objects
+/// - **Compression:** Uses gzip to significantly reduce the storage footprint of JSON-serializable state objects.
+/// - **Security:** Implements a simple placeholder for AES encryption to protect sensitive data. **Note:** The current encryption is a simple XOR cipher and is NOT production-safe.
+/// - **Versioning:** Supports state schema versioning to prevent data corruption when the app is updated. Includes a migration mechanism.
+/// - **Performance Monitoring:** Tracks compression/decompression times and storage usage.
 ///
-/// **Security:**
-/// - AES encryption for sensitive user data and preferences
-/// - Secure key generation and storage using SharedPreferences
-/// - Optional encryption per operation based on data sensitivity
+/// ### Usage Example:
 ///
-/// **Versioning:**
-/// - State schema versioning with automatic migration support
-/// - Backward compatibility for older app versions
-/// - Version tracking prevents data corruption from schema changes
-///
-/// **Performance Monitoring:**
-/// - Compression/decompression timing metrics
-/// - Storage space utilization tracking
-/// - Operation success/failure statistics
-///
-/// ## Usage Examples:
-///
-/// **Basic State Storage:**
 /// ```dart
-/// final stateManager = CompressedStateManager();
+/// // Save user preferences with compression and encryption.
+/// await CompressedStateManager.saveUserPreferences(userModel);
 ///
-/// // Save user preferences with compression
-/// await CompressedStateManager.saveState(
-///   'user_preferences',
-///   {'theme': 'dark', 'notifications': true},
-///   encrypt: false
-/// );
-///
-/// // Load and decompress state
-/// final prefs = await CompressedStateManager.loadState('user_preferences');
+/// // Load and decrypt user preferences.
+/// final userModel = await CompressedStateManager.loadUserPreferences();
 /// ```
-///
-/// **Secure Sensitive Data:**
-/// ```dart
-/// // Save encrypted filter history
-/// await CompressedStateManager.saveState(
-///   'filter_history',
-///   recentFilters,
-///   encrypt: true  // Enables AES encryption
-/// );
-/// ```
-///
-/// **Performance Monitoring:**
-/// ```dart
-/// final metrics = CompressedStateManager.getCompressionStats();
-/// print('Average compression ratio: ${metrics['avgRatio']}%');
-/// print('Total operations: ${metrics['totalOps']}');
-/// ```
-///
-/// ## Performance Targets:
-/// - Compression ratio: 80%+ storage reduction
-/// - Save operation: <50ms for typical state objects
-/// - Load operation: <30ms including decompression
-/// - Memory overhead: <1MB for compression operations
-///
-/// ## Storage Keys:
-/// - `user_preferences_compressed`: User settings and preferences
-/// - `filter_history_compressed`: Recent job filter configurations
-/// - `app_settings_compressed`: Application-wide settings
-/// - `cache_metadata_compressed`: Cache validation and metadata
-///
-/// @see [SharedPreferences] for underlying storage mechanism
-/// @see [gzip] for compression implementation
 class CompressedStateManager {
   static const String _stateVersionKey = 'state_version';
   static const String _encryptionKeyKey = 'encryption_key';
   static const int _currentStateVersion = 1;
   
   // State keys for different data types
+  /// The key for storing compressed user preferences.
   static const String _userPreferencesKey = 'user_preferences_compressed';
+  /// The key for storing compressed filter history.
   static const String _filterHistoryKey = 'filter_history_compressed';
+  /// The key for storing compressed application settings.
   static const String _appSettingsKey = 'app_settings_compressed';
+  /// The key for storing compressed cache metadata.
   static const String _cacheMetadataKey = 'cache_metadata_compressed';
   
   // Performance metrics
   static final Map<String, int> _compressionStats = {};
   static final Map<String, int> _decompressionStats = {};
   
-  /// Save state with compression and optional encryption
+  /// Saves a given state object to [SharedPreferences] with compression and optional encryption.
+  ///
+  /// - [key]: The key under which to store the data.
+  /// - [state]: The JSON-serializable state object to save.
+  /// - [encrypt]: Whether to encrypt the data before saving.
+  /// - [enableMetrics]: Whether to record performance metrics for this operation.
   static Future<void> saveState(
     String key, 
     dynamic state, {
@@ -152,7 +107,13 @@ class CompressedStateManager {
     }
   }
   
-  /// Load state with decompression and optional decryption
+  /// Loads and decodes a state object from [SharedPreferences].
+  ///
+  /// - [key]: The key from which to load the data.
+  /// - [decrypt]: Whether to decrypt the data after loading.
+  /// - [enableMetrics]: Whether to record performance metrics for this operation.
+  ///
+  /// Returns the deserialized state object of type [T], or `null` if not found or on error.
   static Future<T?> loadState<T>(
     String key, {
     bool decrypt = false,
@@ -197,7 +158,7 @@ class CompressedStateManager {
     }
   }
   
-  /// Save user preferences with encryption
+  /// A convenience method to save the [UserModel] state with encryption enabled.
   static Future<void> saveUserPreferences(UserModel user) async {
     await saveState(
       _userPreferencesKey,
@@ -206,7 +167,7 @@ class CompressedStateManager {
     );
   }
   
-  /// Load user preferences with decryption
+  /// A convenience method to load and decrypt the [UserModel] state.
   static Future<UserModel?> loadUserPreferences() async {
     final json = await loadState<Map<String, dynamic>>(
       _userPreferencesKey,
@@ -225,13 +186,13 @@ class CompressedStateManager {
     }
   }
   
-  /// Save filter history with compression
+  /// A convenience method to save the user's job filter history.
   static Future<void> saveFilterHistory(List<JobFilterCriteria> filters) async {
     final filterJsonList = filters.map((filter) => filter.toJson()).toList();
     await saveState(_filterHistoryKey, filterJsonList);
   }
   
-  /// Load filter history
+  /// A convenience method to load the user's job filter history.
   static Future<List<JobFilterCriteria>> loadFilterHistory() async {
     final jsonList = await loadState<List<dynamic>>(_filterHistoryKey);
     
@@ -250,17 +211,17 @@ class CompressedStateManager {
     }
   }
   
-  /// Save app settings
+  /// A convenience method to save general application settings.
   static Future<void> saveAppSettings(Map<String, dynamic> settings) async {
     await saveState(_appSettingsKey, settings);
   }
   
-  /// Load app settings
+  /// A convenience method to load general application settings.
   static Future<Map<String, dynamic>?> loadAppSettings() async {
     return await loadState<Map<String, dynamic>>(_appSettingsKey);
   }
   
-  /// Clear all compressed state
+  /// Removes all state managed by this class from [SharedPreferences].
   static Future<void> clearAllState() async {
     final prefs = await SharedPreferences.getInstance();
     
@@ -280,7 +241,7 @@ class CompressedStateManager {
     }
   }
   
-  /// Get compression statistics
+  /// Returns a map of performance statistics for compression and decompression operations.
   static Map<String, Map<String, int>> getPerformanceStats() {
     return {
       'compression': Map.from(_compressionStats),
@@ -288,7 +249,9 @@ class CompressedStateManager {
     };
   }
   
-  /// Check and perform state migration if needed
+  /// Checks the stored state version and performs data migration if necessary.
+  ///
+  /// This should be called at app startup to ensure data compatibility.
   static Future<void> checkAndMigrateState() async {
     final prefs = await SharedPreferences.getInstance();
     final currentVersion = prefs.getInt(_stateVersionKey) ?? 0;
@@ -366,7 +329,11 @@ class CompressedStateManager {
     }
   }
   
-  /// Encrypt data using AES encryption
+  /// Encrypts the given data.
+  ///
+  /// **Warning:** This uses a simple XOR cipher for demonstration purposes and is
+  /// **not secure**. A robust encryption library like `encrypt` with AES should be used
+  /// in a production application.
   static Future<Uint8List> _encryptData(Uint8List data) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -397,7 +364,10 @@ class CompressedStateManager {
     }
   }
   
-  /// Decrypt data using AES decryption
+  /// Decrypts the given data.
+  ///
+  /// **Warning:** This uses a simple XOR cipher for demonstration purposes and is
+  /// **not secure**.
   static Future<Uint8List> _decryptData(Uint8List encryptedData) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -433,7 +403,7 @@ class CompressedStateManager {
     return Uint8List.fromList(sha256.convert(utf8.encode(combined)).bytes);
   }
   
-  /// Get storage usage statistics
+  /// Calculates and returns the storage size in bytes for each managed state key.
   static Future<Map<String, int>> getStorageStats() async {
     final prefs = await SharedPreferences.getInstance();
     final stats = <String, int>{};
@@ -456,13 +426,18 @@ class CompressedStateManager {
   }
 }
 
-/// State compression configuration
+/// A configuration class for state compression settings.
 class StateCompressionConfig {
+  /// Whether to enable gzip compression.
   final bool enableCompression;
+  /// Whether to enable encryption.
   final bool enableEncryption;
+  /// Whether to enable performance metric collection.
   final bool enableMetrics;
+  /// The gzip compression level (0-9).
   final int compressionLevel;
   
+  /// Creates a [StateCompressionConfig] instance.
   const StateCompressionConfig({
     this.enableCompression = true,
     this.enableEncryption = false,
@@ -470,12 +445,14 @@ class StateCompressionConfig {
     this.compressionLevel = 6,
   });
   
+  /// A recommended configuration for production environments.
   static const StateCompressionConfig production = StateCompressionConfig(
     enableCompression: true,
     enableEncryption: true,
     enableMetrics: false,
   );
   
+  /// A recommended configuration for development environments.
   static const StateCompressionConfig development = StateCompressionConfig(
     enableCompression: true,
     enableEncryption: false,
@@ -483,14 +460,14 @@ class StateCompressionConfig {
   );
 }
 
-/// Extension methods for easy state management
+/// Extension methods on [SharedPreferences] to simplify using the [CompressedStateManager].
 extension CompressedStateExtensions on SharedPreferences {
-  /// Save compressed state
+  /// Saves a state object with compression using this [SharedPreferences] instance.
   Future<void> setCompressedState(String key, dynamic state) async {
     await CompressedStateManager.saveState(key, state);
   }
   
-  /// Load compressed state
+  /// Loads a compressed state object using this [SharedPreferences] instance.
   Future<T?> getCompressedState<T>(String key) async {
     return await CompressedStateManager.loadState<T>(key);
   }

@@ -5,13 +5,23 @@ import '../../../../electrical_components/jj_circuit_breaker_switch_list_tile.da
 import '../../../../electrical_components/jj_circuit_breaker_switch.dart';
 import 'calculation_helpers.dart';
 
+/// A screen providing a residential load calculator based on NEC Article 220.
+///
+/// This calculator helps electricians determine the total electrical load and
+/// recommended service size for a dwelling unit. It is organized into an
+/// "Inputs" tab and a "Results" tab.
 class LoadCalculator extends StatefulWidget {
+  /// Creates a [LoadCalculator] screen.
   const LoadCalculator({super.key});
 
   @override
   State<LoadCalculator> createState() => _LoadCalculatorState();
 }
 
+/// The state for the [LoadCalculator].
+///
+/// Manages the tab controller, input controllers, and the state of the
+/// calculation, including the final result.
 class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   
@@ -42,6 +52,8 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     super.dispose();
   }
 
+  /// Gathers all inputs, performs the load calculation using [ElectricalCalculations],
+  /// and updates the state to display the results.
   void _calculateLoad() {
     final squareFootage = double.tryParse(_squareFootageController.text);
     final hvacLoad = double.tryParse(_hvacLoadController.text) ?? 0;
@@ -86,12 +98,14 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     });
   }
 
+  /// Adds a new entry to the list of appliances.
   void _addAppliance() {
     setState(() {
       _appliances.add(ApplianceEntry());
     });
   }
 
+  /// Removes an appliance entry from the list at the given [index].
   void _removeAppliance(int index) {
     setState(() {
       _appliances.removeAt(index);
@@ -101,6 +115,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     }
   }
 
+  /// Clears all input fields and results, resetting the calculator to its initial state.
   void _clearCalculation() {
     setState(() {
       _result = null;
@@ -155,6 +170,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// Builds the UI for the "Inputs" tab, containing all the form fields.
   Widget _buildInputsTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -182,6 +198,8 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// Builds the UI for the "Results" tab, which displays the calculation results
+  /// once they are available.
   Widget _buildResultsTab() {
     if (_result == null) {
       return Center(
@@ -213,6 +231,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// Builds the header card for the calculator.
   Widget _buildCalculatorHeader() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -262,6 +281,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// Builds the section for basic loads like general lighting and appliance circuits.
   Widget _buildBasicLoadsSection() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -346,6 +366,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// Builds the section for adding and managing fixed appliances.
   Widget _buildAppliancesSection() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -416,6 +437,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// Builds a single row in the UI for an appliance entry.
   Widget _buildApplianceRow(ApplianceEntry appliance, int index) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
@@ -520,6 +542,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// Builds the section for the HVAC load input.
   Widget _buildHVACSection() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -556,6 +579,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// Builds the section for selecting the system voltage.
   Widget _buildSystemVoltageSection() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -603,6 +627,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// Builds the main "Calculate Load" button.
   Widget _buildCalculateButton() {
     return SizedBox(
       width: double.infinity,
@@ -636,6 +661,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// Builds the summary card for the calculation results.
   Widget _buildResultsSummary() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -727,6 +753,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// Builds a card displaying a detailed breakdown of the calculated loads.
   Widget _buildLoadBreakdown() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -755,6 +782,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// Builds a card that visualizes the recommended service size against standard sizes.
   Widget _buildServiceSizeRecommendation() {
     List<int> standardSizes = [100, 125, 150, 200, 225, 300, 400];
     int recommendedSize = _result!.recommendedServiceSize;
@@ -847,6 +875,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// Builds a card displaying relevant NEC references for the calculation.
   Widget _buildNecReference() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -907,6 +936,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// A helper widget to build a styled row for displaying a result.
   Widget _buildResultRow(String label, String value, {bool isHighlight = false, Color? color}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
@@ -932,6 +962,7 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
     );
   }
 
+  /// A helper widget to build a counter input field with increment/decrement buttons.
   Widget _buildCounterField({
     required String label,
     required int value,
@@ -1000,12 +1031,18 @@ class _LoadCalculatorState extends State<LoadCalculator> with SingleTickerProvid
   }
 }
 
+/// A mutable class to hold the state for a single appliance entry in the UI form.
 class ApplianceEntry {
+  /// The name of the appliance.
   String name;
+  /// The load of the appliance in Volt-Amps (VA).
   double load;
+  /// A flag indicating if this is a motor load.
   bool isMotor;
+  /// The power factor of the appliance.
   double powerFactor;
 
+  /// Creates an instance of [ApplianceEntry].
   ApplianceEntry({
     this.name = '',
     this.load = 0,

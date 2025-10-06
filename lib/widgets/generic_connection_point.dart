@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import '../models/transformer_models.dart';
 
-/// Generic interactive connection point widget
+/// A generic, interactive widget representing a connection point or terminal
+/// in the transformer training simulator.
+///
+/// This widget visualizes a [ConnectionPoint] and handles user interactions like
+/// tapping and dragging. It changes its appearance based on its state (selected,
+/// connected, compatible) and supports different [ConnectionMode]s.
 class GenericConnectionPointWidget extends StatefulWidget {
 
+  /// Creates an instance of [GenericConnectionPointWidget].
   const GenericConnectionPointWidget({
     required this.connectionPoint, required this.isSelected, required this.isConnected, required this.showGuidance, required this.onTap, super.key,
     this.isCompatible = true,
@@ -13,22 +19,36 @@ class GenericConnectionPointWidget extends StatefulWidget {
     this.onDragEnd,
     this.onAcceptDrop,
   });
+  /// The data model for the connection point this widget represents.
   final ConnectionPoint connectionPoint;
+  /// Whether this connection point is currently selected by the user.
   final bool isSelected;
+  /// Whether this connection point has a wire connected to it.
   final bool isConnected;
+  /// Whether to show guidance visuals (not currently implemented in this widget).
   final bool showGuidance;
+  /// Whether this point is a compatible target for a connection.
   final bool isCompatible;
+  /// Whether this point can be used as the starting point for a drag operation.
   final bool isDragSource;
+  /// The current interaction mode for making connections.
   final ConnectionMode connectionMode;
+  /// The callback function invoked when the widget is tapped.
   final VoidCallback onTap;
+  /// The callback for when a drag operation starts from this point.
   final VoidCallback? onDragStart;
+  /// The callback for when a drag operation from this point ends.
   final VoidCallback? onDragEnd;
+  /// The callback for when a draggable is dropped onto this point.
   final Function(DragTargetDetails<String>)? onAcceptDrop;
 
   @override
   State<GenericConnectionPointWidget> createState() => _GenericConnectionPointWidgetState();
 }
 
+/// The state for the [GenericConnectionPointWidget].
+///
+/// Manages the pulse animation for the selected state.
 class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWidget>
     with SingleTickerProviderStateMixin {
   AnimationController? _pulseController;
@@ -159,7 +179,7 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
     return connectionPoint;
   }
 
-  /// Get connection point color based on type and state
+  /// Determines the fill color of the connection point based on its current state.
   Color _getConnectionPointColor() {
     if (widget.isConnected) {
       return Colors.green;
@@ -185,7 +205,7 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
     }
   }
 
-  /// Get connection point border color
+  /// Determines the border color of the connection point based on its current state.
   Color _getConnectionPointBorderColor() {
     if (widget.isSelected) {
       return Colors.blue[800]!;
@@ -202,7 +222,7 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
     return Colors.grey[800]!;
   }
 
-  /// Get appropriate icon for connection point
+  /// Determines the icon to display inside the connection point based on its type and state.
   IconData _getConnectionPointIcon() {
     if (widget.isConnected) {
       return Icons.link;
@@ -221,13 +241,17 @@ class _GenericConnectionPointWidgetState extends State<GenericConnectionPointWid
   }
 }
 
-/// Tooltip widget for connection points
+/// A widget that wraps another widget to provide a descriptive tooltip
+/// for a [ConnectionPoint].
 class ConnectionPointTooltip extends StatelessWidget {
 
+  /// Creates an instance of [ConnectionPointTooltip].
   const ConnectionPointTooltip({
     required this.connectionPoint, required this.child, super.key,
   });
+  /// The connection point data to display in the tooltip.
   final ConnectionPoint connectionPoint;
+  /// The child widget that will trigger the tooltip on hover or long-press.
   final Widget child;
 
   @override
@@ -265,18 +289,26 @@ class ConnectionPointTooltip extends StatelessWidget {
   }
 }
 
-/// Custom painter for drawing wire connections
+/// A [CustomPainter] for drawing the wires between [ConnectionPoint] widgets.
+///
+/// It can draw solid lines for correct connections and dashed lines for incorrect ones,
+/// and includes an arrow to indicate the direction of the connection.
 class WireConnectionPainter extends CustomPainter {
 
+  /// Creates an instance of [WireConnectionPainter].
   WireConnectionPainter({
     required this.connections,
     required this.connectionPoints,
     required this.wireColors,
     this.showConnections = true,
   });
+  /// The list of [WireConnection]s to draw.
   final List<WireConnection> connections;
+  /// The list of all available [ConnectionPoint]s on the canvas to find coordinates.
   final List<ConnectionPoint> connectionPoints;
+  /// A map of colors to use for different wire types or phases.
   final Map<String, Color> wireColors;
+  /// A flag to toggle the visibility of the connections.
   final bool showConnections;
 
   @override
@@ -329,6 +361,7 @@ class WireConnectionPainter extends CustomPainter {
     }
   }
 
+  /// Draws a dashed line between two points.
   void _drawDashedLine(
     Canvas canvas,
     Offset start,
@@ -356,6 +389,7 @@ class WireConnectionPainter extends CustomPainter {
     }
   }
 
+  /// Draws an arrowhead at the end of a line segment.
   void _drawArrow(
     Canvas canvas,
     Offset start,

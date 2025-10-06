@@ -3,18 +3,28 @@ import 'package:flutter/services.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
 
+/// A screen providing help and support to users.
+///
+/// It features a tabbed interface for accessing a searchable FAQ,
+/// contact information, and quick-start guides.
 class HelpSupportScreen extends StatefulWidget {
+  /// Creates a [HelpSupportScreen].
   const HelpSupportScreen({super.key});
 
   @override
   State<HelpSupportScreen> createState() => _HelpSupportScreenState();
 }
 
+/// The state for the [HelpSupportScreen].
+///
+/// Manages the tab controller, search functionality for the FAQ, and holds
+/// the static data for the FAQ, contact options, and guides.
 class _HelpSupportScreenState extends State<HelpSupportScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
+  /// A static list of Frequently Asked Questions.
   final List<FAQItem> _faqItems = [
     FAQItem(
       category: 'Account',
@@ -78,6 +88,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> with SingleTicker
     ),
   ];
 
+  /// A static list of contact options for user support.
   final List<ContactOption> _contactOptions = [
     ContactOption(
       icon: Icons.email_outlined,
@@ -122,6 +133,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> with SingleTicker
     super.dispose();
   }
 
+  /// A computed list of FAQs that are filtered based on the current search query.
   List<FAQItem> get _filteredFAQs {
     if (_searchQuery.isEmpty) return _faqItems;
     return _faqItems.where((faq) =>
@@ -169,6 +181,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> with SingleTicker
     );
   }
 
+  /// Builds the UI for the "FAQ" tab, including a search bar and a list of expandable questions.
   Widget _buildFAQTab() {
     return Column(
       children: [
@@ -230,6 +243,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> with SingleTicker
     );
   }
 
+  /// Builds the UI for the "Contact" tab, displaying various methods to contact support.
   Widget _buildContactTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -308,6 +322,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> with SingleTicker
     );
   }
 
+  /// Builds the UI for the "Guides" tab, showing a list of helpful quick-start guides.
   Widget _buildGuidesTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -392,11 +407,16 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> with SingleTicker
   }
 }
 
+/// A data model for a single Frequently Asked Question item.
 class FAQItem {
+  /// The category of the question (e.g., 'Account', 'Jobs').
   final String category;
+  /// The question text.
   final String question;
+  /// The answer text.
   final String answer;
 
+  /// Creates an instance of [FAQItem].
   FAQItem({
     required this.category,
     required this.question,
@@ -404,13 +424,20 @@ class FAQItem {
   });
 }
 
+/// A data model for a single contact option in the support screen.
 class ContactOption {
+  /// The icon representing the contact method.
   final IconData icon;
+  /// The title of the contact method (e.g., 'Email Support').
   final String title;
+  /// A subtitle providing more context (e.g., 'Get help via email').
   final String subtitle;
+  /// The action data, such as an email address or phone number.
   final String action;
+  /// A color used for theming the contact option's UI.
   final Color color;
 
+  /// Creates an instance of [ContactOption].
   ContactOption({
     required this.icon,
     required this.title,
@@ -420,15 +447,19 @@ class ContactOption {
   });
 }
 
+/// A card widget that displays a single, expandable [FAQItem].
 class FAQCard extends StatefulWidget {
+  /// The FAQ data to be displayed in the card.
   final FAQItem faq;
 
+  /// Creates an [FAQCard].
   const FAQCard({super.key, required this.faq});
 
   @override
   State<FAQCard> createState() => _FAQCardState();
 }
 
+/// The state for the [FAQCard], managing its expanded/collapsed state.
 class _FAQCardState extends State<FAQCard> {
   bool _isExpanded = false;
 
@@ -508,9 +539,12 @@ class _FAQCardState extends State<FAQCard> {
   }
 }
 
+/// A card widget that displays a single [ContactOption].
 class ContactCard extends StatelessWidget {
+  /// The contact option data to display.
   final ContactOption option;
 
+  /// Creates a [ContactCard].
   const ContactCard({super.key, required this.option});
 
   @override
@@ -581,6 +615,8 @@ class ContactCard extends StatelessWidget {
     );
   }
 
+  /// Handles the tap action for a contact option, such as copying an email
+  /// address to the clipboard or showing an info message.
   void _handleContactAction(BuildContext context, ContactOption option) {
     switch (option.title) {
       case 'Email Support':
@@ -606,12 +642,18 @@ JJSnackBar.showSuccess(
   }
 }
 
+/// A card widget that displays a quick-start guide with a title, icon, and a list of steps.
 class GuideCard extends StatelessWidget {
+  /// The icon representing the guide's topic.
   final IconData icon;
+  /// The title of the guide.
   final String title;
+  /// A brief subtitle describing the guide's purpose.
   final String subtitle;
+  /// A list of strings, where each string is a step in the guide.
   final List<String> steps;
 
+  /// Creates a [GuideCard].
   const GuideCard({
     super.key,
     required this.icon,

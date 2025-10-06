@@ -3,12 +3,16 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Service for caching frequently accessed data
-/// 
-/// This service provides in-memory and persistent caching capabilities
-/// to improve app performance and reduce Firestore read operations.
+/// A service for caching frequently accessed data.
+///
+/// This service provides a two-tiered caching mechanism: a fast in-memory cache
+/// with LRU (Least Recently Used) eviction and a persistent cache using
+/// `shared_preferences`. It aims to improve app performance and reduce backend
+/// read operations.
 class CacheService {
   static final CacheService _instance = CacheService._internal();
+
+  /// Provides a singleton instance of the [CacheService].
   factory CacheService() => _instance;
   CacheService._internal();
 
@@ -23,21 +27,40 @@ class CacheService {
   DateTime? _lastCleanup;
   
   // Cache configuration
+  /// The default time-to-live for cache entries.
   static const Duration defaultTtl = Duration(minutes: 30);
+  /// The time-to-live for user data cache entries.
   static const Duration userDataTtl = Duration(hours: 2);
+  /// The time-to-live for IBEW local union data.
   static const Duration localsTtl = Duration(days: 1);
+  /// The time-to-live for job postings.
   static const Duration jobsTtl = Duration(minutes: 15);
+  /// The maximum number of entries to store in the in-memory cache.
   static const int maxMemoryEntries = 100; // Reduced for better performance
+  /// The maximum number of entries to store in the persistent cache.
   static const int maxPersistentEntries = 500;
   
   // Cache keys
+  /// Prefix for user data cache keys.
   static const String userDataPrefix = 'user_data_';
+  /// Prefix for IBEW local union data cache keys.
   static const String localsPrefix = 'locals_';
+  /// Prefix for job data cache keys.
   static const String jobsPrefix = 'jobs_';
+  /// Key for caching popular jobs.
   static const String popularJobsKey = 'popular_jobs';
+  /// Prefix for user preferences cache keys.
   static const String userPreferencesPrefix = 'user_prefs_';
   
-  /// Get data from cache (memory first, then persistent)
+  /// Retrieves data from the cache.
+  ///
+  /// It checks the in-memory cache first. If not found or expired, it checks
+  /// the persistent cache. If found there, it's loaded back into memory.
+  ///
+  /// - [key]: The unique key for the cached item.
+  /// - [fromJson]: An optional function to deserialize JSON data into an object of type `T`.
+  ///
+  /// Returns the cached data as type `T`, or `null` if not found or expired.
   Future<T?> get<T>(String key, {T Function(Map<String, dynamic>)? fromJson}) async {
     // Periodic cleanup to remove expired entries
     _performPeriodicCleanup();
@@ -106,7 +129,14 @@ class CacheService {
     return null;
   }
   
-  /// Set data in cache (both memory and persistent)
+  /// Saves or updates data in the cache.
+  ///
+  /// The data is stored in both the in-memory and persistent caches by default.
+  ///
+  /// - [key]: The unique key for the item to be cached.
+  /// - [data]: The data to cache.
+  /// - [ttl]: The time-to-live for this cache entry. Uses [defaultTtl] if not specified.
+  /// - [persistentOnly]: If `true`, only stores the data in the persistent cache.
   Future<void> set<T>(
     String key, 
     T data, {
@@ -140,7 +170,9 @@ class CacheService {
     }
   }
   
-  /// Remove data from cache
+  /// Removes an item from both the in-memory and persistent caches.
+  ///
+  /// - [key]: The key of the item to remove.
   Future<void> remove(String key) async {
     _removeFromMemoryCache(key);
     
@@ -158,7 +190,9 @@ class CacheService {
     }
   }
   
-  /// Clear all cache data
+  /// Clears all data from both the in-memory and persistent caches.
+  ///
+  /// This also resets all cache statistics.
   Future<void> clear() async {
     _memoryCache.clear();
     _accessOrder.clear();
@@ -190,7 +224,7 @@ class CacheService {
     }
   }
   
-  /// Clear expired entries from cache
+  /// Removes all expired entries from both the in-memory and persistent caches.
   Future<void> clearExpired() async {
     // Clear expired memory cache entries
     final expiredMemoryKeys = _memoryCache.entries
@@ -314,7 +348,10 @@ class CacheService {
     }
   }
   
-  /// Get cache statistics
+  /// Retrieves statistics about the cache's performance.
+  ///
+  /// Returns a map containing metrics like hit rate, memory usage, and counts
+  /// for hits, misses, and evictions.
   Map<String, dynamic> getStats() {
     final memoryEntries = _memoryCache.length;
     final expiredMemoryEntries = _memoryCache.values
@@ -339,58 +376,85 @@ class CacheService {
   
   // Convenience methods for specific data types
   
-  /// Cache user data
+  /// Caches user-specific data.
+  ///
+  /// - [uid]: The user's unique ID.
+  /// - [userData]: A map containing the user's data.
   Future<void> cacheUserData(String uid, Map<String, dynamic> userData) {
     return set('$userDataPrefix$uid', userData, ttl: userDataTtl);
   }
   
-  /// Get cached user data
+  /// Retrieves cached user data.
+  ///
+  /// - [uid]: The user's unique ID.
+  ///
+  /// Returns a `Map<String, dynamic>` of user data, or `null` if not cached.
   Future<Map<String, dynamic>?> getCachedUserData(String uid) {
     return get<Map<String, dynamic>>('$userDataPrefix$uid');
   }
   
-  /// Cache locals data
+  /// Caches a list of IBEW local unions.
+  ///
+  /// - [locals]: A list of maps, where each map represents a local union.
   Future<void> cacheLocals(List<Map<String, dynamic>> locals) {
     return set('${localsPrefix}all', locals, ttl: localsTtl);
   }
   
-  /// Get cached locals
+  /// Retrieves the cached list of IBEW local unions.
+  ///
+  /// Returns a list of local union data, or `null` if not cached.
   Future<List<Map<String, dynamic>>?> getCachedLocals() {
     return get<List<Map<String, dynamic>>>('${localsPrefix}all');
   }
   
-  /// Cache popular jobs
+  /// Caches a list of popular jobs.
+  ///
+  /// - [jobs]: A list of maps, where each map represents a job.
   Future<void> cachePopularJobs(List<Map<String, dynamic>> jobs) {
     return set(popularJobsKey, jobs, ttl: jobsTtl);
   }
   
-  /// Get cached popular jobs
+  /// Retrieves the cached list of popular jobs.
+  ///
+  /// Returns a list of job data, or `null` if not cached.
   Future<List<Map<String, dynamic>>?> getCachedPopularJobs() {
     return get<List<Map<String, dynamic>>>(popularJobsKey);
   }
   
-  /// Cache user preferences
+  /// Caches user-specific preferences.
+  ///
+  /// - [uid]: The user's unique ID.
+  /// - [preferences]: A map containing the user's preferences.
   Future<void> cacheUserPreferences(String uid, Map<String, dynamic> preferences) {
     return set('$userPreferencesPrefix$uid', preferences, ttl: userDataTtl);
   }
   
-  /// Get cached user preferences
+  /// Retrieves a user's cached preferences.
+  ///
+  /// - [uid]: The user's unique ID.
+  ///
+  /// Returns a map of user preferences, or `null` if not cached.
   Future<Map<String, dynamic>?> getCachedUserPreferences(String uid) {
     return get<Map<String, dynamic>>('$userPreferencesPrefix$uid');
   }
 }
 
-/// Cache entry with expiration
+/// Represents an entry in the in-memory cache.
 class CacheEntry {
+  /// The cached data.
   final dynamic data;
+  /// The timestamp when the entry was created.
   final DateTime createdAt;
+  /// The duration for which this entry is considered valid.
   final Duration ttl;
   
+  /// Creates a new cache entry.
   CacheEntry({
     required this.data,
     required this.createdAt,
     required this.ttl,
   });
   
+  /// Returns `true` if the cache entry has expired.
   bool get isExpired => DateTime.now().difference(createdAt) >= ttl;
 }

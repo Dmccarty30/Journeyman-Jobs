@@ -1,47 +1,48 @@
 import 'package:flutter/material.dart';
 
-/// Storm Event Model for IBEW Storm Restoration Work
-/// 
-/// Represents emergency storm restoration assignments for electrical workers.
-/// Includes all necessary information for workers to evaluate and respond to
+/// A data model for IBEW storm restoration work assignments.
+///
+/// This class represents an emergency storm restoration event, providing all
+/// the necessary information for electrical workers to evaluate and respond to
 /// storm damage and power restoration needs.
 class StormEvent {
-  /// Unique identifier for the storm event
+  /// The unique identifier for the storm event.
   final String id;
   
-  /// Name of the storm or emergency event
+  /// The name of the storm or emergency event (e.g., "Hurricane Zeta").
   final String name;
   
-  /// Geographic region affected by the storm
+  /// The geographic region affected by the storm (e.g., "Gulf Coast").
   final String region;
   
-  /// Severity level (Critical, High, Moderate, Low)
+  /// The severity level of the event (e.g., "Critical", "High", "Moderate").
   final String severity;
   
-  /// List of affected utility companies
+  /// A list of utility companies affected by the storm.
   final List<String> affectedUtilities;
   
-  /// Estimated duration of restoration work
+  /// The estimated duration of the restoration work.
   final String estimatedDuration;
   
-  /// Number of open positions available
+  /// The number of open positions available for this event.
   final int openPositions;
   
-  /// Hourly pay rate range
+  /// The hourly pay rate or range for the work.
   final String payRate;
   
-  /// Daily per diem allowance
+  /// The daily per diem allowance provided to workers.
   final String perDiem;
   
-  /// Current status of restoration efforts
+  /// The current status of the restoration efforts (e.g., "Mobilizing", "In Progress").
   final String status;
   
-  /// Detailed description of storm damage and work needed
+  /// A detailed description of the storm damage and the work required.
   final String description;
   
-  /// When deployment is scheduled to begin
+  /// The date when deployment is scheduled to begin.
   final DateTime deploymentDate;
 
+  /// Creates an instance of [StormEvent].
   const StormEvent({
     required this.id,
     required this.name,
@@ -57,7 +58,7 @@ class StormEvent {
     required this.deploymentDate,
   });
 
-  /// Convert to Firestore document data
+  /// Serializes the [StormEvent] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -75,7 +76,7 @@ class StormEvent {
     };
   }
 
-  /// Create from Firestore document data
+  /// Creates a [StormEvent] instance from a JSON map.
   factory StormEvent.fromJson(Map<String, dynamic> json) {
     return StormEvent(
       id: json['id'] as String,
@@ -93,7 +94,7 @@ class StormEvent {
     );
   }
 
-  /// Get severity color for UI
+  /// Returns a [Color] corresponding to the event's severity level for UI display.
   Color get severityColor {
     switch (severity.toLowerCase()) {
       case 'critical':
@@ -107,10 +108,10 @@ class StormEvent {
     }
   }
 
-  /// Check if deployment is in the future
+  /// A boolean indicating whether the deployment date is in the future.
   bool get isUpcoming => deploymentDate.isAfter(DateTime.now());
 
-  /// Get time until deployment or time since started
+  /// Returns a formatted string indicating the time until deployment or since it started.
   String get deploymentTimeString {
     final now = DateTime.now();
     final difference = deploymentDate.difference(now);

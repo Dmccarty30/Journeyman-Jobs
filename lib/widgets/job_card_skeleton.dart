@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import '../design_system/app_theme.dart';
 
-/// Skeleton loading card for job listings
-/// Matches the design from assets/job-card-skeleton.png
+/// A skeleton loading widget that mimics the layout of a job card.
+///
+/// This widget displays a placeholder with shimmering gray blocks, providing a
+/// visual cue to the user that content is being loaded. It is designed to match
+/// the structure of a real job card to create a smooth loading experience.
 class JobCardSkeleton extends StatefulWidget {
+  /// Creates a [JobCardSkeleton] widget.
   const JobCardSkeleton({super.key});
 
   @override
   State<JobCardSkeleton> createState() => _JobCardSkeletonState();
 }
 
+/// The state for the [JobCardSkeleton] widget, which manages the animation.
 class _JobCardSkeletonState extends State<JobCardSkeleton>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
@@ -119,6 +124,7 @@ class _JobCardSkeletonState extends State<JobCardSkeleton>
     );
   }
 
+  /// A private helper method to build an individual shimmering block.
   Widget _buildSkeletonBlock({
     required double width,
     required double height,

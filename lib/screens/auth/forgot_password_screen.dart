@@ -4,20 +4,33 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 
+/// A screen that allows users to request a password reset email.
+///
+/// This screen provides a form for the user to enter their email address.
+/// It handles the logic for sending the reset link via Firebase Authentication
+/// and displays appropriate feedback, including success messages and error handling.
 class ForgotPasswordScreen extends StatefulWidget {
+  /// Creates a [ForgotPasswordScreen].
   const ForgotPasswordScreen({super.key});
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
+/// The state for the [ForgotPasswordScreen].
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  /// The global key for the form, used for validation.
   final _formKey = GlobalKey<FormState>();
+  /// The controller for the email input field.
   final _emailController = TextEditingController();
+  /// The focus node for the email input field.
   final _emailFocus = FocusNode();
   
+  /// A flag to indicate if a password reset request is in progress.
   bool _isLoading = false;
+  /// A flag to indicate if the password reset email has been successfully sent.
   bool _emailSent = false;
+  /// An error message to display to the user if the request fails.
   String? _errorMessage;
 
   @override
@@ -27,6 +40,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     super.dispose();
   }
 
+  /// Handles the password reset logic.
+  ///
+  /// Validates the form, then calls Firebase Auth to send the reset email.
+  /// Updates the UI state based on the outcome of the request.
   Future<void> _resetPassword() async {
     if (!_formKey.currentState!.validate()) {
       return;

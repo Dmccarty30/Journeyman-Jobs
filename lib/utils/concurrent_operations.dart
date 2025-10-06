@@ -1,27 +1,43 @@
 import 'dart:async';
 import 'dart:collection';
-import 'package:flutter/foundation.dart';
+import 'package.flutter/foundation.dart';
 
-/// Operation types for queuing and synchronization
+/// Defines the types of asynchronous operations that can be managed and queued.
+///
+/// This helps in prioritizing and preventing conflicts between operations.
 enum OperationType {
+  /// An operation to load job data.
   loadJobs,
+  /// An operation to load IBEW local union data.
   loadLocals,
+  /// An operation to load a user's profile.
   loadUserProfile,
+  /// An operation to update a user's profile.
   updateUserProfile,
+  /// An operation for user sign-in.
   signIn,
+  /// An operation for user sign-out.
   signOut,
+  /// An operation to refresh all app data.
   refreshData,
 }
 
-/// Queued operation data structure
+/// Represents a single operation waiting in the execution queue.
 class QueuedOperation {
+  /// A unique identifier for the operation instance.
   final String id;
+  /// The type of the operation.
   final OperationType type;
+  /// Optional parameters associated with the operation.
   final Map<String, dynamic> parameters;
+  /// The completer that will be resolved when the operation finishes.
   final Completer<dynamic> completer;
+  /// The timestamp when the operation was created.
   final DateTime createdAt;
+  /// The priority level of the operation (higher value means higher priority).
   final int priority;
 
+  /// Creates an instance of a [QueuedOperation].
   QueuedOperation({
     required this.id,
     required this.type,
@@ -52,21 +68,29 @@ class QueuedOperation {
   String toString() => 'QueuedOperation(id: $id, type: $type, priority: $priority)';
 }
 
-/// Transaction state for atomic operations
+/// Manages the state of a single atomic transaction.
 class TransactionState {
+  /// The unique ID for this transaction.
   final String transactionId;
+  /// The state of the data when the transaction began.
   final Map<String, dynamic> originalState;
+  /// A map of changes to be applied upon commit.
   final Map<String, dynamic> pendingChanges;
+  /// The time the transaction was started.
   final DateTime startTime;
+  /// `true` if the transaction has been successfully committed.
   bool isCommitted = false;
+  /// `true` if the transaction has been rolled back.
   bool isRolledBack = false;
 
+  /// Creates an instance of [TransactionState].
   TransactionState({
     required this.transactionId,
     required this.originalState,
   }) : pendingChanges = {},
        startTime = DateTime.now();
 
+  /// Adds a key-value pair representing a change to the transaction.
   void addChange(String key, dynamic value) {
     if (isCommitted || isRolledBack) {
       throw StateError('Cannot modify committed or rolled back transaction');
@@ -74,6 +98,7 @@ class TransactionState {
     pendingChanges[key] = value;
   }
 
+  /// Marks the transaction as committed.
   void commit() {
     if (isCommitted || isRolledBack) {
       throw StateError('Transaction already finalized');
@@ -81,6 +106,7 @@ class TransactionState {
     isCommitted = true;
   }
 
+  /// Marks the transaction as rolled back.
   void rollback() {
     if (isCommitted || isRolledBack) {
       throw StateError('Transaction already finalized');
@@ -88,16 +114,25 @@ class TransactionState {
     isRolledBack = true;
   }
 
+  /// The total duration of the transaction so far.
   Duration get duration => DateTime.now().difference(startTime);
 
   @override
   String toString() => 'Transaction(id: $transactionId, changes: ${pendingChanges.length}, committed: $isCommitted)';
 }
 
-/// Concurrent operation manager with queuing and synchronization
+/// A manager for handling concurrent asynchronous operations with queuing,
+/// priority, and resource locking.
+///
+/// This class ensures that a limited number of operations run simultaneously,
+/// prioritizes important tasks (like authentication), and prevents race conditions
+/// by locking resources during critical operations.
 class ConcurrentOperationManager {
+  /// The maximum number of operations that can run at the same time.
   static const int maxConcurrentOperations = 3;
+  /// The default timeout for an operation before it fails.
   static const Duration operationTimeout = Duration(seconds: 30);
+  /// The default timeout for acquiring a resource lock.
   static const Duration lockTimeout = Duration(seconds: 10);
 
   // Operation queue with priority
@@ -117,13 +152,15 @@ class ConcurrentOperationManager {
   int _failedOperations = 0;
   int _timeoutOperations = 0;
 
-  /// Check if an operation of a specific type is currently in progress
+  /// Checks if an operation of a specific [type] is already running or queued.
   bool isOperationInProgress(OperationType type) {
     return _runningOperations.values.any((op) => op.type == type) ||
            _operationQueue.any((op) => op.type == type);
   }
 
-  /// Execute an operation directly (wrapper around queueOperation for compatibility)
+  /// Executes an operation by adding it to the queue.
+  ///
+  /// This is a convenience wrapper around [queueOperation].
   Future<T> executeOperation<T>({
     required OperationType type,
     Map<String, dynamic> parameters = const {},
@@ -140,7 +177,12 @@ class ConcurrentOperationManager {
     );
   }
 
-  /// Queue an operation for execution
+  /// Adds an operation to the priority queue for execution.
+  ///
+  /// The operation will be executed when its turn comes based on priority and
+  /// the number of concurrent operations allowed.
+  ///
+  /// Returns a `Future` that completes with the result of the [operation].
   Future<T> queueOperation<T>({
     required OperationType type,
     Map<String, dynamic> parameters = const {},
@@ -294,7 +336,11 @@ class ConcurrentOperationManager {
     });
   }
 
-  /// Start a transaction for atomic state updates
+  /// Begins a new transaction for atomic state updates.
+  ///
+  /// - [currentState]: The initial state of the data before any changes.
+  ///
+  /// Returns a unique transaction ID.
   Future<String> startTransaction(Map<String, dynamic> currentState) async {
     final transactionId = _generateTransactionId();
     
@@ -310,7 +356,11 @@ class ConcurrentOperationManager {
     return transactionId;
   }
 
-  /// Add a change to an active transaction
+  /// Adds a change to an active transaction.
+  ///
+  /// - [transactionId]: The ID of the transaction to modify.
+  /// - [key]: The key of the data to change.
+  /// - [value]: The new value for the key.
   void addTransactionChange(String transactionId, String key, dynamic value) {
     final transaction = _activeTransactions[transactionId];
     if (transaction == null) {
@@ -320,7 +370,11 @@ class ConcurrentOperationManager {
     transaction.addChange(key, value);
   }
 
-  /// Commit a transaction and apply all changes atomically
+  /// Commits a transaction, applying all pending changes atomically.
+  ///
+  /// - [transactionId]: The ID of the transaction to commit.
+  ///
+  /// Returns a `Future` with the final, updated state map.
   Future<Map<String, dynamic>> commitTransaction(String transactionId) async {
     final transaction = _activeTransactions[transactionId];
     if (transaction == null) {
@@ -344,7 +398,11 @@ class ConcurrentOperationManager {
     }
   }
 
-  /// Rollback a transaction
+  /// Rolls back a transaction, discarding all pending changes.
+  ///
+  /// - [transactionId]: The ID of the transaction to roll back.
+  ///
+  /// Returns a `Future` with the original state map.
   Future<Map<String, dynamic>> rollbackTransaction(String transactionId) async {
     final transaction = _activeTransactions[transactionId];
     if (transaction == null) {
@@ -364,7 +422,12 @@ class ConcurrentOperationManager {
     }
   }
 
-  /// Acquire a resource lock
+  /// Acquires a lock on a specific resource to prevent concurrent access.
+  ///
+  /// If the resource is already locked, this method will wait until the lock
+  /// is released or until [lockTimeout] is reached.
+  ///
+  /// - [resource]: A unique string identifying the resource to lock.
   Future<void> acquireResourceLock(String resource) async {
     // Use local reference to avoid race condition
     final existingLock = _resourceLocks[resource];
@@ -387,7 +450,9 @@ class ConcurrentOperationManager {
     }
   }
 
-  /// Release a resource lock
+  /// Releases a previously acquired lock on a resource.
+  ///
+  /// - [resource]: The identifier of the resource to unlock.
   void releaseResourceLock(String resource) {
     final completer = _resourceLocks.remove(resource);
     if (completer != null && !completer.isCompleted) {
@@ -399,7 +464,9 @@ class ConcurrentOperationManager {
     }
   }
 
-  /// Cancel all pending operations
+  /// Cancels all queued and running operations.
+  ///
+  /// Operations that are cancelled will complete with an error.
   void cancelAllOperations() {
     // Cancel queued operations
     while (_operationQueue.isNotEmpty) {
@@ -422,7 +489,7 @@ class ConcurrentOperationManager {
     }
   }
 
-  /// Get operation statistics
+  /// Returns a map of statistics about the manager's current state.
   Map<String, dynamic> getOperationStats() {
     return {
       'queuedOperations': _operationQueue.length,
@@ -447,7 +514,9 @@ class ConcurrentOperationManager {
     return 'txn_${DateTime.now().millisecondsSinceEpoch}_${_activeTransactions.length}';
   }
 
-  /// Cleanup resources
+  /// Cleans up all resources, cancelling pending operations and transactions.
+  ///
+  /// This should be called when the manager is no longer needed.
   void dispose() {
     cancelAllOperations();
     

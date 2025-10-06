@@ -1,26 +1,45 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Locals Record Model
-/// 
-/// Represents a local union record with member information
+/// A data model representing an IBEW (International Brotherhood of Electrical Workers)
+/// local union.
+///
+/// This class encapsulates all the relevant details for a local union hall,
+/// including contact information, location, and specialties.
 class LocalsRecord {
+  /// The unique identifier for the local union, typically the Firestore document ID.
   final String id;
+  /// The official number of the IBEW local (e.g., "124").
   final String localNumber;
+  /// The official name of the local union (e.g., "Chicago Electrical Workers").
   final String localName;
-  final String? classification; // Added for job classification
+  /// The primary job classification associated with this local.
+  final String? classification;
+  /// A formatted string of the local's primary location (e.g., "Chicago, IL").
   final String location;
-  final String? address; // Added for full address
+  /// The full street address of the local union's office.
+  final String? address;
+  /// The primary contact email address for the local.
   final String contactEmail;
+  /// The primary contact phone number for the local.
   final String contactPhone;
-  final String? website; // Added for website URL
+  /// The official website URL of the local union.
+  final String? website;
+  /// The approximate number of members in the local union.
   final int memberCount;
+  /// A list of work specialties covered by this local (e.g., 'Commercial', 'Solar').
   final List<String> specialties;
+  /// A flag indicating whether the local union record is active.
   final bool isActive;
+  /// The timestamp when the record was created.
   final DateTime createdAt;
+  /// The timestamp when the record was last updated.
   final DateTime updatedAt;
-  final DocumentReference? reference; // Added for Firestore reference
-  final Map<String, dynamic>? rawData; // Added to store all document data
+  /// The direct Firestore reference to the document.
+  final DocumentReference? reference;
+  /// A map containing the raw, unprocessed data from the Firestore document.
+  final Map<String, dynamic>? rawData;
 
+  /// Creates an instance of [LocalsRecord].
   const LocalsRecord({
     required this.id,
     required this.localNumber,
@@ -40,25 +59,32 @@ class LocalsRecord {
     this.rawData,
   });
 
-  // Getter aliases for compatibility with backend schema expectations
+  /// An alias for [localNumber] for compatibility with different data schemas.
   String get localUnion => localNumber;
+  /// An alias for [contactPhone].
   String get phone => contactPhone;
+  /// An alias for [contactEmail].
   String get email => contactEmail;
   
-  // Extract city and state from location string
+  /// Extracts the city part from the [location] string.
   String get city {
     final parts = location.split(', ');
     return parts.isNotEmpty ? parts[0] : '';
   }
   
+  /// Extracts the state part from the [location] string.
   String get state {
     final parts = location.split(', ');
     return parts.length > 1 ? parts[1] : '';
   }
   
-  // Alias for rawData
+  /// An alias for [rawData].
   Map<String, dynamic>? get data => rawData;
 
+  /// Creates a [LocalsRecord] instance from a Firestore [DocumentSnapshot].
+  ///
+  /// This factory is responsible for parsing the raw data from Firestore,
+  /// including handling `Timestamp` objects and constructing the `location` string.
   factory LocalsRecord.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     
@@ -87,6 +113,7 @@ class LocalsRecord {
     );
   }
 
+  /// Creates a [LocalsRecord] instance from a JSON map.
   factory LocalsRecord.fromJson(Map<String, dynamic> json) {
     return LocalsRecord(
       id: json['id'] ?? '',
@@ -107,6 +134,7 @@ class LocalsRecord {
     );
   }
 
+  /// Converts the [LocalsRecord] instance into a JSON-encodable map.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -127,8 +155,12 @@ class LocalsRecord {
   }
 }
 
-/// Mock data for LocalsRecord
+/// A utility class that provides mock data for [LocalsRecord].
+///
+/// This is useful for testing, UI previews, and development without a live
+/// database connection.
 class LocalsRecordMockData {
+  /// Returns a static list of sample [LocalsRecord] objects.
   static List<LocalsRecord> getSampleData() {
     return [
       LocalsRecord(

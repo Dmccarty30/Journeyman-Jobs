@@ -15,18 +15,27 @@ import '../../widgets/notification_badge.dart';
 import '../../widgets/condensed_job_card.dart';
 import '../../widgets/dialogs/job_details_dialog.dart';
 
+/// The main home screen of the application.
+///
+/// This screen serves as the central dashboard for the user, displaying a
+/// welcome message, quick actions, a summary of active crews, and a list of
+/// suggested job postings.
 class HomeScreen extends ConsumerStatefulWidget {
+  /// Creates a [HomeScreen].
   const HomeScreen({super.key});
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
+/// The state for the [HomeScreen].
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    // Use addPostFrameCallback to ensure that the provider is not read during build.
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Initial load of jobs when the screen is first displayed.
       ref.read(jobsProvider.notifier).loadJobs();
     });
   }
@@ -325,6 +334,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  /// Builds a tappable card for a "quick action" item on the home screen.
   Widget _buildElectricalActionCard(String title, IconData icon, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -362,6 +372,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  /// Builds the section that displays a summary of the user's active crews.
   Widget _buildActiveCrewsWidget(List<dynamic> userCrews) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -430,6 +441,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
 
+  /// Displays the [JobDetailsDialog] for a given job.
+  ///
+  /// It handles converting a legacy [JobsRecord] to the standard [Job] model if necessary.
   void _showJobDetailsDialog(BuildContext context, dynamic job) {
     final jobModel = job is JobsRecord ? _convertJobsRecordToJob(job) : job as Job;
     showDialog(
@@ -438,6 +452,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  /// A helper widget to build a row with a label and a value, for use in details displays.
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingXs),
@@ -464,10 +479,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  /// Placeholder function to show a success toast when a job application is submitted.
   void _submitJobApplication(Job job) {
     JJElectricalToast.showSuccess(context: context, message: 'Application submitted for ${job.classification ?? 'the position'}!');
   }
 
+  /// Converts a legacy [JobsRecord] object to the current [Job] model.
+  ///
+  /// This ensures backward compatibility with older data structures in Firestore.
   Job _convertJobsRecordToJob(JobsRecord jobsRecord) {
     return Job(
       id: jobsRecord.reference.id,

@@ -4,11 +4,16 @@ import '../models/contractor_model.dart';
 import '../design_system/app_theme.dart';
 import '../utils/text_formatting_wrapper.dart';
 
-/// A card widget that displays contractor information with interactive links
-/// for phone, email, and website contact methods.
+/// A card widget that displays detailed information about a [Contractor].
+///
+/// This widget provides a structured layout for contractor details and includes
+/// interactive elements for contact methods like phone, email, and website,
+/// which trigger the appropriate URL launcher.
 class ContractorCard extends StatelessWidget {
+  /// The [Contractor] object containing the data to be displayed.
   final Contractor contractor;
 
+  /// Creates a [ContractorCard] widget.
   const ContractorCard({required this.contractor, super.key});
 
   @override
@@ -140,6 +145,10 @@ class ContractorCard extends StatelessWidget {
     );
   }
 
+  /// A private helper widget to build a formatted row for displaying a piece of information.
+  ///
+  /// It consists of a bold [label] and its corresponding [value].
+  /// The value can be styled as a link.
   Widget _buildInfoRow({
     required String label,
     required String value,
@@ -173,6 +182,7 @@ class ContractorCard extends StatelessWidget {
     );
   }
 
+  /// Attempts to launch the given [url] in an external browser.
   Future<void> _launchWebsite(String url) async {
     try {
       final uri = Uri.parse(url);
@@ -184,6 +194,7 @@ class ContractorCard extends StatelessWidget {
     }
   }
 
+  /// Attempts to launch the device's phone dialer with the given [phone] number.
   Future<void> _launchPhone(String phone) async {
     try {
       final uri = Uri.parse('tel:$phone');
@@ -195,6 +206,7 @@ class ContractorCard extends StatelessWidget {
     }
   }
 
+  /// Attempts to launch the default email client to compose an email to the given [email] address.
   Future<void> _launchEmail(String email) async {
     try {
       final uri = Uri.parse('mailto:$email');

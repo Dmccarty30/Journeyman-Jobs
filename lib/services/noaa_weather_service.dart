@@ -6,15 +6,18 @@ import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 import 'cache_service.dart';
 
-/// NOAA Weather Service for authoritative US weather data
-/// 
-/// Integrates with multiple NOAA services:
-/// - National Weather Service API for alerts and forecasts
-/// - NOAA Radar imagery for real-time precipitation
-/// - National Hurricane Center for tropical systems
-/// - Storm Prediction Center for severe weather outlooks
+/// A service for fetching authoritative US weather data from various NOAA sources.
+///
+/// This service integrates with:
+/// - National Weather Service (NWS) API for alerts and forecasts.
+/// - NOAA Radar for real-time precipitation imagery.
+/// - National Hurricane Center (NHC) for tracking tropical systems.
+/// - Storm Prediction Center (SPC) for severe weather outlooks.
+///
+/// It includes caching to reduce redundant API calls.
 class NoaaWeatherService {
   static final NoaaWeatherService _instance = NoaaWeatherService._internal();
+  /// Provides a singleton instance of the [NoaaWeatherService].
   factory NoaaWeatherService() => _instance;
   NoaaWeatherService._internal();
 
@@ -32,7 +35,7 @@ class NoaaWeatherService {
   static const String _nhcBase = 'https://www.nhc.noaa.gov';
   static const String _spcBase = 'https://www.spc.noaa.gov';
   
-  // Radar products
+  /// A map of available NOAA radar products and their descriptions.
   static const Map<String, String> radarProducts = {
     'N0R': 'Base Reflectivity', // Default precipitation view
     'N0V': 'Base Velocity', // Storm rotation detection
@@ -46,7 +49,14 @@ class NoaaWeatherService {
   static const Duration _radarCacheDuration = Duration(minutes: 2);
   static const Duration _hurricaneCacheDuration = Duration(minutes: 15);
   
-  /// Get all active weather alerts for a location
+  /// Fetches all active weather alerts for a specific geographic location.
+  ///
+  /// It filters for alerts relevant to storm work and sorts them by severity.
+  ///
+  /// - [latitude]: The latitude of the location.
+  /// - [longitude]: The longitude of the location.
+  ///
+  /// Returns a `Future<List<NoaaAlert>>`.
   Future<List<NoaaAlert>> getActiveAlerts({
     required double latitude,
     required double longitude,
@@ -114,7 +124,12 @@ class NoaaWeatherService {
     }
   }
   
-  /// Get nearest NOAA radar station
+  /// Finds the nearest NOAA radar station to a given location that has the location within its coverage range.
+  ///
+  /// - [latitude]: The latitude of the location.
+  /// - [longitude]: The longitude of the location.
+  ///
+  /// Returns a `Future<NoaaRadarStation?>`.
   Future<NoaaRadarStation?> getNearestRadarStation({
     required double latitude,
     required double longitude,
@@ -139,7 +154,13 @@ class NoaaWeatherService {
     return nearest;
   }
   
-  /// Get NOAA radar image URL
+  /// Constructs the URL for a standard NOAA radar image.
+  ///
+  /// - [stationId]: The 4-letter ID of the radar station (e.g., 'KJAX').
+  /// - [product]: The radar product code (e.g., 'N0R' for Base Reflectivity).
+  /// - [loop]: If `true`, returns the URL for an animated GIF loop.
+  ///
+  /// Returns the radar image URL as a `String`.
   String getRadarImageUrl({
     required String stationId,
     String product = 'N0R',
@@ -154,7 +175,16 @@ class NoaaWeatherService {
     }
   }
   
-  /// Get enhanced radar with overlays
+  /// Constructs the URL for an enhanced radar image with optional map overlays.
+  ///
+  /// - [stationId]: The ID of the radar station.
+  /// - [product]: The radar product code.
+  /// - [includeWarnings]: Whether to overlay weather warnings on the map.
+  /// - [includeCounties]: Whether to overlay county lines.
+  /// - [includeHighways]: Whether to overlay major highways.
+  /// - [includeCities]: Whether to overlay city names.
+  ///
+  /// Returns the enhanced radar image URL as a `String`.
   String getEnhancedRadarUrl({
     required String stationId,
     String product = 'NCR',
@@ -174,7 +204,10 @@ class NoaaWeatherService {
     return '$_radarBase/standard/${stationId}/${stationId}_${product}${layerString}_0.gif';
   }
   
-  /// Get current tropical systems from National Hurricane Center
+  /// Fetches a list of currently active tropical systems (hurricanes, tropical storms)
+  /// from the National Hurricane Center (NHC).
+  ///
+  /// Returns a `Future<List<TropicalSystem>>`.
   Future<List<TropicalSystem>> getActiveTropicalSystems() async {
     try {
       final cacheKey = 'nhc_tropical_systems';
@@ -232,7 +265,14 @@ class NoaaWeatherService {
     }
   }
   
-  /// Get Storm Prediction Center convective outlook
+  /// Fetches the convective (severe weather) outlook for a location from the
+  /// Storm Prediction Center (SPC).
+  ///
+  /// - [latitude]: The latitude of the location.
+  /// - [longitude]: The longitude of the location.
+  ///
+  /// Returns a `Future<SpcOutlook?>` representing the highest risk level
+  /// at the given location.
   Future<SpcOutlook?> getSevereWeatherOutlook({
     required double latitude,
     required double longitude,
@@ -271,7 +311,14 @@ class NoaaWeatherService {
     }
   }
   
-  /// Get NOAA forecast discussion for context
+  /// Fetches the detailed forecast discussion text from a specific NWS Weather
+  /// Forecast Office (WFO).
+  ///
+  /// This provides expert context behind a forecast.
+  ///
+  /// - [wfoId]: The 3-letter ID of the Weather Forecast Office (e.g., 'JAX' for Jacksonville).
+  ///
+  /// Returns the forecast discussion as a `Future<String?>`.
   Future<String?> getForecastDiscussion({
     required String wfoId, // Weather Forecast Office ID
   }) async {
@@ -319,7 +366,10 @@ class NoaaWeatherService {
   
   double _toRadians(double degrees) => degrees * pi / 180;
   
-  /// Get all US NOAA radar stations
+  /// Provides a static list of major US NOAA radar stations, with a focus on
+  /// storm-prone areas.
+  ///
+  /// In a production scenario, this list would be more comprehensive or fetched dynamically.
   List<NoaaRadarStation> getRadarStations() {
     return [
       // Major stations covering storm-prone areas
@@ -344,20 +394,32 @@ class NoaaWeatherService {
   }
 }
 
-/// NOAA Weather Alert
+/// Represents a weather alert issued by the National Weather Service.
 class NoaaAlert {
+  /// The unique identifier for the alert.
   final String id;
+  /// The type of weather event (e.g., "Tornado Warning").
   final String event;
-  final String severity; // Extreme, Severe, Moderate, Minor
-  final String urgency; // Immediate, Expected, Future
-  final String certainty; // Observed, Likely, Possible
+  /// The severity of the event (e.g., "Extreme", "Severe").
+  final String severity;
+  /// The urgency of the event (e.g., "Immediate", "Expected").
+  final String urgency;
+  /// The certainty of the event (e.g., "Observed", "Likely").
+  final String certainty;
+  /// The time the alert becomes effective.
   final DateTime effective;
+  /// The time the alert expires.
   final DateTime expires;
+  /// A brief, human-readable summary of the alert.
   final String headline;
+  /// A detailed description of the weather event.
   final String description;
+  /// Recommended actions to take in response to the alert.
   final String instruction;
+  /// A list of the geographic zones affected by the alert.
   final List<String> affectedZones;
   
+  /// Creates an instance of [NoaaAlert].
   NoaaAlert({
     required this.id,
     required this.event,
@@ -372,6 +434,7 @@ class NoaaAlert {
     required this.affectedZones,
   });
   
+  /// Creates a [NoaaAlert] from a GeoJSON feature object provided by the NWS API.
   factory NoaaAlert.fromGeoJson(Map<String, dynamic> feature) {
     final props = feature['properties'];
     return NoaaAlert(
@@ -389,7 +452,10 @@ class NoaaAlert {
     );
   }
   
-  /// Check if this alert is relevant for storm restoration work
+  /// Determines if this alert is relevant for electrical storm restoration work.
+  ///
+  /// Checks the event type against a list of hazardous weather phenomena that
+  /// typically cause power outages.
   bool get isRelevantForStormWork {
     final relevantEvents = [
       'Hurricane Warning',
@@ -412,7 +478,9 @@ class NoaaAlert {
     return relevantEvents.any((e) => event.contains(e));
   }
   
-  /// Get severity level for sorting (higher = more severe)
+  /// Returns a numerical severity level for sorting alerts.
+  ///
+  /// Higher values indicate greater severity.
   int get severityLevel {
     if (severity == 'Extreme') return 4;
     if (severity == 'Severe') return 3;
@@ -422,15 +490,22 @@ class NoaaAlert {
   }
 }
 
-/// NOAA Radar Station
+/// Represents a NOAA NEXRAD radar station.
 class NoaaRadarStation {
+  /// The 4-letter station identifier (e.g., "KJAX").
   final String id;
+  /// The common name of the station location (e.g., "Jacksonville, FL").
   final String name;
+  /// The latitude of the radar station.
   final double latitude;
+  /// The longitude of the radar station.
   final double longitude;
+  /// The general US region of the station.
   final String region;
-  final double range; // Coverage radius in miles
+  /// The effective range of the radar in miles.
+  final double range;
   
+  /// Creates an instance of [NoaaRadarStation].
   NoaaRadarStation(
     this.id,
     this.name,
@@ -441,19 +516,30 @@ class NoaaRadarStation {
   });
 }
 
-/// Tropical System from National Hurricane Center
+/// Represents a tropical system (e.g., hurricane, tropical storm) from the NHC.
 class TropicalSystem {
+  /// A unique identifier for the storm.
   final String id;
+  /// The name of the storm (e.g., "Katrina").
   final String name;
-  final String classification; // Hurricane, Tropical Storm, etc.
+  /// The classification of the storm (e.g., "Hurricane", "Tropical Storm").
+  final String classification;
+  /// The latitude of the storm's center.
   final double latitude;
+  /// The longitude of the storm's center.
   final double longitude;
+  /// The maximum sustained wind speed in miles per hour.
   final int maxWindsMph;
+  /// The direction of movement (e.g., "WNW").
   final String movementDirection;
+  /// The speed of movement in miles per hour.
   final int movementSpeedMph;
+  /// The minimum central pressure in millibars.
   final int pressure;
+  /// The timestamp of the last update.
   final DateTime lastUpdate;
   
+  /// Creates an instance of [TropicalSystem].
   TropicalSystem({
     required this.id,
     required this.name,
@@ -467,6 +553,7 @@ class TropicalSystem {
     required this.lastUpdate,
   });
   
+  /// Converts the object to a JSON map.
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': name,
@@ -480,6 +567,7 @@ class TropicalSystem {
     'lastUpdate': lastUpdate.toIso8601String(),
   };
   
+  /// Creates a [TropicalSystem] instance from a JSON map.
   factory TropicalSystem.fromJson(Map<String, dynamic> json) => TropicalSystem(
     id: json['id'],
     name: json['name'],
@@ -494,12 +582,16 @@ class TropicalSystem {
   );
 }
 
-/// Storm Prediction Center Outlook
+/// Represents a severe weather outlook from the Storm Prediction Center (SPC).
 class SpcOutlook {
-  final String riskLevel; // TSTM, MRGL, SLGT, ENH, MDT, HIGH
+  /// The categorical risk level (e.g., "TSTM", "MRGL", "SLGT", "ENH", "MDT", "HIGH").
+  final String riskLevel;
+  /// The time the outlook is valid for.
   final DateTime validTime;
-  final List<String> hazards; // tornado, wind, hail
+  /// A list of primary hazards associated with the outlook (e.g., "tornado", "wind", "hail").
+  final List<String> hazards;
   
+  /// Creates an instance of [SpcOutlook].
   SpcOutlook({
     required this.riskLevel,
     required this.validTime,

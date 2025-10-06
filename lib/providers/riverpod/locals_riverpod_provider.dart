@@ -6,9 +6,12 @@ import '../../utils/concurrent_operations.dart';
 import 'jobs_riverpod_provider.dart' show firestoreServiceProvider;
 
 part 'locals_riverpod_provider.g.dart';
-/// Represents the state of locals data used by Riverpod.
+/// Represents the state for the IBEW locals feature.
+///
+/// This immutable class holds the complete list of locals, a filtered list
+/// for searching, the current search term, and UI state like loading and error status.
 class LocalsState {
-  /// Creates a [LocalsState] with optional initial values.
+  /// Creates an instance of the locals state.
   const LocalsState({
     this.locals = const <LocalsRecord>[],
     this.filteredLocals = const <LocalsRecord>[],
@@ -19,31 +22,28 @@ class LocalsState {
     this.lastDocument,
   });
 
-  /// The complete list of locals records.
+  /// The complete list of all local union records fetched from the database.
   final List<LocalsRecord> locals;
 
-  /// The list of locals after applying any search filter.
+  /// A sub-list of locals that matches the current search term.
   final List<LocalsRecord> filteredLocals;
 
-  /// The current search term entered by the user.
+  /// The search term currently being used to filter the list of locals.
   final String searchTerm;
 
-  /// Whether the locals are currently being loaded.
+  /// `true` if a data loading operation for locals is currently in progress.
   final bool isLoading;
 
-  /// An optional error message if loading fails.
-  /// An optional error message if loading fails.
+  /// A string description of the last error that occurred while fetching data.
   final String? error;
 
-  /// A map of locals keyed by their ID for quick lookup.
+  /// A cached map of local records, keyed by their ID, for quick access.
   final Map<String, LocalsRecord> cachedLocals;
 
-  /// The last document snapshot from Firestore for pagination.
+  /// The last Firestore document from the previous fetch, used for pagination.
   final DocumentSnapshot? lastDocument;
 
-  /// Returns a new [LocalsState] with the given fields replaced.
-  ///
-  /// Any parameter left `null` will retain its current value.
+  /// Creates a new [LocalsState] instance with updated field values.
   LocalsState copyWith({
     List<LocalsRecord>? locals,
     List<LocalsRecord>? filteredLocals,
@@ -62,15 +62,15 @@ class LocalsState {
         cachedLocals: cachedLocals ?? this.cachedLocals,
         lastDocument: lastDocument ?? this.lastDocument,
       );
-/// Returns a copy of the state with the error cleared.
-  /// Returns a copy of the state with the error cleared.
-  /// Returns a copy of the state with the error cleared.
-  /// Returns a copy of the state with the error cleared.
-  LocalsState clearError() => copyWith();
+  /// Returns a new [LocalsState] instance with the `error` field cleared.
+  LocalsState clearError() => copyWith(error: null);
 }
 
+/// The state notifier for managing the [LocalsState].
+///
+/// This class handles all logic for fetching, paginating, searching, and
+/// filtering IBEW local union data.
 @riverpod
-/// Riverpod notifier that manages loading and searching of locals.
 class LocalsNotifier extends _$LocalsNotifier {
   late final ConcurrentOperationManager _operationManager;
   static const int _pageSize = 20; // Define page size for pagination
@@ -81,7 +81,12 @@ class LocalsNotifier extends _$LocalsNotifier {
     return const LocalsState();
   }
 
-  /// Loads locals from Firestore, optionally forcing a refresh or loading more data.
+  /// Loads IBEW local union data from Firestore.
+  ///
+  /// This method supports pagination and can be forced to refresh the data.
+  ///
+  /// - [forceRefresh]: If `true`, clears the existing list and fetches from the start.
+  /// - [loadMore]: If `true`, fetches the next page of data.
   Future<void> loadLocals({bool forceRefresh = false, bool loadMore = false}) async {
     if (state.isLoading) {
       return;
@@ -134,7 +139,14 @@ class LocalsNotifier extends _$LocalsNotifier {
     }
   }
 
-  /// Searches locals by the given term, updating filteredLocals.
+  /// Filters the list of locals based on a search term.
+  ///
+  /// This performs a client-side search on the already loaded locals data.
+  /// The search is case-insensitive and matches against the local's number,
+  /// name, city, state, and phone number. Results are sorted with a preference
+  /// for exact matches and "starts with" matches on the local number and name.
+  ///
+  /// - [term]: The search query string.
   void searchLocals(String term) {
     final String normalized = term.toLowerCase().trim();
     if (normalized.isEmpty) {
@@ -176,20 +188,23 @@ class LocalsNotifier extends _$LocalsNotifier {
     state = state.copyWith(filteredLocals: filtered, searchTerm: term);
   }
 
-  /// Retrieves a local by its ID from the cached map.
+  /// Retrieves a single local by its ID from the cached map for efficient access.
   LocalsRecord? getLocalById(String id) => state.cachedLocals[id];
 
-  /// Returns locals filtered by a given state name.
+  /// Returns a list of locals filtered by a specific state name.
   List<LocalsRecord> getLocalsByState(String stateName) => state.locals
       .where((LocalsRecord l) => l.state.toLowerCase() == stateName.toLowerCase())
       .toList();
 
-  /// Returns locals filtered by a given classification.
+  /// Returns a list of locals filtered by a specific job classification.
   List<LocalsRecord> getLocalsByClassification(String classification) => state.locals
       .where((LocalsRecord l) => l.classification?.toLowerCase() == classification.toLowerCase())
       .toList();
 
-  /// Returns an empty list as location data is not available in LocalsRecord.
+  /// Placeholder for finding nearby locals.
+  ///
+  /// NOTE: This currently returns an empty list as the [LocalsRecord] model
+  /// does not contain the necessary geolocation data.
   List<LocalsRecord> getNearbyLocals({
     required double latitude,
     required double longitude,
@@ -199,23 +214,24 @@ class LocalsNotifier extends _$LocalsNotifier {
     return <LocalsRecord>[];
   }
 
-  /// Clears the current search, resetting filteredLocals and searchTerm.
+  /// Clears the current search term and resets the filtered list to show all locals.
   void clearSearch() {
     state = state.copyWith(filteredLocals: state.locals, searchTerm: '');
   }
 
-  /// Clears any error in the state.
+  /// Clears any error message from the state.
   void clearError() {
     state = state.clearError();
   }
 
+  /// Disposes of managed resources like the [ConcurrentOperationManager].
   void dispose() {
     _operationManager.dispose();
   }
 }
 
+/// An auto-disposing provider that fetches a single [LocalsRecord] by its ID.
 @riverpod
-/// Riverpod provider that fetches a single local by ID.
 Future<LocalsRecord?> localById(Ref ref, String localId) async {
   final service = ref.watch(firestoreServiceProvider);
   try {
@@ -230,8 +246,8 @@ Future<LocalsRecord?> localById(Ref ref, String localId) async {
   }
 }
 
+/// A provider that filters the main list of locals by a given state name.
 @riverpod
-/// Riverpod provider that returns locals filtered by state.
 List<LocalsRecord> localsByState(Ref ref, String stateName) {
   final localsState = ref.watch(localsProvider);
   return localsState.locals
@@ -239,8 +255,8 @@ List<LocalsRecord> localsByState(Ref ref, String stateName) {
       .toList();
 }
 
+/// A provider that filters the main list of locals by a given job classification.
 @riverpod
-/// Riverpod provider that returns locals filtered by classification.
 List<LocalsRecord> localsByClassification(Ref ref, String classification) {
   final localsState = ref.watch(localsProvider);
   return localsState.locals
@@ -248,8 +264,8 @@ List<LocalsRecord> localsByClassification(Ref ref, String classification) {
       .toList();
 }
 
+/// A provider that performs a client-side search on the main list of locals.
 @riverpod
-/// Riverpod provider that returns locals matching a search term.
 List<LocalsRecord> searchedLocals(Ref ref, String searchTerm) {
   final localsState = ref.watch(localsProvider);
   if (searchTerm.trim().isEmpty) {
@@ -266,6 +282,8 @@ List<LocalsRecord> searchedLocals(Ref ref, String searchTerm) {
   ).toList();
 }
 
+/// A provider that derives a sorted, unique list of all state abbreviations
+/// from the full list of locals.
 @riverpod
 List<String> allStates(Ref ref) {
   final localsState = ref.watch(localsProvider);
@@ -277,6 +295,8 @@ List<String> allStates(Ref ref) {
   return list;
 }
 
+/// A provider that derives a sorted, unique list of all job classifications
+/// from the full list of locals.
 @riverpod
 List<String> allClassifications(Ref ref) {
   final localsState = ref.watch(localsProvider);

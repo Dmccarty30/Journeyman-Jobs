@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:journeyman_jobs/features/crews/models/message.dart';
 
+/// A widget that displays a single chat message in a styled "bubble".
+///
+/// The bubble's alignment and color change depending on whether the message
+/// was sent by the current user (`isMe`).
 class MessageBubble extends StatelessWidget {
+  /// Creates a [MessageBubble] widget.
   const MessageBubble({
     super.key,
     required this.message,
     required this.isMe,
   });
 
+  /// The message data to be displayed.
   final Message message;
+  /// A boolean that is `true` if the message was sent by the current user,
+  /// and `false` otherwise. This controls the bubble's alignment and styling.
   final bool isMe;
 
   @override

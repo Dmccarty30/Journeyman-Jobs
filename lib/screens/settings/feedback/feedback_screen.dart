@@ -4,22 +4,37 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
 
+/// A screen where users can submit feedback, bug reports, or feature requests.
+///
+/// This screen provides a structured form for users to provide valuable input,
+/// which is then submitted to a Firestore collection for review.
 class FeedbackScreen extends StatefulWidget {
+  /// Creates a [FeedbackScreen].
   const FeedbackScreen({super.key});
 
   @override
   State<FeedbackScreen> createState() => _FeedbackScreenState();
 }
 
+/// The state for the [FeedbackScreen].
+///
+/// Manages the form state, controllers, and submission logic.
 class _FeedbackScreenState extends State<FeedbackScreen> {
+  /// A global key to uniquely identify the form and allow for validation.
   final _formKey = GlobalKey<FormState>();
+  /// The controller for the subject input field.
   final _subjectController = TextEditingController();
+  /// The controller for the main feedback message field.
   final _messageController = TextEditingController();
+  /// The controller for the user's email address field.
   final _emailController = TextEditingController();
   
+  /// The currently selected feedback category.
   String _selectedCategory = 'General';
+  /// A flag to indicate if a submission is currently in progress.
   bool _isSubmitting = false;
   
+  /// A list of predefined categories for the user to choose from.
   final List<String> _categories = [
     'General',
     'Bug Report',
@@ -37,6 +52,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     _loadUserEmail();
   }
 
+  /// Attempts to pre-fill the email field with the current user's email.
   void _loadUserEmail() {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null && user.email != null) {
@@ -44,6 +60,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     }
   }
 
+  /// Validates the form and submits the feedback data to Firestore.
+  ///
+  /// Handles the UI loading state and displays a success or error snackbar
+  /// upon completion.
   Future<void> _submitFeedback() async {
     if (!_formKey.currentState!.validate()) return;
 

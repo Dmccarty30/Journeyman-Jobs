@@ -8,7 +8,10 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../navigation/app_router.dart';
 
-/// Top-level function to handle background messages
+/// A top-level function required by `firebase_messaging` to handle messages
+/// that arrive when the app is in the background or terminated.
+///
+/// It must not be an anonymous function and must be annotated with `@pragma('vm:entry-point')`.
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint('Handling background message: ${message.messageId}');
@@ -16,7 +19,11 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await FCMService._handleBackgroundMessage(message);
 }
 
-/// Service to handle Firebase Cloud Messaging (FCM) for push notifications
+/// A service to manage Firebase Cloud Messaging (FCM) for handling push notifications.
+///
+/// This class encapsulates the setup, token management, and message handling
+/// for both foreground and background notifications. It also integrates with
+/// `flutter_local_notifications` to display alerts when the app is active.
 class FCMService {
   static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin _localNotifications = 
@@ -28,7 +35,12 @@ class FCMService {
   static BuildContext? _appContext;
 
 
-  /// Initialize FCM service
+  /// Initializes the FCM service.
+  ///
+  /// This method should be called once at app startup. It sets up local
+  /// notifications, FCM message handlers, and handles the FCM token.
+  ///
+  /// - [appContext]: The root `BuildContext` of the app, used for navigation.
   static Future<void> initialize(BuildContext appContext) async {
     _appContext = appContext;
     
@@ -79,7 +91,9 @@ class FCMService {
     FirebaseMessaging.instance.onTokenRefresh.listen(_onTokenRefresh);
   }
 
-  /// Get current FCM token
+  /// Retrieves the current FCM registration token for this device.
+  ///
+  /// Returns the token as a `String`, or `null` if an error occurs.
   static Future<String?> getToken() async {
     try {
       _currentToken = await _firebaseMessaging.getToken();
@@ -303,7 +317,21 @@ class FCMService {
     }
   }
 
-  /// Send targeted notification (for testing or admin use)
+  /// Sends a targeted notification to a specific user via their FCM token.
+  ///
+  /// This method is intended for server-side or admin use, but is included here
+  /// for testing and demonstration. In a production app, this logic would
+  /// typically reside on a backend server.
+  ///
+  /// It fetches the user's FCM token from Firestore and then would use a server-side
+  /// mechanism (like a Cloud Function) to send the message. This implementation
+  /// simulates the creation of an in-app notification that would accompany a push.
+  ///
+  /// - [userId]: The ID of the user to send the notification to.
+  /// - [title]: The title of the notification.
+  /// - [body]: The main content of the notification.
+  /// - [type]: A category for the notification (e.g., 'jobs', 'safety').
+  /// - [additionalData]: A map of extra data to include in the notification payload.
   static Future<void> sendNotificationToUser({
     required String userId,
     required String title,
@@ -347,7 +375,9 @@ class FCMService {
     }
   }
 
-  /// Subscribe to topic for broadcast notifications
+  /// Subscribes the device to a specific FCM topic for broadcast notifications.
+  ///
+  /// - [topic]: The name of the topic to subscribe to.
   static Future<void> subscribeToTopic(String topic) async {
     try {
       await _firebaseMessaging.subscribeToTopic(topic);
@@ -357,7 +387,9 @@ class FCMService {
     }
   }
 
-  /// Unsubscribe from topic
+  /// Unsubscribes the device from a specific FCM topic.
+  ///
+  /// - [topic]: The name of the topic to unsubscribe from.
   static Future<void> unsubscribeFromTopic(String topic) async {
     try {
       await _firebaseMessaging.unsubscribeFromTopic(topic);
@@ -367,7 +399,7 @@ class FCMService {
     }
   }
 
-  /// Clear app badge (iOS)
+  /// Clears the app icon's notification badge number, primarily for iOS.
   static Future<void> clearBadge() async {
     try {
       // For iOS badge clearing, we use flutter_local_notifications

@@ -1,27 +1,51 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 
+/// An immutable data model representing a single job record from Firestore.
+///
+/// This class provides a clean, type-safe representation of a job document,
+/// suitable for use throughout the application. It is distinct from the more
+/// complex `Job` model and serves as a direct mapping to the `jobs` collection schema.
 @immutable
 class JobsRecord {
+  /// The unique identifier for the job record (document ID).
   final String id;
+  /// The name of the company offering the job.
   final String company;
+  /// The geographic location of the job.
   final String location;
+  /// The IBEW classification for the job (e.g., 'Journeyman Lineman').
   final String classification;
+  /// The expected hours per shift or week.
   final int? hours;
+  /// The hourly wage for the job.
   final double? wage;
+  /// The official title of the job.
   final String? jobTitle;
+  /// The timestamp when the record was created or last updated.
   final DateTime? timestamp;
+  /// The expected start date of the job.
   final String? startDate;
+  /// A detailed description of the job's duties and responsibilities.
   final String? jobDescription;
+  /// A summary of the required qualifications.
   final String? qualifications;
+  /// Information on per diem payments, if available.
   final String? perDiem;
+  /// The type of work involved (e.g., 'Transmission', 'Distribution').
   final String? typeOfWork;
+  /// The expected duration of the job.
   final String? duration;
+  /// The voltage level of the work (e.g., 'High Voltage').
   final String? voltageLevel;
+  /// The IBEW local union number associated with the job.
   final int? localNumber;
+  /// A list of required certifications (e.g., 'CDL', 'First Aid').
   final List<String>? certifications;
+  /// A flag for soft-deleting the job record.
   final bool deleted;
 
+  /// Creates an instance of [JobsRecord].
   const JobsRecord({
     required this.id,
     required this.company,
@@ -43,6 +67,7 @@ class JobsRecord {
     this.deleted = false,
   });
 
+  /// Creates a new [JobsRecord] instance with updated field values.
   JobsRecord copyWith({
     String? id,
     String? company,
@@ -85,6 +110,10 @@ class JobsRecord {
     );
   }
 
+  /// Creates a [JobsRecord] instance from a JSON map.
+  ///
+  /// This factory includes robust parsing logic to handle various data types
+  /// that might be received from Firestore or other JSON sources.
   factory JobsRecord.fromJson(Map<String, dynamic> json) {
     DateTime? parseDateTime(dynamic value) {
       if (value == null) return null;
@@ -146,6 +175,11 @@ class JobsRecord {
     }
   }
 
+  /// Serializes the [JobsRecord] instance to a JSON map.
+  ///
+  /// - [useFirestoreTypes]: If `true`, `DateTime` objects are converted to
+  ///   Firestore `Timestamp` objects. Otherwise, they are converted to
+  ///   ISO 8601 strings.
   Map<String, dynamic> toJson({bool useFirestoreTypes = false}) {
     final Map<String, dynamic> data = {
       'id': id,
@@ -174,14 +208,17 @@ class JobsRecord {
     return data;
   }
 
+  /// A convenience method that converts the instance to a Firestore-compatible map.
   Map<String, dynamic> toFirestore() => toJson(useFirestoreTypes: true);
 
+  /// Creates a [JobsRecord] instance from a Firestore [DocumentSnapshot].
   factory JobsRecord.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data() ?? {};
     data['id'] = doc.id;
     return JobsRecord.fromJson(data);
   }
 
+  /// A quick check to determine if the record has the essential required data.
   bool get isValid => id.isNotEmpty && company.isNotEmpty && location.isNotEmpty;
 
   @override

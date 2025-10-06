@@ -7,9 +7,13 @@ import '../../utils/concurrent_operations.dart';
 
 part 'auth_riverpod_provider.g.dart';
 
-/// Authentication state model for Riverpod
+/// Represents the state of authentication within the application.
+///
+/// This immutable class holds the current user, loading status, any errors,
+/// and performance metrics related to authentication operations.
 class AuthState {
 
+  /// Creates an instance of the authentication state.
   const AuthState({
     this.user,
     this.isLoading = false,
@@ -17,14 +21,21 @@ class AuthState {
     this.lastSignInDuration,
     this.signInSuccessRate = 0.0,
   });
+  /// The currently authenticated Firebase user, or `null` if not authenticated.
   final User? user;
+  /// `true` if an authentication operation is currently in progress.
   final bool isLoading;
+  /// A string description of the last authentication error that occurred.
   final String? error;
+  /// The duration of the last sign-in attempt.
   final Duration? lastSignInDuration;
+  /// The success rate of sign-in attempts as a percentage.
   final double signInSuccessRate;
 
+  /// A convenience getter to check if a user is currently authenticated.
   bool get isAuthenticated => user != null;
 
+  /// Creates a new [AuthState] instance with updated field values.
   AuthState copyWith({
     User? user,
     bool? isLoading,
@@ -39,21 +50,27 @@ class AuthState {
       signInSuccessRate: signInSuccessRate ?? this.signInSuccessRate,
     );
 
-  AuthState clearError() => copyWith();
+  /// Returns a new [AuthState] instance with the `error` field cleared.
+  AuthState clearError() => copyWith(error: null);
 }
 
-/// AuthService provider
+/// Provides an app-wide instance of [AuthService].
 @riverpod
 AuthService authService(Ref ref) => AuthService();
 
-/// Auth state stream provider
+/// Provides a stream of the current authentication state from Firebase.
+///
+/// This stream emits a new [User] object whenever the user signs in or out.
 @riverpod
 Stream<User?> authStateStream(Ref ref) {
   final authService = ref.watch(authServiceProvider);
   return authService.authStateChanges;
 }
 
-/// Current user provider
+/// Provides the currently authenticated [User] object, or `null`.
+///
+/// This is derived from the [authStateStreamProvider] and offers direct,
+/// synchronous access to the current user state.
 @riverpod
 User? currentUser(Ref ref) {
   final authState = ref.watch(authStateStreamProvider);
@@ -64,7 +81,11 @@ User? currentUser(Ref ref) {
   );
 }
 
-/// Auth state notifier for managing authentication operations
+/// The primary state notifier for handling authentication logic.
+///
+/// This class manages the [AuthState] and exposes methods for signing in,
+/// signing out, and handling errors. It uses a [ConcurrentOperationManager]
+/// to prevent duplicate operations.
 @riverpod
 class AuthNotifier extends _$AuthNotifier {
   late final ConcurrentOperationManager _operationManager;
@@ -99,7 +120,11 @@ class AuthNotifier extends _$AuthNotifier {
     return const AuthState();
   }
 
-  /// Sign in with email and password
+  /// Signs in a user with their email and password.
+  ///
+  /// Manages the loading state and updates the [AuthState] with the result
+  /// of the sign-in attempt, including performance metrics.
+  /// Throws an error if the sign-in fails.
   Future<void> signInWithEmailAndPassword({
     required String email,
     required String password,
@@ -142,7 +167,9 @@ class AuthNotifier extends _$AuthNotifier {
     }
   }
 
-  /// Sign out
+  /// Signs out the current user.
+  ///
+  /// Manages the loading state and updates the [AuthState] upon completion.
   Future<void> signOut() async {
     if (_operationManager.isOperationInProgress(OperationType.signOut)) {
       return;
@@ -166,25 +193,28 @@ class AuthNotifier extends _$AuthNotifier {
     }
   }
 
-  /// Clear authentication error
+  /// Clears any authentication error message from the state.
   void clearError() {
     state = state.clearError();
   }
 
-  /// Dispose resources
+  /// Disposes of managed resources, such as the [ConcurrentOperationManager].
   void dispose() {
     _operationManager.dispose();
   }
 }
 
-/// Convenience provider for auth state
+/// A convenience provider that returns a simple boolean indicating if the user is authenticated.
 @riverpod
 bool isAuthenticated(Ref ref) {
   final user = ref.watch(currentUserProvider);
   return user != null;
 }
 
-/// Route guard provider
+/// A utility provider used for route guarding.
+///
+/// It checks if a given [routePath] matches any of the predefined protected routes
+/// that require authentication for access.
 @riverpod
 bool isRouteProtected(Ref ref, String routePath) {
   // Define protected routes

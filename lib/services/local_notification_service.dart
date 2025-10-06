@@ -5,7 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-/// Service for handling local/scheduled notifications
+/// A service for managing local and scheduled notifications on the device.
+///
+/// This service uses the `flutter_local_notifications` plugin to schedule
+/// time-based alerts for various events like union meetings, job application
+/// deadlines, and safety training expirations. It also handles notification
+/// channels for Android and respects user-defined quiet hours.
 class LocalNotificationService {
   static final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
@@ -13,7 +18,11 @@ class LocalNotificationService {
   
   static bool _isInitialized = false;
 
-  /// Initialize the local notification service
+  /// Initializes the local notification service.
+  ///
+  /// This method sets up the notification plugin, creates Android notification
+  /// channels, and configures handlers for notification taps. It should be
+  /// called once at app startup.
   static Future<void> initialize() async {
     if (_isInitialized) return;
     
@@ -83,7 +92,16 @@ class LocalNotificationService {
   }
 
 
-  /// Schedule union meeting reminder
+  /// Schedules a local notification to remind a user about an upcoming union meeting.
+  ///
+  /// The reminder is scheduled a specified number of hours before the meeting.
+  /// It respects the user's quiet hour settings.
+  ///
+  /// - [meetingId]: A unique identifier for the meeting to use as the notification ID.
+  /// - [meetingTitle]: The title or topic of the meeting.
+  /// - [localNumber]: The IBEW local number (e.g., "124").
+  /// - [meetingTime]: The `DateTime` of the meeting.
+  /// - [hoursBeforeMeeting]: How many hours before the meeting to send the reminder.
   static Future<void> scheduleUnionMeetingReminder({
     required String meetingId,
     required String meetingTitle,
@@ -158,7 +176,9 @@ class LocalNotificationService {
   }
 
 
-  /// Cancel a scheduled notification
+  /// Cancels a single scheduled notification by its ID.
+  ///
+  /// - [id]: The integer ID of the notification to cancel.
   static Future<void> cancelNotification(int id) async {
     try {
       await _notifications.cancel(id);
@@ -168,7 +188,7 @@ class LocalNotificationService {
     }
   }
 
-  /// Cancel all scheduled notifications
+  /// Cancels all pending scheduled notifications for the app.
   static Future<void> cancelAllNotifications() async {
     try {
       await _notifications.cancelAll();
@@ -178,7 +198,9 @@ class LocalNotificationService {
     }
   }
 
-  /// Get pending notifications
+  /// Retrieves a list of all notifications that are currently scheduled and pending.
+  ///
+  /// Returns a `Future<List<PendingNotificationRequest>>`.
   static Future<List<PendingNotificationRequest>> getPendingNotifications() async {
     try {
       return await _notifications.pendingNotificationRequests();
@@ -257,7 +279,15 @@ class LocalNotificationService {
     return adjustedTime;
   }
   
-  /// Schedule job deadline reminder
+  /// Schedules a local reminder for a job application deadline.
+  ///
+  /// The reminder is scheduled a specified number of hours before the deadline.
+  ///
+  /// - [jobId]: A unique identifier for the job.
+  /// - [jobTitle]: The title of the job.
+  /// - [company]: The company offering the job.
+  /// - [deadline]: The `DateTime` of the application deadline.
+  /// - [hoursBeforeDeadline]: How many hours before the deadline to send the reminder.
   static Future<void> scheduleJobDeadlineReminder({
     required String jobId,
     required String jobTitle,
@@ -329,7 +359,12 @@ class LocalNotificationService {
     }
   }
   
-  /// Schedule safety training reminder
+  /// Schedules a reminder for an expiring safety training or certification.
+  ///
+  /// - [trainingId]: A unique identifier for the training.
+  /// - [trainingName]: The name of the training or certification.
+  /// - [expiryDate]: The `DateTime` when the training expires.
+  /// - [daysBeforeExpiry]: How many days before expiry to send the reminder.
   static Future<void> scheduleSafetyTrainingReminder({
     required String trainingId,
     required String trainingName,

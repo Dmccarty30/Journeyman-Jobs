@@ -3,6 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
+/// A service that manages user authentication using Firebase Auth.
+///
+/// Provides methods for signing up, signing in, signing out, and managing
+/// user accounts with various providers like email/password, Google, and Apple.
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
@@ -25,13 +29,16 @@ class AuthService {
     }
   }
 
-  // Get current user
+  /// Returns the currently signed-in user, or `null` if none exists.
   User? get currentUser => _auth.currentUser;
 
-  // Auth state changes stream
+  /// A stream that emits the currently signed-in user when the auth state changes.
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  // Email & Password Sign Up
+  /// Creates a new user account with the given [email] and [password].
+  ///
+  /// Returns a `Future<UserCredential?>` containing the user's credential
+  /// upon successful registration. Throws a `FirebaseAuthException` on failure.
   Future<UserCredential?> signUpWithEmailAndPassword({
     required String email,
     required String password,
@@ -47,7 +54,10 @@ class AuthService {
     }
   }
 
-  // Email & Password Sign In
+  /// Signs in a user with the given [email] and [password].
+  ///
+  /// Returns a `Future<UserCredential?>` containing the user's credential
+  /// upon successful sign-in. Throws a `FirebaseAuthException` on failure.
   Future<UserCredential?> signInWithEmailAndPassword({
     required String email,
     required String password,
@@ -63,7 +73,11 @@ class AuthService {
     }
   }
 
-  // Google Sign In
+  /// Signs in a user using their Google account.
+  ///
+  /// Initiates the Google Sign-In flow and uses the resulting token to
+  /// authenticate with Firebase. Returns a `Future<UserCredential?>` on success.
+  /// Throws an exception if the process fails or is cancelled.
   Future<UserCredential?> signInWithGoogle() async {
     try {
       // Ensure Google Sign-In is initialized
@@ -99,7 +113,11 @@ class AuthService {
     }
   }
 
-  // Apple Sign In
+  /// Signs in a user using their Apple ID.
+  ///
+  /// This method is only available on Apple devices. It initiates the
+  /// Sign in with Apple flow and uses the resulting credential to authenticate
+  /// with Firebase. Returns a `Future<UserCredential?>` on success.
   Future<UserCredential?> signInWithApple() async {
     try {
       // Check if Apple Sign In is available
@@ -129,7 +147,10 @@ class AuthService {
     }
   }
 
-  // Password Reset
+  /// Sends a password reset email to the specified [email] address.
+  ///
+  /// Throws a `FirebaseAuthException` if the email is not valid or does not
+  /// exist in the system.
   Future<void> sendPasswordResetEmail({required String email}) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
@@ -138,7 +159,7 @@ class AuthService {
     }
   }
 
-  // Sign Out
+  /// Signs out the current user from Firebase and any third-party providers.
   Future<void> signOut() async {
     try {
       await Future.wait([
@@ -150,7 +171,9 @@ class AuthService {
     }
   }
 
-  // Delete Account
+  /// Deletes the current user's account permanently.
+  ///
+  /// This action is irreversible and requires the user to have recently signed in.
   Future<void> deleteAccount() async {
     try {
       await currentUser?.delete();
@@ -159,7 +182,10 @@ class AuthService {
     }
   }
 
-  // Update Email
+  /// Updates the current user's email address.
+  ///
+  /// Firebase will send a verification email to the [newEmail] address.
+  /// The email change will only complete after the user verifies the new address.
   Future<void> updateEmail({required String newEmail}) async {
     try {
       await currentUser?.verifyBeforeUpdateEmail(newEmail);
@@ -168,7 +194,9 @@ class AuthService {
     }
   }
 
-  // Update Password
+  /// Updates the current user's password.
+  ///
+  /// The user must have signed in recently for this operation to succeed.
   Future<void> updatePassword({required String newPassword}) async {
     try {
       await currentUser?.updatePassword(newPassword);
@@ -177,7 +205,11 @@ class AuthService {
     }
   }
 
-  // Handle Firebase Auth Exceptions
+  /// Handles `FirebaseAuthException` and returns a user-friendly error message.
+  ///
+  /// - [e]: The `FirebaseAuthException` to handle.
+  ///
+  /// Returns a `String` containing the appropriate error message.
   String _handleAuthException(FirebaseAuthException e) {
     switch (e.code) {
       case 'weak-password':

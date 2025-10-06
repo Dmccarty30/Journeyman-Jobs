@@ -11,13 +11,22 @@ import '../../navigation/app_router.dart';
 import '../../utils/text_formatting_wrapper.dart';
 import '../../electrical_components/circuit_board_background.dart';
 
+/// A screen that displays a searchable and filterable directory of IBEW local unions.
+///
+/// This screen fetches data from the [localsProvider], displays it in a list,
+/// and supports pagination through infinite scrolling.
 class LocalsScreen extends ConsumerStatefulWidget {
+  /// Creates a [LocalsScreen].
   const LocalsScreen({super.key});
 
   @override
   ConsumerState<LocalsScreen> createState() => _LocalsScreenState();
 }
 
+/// The state for the [LocalsScreen].
+///
+/// Manages the scroll controller for pagination, search and filter states,
+/// and the overall UI rendering based on the data from the provider.
 class _LocalsScreenState extends ConsumerState<LocalsScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -41,6 +50,8 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
     super.dispose();
   }
 
+  /// Listens to the scroll position to trigger loading more locals when the
+  /// user reaches the end of the list.
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       ref.read(localsProvider.notifier).loadLocals(loadMore: true);
@@ -162,6 +173,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
     );
   }
 
+  /// Builds the main list of locals, handling loading, error, and empty states.
   Widget _buildLocalsList(LocalsState localsState) {
     if (localsState.isLoading && localsState.locals.isEmpty) {
       return const Center(
@@ -265,6 +277,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
     );
   }
 
+  /// Displays a dialog with detailed information about the selected [local].
   void _showLocalDetails(BuildContext context, LocalsRecord local) {
     showDialog(
       context: context,
@@ -273,10 +286,14 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
   }
 }
 
+/// A card widget for displaying a summary of an IBEW local union's information.
 class LocalCard extends StatelessWidget {
+  /// The local union data to display.
   final LocalsRecord local;
+  /// A callback function invoked when the card is tapped.
   final VoidCallback onTap;
 
+  /// Creates a [LocalCard].
   const LocalCard({
     super.key,
     required this.local,
@@ -409,6 +426,7 @@ class LocalCard extends StatelessWidget {
     );
   }
 
+  /// A helper widget to build a formatted row with an icon, label, and value.
   Widget _buildInfoRow(
     BuildContext context,
     String label,
@@ -454,6 +472,7 @@ class LocalCard extends StatelessWidget {
     );
   }
 
+  /// Launches the device's default phone dialer with the given [phone] number.
   Future<void> _launchPhone(String phone) async {
     final cleanPhone = phone.replaceAll(RegExp(r'[^\d+]'), '');
     final Uri phoneUri = Uri(scheme: 'tel', path: cleanPhone);
@@ -463,6 +482,7 @@ class LocalCard extends StatelessWidget {
     }
   }
 
+  /// Launches the default email client to compose an email to the given [email] address.
   Future<void> _launchEmail(String email) async {
     final Uri emailUri = Uri(scheme: 'mailto', path: email);
     
@@ -471,6 +491,7 @@ class LocalCard extends StatelessWidget {
     }
   }
 
+  /// Launches the given [website] URL in an external browser.
   Future<void> _launchWebsite(String website) async {
     String url = website;
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -484,6 +505,10 @@ class LocalCard extends StatelessWidget {
     }
   }
 
+  /// Launches a map application to show the location of the given [address].
+  ///
+  /// It constructs a query string and uses the appropriate maps URL scheme
+  /// for either iOS or Android.
   Future<void> _launchMaps(String address, String city, String state) async {
     final fullAddress = '$address, $city, $state';
     final encodedAddress = Uri.encodeComponent(fullAddress);
@@ -506,9 +531,15 @@ class LocalCard extends StatelessWidget {
   }
 }
 
+/// A dialog that displays comprehensive details about a specific [LocalsRecord].
+///
+/// It intelligently handles the display of single or multiple office locations
+/// and formats various pieces of contact and meeting information.
 class LocalDetailsDialog extends StatelessWidget {
+  /// The local union data to be displayed in the dialog.
   final LocalsRecord local;
 
+  /// Creates a [LocalDetailsDialog].
   const LocalDetailsDialog({super.key, required this.local});
 
   @override
@@ -619,6 +650,7 @@ class LocalDetailsDialog extends StatelessWidget {
     );
   }
 
+  /// Checks the raw data for patterns indicating multiple office locations.
   bool _hasMultipleOffices() {
     if (local.data == null) return false;
     
@@ -631,6 +663,7 @@ class LocalDetailsDialog extends StatelessWidget {
            (data.containsKey('offices') && data['offices'] is List);
   }
 
+  /// Builds the UI for a local with a single office.
   Widget _buildSingleOffice(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -655,6 +688,7 @@ class LocalDetailsDialog extends StatelessWidget {
     );
   }
 
+  /// Builds the UI for a local with multiple offices, creating a section for each.
   Widget _buildMultipleOffices(BuildContext context) {
     final offices = _extractOffices();
     
@@ -689,6 +723,8 @@ class LocalDetailsDialog extends StatelessWidget {
     );
   }
 
+  /// Parses the raw data from the [LocalsRecord] to extract a structured list
+  /// of all office locations, accommodating various key naming conventions.
   List<Map<String, String?>> _extractOffices() {
     final offices = <Map<String, String?>>[];
     final data = local.data ?? {};
@@ -751,6 +787,7 @@ class LocalDetailsDialog extends StatelessWidget {
     return offices;
   }
 
+  /// A helper widget to build a styled section header with an accent line.
   Widget _buildSectionHeader(String title) {
     return Row(
       children: [
@@ -774,6 +811,7 @@ class LocalDetailsDialog extends StatelessWidget {
     );
   }
 
+  /// Builds a card containing a list of clickable contact information rows.
   Widget _buildContactCard(
     BuildContext context, {
     String? address,
@@ -843,6 +881,9 @@ class LocalDetailsDialog extends StatelessWidget {
     );
   }
 
+  /// A helper widget to build a single row of contact information.
+  ///
+  /// The row is tappable if an `onTap` callback is provided.
   Widget _buildClickableRow(
     BuildContext context, {
     required IconData icon,
@@ -909,6 +950,7 @@ class LocalDetailsDialog extends StatelessWidget {
     );
   }
 
+  /// Builds a styled box to display meeting information, if available.
   Widget _buildMeetingInfo(String? meetingInfo) {
     if (meetingInfo == null || meetingInfo.isEmpty) return const SizedBox.shrink();
     
@@ -957,6 +999,10 @@ class LocalDetailsDialog extends StatelessWidget {
     );
   }
 
+  /// Determines whether the "Additional Information" section should be displayed.
+  ///
+  /// It checks if there is any data left after filtering out the keys that are
+  /// already displayed in dedicated sections.
   bool _shouldSkipAdditionalInfo() {
     if (local.data == null) return true;
     
@@ -976,6 +1022,8 @@ class LocalDetailsDialog extends StatelessWidget {
     );
   }
 
+  /// Builds a generic list of key-value pairs for all other data
+  /// found in the local's record that hasn't been explicitly handled.
   Widget _buildAdditionalInfo() {
     final skipKeys = [
       'address', 'phone', 'email', 'website', 'fax',
@@ -1040,6 +1088,7 @@ class LocalDetailsDialog extends StatelessWidget {
     );
   }
 
+  /// Formats a snake_case or camelCase key into a user-friendly "Title Case" string.
   String _formatKey(String key) {
     return key
         .replaceAll('_', ' ')
@@ -1050,6 +1099,7 @@ class LocalDetailsDialog extends StatelessWidget {
         .join(' ');
   }
 
+  /// Launches the device's phone dialer.
   Future<void> _launchPhone(String phone) async {
     final cleanPhone = phone.replaceAll(RegExp(r'[^\d+]'), '');
     final Uri phoneUri = Uri(scheme: 'tel', path: cleanPhone);
@@ -1059,6 +1109,7 @@ class LocalDetailsDialog extends StatelessWidget {
     }
   }
 
+  /// Launches the default email client.
   Future<void> _launchEmail(String email) async {
     final Uri emailUri = Uri(scheme: 'mailto', path: email);
     
@@ -1067,6 +1118,7 @@ class LocalDetailsDialog extends StatelessWidget {
     }
   }
 
+  /// Launches a URL in an external browser.
   Future<void> _launchWebsite(String website) async {
     String url = website;
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -1080,6 +1132,7 @@ class LocalDetailsDialog extends StatelessWidget {
     }
   }
 
+  /// Launches a map application with the given address.
   Future<void> _launchMaps(String address, String city, String state) async {
     final fullAddress = '$address, $city, $state';
     final encodedAddress = Uri.encodeComponent(fullAddress);

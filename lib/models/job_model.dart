@@ -2,44 +2,76 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
-/// Model class representing a Job posting
-/// Matches the backend JobsRecord schema
+/// An immutable data model representing a job posting.
+///
+/// This class is designed to be robust, handling both a structured `jobDetails`
+/// map and a variety of flat, legacy fields for backward compatibility with
+/// different data schemas.
 @immutable
 class Job {
-  // Document reference
+  /// The unique identifier for the job, typically the Firestore document ID.
   final String id;
+  /// The direct Firestore reference to the job document.
   final DocumentReference? reference;
+  /// The ID of the user who shared the job posting.
   final String sharerId;
-  final Map<String, dynamic> jobDetails; // Nested details: hours, payRate, perDiem, contractor, location (GeoPoint)
+  /// A nested map containing structured job details.
+  /// Expected keys include 'hours', 'payRate', 'perDiem', 'contractor', and 'location' (as a GeoPoint).
+  final Map<String, dynamic> jobDetails;
+  /// A flag indicating if this job matches a specific crew's defined preferences.
   final bool matchesCriteria;
+  /// A flag for soft-deleting the job posting.
   final bool deleted;
   
   // Core job fields (legacy/flat fields for compatibility)
+  /// The IBEW local union number associated with the job.
   final int? local;
+  /// The primary job classification (e.g., 'Journeyman Lineman').
   final String? classification;
+  /// The name of the company or contractor offering the job.
   final String company;
+  /// The general location of the job (e.g., "City, ST").
   final String location;
+  /// The number of hours per shift or week.
   final int? hours;
+  /// The hourly wage for the job.
   final double? wage;
+  /// The substation or specific job site identifier.
   final String? sub;
+  /// An alternative or more specific job classification.
   final String? jobClass;
+  /// The IBEW local union number (can be redundant with `local`).
   final int? localNumber;
+  /// Required qualifications or certifications for the job.
   final String? qualifications;
+  /// The date the job was originally posted, as a string.
   final String? datePosted;
+  /// A detailed description of the job duties and requirements.
   final String? jobDescription;
+  /// The official title of the job.
   final String? jobTitle;
+  /// Information about per diem payments.
   final String? perDiem;
+  /// The type of agreement (e.g., "Inside Agreement").
   final String? agreement;
+  /// The number of available positions.
   final String? numberOfJobs;
+  /// The timestamp when the job was posted or last updated.
   final DateTime? timestamp;
+  /// The start date of the job, as a string.
   final String? startDate;
+  /// The start time of the job, as a string.
   final String? startTime;
+  /// A list of union books the applicant is on.
   final List<int>? booksYourOn;
+  /// The type of work (e.g., "Transmission", "Distribution").
   final String? typeOfWork;
+  /// The expected duration of the job.
   final String? duration;
-  final String? voltageLevel; // New field for voltage categorization
+  /// The voltage level of the work (e.g., "High Voltage").
+  final String? voltageLevel;
 
-  /// Constructor with required and optional parameters
+  /// Creates an instance of the [Job] model.
   const Job({
     required this.id,
     this.reference,
@@ -72,7 +104,7 @@ class Job {
     this.voltageLevel,
   });
 
-  /// Creates a copy of this Job with the given fields replaced with new values
+  /// Creates a new [Job] instance with updated field values.
   Job copyWith({
     String? id,
     DocumentReference? reference,
@@ -137,8 +169,12 @@ class Job {
     );
   }
 
-  /// Creates a Job instance from a JSON map
-  /// Handles both Firestore documents and standard JSON
+  /// Creates a [Job] instance from a JSON map.
+  ///
+  /// This factory is designed to be highly resilient, capable of parsing data from
+  /// various legacy schemas and data types. It includes helper functions to safely
+  /// parse numbers, dates, and lists, and to normalize data from different field names
+  /// (e.g., 'wage' vs. 'hourlyWage').
   factory Job.fromJson(Map<String, dynamic> json) {
     // Helper function to parse DateTime from various formats
     DateTime parseDateTime(dynamic value) {
@@ -281,9 +317,10 @@ class Job {
     }
   }
 
-  /// Converts this Job instance to a JSON map
-  /// [useFirestoreTypes] - If true, converts DateTime to Timestamp for Firestore
-  /// [includeNullValues] - If true, includes null values in the output map
+  /// Converts this [Job] instance to a JSON map.
+  ///
+  * [useFirestoreTypes]: If `true`, converts `DateTime` objects to Firestore `Timestamp` objects.
+  * [includeNullValues]: If `true`, includes fields with `null` values in the output map.
   Map<String, dynamic> toJson({
     bool useFirestoreTypes = false,
     bool includeNullValues = false,
@@ -346,20 +383,23 @@ class Job {
     return data;
   }
 
-  /// Converts this Job instance to a Firestore-compatible map
-  /// This is a convenience method that calls toJson with Firestore settings
+  /// A convenience method that converts this [Job] instance to a Firestore-compatible map.
+  ///
+  /// This is equivalent to calling `toJson(useFirestoreTypes: true, includeNullValues: false)`.
   Map<String, dynamic> toFirestore() {
     return toJson(useFirestoreTypes: true, includeNullValues: false);
   }
 
-  /// Creates a Job instance from a Firestore DocumentSnapshot
-  /// This is a convenience factory that extracts data and adds the document ID
+  /// A convenience factory to create a [Job] instance from a Firestore [DocumentSnapshot].
+  ///
+  /// It automatically includes the document's ID in the created object.
   factory Job.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     data['id'] = doc.id; // Ensure the document ID is included
     return Job.fromJson(data);
   }
 
+  /// Checks if the essential fields of the job model are valid.
   bool isValid() => id.isNotEmpty && sharerId.isNotEmpty && jobDetails.isNotEmpty;
 
   @override

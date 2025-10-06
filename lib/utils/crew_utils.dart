@@ -1,10 +1,16 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Utility functions for crew operations
+/// A utility class containing helper functions for crew-related operations.
 class CrewUtils {
-  /// Validates crew name according to business rules
-  /// Returns error message if invalid, null if valid
+  /// Validates a crew name based on a set of business rules.
+  ///
+  /// The rules are:
+  /// - Name is required (not null or empty).
+  /// - Name must be between 3 and 50 characters long.
+  /// - Name can only contain alphanumeric characters, spaces, hyphens, and underscores.
+  ///
+  /// Returns a `String` with an error message if validation fails, otherwise returns `null`.
   static String? validateCrewName(String? name) {
     if (name == null || name.trim().isEmpty) {
       return 'Crew name is required';
@@ -23,8 +29,17 @@ class CrewUtils {
     return null;
   }
 
-  /// Calculates the next crew ID counter by querying existing crews with the name_timestamp prefix
-  /// Returns the next counter value to use for unique ID generation
+  /// Calculates the next sequential counter for a new crew ID to ensure uniqueness.
+  ///
+  /// This function queries Firestore for existing crew IDs that start with
+  /// the given [crewName] and have been created within the last 24 hours.
+  /// It finds the highest counter used in that period and returns the next integer.
+  /// This helps prevent ID collisions in high-frequency creation scenarios.
+  ///
+  /// - [crewName]: The base name for the crew.
+  /// - [firestore]: The `FirebaseFirestore` instance to use for the query.
+  ///
+  /// Returns a `Future<int>` representing the next available counter.
   static Future<int> calculateCrewIdCounter({
     required String crewName,
     required FirebaseFirestore firestore,
@@ -72,8 +87,12 @@ class CrewUtils {
     }
   }
 
-  /// Calculates the great-circle distance between two points on Earth using the Haversine formula
-  /// Returns distance in kilometers
+  /// Calculates the great-circle distance between two geographic points using the Haversine formula.
+  ///
+  /// - [lat1], [lon1]: Latitude and longitude of the first point.
+  /// - [lat2], [lon2]: Latitude and longitude of the second point.
+  ///
+  /// Returns the distance in kilometers.
   static double calculateHaversineDistance({
     required double lat1,
     required double lon1,
@@ -96,13 +115,14 @@ class CrewUtils {
     return earthRadius * c;
   }
 
-  /// Converts degrees to radians
+  /// Converts degrees to radians.
   static double _toRadians(double degrees) {
     return degrees * pi / 180;
   }
 
-  /// Calculates distance between two geographic coordinates
-  /// Convenience wrapper for haversine calculation
+  /// A convenience wrapper for [calculateHaversineDistance].
+  ///
+  /// Calculates the distance between two geographic coordinates.
   static double distanceBetween({
     required double startLatitude,
     required double startLongitude,

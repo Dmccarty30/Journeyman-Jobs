@@ -1,37 +1,58 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Model representing job filter criteria
+/// An immutable model that represents a collection of filters for a job search.
+///
+/// This class holds all possible criteria a user can specify to narrow down
+/// job search results, including location, job type, time, work preferences,
+/// and sorting options.
 class JobFilterCriteria {
   // Location filters
+  /// The city to filter jobs by.
   final String? city;
+  /// The state to filter jobs by.
   final String? state;
-  final double? maxDistance; // in miles
+  /// The maximum distance in miles from a central point for a location-based search.
+  final double? maxDistance;
   
   // Classification filters
+  /// A list of IBEW classifications to include (e.g., 'Inside Wireman').
   final List<String> classifications;
+  /// A list of IBEW local union numbers to filter by.
   final List<int> localNumbers;
   
   // Job type filters
+  /// A list of construction types to include (e.g., 'Commercial', 'Industrial').
   final List<String> constructionTypes;
+  /// A list of job classes to include.
   final List<String> jobClasses;
 
   // Time filters
+  /// Only include jobs posted on or after this date.
   final DateTime? postedAfter;
+  /// Only include jobs with a start date on or before this date.
   final DateTime? startDateBefore;
+  /// Only include jobs with a start date on or after this date.
   final DateTime? startDateAfter;
   
   // Work preferences
+  /// If not null, filters for jobs that either have per diem (`true`) or not (`false`).
   final bool? hasPerDiem;
-  final String? durationPreference; // 'short-term', 'long-term', 'any'
+  /// The preferred duration of the job (e.g., 'short-term', 'long-term').
+  final String? durationPreference;
+  /// A list of specific company names to filter by.
   final List<String> companies;
 
   // Sorting
+  /// The field to sort the job results by.
   final JobSortOption sortBy;
+  /// Whether to sort the results in descending order.
   final bool sortDescending;
   
   // Search query
+  /// A general text search query to match against job details.
   final String? searchQuery;
 
+  /// Creates an instance of [JobFilterCriteria].
   const JobFilterCriteria({
     this.city,
     this.state,
@@ -51,10 +72,10 @@ class JobFilterCriteria {
     this.searchQuery,
   });
 
-  /// Create an empty filter criteria
+  /// Creates a new instance of [JobFilterCriteria] with no filters applied.
   factory JobFilterCriteria.empty() => const JobFilterCriteria();
 
-  /// Check if any filters are active
+  /// A boolean indicating whether any filters are currently active.
   bool get hasActiveFilters {
     return city != null ||
         state != null ||
@@ -72,7 +93,7 @@ class JobFilterCriteria {
         searchQuery != null;
   }
 
-  /// Get the count of active filters
+  /// Returns the total number of currently active filters.
   int get activeFilterCount {
     int count = 0;
     if (city != null) count++;
@@ -92,7 +113,15 @@ class JobFilterCriteria {
     return count;
   }
 
-  /// Apply filters to a Firestore query
+  /// Applies the current filter criteria to a Firestore [Query].
+  ///
+  /// This method constructs a new query by adding `where` and `orderBy` clauses
+  /// based on the set filters. Note that location-based distance filtering
+  /// must be handled client-side after the initial query.
+  ///
+  /// - [query]: The base `Query` to which filters will be applied.
+  ///
+  /// Returns a new `Query` object with the filters applied.
   Query applyToQuery(Query query) {
     // Apply classification filters
     if (classifications.isNotEmpty) {
@@ -154,7 +183,7 @@ class JobFilterCriteria {
     return query;
   }
 
-  /// Copy with new values
+  /// Creates a new [JobFilterCriteria] instance with updated values.
   JobFilterCriteria copyWith({
     String? city,
     String? state,
@@ -193,7 +222,9 @@ class JobFilterCriteria {
     );
   }
 
-  /// Clear specific filter
+  /// Returns a new [JobFilterCriteria] instance with a specific filter category cleared.
+  ///
+  /// - [filterType]: The [FilterType] to clear.
   JobFilterCriteria clearFilter(FilterType filterType) {
     switch (filterType) {
       case FilterType.location:
@@ -221,7 +252,9 @@ class JobFilterCriteria {
     }
   }
 
-  /// Convert to JSON for storage
+  /// Serializes the [JobFilterCriteria] instance to a JSON map.
+  ///
+  /// This is useful for saving filter presets.
   Map<String, dynamic> toJson() {
     return {
       'city': city,
@@ -243,7 +276,7 @@ class JobFilterCriteria {
     };
   }
 
-  /// Create from JSON
+  /// Creates a [JobFilterCriteria] instance from a JSON map.
   factory JobFilterCriteria.fromJson(Map<String, dynamic> json) {
     return JobFilterCriteria(
       city: json['city'],
@@ -272,29 +305,43 @@ class JobFilterCriteria {
   }
 }
 
-/// Enum for different filter types
+/// An enumeration of the different categories of filters that can be applied.
 enum FilterType {
+  /// Filters related to geographic location (city, state, distance).
   location,
+  /// Filters related to IBEW job classifications.
   classification,
+  /// Filters for specific IBEW local unions.
   local,
+  /// Filters for the type of construction work.
   constructionType,
+  /// Filters related to job posting or start dates.
   date,
+  /// Filters for whether a job offers per diem.
   perDiem,
+  /// Filters for the duration of the job.
   duration,
+  /// Filters for specific companies.
   company,
+  /// A general text search filter.
   search,
 }
 
-/// Enum for job sorting options
+/// An enumeration of the available options for sorting job search results.
 enum JobSortOption {
+  /// Sort by the date the job was posted.
   datePosted,
+  /// Sort by the offered wage.
   wage,
+  /// Sort by the job's start date.
   startDate,
+  /// Sort by distance from a location (requires client-side sorting).
   distance,
 }
 
-/// Extension to get display names for sort options
+/// An extension on [JobSortOption] to provide user-friendly display names.
 extension JobSortOptionExtension on JobSortOption {
+  /// Returns the display-friendly name for the sort option.
   String get displayName {
     switch (this) {
       case JobSortOption.datePosted:

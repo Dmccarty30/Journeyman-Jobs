@@ -2,12 +2,20 @@ import 'package:flutter/material.dart';
 import 'social_animations.dart';
 import '../design_system/app_theme.dart';
 
-/// Pull-to-refresh widget with electrical theme animation
+/// A custom pull-to-refresh widget featuring an "electrical arc" animation.
+///
+/// This widget wraps a scrollable child and provides a custom visual indicator
+/// that animates as the user pulls down to refresh the content.
 class ElectricalPullToRefresh extends StatefulWidget {
+  /// A callback function that is triggered when a refresh is initiated.
+  /// It should return a `Future` that completes when the refresh is done.
   final Future<void> Function() onRefresh;
+  /// The scrollable widget that this pull-to-refresh indicator is associated with.
   final Widget child;
+  /// The distance in logical pixels the user must pull down to trigger the refresh.
   final double triggerDistance;
   
+  /// Creates an [ElectricalPullToRefresh] widget.
   const ElectricalPullToRefresh({
     super.key,
     required this.onRefresh,
@@ -19,6 +27,10 @@ class ElectricalPullToRefresh extends StatefulWidget {
   State<ElectricalPullToRefresh> createState() => _ElectricalPullToRefreshState();
 }
 
+/// The state for the [ElectricalPullToRefresh] widget.
+///
+/// Manages the animations and the state transitions from pulling, to ready,
+/// to refreshing, and back to idle.
 class _ElectricalPullToRefreshState extends State<ElectricalPullToRefresh>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
@@ -148,6 +160,7 @@ class _ElectricalPullToRefreshState extends State<ElectricalPullToRefresh>
     );
   }
   
+  /// Builds the refresh indicator widget based on the current animation state.
   Widget _buildRefreshIndicator() {
     return AnimatedBuilder(
       animation: _controller,
@@ -182,6 +195,8 @@ class _ElectricalPullToRefreshState extends State<ElectricalPullToRefresh>
     );
   }
   
+  /// Builds the indicator shown when the user is pulling down but has not yet
+  /// reached the trigger distance.
   Widget _buildPullingIndicator() {
     return Opacity(
       opacity: _controller.value,
@@ -196,6 +211,7 @@ class _ElectricalPullToRefreshState extends State<ElectricalPullToRefresh>
     );
   }
   
+  /// Builds the indicator shown when the user has pulled far enough to trigger a refresh.
   Widget _buildReadyToRefreshIndicator() {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -207,6 +223,7 @@ class _ElectricalPullToRefreshState extends State<ElectricalPullToRefresh>
     );
   }
   
+  /// Builds the custom electrical arc animation displayed during the refresh.
   Widget _buildElectricalArc() {
     return CustomPaint(
       painter: ElectricalArcPainter(
@@ -217,6 +234,7 @@ class _ElectricalPullToRefreshState extends State<ElectricalPullToRefresh>
     );
   }
   
+  /// Builds the circular progress indicator shown during the refresh.
   Widget _buildCircularProgress() {
     return SizedBox(
       width: 32,
@@ -231,11 +249,14 @@ class _ElectricalPullToRefreshState extends State<ElectricalPullToRefresh>
   }
 }
 
-/// Custom painter for electrical arc effect
+/// A [CustomPainter] that draws an animated electrical arc effect.
 class ElectricalArcPainter extends CustomPainter {
+  /// The current progress of the animation, from 0.0 to 1.0.
   final double progress;
+  /// The color of the arc and sparks.
   final Color color;
   
+  /// Creates an instance of [ElectricalArcPainter].
   ElectricalArcPainter({
     required this.progress,
     required this.color,

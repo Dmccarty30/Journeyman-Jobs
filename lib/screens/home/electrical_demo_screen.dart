@@ -9,15 +9,23 @@ import '../../design_system/app_theme.dart';
 import '../../navigation/app_router.dart';
 import '../tools/electrical_components_showcase_screen.dart';
 
-/// Quick demo screen showcasing the electrical theme enhancements
-/// This provides an easy way to see the new electrical components in action
+/// A demonstration screen that showcases the various electrical-themed widgets
+/// and components available in the application.
+///
+/// This screen serves as a visual guide and testing ground for custom UI elements
+/// like animated backgrounds, themed buttons, interactive fields, and custom notifications.
 class ElectricalDemoScreen extends StatefulWidget {
+  /// Creates an [ElectricalDemoScreen].
   const ElectricalDemoScreen({super.key});
 
   @override
   State<ElectricalDemoScreen> createState() => _ElectricalDemoScreenState();
 }
 
+/// The state for the [ElectricalDemoScreen].
+///
+/// Manages the state for interactive elements on the demo screen, such as
+/// text controllers and dropdown selections.
 class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
   final _textController = TextEditingController();
   String? _selectedComponent;
@@ -337,6 +345,7 @@ class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
     );
   }
 
+  /// Shows a sequence of different notification types to demonstrate their appearance.
   void _showNotificationDemo() {
     // Show multiple notifications in sequence
     JJElectricalNotifications.showElectricalToast(
@@ -365,6 +374,7 @@ class _ElectricalDemoScreenState extends State<ElectricalDemoScreen> {
     });
   }
 
+  /// A helper method to create a consistent decoration for card widgets on this screen.
   BoxDecoration _buildCardDecoration() {
     return BoxDecoration(
       color: Colors.white.withValues(alpha: 0.95),

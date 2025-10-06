@@ -2,10 +2,11 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-/// Service for monitoring network connectivity and providing offline indicators
-/// 
-/// This service provides real-time connectivity monitoring and notifies
-/// listeners when the connection state changes, enabling offline-first UX.
+/// A service for monitoring network connectivity and providing offline indicators.
+///
+/// This service uses the `connectivity_plus` package to provide real-time
+/// connectivity monitoring. It notifies listeners when the connection state
+/// changes, enabling an offline-first user experience.
 class ConnectivityService extends ChangeNotifier {
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
@@ -21,16 +22,24 @@ class ConnectivityService extends ChangeNotifier {
   bool _isMobileData = false;
   
   // Getters
+  /// Returns `true` if the device has an active network connection.
   bool get isOnline => _isOnline;
+  /// Returns `true` if the device has no active network connection.
   bool get isOffline => !_isOnline;
+  /// Returns `true` if the device has been offline at least once during the session.
   bool get wasOffline => _wasOffline;
+  /// Returns `true` if the device is connected to a WiFi network.
   bool get isConnectedToWifi => _isConnectedToWifi;
+  /// Returns `true` if the device is connected to a mobile data network.
   bool get isMobileData => _isMobileData;
+  /// Returns a string representation of the current connection type (e.g., 'WiFi', 'Mobile Data').
   String get connectionType => _connectionType;
+  /// The timestamp of the last time the device went offline.
   DateTime? get lastOfflineTime => _lastOfflineTime;
+  /// The timestamp of the last time the device came back online.
   DateTime? get lastOnlineTime => _lastOnlineTime;
   
-  /// Get connection quality description
+  /// Returns a human-readable description of the connection quality.
   String get connectionQuality {
     if (!_isOnline) return 'Offline';
     if (_isConnectedToWifi) return 'WiFi';
@@ -38,7 +47,9 @@ class ConnectivityService extends ChangeNotifier {
     return 'Unknown';
   }
   
-  /// Get offline duration in minutes
+  /// The duration in minutes the device was last offline.
+  ///
+  /// Returns `null` if the device has never been offline.
   int? get offlineDurationMinutes {
     if (_lastOfflineTime == null) return null;
     if (_isOnline && _lastOnlineTime != null) {
@@ -153,6 +164,12 @@ class ConnectivityService extends ChangeNotifier {
   }
   
   /// Test internet connectivity by attempting a network request
+  /// Performs a check to determine if the device has a functional internet connection.
+  ///
+  /// This can be more reliable than just checking the connection type, as it
+  /// attempts a real network operation.
+  ///
+  /// Returns `true` if internet is accessible, `false` otherwise.
   Future<bool> testInternetConnection() async {
     try {
       // Use a reliable endpoint to test actual internet connectivity
@@ -166,7 +183,9 @@ class ConnectivityService extends ChangeNotifier {
     }
   }
   
-  /// Force refresh connectivity state
+  /// Manually triggers a refresh of the connectivity state.
+  ///
+  /// This is useful for re-checking the connection after a failed network request.
   Future<void> refreshConnectivityState() async {
     try {
       final List<ConnectivityResult> result = await _connectivity.checkConnectivity();
@@ -179,19 +198,26 @@ class ConnectivityService extends ChangeNotifier {
     }
   }
   
-  /// Check if we should sync data now
+  /// Determines if the app should perform a data sync based on the current connection.
+  ///
+  /// Returns `true` if connected to WiFi or mobile data.
   bool shouldSyncData() {
     // Only sync on WiFi or if mobile data is explicitly allowed
     return _isOnline && (_isConnectedToWifi || _isMobileData);
   }
   
-  /// Check if we should download large content
+  /// Determines if the app should download large content.
+  ///
+  /// To conserve user data, this typically returns `true` only when connected to WiFi.
   bool shouldDownloadLargeContent() {
     // Only download large content on WiFi to save mobile data
     return _isOnline && _isConnectedToWifi;
   }
   
-  /// Get connection status summary
+  /// Returns a summary of the current connection status.
+  ///
+  /// The returned map includes details like online status, connection type,
+  /// and timestamps of state changes.
   Map<String, dynamic> getConnectionStatus() {
     return {
       'isOnline': _isOnline,
@@ -207,7 +233,10 @@ class ConnectivityService extends ChangeNotifier {
     };
   }
   
-  /// Reset the wasOffline flag (useful for dismissing offline indicators)
+  /// Resets the [wasOffline] flag to `false`.
+  ///
+  /// This is useful for dismissing persistent offline indicators after the user
+  /// has acknowledged the status.
   void resetOfflineFlag() {
     _wasOffline = false;
     notifyListeners();
@@ -224,14 +253,19 @@ class ConnectivityService extends ChangeNotifier {
   }
 }
 
-/// Extension methods for connectivity state
+/// Provides convenient extension methods on [ConnectivityService].
 extension ConnectivityServiceExtensions on ConnectivityService {
-  /// Check if app should show offline indicators
+  /// Determines if a UI indicator for being offline should be shown.
   bool get shouldShowOfflineIndicator => !isOnline || wasOffline;
   
-  /// Check if app should cache aggressively
+  /// Determines if the app should cache data more aggressively.
+  ///
+  /// This is typically `true` when on mobile data or offline to reduce data usage
+  /// and improve user experience.
   bool get shouldCacheAggressively => isMobileData || !isOnline;
   
-  /// Check if app should reduce background sync
+  /// Determines if the app should reduce the frequency of background sync operations.
+  ///
+  /// This is `true` when on mobile data to conserve the user's data plan.
   bool get shouldReduceBackgroundSync => isMobileData;
 }

@@ -11,9 +11,13 @@ import '../../utils/structured_logging.dart';
 
 part 'job_filter_riverpod_provider.g.dart';
 
-/// Job filter state model for Riverpod
+/// Represents the state for the job filtering feature.
+///
+/// This immutable class holds the currently applied filters, saved user presets,
+/// recent search history, and the UI loading/error state.
 class JobFilterState {
 
+  /// Creates an instance of the job filter state.
   const JobFilterState({
     this.currentFilter = const JobFilterCriteria(),
     this.presets = const <FilterPreset>[],
@@ -21,12 +25,18 @@ class JobFilterState {
     this.isLoading = false,
     this.error,
   });
+  /// The currently active filter criteria.
   final JobFilterCriteria currentFilter;
+  /// A list of all saved filter presets for the user.
   final List<FilterPreset> presets;
+  /// A list of the user's most recent search queries.
   final List<String> recentSearches;
+  /// `true` if the filter state is currently being loaded from storage.
   final bool isLoading;
+  /// A string description of the last error that occurred.
   final String? error;
 
+  /// Creates a new [JobFilterState] instance with updated field values.
   JobFilterState copyWith({
     JobFilterCriteria? currentFilter,
     List<FilterPreset>? presets,
@@ -41,19 +51,20 @@ class JobFilterState {
       error: error ?? this.error,
     );
 
-  JobFilterState clearError() => copyWith();
+  /// Returns a new [JobFilterState] instance with the `error` field cleared.
+  JobFilterState clearError() => copyWith(error: null);
 
-  /// True when any filter settings are active.
+  /// A convenience getter that returns `true` if any filter criteria are currently active.
   bool get hasActiveFilters => currentFilter.hasActiveFilters;
 
-  /// The number of active filter options currently applied.
+  /// A convenience getter that returns the count of active filter criteria.
   int get activeFilterCount => currentFilter.activeFilterCount;
 
-  /// Get pinned presets
+  /// Returns a list of all presets that have been marked as pinned by the user.
   List<FilterPreset> get pinnedPresets =>
       presets.where((FilterPreset p) => p.isPinned).toList();
 
-  /// Get recently used presets (sorted by last used)
+  /// Returns a list of the most recently used presets, sorted by `lastUsedAt`.
   List<FilterPreset> get recentPresets {
     final List<FilterPreset> sorted = List<FilterPreset>.from(presets)
       ..sort((FilterPreset a, FilterPreset b) => b.lastUsedAt.compareTo(a.lastUsedAt));
@@ -61,11 +72,15 @@ class JobFilterState {
   }
 }
 
-/// SharedPreferences provider
+/// Provides a singleton instance of [SharedPreferences].
 @riverpod
 Future<SharedPreferences> sharedPreferences(Ref ref) async => SharedPreferences.getInstance();
 
-/// Job filter notifier for managing filter state and presets
+/// The state notifier for managing the [JobFilterState].
+///
+/// This class handles all logic related to updating filters, managing presets,
+/// and persisting the state to local storage. It uses debouncing to prevent
+/// excessive updates during user input.
 @riverpod
 class JobFilterNotifier extends _$JobFilterNotifier {
   static const String _filterKey = 'current_job_filter';
@@ -81,7 +96,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     return const JobFilterState();
   }
 
-  /// Load filters and presets from storage
+  /// Loads the filter state from [SharedPreferences] upon initialization.
   Future<void> _loadFromStorage() async {
     state = state.copyWith(isLoading: true, error: null);
 
@@ -134,7 +149,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     }
   }
 
-  /// Save current filter to storage
+  /// Persists the current [JobFilterCriteria] to local storage.
   Future<void> _saveFilter() async {
     try {
       final prefs = await ref.read(sharedPreferencesProvider.future);
@@ -144,7 +159,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     }
   }
 
-  /// Save presets to storage
+  /// Persists the list of [FilterPreset]s to local storage.
   Future<void> _savePresets(List<FilterPreset> presets) async {
     try {
       final prefs = await ref.read(sharedPreferencesProvider.future);
@@ -157,7 +172,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     }
   }
 
-  /// Save recent searches to storage
+  /// Persists the list of recent searches to local storage.
   Future<void> _saveRecentSearches() async {
     try {
       final prefs = await ref.read(sharedPreferencesProvider.future);
@@ -173,21 +188,21 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     _debounceTimer = Timer(_debounceDuration, callback);
   }
 
-  /// Update the current filter (debounced for smooth UX)
+  /// Updates the current filter criteria and notifies listeners after a debounce period.
   void updateFilter(JobFilterCriteria newFilter) {
     state = state.copyWith(currentFilter: newFilter);
     _saveFilter(); // Save immediately for persistence
     _debounceNotification(ref.invalidateSelf);
   }
 
-  /// Clear all filters (immediate notification for deliberate action)
+  /// Clears all active filters and immediately notifies listeners.
   void clearAllFilters() {
     state = state.copyWith(currentFilter: JobFilterCriteria.empty());
     _saveFilter();
     ref.invalidateSelf();
   }
 
-  /// Clear a specific filter type (immediate notification for deliberate action)
+  /// Clears a specific category of filters and immediately notifies listeners.
   void clearFilterType(FilterType filterType) {
     final clearedFilter = state.currentFilter.clearFilter(filterType);
     state = state.copyWith(currentFilter: clearedFilter);
@@ -195,7 +210,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     ref.invalidateSelf();
   }
 
-  /// Update location filter (debounced for smooth distance slider)
+  /// Updates the location-related filters with debouncing.
   void updateLocationFilter({
     String? city,
     String? state,
@@ -211,7 +226,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     _debounceNotification(ref.invalidateSelf);
   }
 
-  /// Update classification filter (immediate for deliberate selection)
+  /// Updates the classification filter and notifies listeners immediately.
   void updateClassificationFilter(List<String> classifications) {
     final updatedFilter = state.currentFilter.copyWith(
       classifications: classifications,
@@ -221,7 +236,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     ref.invalidateSelf();
   }
 
-  /// Update local numbers filter (immediate for deliberate selection)
+  /// Updates the IBEW local numbers filter and notifies listeners immediately.
   void updateLocalNumbersFilter(List<int> localNumbers) {
     final updatedFilter = state.currentFilter.copyWith(
       localNumbers: localNumbers,
@@ -231,7 +246,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     ref.invalidateSelf();
   }
 
-  /// Update construction types filter (immediate for deliberate selection)
+  /// Updates the construction types filter and notifies listeners immediately.
   void updateConstructionTypesFilter(List<String> constructionTypes) {
     final updatedFilter = state.currentFilter.copyWith(
       constructionTypes: constructionTypes,
@@ -241,7 +256,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     ref.invalidateSelf();
   }
 
-  /// Update date filters (debounced for smooth date picker interaction)
+  /// Updates the date-related filters with debouncing.
   void updateDateFilters({
     DateTime? postedAfter,
     DateTime? startDateBefore,
@@ -257,7 +272,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     _debounceNotification(ref.invalidateSelf);
   }
 
-  /// Update per diem filter (immediate for toggle action)
+  /// Updates the per diem filter and notifies listeners immediately.
   void updatePerDiemFilter(bool? hasPerDiem) {
     final updatedFilter = state.currentFilter.copyWith(
       hasPerDiem: hasPerDiem,
@@ -267,7 +282,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     ref.invalidateSelf();
   }
 
-  /// Update duration preference (immediate for dropdown selection)
+  /// Updates the job duration preference and notifies listeners immediately.
   void updateDurationPreference(String? preference) {
     final updatedFilter = state.currentFilter.copyWith(
       durationPreference: preference,
@@ -277,7 +292,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     ref.invalidateSelf();
   }
 
-  /// Update company filter (immediate for deliberate selection)
+  /// Updates the company filter and notifies listeners immediately.
   void updateCompanyFilter(List<String> companies) {
     final updatedFilter = state.currentFilter.copyWith(
       companies: companies,
@@ -287,7 +302,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     ref.invalidateSelf();
   }
 
-  /// Update sort options (debounced for rapid sort changes)
+  /// Updates the sorting options with debouncing.
   void updateSortOptions({
     JobSortOption? sortBy,
     bool? sortDescending,
@@ -301,7 +316,9 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     _debounceNotification(ref.invalidateSelf);
   }
 
-  /// Update search query (debounced for smooth typing experience)
+  /// Updates the text search query with debouncing.
+  ///
+  /// Also adds the query to the recent searches list after the debounce period.
   void updateSearchQuery(String? query) {
     final updatedFilter = state.currentFilter.copyWith(
       searchQuery: query,
@@ -342,14 +359,14 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     _saveRecentSearches();
   }
 
-  /// Clear recent searches (immediate for deliberate action)
+  /// Clears the list of recent searches and notifies listeners immediately.
   void clearRecentSearches() {
     state = state.copyWith(recentSearches: <String>[]);
     _saveRecentSearches();
     ref.invalidateSelf();
   }
 
-  /// Save current filter as preset (immediate for deliberate action)
+  /// Saves the current filter criteria as a new [FilterPreset].
   Future<void> saveAsPreset(String name, {String? description, IconData? icon}) async {
     final FilterPreset preset = FilterPreset.create(
       name: name,
@@ -364,7 +381,9 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     ref.invalidateSelf();
   }
 
-  /// Apply a preset (immediate for deliberate action)
+  /// Applies a saved [FilterPreset] to the current filter state.
+  ///
+  /// Also updates the preset's usage metadata.
   void applyPreset(String presetId) {
     final preset = state.presets.firstWhere(
       (FilterPreset p) => p.id == presetId,
@@ -387,7 +406,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     ref.invalidateSelf();
   }
 
-  /// Update a preset (immediate for deliberate action)
+  /// Updates an existing [FilterPreset] with new values.
   Future<void> updatePreset(
     String presetId, {
     String? name,
@@ -413,7 +432,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     ref.invalidateSelf();
   }
 
-  /// Delete a preset (immediate for deliberate action)
+  /// Deletes a saved [FilterPreset] from the user's list.
   Future<void> deletePreset(String presetId) async {
     final updatedPresets = state.presets.where((FilterPreset p) => p.id != presetId).toList();
     state = state.copyWith(presets: updatedPresets);
@@ -421,7 +440,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     ref.invalidateSelf();
   }
 
-  /// Toggle preset pinned status (immediate for deliberate action)
+  /// Toggles the `isPinned` status of a [FilterPreset].
   Future<void> togglePresetPinned(String presetId) async {
     final List<FilterPreset> updatedPresets = List<FilterPreset>.from(state.presets);
     final int index = updatedPresets.indexWhere((FilterPreset p) => p.id == presetId);
@@ -435,7 +454,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     ref.invalidateSelf();
   }
 
-  /// Reset to default presets (immediate for deliberate action)
+  /// Resets the user's presets to the default list.
   Future<void> resetToDefaultPresets() async {
     final List<FilterPreset> defaultPresets = DefaultFilterPresets.defaults;
     state = state.copyWith(presets: defaultPresets);
@@ -443,7 +462,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     ref.invalidateSelf();
   }
 
-  /// Get quick filter suggestions based on user data
+  /// Generates a list of context-aware quick filter suggestions for the UI.
   List<QuickFilterSuggestion> getQuickFilterSuggestions() {
     final List<QuickFilterSuggestion> suggestions = <QuickFilterSuggestion>[];
     
@@ -496,68 +515,68 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     return suggestions;
   }
 
-  /// Clear error
+  /// Clears any error message from the state.
   void clearError() {
     state = state.clearError();
   }
 
-  /// Cleanup resources when provider is disposed
+  /// Cleans up resources, such as the debounce timer, when the provider is disposed.
   void dispose() {
     _debounceTimer?.cancel();
   }
 }
 
-/// Quick filter suggestion model
+/// A model for a UI suggestion that applies a common filter action.
 class QuickFilterSuggestion {
-  /// Creates a quick filter suggestion used to present common filter actions to the user.
+  /// Creates an instance of [QuickFilterSuggestion].
   ///
   /// The [label] is the visible text, [icon] represents the action visually, and
-  /// [onTap] is called when the suggestion is activated.
+  /// [onTap] is the callback executed when the suggestion is tapped.
   const QuickFilterSuggestion({
     required this.label,
     required this.icon,
     required this.onTap,
   });
 
-  /// The visible label for the suggestion (e.g., "Near Me", "Recent").
+  /// The text label for the suggestion (e.g., "Near Me").
   final String label;
 
-  /// Icon shown alongside the suggestion label.
+  /// The icon to display next to the suggestion label.
   final IconData icon;
 
-  /// Callback invoked when the suggestion is selected/tapped.
+  /// The function to call when the suggestion is tapped.
   final VoidCallback onTap;
 }
 
-/// Current filter provider (computed from state)
+/// A provider that exposes the current [JobFilterCriteria] from the main notifier.
 @riverpod
 JobFilterCriteria currentJobFilter(Ref ref) => ref.watch(jobFilterProvider).currentFilter;
 
-/// Presets provider (computed from state)
+/// A provider that exposes the list of all saved [FilterPreset]s.
 @riverpod
 List<FilterPreset> filterPresets(Ref ref) => ref.watch(jobFilterProvider).presets;
 
-/// Recent searches provider (computed from state)
+/// A provider that exposes the list of recent search queries.
 @riverpod
 List<String> recentSearches(Ref ref) => ref.watch(jobFilterProvider).recentSearches;
 
-/// Pinned presets provider (computed from state)
+/// A provider that exposes a filtered list of only the pinned presets.
 @riverpod
 List<FilterPreset> pinnedPresets(Ref ref) => ref.watch(jobFilterProvider).pinnedPresets;
 
-/// Recent presets provider (computed from state)
+/// A provider that exposes a sorted list of the most recently used presets.
 @riverpod
 List<FilterPreset> recentPresets(Ref ref) => ref.watch(jobFilterProvider).recentPresets;
 
-/// Active filters status provider (computed from state)
+/// A provider that exposes a boolean indicating if any filters are currently active.
 @riverpod
 bool hasActiveFilters(Ref ref) => ref.watch(jobFilterProvider).hasActiveFilters;
 
-/// Active filter count provider (computed from state)
+/// A provider that exposes the integer count of currently active filters.
 @riverpod
 int activeFilterCount(Ref ref) => ref.watch(jobFilterProvider).activeFilterCount;
 
-/// Quick filter suggestions provider (computed from state)
+/// A provider that generates and exposes a list of [QuickFilterSuggestion]s.
 @riverpod
 List<QuickFilterSuggestion> quickFilterSuggestions(Ref ref) {
   final notifier = ref.watch(jobFilterProvider.notifier);

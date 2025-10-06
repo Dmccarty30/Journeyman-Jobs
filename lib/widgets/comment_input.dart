@@ -3,12 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
 import '../../features/crews/providers/feed_provider.dart';
 
+/// A user input widget for adding comments to a post.
+///
+/// This widget starts in a collapsed state, showing a simple "Add a comment..."
+/// prompt. When tapped, it expands into a multi-line text field with controls
+/// for posting or canceling the comment.
 class CommentInput extends StatefulWidget {
+  /// The unique identifier of the post to which the comment will be added.
   final String postId;
+  /// A callback function that is invoked when a comment is successfully added.
   final VoidCallback onCommentAdded;
+  /// The ID of the user who is posting the comment.
   final String? currentUserId;
+  /// The name of the user who is posting the comment.
   final String? currentUserName;
 
+  /// Creates an instance of [CommentInput].
   const CommentInput({
     super.key,
     required this.postId,
@@ -21,10 +31,15 @@ class CommentInput extends StatefulWidget {
   State<CommentInput> createState() => _CommentInputState();
 }
 
+/// The state for the [CommentInput] widget.
 class _CommentInputState extends State<CommentInput> {
+  /// The controller for the text input field.
   final TextEditingController _commentController = TextEditingController();
+  /// The focus node to manage the focus state of the input field.
   final FocusNode _commentFocusNode = FocusNode();
+  /// A flag to control the collapsed/expanded state of the widget.
   bool _isExpanded = false;
+  /// A flag to prevent duplicate submissions by disabling the send button during a request.
   bool _isSending = false;
 
   @override
@@ -34,6 +49,7 @@ class _CommentInputState extends State<CommentInput> {
     super.dispose();
   }
 
+  /// Toggles the UI between its collapsed and expanded input states.
   void _toggleExpand() {
     setState(() {
       _isExpanded = !_isExpanded;
@@ -43,6 +59,10 @@ class _CommentInputState extends State<CommentInput> {
     });
   }
 
+  /// Validates and submits the user's comment.
+  ///
+  /// Handles UI updates for the loading state and shows SnackBars for feedback.
+  /// Invokes the [onCommentAdded] callback on success.
   Future<void> _submitComment() async {
     if (_isSending) return;
 

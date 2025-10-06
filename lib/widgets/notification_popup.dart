@@ -5,11 +5,15 @@ import '../design_system/components/reusable_components.dart';
 import '../electrical_components/circuit_pattern_painter.dart';
 import '../navigation/app_router.dart';
 
-/// A themed popup widget for quick notification access
-/// Displays a electrical-themed popup with notification options
+/// A stateful widget that displays a themed popup menu for quick access to
+/// notification-related actions, such as viewing all notifications or managing settings.
+///
+/// It features an entry animation and a custom electrical circuit background.
 class NotificationPopup extends StatefulWidget {
+  /// An optional callback that is invoked when the popup is closed.
   final VoidCallback? onClose;
   
+  /// Creates a [NotificationPopup] widget.
   const NotificationPopup({
     super.key,
     this.onClose,
@@ -19,6 +23,9 @@ class NotificationPopup extends StatefulWidget {
   State<NotificationPopup> createState() => _NotificationPopupState();
 }
 
+/// The state for the [NotificationPopup] widget.
+///
+/// Manages the animations for the popup's appearance and disappearance.
 class _NotificationPopupState extends State<NotificationPopup>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
@@ -52,6 +59,7 @@ class _NotificationPopupState extends State<NotificationPopup>
     super.dispose();
   }
 
+  /// Reverses the entry animation and then calls the [onClose] callback to dismiss the popup.
   Future<void> _closePopup() async {
     await _animationController.reverse();
     widget.onClose?.call();
@@ -200,6 +208,7 @@ class _NotificationPopupState extends State<NotificationPopup>
     );
   }
 
+  /// A private helper to build a single tappable option row within the popup.
   Widget _buildOption({
     required IconData icon,
     required String title,
@@ -269,6 +278,8 @@ class _NotificationPopupState extends State<NotificationPopup>
     );
   }
 
+  /// A private helper that shows a nested dialog for setting a temporary
+  /// "quiet hours" duration.
   void _showQuietHoursDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -329,6 +340,7 @@ class _NotificationPopupState extends State<NotificationPopup>
     );
   }
 
+  /// A private helper to build a choice chip for the quiet hours dialog.
   Widget _buildTimeChip(String label) {
     return ActionChip(
       label: Text(label),
@@ -347,7 +359,11 @@ class _NotificationPopupState extends State<NotificationPopup>
   }
 }
 
-/// Helper function to show the notification popup
+/// A global helper function that displays the [NotificationPopup] as a dialog.
+///
+/// It configures the dialog's appearance, such as making the background
+/// transparent and removing elevation, to let the popup's custom styling
+/// shine through.
 void showNotificationPopup(BuildContext context) {
   showDialog(
     context: context,

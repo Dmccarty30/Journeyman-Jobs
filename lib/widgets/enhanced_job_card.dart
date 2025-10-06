@@ -5,9 +5,14 @@ import '../design_system/app_theme.dart';
 import '../electrical_components/enhanced_backgrounds.dart' show VoltageLevel, EnhancedBackgrounds;
 import '../models/job_model.dart';
 
-/// Enhanced JobCard component with electrical theme
+/// A highly-styled, feature-rich card for displaying job information with
+/// an electrical theme.
+///
+/// This widget supports multiple visual [variant]s, such as `full` and `half`,
+/// to adapt to different UI contexts. It includes themed indicators, action buttons,
+/// and detailed sections for job data.
 class EnhancedJobCard extends StatelessWidget {
-  /// Creates an EnhancedJobCard.
+  /// Creates an [EnhancedJobCard].
   ///
   /// The [job] and [variant] parameters are required.
   const EnhancedJobCard({
@@ -21,31 +26,32 @@ class EnhancedJobCard extends StatelessWidget {
     this.padding,
   });
 
-  /// The job data to display
+  /// The job data to be displayed in the card.
   final Job job;
   
-  /// The variant of the job card to display
+  /// Determines the layout and level of detail of the card.
+  /// See [JobCardVariant] for available options.
   final JobCardVariant variant;
   
-  /// Callback when the card is tapped
+  /// An optional callback function triggered when the card itself is tapped.
   final VoidCallback? onTap;
   
-  /// Callback when the view details button is pressed
+  /// An optional callback for the "View Details" button.
   final VoidCallback? onViewDetails;
   
-  /// Callback when the bid now button is pressed
+  /// An optional callback for the "Bid Now" or "Quick Bid" button.
   final VoidCallback? onBidNow;
   
-  /// Callback when the favorite button is pressed
+  /// An optional callback for the favorite (heart) button.
   final VoidCallback? onFavorite;
   
-  /// Whether the job is favorited
+  /// A boolean that determines the visual state of the favorite button.
   final bool isFavorited;
   
-  /// Margin around the card
+  /// The margin to apply around the outside of the card.
   final EdgeInsets? margin;
   
-  /// Padding inside the card
+  /// The padding to apply inside the card, around the content.
   final EdgeInsets? padding;
 
   @override
@@ -645,10 +651,12 @@ class EnhancedJobCard extends StatelessWidget {
   }
 }
 
-/// Job card variants for different use cases
+/// Defines the different visual layouts or variants for an [EnhancedJobCard].
 enum JobCardVariant {
-  /// Compact card for home screen and lists
+  /// A compact card layout, suitable for displaying in lists or on a dashboard.
+  /// It shows essential information in a condensed format.
   half,
-  /// Full detailed card for job listings
+  /// A full-sized, detailed card layout, suitable for a dedicated job details screen
+  /// or a main job board. It includes more information and enhanced visual elements.
   full,
 }

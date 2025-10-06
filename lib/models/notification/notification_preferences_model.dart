@@ -1,45 +1,56 @@
-/// Model for user notification preferences stored in Firestore
+/// A data model representing a user's notification preferences.
+///
+/// This class encapsulates all settings related to push and local notifications,
+/// including category toggles, job matching criteria, and quiet hours.
 class NotificationPreferencesModel {
-  /// User's FCM token for push notifications
+  /// The user's Firebase Cloud Messaging (FCM) token for receiving push notifications.
   final String? fcmToken;
   
-  /// When the FCM token was last updated
+  /// The timestamp when the FCM token was last updated in Firestore.
   final DateTime? tokenUpdatedAt;
   
-  /// Notification category preferences
+  /// Whether the user wants to receive alerts for new job postings.
   final bool jobAlertsEnabled;
+  /// Whether the user wants to receive updates from their union local.
   final bool unionUpdatesEnabled;
+  /// Whether the user wants to receive system-level notifications.
   final bool systemNotificationsEnabled;
+  /// Whether the user wants to receive high-priority storm work alerts.
   final bool stormWorkEnabled;
   
-  /// Reminder preferences
+  /// Whether the user wants to receive local reminders for job deadlines.
   final bool jobRemindersEnabled;
+  /// Whether the user wants to receive local reminders for union meetings.
   final bool unionRemindersEnabled;
   
-  /// Sound and vibration preferences
+  /// Whether notifications should play a sound.
   final bool soundEnabled;
+  /// Whether notifications should cause the device to vibrate.
   final bool vibrationEnabled;
   
-  /// Quiet hours settings
+  /// Whether to suppress notifications during a specific time range.
   final bool quietHoursEnabled;
-  final int quietHoursStart; // Hour (0-23)
-  final int quietHoursEnd;   // Hour (0-23)
+  /// The starting hour (0-23) for the quiet hours period.
+  final int quietHoursStart;
+  /// The ending hour (0-23) for the quiet hours period.
+  final int quietHoursEnd;
   
-  /// User's IBEW classifications for job matching
+  /// A list of the user's IBEW classifications for targeted job alerts.
   final List<String> classifications;
   
-  /// Preferred job locations
+  /// A list of preferred job locations for targeted job alerts.
   final List<String> preferredLocations;
   
-  /// Union local number
+  /// The user's home IBEW local number.
   final String? unionLocal;
   
-  /// Minimum hourly rate for job alerts
+  /// The minimum hourly wage the user is interested in for job alerts.
   final double? minHourlyRate;
   
-  /// User's current location for storm work alerts
+  /// The user's general location, used for targeted storm work alerts.
   final String? location;
 
+  /// Creates an instance of [NotificationPreferencesModel].
   const NotificationPreferencesModel({
     this.fcmToken,
     this.tokenUpdatedAt,
@@ -61,7 +72,7 @@ class NotificationPreferencesModel {
     this.location,
   });
 
-  /// Create from Firestore document
+  /// Creates a [NotificationPreferencesModel] instance from a Firestore data map.
   factory NotificationPreferencesModel.fromFirestore(Map<String, dynamic> data) {
     return NotificationPreferencesModel(
       fcmToken: data['fcmToken'] as String?,
@@ -85,7 +96,9 @@ class NotificationPreferencesModel {
     );
   }
 
-  /// Convert to Firestore document
+  /// Converts the [NotificationPreferencesModel] instance to a map suitable for Firestore.
+  ///
+  /// Null values for optional fields are omitted to keep the Firestore document clean.
   Map<String, dynamic> toFirestore() {
     return {
       if (fcmToken != null) 'fcmToken': fcmToken,
@@ -109,7 +122,7 @@ class NotificationPreferencesModel {
     };
   }
 
-  /// Create a copy with updated values
+  /// Creates a new [NotificationPreferencesModel] instance with updated field values.
   NotificationPreferencesModel copyWith({
     String? fcmToken,
     DateTime? tokenUpdatedAt,

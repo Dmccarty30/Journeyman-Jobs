@@ -3,19 +3,30 @@ import '../../../../design_system/app_theme.dart';
 import 'electrical_constants.dart';
 import 'calculation_helpers.dart';
 
+/// A calculator screen for determining conduit fill percentage based on the
+/// National Electrical Code (NEC).
+///
+/// Users can select a conduit type and size, then add multiple groups of
+/// conductors to calculate if the combination is compliant with NEC standards.
 class ConduitFillCalculator extends StatefulWidget {
+  /// Creates a [ConduitFillCalculator] screen.
   const ConduitFillCalculator({super.key});
 
   @override
   State<ConduitFillCalculator> createState() => _ConduitFillCalculatorState();
 }
 
+/// The state for the [ConduitFillCalculator].
+///
+/// Manages the user's selections for conduit and conductors, triggers
+/// calculations, and displays the results.
 class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
   String? _selectedConduitSize;
   ConduitType _conduitType = ConduitType.emt;
   List<ConductorEntry> _conductors = [ConductorEntry()];
   ConduitFillResult? _result;
 
+  /// Adds a new, empty conductor entry to the list.
   void _addConductor() {
     setState(() {
       _conductors.add(ConductorEntry());
@@ -23,6 +34,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     _calculateConduitFill();
   }
 
+  /// Removes a conductor entry from the list at the specified [index].
   void _removeConductor(int index) {
     if (_conductors.length > 1) {
       setState(() {
@@ -32,6 +44,11 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     }
   }
 
+  /// Triggers the conduit fill calculation based on the current state.
+  ///
+  /// It gathers valid conductor entries, calls the calculation helper,
+  /// and updates the state with the new result. A brief delay is added
+  /// for a smoother user experience.
   void _calculateConduitFill() {
     if (_selectedConduitSize == null) return;
 
@@ -71,6 +88,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     });
   }
 
+  /// Resets the calculator to its initial state, clearing all inputs and results.
   void _clearCalculation() {
     setState(() {
       _result = null;
@@ -128,6 +146,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     );
   }
 
+  /// Builds the header section of the calculator screen.
   Widget _buildCalculatorHeader() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -177,6 +196,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     );
   }
 
+  /// Builds the UI section for selecting conduit type and size.
   Widget _buildConduitSection() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -248,6 +268,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     );
   }
 
+  /// Builds the UI section for adding and defining conductors.
   Widget _buildConductorsSection() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -288,6 +309,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     );
   }
 
+  /// Builds a single row for a conductor entry, including wire size and quantity inputs.
   Widget _buildConductorRow(ConductorEntry conductor, int index) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
@@ -359,6 +381,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     );
   }
 
+  /// Builds the quantity input field with increment and decrement buttons.
   Widget _buildQuantityField(ConductorEntry conductor, int index) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -432,6 +455,9 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     );
   }
 
+  /// Builds the results section, which is only visible after a calculation is performed.
+  ///
+  /// It displays the fill percentage, a progress bar, and other detailed results.
   Widget _buildResultsSection() {
     if (_result == null) return const SizedBox.shrink();
 
@@ -594,6 +620,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     );
   }
 
+  /// A helper widget to build a labeled row for displaying a single result value.
   Widget _buildResultRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
@@ -618,6 +645,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     );
   }
 
+  /// Builds a card that displays relevant NEC reference information.
   Widget _buildNecReference() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -669,6 +697,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     );
   }
 
+  /// A generic helper widget to create a styled dropdown form field.
   Widget _buildDropdownField<T>({
     required String label,
     required T? value,
@@ -709,6 +738,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     );
   }
 
+  /// Returns a user-friendly display string for a given [ConduitType].
   String _getConduitTypeDisplay(ConduitType type) {
     switch (type) {
       case ConduitType.emt:
@@ -722,6 +752,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     }
   }
 
+  /// Returns a list of available conduit sizes based on the currently selected conduit type.
   List<String> _getAvailableConduitSizes() {
     // Currently only EMT data is available
     if (_conduitType == ConduitType.emt) {
@@ -730,6 +761,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
     return [];
   }
 
+  /// Determines the correct NEC fill limit percentage based on the total number of conductors.
   double _getFillLimit() {
     int totalConductors = _conductors
         .where((conductor) => conductor.wireSize != null)
@@ -746,11 +778,16 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
   }
 }
 
+/// A simple class to manage the state of a single conductor entry in the UI.
 class ConductorEntry {
+  /// The selected AWG wire size.
   String? wireSize;
+  /// The number of conductors of this size.
   int quantity;
+  /// The insulation type for the conductor.
   String insulationType;
 
+  /// Creates an instance of [ConductorEntry].
   ConductorEntry({
     this.wireSize,
     this.quantity = 1,

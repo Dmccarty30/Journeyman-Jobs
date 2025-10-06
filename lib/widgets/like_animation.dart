@@ -3,15 +3,26 @@ import 'dart:math' as math;
 import 'social_animations.dart';
 import '../design_system/app_theme.dart';
 
-/// Like animation widget with heart pop, color transitions, and particle effects
+/// A widget that displays a heart icon with an elaborate "pop" and particle
+/// animation when liked.
+///
+/// This widget is designed to provide satisfying visual feedback for a "like" action.
 class LikeAnimation extends StatefulWidget {
+  /// Whether the item is currently in the "liked" state. This determines the
+  /// heart's fill and color.
   final bool isLiked;
+  /// A callback function that is invoked when the widget is tapped.
   final VoidCallback onLike;
+  /// The size of the heart icon.
   final double size;
+  /// The color of the heart icon when it is in the "liked" state.
   final Color? likedColor;
+  /// The color of the heart icon when it is not in the "liked" state.
   final Color? unlikedColor;
+  /// The duration of the entire like animation sequence.
   final Duration? animationDuration;
   
+  /// Creates a [LikeAnimation] widget.
   const LikeAnimation({
     super.key,
     required this.isLiked,
@@ -73,6 +84,7 @@ class _LikeAnimationState extends State<LikeAnimation>
     super.dispose();
   }
   
+  /// Handles the tap event, triggering the animation and the `onLike` callback.
   void _handleLike() {
     if (!_isAnimating) {
       _isAnimating = true;
@@ -120,6 +132,7 @@ class _LikeAnimationState extends State<LikeAnimation>
     );
   }
   
+  /// Builds the particle effects that emanate from the heart during the animation.
   Widget _buildParticleEffects() {
     final particles = SocialAnimations.generateParticles(
       count: 8,
@@ -140,17 +153,27 @@ class _LikeAnimationState extends State<LikeAnimation>
   }
 }
 
-/// Like button widget with enhanced animation effects
+/// A complete "like" button widget that includes an animated heart icon and a
+/// like counter.
 class AnimatedLikeButton extends StatefulWidget {
+  /// Whether the item is currently in the "liked" state.
   final bool isLiked;
+  /// The total number of likes to display next to the heart icon.
   final int likeCount;
+  /// A callback function invoked when the button is tapped.
   final VoidCallback onLike;
+  /// The size of the heart icon.
   final double size;
+  /// The color of the icon and text when in the "liked" state.
   final Color? likedColor;
+  /// The color of the icon and text when not in the "liked" state.
   final Color? unlikedColor;
+  /// The duration of the animation.
   final Duration? animationDuration;
+  /// Whether to display the [likeCount] next to the icon.
   final bool showCount;
   
+  /// Creates an [AnimatedLikeButton] widget.
   const AnimatedLikeButton({
     super.key,
     required this.isLiked,
@@ -211,6 +234,7 @@ class _AnimatedLikeButtonState extends State<AnimatedLikeButton>
     super.dispose();
   }
   
+  /// Handles the tap event, triggering the animation and the `onLike` callback.
   void _handleLike() {
     if (!_isAnimating) {
       _isAnimating = true;
@@ -276,6 +300,7 @@ class _AnimatedLikeButtonState extends State<AnimatedLikeButton>
     );
   }
   
+  /// Builds the particle effects for the like animation.
   Widget _buildParticleEffects() {
     final particles = SocialAnimations.generateParticles(
       count: 6,
@@ -296,13 +321,21 @@ class _AnimatedLikeButtonState extends State<AnimatedLikeButton>
   }
 }
 
-/// Heart burst animation for when a post is liked
+/// A widget that creates a "burst" of hearts emanating from a central point.
+///
+/// This is typically used as a secondary effect after a user likes a post,
+/// providing a more dramatic visual celebration.
 class HeartBurstAnimation extends StatefulWidget {
+  /// A callback function that is invoked when the burst animation is complete.
   final VoidCallback onComplete;
+  /// The number of hearts to include in the burst.
   final int heartCount;
+  /// The maximum size that each heart will scale to during the animation.
   final double maxSize;
+  /// The total duration of the burst animation.
   final Duration? duration;
   
+  /// Creates a [HeartBurstAnimation] widget.
   const HeartBurstAnimation({
     super.key,
     required this.onComplete,

@@ -8,13 +8,24 @@ import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
 import '../../electrical_components/circuit_board_background.dart';
 
+/// The main authentication screen for the application.
+///
+/// This screen provides a tabbed interface for users to either sign up for a new
+/// account or sign in to an existing one. It supports email/password, Google,
+/// and Apple authentication methods.
 class AuthScreen extends StatefulWidget {
+  /// Creates an [AuthScreen].
   const AuthScreen({super.key});
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
 }
 
+/// The state for the [AuthScreen].
+///
+/// Manages the tab controller, form keys, text controllers, and state flags
+/// for loading and password visibility. It contains all the logic for handling
+/// user authentication.
 class _AuthScreenState extends State<AuthScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
@@ -56,6 +67,7 @@ class _AuthScreenState extends State<AuthScreen>
   }
 
   // Validation
+  /// Validates an email input string.
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email is required';
@@ -66,6 +78,7 @@ class _AuthScreenState extends State<AuthScreen>
     return null;
   }
 
+  /// Validates a password input string.
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password is required';
@@ -76,6 +89,7 @@ class _AuthScreenState extends State<AuthScreen>
     return null;
   }
 
+  /// Validates that the confirmed password matches the original password.
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please confirm your password';
@@ -88,6 +102,7 @@ class _AuthScreenState extends State<AuthScreen>
 
 
   // Authentication Methods
+  /// Handles the user sign-up process using email and password.
   Future<void> _signUpWithEmail() async {
     if (!_signUpFormKey.currentState!.validate()) return;
 
@@ -130,6 +145,7 @@ class _AuthScreenState extends State<AuthScreen>
     }
   }
 
+  /// Handles the user sign-in process using email and password.
   Future<void> _signInWithEmail() async {
     if (!_signInFormKey.currentState!.validate()) return;
 
@@ -172,6 +188,7 @@ class _AuthScreenState extends State<AuthScreen>
     }
   }
 
+  /// Initiates the Google Sign-In flow.
   Future<void> _signInWithGoogle() async {
     setState(() => _isGoogleLoading = true);
 
@@ -221,6 +238,7 @@ class _AuthScreenState extends State<AuthScreen>
     }
   }
 
+  /// Initiates the Sign in with Apple flow.
   Future<void> _signInWithApple() async {
     setState(() => _isAppleLoading = true);
 
@@ -256,6 +274,7 @@ class _AuthScreenState extends State<AuthScreen>
     }
   }
 
+  /// Navigates the user to the onboarding screen after a successful sign-in or sign-up.
   void _navigateToOnboarding() {
     context.go(AppRouter.onboarding);
   }
@@ -344,6 +363,7 @@ class _AuthScreenState extends State<AuthScreen>
     );
   }
 
+  /// Builds the sign-up form widget.
   Widget _buildSignUpForm() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
@@ -421,6 +441,7 @@ class _AuthScreenState extends State<AuthScreen>
     );
   }
 
+  /// Builds the sign-in form widget.
   Widget _buildSignInForm() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
@@ -501,6 +522,7 @@ class _AuthScreenState extends State<AuthScreen>
     );
   }
 
+  /// Builds the section containing the social sign-in buttons (Google and Apple).
   Widget _buildSocialSignInButtons() {
     return Column(
       children: [
@@ -555,10 +577,15 @@ class _AuthScreenState extends State<AuthScreen>
 }
 
 // Add this new widget class to your file (place it after the _AuthScreenState class)
+/// A custom segmented tab bar with an animated indicator for switching
+/// between Sign Up and Sign In forms.
 class SegmentedTabBar extends StatefulWidget {
+  /// The controller that synchronizes the tab bar and the tab view.
   final TabController controller;
+  /// A callback function that is invoked when a new tab is selected.
   final Function(int) onTabChanged;
 
+  /// Creates a [SegmentedTabBar].
   const SegmentedTabBar({
     Key? key,
     required this.controller,
@@ -569,6 +596,9 @@ class SegmentedTabBar extends StatefulWidget {
   State<SegmentedTabBar> createState() => _SegmentedTabBarState();
 }
 
+/// The state for the [SegmentedTabBar].
+///
+/// Manages the animation of the selected tab indicator.
 class _SegmentedTabBarState extends State<SegmentedTabBar>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
@@ -591,6 +621,7 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
     widget.controller.addListener(_handleTabControllerTick);
   }
 
+  /// A listener that updates the UI when the tab controller's index changes.
   void _handleTabControllerTick() {
     if (widget.controller.index != _currentIndex) {
       setState(() {
@@ -607,6 +638,7 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
     super.dispose();
   }
 
+  /// Returns the appropriate gradient for the animated indicator based on the selected tab.
   LinearGradient _getGradient(int index) {
     if (index == 0) {
       // Sign Up: Orange on left, Navy on right

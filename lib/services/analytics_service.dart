@@ -1,11 +1,20 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 
-/// Service for handling analytics data aggregation and reporting
+/// A service for handling analytics data aggregation and reporting.
+///
+/// This service interfaces with Firebase Analytics to log events, track user
+/// behavior, and provide simulated metrics for performance, cost, and system health.
 class AnalyticsService {
   static final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
-  /// Get aggregated performance metrics for dashboard
+  /// Fetches aggregated performance metrics for the dashboard.
+  ///
+  /// In a real implementation, this would fetch data from Firebase Analytics.
+  /// Currently, it returns simulated data representing typical performance indicators.
+  ///
+  /// Returns a `Future<Map<String, dynamic>>` containing performance metrics
+  /// such as average query time, cache hit rate, and user sessions.
   static Future<Map<String, dynamic>> getPerformanceMetrics() async {
     try {
       // In a real implementation, this would fetch from Firebase Analytics
@@ -46,7 +55,12 @@ class AnalyticsService {
     }
   }
 
-  /// Get user behavior analytics
+  /// Fetches user behavior analytics.
+  ///
+  /// This method simulates fetching user engagement and demographic data.
+  ///
+  /// Returns a `Future<Map<String, dynamic>>` with metrics like total users,
+  /// retention rate, and popular search terms.
   static Future<Map<String, dynamic>> getUserBehaviorMetrics() async {
     try {
       return {
@@ -85,7 +99,13 @@ class AnalyticsService {
     }
   }
 
-  /// Get cost analysis data
+  /// Fetches cost analysis data.
+  ///
+  /// Simulates retrieving data related to service usage costs, such as
+  /// Firestore reads/writes and estimated monthly expenses.
+  ///
+  /// Returns a `Future<Map<String, dynamic>>` containing a breakdown of costs
+  /// and saving trends.
   static Future<Map<String, dynamic>> getCostAnalysis() async {
     try {
       return {
@@ -119,7 +139,12 @@ class AnalyticsService {
     }
   }
 
-  /// Get real-time system health metrics
+  /// Fetches real-time system health metrics.
+  ///
+  /// Simulates a snapshot of the system's operational status, including
+  /// uptime, response time, and error rates.
+  ///
+  /// Returns a `Future<Map<String, dynamic>>` with health indicators.
   static Future<Map<String, dynamic>> getSystemHealth() async {
     try {
       return {
@@ -154,7 +179,13 @@ class AnalyticsService {
     }
   }
 
-  /// Log custom analytics event
+  /// Logs a custom analytics event.
+  ///
+  /// Records a custom event with the given [eventName] and [parameters] to
+  /// Firebase Analytics.
+  ///
+  /// - [eventName]: The name of the event to log.
+  /// - [parameters]: A map of parameters to associate with the event.
   static Future<void> logCustomEvent(
     String eventName,
     Map<String, dynamic> parameters,
@@ -169,7 +200,12 @@ class AnalyticsService {
     }
   }
 
-  /// Set user properties for analytics
+  /// Sets user properties for analytics.
+  ///
+  /// Assigns custom properties to the user, which can be used for segmentation
+  /// and audience building in Firebase Analytics.
+  ///
+  /// - [properties]: A map of key-value pairs representing user properties.
   static Future<void> setUserProperties(Map<String, String> properties) async {
     try {
       for (final entry in properties.entries) {
@@ -183,7 +219,12 @@ class AnalyticsService {
     }
   }
 
-  /// Track screen views
+  /// Tracks a screen view.
+  ///
+  * Logs a `screen_view` event to Firebase Analytics, indicating that a user
+  * has navigated to a specific screen.
+  *
+  * - [screenName]: The name of the screen being viewed.
   static Future<void> trackScreenView(String screenName) async {
     try {
       await _analytics.logScreenView(screenName: screenName);
@@ -192,7 +233,14 @@ class AnalyticsService {
     }
   }
 
-  /// Get historical performance trends
+  /// Fetches historical performance trends.
+  ///
+  /// Simulates querying for performance data over a specified number of days.
+  ///
+  /// - [days]: The number of days to retrieve trend data for. Defaults to 30.
+  ///
+  /// Returns a `Future<List<Map<String, dynamic>>>` where each map represents
+  /// a day's performance metrics.
   static Future<List<Map<String, dynamic>>> getPerformanceTrends({
     int days = 30,
   }) async {
@@ -222,6 +270,7 @@ class AnalyticsService {
 
   // Helper methods for fallback data
 
+  /// Returns a default set of performance metrics for fallback scenarios.
   static Map<String, dynamic> _getDefaultMetrics() {
     return {
       'avgQueryTime': 500,
@@ -252,7 +301,8 @@ class AnalyticsService {
       },
     };
   }
-static Map<String, dynamic> _getDefaultCostData() {
+  /// Returns a default set of cost data for fallback scenarios.
+  static Map<String, dynamic> _getDefaultCostData() {
   return {
     'firestoreReads': 8000000,
     'firestoreWrites': 250000,
@@ -280,7 +330,10 @@ static Map<String, dynamic> _getDefaultCostData() {
   };
 }
 
-/// Tailboard-specific analytics events
+/// Logs an event for when a new post is created on the tailboard.
+///
+/// - [postId]: The ID of the created post.
+/// - [crewId]: The ID of the crew associated with the post.
 static Future<void> logPostCreated({
   String? postId,
   String? crewId,
@@ -298,6 +351,10 @@ static Future<void> logPostCreated({
   }
 }
 
+/// Logs an event for when a job is shared.
+///
+/// - [jobId]: The ID of the job that was shared.
+/// - [sharedWith]: The platform or user with whom the job was shared.
 static Future<void> logJobShared({
   String? jobId,
   String? sharedWith,

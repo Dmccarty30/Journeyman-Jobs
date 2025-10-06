@@ -3,23 +3,40 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../services/analytics_service.dart';
 import '../../design_system/app_theme.dart';
 
-/// Admin-only performance dashboard for monitoring app metrics
+/// A screen that provides an admin-only dashboard for monitoring key application metrics.
+///
+/// This dashboard includes tabs for a general overview, performance, user behavior,
+/// and cost analysis, pulling data from the [AnalyticsService].
 class PerformanceDashboard extends StatefulWidget {
+  /// Creates a [PerformanceDashboard] screen.
   const PerformanceDashboard({super.key});
 
   @override
   State<PerformanceDashboard> createState() => _PerformanceDashboardState();
 }
 
+/// The state for the [PerformanceDashboard] screen.
+///
+/// Manages the tab controller, data fetching, and UI rendering for the various
+/// metric categories.
 class _PerformanceDashboardState extends State<PerformanceDashboard> with SingleTickerProviderStateMixin {
+  /// Holds performance-related metrics like response times and cache hit rates.
   Map<String, dynamic> _performanceMetrics = {};
+  /// Holds metrics related to user behavior, such as active users and retention.
   Map<String, dynamic> _userBehaviorMetrics = {};
+  /// Holds data related to service costs and usage.
   Map<String, dynamic> _costAnalysis = {};
+  /// Holds real-time system health data like uptime and error rates.
   Map<String, dynamic> _systemHealth = {};
+  /// Holds historical data for performance trends.
   List<Map<String, dynamic>> _performanceTrends = [];
+  /// A flag to indicate if data is currently being loaded.
   bool _isLoading = true;
+  /// An error message to display if data fetching fails.
   String? _error;
+  /// The index of the currently selected tab.
   int _selectedTabIndex = 0;
+  /// The controller for the tab bar.
   late TabController _tabController;
 
   @override
@@ -37,7 +54,11 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     _loadAllMetrics();
   }
 
-  /// Check if current user has admin access
+  /// Checks if the current user has administrative privileges.
+  ///
+  /// **Note:** The current implementation is a placeholder and allows access
+  /// for any authenticated user. In a production app, this would involve
+  /// checking custom claims or a roles collection in Firestore.
   Future<void> _checkAdminAccess() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -53,7 +74,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     // You could check against a Firebase function or Firestore document
   }
 
-  /// Load all dashboard metrics
+  /// Fetches all metrics from the [AnalyticsService] and updates the state.
   Future<void> _loadAllMetrics() async {
     try {
       setState(() {
@@ -117,6 +138,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds the main body of the scaffold, handling loading and error states.
   Widget _buildBody() {
     if (_isLoading) {
       return const Center(
@@ -160,6 +182,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds the content for the 'Overview' tab.
   Widget _buildOverviewTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -182,6 +205,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds the content for the 'Performance' tab.
   Widget _buildPerformanceTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -204,6 +228,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds the content for the 'Users' tab.
   Widget _buildUsersTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -226,6 +251,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds the content for the 'Costs' tab.
   Widget _buildCostsTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -248,6 +274,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds a grid displaying system health metrics.
   Widget _buildSystemHealthGrid() {
     final uptime = _systemHealth['uptime'] ?? 0.0;
     final responseTime = _systemHealth['responseTime'] ?? 0;
@@ -273,6 +300,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds a grid displaying key performance and user metrics.
   Widget _buildKeyMetricsGrid() {
     final avgQueryTime = _performanceMetrics['avgQueryTime'] ?? 0;
     final cacheHitRate = _performanceMetrics['cacheHitRate'] ?? 0.0;
@@ -297,6 +325,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds a grid displaying screen load times.
   Widget _buildResponseTimesGrid() {
     final loadTimes = _performanceMetrics['loadTimes'] as Map<String, dynamic>? ?? {};
     
@@ -325,6 +354,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds a card displaying cache performance metrics.
   Widget _buildCachePerformanceCard() {
     final cachePerf = _systemHealth['cachePerformance'] as Map<String, dynamic>? ?? {};
     
@@ -353,6 +383,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds a grid displaying user engagement statistics.
   Widget _buildUserStatsGrid() {
     final totalUsers = _userBehaviorMetrics['totalUsers'] ?? 0;
     final activeUsers = _userBehaviorMetrics['activeUsers'] ?? 0;
@@ -376,6 +407,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds a card displaying popular feature usage.
   Widget _buildPopularFeaturesCard() {
     final features = _performanceMetrics['popularFeatures'] as Map<String, dynamic>? ?? {};
     
@@ -407,6 +439,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds a card summarizing cost and savings data.
   Widget _buildCostOverviewCard() {
     final monthlyCost = _costAnalysis['estimatedMonthlyCost'] ?? 0.0;
     final savings = _costAnalysis['costTrends']?['savings'] ?? 0.0;
@@ -444,6 +477,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds a section displaying any active system alerts.
   Widget _buildAlertsSection() {
     final alerts = _systemHealth['alerts'] as List<dynamic>? ?? [];
     
@@ -499,6 +533,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds a card to display performance trends (chart placeholder).
   Widget _buildPerformanceTrendsCard() {
     return Card(
       child: Padding(
@@ -531,6 +566,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds a card displaying peak app usage hours.
   Widget _buildPeakUsageCard() {
     final peakHours = _performanceMetrics['peakUsageHours'] as Map<String, dynamic>? ?? {};
     
@@ -575,6 +611,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds a card showing a breakdown of service costs.
   Widget _buildCostBreakdownCard() {
     final breakdown = _costAnalysis['costBreakdown'] as Map<String, dynamic>? ?? {};
     
@@ -612,6 +649,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// Builds a card analyzing cost savings from optimizations.
   Widget _buildSavingsAnalysisCard() {
     final optimizationImpact = _costAnalysis['costTrends']?['optimization_impact'] ?? 0.0;
     final baselineCost = _costAnalysis['baselineCost'] ?? 0.0;
@@ -655,6 +693,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// A helper widget to build a single card for displaying a metric.
   Widget _buildMetricCard(String title, String value, Color color, IconData icon) {
     return Card(
       child: Padding(
@@ -673,6 +712,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// A helper widget to build a labeled linear progress indicator.
   Widget _buildProgressIndicator(String label, double value, String suffix) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -697,6 +737,7 @@ class _PerformanceDashboardState extends State<PerformanceDashboard> with Single
     );
   }
 
+  /// A helper widget to build a single item for the cost summary card.
   Widget _buildCostSummaryItem(String label, String value, Color color) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

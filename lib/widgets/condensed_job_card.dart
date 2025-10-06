@@ -3,12 +3,18 @@ import '../models/job_model.dart';
 import '../design_system/app_theme.dart';
 import '../utils/text_formatting_wrapper.dart';
 
-/// Condensed job card for home screen display
-/// Shows only essential information: local, classification, location, hours, and per diem
+/// A compact card widget for displaying essential job information.
+///
+/// This widget is designed for use in lists or on a home screen where a concise
+/// summary of a job is needed. It shows key details like local number,
+/// classification, location, hours, and per diem in a two-column layout.
 class CondensedJobCard extends StatelessWidget {
+  /// The [Job] object containing the data to display.
   final Job job;
+  /// An optional callback function that is triggered when the card is tapped.
   final VoidCallback? onTap;
 
+  /// Creates a [CondensedJobCard].
   const CondensedJobCard({
     super.key,
     required this.job,
@@ -128,7 +134,9 @@ class CondensedJobCard extends StatelessWidget {
     );
   }
 
-  /// Helper method to build two-column info rows
+  /// A private helper method to build a [Row] with two columns of labeled data.
+  ///
+  /// Each column consists of a bold label and a corresponding value.
   Widget _buildTwoColumnRow({
     required String leftLabel,
     required String leftValue,

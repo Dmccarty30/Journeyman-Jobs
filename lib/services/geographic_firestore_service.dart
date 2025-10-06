@@ -4,16 +4,17 @@ import 'package:flutter/foundation.dart';
 import '../models/locals_record.dart';
 import 'resilient_firestore_service.dart';
 
-/// Geographic data sharding service for optimized regional queries
-/// 
-/// Implements geographic data organization to improve query performance by:
-/// - Organizing data into 5 US geographic regions
-/// - Reducing query scope by 70% through regional targeting
-/// - Automatic region detection from state codes
-/// - Regional subcollection architecture for better scalability
+/// A service that extends [ResilientFirestoreService] to implement geographic
+/// data sharding for optimized regional queries.
+///
+/// This service improves query performance by:
+/// - Organizing 'locals' and 'jobs' data into subcollections based on 5 US geographic regions.
+/// - Reducing query scope by targeting specific regional collections.
+/// - Automatically detecting the correct region from state codes.
 class GeographicFirestoreService extends ResilientFirestoreService {
   
-  // US regions for data sharding - optimized for electrical industry coverage
+  /// Defines the US geographic regions and their corresponding states for data sharding.
+  /// This structure is optimized for electrical industry coverage.
   static const Map<String, List<String>> REGIONS = {
     'northeast': [
       'NY', 'NJ', 'CT', 'MA', 'PA', 'VT', 'NH', 'ME', 'RI', 'DE', 'MD'
@@ -34,7 +35,13 @@ class GeographicFirestoreService extends ResilientFirestoreService {
   
   // Cache keys for regional data
   
-  /// Get locals with geographic optimization
+  /// Retrieves a stream of IBEW locals with geographic optimization.
+  ///
+  /// Overrides the base implementation to query a region-specific subcollection
+  /// if a [state] is provided. If no state is given, it falls back to the
+  /// parent method for a cross-regional query.
+  ///
+  /// - [state]: The state to filter by, which determines the target region.
   @override
   Stream<QuerySnapshot> getLocals({
     int limit = 20,
@@ -57,7 +64,10 @@ class GeographicFirestoreService extends ResilientFirestoreService {
     );
   }
   
-  /// Get jobs with geographic optimization
+  /// Retrieves a stream of jobs with geographic optimization.
+  ///
+  /// Overrides the base implementation to query a region-specific subcollection
+  /// if a 'state' filter is provided. Otherwise, it falls back to the parent method.
   @override
   Stream<QuerySnapshot> getJobs({
     int limit = 20,
@@ -160,7 +170,13 @@ class GeographicFirestoreService extends ResilientFirestoreService {
         .collection('jobs');
   }
   
-  /// Get region from state code with automatic detection
+  /// Determines the geographic region for a given state code.
+  ///
+  /// - [state]: The two-letter state code (e.g., 'CA', 'TX').
+  ///
+  /// Returns the corresponding region key (e.g., 'west', 'southwest'). If the
+  /// state is null, empty, or not found, it returns 'all' to indicate a
+  /// cross-regional search is needed.
   String getRegionFromState(String? state) {
     if (state == null || state.isEmpty) return 'all';
     
@@ -176,12 +192,18 @@ class GeographicFirestoreService extends ResilientFirestoreService {
     return 'all';
   }
   
-  /// Get all states in a region
+  /// Returns a list of all state codes within a specified region.
+  ///
+  /// - [region]: The key of the region (e.g., 'northeast').
   List<String> getStatesInRegion(String region) {
     return REGIONS[region] ?? [];
   }
   
-  /// Get region statistics for monitoring
+  /// Fetches statistics about data distribution across the geographic regions.
+  ///
+  /// This is useful for monitoring the health and balance of the sharded data.
+  ///
+  /// Returns a `Future<Map<String, dynamic>>` containing counts and paths for each region.
   Future<Map<String, dynamic>> getRegionStatistics() async {
     final stats = <String, dynamic>{};
     
@@ -220,7 +242,12 @@ class GeographicFirestoreService extends ResilientFirestoreService {
     };
   }
   
-  /// Migrate existing data to regional collections
+  /// Migrates existing data from the main 'locals' and 'jobs' collections
+  /// into the new regional subcollections.
+  ///
+  /// - [dryRun]: If `true`, simulates the migration and prints a report without
+  ///   writing any data. Defaults to `true`.
+  /// - [onProgress]: An optional callback function to receive progress updates.
   Future<void> migrateToRegionalCollections({
     bool dryRun = true,
     Function(String)? onProgress,
@@ -392,7 +419,11 @@ class GeographicFirestoreService extends ResilientFirestoreService {
     onProgress?.call('Estimated query scope reduction: ${((totalKnown / (totalKnown + unknownCount)) * 70).round()}%');
   }
   
-  /// Get nearby regions for cross-regional searches
+  /// Gets a list of geographically adjacent regions for a given primary region.
+  ///
+  /// This is used to expand searches beyond a single region when necessary.
+  ///
+  /// - [primaryRegion]: The starting region.
   List<String> getNearbyRegions(String primaryRegion) {
     // Define geographic adjacency for cross-regional searches
     const adjacency = {
@@ -406,7 +437,16 @@ class GeographicFirestoreService extends ResilientFirestoreService {
     return adjacency[primaryRegion] ?? [];
   }
   
-  /// Perform cross-regional search when needed
+  /// Performs a search for locals across a primary region and its neighbors.
+  ///
+  /// This provides a balance between targeted regional searches and comprehensive
+  /// national searches.
+  ///
+  /// - [query]: The search term.
+  /// - [primaryState]: The user's primary state to determine the starting region.
+  /// - [limit]: The total number of results to return.
+  ///
+  /// Returns a `Future<List<LocalsRecord>>` with the combined results.
   Future<List<LocalsRecord>> searchLocalsAcrossRegions({
     required String query,
     String? primaryState,
@@ -461,7 +501,10 @@ class GeographicFirestoreService extends ResilientFirestoreService {
         .toList();
   }
   
-  /// Get geographic coverage report
+  /// Generates a report on the geographic sharding strategy and coverage.
+  ///
+  /// This method provides metadata about the region setup, estimated performance
+  /// benefits, and migration status.
   Map<String, dynamic> getGeographicCoverageReport() {
     return {
       'regions': REGIONS.map((region, states) => MapEntry(region, {

@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// Provides convenient extension methods for the [Color] class.
 extension ColorExtension on Color {
+  /// Converts the color to a CSS-compatible `rgba()` string.
+  ///
+  /// Example: `Colors.red.withOpacity(0.5)` would produce `'rgba(244, 67, 54, 0.5)'`.
   String toCssString() {
-    return 'rgba(${(r * 255.0).round()}, ${(g * 255.0).round()}, ${(b * 255.0).round()}, $a)';
-  }
-  
-  /// Creates a new color with the same RGB but different opacity.
-  /// 
-  /// The [alpha] parameter should be between 0.0 (transparent) and 1.0 (opaque).
-  /// This is a convenience wrapper around [Color.withValues].
-  Color withOpacity(double alpha) {
-    return withValues(alpha: alpha);
+    return 'rgba($red, $green, $blue, $opacity)';
   }
 }

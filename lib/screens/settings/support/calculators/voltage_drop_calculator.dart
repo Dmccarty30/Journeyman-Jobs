@@ -4,13 +4,19 @@ import '../../../../design_system/components/reusable_components.dart';
 import 'electrical_constants.dart';
 import 'calculation_helpers.dart';
 
+/// A screen that provides a calculator for determining the voltage drop in an
+/// electrical circuit, based on NEC guidelines.
 class VoltageDropCalculator extends StatefulWidget {
+  /// Creates a [VoltageDropCalculator] screen.
   const VoltageDropCalculator({super.key});
 
   @override
   State<VoltageDropCalculator> createState() => _VoltageDropCalculatorState();
 }
 
+/// The state for the [VoltageDropCalculator].
+///
+/// Manages the form inputs, triggers calculations, and displays the results.
 class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
   final _formKey = GlobalKey<FormState>();
   final _currentController = TextEditingController();
@@ -31,6 +37,10 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
     super.dispose();
   }
 
+  /// Validates the form inputs and triggers the voltage drop calculation.
+  ///
+  /// Updates the state with the new [VoltageDropResult]. A brief delay is
+  /// added to improve the user experience by showing a loading indicator.
   Future<void> _calculateVoltageDrop() async {
     if (_formKey.currentState?.validate() != true || _selectedWireSize == null) {
       return;
@@ -60,6 +70,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
     }
   }
 
+  /// Resets all input fields and calculation results to their initial state.
   void _clearCalculation() {
     setState(() {
       _result = null;
@@ -121,6 +132,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
     );
   }
 
+  /// Builds the header card for the calculator screen.
   Widget _buildCalculatorHeader() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -170,6 +182,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
     );
   }
 
+  /// Builds the main input section containing all the form fields for the calculation.
   Widget _buildInputSection() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -400,6 +413,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
     );
   }
 
+  /// A generic helper widget to create a styled dropdown form field.
   Widget _buildDropdownField<T>({
     required String label,
     required T? value,
@@ -446,6 +460,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
     );
   }
 
+  /// A helper widget to create a styled radio button list tile.
   Widget _buildRadioOption<T>(
     String title,
     T value,
@@ -476,6 +491,9 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
     );
   }
 
+  /// Builds the section that displays the results of the voltage drop calculation.
+  ///
+  /// This widget is only shown when a result is available.
   Widget _buildResultsSection() {
     if (_result == null) return const SizedBox.shrink();
 
@@ -578,6 +596,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
     );
   }
 
+  /// A helper widget to build a styled row for displaying a single result value.
   Widget _buildResultRow(String label, String value, {bool isHighlight = false, Color? color}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
@@ -603,6 +622,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
     );
   }
 
+  /// Builds the main "Calculate" button.
   Widget _buildCalculateButton() {
     return SizedBox(
       width: double.infinity,
@@ -636,6 +656,8 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
     );
   }
 
+  /// Builds a card that displays the voltage drop formula and related NEC references
+  /// for educational purposes.
   Widget _buildFormulaReference() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),

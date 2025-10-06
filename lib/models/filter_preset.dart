@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
 import 'filter_criteria.dart';
 
-/// Model representing a saved filter preset
+/// A data model representing a user-saved set of job search filters.
+///
+/// This allows users to save complex filter combinations for quick reuse.
 class FilterPreset {
+  /// A unique identifier for the preset.
   final String id;
+  /// The user-defined name for the preset.
   final String name;
+  /// An optional, more detailed description of the preset.
   final String? description;
+  /// The set of [JobFilterCriteria] that this preset represents.
   final JobFilterCriteria criteria;
+  /// The timestamp when the preset was first created.
   final DateTime createdAt;
+  /// The timestamp when the preset was last used.
   final DateTime lastUsedAt;
+  /// The number of times this preset has been used.
   final int useCount;
+  /// A flag indicating if the preset is pinned for quick access.
   final bool isPinned;
+  /// An optional icon to visually represent the preset.
   final IconData? icon;
 
+  /// Creates an instance of [FilterPreset].
   const FilterPreset({
     required this.id,
     required this.name,
@@ -25,7 +37,12 @@ class FilterPreset {
     this.icon,
   });
 
-  /// Create a new preset
+  /// A factory constructor to create a new [FilterPreset] with default metadata.
+  ///
+  /// - [name]: The name for the new preset.
+  /// - [description]: An optional description.
+  /// - [criteria]: The [JobFilterCriteria] to save.
+  /// - [icon]: An optional icon.
   factory FilterPreset.create({
     required String name,
     String? description,
@@ -46,7 +63,7 @@ class FilterPreset {
     );
   }
 
-  /// Copy with updated values
+  /// Creates a new [FilterPreset] instance with updated field values.
   FilterPreset copyWith({
     String? id,
     String? name,
@@ -71,7 +88,8 @@ class FilterPreset {
     );
   }
 
-  /// Mark preset as used
+  /// Returns a new [FilterPreset] instance with an updated `lastUsedAt` timestamp
+  /// and an incremented `useCount`.
   FilterPreset markAsUsed() {
     return copyWith(
       lastUsedAt: DateTime.now(),
@@ -79,12 +97,12 @@ class FilterPreset {
     );
   }
 
-  /// Toggle pinned status
+  /// Returns a new [FilterPreset] instance with the `isPinned` status toggled.
   FilterPreset togglePinned() {
     return copyWith(isPinned: !isPinned);
   }
 
-  /// Convert to JSON for storage
+  /// Serializes the [FilterPreset] instance to a JSON map for storage.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -99,7 +117,7 @@ class FilterPreset {
     };
   }
 
-  /// Create from JSON
+  /// Creates a [FilterPreset] instance from a JSON map.
   factory FilterPreset.fromJson(Map<String, dynamic> json) {
     return FilterPreset(
       id: json['id'],
@@ -117,8 +135,9 @@ class FilterPreset {
   }
 }
 
-/// Default filter presets
+/// A utility class that provides a list of pre-configured default filter presets.
 class DefaultFilterPresets {
+  /// A static list of default [FilterPreset] objects to offer to new users.
   static List<FilterPreset> get defaults => [
         FilterPreset.create(
           name: 'Local Jobs',

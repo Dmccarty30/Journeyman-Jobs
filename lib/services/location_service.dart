@@ -10,16 +10,15 @@ import 'geographic_firestore_service.dart';
 import 'cache_service.dart';
 
 
-/// Location-based service for job matching and geographic queries
-/// 
-/// Provides advanced location capabilities including:
-/// - Location-based job search within configurable radius
-/// - Distance calculation and sorting by proximity  
-/// - GPS permission handling with fallback strategies
-/// - Geocoding for address-to-coordinates conversion
-/// - State-based fallback when location unavailable
+/// A service providing advanced location-based functionalities.
+///
+/// This service handles location-based job and IBEW local searches, distance
+/// calculations, GPS permission management, and geocoding. It integrates with
+/// [GeographicFirestoreService] for optimized regional queries and uses
+/// caching to improve performance.
 class LocationService {
   static final LocationService _instance = LocationService._internal();
+  /// Provides a singleton instance of the [LocationService].
   factory LocationService() => _instance;
   LocationService._internal();
 
@@ -27,9 +26,13 @@ class LocationService {
   final CacheService _cacheService = CacheService();
   
   // Location configuration
+  /// The default search radius in miles for location-based queries.
   static const double defaultRadiusMiles = 50.0;
+  /// The maximum allowable search radius in miles.
   static const double maxRadiusMiles = 200.0;
+  /// The approximate radius of the Earth in miles, used for distance calculations.
   static const double earthRadiusMiles = 3959.0; // Earth's radius in miles
+  /// The duration for which a fetched location is cached.
   static const Duration locationCacheTimeout = Duration(minutes: 30);
   
   // Cache keys
@@ -41,7 +44,19 @@ class LocationService {
   LocationPermission? _cachedPermissionStatus;
   Timer? _locationUpdateTimer;
   
-  /// Get jobs near a specific location with distance filtering and sorting
+  /// Retrieves jobs near a specified geographic location, filtered by radius and other criteria.
+  ///
+  /// The method performs a bounding box query and then filters the results by precise
+  /// distance using the Haversine formula. It leverages regional sharding for performance.
+  ///
+  /// - [latitude]: The latitude of the search center.
+  /// - [longitude]: The longitude of the search center.
+  /// - [radiusMiles]: The search radius in miles.
+  /// - [limit]: The maximum number of jobs to return.
+  /// - [classification]: Optional job classification to filter by.
+  /// - [typeOfWork]: Optional type of work to filter by.
+  ///
+  /// Returns a `Future<List<JobWithDistance>>` sorted by proximity.
   Future<List<JobWithDistance>> getJobsNearLocation({
     required double latitude,
     required double longitude,
@@ -135,7 +150,15 @@ class LocationService {
     }
   }
   
-  /// Get current user location with permission handling
+  /// Retrieves the user's current geographic position.
+  ///
+  /// Handles location permission checks and requests. It uses a cached location
+  /// to avoid unnecessary GPS calls unless [forceRefresh] is `true`.
+  ///
+  /// - [forceRefresh]: If `true`, it will bypass the cache and fetch a new location.
+  ///
+  /// Returns a `Future<Position?>`, which is the user's current position, a cached
+  /// position, or `null` if permission is denied or an error occurs.
   Future<Position?> getCurrentLocation({
     bool forceRefresh = false,
   }) async {
@@ -182,7 +205,17 @@ class LocationService {
     }
   }
   
-  /// Get jobs near current user location
+  /// Retrieves jobs near the user's current location.
+  ///
+  /// A convenience method that first calls [getCurrentLocation] and then
+  /// passes the result to [getJobsNearLocation].
+  ///
+  /// - [radiusMiles]: The search radius in miles.
+  /// - [limit]: The maximum number of jobs to return.
+  /// - [classification]: Optional job classification to filter by.
+  /// - [typeOfWork]: Optional type of work to filter by.
+  ///
+  /// Returns a `Future<List<JobWithDistance>>`.
   Future<List<JobWithDistance>> getJobsNearCurrentLocation({
     double radiusMiles = defaultRadiusMiles,
     int limit = 20,
@@ -214,7 +247,17 @@ class LocationService {
     }
   }
   
-  /// Get locals near a specific location
+  /// Retrieves IBEW locals near a specified geographic location.
+  ///
+  /// Similar to [getJobsNearLocation], it uses a bounding box query followed by
+  /// precise distance filtering.
+  ///
+  /// - [latitude]: The latitude of the search center.
+  /// - [longitude]: The longitude of the search center.
+  /// - [radiusMiles]: The search radius in miles.
+  /// - [limit]: The maximum number of locals to return.
+  ///
+  /// Returns a `Future<List<LocalWithDistance>>` sorted by proximity.
   Future<List<LocalWithDistance>> getLocalsNearLocation({
     required double latitude,
     required double longitude,
@@ -281,7 +324,12 @@ class LocationService {
     }
   }
   
-  /// Calculate distance between two points using Haversine formula
+  /// Calculates the distance in miles between two geographic points using the Haversine formula.
+  ///
+  /// - [lat1], [lon1]: Latitude and longitude of the first point.
+  /// - [lat2], [lon2]: Latitude and longitude of the second point.
+  ///
+  /// Returns the distance as a `double`.
   static double calculateDistance(
     double lat1, double lon1,
     double lat2, double lon2,
@@ -654,7 +702,10 @@ class LocationService {
     }
   }
   
-  /// Get location service status
+  /// Retrieves the current status of the location service.
+  ///
+  /// Returns a map with information about the last known location, permission
+  /// status, and configuration settings.
   Map<String, dynamic> getLocationStatus() {
     return {
       'hasLastKnownLocation': _lastKnownPosition != null,
@@ -668,7 +719,7 @@ class LocationService {
     };
   }
   
-  /// Clear location cache and reset permissions
+  /// Clears all cached location data, including the last known position and permission status.
   Future<void> clearLocationData() async {
     _lastKnownPosition = null;
     _cachedPermissionStatus = null;
@@ -678,8 +729,12 @@ class LocationService {
     await _cacheService.remove(_locationPermissionKey);
   }
   
-  /// Request location permission specifically for weather radar
-  /// Returns detailed permission status for UI feedback
+  /// Requests location permission specifically for the weather radar feature.
+  ///
+  /// Provides a detailed status map for the UI to give appropriate feedback
+  /// to the user, whether permission is granted, denied, or permanently denied.
+  ///
+  /// Returns a `Future<Map<String, dynamic>>` with status details.
   Future<Map<String, dynamic>> requestLocationForRadar() async {
     try {
       // First check if location services are enabled
@@ -776,7 +831,9 @@ class LocationService {
     }
   }
   
-  /// Open location settings for the user
+  /// Opens the device's location settings screen.
+  ///
+  /// This allows the user to enable location services if they are disabled.
   Future<bool> openLocationSettings() async {
     try {
       return await Geolocator.openLocationSettings();
@@ -788,7 +845,10 @@ class LocationService {
     }
   }
   
-  /// Open app settings for permission management
+  /// Opens the app's specific settings screen on the device.
+  ///
+  /// This is useful if the user has permanently denied location permissions
+  /// and needs to re-enable them manually.
   Future<bool> openAppSettings() async {
     try {
       return await permission.openAppSettings();
@@ -801,53 +861,64 @@ class LocationService {
   }
 }
 
-/// Job with calculated distance information
+/// A wrapper class that pairs a [Job] with its calculated distance from a search point.
 class JobWithDistance {
+  /// The job object.
   final Job job;
-  final double distance; // Distance in miles (-1 if not calculated)
+  /// The calculated distance in miles. A value of -1 indicates distance was not calculated.
+  final double distance;
+  /// The geographic coordinates of the job.
   final Coordinates? coordinates;
   
+  /// Creates an instance of [JobWithDistance].
   JobWithDistance({
     required this.job,
     required this.distance,
     this.coordinates,
   });
   
-  /// Get formatted distance string
+  /// Returns a user-friendly string for the distance.
   String get formattedDistance {
     if (distance < 0) return 'Distance unknown';
     if (distance < 1) return '${(distance * 5280).round()} ft';
     return '${distance.toStringAsFixed(1)} mi';
   }
   
-  /// Check if distance was calculated
+  /// A boolean indicating whether the distance was successfully calculated.
   bool get hasDistance => distance >= 0;
 }
 
-/// Local union with calculated distance information
+/// A wrapper class that pairs a [LocalsRecord] with its calculated distance.
 class LocalWithDistance {
+  /// The IBEW local record.
   final LocalsRecord local;
-  final double distance; // Distance in miles
+  /// The calculated distance in miles.
+  final double distance;
+  /// The geographic coordinates of the local.
   final Coordinates coordinates;
   
+  /// Creates an instance of [LocalWithDistance].
   LocalWithDistance({
     required this.local,
     required this.distance,
     required this.coordinates,
   });
   
-  /// Get formatted distance string
+  /// Returns a user-friendly string for the distance.
   String get formattedDistance {
     if (distance < 1) return '${(distance * 5280).round()} ft';
     return '${distance.toStringAsFixed(1)} mi';
   }
 }
 
-/// Simple coordinates class
+/// A simple class to represent geographic coordinates.
 class Coordinates {
+  /// The latitude value.
   final double latitude;
+  /// The longitude value.
   final double longitude;
   
+  /// Creates an instance of [Coordinates].
   Coordinates(this.latitude, this.longitude);
   
   @override

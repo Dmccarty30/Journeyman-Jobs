@@ -8,13 +8,20 @@ import 'calculators/conduit_fill_calculator.dart';
 import 'calculators/load_calculator.dart';
 import 'calculators/wire_size_chart.dart';
 
+/// A screen that provides a curated list of resources for electrical professionals,
+/// including documents, tools, and external links.
 class ResourcesScreen extends StatefulWidget {
+  /// Creates a [ResourcesScreen].
   const ResourcesScreen({super.key});
 
   @override
   State<ResourcesScreen> createState() => _ResourcesScreenState();
 }
 
+/// The state for the [ResourcesScreen].
+///
+/// Manages the tab controller for different resource categories, filters
+/// resources based on a search query, and handles navigation to tools or links.
 class _ResourcesScreenState extends State<ResourcesScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();

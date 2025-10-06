@@ -4,19 +4,36 @@ import 'package:intl/intl.dart';
 import '../../design_system/app_theme.dart';
 import '../../features/crews/models/tailboard.dart';
 
+/// A widget that displays a single comment in a feed or thread.
+///
+/// It shows the author's avatar, name, the comment content, and timestamp.
+/// It also provides interactive elements like like, edit, delete, and reply
+/// buttons, whose visibility is controlled by the provided boolean flags.
 class CommentItem extends StatefulWidget {
+  /// The [Comment] object containing the data to display.
   final Comment comment;
+  /// Determines if the edit action is available to the current user.
   final bool canEdit;
+  /// Determines if the delete action is available to the current user.
   final bool canDelete;
+  /// Determines if the like action is available to the current user.
   final bool canLike;
+  /// Indicates if the current user has already liked this comment.
   final bool isLiked;
+  /// The total number of likes for this comment.
   final int likeCount;
+  /// A callback function executed when the like button is tapped.
   final VoidCallback? onLike;
+  /// A callback function executed when the unlike button is tapped.
   final VoidCallback? onUnlike;
+  /// A callback function executed when the edit action is selected.
   final VoidCallback? onEdit;
+  /// A callback function executed when the delete action is selected.
   final VoidCallback? onDelete;
+  /// A callback function executed when the reply button is tapped.
   final VoidCallback? onReply;
 
+  /// Creates a [CommentItem] widget.
   const CommentItem({
     super.key,
     required this.comment,
@@ -36,7 +53,9 @@ class CommentItem extends StatefulWidget {
   State<CommentItem> createState() => _CommentItemState();
 }
 
+/// The state for the [CommentItem] widget.
 class _CommentItemState extends State<CommentItem> {
+  /// A flag to control the visibility of the popup action menu (edit, delete, report).
   bool _showActionMenu = false;
 
   @override

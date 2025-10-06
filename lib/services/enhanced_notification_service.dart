@@ -6,12 +6,17 @@ import '../models/job_model.dart';
 import 'fcm_service.dart';
 import 'local_notification_service.dart';
 
-/// Enhanced notification service specifically designed for IBEW electrical workers
+/// A specialized service for sending targeted notifications to IBEW electrical workers.
+///
+/// This service handles various notification types including job alerts, storm work,
+/// union updates, safety alerts, and application status changes. It integrates with
+/// FCM for push notifications and local notifications for scheduled reminders.
 class EnhancedNotificationService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  /// IBEW Classifications for job matching
+  /// A predefined list of IBEW (International Brotherhood of Electrical Workers) classifications
+  /// used for job matching and user profiles.
   static const List<String> ibewClassifications = [
     'Inside Wireman',
     'Journeyman Lineman',
@@ -23,7 +28,7 @@ class EnhancedNotificationService {
     'Residential Wireman',
   ];
 
-  /// Construction types for job categorization
+  /// A predefined list of construction types used for categorizing jobs.
   static const List<String> constructionTypes = [
     'Commercial',
     'Industrial',
@@ -34,7 +39,14 @@ class EnhancedNotificationService {
     'Emergency Work',
   ];
 
-  /// Send job alert notification based on user preferences
+  /// Sends a job alert notification to a user if the job matches their preferences.
+  ///
+  /// It checks the user's notification settings and job criteria (like classification,
+  /// location, and wage) before sending a push notification and creating an
+  /// in-app notification.
+  ///
+  /// - [job]: The [Job] object to send an alert for.
+  /// - [isStormWork]: A boolean flag indicating if this is an urgent storm work alert.
   static Future<void> sendJobAlert({
     required Job job,
     bool isStormWork = false,
@@ -97,7 +109,15 @@ class EnhancedNotificationService {
   }
 
 
-  /// Send union local update notification
+  /// Sends an update notification to all members of a specific IBEW union local.
+  ///
+  /// It can also schedule a local reminder if a [meetingDate] is provided.
+  ///
+  /// - [unionLocal]: The IBEW local number (e.g., "124").
+  /// - [title]: The title of the update.
+  /// - [message]: The main content of the notification.
+  /// - [meetingDate]: An optional ISO 8601 string for a meeting date to schedule a reminder.
+  /// - [actionUrl]: An optional deep link URL for the notification to open.
   static Future<void> sendUnionUpdate({
     required String unionLocal,
     required String title,
@@ -150,7 +170,14 @@ class EnhancedNotificationService {
   }
 
 
-  /// Send storm work priority notification to qualified users
+  /// Sends a high-priority storm work alert to qualified users in an affected area.
+  ///
+  /// It identifies users with relevant classifications (like 'Journeyman Lineman')
+  /// and sends them a specialized job alert.
+  ///
+  /// - [stormJob]: The [Job] object for the storm restoration work.
+  /// - [affectedArea]: A string describing the location of the storm work.
+  /// - [priority]: The priority of the alert (currently for informational purposes).
   static Future<void> sendStormWorkAlert({
     required Job stormJob,
     required String affectedArea,
@@ -314,7 +341,15 @@ class EnhancedNotificationService {
     }
   }
   
-  /// Send safety alert notification
+  /// Sends a safety alert to a targeted group of users or all users.
+  ///
+  /// The alert can be targeted by [unionLocal], [location], or sent to everyone.
+  ///
+  /// - [title]: The title of the safety alert.
+  /// - [message]: The detailed safety message.
+  /// - [unionLocal]: Optional. The IBEW local to target.
+  /// - [location]: Optional. The geographical location to target.
+  /// - [severity]: The severity of the alert (e.g., 'low', 'medium', 'high').
   static Future<void> sendSafetyAlert({
     required String title,
     required String message,
@@ -366,7 +401,13 @@ class EnhancedNotificationService {
     }
   }
 
-  /// Send application status update
+  /// Sends a notification to a user about an update to their job application status.
+  ///
+  /// - [userId]: The ID of the user to notify.
+  /// - [jobTitle]: The title of the job applied for.
+  /// - [company]: The company associated with the job.
+  /// - [status]: The new status of the application (e.g., "Viewed", "Accepted").
+  /// - [nextSteps]: Optional. Any follow-up actions for the user.
   static Future<void> sendApplicationUpdate({
     required String userId,
     required String jobTitle,

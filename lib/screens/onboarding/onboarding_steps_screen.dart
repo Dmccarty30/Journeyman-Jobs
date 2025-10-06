@@ -16,13 +16,23 @@ import '../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
 import '../../electrical_components/circuit_board_background.dart';
 
+/// A screen that guides new users through a multi-step onboarding process
+/// to set up their profile.
+///
+/// This screen uses a [PageView] to present a sequence of forms for collecting
+/// personal, professional, and preferential information.
 class OnboardingStepsScreen extends StatefulWidget {
+  /// Creates an [OnboardingStepsScreen].
   const OnboardingStepsScreen({super.key});
 
   @override
   State<OnboardingStepsScreen> createState() => _OnboardingStepsScreenState();
 }
 
+/// The state for the [OnboardingStepsScreen].
+///
+/// Manages the state for each step of the onboarding process, including
+/// text controllers, focus nodes, selections, and form validation.
 class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
   final PageController _pageController = PageController();
   int _currentStep = 0;
@@ -153,6 +163,9 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     super.dispose();
   }
 
+  /// Navigates to the next step in the onboarding process or completes it.
+  ///
+  /// Before proceeding, it saves the data from the current step.
   void _nextStep() async {
     if (_isSaving) return;
 
@@ -179,6 +192,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     }
   }
 
+  /// Navigates to the previous step in the onboarding process.
   void _previousStep() {
     if (_currentStep > 0) {
       _pageController.previousPage(
@@ -188,6 +202,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     }
   }
 
+  /// Saves the data collected in Step 1 (Basic Information) to Firestore.
   Future<void> _saveStep1Data() async {
     setState(() => _isSaving = true);
 
@@ -232,6 +247,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     }
   }
 
+  /// Saves the data collected in Step 2 (Professional Details) to Firestore.
   Future<void> _saveStep2Data() async {
     setState(() => _isSaving = true);
 
@@ -273,6 +289,10 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     }
   }
 
+  /// Finalizes the onboarding process.
+  ///
+  /// Gathers all collected data, creates a new [UserModel], saves it to Firestore,
+  /// marks onboarding as complete, and navigates the user to the home screen.
   void _completeOnboarding() async {
     try {
       // Get current user from Firebase Auth
@@ -354,6 +374,8 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     }
   }
 
+  /// Checks if the user can proceed to the next step based on the validity
+  /// of the current step's form data.
   bool _canProceed() {
     switch (_currentStep) {
       case 0: // Basic Information
@@ -488,6 +510,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     );
   }
 
+  /// Builds the UI for Step 1: Basic Information.
   Widget _buildStep1() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -655,6 +678,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.2, end: 0);
   }
 
+  /// Builds the UI for Step 2: Professional Details.
   Widget _buildStep2() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -806,6 +830,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.2, end: 0);
   }
 
+  /// Builds the UI for Step 3: Preferences & Feedback.
   Widget _buildStep3() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -1083,6 +1108,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.2, end: 0);
   }
 
+  /// A helper widget to build a consistent header for each onboarding step.
   Widget _buildStepHeader({
     required IconData icon,
     required String title,
@@ -1124,6 +1150,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     );
   }
 
+  /// Returns an appropriate icon for a given construction type string.
   IconData _getConstructionTypeIcon(String type) {
     switch (type) {
       case 'Distribution':

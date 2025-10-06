@@ -2,10 +2,18 @@ import 'package:flutter/material.dart';
 import 'reaction_animation.dart';
 import '../design_system/app_theme.dart';
 
+/// A widget that displays a grid of selectable emojis for reacting to content.
+///
+/// It presents a list of emojis in a themed container, and allows the user
+/// to select one, triggering a callback with the chosen emoji.
 class EmojiReactionPicker extends StatelessWidget {
+  /// A callback function that is invoked when an emoji is selected.
+  /// It passes the selected emoji as a `String`.
   final Function(String emoji) onEmojiSelected;
+  /// The list of emoji strings to be displayed as available reactions.
   final List<String> availableEmojis;
 
+  /// Creates an [EmojiReactionPicker] widget.
   const EmojiReactionPicker({
     super.key,
     required this.onEmojiSelected,

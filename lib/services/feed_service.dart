@@ -5,6 +5,11 @@ import '../domain/exceptions/app_exception.dart';
 import '../features/crews/models/tailboard.dart';
 import '../models/post_model.dart';
 
+/// A service dedicated to managing feed-related operations in Firestore.
+///
+/// This includes creating, reading, updating, and deleting posts, comments,
+/// and reactions within a crew's feed. It also provides methods for
+/// real-time data streaming and statistical analysis.
 class FeedService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -17,11 +22,20 @@ class FeedService {
   CollectionReference get _crewsCollection => _firestore.collection('crews');
 
   // Get Firestore instance
+  /// Returns the underlying [FirebaseFirestore] instance for direct access if needed.
   FirebaseFirestore get firestore => _firestore;
 
   // Post CRUD Operations
 
-  /// Create a new post in a crew's feed
+  /// Creates a new post in a crew's feed.
+  ///
+  /// - [crewId]: The ID of the crew where the post will be created.
+  /// - [authorId]: The ID of the user creating the post.
+  /// - [content]: The text content of the post.
+  /// - [mediaUrls]: An optional list of URLs for attached media.
+  ///
+  /// Returns the ID of the newly created post as a `Future<String>`.
+  /// Throws an [AppException] if validation fails or on Firestore errors.
   Future<String> createPost({
     required String crewId,
     required String authorId,
@@ -60,7 +74,14 @@ class FeedService {
     }
   }
 
-  /// Get posts for a specific crew with pagination
+  /// Retrieves a paginated stream of posts for a specific crew.
+  ///
+  /// - [crewId]: The ID of the crew whose posts are to be fetched.
+  /// - [limit]: The maximum number of posts to return per page.
+  /// - [startAfter]: The `DocumentSnapshot` to start fetching after for pagination.
+  /// - [includeDeleted]: Whether to include posts that have been soft-deleted.
+  ///
+  /// Returns a `Stream<QuerySnapshot>` that emits updates in real-time.
   Stream<QuerySnapshot> getCrewPosts({
     required String crewId,
     int limit = defaultPageSize,
@@ -91,7 +112,11 @@ class FeedService {
     return query.snapshots();
   }
 
-  /// Get a single post by ID
+  /// Fetches a single post by its ID.
+  ///
+  /// - [postId]: The unique ID of the post.
+  ///
+  /// Returns a `Future<PostModel?>`, which is the post object if found, otherwise `null`.
   Future<PostModel?> getPost(String postId) async {
     try {
       final doc = await _postsCollection.doc(postId).get();
@@ -103,7 +128,14 @@ class FeedService {
     }
   }
 
-  /// Update a post's content
+  /// Updates the content and/or media of an existing post.
+  ///
+  /// - [postId]: The ID of the post to update.
+  /// - [authorId]: The ID of the author (for validation, though not used in current implementation).
+  /// - [content]: The new text content for the post.
+  /// - [mediaUrls]: An optional new list of media URLs.
+  ///
+  /// Throws an [AppException] on validation or Firestore errors.
   Future<void> updatePost({
     required String postId,
     required String authorId,
@@ -133,7 +165,11 @@ class FeedService {
     }
   }
 
-  /// Soft delete a post
+  /// Soft-deletes a post by setting its `isDeleted` flag to `true`.
+  ///
+  /// The post remains in the database but will be hidden from default queries.
+  ///
+  /// - [postId]: The ID of the post to soft-delete.
   Future<void> deletePost(String postId) async {
     try {
       await _postsCollection.doc(postId).update({
@@ -149,7 +185,11 @@ class FeedService {
     }
   }
 
-  /// Hard delete a post (permanent deletion)
+  /// Permanently deletes a post from Firestore.
+  ///
+  /// This action is irreversible. Use with caution.
+  ///
+  /// - [postId]: The ID of the post to permanently delete.
   Future<void> hardDeletePost(String postId) async {
     try {
       await _postsCollection.doc(postId).delete();
@@ -162,7 +202,12 @@ class FeedService {
     }
   }
 
-  /// Pin/unpin a post
+  /// Pins or unpins a post in a crew's feed.
+  ///
+  /// Pinned posts can be displayed prominently in the UI.
+  ///
+  /// - [postId]: The ID of the post to pin or unpin.
+  /// - [isPinned]: `true` to pin the post, `false` to unpin it.
   Future<void> togglePinPost(String postId, bool isPinned) async {
     try {
       await _postsCollection.doc(postId).update({
@@ -180,7 +225,14 @@ class FeedService {
 
   // Likes and Reactions
 
-  /// Add or update a reaction to a post
+  /// Adds or updates a user's reaction to a post.
+  ///
+  /// This method uses a Firestore transaction to ensure atomic updates to
+  /// reaction counts and user reaction maps.
+  ///
+  /// - [postId]: The ID of the post to react to.
+  /// - [memberId]: The ID of the user adding the reaction.
+  /// - [emoji]: The emoji string representing the reaction.
   Future<void> addReaction({
     required String postId,
     required String memberId,
@@ -230,7 +282,12 @@ class FeedService {
     }
   }
 
-  /// Remove a reaction from a post
+  /// Removes a user's reaction from a post.
+  ///
+  /// This method uses a Firestore transaction to ensure atomic updates.
+  ///
+  /// - [postId]: The ID of the post.
+  /// - [memberId]: The ID of the user whose reaction is to be removed.
   Future<void> removeReaction({
     required String postId,
     required String memberId,
@@ -280,7 +337,12 @@ class FeedService {
     }
   }
 
-  /// Get reaction counts for a post from Firestore
+  /// Retrieves the reaction counts for a specific post.
+  ///
+  /// - [postId]: The ID of the post.
+  ///
+  /// Returns a `Future<Map<String, int>>` where keys are emoji strings and
+  /// values are their respective counts.
   Future<Map<String, int>> getPostReactionCounts(String postId) async {
     try {
       final doc = await _postsCollection.doc(postId).get();
@@ -293,7 +355,13 @@ class FeedService {
     }
   }
 
-  /// Check if a user has reacted to a post with a specific emoji
+  /// Checks if a specific user has already reacted to a post with a given emoji.
+  ///
+  /// - [postId]: The ID of the post.
+  /// - [userId]: The ID of the user.
+  /// - [emoji]: The emoji to check for.
+  ///
+  /// Returns `true` if the user has reacted with the specified emoji, `false` otherwise.
   Future<bool> hasUserReacted(String postId, String userId, String emoji) async {
     try {
       final doc = await _postsCollection.doc(postId).get();
@@ -309,7 +377,15 @@ class FeedService {
 
   // Comments
 
-  /// Add a comment to a post
+  /// Adds a comment to a post.
+  ///
+  /// Atomically increments the `commentCount` on the parent post.
+  ///
+  /// - [postId]: The ID of the post to comment on.
+  /// - [authorId]: The ID of the comment's author.
+  /// - [content]: The text content of the comment.
+  ///
+  /// Returns the ID of the newly created comment as a `Future<String>`.
   Future<String> addComment({
     required String postId,
     required String authorId,
@@ -349,7 +425,13 @@ class FeedService {
     }
   }
 
-  /// Get comments for a post
+  /// Retrieves a paginated stream of comments for a specific post.
+  ///
+  /// - [postId]: The ID of the post whose comments are to be fetched.
+  /// - [limit]: The maximum number of comments to return per page.
+  /// - [startAfter]: The `DocumentSnapshot` for pagination.
+  ///
+  /// Returns a `Stream<QuerySnapshot>` of comments, ordered oldest to newest.
   Stream<QuerySnapshot> getPostComments({
     required String postId,
     int limit = defaultPageSize,
@@ -375,7 +457,12 @@ class FeedService {
     return query.snapshots();
   }
 
-  /// Update a comment
+  /// Updates the content of an existing comment.
+  ///
+  /// - [postId]: The ID of the parent post.
+  /// - [commentId]: The ID of the comment to update.
+  /// - [authorId]: The ID of the author (for validation).
+  /// - [content]: The new text content for the comment.
   Future<void> updateComment({
     required String postId,
     required String commentId,
@@ -403,7 +490,10 @@ class FeedService {
     }
   }
 
-  /// Delete a comment
+  /// Soft-deletes a comment and atomically decrements the post's `commentCount`.
+  ///
+  /// - [postId]: The ID of the parent post.
+  /// - [commentId]: The ID of the comment to delete.
   Future<void> deleteComment({
     required String postId,
     required String commentId,
@@ -434,7 +524,9 @@ class FeedService {
 
   // Real-time Updates
 
-  /// Get real-time stream of posts for a crew
+  /// A convenience method to get a real-time stream of posts for a crew.
+  ///
+  /// See [getCrewPosts] for parameter details.
   Stream<QuerySnapshot> getCrewPostsStream({
     required String crewId,
     int limit = defaultPageSize,
@@ -442,7 +534,9 @@ class FeedService {
     return getCrewPosts(crewId: crewId, limit: limit);
   }
 
-  /// Get real-time stream of comments for a post
+  /// A convenience method to get a real-time stream of comments for a post.
+  ///
+  /// See [getPostComments] for parameter details.
   Stream<QuerySnapshot> getPostCommentsStream({
     required String postId,
     int limit = defaultPageSize,
@@ -450,14 +544,23 @@ class FeedService {
     return getPostComments(postId: postId, limit: limit);
   }
 
-  /// Get real-time stream of a single post
+  /// Provides a real-time stream for a single post document.
+  ///
+  /// This is useful for listening to changes in likes, comments, and reactions.
+  ///
+  /// - [postId]: The ID of the post to stream.
   Stream<DocumentSnapshot> getPostStream(String postId) {
     return _postsCollection.doc(postId).snapshots();
   }
 
   // Analytics and Statistics
 
-  /// Get post statistics for a crew
+  /// Calculates and returns engagement statistics for all posts in a crew.
+  ///
+  /// - [crewId]: The ID of the crew.
+  ///
+  /// Returns a `Future<Map<String, dynamic>>` containing stats like total posts,
+  /// likes, comments, and averages.
   Future<Map<String, dynamic>> getCrewPostStats(String crewId) async {
     try {
       final querySnapshot = await _postsCollection
@@ -493,7 +596,9 @@ class FeedService {
 
   // Batch Operations
 
-  /// Batch delete multiple posts
+  /// Soft-deletes multiple posts in a single atomic batch operation.
+  ///
+  /// - [postIds]: A list of post IDs to be deleted.
   Future<void> batchDeletePosts(List<String> postIds) async {
     final batch = _firestore.batch();
 
@@ -517,7 +622,7 @@ class FeedService {
 
   // Validation Helpers
 
-  /// Validate post data
+  /// Validates post data before creation or update.
   bool _isValidPostData({
     required String content,
     List<String>? mediaUrls,
@@ -528,7 +633,7 @@ class FeedService {
     return true;
   }
 
-  /// Validate comment data
+  /// Validates comment data before creation or update.
   bool _isValidCommentData(String content) {
     if (content.trim().isEmpty) return false;
     if (content.length > 2000) return false; // Reasonable comment limit

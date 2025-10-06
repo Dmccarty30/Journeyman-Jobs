@@ -1,20 +1,33 @@
 import 'package:flutter/material.dart';
 
-// NEC Table 8 - Conductor Properties
+/// A data class holding properties for a specific wire size, based on NEC Table 8.
 class WireData {
+  /// The American Wire Gauge (AWG) size identifier (e.g., "14", "2/0", "250").
   final String awgSize;
+  /// The cross-sectional area in circular mils.
   final double circularMils;
+  /// The diameter of the bare conductor in inches.
   final double diameterInches;
+  /// The cross-sectional area of the copper conductor in square inches.
   final double areaCopperSqIn;
+  /// The cross-sectional area of the aluminum conductor in square inches.
   final double areaAluminumSqIn;
+  /// The DC resistance of a copper conductor in ohms per 1000 feet.
   final double dcResistanceCopperPer1000Ft;
+  /// The DC resistance of an aluminum conductor in ohms per 1000 feet.
   final double dcResistanceAluminumPer1000Ft;
+  /// The allowable ampacity for a copper conductor with 60°C rated insulation.
   final int ampacity60C;
+  /// The allowable ampacity for a copper conductor with 75°C rated insulation.
   final int ampacity75C;
+  /// The allowable ampacity for a copper conductor with 90°C rated insulation.
   final int ampacity90C;
+  /// The allowable ampacity for an aluminum conductor with 75°C rated insulation.
   final int ampacityAlum75C;
+  /// The allowable ampacity for an aluminum conductor with 90°C rated insulation.
   final int ampacityAlum90C;
 
+  /// Creates an instance of [WireData].
   const WireData({
     required this.awgSize,
     required this.circularMils,
@@ -31,15 +44,22 @@ class WireData {
   });
 }
 
-// NEC Table 4 - Conduit and Tubing Dimensions
+/// A data class holding dimensional properties for a specific conduit size, based on NEC Table 4.
 class ConduitData {
+  /// The trade size of the conduit (e.g., "1/2"").
   final String size;
+  /// The internal diameter of the conduit in inches.
   final double internalDiameter;
+  /// The total internal area of the conduit in square inches.
   final double internalArea;
+  /// The maximum allowable fill area for a single conductor.
   final double fill1Conductor;
+  /// The maximum allowable fill area for two conductors.
   final double fill2Conductor;
+  /// The maximum allowable fill area for three or more conductors.
   final double fill3OrMore;
 
+  /// Creates an instance of [ConduitData].
   const ConduitData({
     required this.size,
     required this.internalDiameter,
@@ -50,7 +70,7 @@ class ConduitData {
   });
 }
 
-// Standard AWG wire sizes with properties
+/// A list of [WireData] for standard AWG wire sizes, based on NEC Table 8.
 const List<WireData> standardWireData = [
   WireData(
     awgSize: '14',
@@ -348,7 +368,7 @@ const List<WireData> standardWireData = [
   ),
 ];
 
-// Standard conduit sizes for EMT
+/// A list of [ConduitData] for standard EMT (Electrical Metallic Tubing) sizes, based on NEC Table 4.
 const List<ConduitData> emtConduitData = [
   ConduitData(
     size: '1/2"',
@@ -448,36 +468,48 @@ const List<ConduitData> emtConduitData = [
   ),
 ];
 
-// Electrical constants
+/// A class that holds various constant values used in electrical calculations,
+/// derived from the National Electrical Code (NEC).
 class ElectricalConstants {
-  static const double copperResistivity = 12.9; // Ohms per circular mil-foot
-  static const double aluminumResistivity = 21.2; // Ohms per circular mil-foot
+  /// The resistivity of copper in ohms per circular mil-foot.
+  static const double copperResistivity = 12.9;
+  /// The resistivity of aluminum in ohms per circular mil-foot.
+  static const double aluminumResistivity = 21.2;
   
-  // NEC voltage drop limits
-  static const double branchCircuitVoltageDropLimit = 3.0; // 3%
-  static const double feederVoltageDropLimit = 5.0; // 5%
-  static const double totalVoltageDropLimit = 5.0; // 5%
+  /// The NEC recommended voltage drop limit for a branch circuit (3%).
+  static const double branchCircuitVoltageDropLimit = 3.0;
+  /// The NEC recommended voltage drop limit for a feeder (5%).
+  static const double feederVoltageDropLimit = 5.0;
+  /// The NEC recommended total voltage drop limit for a system (5%).
+  static const double totalVoltageDropLimit = 5.0;
   
-  // Standard voltage levels
+  /// A list of standard system voltages.
   static const List<int> standardVoltages = [120, 240, 277, 480, 600];
   
-  // Conduit fill percentages (NEC Table 1, Chapter 9)
-  static const double fill1Conductor = 0.53; // 53%
-  static const double fill2Conductor = 0.31; // 31%
-  static const double fill3OrMore = 0.40; // 40%
+  /// The maximum conduit fill percentage for one conductor (53%).
+  static const double fill1Conductor = 0.53;
+  /// The maximum conduit fill percentage for two conductors (31%).
+  static const double fill2Conductor = 0.31;
+  /// The maximum conduit fill percentage for three or more conductors (40%).
+  static const double fill3OrMore = 0.40;
   
-  // Common power factors
+  /// A typical power factor for motor loads.
   static const double powerFactorMotors = 0.8;
+  /// A typical power factor for lighting loads.
   static const double powerFactorLighting = 1.0;
+  /// A typical power factor for mixed loads.
   static const double powerFactorMixed = 0.9;
   
-  // Load calculation constants (NEC Article 220)
+  /// The standard load value for general lighting in VA per square foot.
   static const double generalLightingVAPerSqFt = 3.0;
+  /// The standard load value for a small appliance circuit in VA.
   static const double smallApplianceCircuitVA = 1500.0;
+  /// The standard load value for a laundry circuit in VA.
   static const double laundryCircuitVA = 1500.0;
+  /// The standard load value for a general-purpose receptacle in VA.
   static const double receptacleVA = 180.0;
   
-  // Demand factors
+  /// Demand factors for dwelling unit load calculations.
   static const Map<String, double> dwellingDemandFactors = {
     'first3000': 1.0,
     'next117000': 0.35,
@@ -485,15 +517,21 @@ class ElectricalConstants {
   };
 }
 
-// Enumerations for electrical calculations
+/// The material of a conductor.
 enum ConductorMaterial { copper, aluminum }
+/// The type of electrical circuit.
 enum CircuitType { singlePhase, threePhase }
+/// The type of conduit.
 enum ConduitType { emt, imc, rmc, pvc }
+/// The temperature rating of a conductor's insulation.
 enum TemperatureRating { temp60C, temp75C, temp90C }
+/// The type of electrical load.
 enum LoadType { lighting, motor, heating, appliance, receptacle }
 
-// Helper functions for electrical calculations
+/// A utility class providing helper functions for electrical calculations.
 class ElectricalHelpers {
+  /// Retrieves [WireData] for a given [awgSize] from the [standardWireData] list.
+  /// Returns `null` if the size is not found.
   static WireData? getWireData(String awgSize) {
     try {
       return standardWireData.firstWhere((wire) => wire.awgSize == awgSize);
@@ -502,6 +540,8 @@ class ElectricalHelpers {
     }
   }
   
+  /// Retrieves [ConduitData] for a given [size] and [type].
+  /// **Note:** Currently, only EMT data is implemented.
   static ConduitData? getConduitData(String size, ConduitType type) {
     // Currently only EMT data is provided
     if (type == ConduitType.emt) {
@@ -514,6 +554,7 @@ class ElectricalHelpers {
     return null;
   }
   
+  /// Formats a wire size string for user-friendly display.
   static String formatAwgSize(String size) {
     // Format AWG size for display
     if (size.contains('/')) {
@@ -525,6 +566,11 @@ class ElectricalHelpers {
     }
   }
   
+  /// Returns a color indicating compliance status based on a percentage and a limit.
+  ///
+  /// - Green: Compliant.
+  /// - Orange: Approaching the limit.
+  /// - Red: Exceeds the limit.
   static Color getComplianceColor(double percentage, double limit) {
     if (percentage <= limit) {
       return Colors.green;

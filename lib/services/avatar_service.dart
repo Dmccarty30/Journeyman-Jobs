@@ -6,8 +6,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// A service to handle user avatar management, including picking, cropping,
+/// uploading, and updating user profiles.
 class AvatarService {
   static final AvatarService _instance = AvatarService._internal();
+
+  /// Provides a singleton instance of the [AvatarService].
   factory AvatarService() => _instance;
   AvatarService._internal();
 
@@ -16,6 +20,15 @@ class AvatarService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  /// Initiates a process to pick an image, crop it, upload it, and update the user's avatar.
+  ///
+  /// This method shows a dialog to the user to select an image source (camera or gallery).
+  /// After selection, it proceeds with cropping, uploading to Firebase Storage,
+  /// and updating the user's profile URL in both Firebase Auth and Firestore.
+  ///
+  /// - [context]: The `BuildContext` used to show the image source dialog.
+  ///
+  /// Returns the URL of the uploaded avatar as a `String`, or `null` if the process is cancelled or fails.
   Future<String?> pickAndUploadAvatar(BuildContext context) async {
     try {
       // Show source selection dialog
@@ -50,7 +63,14 @@ class AvatarService {
     }
   }
 
-  // Upload avatar from specified source
+  /// Uploads an avatar from a specified [ImageSource].
+  ///
+  /// This method is similar to [pickAndUploadAvatar] but skips the source selection dialog.
+  /// It's useful when the source (camera or gallery) is already determined.
+  ///
+  /// - [source]: The `ImageSource` to use for picking the image.
+  ///
+  /// Returns the URL of the uploaded avatar as a `String`, or `null` if the process fails.
   Future<String?> uploadAvatar(ImageSource source) async {
     try {
       // Pick image
@@ -81,6 +101,7 @@ class AvatarService {
     }
   }
 
+  /// Displays a dialog for the user to choose between camera and gallery.
   Future<ImageSource?> _showImageSourceDialog(BuildContext context) async {
     return await showDialog<ImageSource>(
       context: context,
@@ -113,6 +134,7 @@ class AvatarService {
     );
   }
 
+  /// Crops the image at [sourcePath] to a square aspect ratio.
   Future<CroppedFile?> _cropImage(String sourcePath) async {
     return await ImageCropper().cropImage(
       sourcePath: sourcePath,
@@ -143,6 +165,7 @@ class AvatarService {
     );
   }
 
+  /// Uploads the file at [filePath] to Firebase Storage.
   Future<String?> _uploadToFirebase(String filePath) async {
     try {
       final user = _auth.currentUser;
@@ -179,6 +202,7 @@ class AvatarService {
     }
   }
 
+  /// Updates the user's profile with the new [avatarUrl].
   Future<void> _updateUserProfile(String avatarUrl) async {
     try {
       final user = _auth.currentUser;
@@ -198,6 +222,12 @@ class AvatarService {
     }
   }
 
+  /// Deletes a user's old avatar from Firebase Storage.
+  ///
+  /// It parses the [oldAvatarUrl] to get the file path and then deletes it.
+  /// Fails silently if the URL is null, not a Firebase URL, or if deletion fails.
+  ///
+  /// - [oldAvatarUrl]: The URL of the avatar to be deleted.
   Future<void> deleteOldAvatar(String? oldAvatarUrl) async {
     if (oldAvatarUrl == null || !oldAvatarUrl.contains('firebase')) return;
 

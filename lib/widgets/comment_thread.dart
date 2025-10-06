@@ -4,19 +4,35 @@ import '../../design_system/app_theme.dart';
 import '../../features/crews/models/tailboard.dart';
 import 'comment_item.dart';
 
+/// A widget that displays a list of comments as a thread.
+///
+/// It handles displaying a list of [CommentItem] widgets, shows a loading
+/// indicator, and provides a "load more" button for pagination.
 class CommentThread extends StatefulWidget {
+  /// The list of comments to display in the thread.
   final List<Comment> comments;
+  /// The ID of the parent post to which these comments belong.
   final String postId;
+  /// The ID of the currently logged-in user, used to determine permissions (edit/delete).
   final String? currentUserId;
+  /// A flag indicating if more comments are currently being loaded.
   final bool isLoading;
+  /// A callback function to be invoked when the user requests to load more comments.
   final VoidCallback? onLoadMore;
+  /// A flag indicating if there are more comments available to be loaded from the server.
   final bool hasMore;
+  /// A callback for when a user likes a comment. Passes post ID and comment ID.
   final Function(String, String)? onLikeComment;
+  /// A callback for when a user unlikes a comment. Passes post ID and comment ID.
   final Function(String, String)? onUnlikeComment;
+  /// A callback for when a user edits a comment. Passes post ID and comment ID.
   final Function(String, String)? onEditComment;
+  /// A callback for when a user deletes a comment. Passes post ID and comment ID.
   final Function(String, String)? onDeleteComment;
+  /// A callback for when a user replies to a comment. Passes the comment ID.
   final Function(String)? onReplyToComment;
 
+  /// Creates a [CommentThread] widget.
   const CommentThread({
     super.key,
     required this.comments,
@@ -36,7 +52,9 @@ class CommentThread extends StatefulWidget {
   State<CommentThread> createState() => _CommentThreadState();
 }
 
+/// The state for the [CommentThread] widget.
 class _CommentThreadState extends State<CommentThread> {
+  /// The scroll controller for the list of comments.
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -52,6 +70,8 @@ class _CommentThreadState extends State<CommentThread> {
     super.dispose();
   }
 
+  /// Listens to the scroll position to trigger loading more comments when the
+  /// user reaches the end of the list.
   void _scrollListener() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {

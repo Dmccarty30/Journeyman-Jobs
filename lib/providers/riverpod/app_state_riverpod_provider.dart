@@ -13,20 +13,29 @@ import 'locals_riverpod_provider.dart';
 
 part 'app_state_riverpod_provider.g.dart';
 
-/// Global app state model
+/// Represents the global state of the application.
+///
+/// This immutable class holds high-level state information such as connectivity status,
+/// initialization status, global errors, and performance metrics.
 class AppState {
 
+  /// Creates an instance of the application's global state.
   const AppState({
     this.isConnected = true,
     this.isInitialized = false,
     this.globalError,
     this.performanceMetrics = const <String, dynamic>{},
   });
+  /// `true` if the device has an active network connection.
   final bool isConnected;
+  /// `true` if the app has completed its initial setup.
   final bool isInitialized;
+  /// A global error message, if any, to be displayed to the user.
   final String? globalError;
+  /// A map of performance metrics collected during the app's lifecycle.
   final Map<String, dynamic> performanceMetrics;
 
+  /// Creates a new [AppState] instance with updated field values.
   AppState copyWith({
     bool? isConnected,
     bool? isInitialized,
@@ -39,13 +48,17 @@ class AppState {
       performanceMetrics: performanceMetrics ?? this.performanceMetrics,
     );
 
-  AppState clearError() => copyWith();
+  /// Returns a new [AppState] instance with the `globalError` field cleared.
+  AppState clearError() => copyWith(globalError: null);
 }
 
-/// Connectivity service provider
+/// Provides an app-wide instance of [ConnectivityService].
 @riverpod
 ConnectivityService connectivityService(Ref ref) => ConnectivityService();
 
+/// Provides an app-wide instance of [OfflineDataService].
+///
+/// This provider initializes the service in the background and manages its lifecycle.
 final offlineDataServiceProvider = Provider<OfflineDataService>((ref) {
   final connectivity = ref.watch(connectivityServiceProvider);
   final service = OfflineDataService(connectivity);
@@ -57,33 +70,45 @@ final offlineDataServiceProvider = Provider<OfflineDataService>((ref) {
   return service;
 });
 
-/// Notification service adapter (wraps local notification initialization)
+/// An adapter class that wraps the static [LocalNotificationService] for easier
+/// integration with Riverpod's dependency injection system.
 class NotificationServiceAdapter {
+  /// Initializes the underlying [LocalNotificationService].
   Future<void> initialize() async {
     await LocalNotificationService.initialize();
   }
 }
 
+/// Provides an instance of [NotificationServiceAdapter].
 @riverpod
 NotificationServiceAdapter notificationService(Ref ref) => NotificationServiceAdapter();
 
-/// Analytics service adapter wrapping static analytics helpers
+/// An adapter class that wraps the static methods of [AnalyticsService].
+///
+/// This allows for a more consistent provider-based architecture and easier testing.
 class AnalyticsServiceAdapter {
+  /// A placeholder for initialization logic if ever needed.
   Future<void> initialize() async {
     // AnalyticsService uses static helper methods; keep a no-op initializer
     // in case future setup is required.
     return;
   }
 
+  /// Logs a custom analytics event.
   Future<void> logEvent(String eventName, {Map<String, dynamic>? parameters}) => AnalyticsService.logCustomEvent(eventName, parameters ?? <String, dynamic>{});
 
+  /// Fetches performance metrics from the analytics service.
   Future<Map<String, dynamic>> getPerformanceMetrics() => AnalyticsService.getPerformanceMetrics();
 }
 
+/// Provides an instance of [AnalyticsServiceAdapter].
 @riverpod
 AnalyticsServiceAdapter analyticsService(Ref ref) => AnalyticsServiceAdapter();
 
-/// Connectivity state stream
+/// Provides a stream of the device's connectivity status.
+///
+/// It listens to the [ConnectivityService] `ChangeNotifier` and exposes its
+/// `isOnline` status as a boolean stream.
 @riverpod
 Stream<bool> connectivityStream(Ref ref) {
   final connectivityService = ref.watch(connectivityServiceProvider);
@@ -113,7 +138,11 @@ Stream<bool> connectivityStream(Ref ref) {
   return controller.stream;
 }
 
-/// App state notifier
+/// The main state notifier for the application's global [AppState].
+///
+/// This notifier manages the app's initialization process, listens to connectivity
+/// changes, and orchestrates high-level data loading and state transitions
+/// such as sign-in, sign-out, and data refreshes.
 @riverpod
 class AppStateNotifier extends _$AppStateNotifier {
   @override
@@ -141,7 +170,7 @@ class AppStateNotifier extends _$AppStateNotifier {
     return const AppState();
   }
 
-  /// Initialize the application
+  /// Kicks off the asynchronous initialization of the application.
   Future<void> _initializeApp() async {
     try {
       // Initialize services
@@ -167,7 +196,7 @@ class AppStateNotifier extends _$AppStateNotifier {
     }
   }
 
-  /// Load initial data for authenticated users
+  /// Loads the essential initial data required for an authenticated user session.
   Future<void> _loadInitialData() async {
     try {
       await Future.wait(<Future<void>>[
@@ -180,7 +209,7 @@ class AppStateNotifier extends _$AppStateNotifier {
     }
   }
 
-  /// Refresh all data
+  /// Triggers a full refresh of all application data.
   Future<void> refreshAppData() async {
     try {
       final bool isAuthenticated = ref.read(isAuthenticatedProvider);
@@ -208,7 +237,7 @@ class AppStateNotifier extends _$AppStateNotifier {
     }
   }
 
-  /// Handle user sign in
+  /// Handles the necessary state updates and data loading after a user signs in.
   Future<void> handleUserSignIn() async {
     try {
       await _loadInitialData();
@@ -220,7 +249,7 @@ class AppStateNotifier extends _$AppStateNotifier {
     }
   }
 
-  /// Handle user sign out
+  /// Handles the necessary state cleanup after a user signs out.
   Future<void> handleUserSignOut() async {
     try {
       // Clear all provider states
@@ -234,12 +263,12 @@ class AppStateNotifier extends _$AppStateNotifier {
     }
   }
 
-  /// Clear global error
+  /// Clears any global error message from the application state.
   void clearError() {
     state = state.clearError();
   }
 
-  /// Update performance metrics
+  /// Updates the performance metrics in the application state.
   void updatePerformanceMetrics(Map<String, dynamic> metrics) {
     final Map<String, dynamic> updatedMetrics = Map<String, dynamic>.from(state.performanceMetrics)
       ..addAll(metrics);
@@ -247,7 +276,10 @@ class AppStateNotifier extends _$AppStateNotifier {
   }
 }
 
-/// Combined app status provider
+/// A provider that combines various states into a single, convenient status map.
+///
+/// This is useful for quickly checking the overall status of the app from the UI,
+/// for example, to show a global loading indicator or an error banner.
 @riverpod
 Map<String, dynamic> appStatus(Ref ref) {
   final appState = ref.watch(appStateProvider);
@@ -269,7 +301,8 @@ Map<String, dynamic> appStatus(Ref ref) {
   };
 }
 
-/// Error aggregation provider
+/// A provider that aggregates all current error messages from different parts
+/// of the application state into a single list.
 @riverpod
 List<String> allErrors(Ref ref) {
   final List<String> errors = <String>[];
@@ -295,7 +328,10 @@ List<String> allErrors(Ref ref) {
   return errors;
 }
 
-/// Loading state aggregation provider
+/// A provider that aggregates the loading status from various providers
+/// into a single boolean value.
+///
+/// Returns `true` if any major part of the app is currently in a loading state.
 @riverpod
 bool isAnyLoading(Ref ref) {
   final appState = ref.watch(appStateProvider);

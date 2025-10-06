@@ -16,11 +16,25 @@ import '../services/notification_service.dart';
 import '../services/connectivity_service.dart';
 import '../domain/exceptions/app_exception.dart';
 
+/// A comprehensive service for all database interactions with Firestore.
+///
+/// This service handles operations related to users, crews, posts, jobs,
+/// conversations, and contractors. It incorporates caching, error handling,
+/// and offline support checks.
 class DatabaseService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final String? uid = FirebaseAuth.instance.currentUser?.uid;
 
   // User Operations
+  /// Fetches a user's profile from Firestore.
+  ///
+  /// Checks the cache first. If not found, fetches from Firestore and caches the result.
+  /// Throws an [OfflineError] if the device is offline.
+  /// Throws various [AppException] subtypes on Firestore errors.
+  ///
+  /// - [userId]: The unique ID of the user to fetch.
+  ///
+  /// Returns a `Future<UserModel?>`.
   Future<UserModel?> getUser(String userId) async {
     final cache = CacheService();
     final cachedUser = await cache.get<UserModel>('user_$userId');
@@ -55,6 +69,12 @@ class DatabaseService {
     }
   }
 
+  /// Updates a user's profile in Firestore.
+  ///
+  /// Validates the user data before updating.
+  /// Throws a [ValidationError] for invalid data or an [OfflineError] if offline.
+  ///
+  /// - [user]: The [UserModel] object with updated information.
   Future<void> updateUser(UserModel user) async {
     if (!user.isValid()) {
       throw ValidationError('Invalid user data');
@@ -81,6 +101,11 @@ class DatabaseService {
     }
   }
 
+  /// Sets the online status for the current user.
+  ///
+  /// Updates the `onlineStatus` and `lastActive` fields in the user's document.
+  ///
+  /// - [status]: `true` for online, `false` for offline.
   Future<void> setOnlineStatus(bool status) async {
     if (uid == null) return;
     final connectivity = ConnectivityService();
@@ -109,6 +134,13 @@ class DatabaseService {
   }
 
   // Crew Operations
+  /// Fetches a specific crew's details from Firestore.
+  ///
+  /// Throws an [OfflineError] if the device is offline.
+  ///
+  /// - [crewId]: The unique ID of the crew to fetch.
+  ///
+  /// Returns a `Future<Crew?>`.
   Future<Crew?> getCrew(String crewId) async {
     final connectivity = ConnectivityService();
     if (!connectivity.isOnline) {
@@ -133,6 +165,13 @@ class DatabaseService {
     }
   }
 
+  /// Creates a new crew in Firestore.
+  ///
+  /// Also adds the new crew's ID to the foreman's list of `crewIds`.
+  ///
+  /// - [crew]: The [Crew] object to create.
+  ///
+  /// Returns the ID of the newly created crew as a `Future<String>`.
   Future<String> createCrew(Crew crew) async {
     try {
       final ref = await _db.collection('crews').add(crew.toFirestore());
@@ -148,6 +187,11 @@ class DatabaseService {
     }
   }
 
+  /// Adds the current user to a specified crew.
+  ///
+  /// Updates both the crew's `memberIds` and the user's `crewIds`.
+  ///
+  /// - [crewId]: The ID of the crew to join.
   Future<void> joinCrew(String crewId) async {
     if (uid == null) return;
     try {
@@ -164,6 +208,12 @@ class DatabaseService {
     }
   }
 
+  /// Removes a member from a crew.
+  ///
+  /// Only the crew's foreman can perform this action.
+  ///
+  /// - [crewId]: The ID of the crew.
+  /// - [memberId]: The ID of the member to remove.
   Future<void> removeMember(String crewId, String memberId) async {
     final crew = await getCrew(crewId);
     if (crew?.foremanId != uid) throw AppException('Not authorized to remove member');
@@ -181,6 +231,12 @@ class DatabaseService {
     }
   }
 
+  /// Updates the job preferences for a specific crew.
+  ///
+  /// Only the crew's foreman can perform this action.
+  ///
+  /// - [crewId]: The ID of the crew to update.
+  /// - [prefs]: A map of job preferences to set.
   Future<void> updateJobPreferences(String crewId, Map<String, dynamic> prefs) async {
     final crew = await getCrew(crewId);
     if (crew?.foremanId != uid) throw Exception('Not foreman');
@@ -188,6 +244,15 @@ class DatabaseService {
   }
 
   // Feed Posts
+  /// Provides a real-time stream of feed posts for a crew.
+  ///
+  /// Supports pagination using [limit] and [startAfter].
+  ///
+  /// - [crewId]: The ID of the crew whose feed is being streamed.
+  /// - [limit]: The maximum number of posts to fetch.
+  /// - [startAfter]: The `DocumentSnapshot` to start after for pagination.
+  ///
+  /// Returns a `Stream<List<PostModel>>`.
   Stream<List<PostModel>> streamFeedPosts(String crewId, {int limit = 20, DocumentSnapshot? startAfter}) {
     Query<Map<String, dynamic>> query = _db.collection('crews').doc(crewId).collection('feedPosts')
         .where('deleted', isEqualTo: false)
@@ -200,6 +265,13 @@ class DatabaseService {
         .map((snap) => snap.docs.map((doc) => PostModel.fromFirestore(doc)).toList());
   }
 
+  /// Creates a new post in a crew's feed and notifies members.
+  ///
+  /// Optionally uploads media files associated with the post.
+  ///
+  /// - [crewId]: The ID of the crew.
+  /// - [post]: The [PostModel] object to create.
+  /// - [mediaFiles]: An optional list of `File` objects to upload as media.
   Future<void> createPost(String crewId, PostModel post, {List<File>? mediaFiles}) async {
     List<String> mediaUrls = [];
     if (mediaFiles != null && mediaFiles.isNotEmpty) {
@@ -250,6 +322,10 @@ class DatabaseService {
     }
   }
 
+  /// Adds the current user's ID to a post's `likes` array.
+  ///
+  /// - [crewId]: The ID of the crew where the post exists.
+  /// - [postId]: The ID of the post to like.
   Future<void> likePost(String crewId, String postId) async {
     if (uid == null) return;
     await _db.collection('crews').doc(crewId).collection('feedPosts').doc(postId).update({
@@ -257,12 +333,26 @@ class DatabaseService {
     });
   }
 
+  /// Marks a post as deleted.
+  ///
+  /// Only the author of the post can delete it.
+  ///
+  /// - [crewId]: The ID of the crew.
+  /// - [postId]: The ID of the post to delete.
+  /// - [authorId]: The ID of the post's author for verification.
   Future<void> deletePost(String crewId, String postId, String authorId) async {
     if (uid != authorId) throw Exception('Not author');
     await _db.collection('crews').doc(crewId).collection('feedPosts').doc(postId).update({'deleted': true});
   }
 
   // Jobs
+  /// Provides a real-time stream of jobs shared in a crew that match its criteria.
+  ///
+  /// - [crewId]: The ID of the crew.
+  /// - [limit]: The maximum number of jobs to fetch.
+  /// - [startAfter]: The `DocumentSnapshot` for pagination.
+  ///
+  /// Returns a `Stream<List<Job>>`.
   Stream<List<Job>> streamJobs(String crewId, {int limit = 20, DocumentSnapshot? startAfter}) {
     Query<Map<String, dynamic>> query = _db.collection('crews').doc(crewId).collection('jobs')
         .where('deleted', isEqualTo: false)
@@ -276,6 +366,13 @@ class DatabaseService {
         .map((snap) => snap.docs.map((doc) => Job.fromFirestore(doc)).toList());
   }
 
+  /// Shares a job to a crew's job board.
+  ///
+  /// It computes whether the job matches the crew's preferences and updates
+  /// crew statistics accordingly. Notifies crew members about the new job.
+  ///
+  /// - [crewId]: The ID of the crew to share the job with.
+  /// - [job]: The [Job] object to share.
   Future<void> shareJob(String crewId, Job job) async {
     final crew = await getCrew(crewId);
     final jobToShare = job.copyWith(matchesCriteria: _computeJobMatch(job.jobDetails, crew?.jobPreferences ?? {}));
@@ -368,6 +465,16 @@ class DatabaseService {
   }
 
   // Chat/Conversations
+  /// Gets an existing conversation or creates a new one.
+  ///
+  /// For crew-wide chats, a fixed ID is used. For direct messages, an ID is
+  /// generated from the participants' UIDs.
+  ///
+  /// - [crewId]: The ID of the crew.
+  /// - [isDirect]: `true` if this is a direct message conversation.
+  /// - [participants]: A list of user IDs for a direct conversation.
+  ///
+  /// Returns the conversation ID as a `Future<String>`.
   Future<String> getOrCreateConversation(String crewId, {bool isDirect = false, List<String>? participants}) async {
     // For crew-wide: use fixed ID like 'crew_chat'
     final convId = isDirect ? _generateDirectConvId(participants!) : 'crew_chat';
@@ -384,7 +491,15 @@ class DatabaseService {
     return convId;
   }
 
-Stream<List<Message>> streamMessages(String crewId, String conversationId, {int limit = 20, DocumentSnapshot? startAfter}) {
+  /// Provides a real-time stream of messages for a conversation.
+  ///
+  /// - [crewId]: The ID of the crew.
+  /// - [conversationId]: The ID of the conversation.
+  /// - [limit]: The maximum number of messages to fetch.
+  /// - [startAfter]: The `DocumentSnapshot` for pagination.
+  ///
+  /// Returns a `Stream<List<Message>>`.
+  Stream<List<Message>> streamMessages(String crewId, String conversationId, {int limit = 20, DocumentSnapshot? startAfter}) {
     Query<Map<String, dynamic>> query = _db.collection('crews').doc(crewId).collection('conversations').doc(conversationId)
         .collection('messages')
         .where('deleted', isEqualTo: false)
@@ -397,6 +512,15 @@ return query.snapshots()
         .map((snap) => snap.docs.map((doc) => Message.fromFirestore(doc)).toList());
   }
 
+  /// Sends a message in a conversation.
+  ///
+  /// Optionally uploads media files as attachments. Updates the conversation's
+  /// `lastMessage` details.
+  ///
+  /// - [crewId]: The ID of the crew.
+  /// - [conversationId]: The ID of the conversation.
+  /// - [message]: The [Message] object to send.
+  /// - [mediaFiles]: An optional list of `File` objects to attach.
   Future<void> sendMessage(String crewId, String conversationId, Message message, {List<File>? mediaFiles}) async {
     if (mediaFiles != null && mediaFiles.isNotEmpty) {
       final connectivity = ConnectivityService();
@@ -436,6 +560,11 @@ return query.snapshots()
     await batch.commit();
   }
 
+  /// Marks a message as read by the current user.
+  ///
+  /// - [crewId]: The ID of the crew.
+  /// - [conversationId]: The ID of the conversation.
+  /// - [messageId]: The ID of the message to mark as read.
   Future<void> markAsRead(String crewId, String conversationId, String messageId) async {
     if (uid == null) return;
     await _db.collection('crews').doc(crewId).collection('conversations').doc(conversationId)
@@ -445,6 +574,13 @@ return query.snapshots()
   }
 
   // Members Stream
+  /// Provides a real-time stream of all members in a crew.
+  ///
+  /// - [crewId]: The ID of the crew.
+  /// - [limit]: The maximum number of members to fetch.
+  /// - [startAfter]: The `DocumentSnapshot` for pagination.
+  ///
+  /// Returns a `Stream<List<UserModel>>`.
   Stream<List<UserModel>> streamMembers(String crewId, {int limit = 20, DocumentSnapshot? startAfter}) {
     Query<Map<String, dynamic>> query = _db.collection('users')
         .where('crewIds', arrayContains: crewId)
@@ -501,17 +637,34 @@ return query.snapshots()
     return true;
   }
 
+  /// Streams a single conversation document to get real-time updates.
+  ///
+  /// - [crewId]: The ID of the crew.
+  /// - [convId]: The ID of the conversation to stream.
+  ///
+  /// Returns a `Stream<DocumentSnapshot>`.
   Stream<DocumentSnapshot> streamConversation(String crewId, String convId) {
     return _db.collection('crews').doc(crewId).collection('conversations').doc(convId).snapshots();
   }
 
-Stream<List<conv.Conversation>> streamConversations(String crewId) {
+  /// Streams all conversations within a crew.
+  ///
+  /// - [crewId]: The ID of the crew.
+  ///
+  /// Returns a `Stream<List<conv.Conversation>>`.
+  Stream<List<conv.Conversation>> streamConversations(String crewId) {
     return _db.collection('crews').doc(crewId).collection('conversations')
         .where('deleted', isEqualTo: false)
         .snapshots()
         .map((snap) => snap.docs.map((doc) => conv.Conversation.fromFirestore(doc)).toList());
   }
 
+  /// Updates the list of typing users in a conversation.
+  ///
+  /// - [crewId]: The ID of the crew.
+  /// - [convId]: The ID of the conversation.
+  /// - [userId]: The ID of the user whose typing status is changing.
+  /// - [typing]: `true` if the user is typing, `false` otherwise.
   Future<void> updateTyping(String crewId, String convId, String userId, bool typing) async {
     try {
       final updateData = typing
@@ -525,6 +678,11 @@ Stream<List<conv.Conversation>> streamConversations(String crewId) {
     }
   }
 
+  /// Creates a post and updates crew stats in a single atomic batch operation.
+  ///
+  /// - [crewId]: The ID of the crew.
+  /// - [post]: The [PostModel] to create.
+  /// - [mediaFiles]: Optional list of media files to attach.
   Future<void> batchCreatePostAndNotify(String crewId, PostModel post, {List<File>? mediaFiles}) async {
     List<String> mediaUrls = [];
     if (mediaFiles != null && mediaFiles.isNotEmpty) {
@@ -580,7 +738,11 @@ Stream<List<conv.Conversation>> streamConversations(String crewId) {
     }
   }
 
-  /// Gets a single contractor by ID
+  /// Fetches a single contractor by their ID.
+  ///
+  /// - [contractorId]: The unique ID of the contractor.
+  ///
+  /// Returns a `Future<Contractor?>`.
   Future<Contractor?> getContractor(String contractorId) async {
     try {
       final doc = await _db.collection('contractors').doc(contractorId).get();
@@ -593,7 +755,15 @@ Stream<List<conv.Conversation>> streamConversations(String crewId) {
     }
   }
 
-  /// Searches contractors by company name
+  /// Searches for contractors by company name.
+  ///
+  /// Since Firestore doesn't support native full-text search, this method fetches
+  /// all contractors and filters them locally. For large datasets, a more
+  /// robust search solution like Algolia or Elasticsearch would be better.
+  ///
+  /// - [searchQuery]: The string to search for in company names.
+  ///
+  /// Returns a `Stream<List<Contractor>>`.
   Stream<List<Contractor>> searchContractors(String searchQuery) {
     try {
       if (searchQuery.isEmpty) {
@@ -616,7 +786,13 @@ Stream<List<conv.Conversation>> streamConversations(String crewId) {
     }
   }
 
-  /// Creates a new contractor (admin function)
+  /// Creates a new contractor document.
+  ///
+  /// This is intended as an admin-only function.
+  ///
+  /// - [contractor]: The [Contractor] object to create.
+  ///
+  /// Returns the ID of the new document as a `Future<String>`.
   Future<String> createContractor(Contractor contractor) async {
     try {
       final docRef = _db.collection('contractors').doc();
@@ -630,7 +806,11 @@ Stream<List<conv.Conversation>> streamConversations(String crewId) {
     }
   }
 
-  /// Updates an existing contractor (admin function)
+  /// Updates an existing contractor document.
+  ///
+  /// This is intended as an admin-only function.
+  ///
+  /// - [contractor]: The [Contractor] object with updated data.
   Future<void> updateContractor(Contractor contractor) async {
     try {
       await _db.collection('contractors')
@@ -643,7 +823,11 @@ Stream<List<conv.Conversation>> streamConversations(String crewId) {
     }
   }
 
-  /// Deletes a contractor (admin function)
+  /// Deletes a contractor document.
+  ///
+  /// This is intended as an admin-only function.
+  ///
+  /// - [contractorId]: The ID of the contractor to delete.
   Future<void> deleteContractor(String contractorId) async {
     try {
       await _db.collection('contractors').doc(contractorId).delete();
@@ -654,7 +838,7 @@ Stream<List<conv.Conversation>> streamConversations(String crewId) {
     }
   }
 
-  /// Helper method to determine attachment type from file
+  /// A helper method to determine the [AttachmentType] from a file's extension.
   AttachmentType _getAttachmentTypeFromFile(File file) {
     final extension = file.path.split('.').last.toLowerCase();
     switch (extension) {

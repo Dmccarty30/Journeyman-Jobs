@@ -3,16 +3,26 @@ import 'dart:math' as math;
 import 'social_animations.dart';
 import '../design_system/app_theme.dart';
 
-/// Comment animation with slide-in effects and transitions
+/// A widget that provides a slide, scale, and fade animation for its child.
+///
+/// This is typically used to animate comments appearing or disappearing in a list.
 class CommentAnimation extends StatefulWidget {
+  /// Controls whether the child is visible and the animation is running.
   final bool isVisible;
+  /// The widget to be animated.
   final Widget child;
+  /// The total duration of the animation.
   final Duration? animationDuration;
+  /// The curve to apply to the slide animation.
   final Curve? curve;
+  /// The starting offset for the slide animation. Defaults to `Offset(0, 0.5)`.
   final Offset? beginOffset;
+  /// The starting scale factor for the scale animation. Defaults to `0.8`.
   final double? beginScale;
+  /// An optional callback that fires when the animation completes.
   final VoidCallback? onAnimationComplete;
   
+  /// Creates a [CommentAnimation] widget.
   const CommentAnimation({
     super.key,
     required this.isVisible,
@@ -114,13 +124,20 @@ class _CommentAnimationState extends State<CommentAnimation>
   }
 }
 
-/// Typing indicator with pulse animation
+/// A widget that displays an animated "is typing" indicator.
+///
+/// It shows a text label followed by three pulsing dots to signify activity.
 class TypingIndicator extends StatefulWidget {
+  /// The text to display next to the pulsing dots (e.g., "User is typing").
   final String text;
+  /// The color of the text and dots.
   final Color? color;
+  /// The font size of the text.
   final double? fontSize;
+  /// The duration of one full pulse animation cycle.
   final Duration? pulseDuration;
   
+  /// Creates a [TypingIndicator] widget.
   const TypingIndicator({
     super.key,
     required this.text,
@@ -203,13 +220,20 @@ class _TypingIndicatorState extends State<TypingIndicator>
   }
 }
 
-/// Staggered comment list with animation
+/// A widget that displays a list of comments with a staggered animation effect.
+///
+/// Each comment in the list animates in sequentially.
 class AnimatedCommentList extends StatefulWidget {
+  /// The list of comment widgets to display and animate.
   final List<Widget> comments;
+  /// The delay between the start of each comment's animation.
   final Duration? staggerDuration;
+  /// The duration of the animation for each individual comment.
   final Duration? animationDuration;
+  /// The axis along which the comments should animate in.
   final Axis direction;
   
+  /// Creates an [AnimatedCommentList] widget.
   const AnimatedCommentList({
     super.key,
     required this.comments,
@@ -247,15 +271,24 @@ class _AnimatedCommentListState extends State<AnimatedCommentList> {
   }
 }
 
-/// Comment input with focus animation
+/// An animated text input field designed for entering comments.
+///
+/// It features a border and scale animation that activates when the field gains focus.
 class AnimatedCommentInput extends StatefulWidget {
+  /// The controller for the text field.
   final TextEditingController? controller;
+  /// The focus node to control the focus state of the text field.
   final FocusNode? focusNode;
+  /// The hint text to display when the input field is empty.
   final String? hintText;
+  /// A callback that fires when the send button is pressed.
   final VoidCallback? onSend;
+  /// A callback that fires when the text in the input field changes.
   final ValueChanged<String>? onTextChanged;
+  /// The duration of the focus animation.
   final Duration? animationDuration;
   
+  /// Creates an [AnimatedCommentInput] widget.
   const AnimatedCommentInput({
     super.key,
     this.controller,
@@ -390,14 +423,21 @@ class _AnimatedCommentInputState extends State<AnimatedCommentInput>
   }
 }
 
-/// Comment thread with expand/collapse animation
+/// A widget that displays a comment thread that can be expanded and collapsed
+/// with a smooth animation.
 class AnimatedCommentThread extends StatefulWidget {
+  /// The list of comment widgets in the thread.
   final List<Widget> comments;
+  /// The widget to display as the header, which also acts as the toggle button.
   final Widget header;
+  /// The initial expanded state of the thread.
   final bool isExpanded;
+  /// The duration of the expand/collapse animation.
   final Duration? animationDuration;
+  /// An optional callback that fires when the thread is toggled.
   final VoidCallback? onToggle;
   
+  /// Creates an [AnimatedCommentThread] widget.
   const AnimatedCommentThread({
     super.key,
     required this.comments,
@@ -509,13 +549,21 @@ class _AnimatedCommentThreadState extends State<AnimatedCommentThread>
   }
 }
 
-/// Comment counter with animation
+/// A widget that displays a numerical counter with an animation that "counts up"
+/// from zero to the target [count].
+///
+/// This is typically used for displaying comment or like counts.
 class AnimatedCommentCounter extends StatefulWidget {
+  /// The target number to count up to.
   final int count;
+  /// The label to display after the count (e.g., "comments"). Defaults to "comment" or "comments".
   final String? label;
+  /// The color of the text.
   final Color? color;
+  /// The duration of the counting animation.
   final Duration? animationDuration;
   
+  /// Creates an [AnimatedCommentCounter] widget.
   const AnimatedCommentCounter({
     super.key,
     required this.count,

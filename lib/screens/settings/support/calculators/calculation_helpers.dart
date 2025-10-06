@@ -1,12 +1,22 @@
 import 'electrical_constants.dart';
 
+/// A base class for holding the results of an electrical calculation.
+///
+/// It includes the primary calculated value, its units, compliance status,
+/// a descriptive message, and a reference to the relevant NEC article.
 class CalculationResults {
+  /// The primary numerical result of the calculation.
   final double value;
+  /// The units for the [value] (e.g., '%', 'VA').
   final String units;
+  /// A boolean indicating if the result is compliant with NEC standards.
   final bool isCompliant;
+  /// A user-friendly message describing the outcome of the calculation.
   final String message;
+  /// A reference to the relevant National Electrical Code (NEC) article.
   final String necReference;
 
+  /// Creates an instance of [CalculationResults].
   CalculationResults({
     required this.value,
     required this.units,
@@ -16,11 +26,16 @@ class CalculationResults {
   });
 }
 
+/// A specialized [CalculationResults] class for voltage drop calculations.
 class VoltageDropResult extends CalculationResults {
+  /// The calculated voltage drop in volts.
   final double voltageDropVolts;
+  /// The voltage drop expressed as a percentage of the system voltage.
   final double voltageDropPercentage;
+  /// The final voltage at the end of the circuit after the drop.
   final double finalVoltage;
 
+  /// Creates an instance of [VoltageDropResult].
   VoltageDropResult({
     required this.voltageDropVolts,
     required this.voltageDropPercentage,
@@ -34,12 +49,18 @@ class VoltageDropResult extends CalculationResults {
         );
 }
 
+/// A specialized [CalculationResults] class for conduit fill calculations.
 class ConduitFillResult extends CalculationResults {
+  /// The total cross-sectional area of all conductors in square inches.
   final double totalConductorArea;
+  /// The internal area of the conduit in square inches.
   final double conduitArea;
+  /// The percentage of the conduit's area that is filled by conductors.
   final double fillPercentage;
+  /// The total number of conductors inside the conduit.
   final int conductorCount;
 
+  /// Creates an instance of [ConduitFillResult].
   ConduitFillResult({
     required this.totalConductorArea,
     required this.conduitArea,
@@ -54,12 +75,18 @@ class ConduitFillResult extends CalculationResults {
         );
 }
 
+/// A specialized [CalculationResults] class for residential load calculations.
 class LoadCalculationResult extends CalculationResults {
+  /// The total connected load in VA before applying demand factors.
   final double totalLoad;
+  /// The calculated load in VA after applying NEC demand factors.
   final double demandLoad;
+  /// The recommended minimum electrical service size in amps.
   final int recommendedServiceSize;
+  /// A breakdown of the different load components and their VA values.
   final Map<String, double> loadBreakdown;
 
+  /// Creates an instance of [LoadCalculationResult].
   LoadCalculationResult({
     required this.totalLoad,
     required this.demandLoad,
@@ -74,8 +101,20 @@ class LoadCalculationResult extends CalculationResults {
         );
 }
 
+/// A utility class providing static methods for common electrical calculations
+/// based on the National Electrical Code (NEC).
 class ElectricalCalculations {
   // Voltage Drop Calculations
+  /// Calculates the voltage drop for a circuit.
+  ///
+  /// - [wireSize]: The AWG size of the wire.
+  /// - [current]: The current in amps flowing through the circuit.
+  /// - [length]: The one-way length of the circuit in feet.
+  /// - [systemVoltage]: The voltage of the system (e.g., 120, 240, 480).
+  /// - [material]: The conductor material ([ConductorMaterial.copper] or [ConductorMaterial.aluminum]).
+  /// - [circuitType]: The type of circuit ([CircuitType.singlePhase] or [CircuitType.threePhase]).
+  ///
+  /// Returns a [VoltageDropResult] object with the detailed results.
   static VoltageDropResult calculateVoltageDrop({
     required String wireSize,
     required double current,
@@ -132,6 +171,13 @@ class ElectricalCalculations {
   }
 
   // Conduit Fill Calculations
+  /// Calculates the conduit fill percentage.
+  ///
+  /// - [conduitSize]: The trade size of the conduit (e.g., "1/2").
+  /// - [conduitType]: The type of conduit (e.g., [ConduitType.EMT]).
+  /// - [conductors]: A list of [ConductorInfo] objects representing the wires in the conduit.
+  ///
+  /// Returns a [ConduitFillResult] with the detailed results.
   static ConduitFillResult calculateConduitFill({
     required String conduitSize,
     required ConduitType conduitType,
@@ -192,6 +238,16 @@ class ElectricalCalculations {
   }
 
   // Load Calculations
+  /// Performs a standard residential load calculation based on NEC Article 220.
+  ///
+  /// - [squareFootage]: The total square footage of the dwelling.
+  /// - [smallApplianceCircuits]: The number of small appliance branch circuits.
+  /// - [hasLaundryCircuit]: Whether a dedicated laundry circuit is present.
+  /// - [appliances]: A list of fixed appliances and their loads.
+  /// - [hvacLoad]: The total load of the HVAC system in VA.
+  /// - [systemVoltage]: The service voltage.
+  ///
+  /// Returns a [LoadCalculationResult] with the detailed results.
   static LoadCalculationResult calculateResidentialLoad({
     required double squareFootage,
     required int smallApplianceCircuits,
@@ -260,7 +316,8 @@ class ElectricalCalculations {
     );
   }
 
-  // Helper method to apply dwelling demand factors
+  /// A helper method to apply NEC demand factors for general lighting and receptacle loads
+  /// in dwelling units.
   static double _applyDwellingDemandFactors(double baseLoad) {
     double demandLoad = 0;
     
@@ -275,7 +332,8 @@ class ElectricalCalculations {
     return demandLoad;
   }
 
-  // Helper method to calculate service size
+  /// A helper method to determine the next standard service size based on the
+  /// calculated current.
   static int _calculateServiceSize(double currentAmps) {
     List<int> standardServiceSizes = [100, 125, 150, 200, 225, 300, 400, 600, 800, 1000, 1200];
     
@@ -288,7 +346,15 @@ class ElectricalCalculations {
     return 1200; // Maximum standard service size
   }
 
-  // Ampacity derating calculations
+  /// Calculates the adjusted ampacity of a conductor after applying derating factors.
+  ///
+  /// - [wireSize]: The AWG size of the wire.
+  /// - [material]: The conductor material.
+  /// - [tempRating]: The temperature rating of the conductor's insulation.
+  /// - [conductorCount]: The number of current-carrying conductors in the raceway.
+  /// - [ambientTemp]: The ambient temperature in Celsius.
+  ///
+  /// Returns the derated ampacity in amps.
   static double calculateAmpacityDerating({
     required String wireSize,
     required ConductorMaterial material,
@@ -344,11 +410,17 @@ class ElectricalCalculations {
 }
 
 // Supporting classes
+// Supporting classes
+/// A data class to hold information about a group of conductors for calculations.
 class ConductorInfo {
+  /// The AWG size of the conductor (e.g., "12", "2/0").
   final String awgSize;
+  /// The number of conductors of this size.
   final int quantity;
+  /// The type of insulation (e.g., "THWN"), which affects conductor area.
   final String insulationType;
 
+  /// Creates an instance of [ConductorInfo].
   ConductorInfo({
     required this.awgSize,
     required this.quantity,
@@ -356,12 +428,18 @@ class ConductorInfo {
   });
 }
 
+/// A data class representing a single fixed appliance for load calculations.
 class ApplianceLoad {
+  /// The name of the appliance (e.g., "Dishwasher").
   final String name;
-  final double load; // in VA
+  /// The load of the appliance in Volt-Amps (VA).
+  final double load;
+  /// A flag indicating if the appliance is a motor load.
   final bool isMotor;
+  /// The power factor of the appliance.
   final double powerFactor;
 
+  /// Creates an instance of [ApplianceLoad].
   ApplianceLoad({
     required this.name,
     required this.load,

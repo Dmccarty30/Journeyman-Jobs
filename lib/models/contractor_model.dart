@@ -1,15 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Model representing a storm work contractor
+/// A data model representing a storm work contractor.
+///
+/// This class encapsulates the details of a contracting company, including contact
+/// information and instructions for how electrical workers can sign up for storm
+/// restoration jobs.
 class Contractor {
+  /// The unique identifier for the contractor, typically the Firestore document ID.
   final String id;
+  /// The legal name of the contracting company.
   final String company;
+  /// Instructions for electrical workers on how to register or apply.
   final String howToSignup;
+  /// The primary contact phone number for the contractor.
   final String? phoneNumber;
+  /// The primary contact email address for the contractor.
   final String? email;
+  /// The official website of the contractor.
   final String? website;
+  /// The timestamp when the contractor record was created.
   final DateTime createdAt;
 
+  /// Creates an instance of the [Contractor] model.
   Contractor({
     required this.id,
     required this.company,
@@ -20,7 +32,10 @@ class Contractor {
     required this.createdAt,
   });
 
-  /// Creates a Contractor from JSON data
+  /// Creates a [Contractor] instance from a JSON map.
+  ///
+  /// This factory constructor can handle variations in key casing (e.g., 'COMPANY' vs 'company')
+  /// and correctly parses `Timestamp` or `String` date formats.
   factory Contractor.fromJson(Map<String, dynamic> json) {
     return Contractor(
       id: json['id'] ?? '',
@@ -37,7 +52,9 @@ class Contractor {
     );
   }
 
-  /// Converts Contractor to JSON
+  /// Converts the [Contractor] instance into a JSON-encodable map.
+  ///
+  /// Dates are converted to ISO 8601 string format.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -50,7 +67,9 @@ class Contractor {
     };
   }
 
-  /// Converts Contractor to Firestore format
+  /// Converts the [Contractor] instance into a map format suitable for Cloud Firestore.
+  ///
+  /// Dates are converted to Firestore `Timestamp` objects.
   Map<String, dynamic> toFirestore() {
     return {
       'id': id,
@@ -63,7 +82,7 @@ class Contractor {
     };
   }
 
-  /// Creates a copy of this Contractor with updated fields
+  /// Creates a new instance of [Contractor] with updated field values.
   Contractor copyWith({
     String? id,
     String? company,

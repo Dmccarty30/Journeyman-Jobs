@@ -11,24 +11,41 @@ import '../../electrical_components/circuit_board_background.dart';
 import '../../electrical_components/jj_electrical_toast.dart';
 import '../../navigation/app_router.dart';
 
+/// A screen that displays a list of available job opportunities.
+///
+/// This screen provides functionality for users to browse, search, and filter
+/// job postings. It supports infinite scrolling for pagination and features a
+/// custom electrical-themed design.
 class JobsScreen extends ConsumerStatefulWidget {
+  /// Creates a [JobsScreen].
   const JobsScreen({super.key});
 
+  /// The route name for this screen, used in navigation.
   static String routeName = 'jobs';
+  /// The route path for this screen, used in navigation.
   static String routePath = '/jobs';
 
   @override
   ConsumerState<JobsScreen> createState() => _JobsScreenState();
 }
 
+/// The state for the [JobsScreen].
+///
+/// Manages the UI state, including search, filtering, and scroll listeners for pagination.
 class _JobsScreenState extends ConsumerState<JobsScreen> {
+  /// The controller for the search input field in the search dialog.
   final TextEditingController _searchController = TextEditingController();
+  /// The scroll controller for the main job list, used to detect when the user
+  /// has scrolled to the bottom to trigger loading more jobs.
   final ScrollController _scrollController = ScrollController();
+  /// The currently selected filter category from the filter chips.
   String _selectedFilter = 'All Jobs';
+  /// The current text search query.
   String _searchQuery = '';
+  /// A flag to control the visibility of the advanced filters section.
   bool _showAdvancedFilters = false;
 
-  // Filter categories for electrical jobs
+  /// A predefined list of categories for filtering jobs.
   final List<String> _filterCategories = [
     'All Jobs',
     'Journeyman Lineman',
@@ -61,6 +78,8 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     super.dispose();
   }
 
+  /// A listener for the scroll controller that triggers loading more jobs
+  /// when the user reaches the end of the list.
   void _onScroll() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       // Load more jobs when reaching the bottom
@@ -68,6 +87,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     }
   }
 
+  /// Displays a dialog for the user to enter a text-based search query.
   void _showSearchDialog() {
     showDialog(
       context: context,
@@ -129,11 +149,14 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     );
   }
 
+  /// Applies the current filters by invalidating the jobs provider, which
+  /// will cause it to refetch the data with the new filter criteria.
   void _applyFilters() {
     // Trigger a new search with current filters
     ref.invalidate(jobsProvider);
   }
 
+  /// Shows a [JobDetailsDialog] for the selected job.
   void _showJobDetails(Job job) {
     showDialog(
       context: context,
@@ -141,11 +164,14 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     );
   }
 
+  /// A placeholder function to handle the "Bid Now" action.
   void _handleBidAction(Job job) {
     // TODO: Handle bid action
     JJElectricalToast.showInfo(context: context, message: 'Bidding on job at ${job.company}');
   }
 
+  /// Applies client-side filtering to the list of jobs based on the current
+  /// search query and selected filter category.
   List<Job> _getFilteredJobs(List<Job> jobs) {
     List<Job> filtered = jobs;
 
@@ -177,6 +203,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     return filtered;
   }
 
+  /// Builds the horizontal list of filter chips for job categories.
   Widget _buildFilterChips() {
     return SizedBox(
       height: 40,
@@ -212,6 +239,9 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     );
   }
 
+  /// Builds the UI for the advanced filters section.
+  ///
+  /// This is currently a placeholder and is hidden by default.
   Widget _buildAdvancedFilters() {
     if (!_showAdvancedFilters) return const SizedBox.shrink();
     
@@ -282,6 +312,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     );
   }
 
+  /// Builds the skeleton loading indicator UI shown while jobs are being fetched.
   Widget _buildLoadingIndicator() {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -292,6 +323,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     );
   }
 
+  /// Builds the UI to display when an error occurs while fetching jobs.
   Widget _buildErrorState(String error) {
     return Center(
       child: Padding(
@@ -330,6 +362,8 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     );
   }
 
+  /// Builds the UI to display when no jobs match the current filters or
+  /// when no jobs are available.
   Widget _buildEmptyState() {
     return Center(
       child: Padding(

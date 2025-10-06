@@ -2,11 +2,16 @@ import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/contractor_model.dart';
 
+/// A service for interacting with the `contractors` collection in Firestore.
+///
+/// Provides methods to fetch, search, and stream contractor data.
 class ContractorService {
   static const String _collection = 'contractors';
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   /// Fetches all contractors from Firestore, ordered by company name.
+  ///
+  /// Returns a `Future<List<Contractor>>`. If an error occurs, it returns an empty list.
   Future<List<Contractor>> getAllContractors() async {
     try {
       final QuerySnapshot snapshot = await _firestore
@@ -27,7 +32,12 @@ class ContractorService {
     }
   }
 
-  /// Searches contractors by company name (prefix search).
+  /// Searches for contractors by company name using a prefix search.
+  ///
+  /// - [query]: The search string to match against the beginning of company names.
+  ///
+  /// If the [query] is empty, it returns all contractors.
+  /// Returns a `Future<List<Contractor>>` with matching results, or an empty list on error.
   Future<List<Contractor>> searchContractors(String query) async {
     if (query.isEmpty) {
       return getAllContractors();
@@ -53,7 +63,11 @@ class ContractorService {
     }
   }
 
-  /// Gets a specific contractor by ID.
+  /// Retrieves a specific contractor by their document ID.
+  ///
+  /// - [id]: The unique ID of the contractor document in Firestore.
+  ///
+  /// Returns a `Future<Contractor?>` which is the contractor object if found, otherwise `null`.
   Future<Contractor?> getContractorById(String id) async {
     try {
       final DocumentSnapshot doc = await _firestore
@@ -74,6 +88,10 @@ class ContractorService {
   }
 
   /// Provides a real-time stream of all contractors, ordered by company name.
+  ///
+  /// This is useful for UIs that need to update automatically when contractor data changes.
+  ///
+  /// Returns a `Stream<List<Contractor>>`.
   Stream<List<Contractor>> contractorsStream() {
     return _firestore
         .collection(_collection)

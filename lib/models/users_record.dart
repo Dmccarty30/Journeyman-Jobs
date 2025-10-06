@@ -1,18 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 
+/// An immutable data model representing a summarized user record from Firestore.
+///
+/// This class is a lightweight alternative to the more comprehensive [UserModel],
+/// often used for displaying user information in lists or summaries where not all
+/// profile details are needed.
 @immutable
 class UsersRecord {
+  /// The unique identifier for the user.
   final String uid;
+  /// The user's email address.
   final String email;
+  /// The user's display name.
   final String displayName;
+  /// The user's IBEW local union number.
   final String? localNumber;
+  /// A list of the user's professional certifications.
   final List<String>? certifications;
+  /// The user's years of experience in their trade.
   final int? yearsExperience;
+  /// The maximum distance the user is willing to travel for work, in miles.
   final double? preferredDistance;
+  /// A flag indicating if the user's account is active.
   final bool isActive;
+  /// The timestamp when the user account was created.
   final DateTime? createdTime;
 
+  /// Creates an instance of [UsersRecord].
   const UsersRecord({
     required this.uid,
     required this.email,
@@ -25,6 +40,7 @@ class UsersRecord {
     this.createdTime,
   });
 
+  /// Creates a new [UsersRecord] instance with updated field values.
   UsersRecord copyWith({
     String? uid,
     String? email,
@@ -49,6 +65,9 @@ class UsersRecord {
     );
   }
 
+  /// Creates a [UsersRecord] instance from a JSON map.
+  ///
+  /// Includes robust parsing for various data types.
   factory UsersRecord.fromJson(Map<String, dynamic> json) {
     DateTime? parseDateTime(dynamic value) {
       if (value == null) return null;
@@ -98,6 +117,9 @@ class UsersRecord {
     }
   }
 
+  /// Serializes the [UsersRecord] instance to a JSON map.
+  ///
+  /// - [useFirestoreTypes]: If `true`, converts `DateTime` to Firestore `Timestamp`.
   Map<String, dynamic> toJson({bool useFirestoreTypes = false}) {
     final Map<String, dynamic> data = {
       'uid': uid,
@@ -117,14 +139,17 @@ class UsersRecord {
     return data;
   }
 
+  /// A convenience method that converts the instance to a Firestore-compatible map.
   Map<String, dynamic> toFirestore() => toJson(useFirestoreTypes: true);
 
+  /// Creates a [UsersRecord] instance from a Firestore [DocumentSnapshot].
   factory UsersRecord.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data() ?? {};
     data['uid'] = doc.id;
     return UsersRecord.fromJson(data);
   }
 
+  /// Checks if the record has the minimum required data to be considered valid.
   bool get isValid => uid.isNotEmpty && email.isNotEmpty && displayName.isNotEmpty;
 
   @override
