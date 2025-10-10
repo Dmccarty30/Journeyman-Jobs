@@ -1,0 +1,4 @@
+- [x] Analyze the error and identify the issue
+- [ ] Fix the getter to return the proper provider
+- [ ] Update the code to use JobsState properly
+- [ ] Verify the fix resolves the compilation error

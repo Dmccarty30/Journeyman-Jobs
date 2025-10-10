@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
 import '../../electrical_components/circuit_board_background.dart';
-import '../../electrical_components/jj_electrical_toast.dart';
 import '../../navigation/app_router.dart';
 import '../../providers/riverpod/jobs_riverpod_provider.dart';
 import '../../providers/riverpod/auth_riverpod_provider.dart';
@@ -578,35 +577,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingXs),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              '$label:',
-              style: AppTheme.bodyMedium.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: AppTheme.bodyMedium,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _submitJobApplication(Job job) {
-    JJElectricalToast.showSuccess(context: context, message: 'Application submitted for ${job.classification ?? 'the position'}!');
-  }
 
   Job _convertJobsRecordToJob(JobsRecord jobsRecord) {
     return Job(

@@ -64,7 +64,7 @@ class _CrewOnboardingScreenState extends State<CrewOnboardingScreen> {
               
               // Subtitle
               Text(
-                'Join the team or build your own',
+                'Build your crew and start collaborating',
                 style: AppTheme.headlineSmall.copyWith(
                   color: AppTheme.accentCopper,
                   fontWeight: FontWeight.w500,
@@ -84,7 +84,7 @@ class _CrewOnboardingScreenState extends State<CrewOnboardingScreen> {
               
               // Description
               Text(
-                'Whether you want to create your own crew or join an existing one, get started below to access crew features, messaging, and job sharing.',
+                'Create your own crew to access crew features, messaging, and job sharing. Get started below to build your team.',
                 style: AppTheme.bodyLarge.copyWith(
                   color: AppTheme.textSecondary,
                   height: 1.6,
@@ -109,8 +109,8 @@ class _CrewOnboardingScreenState extends State<CrewOnboardingScreen> {
                   onPressed: () {
                     context.go(AppRouter.createCrew);
                   },
-                  icon: const Icon(Icons.add, color: AppTheme.white),
-                  label: const Text('Create a Crew', style: TextStyle(color: AppTheme.white)),
+                  icon: const Icon(Icons.arrow_forward, color: AppTheme.white),
+                  label: const Text('Next', style: TextStyle(color: AppTheme.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryNavy,
                     foregroundColor: AppTheme.white,
@@ -123,31 +123,6 @@ class _CrewOnboardingScreenState extends State<CrewOnboardingScreen> {
                 ),
               ).animate().fadeIn(
                 delay: const Duration(milliseconds: 1000),
-                duration: const Duration(milliseconds: 600),
-              ),
-              
-              const SizedBox(height: AppTheme.spacingLg),
-              
-              // Join Crew Button (Outlined)
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    context.go(AppRouter.joinCrew);
-                  },
-                  icon: const Icon(Icons.group_add, color: AppTheme.accentCopper),
-                  label: const Text('Join a Crew', style: TextStyle(color: AppTheme.accentCopper)),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppTheme.accentCopper,
-                    side: BorderSide(color: AppTheme.accentCopper, width: 2),
-                    padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingLg),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                  ),
-                ),
-              ).animate().fadeIn(
-                delay: const Duration(milliseconds: 1200),
                 duration: const Duration(milliseconds: 600),
               ),
             ],

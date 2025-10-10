@@ -100,6 +100,7 @@ class _StormScreenState extends State<StormScreen> {
   final PowerOutageService _powerOutageService = PowerOutageService();
   List<PowerOutageState> _powerOutages = [];
   bool _isLoadingOutages = true;
+  bool _isPowerOutageExpanded = true;
   
   final List<String> _regions = [
     'All Regions',
@@ -193,6 +194,22 @@ class _StormScreenState extends State<StormScreen> {
         });
       }
     }
+  }
+
+  Future<bool> _checkAdminStatus(String uid) async {
+    // TODO: Check if current user is admin
+    // final isAdmin = await _checkAdminStatus(currentUser.uid);
+    // if (!isAdmin) return SizedBox.shrink();
+    return false; // Placeholder - implement admin check logic
+  }
+
+  List<PowerOutageState> get _sortedPowerOutages {
+    final sorted = List<PowerOutageState>.from(_powerOutages);
+    sorted.sort((a, b) {
+      // Sort by state name alphabetically
+      return a.stateName.compareTo(b.stateName);
+    });
+    return sorted;
   }
 
   Widget _buildStormDetailCard(String title, String description, IconData icon, Color iconColor) {
@@ -305,7 +322,7 @@ class _StormScreenState extends State<StormScreen> {
                     padding: const EdgeInsets.all(AppTheme.spacingLg),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [AppTheme.warningYellow, AppTheme.errorRed],
+                        colors: [AppTheme.primaryNavy, AppTheme.accentCopper],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -355,88 +372,80 @@ class _StormScreenState extends State<StormScreen> {
 
                   const SizedBox(height: AppTheme.spacingLg),
 
-                  // Storm work stats
-                  Text(
-                    'Current Storm Activity',
-                    style: AppTheme.headlineSmall.copyWith(
-                      color: AppTheme.primaryNavy,
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spacingMd),
-                  
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildStormStatCard(
-                          'Active Storms',
-                          '${_activeStorms.length}',
-                          Icons.storm_outlined,
-                          AppTheme.errorRed,
-                        ),
-                      ),
-                      const SizedBox(width: AppTheme.spacingMd),
-                      Expanded(
-                        child: _buildStormStatCard(
-                          'Open Positions',
-                          '${_activeStorms.fold(0, (sum, storm) => sum + storm.openPositions)}',
-                          Icons.flash_on_outlined,
-                          AppTheme.warningYellow,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: AppTheme.spacingMd),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildStormStatCard(
-                          'Avg Pay Rate',
-                          '\$65/hr',
-                          Icons.attach_money,
-                          AppTheme.successGreen,
-                        ),
-                      ),
-                      const SizedBox(width: AppTheme.spacingMd),
-                      Expanded(
-                        child: _buildStormStatCard(
-                          'Avg Per Diem',
-                          '\$110/day',
-                          Icons.hotel,
-                          AppTheme.accentCopper,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: AppTheme.spacingLg),
-
-                  // Power outage section
+                  // Power outage section with toggle
                   if (_powerOutages.isNotEmpty) ...[
                     PowerOutageSummary(outages: _powerOutages),
                     const SizedBox(height: AppTheme.spacingLg),
-                    
-                    Text(
-                      'Major Power Outages by State',
-                      style: AppTheme.headlineSmall.copyWith(
-                        color: AppTheme.primaryNavy,
+
+                    // Power outage toggle header
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppTheme.white,
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        border: Border.all(
+                          color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: ListTile(
+                        leading: Icon(
+                          _isPowerOutageExpanded ? Icons.expand_less : Icons.expand_more,
+                          color: AppTheme.primaryNavy,
+                        ),
+                        title: Text(
+                          'Power Outages by State',
+                          style: AppTheme.headlineSmall.copyWith(
+                            color: AppTheme.primaryNavy,
+                          ),
+                        ),
+                        subtitle: Text(
+                          '${_powerOutages.length} states with active outages',
+                          style: AppTheme.bodySmall.copyWith(
+                            color: AppTheme.textSecondary,
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            _isPowerOutageExpanded = !_isPowerOutageExpanded;
+                          });
+                        },
+                        trailing: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacingSm,
+                            vertical: AppTheme.spacingXs,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppTheme.infoBlue.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                          ),
+                          child: Text(
+                            _isPowerOutageExpanded ? 'COLLAPSE' : 'EXPAND',
+                            style: AppTheme.labelSmall.copyWith(
+                              color: AppTheme.infoBlue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: AppTheme.spacingMd),
-                    
-                    if (_isLoadingOutages)
-                      Center(
-                        child: CircularProgressIndicator(
-                          color: AppTheme.accentCopper,
-                        ),
-                      )
-                    else
-                      ..._powerOutages.map((outage) => PowerOutageCard(
-                        outageData: outage,
-                        onTap: () => _showOutageDetails(context, outage),
-                      )),
-                    
+
+                    // Expandable power outage cards
+                    if (_isPowerOutageExpanded) ...[
+                      const SizedBox(height: AppTheme.spacingMd),
+
+                      if (_isLoadingOutages)
+                        Center(
+                          child: CircularProgressIndicator(
+                            color: AppTheme.accentCopper,
+                          ),
+                        )
+                      else
+                        ..._sortedPowerOutages.map((outage) => PowerOutageCard(
+                          outageData: outage,
+                          onTap: () => _showOutageDetails(context, outage),
+                        )),
+                    ],
+
                     const SizedBox(height: AppTheme.spacingLg),
                   ],
 
@@ -490,16 +499,147 @@ class _StormScreenState extends State<StormScreen> {
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
 
-                  // Active Storm Events Section
-                  Text(
-                    'Active Storm Events',
-                    style: AppTheme.headlineSmall.copyWith(
-                      color: AppTheme.primaryNavy,
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spacingMd),
+                  // Emergency Declarations Section (Admin Only)
+                  FutureBuilder<bool>(
+                    future: _checkAdminStatus('current-user-id'), // TODO: Replace with actual user ID
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
+                          width: double.infinity,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: AppTheme.white,
+                            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                            border: Border.all(
+                              color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: AppTheme.accentCopper,
+                            ),
+                          ),
+                        );
+                      }
 
-                  ..._filteredStorms.map((storm) => StormEventCard(storm: storm)),
+                      if (snapshot.data == true) {
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(AppTheme.spacingLg),
+                          decoration: BoxDecoration(
+                            color: AppTheme.white,
+                            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                            boxShadow: [AppTheme.shadowMd],
+                            border: Border.all(
+                              color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.video_library,
+                                    color: AppTheme.primaryNavy,
+                                    size: AppTheme.iconMd,
+                                  ),
+                                  const SizedBox(width: AppTheme.spacingSm),
+                                  Text(
+                                    'Emergency Declarations',
+                                    style: AppTheme.headlineSmall.copyWith(
+                                      color: AppTheme.primaryNavy,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(width: AppTheme.spacingSm),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: AppTheme.spacingSm,
+                                      vertical: AppTheme.spacingXs,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.warningYellow.withValues(alpha: 0.2),
+                                      borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                                    ),
+                                    child: Text(
+                                      'ADMIN ONLY',
+                                      style: AppTheme.labelSmall.copyWith(
+                                        color: AppTheme.warningYellow,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: AppTheme.spacingMd),
+                              Text(
+                                'Real-time video updates from emergency management',
+                                style: AppTheme.bodyMedium.copyWith(
+                                  color: AppTheme.textSecondary,
+                                ),
+                              ),
+                              const SizedBox(height: AppTheme.spacingMd),
+                              // TODO: Implement video player widget
+                              // Use video_player package or chewie for video playback
+                              // Videos should be uploaded by admins via Firebase Storage
+                              // Display in a ListView with thumbnail, title, timestamp
+                              // Example:
+                              // VideoPlayerWidget(
+                              //   videoUrl: 'https://storage.googleapis.com/...',
+                              //   thumbnail: 'https://...',
+                              //   title: 'Governor Emergency Declaration - Hurricane Milton',
+                              //   timestamp: DateTime.now(),
+                              // )
+                              Container(
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.lightGray.withValues(alpha: 0.3),
+                                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                  border: Border.all(
+                                    color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.video_library_outlined,
+                                      size: 48,
+                                      color: AppTheme.textSecondary,
+                                    ),
+                                    const SizedBox(height: AppTheme.spacingSm),
+                                    Text(
+                                      'Video player coming soon',
+                                      style: AppTheme.bodyMedium.copyWith(
+                                        color: AppTheme.textSecondary,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Admin video upload functionality',
+                                      style: AppTheme.bodySmall.copyWith(
+                                        color: AppTheme.textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // TODO: Add video upload functionality for admins
+                              // TODO: Implement video player with controls
+                              // TODO: Add video metadata (title, description, timestamp)
+                              // TODO: Implement video list with pagination
+                            ],
+                          ),
+                        );
+                      }
+
+                      // Non-admin users see nothing
+                      return const SizedBox.shrink();
+                    },
+                  ),
 
                   const SizedBox(height: AppTheme.spacingLg),
 

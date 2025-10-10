@@ -1,6 +1,7 @@
 
 class CrewPreferences {
   final List<String> jobTypes;
+  final List<String> constructionTypes;
   final double? minHourlyRate;
   final int? maxDistanceMiles;
   final List<String> preferredCompanies;
@@ -10,6 +11,7 @@ class CrewPreferences {
   
   CrewPreferences({
     required this.jobTypes,
+    required this.constructionTypes,
     this.minHourlyRate,
     this.maxDistanceMiles,
     this.preferredCompanies = const [],
@@ -21,6 +23,7 @@ class CrewPreferences {
   factory CrewPreferences.fromMap(Map<String, dynamic> map) {
     return CrewPreferences(
       jobTypes: List<String>.from(map['jobTypes'] ?? []),
+      constructionTypes: List<String>.from(map['constructionTypes'] ?? []),
       minHourlyRate: map['minHourlyRate']?.toDouble(),
       maxDistanceMiles: map['maxDistanceMiles'] as int?,
       preferredCompanies: List<String>.from(map['preferredCompanies'] ?? []),
@@ -33,6 +36,7 @@ class CrewPreferences {
   Map<String, dynamic> toJson() {
     return {
       'jobTypes': jobTypes,
+      'constructionTypes': constructionTypes,
       'minHourlyRate': minHourlyRate,
       'maxDistanceMiles': maxDistanceMiles,
       'preferredCompanies': preferredCompanies,
@@ -45,6 +49,7 @@ class CrewPreferences {
   factory CrewPreferences.empty() {
     return CrewPreferences(
       jobTypes: [],
+      constructionTypes: [],
       minHourlyRate: null,
       maxDistanceMiles: null,
       preferredCompanies: [],
@@ -53,26 +58,27 @@ class CrewPreferences {
       matchThreshold: 50,
     );
   }
-
-  CrewPreferences copyWith({
-    List<String>? jobTypes,
-    double? minHourlyRate,
-    int? maxDistanceMiles,
-    List<String>? preferredCompanies,
-    List<String>? requiredSkills,
-    bool? autoShareEnabled,
-    int? matchThreshold,
-  }) {
-    return CrewPreferences(
-      jobTypes: jobTypes ?? this.jobTypes,
-      minHourlyRate: minHourlyRate ?? this.minHourlyRate,
-      maxDistanceMiles: maxDistanceMiles ?? this.maxDistanceMiles,
-      preferredCompanies: preferredCompanies ?? this.preferredCompanies,
-      requiredSkills: requiredSkills ?? this.requiredSkills,
-      autoShareEnabled: autoShareEnabled ?? this.autoShareEnabled,
-      matchThreshold: matchThreshold ?? this.matchThreshold,
-    );
-  }
+CrewPreferences copyWith({
+  List<String>? jobTypes,
+  List<String>? constructionTypes,
+  double? minHourlyRate,
+  int? maxDistanceMiles,
+  List<String>? preferredCompanies,
+  List<String>? requiredSkills,
+  bool? autoShareEnabled,
+  int? matchThreshold,
+}) {
+  return CrewPreferences(
+    jobTypes: jobTypes ?? this.jobTypes,
+    constructionTypes: constructionTypes ?? this.constructionTypes,
+    minHourlyRate: minHourlyRate ?? this.minHourlyRate,
+    maxDistanceMiles: maxDistanceMiles ?? this.maxDistanceMiles,
+    preferredCompanies: preferredCompanies ?? this.preferredCompanies,
+    requiredSkills: requiredSkills ?? this.requiredSkills,
+    autoShareEnabled: autoShareEnabled ?? this.autoShareEnabled,
+    matchThreshold: matchThreshold ?? this.matchThreshold,
+  );
+}
 
   Map<String, dynamic> toMap() {
     return toJson();

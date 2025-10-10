@@ -12,6 +12,7 @@ import 'package:journeyman_jobs/domain/exceptions/member_exception.dart';
 import 'package:journeyman_jobs/domain/exceptions/messaging_exception.dart';
 import '../../../services/offline_data_service.dart';
 import '../../../services/connectivity_service.dart';
+import '../../../utils/structured_logging.dart';
 
 import 'package:journeyman_jobs/domain/enums/member_role.dart';
 import 'package:journeyman_jobs/domain/enums/permission.dart';
@@ -291,13 +292,58 @@ class CrewService {
           lastActivityAt: DateTime.now(),
         );
 
-        await _firestore.collection('crews').doc(crewId).set(crew.toFirestore());
+        // Ensure foreman is added to members subcollection with correct role
+        final member = CrewMember(
+          userId: foremanId,
+          crewId: crewId,
+          role: MemberRole.foreman,
+          joinedAt: DateTime.now(),
+          permissions: MemberPermissions.fromRole(MemberRole.foreman),
+          isAvailable: true,
+          lastActive: DateTime.now(),
+          isActive: true,
+        );
+
+        // Use transaction to ensure both crew creation and member addition succeed together
+        await _firestore.runTransaction((transaction) async {
+          transaction.set(_firestore.collection('crews').doc(crewId), crew.toFirestore());
+          transaction.set(
+            _firestore.collection('crews').doc(crewId).collection('members').doc(foremanId),
+            member.toFirestore()
+          );
+        });
+
         await _incrementCrewCreationCount(foremanId);
       });
     } on CrewException {
       rethrow; // Rethrow custom exceptions directly
     } on FirebaseException catch (e) {
-      throw CrewException('Firestore error creating crew: ${e.message}', code: e.code);
+      // Provide more specific error messages for common Firestore errors
+      if (e.code == 'permission-denied') {
+        throw CrewException(
+          'Permission denied. You may not have the required privileges to create a crew. '
+          'Please ensure you are authenticated and try again. '
+          'If the problem persists, contact support.',
+          code: 'permission-denied'
+        );
+      } else if (e.code == 'unauthenticated') {
+        throw CrewException(
+          'Authentication required. Please sign in to create a crew.',
+          code: 'unauthenticated'
+        );
+      } else if (e.code == 'not-found') {
+        throw CrewException(
+          'Database collection not found. Please try again later.',
+          code: 'collection-not-found'
+        );
+      } else if (e.code == 'already-exists') {
+        throw CrewException(
+          'A crew with this ID already exists. Please try again.',
+          code: 'crew-already-exists'
+        );
+      } else {
+        throw CrewException('Firestore error creating crew: ${e.message}', code: e.code);
+      }
     } catch (e) {
       throw CrewException('An unexpected error occurred while creating crew: $e', code: 'unknown-error');
     }
@@ -1301,16 +1347,100 @@ class CrewService {
     required Permission permission,
   }) async {
     try {
+      StructuredLogger.info(
+        'Checking permission',
+        category: LogCategory.business,
+        context: {
+          'crewId': crewId,
+          'userId': userId,
+          'permission': permission.toString(),
+        },
+      );
+
+      // First check if user is the foreman (they should always have permissions)
+      final crewDoc = await _firestore.collection('crews').doc(crewId).get();
+      if (crewDoc.exists) {
+        final crew = Crew.fromFirestore(crewDoc);
+        if (crew.foremanId == userId) {
+          StructuredLogger.info(
+            'User is foreman, granting permission',
+            category: LogCategory.business,
+            context: {
+              'crewId': crewId,
+              'userId': userId,
+              'permission': permission.toString(),
+              'granted': true,
+            },
+          );
+          return RolePermissions.hasPermission(MemberRole.foreman, permission);
+        }
+      }
+
       final member = await getCrewMember(crewId, userId);
-      if (member == null) return false;
+      if (member == null) {
+        StructuredLogger.warning(
+          'User not found in crew members',
+          category: LogCategory.business,
+          context: {
+            'crewId': crewId,
+            'userId': userId,
+            'permission': permission.toString(),
+          },
+        );
+        return false;
+      }
 
       final role = member.role;
-      return RolePermissions.hasPermission(role, permission);
+      final hasPermission = RolePermissions.hasPermission(role, permission);
+
+      StructuredLogger.info(
+        'Permission check result',
+        category: LogCategory.business,
+        context: {
+          'crewId': crewId,
+          'userId': userId,
+          'permission': permission.toString(),
+          'role': role.toString(),
+          'granted': hasPermission,
+        },
+      );
+
+      return hasPermission;
     } on AppException {
+      StructuredLogger.error(
+        'AppException during permission check',
+        category: LogCategory.business,
+        context: {
+          'crewId': crewId,
+          'userId': userId,
+          'permission': permission.toString(),
+          'error': 'AppException',
+        },
+      );
       rethrow; // Rethrow custom exceptions
-    } on FirebaseException {
+    } on FirebaseException catch (e) {
+      StructuredLogger.error(
+        'FirebaseException during permission check',
+        category: LogCategory.business,
+        context: {
+          'crewId': crewId,
+          'userId': userId,
+          'permission': permission.toString(),
+          'error': e.toString(),
+        },
+      );
       return false;
     } catch (e) {
+      StructuredLogger.error(
+        'Unexpected error during permission check',
+        category: LogCategory.business,
+        context: {
+          'crewId': crewId,
+          'userId': userId,
+          'permission': permission.toString(),
+          'error': e.toString(),
+        },
+      );
       return false;
     }
   }

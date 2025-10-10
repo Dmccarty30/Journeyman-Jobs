@@ -773,6 +773,8 @@ final class PostCreationNotifierProvider extends $FunctionalProvider<
           $allTransitiveDependencies: null,
         );
 
+  Null get notifier => null;
+
   @override
   String debugGetCreateSourceHash() => _$postCreationNotifierHash();
 

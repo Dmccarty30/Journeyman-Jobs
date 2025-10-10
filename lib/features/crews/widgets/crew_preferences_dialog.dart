@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import '../models/crew_preferences.dart';
 import '../services/crew_service.dart';
 import '../../../design_system/app_theme.dart';
+import '../../../domain/enums/enums.dart';
+import '../../../utils/text_formatting_wrapper.dart';
+import '../../../electrical_components/jj_circuit_breaker_switch.dart';
 
 class CrewPreferencesDialog extends StatefulWidget {
   final CrewPreferences initialPreferences;
@@ -27,19 +30,8 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
-  // Common job types in electrical industry
-  final List<String> _availableJobTypes = [
-    'Inside Wireman',
-    'Journeyman Lineman',
-    'Apprentice Lineman',
-    'Electrical Foreman',
-    'Project Manager',
-    'Electrical Engineer',
-    'Safety Coordinator',
-    'Estimator',
-    'Service Technician',
-    'Maintenance Electrician',
-  ];
+  // Common construction types
+  final List<String> _availableConstructionTypes = ConstructionTypes.all.map((e) => toTitleCase(e)).toList();
 
   // Common electrical companies
   final List<String> _commonCompanies = [
@@ -98,11 +90,14 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
               size: AppTheme.iconMd,
             ),
             const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              widget.isNewCrew ? 'Set Crew Preferences' : 'Crew Job Preferences',
-              style: AppTheme.headlineMedium.copyWith(
-                color: AppTheme.white,
-                fontWeight: FontWeight.bold,
+            Expanded(
+              child: Text(
+                widget.isNewCrew ? 'Set Crew Preferences' : 'Crew Job Preferences',
+                style: AppTheme.headlineMedium.copyWith(
+                  color: AppTheme.white,
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const Spacer(),
@@ -112,6 +107,10 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
                 Icons.close,
                 color: AppTheme.white,
                 size: AppTheme.iconMd,
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 40,
+                minHeight: 40,
               ),
             ),
           ],
@@ -148,7 +147,7 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildJobTypesSection(),
+                        _buildConstructionTypesSection(),
                         const SizedBox(height: AppTheme.spacingMd),
                         _buildWageRangeSection(),
                         const SizedBox(height: AppTheme.spacingMd),
@@ -175,12 +174,12 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
     );
   }
 
-  Widget _buildJobTypesSection() {
+  Widget _buildConstructionTypesSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Job Types',
+          'Construction Types',
           style: AppTheme.titleLarge.copyWith(
             color: AppTheme.textPrimary,
             fontWeight: FontWeight.bold,
@@ -188,7 +187,7 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
         ),
         const SizedBox(height: AppTheme.spacingSm),
         Text(
-          'Select the types of electrical jobs your crew is interested in',
+          'Select the construction types your crew works on',
           style: AppTheme.bodySmall.copyWith(
             color: AppTheme.textSecondary,
           ),
@@ -197,11 +196,11 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
         Wrap(
           spacing: AppTheme.spacingXs,
           runSpacing: AppTheme.spacingXs,
-          children: _availableJobTypes.map((jobType) {
-            final isSelected = _preferences.jobTypes.contains(jobType);
+          children: _availableConstructionTypes.map((constructionType) {
+            final isSelected = _preferences.constructionTypes.contains(constructionType);
             return FilterChip(
               label: Text(
-                jobType,
+                constructionType,
                 style: AppTheme.bodySmall.copyWith(
                   color: isSelected ? AppTheme.white : AppTheme.textPrimary,
                 ),
@@ -211,11 +210,11 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
                 setState(() {
                   if (selected) {
                     _preferences = _preferences.copyWith(
-                      jobTypes: [..._preferences.jobTypes, jobType],
+                      constructionTypes: [..._preferences.constructionTypes, constructionType],
                     );
                   } else {
                     _preferences = _preferences.copyWith(
-                      jobTypes: _preferences.jobTypes.where((type) => type != jobType).toList(),
+                      constructionTypes: _preferences.constructionTypes.where((type) => type != constructionType).toList(),
                     );
                   }
                 });

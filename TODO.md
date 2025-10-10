@@ -145,3 +145,16 @@
 ## SETTINGS SCREEN
 
 - **lib\screens\storm\settings_screen.dart**
+
+- When i am in edit mode in the settings, if try to upload an image from my gallery, when i press upload or okay or whatever the button is called to upload the image, the entire app crashes.
+- When I press the `edit profile button` in the settings screen  I get an error "Error loading data 'init' is not a sub type of "string"
+- Change the main container at the top of the settings screen to reflect a more personal vibe or connection with the user by displaying their ticket number, their name and a random but catcthy expression,something, anything....as long as it is different than what it is now.
+
+### PROFILE SCREEN
+
+- At the top of the screen, i guess the header or maybe it could be part of the `app bar`, You need to remove the user's email and replace it with thier name or something else. Underneath that in copper is "IBEW Local 296" for example. That entire expression needs to be replaced with a `rich text widget` and formatted like so"IBEW Local: " [localNumber]
+- You need to implement or activate to tool tips again to better explain to users how to edit thier profiles.
+
+#### PROFESSIONAL TAB
+
+- For the `Books on` `text field` remove the hint text in the center of the text field and replace it with actual local number like.. REMOVE 'Book 1', 'Book 2' and replace it with 84, 222, 111, 1249, 71. I feel like user would better understand what it is that we are asking of them.

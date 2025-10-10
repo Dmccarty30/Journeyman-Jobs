@@ -780,18 +780,18 @@ packages:
     dependency: transitive
     description:
       name: flutter_plugin_android_lifecycle
-      sha256: b0694b7fb1689b0e6cc193b3f1fcac6423c4f93c74fb20b806c6b6f196db0c31
+      sha256: c2fe1001710127dfa7da89977a08d591398370d099aacdaa6d44da7eb14b8476
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.30"
+    version: "2.0.31"
   flutter_riverpod:
     dependency: "direct main"
     description:
       name: flutter_riverpod
-      sha256: "71a420767ae786f9402e4efb74e1119fa95b53e6a3781ab8ab21c121ac1349c6"
+      sha256: "9e2d6907f12cc7d23a846847615941bddee8709bf2bfd274acdf5e80bcf22fde"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.1"
+    version: "3.0.3"
   flutter_shaders:
     dependency: transitive
     description:
@@ -971,10 +971,10 @@ packages:
     dependency: transitive
     description:
       name: google_sign_in_android
-      sha256: "7abdfa0088dc8f7d08eb3dbb1665a72bcb5b37afa256c9ec5d21e1e2d7503e5c"
+      sha256: "799165f4c0621ed233bccdded4c2e92739bc1fe73e970163b2f7493b301adad3"
       url: "https://pub.dev"
     source: hosted
-    version: "7.2.0"
+    version: "7.2.1"
   google_sign_in_ios:
     dependency: transitive
     description:
@@ -1091,10 +1091,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker_android
-      sha256: "8dfe08ea7fcf7467dbaf6889e72eebd5e0d6711caae201fdac780eb45232cd02"
+      sha256: dd7a61daaa5896cc34b7bc95f66c60225ae6bee0d167dde0e21a9d9016cac0dc
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.13+3"
+    version: "0.8.13+4"
   image_picker_for_web:
     dependency: transitive
     description:
@@ -1248,10 +1248,10 @@ packages:
     dependency: transitive
     description:
       name: lucide_icons_flutter
-      sha256: b413c4249c816a8dc34f445e57ce04cbfb0760ea8e39d11c688857c023d30c59
+      sha256: "4cd040e7886620094a02567194074c6a9ba65c6c460352c8679822cb0806254d"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.1"
+    version: "3.1.2"
   matcher:
     dependency: transitive
     description:
@@ -1408,10 +1408,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_android
-      sha256: "993381400e94d18469750e5b9dcb8206f15bc09f9da86b9e44a9b0092a0066db"
+      sha256: "3b4c1fc3aa55ddc9cd4aa6759984330d5c8e66aa7702a6223c61540dc6380c37"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.18"
+    version: "2.2.19"
   path_provider_foundation:
     dependency: transitive
     description:
@@ -1592,10 +1592,10 @@ packages:
     dependency: transitive
     description:
       name: riverpod
-      sha256: b21446f04474040479b19004c5b729605cde221bbd14cf16ad0db8804dce4810
+      sha256: c406de02bff19d920b832bddfb8283548bfa05ce41c59afba57ce643e116aa59
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.1"
+    version: "3.0.3"
   riverpod_analyzer_utils:
     dependency: transitive
     description:
@@ -1608,18 +1608,18 @@ packages:
     dependency: "direct main"
     description:
       name: riverpod_annotation
-      sha256: d8154e04008b98015ee3e0514a5d929e3d15605790d28bcd74e63e2d415632a1
+      sha256: "7230014155777fc31ba3351bc2cb5a3b5717b11bfafe52b1553cb47d385f8897"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.1"
+    version: "3.0.3"
   riverpod_generator:
     dependency: "direct dev"
     description:
       name: riverpod_generator
-      sha256: af92fa4051568071f7e12bd44b8b4f3adc7470e3676bd5ac953582a9cce4a1c0
+      sha256: "49894543a42cf7a9954fc4e7366b6d3cb2e6ec0fa07775f660afcdd92d097702"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.1"
+    version: "3.0.3"
   rx:
     dependency: transitive
     description:
@@ -1656,10 +1656,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_android
-      sha256: "0b0f98d535319cb5cdd4f65783c2a54ee6d417a2f093dbb18be3e36e4c3d181f"
+      sha256: "34266009473bf71d748912da4bf62d439185226c03e01e2d9687bc65bbfcb713"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.14"
+    version: "2.4.15"
   shared_preferences_foundation:
     dependency: transitive
     description:
@@ -2005,10 +2005,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_android
-      sha256: c0fb544b9ac7efa10254efaf00a951615c362d1ea1877472f8f6c0fa00fcf15b
+      sha256: "5c8b6c2d89a78f5a1cca70a73d9d5f86c701b36b42f9c9dac7bad592113c28e9"
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.23"
+    version: "6.3.24"
   url_launcher_ios:
     dependency: transitive
     description:
@@ -2157,10 +2157,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: "66814138c3562338d05613a6e368ed8cfb237ad6d64a9e9334be3f309acfca03"
+      sha256: d7cb55e04cd34096cd3a79b3330245f54cb96a370a1c27adb3c84b917de8b08e
       url: "https://pub.dev"
     source: hosted
-    version: "5.14.0"
+    version: "5.15.0"
   wkt_parser:
     dependency: transitive
     description:

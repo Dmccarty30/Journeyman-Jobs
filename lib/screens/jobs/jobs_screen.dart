@@ -10,6 +10,7 @@ import '../../widgets/dialogs/job_details_dialog.dart';
 import '../../electrical_components/circuit_board_background.dart';
 import '../../electrical_components/jj_electrical_toast.dart';
 import '../../navigation/app_router.dart';
+import '../../utils/text_formatting_wrapper.dart';
 
 class JobsScreen extends ConsumerStatefulWidget {
   const JobsScreen({super.key});
@@ -126,11 +127,11 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
         itemBuilder: (context, index) {
           final category = _filterCategories[index];
           final isSelected = _selectedFilter == category;
-          
+
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
             child: FilterChip(
-              label: Text(category),
+              label: Text(toTitleCase(category)),
               selected: isSelected,
               onSelected: (selected) {
                 setState(() {
@@ -171,12 +172,12 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Advanced Filters',
-            style: AppTheme.headlineSmall.copyWith(
-              color: AppTheme.primaryNavy,
+            Text(
+              toTitleCase('Advanced Filters'),
+              style: AppTheme.headlineSmall.copyWith(
+                color: AppTheme.primaryNavy,
+              ),
             ),
-          ),
           const SizedBox(height: 12),
           // Add more advanced filter options here
           Row(
@@ -195,7 +196,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
                     backgroundColor: AppTheme.textSecondary,
                     foregroundColor: AppTheme.white,
                   ),
-                  child: const Text('Clear All'),
+                  child: Text(toTitleCase('Clear All')),
                 ),
               ),
               const SizedBox(width: 12),
@@ -211,7 +212,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
                     backgroundColor: AppTheme.primaryNavy,
                     foregroundColor: AppTheme.white,
                   ),
-                  child: const Text('Apply'),
+                  child: Text(toTitleCase('Apply')),
                 ),
               ),
             ],
@@ -245,7 +246,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Error loading jobs',
+              toTitleCase('Error loading jobs'),
               style: AppTheme.headlineMedium.copyWith(
                 color: AppTheme.textSecondary,
               ),
@@ -261,7 +262,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => ref.invalidate(jobsProvider),
-              child: const Text('Retry'),
+              child: Text(toTitleCase('Retry')),
             ),
           ],
         ),
@@ -283,7 +284,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'No jobs found',
+              toTitleCase('No jobs found'),
               style: AppTheme.headlineMedium.copyWith(
                 color: AppTheme.textSecondary,
               ),
@@ -309,7 +310,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
                   });
                   _applyFilters();
                 },
-                child: const Text('Clear Filters'),
+                child: Text(toTitleCase('Clear Filters')),
               ),
             ],
           ],

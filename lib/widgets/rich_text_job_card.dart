@@ -45,44 +45,46 @@ class RichTextJobCard extends StatelessWidget {
               rightLabel: 'Classification',
               rightValue: toTitleCase(job.classification ?? 'N/A'),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
+            Divider(color: AppTheme.accentCopper, height: 1, thickness: 1.5),
+            const SizedBox(height: 12),
 
             // Row 2: Contractor | Wages
             _buildTwoColumnRow(
               leftLabel: 'Contractor',
               leftValue: toTitleCase(job.company.isNotEmpty ? job.company : 'N/A'),
               rightLabel: 'Wages',
-              rightValue: job.wage != null && job.wage! > 0 
-                  ? '\${job.wage!.toStringAsFixed(2)}/hr' 
-                  : 'N/A',
-              rightValueColor: job.wage != null && job.wage! > 0 ? AppTheme.successGreen : null,
+              rightValue: job.wage != null && job.wage! > 0
+                  ? '\${job.wage!.toStringAsFixed(2)}/hr'
+                  : 'Contact for Rate',
+              rightValueColor: null, // Remove conditional coloring
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
 
             // Row 3: Location | Hours
             _buildTwoColumnRow(
               leftLabel: 'Location',
               leftValue: toTitleCase(job.location.isNotEmpty ? job.location : 'N/A'),
               rightLabel: 'Hours',
-              rightValue: job.hours != null ? '${job.hours}/week' : 'N/A',
+              rightValue: job.hours != null ? '${job.hours}/week' : 'Varies',
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
 
             // Row 4: Start Date | Per Diem
             _buildTwoColumnRow(
               leftLabel: 'Start Date',
-              leftValue: job.startDate ?? 'N/A',
+              leftValue: job.startDate ?? 'Flexible',
               rightLabel: 'Per Diem',
-              rightValue: job.perDiem ?? 'N/A',
+              rightValue: job.perDiem != null && job.perDiem!.isNotEmpty ? job.perDiem! : 'Not Specified',
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
 
             // Row 5: Type of Work (full width)
             _buildInfoRow(
               label: 'Type of Work',
               value: toTitleCase(job.typeOfWork ?? 'N/A'),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
 
             // Row 6: Notes/Requirements (full width)
             if (job.qualifications != null && job.qualifications!.isNotEmpty)
@@ -91,7 +93,7 @@ class RichTextJobCard extends StatelessWidget {
                 value: job.qualifications!,
               ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Action buttons
             Row(

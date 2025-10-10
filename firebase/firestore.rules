@@ -29,9 +29,23 @@ service cloud.firestore {
 
     // Crews collection: Access restricted to crew members and foreman
     match /crews/{crewId} {
-      allow read, write: if request.auth != null && 
+      // Allow read for members and foreman
+      allow read: if request.auth != null &&
         (request.auth.uid in resource.data.memberIds || request.auth.uid == resource.data.foremanId);
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.foremanId;
+
+      // Allow create for foreman - check if the authenticated user is the foreman
+      allow create: if request.auth != null && request.auth.uid == request.data.foremanId;
+
+      // Allow update for foreman and admins only (check members subcollection for role)
+      allow update: if request.auth != null && (
+        request.auth.uid == resource.data.foremanId ||
+        (exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role in ['admin', 'foreman'])
+      );
+
+      // Allow delete for foreman only
+      allow delete: if request.auth != null && request.auth.uid == resource.data.foremanId;
+    }
     }
 
     // FeedPosts subcollection under crews: Read/create for crew members, update/delete for author or foreman
