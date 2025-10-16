@@ -226,7 +226,7 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
                         _autoShareEnabled = value;
                       });
                     },
-                    activeColor: AppTheme.accentCopper,
+                    activeThumbColor: AppTheme.accentCopper,
                     tileColor: AppTheme.secondaryNavy,
                   ),
                   const SizedBox(height: 32),

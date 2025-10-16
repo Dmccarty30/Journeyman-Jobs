@@ -1,31 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/crews_riverpod_provider.dart';
-import '../providers/tailboard_riverpod_provider.dart';
 import '../models/models.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
 import '../../../design_system/app_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import '../../../navigation/app_router.dart';
 import '../../../providers/core_providers.dart' hide selectedCrewProvider, currentUserProvider;
-import '../services/crew_service.dart';
 import 'package:journeyman_jobs/electrical_components/jj_electrical_notifications.dart';
-import 'package:journeyman_jobs/models/conversation_model.dart';
 import 'package:journeyman_jobs/providers/riverpod/jobs_riverpod_provider.dart';
 import 'package:journeyman_jobs/widgets/electrical_circuit_background.dart';
-import 'package:journeyman_jobs/widgets/dialogs/job_details_dialog.dart';
-import 'package:journeyman_jobs/models/job_model.dart' as JobModel;
-import '../providers/crew_jobs_riverpod_provider.dart';
+import 'package:journeyman_jobs/models/job_model.dart';
 import '../providers/feed_provider.dart';
-import '../providers/messaging_riverpod_provider.dart';
 import '../widgets/crew_selection_dropdown.dart';
 import '../widgets/crew_preferences_dialog.dart';
 import '../widgets/tab_widgets.dart';
-import '../models/crew_member.dart';
-import 'dart:convert';
 
 // Extension method to add divide functionality to List
 extension ListExtensions<T> on List<T> {
@@ -52,7 +43,6 @@ class TailboardScreen extends ConsumerStatefulWidget {
 class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late TabController _tabController;
   int _selectedTab = 0;
-  String? _selectedCrewDisplay;
 
 
 
@@ -63,7 +53,8 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
     _tabController.addListener(_handleTabSelection);
     WidgetsBinding.instance.addObserver(this);
 
-    _selectedCrewDisplay = null;
+    // Remove this line since it's not needed
+    // _selectedCrewDisplay = null;
 
     // Animations will be applied directly on widgets using flutter_animate extensions
     // (e.g., .animate().fadeIn().slideY(begin: 0.1, end: 0))
@@ -728,7 +719,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
     final TextEditingController messageController = TextEditingController();
     final selectedCrew = ref.read(selectedCrewProvider);
     final jobsAsync = ref.watch(recentJobsProvider);
-    JobModel.Job? selectedJob;
+    Job? selectedJob;
 
     showModalBottomSheet(
       context: context,
@@ -763,7 +754,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.mediumGray),
                           );
                         }
-                        return DropdownButtonFormField<JobModel.Job>(
+                        return DropdownButtonFormField<Job>(
                           initialValue: selectedJob,
                           decoration: InputDecoration(
                             labelText: 'Select Job',
@@ -785,13 +776,13 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
                           ),
                           dropdownColor: AppTheme.secondaryNavy,
                           style: TextStyle(color: AppTheme.textOnDark),
-                          items: jobs.map<DropdownMenuItem<JobModel.Job>>((JobModel.Job job) {
-                            return DropdownMenuItem<JobModel.Job>(
+                          items: jobs.map<DropdownMenuItem<Job>>((Job job) {
+                            return DropdownMenuItem<Job>(
                               value: job,
                               child: Text(job.jobTitle ?? 'Untitled Job', style: TextStyle(color: AppTheme.textOnDark)),
                             );
                           }).toList(),
-                          onChanged: (JobModel.Job? job) {
+                          onChanged: (Job? job) {
                             setModalState(() {
                               selectedJob = job;
                             });
@@ -1089,7 +1080,6 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
                                 return;
                               }
 
-                              final subject = subjectController.text.trim();
                               final message = messageController.text.trim();
 
                               if (message.isEmpty) {
