@@ -1,5 +1,5 @@
 
-### Quick Review of the Provided Files
+# Quick Review of the Provided Files
 
 To ensure we're on the same page, here's a high-level synthesis of what I've gleaned from the documents. This builds on the Spec-Kit structure (which focuses on iterative, AI-assisted spec-driven development) and highlights how your app's maturity influences our customization:
 
@@ -21,7 +21,7 @@ Overall Insights:
 - **Key Themes**: Electrical branding (copper/navy, circuits/sparks), safety/weather integration (NOAA), crew collab (RBAC, messaging), offline resilience, Firebase-heavy backend, Flutter/Riverpod frontend.
 - **Gaps in Spec-Kit Coverage**: Spec-Kit is great for phased workflows but misses app-specifics like your custom electrical UI library, NOAA integrations, RBAC for crews, or production metrics/monitoring. It also doesn't deeply cover ongoing maintenance (e.g., tech debt refactoring) or industry compliance (e.g., union rules, safety protocols). We can add phases for "refine" (iterating on existing features) and "deploy/monitor" (post-implementation validation with metrics).
 
-### Brainstorming: Structuring the Customized Prompts
+## Brainstorming: Structuring the Customized Prompts
 
 Now, let's brainstorm how to adapt Spec-Kit's phases into a custom set of prompts (or prompt templates) for your app. The goal is a cohesive "Journeyman Jobs Spec-Kit" – a series of prompts you can feed to an AI (like me) for feature planning/implementation. We'll cover all Spec-Kit phases and fill gaps.
 

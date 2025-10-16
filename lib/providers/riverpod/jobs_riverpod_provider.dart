@@ -5,9 +5,8 @@ import '../../models/filter_criteria.dart';
 import '../../models/job_model.dart';
 import '../../services/resilient_firestore_service.dart';
 import '../../utils/concurrent_operations.dart';
-// TODO: Add back when utility classes are implemented
-// import '../../utils/filter_performance.dart';
-// import '../../utils/memory_management.dart';
+import '../../utils/filter_performance.dart';
+import '../../utils/memory_management.dart';
 
 part 'jobs_riverpod_provider.g.dart';
 
@@ -64,22 +63,18 @@ class JobsState {
 @riverpod
 ResilientFirestoreService firestoreService(Ref ref) => ResilientFirestoreService();
 
-/// Jobs notifier for managing job data and operations
-@riverpod
 class JobsNotifier extends _$JobsNotifier {
   late final ConcurrentOperationManager _operationManager;
-  // TODO: Implement these utility classes when ready
-  // late final FilterPerformanceEngine _filterEngine;
-  // late final BoundedJobList _boundedJobList;
-  // late final VirtualJobListState _virtualJobList;
+  late final FilterPerformanceEngine _filterEngine;
+  late final BoundedJobList _boundedJobList;
+  late final VirtualJobListState _virtualJobList;
 
   @override
   JobsState build() {
     _operationManager = ConcurrentOperationManager();
-    // TODO: Implement these utility classes
-    // _filterEngine = FilterPerformanceEngine();
-    // _boundedJobList = BoundedJobList();
-    // _virtualJobList = VirtualJobListState();
+    _filterEngine = FilterPerformanceEngine();
+    _boundedJobList = BoundedJobList();
+    _virtualJobList = VirtualJobListState();
 
     return const JobsState();
   }
@@ -94,8 +89,6 @@ class JobsNotifier extends _$JobsNotifier {
       return;
     }
 
-    print('[DEBUG] JobsNotifier.loadJobs called - isRefresh: $isRefresh, filter: ${filter?.toString()}');
-
     if (isRefresh) {
       state = state.copyWith(
         jobs: <Job>[],
@@ -103,9 +96,8 @@ class JobsNotifier extends _$JobsNotifier {
         hasMoreJobs: true,
         isLoading: true,
       );
-      // TODO: Implement utility classes
-      // _boundedJobList.clear();
-      // _virtualJobList.clear();
+      _boundedJobList.clear();
+      _virtualJobList.clear();
     } else {
       state = state.copyWith(isLoading: true);
     }
@@ -214,18 +206,13 @@ class JobsNotifier extends _$JobsNotifier {
 
   /// Update visible jobs for virtual scrolling
   void updateVisibleJobsRange(int startIndex, int endIndex) {
-    // Basic implementation: filter the visible jobs based on the range
     if (startIndex < 0 || endIndex < 0 || startIndex > endIndex) {
       return;
     }
 
-    final List<Job> visibleJobs;
-    if (startIndex >= state.jobs.length) {
-      visibleJobs = <Job>[];
-    } else {
-      final safeEndIndex = endIndex >= state.jobs.length ? state.jobs.length - 1 : endIndex;
-      visibleJobs = state.jobs.sublist(startIndex, safeEndIndex + 1);
-    }
+    // Use VirtualJobListState for efficient virtual scrolling
+    _virtualJobList.updateJobs(state.jobs, startIndex);
+    final visibleJobs = _virtualJobList.visibleJobs;
 
     state = state.copyWith(visibleJobs: visibleJobs);
   }
@@ -255,17 +242,19 @@ class JobsNotifier extends _$JobsNotifier {
                   state.loadTimes.length,
             ),
       'totalJobsLoaded': state.totalJobsLoaded,
-      // TODO: Add back when utility classes are implemented
-      // 'memoryUsage': _boundedJobList.estimatedMemoryUsage,
-      // 'filterPerformance': _filterEngine.getAverageFilterTime(),
+      'memoryUsage': _boundedJobList.estimatedMemoryUsage,
+      'filterPerformance': _filterEngine.getStats(),
+      'virtualListStats': _virtualJobList.getStats(),
     };
 
   /// Dispose resources
   void dispose() {
-    // TODO: Implement dispose when utility classes are ready
-    // _operationManager.dispose();
-    // _boundedJobList.dispose();
-    // _virtualJobList.dispose();
+    _operationManager.dispose();
+    // Note: BoundedJobList and VirtualJobListState don't implement dispose methods
+    // as they only contain in-memory data structures that will be garbage collected
+    // _boundedJobList.dispose(); // Not needed - only manages List<Job>
+    // _virtualJobList.dispose(); // Not needed - only manages Map<String, Job> and List<String>
+    _filterEngine.clearCaches(); // Clear filter caches to free memory
   }
 }
 

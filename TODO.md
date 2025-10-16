@@ -79,6 +79,7 @@
 - Read "docs\Storm-Analysis.md" to get a better understanding of this files structure and potential issues
 - The borders around everything on the `Storm Screen` are to thick. They need to be reduced in thickness by 1/2.
 - I am not sure what is exactly is going on with this screen. They're just like everything is inside of the container or column including the background Like the circuit board background is inside this container and column it just seems weird something's off but needs to be redone Yeah something's off
+- line 504 has check admin status. I do not know why this is in my codebase. I do not have nor do i want anything to do with an admin status.
 
 ## TAILBOARD SCREEN
 
