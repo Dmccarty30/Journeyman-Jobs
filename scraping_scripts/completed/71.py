@@ -13,7 +13,7 @@ from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_t
 DISPATCH_URL = "https://www.ibew71.org/AvailableJobs/#"
 OUTPUT_DIR = Path("scraping_scripts/outputs")
 OUTPUT_FILE = OUTPUT_DIR / "ibew71_jobs.json"
-FIREBASE_CREDENTIALS_PATH = "C:\\Users\\david\\Desktop\\Journeyman-Jobs\\scraping_scripts\\journeyman-jobs-firebase-adminsdk-rwcqx-b2872d649a.json"  # <-- fill in your service‑account JSON path
+FIREBASE_CREDENTIALS_PATH = "C:\\Users\\david\\Desktop\\Journeyman-Jobs\\scraping_scripts\\jj-firebase-adminsdk.json"  # <-- fill in your service‑account JSON path
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s – %(message)s")
 logger = logging.getLogger(__name__)
@@ -31,6 +31,7 @@ TARGET_CLASSIFICATIONS = {
     "journeyman-cbl-splicer",
     "line-equipment-operator",
     "journeyman-substation-tech",
+    "inside-wireman",
 }
 
 # Map the parsed keys to the desired JSON keys (adapted from the MD guidance)
@@ -42,6 +43,16 @@ FIELD_MAP = {
     "Report On": "startTime",
     "Comments": "notes",  # Will parse further for sub-fields
 }
+
+def to_title_case(value):
+    """Converts a string to title case, removing hyphens, periods, and other special characters."""
+    if not value:
+        return ""
+    # Remove special characters: hyphens, periods, etc.
+    cleaned = re.sub(r'[-.\s]+', ' ', value)  # Replace hyphens/periods/spaces with single space
+    cleaned = re.sub(r'[^a-zA-Z0-9\s]', '', cleaned)  # Remove other special chars
+    # Title case: capitalize first letter of each word
+    return ' '.join(word.capitalize() for word in cleaned.split())
 
 def parse_comments(comments):
     """Parses the Comments field for sub-details like Location, Hours, etc."""
@@ -144,7 +155,7 @@ async def scrape_ibew71():
         
         job_data = {
             "localNumber": "71",
-            "company": company,
+            "company": to_title_case(company),
             "startDate": start_date,
             "dispatchNumber": dispatch_number,
             "notes": f"Short Call: {short_call}",
@@ -187,18 +198,24 @@ async def scrape_ibew71():
             job_data["location"] = city
         
         # Set classification from jobClass, normalized to slug
-        job_class = job_data.get("jobClass", "").lower().replace(" ", "-").replace("-out-of-classificaton", "").replace("-out-of-classification", "")
-        job_data["classification"] = job_class
+        job_class_raw = job_data.get("jobClass", "")
+        job_class_slug = job_class_raw.lower().replace(" ", "-").replace("-out-of-classificaton", "").replace("-out-of-classification", "")
+        job_data["classification"] = job_class_slug
         
         # Filter to target classifications
         if job_data["classification"] not in TARGET_CLASSIFICATIONS:
             logger.info(f"Skipping job with classification '{job_data['classification']}' (not in targets).")
             continue
         
-        # Standardize jobClass if empty
-        if not job_data.get("jobClass"):
-            job_data["jobClass"] = job_data["classification"].replace("-", " ").title()
+        # Standardize jobClass to title case without special chars
+        job_data["jobClass"] = to_title_case(job_class_raw)
         
+        # Apply title case to other relevant fields if needed
+        job_data["location"] = to_title_case(job_data.get("location", ""))
+        job_data["qualifications"] = to_title_case(job_data.get("qualifications", ""))
+        job_data["hours"] = to_title_case(job_data.get("hours", ""))
+        job_data["notes"] = to_title_case(job_data.get("notes", ""))
+
         all_jobs.append(job_data)
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -279,7 +296,7 @@ def update_database_with_jobs(classification, jobs, local_number):
             "classification": classification,
             "company": sanitized_job.get("company", ""),
             "datePosted": sanitized_job.get("datePosted", ""),
-            "jobClass": sanitized_job.get("jobClass", "") or classification.replace("-", " ").title(),
+            "jobClass": sanitized_job.get("jobClass", "") or to_title_case(classification),
             "location": sanitized_job.get("location", ""),
             "numberOfJobs": sanitized_job.get("numberOfJobs", ""),
             "hours": sanitized_job.get("hours", ""),

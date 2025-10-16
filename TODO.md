@@ -150,6 +150,8 @@
 
 ## SETTINGS SCREEN
 
+- `ACCOUNT SECTION`
+
 - **lib\screens\storm\settings_screen.dart**
 
 - When i am in edit mode in the settings, if try to upload an image from my gallery, when i press upload or okay or whatever the button is called to upload the image, the entire app crashes.
@@ -161,6 +163,60 @@
 - At the top of the screen, i guess the header or maybe it could be part of the `app bar`, You need to remove the user's email and replace it with thier name or something else. Underneath that in copper is "IBEW Local 296" for example. That entire expression needs to be replaced with a `rich text widget` and formatted like so"IBEW Local: " [localNumber]
 - You need to implement or activate to tool tips again to better explain to users how to edit thier profiles.
 
+#### PERSONAL TAB
+
 #### PROFESSIONAL TAB
 
 - For the `Books on` `text field` remove the hint text in the center of the text field and replace it with actual local number like.. REMOVE 'Book 1', 'Book 2' and replace it with 84, 222, 111, 1249, 71. I feel like user would better understand what it is that we are asking of them.
+
+#### SETTINGS TAB
+
+### TRAINING AND CERTIFICATES SCREEN
+
+#### CERTIFICATES TAB
+
+#### COURSES TAB
+
+#### HISTORY TAB
+
+- `SUPPORT SECTION`
+
+### HELP AND SUPPORT SCREEN
+
+#### FAQ TAB
+
+#### CONTACT TAB
+
+#### GUIDES TAB
+
+### RESOURCES SCREEN
+
+#### DOCUMENTS TAB
+
+- **IBEW CONSTITUTION**
+
+- **SAFETY**
+
+- **TECHNICAL**
+
+#### TOOLS TAB
+
+- **CALCULATORS**
+
+- **REFERENCES**
+
+#### LINKS TAB
+
+***REMOVE `GOVERNMENT` SECTIONS AND REPLACE IT WITH A `HELPFUL` SECTION***
+
+- **IBEW OFFICIAL**
+
+- **TRAINING**
+
+- **HELPFUL**
+
+- ADD a container for "Union Pay Scales". and have the link icon connected to <https://unionpayscales.com/trades/ibew-linemen/>
+
+- **SAFETY**
+
+- connect NFPA to <https://www.nfpa.org/en/for-professionals/codes-and-standards/list-of-codes-and-standards#sortCriteria=%40computedproductid%20ascending%2C%40productid%20ascending&aq=%40culture%3D%22en%22&cq=%40tagtype%3D%3D(%22Standards%20Development%20Process%22)%20%20>

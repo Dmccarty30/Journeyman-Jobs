@@ -13,7 +13,7 @@ from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_t
 DISPATCH_URL = "https://www.ibew111.org/dispatch"
 OUTPUT_DIR = Path("scraping_scripts/outputs")
 OUTPUT_FILE = OUTPUT_DIR / "ibew111_jobs.json"
-FIREBASE_CREDENTIALS_PATH = "C:\\Users\\david\\Desktop\\Journeyman-Jobs\\scraping_scripts\\journeyman-jobs-firebase-adminsdk-rwcqx-b2872d649a.json"  # <-- fill in your service‑account JSON path
+FIREBASE_CREDENTIALS_PATH = "C:\\Users\\david\\Desktop\\Journeyman-Jobs\\scraping_scripts\\jj-firebase-adminsdk.json"  # <-- fill in your service‑account JSON path
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s – %(message)s")
 logger = logging.getLogger(__name__)
