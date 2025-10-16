@@ -2,8 +2,14 @@
 
 ## APP WIDE CHANGES
 
-- ***I WANT TO USE THE DARK NAVY BLUE COLORED BACKGROUND ON THE `WELCOME SCREEN` WILL BE THE THEME FOR `DARK MODE`. THIS MEANS THAT THERE NEEDS TO BE THE ADDITION OF A `DARK MODE` FEATURE***
-- ***BE SURE TO PROVIDE DETAILED AND COMPREHENSIVE DOCUMENTATIO TO ANY AND ALL CHANGES/MODIFICATIONS/ADDITIONS THAT NEED TO BE MADE***
+- ***I WANT TO USE THE DARK NAVY BLUE COLORED BACKGROUND ON THE `WELCOME SCREEN` AND `AUTH SCREEN` WILL BE THE THEME FOR `DARK MODE`. THIS MEANS THAT THERE NEEDS TO BE THE ADDITION OF A `DARK MODE` FEATURE. SO THAT MEANS, GO AHEAD AND CREATE THE THE `DARK MODE` APP THEME BASED OFF OF THE CURRENT MODE OF THE `WELCOME SCREEN` AND `AUTH SCREEN` AND ADD IT TO "lib\design_system\app_theme.dart" THEN, CHANGE THE COLOR THEME OF THE `WELCOME SCREEN` AND `AUTH SCREEN` BACK TO THE `LIGHT MODE`***
+- ***BE SURE TO PROVIDE DETAILED AND COMPREHENSIVE DOCUMENTATION TO ANY AND ALL CHANGES/MODIFICATIONS/ADDITIONS THAT NEED TO BE MADE***
+
+## APP THEME
+
+- **Dark Mode**
+
+- In text color on top of all of the `text fields` needs to be black. They are light grey so you cannot read the `text hint` or `text label`.
 
 ## ONBOARDING SCREENS
 
@@ -20,7 +26,8 @@
 - **lib\screens\onboarding\auth_screen.dart**
 
 - I want to change the `tab bar` needs to be better aligned. The `sign up` and `sign in` tabs are smaller than the entire `tab bar` so there is a gap between the bottom boarder of the entire `tab bar` and the bottom of either of the tabs.. there is a screenshot @assets\tab-bar-gap.png
-- REMOVE this gap and make either the tabs bigger or the `tab bar` smaller so that the height is the same for everything
+- REDUCE the border size of the `tab bar` by 50%
+- Correct the overflow error for the continue with `Google button`
 
 ### ONBOARDING STEPS SCREEN
 
@@ -32,11 +39,11 @@
 
 #### STEP 2
 
-- Because the `next button` has no functionality or navigation, i cannot get to this screen to identify any changes that need to be made. That being said, what i do know that needs to be done is the same as the first step. When the user presses the `complete button` all of the input data provided by the user needs to be written to thet user document and then navigate to step 3
+- In the "Books you are currently on" `text field` replace the current values " Book1, Book2 etc" with examples of actual local number
 
 #### STEP 3: PREFERENCES AND FEEDBACK
 
-- Because the `next button` has no functionality or navigation, i cannot get to this screen to identify any changes that need to be made. That being said, what i do know that needs to be done is the same as the two previous steps. When the user presses the `next button` all of the input data provided by the user needs to be written to thet user document and then navigate to the `home screen`
+- The `choice chips` for 'construction type' the text values need to be capitalized. They are currently formatted like a backend value with the first letter lower case and the first letter of the second word capitalized. This needs to be corrected
 
 ## HOME SCREEN
 
