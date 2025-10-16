@@ -350,7 +350,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           child: Container(
                             height: 56,
                             decoration: BoxDecoration(
-                              color: AppTheme.primaryNavy.withOpacity(0.8),
+                              color: AppTheme.primaryNavy.withValues(alpha:0.8),
                               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                               border: Border.all(
                                 color: AppTheme.accentCopper,

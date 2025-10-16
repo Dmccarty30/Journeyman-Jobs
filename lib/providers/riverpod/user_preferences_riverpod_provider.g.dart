@@ -45,7 +45,7 @@ final class UserPreferencesNotifierProvider
 }
 
 String _$userPreferencesNotifierHash() =>
-    r'a09411cca76b432fefb5777930f0fea0699a6cfa';
+    r'bf3f568a3704f4fcaf743db6e4aa3ac8e25f507d';
 
 /// User preferences notifier for managing user job preferences
 
@@ -67,12 +67,10 @@ abstract class _$UserPreferencesNotifier
 }
 
 /// Convenience provider for user preferences
-
 @ProviderFor(userPreferences)
-const userPreferencesFunctionalProvider = UserPreferencesProvider._();
+const userJobPreferencesProvider = UserPreferencesProvider._();
 
 /// Convenience provider for user preferences
-
 final class UserPreferencesProvider extends $FunctionalProvider<
     UserJobPreferences,
     UserJobPreferences,
@@ -83,11 +81,13 @@ final class UserPreferencesProvider extends $FunctionalProvider<
           from: null,
           argument: null,
           retry: null,
-          name: r'userPreferencesFunctionalProvider',
+          name: r'userPreferencesProvider',
           isAutoDispose: true,
           dependencies: null,
           $allTransitiveDependencies: null,
         );
+
+  ProviderListenable? get notifier => null;
 
   @override
   String debugGetCreateSourceHash() => _$userPreferencesHash();
@@ -112,7 +112,7 @@ final class UserPreferencesProvider extends $FunctionalProvider<
   }
 }
 
-String _$userPreferencesHash() => r'ae9edce7eb90b6ed8cbe1ae42f9221e7f6389302';
+String _$userPreferencesHash() => r'562357716dd92fcedf9ee26c94c111f7a6866c24';
 
 /// Convenience provider for checking if user has preferences
 
@@ -158,7 +158,7 @@ final class HasUserPreferencesProvider
 }
 
 String _$hasUserPreferencesHash() =>
-    r'eac7e1f05f32c381ca952e10656bd39db56ee1b3';
+    r'56c7cf9a68616767e8d4850c9f81d12aff543fb1';
 
 /// Convenience provider for last updated timestamp
 
@@ -206,4 +206,4 @@ final class UserPreferencesLastUpdatedProvider
 }
 
 String _$userPreferencesLastUpdatedHash() =>
-    r'63370bc5f1bfd068a8d2c40f32a49d2ed11fa180';
+    r'6fa2b33dd0b4c6fbcf9154ca42086370341f7b14';

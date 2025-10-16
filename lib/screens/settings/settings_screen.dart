@@ -6,15 +6,18 @@ import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
 import '../../services/onboarding_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../widgets/dialogs/user_job_preferences_dialog.dart';
+import '../../providers/riverpod/user_preferences_riverpod_provider.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   String? _ticketNumber;
   bool _isLoading = true;
 
@@ -159,6 +162,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: 'Training & Certificates',
                   subtitle: 'Track your professional credentials',
                   onTap: () => context.push(AppRouter.training),
+                ),
+                _MenuOption(
+                  icon: Icons.tune_outlined,
+                  title: 'Job Preferences',
+                  subtitle: 'Set your job preferences',
+                  onTap: () async {
+                    final user = FirebaseAuth.instance.currentUser;
+                    if (user == null) {
+                      JJSnackBar.showError(
+                        context: context,
+                        message: 'User not logged in',
+                      );
+                      return;
+                    }
+                    final initialPrefs = ref.read(userPreferencesProvider).preferences.preferences;
+                    await showDialog(
+                      context: context,
+                      builder: (context) => UserJobPreferencesDialog(
+                        userId: user.uid,
+                        isFirstTime: false,
+                        initialPreferences: initialPrefs,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

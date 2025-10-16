@@ -7,6 +7,9 @@ import '../../electrical_components/circuit_board_background.dart';
 import '../../navigation/app_router.dart';
 import '../../providers/riverpod/jobs_riverpod_provider.dart';
 import '../../providers/riverpod/auth_riverpod_provider.dart';
+import '../../providers/riverpod/user_preferences_riverpod_provider.dart';
+import '../../widgets/dialogs/user_job_preferences_dialog.dart';
+import '../../models/user_job_preferences.dart';
 import '../../features/crews/providers/crews_riverpod_provider.dart';
 import '../../models/job_model.dart';
 import '../../legacy/flutterflow/schema/jobs_record.dart';
@@ -26,7 +29,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(jobsProvider.notifier).loadJobs();
+      final prefsState = ref.read(userPreferencesProvider);
+      if (prefsState.preferences != UserJobPreferences.empty()) {
+        final filter = prefsState.preferences.toFilterCriteria();
+        ref.read(jobsProvider.notifier).loadJobs(filter: filter);
+      } else {
+        ref.read(jobsProvider.notifier).loadJobs();
+      }
+    });
+    // Listen for preference changes to reload jobs with new filter
+    ref.listen(userPreferencesProvider, (previous, next) {
+      if (next.preferences != UserJobPreferences.empty()) {
+        final filter = next.preferences.toFilterCriteria();
+        ref.read(jobsProvider.notifier).loadJobs(filter: filter);
+      }
     });
   }
 
@@ -159,6 +175,45 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
 
                   const SizedBox(height: AppTheme.spacingLg),
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final prefsState = ref.watch(userPreferencesProvider);
+                      final hasPrefs = prefsState.preferences != UserJobPreferences.empty();
+                      if (!hasPrefs) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingLg),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              final authState = ref.read(authProvider);
+                              final result = await showDialog<bool>(
+                                context: context,
+                                builder: (_) => UserJobPreferencesDialog(
+                                  isFirstTime: true,
+                                  userId: authState.user?.uid ?? '',
+                                ),
+                              );
+                            if (result == true) {
+                              final newPrefs = ref.read(userPreferencesProvider).preferences;
+                              final filter = newPrefs.toFilterCriteria();
+                                ref.read(jobsProvider.notifier).loadJobs(filter: filter);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.accentCopper,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                              ),
+                            ),
+                            child: Text(
+                              'Set Preferences',
+                              style: AppTheme.buttonMedium.copyWith(color: AppTheme.white),
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
 
                   Text(
                     'Quick Actions',

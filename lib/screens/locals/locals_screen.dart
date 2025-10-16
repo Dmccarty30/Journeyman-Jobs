@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,8 +22,8 @@ class LocalsScreen extends ConsumerStatefulWidget {
 class _LocalsScreenState extends ConsumerState<LocalsScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  
-  String _searchQuery = '';
+
+  Timer? _debounceTimer;
   String? _selectedState;
 
   @override
@@ -36,6 +37,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _searchController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -45,6 +47,18 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       ref.read(localsProvider.notifier).loadLocals(loadMore: true);
     }
+  }
+
+  void _onSearchChanged(String value) {
+    _debounceTimer?.cancel();
+    if (value.isEmpty) {
+      // Immediate clear for empty search
+      ref.read(localsProvider.notifier).searchLocals('');
+      return;
+    }
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      ref.read(localsProvider.notifier).searchLocals(value);
+    });
   }
 
 
@@ -96,12 +110,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
                   ),
                 ),
               ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value.toLowerCase();
-                });
-                // Handle search on the UI side for now
-              },
+              onChanged: _onSearchChanged,
             ),
           ),
         ),
@@ -206,16 +215,8 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
       );
     }
 
-    // Filter locals based on search query
-    List<LocalsRecord> filteredLocals = localsState.locals;
-    if (_searchQuery.isNotEmpty) {
-      filteredLocals = localsState.locals.where((local) {
-        return local.localUnion.toLowerCase().contains(_searchQuery) ||
-               local.city.toLowerCase().contains(_searchQuery) ||
-               local.state.toLowerCase().contains(_searchQuery) ||
-               (local.classification?.toLowerCase().contains(_searchQuery) ?? false);
-      }).toList();
-    }
+    // Use filtered locals from the provider
+    List<LocalsRecord> filteredLocals = localsState.filteredLocals;
 
     if (filteredLocals.isEmpty) {
       return Center(
@@ -229,22 +230,11 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
             ),
             const SizedBox(height: AppTheme.spacingMd),
             Text(
-              _searchQuery.isEmpty 
-                  ? 'No locals found' 
-                  : 'No results found',
+              'No locals found',
               style: AppTheme.headlineSmall.copyWith(
                 color: AppTheme.textLight
               ),
             ),
-            if (_searchQuery.isNotEmpty) ...[
-              const SizedBox(height: AppTheme.spacingSm),
-              Text(
-                'Try adjusting your search',
-                style: AppTheme.bodyMedium.copyWith(
-                  color: AppTheme.textLight
-                ),
-              ),
-            ],
           ],
         ),
       );

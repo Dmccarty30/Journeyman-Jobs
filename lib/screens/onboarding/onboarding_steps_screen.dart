@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/domain/enums/enums.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
@@ -14,15 +15,17 @@ import '../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
 import '../../electrical_components/circuit_board_background.dart';
 import '../../electrical_components/jj_electrical_notifications.dart';
+import '../../models/user_job_preferences.dart';
+import '../../providers/riverpod/user_preferences_riverpod_provider.dart';
 
-class OnboardingStepsScreen extends StatefulWidget {
+class OnboardingStepsScreen extends ConsumerStatefulWidget {
   const OnboardingStepsScreen({super.key});
 
   @override
-  State<OnboardingStepsScreen> createState() => _OnboardingStepsScreenState();
+  ConsumerState<OnboardingStepsScreen> createState() => _OnboardingStepsScreenState();
 }
 
-class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
+class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
   final PageController _pageController = PageController();
   int _currentStep = 0;
   final int _totalSteps = 3;
@@ -276,12 +279,49 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
     }
   }
 
+  // Method to map onboarding data to UserJobPreferences model
+  UserJobPreferences _mapOnboardingDataToPreferences() {
+    // Parse preferred locals from text input
+    final localsText = _preferredLocalsController.text.trim();
+    final preferredLocals = <int>[];
+    if (localsText.isNotEmpty) {
+      final localStrings = localsText.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty);
+      for (final localStr in localStrings) {
+        final local = int.tryParse(localStr);
+        if (local != null) {
+          preferredLocals.add(local);
+        }
+      }
+    }
+
+    return UserJobPreferences(
+      classifications: [], // Set to empty for now as per requirements
+      constructionTypes: _selectedConstructionTypes.toList(),
+      preferredLocals: preferredLocals,
+      hoursPerWeek: _selectedHoursPerWeek,
+      perDiemRequirement: _selectedPerDiem,
+      minWage: null, // Set to null as per requirements
+      maxDistance: null, // Set to null as per requirements
+    );
+  }
+
   void _completeOnboarding() async {
     try {
       // Get current user from Firebase Auth
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         throw Exception('No authenticated user found');
+      }
+
+      // Map onboarding data to UserJobPreferences
+      final preferences = _mapOnboardingDataToPreferences();
+
+      // Save preferences using userPreferencesProvider
+      try {
+        await ref.read(userPreferencesProvider.notifier).savePreferences(user.uid, preferences);
+      } catch (e) {
+        // Log error but don't block onboarding completion
+        debugPrint('Error saving job preferences: $e');
       }
 
       // Build data map containing only Step 3 fields plus onboardingStatus
@@ -305,6 +345,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
         'role': 'electrician',
         'displayName': '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}'.trim(),
         'lastActive': FieldValue.serverTimestamp(),
+        'hasSetJobPreferences': true, // Set hasSetJobPreferences to true
       };
 
       // Save to Firestore with merge semantics

@@ -146,7 +146,7 @@
 
 - **lib\screens\storm\locals_screen.dart**
 
-- As far as the local screen I'm pretty much done with it I mean it looks good and I'm not fooling with it I mess it up so that screen is done.
+- The search function for the `Locals Screen` does not function properly. Regardless if I search for city, state, "local number", just the number, nothing.
 
 ## SETTINGS SCREEN
 
@@ -216,6 +216,7 @@
 - **HELPFUL**
 
 - ADD a container for "Union Pay Scales". and have the link icon connected to <https://unionpayscales.com/trades/ibew-linemen/>
+- ADD another container for "Union Pay Scales". and have the link icon and have it set to dispay @lib\widgets\pay_scale_card.dart instead of navidating to the devices browser
 
 - **SAFETY**
 

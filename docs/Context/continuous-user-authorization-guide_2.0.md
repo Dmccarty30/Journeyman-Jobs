@@ -147,36 +147,6 @@ class ConnectivityService extends ChangeNotifier {
 
 ## 3. Production Role-Based Access Control
 
-### Three-Tier Permission System
-
-**Current Production Implementation**:
-
-```dart
-enum MemberRole {
-  foreman,  // Full administrative control
-  lead,     // Limited administrative permissions
-  member    // Basic participation permissions
-}
-
-class RolePermissions {
-  static const Map<MemberRole, Set<Permission>> permissions = {
-    MemberRole.foreman: {
-      Permission.createCrew, Permission.updateCrew, Permission.deleteCrew,
-      Permission.inviteMember, Permission.removeMember, Permission.updateRole,
-      Permission.shareJob, Permission.moderateContent, Permission.viewStats,
-      Permission.manageSettings,
-    },
-    MemberRole.lead: {
-      Permission.inviteMember, Permission.shareJob,
-      Permission.moderateContent, Permission.viewStats,
-    },
-    MemberRole.member: {
-      Permission.shareJob, Permission.viewStats,
-    },
-  };
-}
-```
-
 ### Production Permission Validation
 
 **Location**: `lib/features/crews/services/crew_service.dart`
