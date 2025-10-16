@@ -1,15 +1,9 @@
-Of course. It was an excellent session, and the pivot you made was a crucial insight that has significantly improved the feature's design.
-
-Here is the structured document summarizing our entire brainstorming session. You can use this as a direct input for creating a more formal Project Brief or PRD.
-
----
-
 # Brainstorming Session Results
 
 **Session Date:** 2024-05-24
 **Facilitator:** Mary (Business Analyst)
 
-### **Executive Summary**
+## **Executive Summary**
 
 **Topic:** A new feature, "Crews," for the "Journeyman Jobs" Flutter application.
 
@@ -28,7 +22,7 @@ Here is the structured document summarizing our entire brainstorming session. Yo
 
 We mapped the entire user journey for the "Crews" feature across five distinct stages.
 
-**Stage 1: Crew Creation & Invitation**
+* **Stage 1: Crew Creation & Invitation**
 
 * **Entry Point:** Users tap a "Crews" icon on the bottom navigation bar to access the "Tailboard" screen.
 * **Creation:** A new user is prompted to "Create a Crew" or "Join a Crew." The creator is assigned the "Foreman" role.
@@ -39,13 +33,13 @@ We mapped the entire user journey for the "Crews" feature across five distinct s
   * Any member can leave a crew at any time.
 * **Invitations:** The Foreman uses a contact picker to invite members via in-app notification (for existing users) or an SMS/email link with a quick sign-up flow (for new users).
 
-**Stage 2: Setting Crew Preferences**
+* **Stage 2: Setting Crew Preferences**
 
 * **UI Flow:** Immediately upon creation, the Foreman is shown a dialog to set the Crew's job preferences. This UI component is reused from the individual user's preference settings.
 * **Permissions:** Only the Foreman can set or edit the preferences. This is a critical rule to prevent confusion. A clear way to edit these preferences later must be available on the Tailboard screen.
 * **Transparency:** All other crew members can view the preferences in a read-only state. Onboarding tooltips will explain this and other feature mechanics to new members.
 
-**Stage 3: Job Matching & Notification**
+* **Stage 3: Job Matching & Notification**
 
 * **The Hub:** The "Tailboard" screen is the central hub for all crew activity, containing four tabs:
   * **Jobs:** Displays jobs that match the Crew's preferences.
@@ -55,14 +49,14 @@ We mapped the entire user journey for the "Crews" feature across five distinct s
 * **Notification:** When a matching job is found, all Crew members receive a push notification. The notification displays a "condensed job card" with key details (title, pay, location).
 * **Destination:** Tapping the notification takes the user directly to a detailed job dialog popup, which includes a clear "Apply" button.
 
-**Stage 4: Group Discussion & Interest Gauging**
+* **Stage 4: Group Discussion & Interest Gauging**
 
 * **Insightful Pivot:** We determined that a formal, binding vote could prevent users from getting jobs, defeating the app's purpose. The model was changed to focus on communication and informal polling.
 * **Discussion:** The primary forum for discussing a new job is the private "Chat" tab.
 * **Gauging Interest:** A non-binding "I'm Interested" button on the job card allows members to quickly signal interest. This is for informational purposes only.
 * **Transparency:** All members can see who has expressed interest, helping them coordinate organically.
 
-**Stage 5: Individual Application with Crew Context**
+* **Stage 5: Individual Application with Crew Context**
 
 * **User Empowerment:** Any Crew member can choose to apply for a job at any time, regardless of what others think.
 * **Action:** Tapping the "Apply" button on the job detail dialog triggers the **app's existing individual application function**.
@@ -70,19 +64,19 @@ We mapped the entire user journey for the "Crews" feature across five distinct s
 
 ### **Idea Categorization**
 
-**Immediate Opportunities**
+* **Immediate Opportunities**
 
 1. **Core Crew Functionality:** Build the creation, invitation, and member management logic for Crews.
 2. **Tailboard Hub UI:** Develop the tabbed Tailboard screen as the central point for all Crew interactions.
 3. **Preference Sync & Job Matching:** Implement the logic for the Foreman to set preferences and for the backend to match and deliver jobs to the Crew.
 
-**Future Innovations**
+* **Future Innovations**
 
 * **Detailed Member Profiles:** Flesh out the "Members" tab to show user profiles, skills, or certifications when a name is tapped.
 * **Foreman Tools:** Add special tools for Foremen, such as the ability to pin important messages or jobs.
 * **Crew Chat Enhancements:** Add features like threaded replies or reactions to the Crew chat to improve communication.
 
-**Insights & Learnings**
+* **Insights & Learnings**
 
 * **The Critical Pivot:** The most significant insight was realizing a formal voting system was counterproductive. Shifting to an informal, communication-focused model ("Discover together, apply individually") is simpler, safer, and more user-centric.
 

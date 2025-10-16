@@ -17,6 +17,11 @@ class CondensedJobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Extract values with fallback to jobDetails map
+    final wageValue = job.wage ?? (job.jobDetails['payRate'] as double?);
+    final hoursValue = job.hours ?? (job.jobDetails['hours'] as int?);
+    final perDiemValue = job.perDiem ?? (job.jobDetails['perDiem'] as String?);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -88,8 +93,8 @@ class CondensedJobCard extends StatelessWidget {
               leftLabel: 'Contractor',
               leftValue: JobDataFormatter.formatCompany(job.company),
               rightLabel: 'Wages',
-              rightValue: job.wage != null ? '\$${job.wage!.toStringAsFixed(2)}/hr' : 'N/A',
-              rightValueColor: job.wage != null && job.wage! > 0 ? AppTheme.successGreen : null,
+              rightValue: wageValue != null ? '\$${wageValue.toStringAsFixed(2)}/hr' : 'N/A',
+              rightValueColor: wageValue != null && wageValue > 0 ? AppTheme.successGreen : null,
             ),
             const SizedBox(height: 8),
 
@@ -98,7 +103,7 @@ class CondensedJobCard extends StatelessWidget {
               leftLabel: 'Location',
               leftValue: JobDataFormatter.formatLocation(job.location),
               rightLabel: 'Hours',
-              rightValue: job.hours != null ? '${job.hours}/week' : 'N/A',
+              rightValue: hoursValue != null ? '${hoursValue}/week' : 'N/A',
             ),
             const SizedBox(height: 8),
 
@@ -107,7 +112,7 @@ class CondensedJobCard extends StatelessWidget {
               leftLabel: 'Start Date',
               leftValue: job.startDate ?? 'N/A',
               rightLabel: 'Per Diem',
-              rightValue: job.perDiem ?? 'N/A',
+              rightValue: perDiemValue ?? 'N/A',
             ),
             const SizedBox(height: AppTheme.spacingSm),
 

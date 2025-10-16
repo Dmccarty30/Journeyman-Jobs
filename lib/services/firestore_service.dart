@@ -15,6 +15,12 @@ class FirestoreService {
   CollectionReference get usersCollection => _firestore.collection('users');
   CollectionReference get jobsCollection => _firestore.collection('jobs');
   CollectionReference get localsCollection => _firestore.collection('locals');
+  CollectionReference get crewsCollection => _firestore.collection('crews');
+  CollectionReference get countersCollection => _firestore.collection('counters');
+  CollectionReference get preferencesCollection => _firestore.collection('preferences');
+  CollectionReference get stormContractorsCollection =>
+      _firestore.collection('stormcontractors');
+
 
   // User Operations
   Future<void> createUser({

@@ -1,0 +1,18 @@
+{
+  "name": "job-scrapers",
+  "version": "1.0.0",
+  "description": "Job scrapers for IBEW locals",
+  "main": "runAllScrapers.js",
+  "type": "commonjs",
+  "dependencies": {
+    "@google-cloud/firestore": "^7.0.0",
+    "axios": "^1.6.7",
+    "node-fetch": "^2.6.1",
+    "openai": "^4.28.0",
+    "puppeteer": "^24.3.0",
+    "puppeteer-core": "^24.2.1"
+  },
+  "scripts": {
+    "start": "node runAllScrapers.js"
+  }
+}

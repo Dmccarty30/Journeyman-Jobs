@@ -2,8 +2,6 @@
 
 ## APP WIDE CHANGES
 
-- ***IMPLEMENT THE ELECTRICAL CIRCUIT DESIGN AND THEME TO ANY AND ALL `TOASTS`, `SNACK BARS`, AND `TOOL TIPS` EXACTLY AS THEY ARE IN THE "DEMO_SCREEN" WITH A THICK BOARDER, THE BACKGROUND IS SLIGHTLY TRANSPARENT WITH AN ELECTRICAL CURCUIT BOARD DESIGN AND ANIMATION. WITH THE COLORS OF RED FOR WARNING, GREEN FOR SUCCESS, AND YELLOW FOR CAUTION(NOT EXACTLY SURE HOW THOSE LABELS ARE GOING TO TRANSLATE TO THE APP. MAYBE RED IS PERMENANT?). WITH THE ONLY EXCEPTION TO THE COLOR CODE ARE THE TOOL TIPS. THE TOOL TIPS SHOULD COMPLEMENT THE MOOD AND SITUATIONS.***
-
 ## ONBOARDING SCREENS
 
 ### WELCOME SCREEN
@@ -39,13 +37,12 @@
 
 - **lib\screens\storm\home_screen.dart**
 
-- There needs to be a text/font formatter wrapper for all cards, containers, overlays, dialog popups, etc to ensure absolute consistency displayed to the users regardless of what means, the user will always be presented with proper and consistant formatting.
-- This formatting will be `Title Case`.
-- We need to clean-up what is shown on the job cards provided there are prospects.This bleeds over to the "Jobs Screen"
+- Read "docs\Home-Analysis.md" to get a better understanding of this files structure and potential issues
 
 - *Quick Actions*
 
 - ADD two `dummy containers` or `placeholders` for future use
+- REMOVE the light blue shadow from the containers as well.
 
 - *Suggested Jobs*
 
@@ -55,31 +52,26 @@
 
 - **lib\screens\storm\jobs_screen.dart**
 
-- REMOVE all colored font from all cards, containers, and or dialog popups. This includes the grey tint behind and around the local number of the job cards.
-- For the `job cards` on this screen... I'd like to have the same copper divider seperating the `local number`/`classification` and the rest of the values.
-- The cards need to be more evenly spaced out.
-- EVERYTHING MUST FOLLOW A STRICT ADHERENCE TO DATA FLOWS FROM LEFT TO RIGHT FIRST, THEN FROM TOP TO BOTTOM. IN THE CASE OF THE `RICH TEXT WIDGETS``SPAN1` WILL BE BOLD AND THE HARDCODED VALUE ENDING WITH ": ". WHILE `SPAN2` WILL BE THE REGULAR STYLE FONT AND WEIGHT BUT WILL BE THE ACTUAL BACKENDQUERY VALUE. SO, THE EXAMPLE `RICH TEXT WIDGET` GOES AS FOLLOWS... "LOCAL: "[111]
-- It is important to have the semicolon and space between the two spans. This ensures that the users will be able to see and understand the values being presented.
-- ***ALL DATA MUST AND ONLY WILL FLOW FROM LEFT TO RIGHT ON THE JOB CARDS. THERE WILL BY NO MEANS BE `SPAN1` ABOVE `SPAN2`. IF WE HAVE TO CHANGE THE FONT SIZE AND WEIGHTS, THEN WE WILL***
-- I must get better with the formatting, word matching, word mapping, something. We cannot have `job cards` where half of the data is "N/A". Or even worse, it's N/A or something in the card, but something completely different in the dialog popup.
+- Read "docs\Jobs-Analysis.md" to get a better understanding of this files structure and potential issues
+- ADD a simple search feature so that the user can `Search` for any specific local union. Place this widget underneath the horizontal filter
+- Make the `Search` widget a traditional seatch widget as in a `text field` with a magnifying icon on one end and the text hint "Search For A Specific Local"
+- THE ONLY VALUE THAT WILL BE SEARCHABLE IS THE LOCAL UNION NUMBER.
+- REMOVE "Storm Work" as one of the filtering options.
 
 ## STORM SCREEN
 
 - **lib\screens\storm\storm_screen.dart**
 
-- We're going to remove the `current storm activity` section I don't need any of that I don't none of it is useful
-- We're also going to remove the `active storm events` section
-- Need to button up the Storm contractors card company card or container whichever it is so that we can get some companies on this screen
-- I want to implement the `poweroutage.us` API and custom widgets as a full time widget in API however with a toggle switch or something to minimize it like an accordion or something so that way at any given time a user can easily see you know how many outages are in Ohio and then very quickly look to see how many outages are in Michigan or New York or Texas I'm not quite sure how far down the rabbit hole I'll go with the outages as far as counties and utilities and uh customers and things like that there's a lot that you can get from `poweroutage.us` I know that I'll start with the States and I know that I'll start with the utilities
-- Again we need to change the color of the `emergency work available` container that has the `View live weather radar` button to match this at color scheme there's nothing about this apps color scheme `app theme` or system designer `app design` that is orange and yellow.
-- Somehow I'd like to get or build the foundation for real time current Emergency declaration videos or news clips from The Local news channel about the weather but just set up the foundation to upload and view videos This is not going to be a user feature This is going to be like an admin feature like only me it's Really all I need is a place cut out and the script with commented out code or placeholders or the video player widget and whatever else is required to play videos in the map and that's it I don't want any AI coding assistant to take this out of context and take it out and get out of hand and start coding all kinds of crazy crap
+- Read "docs\Storm-Analysis.md" to get a better understanding of this files structure and potential issues
+- The borders around everything on the `Storm Screen` are to thick. They need to be reduced in thickness by 1/2.
+- I am not sure what is exactly is going on with this screen. They're just like everything is inside of the container or column including the background Like the circuit board background is inside this container and column it just seems weird something's off but needs to be redone Yeah something's off
 
 ## TAILBOARD SCREEN
 
 - **lib\features\crews\screens\tailboard_screen.dart**
 
 - Once a user joins a crew or creates a crew then it can be assumed that that user will be active with the crew from this point forward therefore the welcome to the tail board heading and the description below will be removed and replaced with a lower profile header of the name of the active crew with that crew's description underneath just in smaller text and font So There is more room Or the tab bar and the messages below it
-- When you're on the till board screen and you turn the phone horizontally there is an overflow error.
+- When you're on the tailboard screen and you turn the phone horizontally there is an overflow error.
 
 ### CREATE CREWS SCREEN
 

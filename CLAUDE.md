@@ -12,7 +12,7 @@
 
 - **Follow Flutter's feature-based architecture**:
 
-  ```tree
+  ```dart
   lib/
   ├── screens/         # Screen widgets (home/, jobs/, unions/, etc.)
   ├── widgets/         # Reusable components (job_card.dart, union_card.dart)
@@ -194,7 +194,7 @@
 - **Bid System**: Users can bid on jobs through the app
 - **Storm Work**: Emergency restoration jobs get priority highlighting
 - **Union Directory**: 797+ IBEW locals with contact integration
-- **Weather Integration**: 
+- **Weather Integration**:
   - NOAA radar and alerts for storm tracking
   - National Hurricane Center data
   - Storm Prediction Center outlooks
@@ -204,7 +204,7 @@
   - Journeyman Lineman
   - Tree Trimmer
   - Equipment Operator
-  - Inside Journeyman Electrician 
+  - Inside Journeyman Electrician
 - **Construction Types**:
   - Commercial
   - Industrial

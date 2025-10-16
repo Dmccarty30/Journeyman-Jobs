@@ -46,6 +46,7 @@ class UserModel {
   final String? howHeardAboutUs;
   final String? lookingToAccomplish;
   final OnboardingStatus? onboardingStatus;
+  final bool hasSetJobPreferences;
 
   UserModel({
     required this.uid,
@@ -92,6 +93,7 @@ class UserModel {
     this.howHeardAboutUs,
     this.lookingToAccomplish,
     this.onboardingStatus,
+    this.hasSetJobPreferences = false,
   });
 
   String get displayNameStr => displayName.isEmpty ? '$firstName $lastName'.trim() : displayName;
@@ -145,6 +147,7 @@ class UserModel {
       howHeardAboutUs: data['howHeardAboutUs'],
       lookingToAccomplish: data['lookingToAccomplish'],
       onboardingStatus: data['onboardingStatus'] != null ? OnboardingStatus.values.firstWhere((e) => e.name == data['onboardingStatus']) : null,
+      hasSetJobPreferences: data['hasSetJobPreferences'] ?? false,
     );
   }
 
@@ -194,6 +197,7 @@ class UserModel {
       howHeardAboutUs: json['howHeardAboutUs'],
       lookingToAccomplish: json['lookingToAccomplish'],
       onboardingStatus: json['onboardingStatus'] != null ? OnboardingStatus.values.firstWhere((e) => e.name == json['onboardingStatus']) : null,
+      hasSetJobPreferences: json['hasSetJobPreferences'] ?? false,
     );
   }
 
@@ -243,6 +247,7 @@ class UserModel {
       'howHeardAboutUs': howHeardAboutUs,
       'lookingToAccomplish': lookingToAccomplish,
       'onboardingStatus': onboardingStatus,
+      'hasSetJobPreferences': hasSetJobPreferences,
     };
   }
 
@@ -291,6 +296,7 @@ class UserModel {
       'howHeardAboutUs': howHeardAboutUs,
       'lookingToAccomplish': lookingToAccomplish,
       'onboardingStatus': onboardingStatus,
+      'hasSetJobPreferences': hasSetJobPreferences,
     };
   }
 

@@ -45,17 +45,6 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
           throw Exception('User not authenticated');
         }
 
-        // Validate user has permission to create crew
-        final canCreate = await crewService.hasPermission(
-          crewId: 'temp', // This won't be used for creation permission
-          userId: currentUser.uid,
-          permission: Permission.createCrew,
-        );
-
-        if (!canCreate) {
-          throw Exception('Insufficient permissions to create crew');
-        }
-
         // Create crew with current user as foreman
         await crewService.createCrew(
           name: _crewNameController.text,
@@ -146,8 +135,8 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
                         borderSide: BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthCopper),
                       ),
                       filled: true,
-                      fillColor: AppTheme.secondaryNavy,
-                      labelStyle: TextStyle(color: AppTheme.textOnDark),
+                      fillColor: AppTheme.white,
+                      labelStyle: TextStyle(color: AppTheme.textSecondary),
                       hintStyle: TextStyle(color: AppTheme.mediumGray),
                     ),
                     validator: (value) {
@@ -156,16 +145,16 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
                       }
                       return null;
                     },
-                    style: TextStyle(color: AppTheme.textOnDark),
+                    style: TextStyle(color: AppTheme.textPrimary),
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: _selectedJobType,
+                    initialValue: _selectedJobType,
                     items: const [
+                      DropdownMenuItem(value: 'Journeyman Lineman', child: Text('Journeyman Lineman')),
                       DropdownMenuItem(value: 'Inside Wireman', child: Text('Inside Wireman')),
-                      DropdownMenuItem(value: 'Outside Lineman', child: Text('Outside Lineman')),
-                      DropdownMenuItem(value: 'Apprentice', child: Text('Apprentice')),
-                      DropdownMenuItem(value: 'Journeyman', child: Text('Journeyman')),
+                      DropdownMenuItem(value: 'Operator', child: Text('Operator')),
+                      DropdownMenuItem(value: 'Journeyman Wireman', child: Text('Journeyman Wireman')),
                     ],
                     onChanged: (String? newValue) {
                       setState(() {
@@ -187,11 +176,11 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
                         borderSide: BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthCopper),
                       ),
                       filled: true,
-                      fillColor: AppTheme.secondaryNavy,
-                      labelStyle: TextStyle(color: AppTheme.textOnDark),
+                      fillColor: AppTheme.white,
+                      labelStyle: TextStyle(color: AppTheme.textSecondary),
                     ),
-                    style: TextStyle(color: AppTheme.textOnDark),
-                    dropdownColor: AppTheme.secondaryNavy,
+                    style: TextStyle(color: AppTheme.textPrimary),
+                    dropdownColor: AppTheme.white,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -212,8 +201,8 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
                         borderSide: BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthCopper),
                       ),
                       filled: true,
-                      fillColor: AppTheme.secondaryNavy,
-                      labelStyle: TextStyle(color: AppTheme.textOnDark),
+                      fillColor: AppTheme.white,
+                      labelStyle: TextStyle(color: AppTheme.textSecondary),
                       hintStyle: TextStyle(color: AppTheme.mediumGray),
                     ),
                     validator: (value) {
@@ -223,7 +212,7 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
                       return null;
                     },
                     maxLines: 3,
-                    style: TextStyle(color: AppTheme.textOnDark),
+                    style: TextStyle(color: AppTheme.textPrimary),
                   ),
                   const SizedBox(height: 24),
                   SwitchListTile(

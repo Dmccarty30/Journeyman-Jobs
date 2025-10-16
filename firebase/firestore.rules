@@ -1,112 +1,100 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Users collection: Users can read their own profile or if they are a foreman (RBAC via user role)
-    // Write only to own profile
+    // Helper functions for role checking
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isForeman(crewId) {
+      return isAuthenticated() &&
+             exists(/databases/$(database)/documents/crews/$(crewId)) &&
+             get(/databases/$(database)/documents/crews/$(crewId)).data.foremanId == request.auth.uid;
+    }
+
+    function isCrewMember(crewId) {
+      return isAuthenticated() &&
+             exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid));
+    }
+
+    function getMemberRole(crewId) {
+      return get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role;
+    }
+
+    function hasPermission(crewId, requiredPermission) {
+      let role = getMemberRole(crewId);
+      return (role == 'foreman' && requiredPermission in ['read', 'write', 'delete', 'manage']) ||
+             (role == 'member' && requiredPermission in ['read', 'write']);
+    }
+
+    // Users collection: Authenticated users can read/write their own profiles
     match /users/{userId} {
-      // Helper function to check if user is a foreman (only check if document exists)
-      function isForeman() {
-        return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-               get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'foreman';
-      }
-
-      // Allow read for own profile or if foreman
-      allow read: if request.auth != null &&
-        (request.auth.uid == userId || isForeman());
-      
-      // Allow creation of own profile during signup/onboarding
-      allow create: if request.auth != null && 
-                   request.auth.uid == userId;
-      
-      // Allow updates to own profile
-      allow update: if request.auth != null && 
-                   request.auth.uid == userId;
-      
-      // Allow deletion of own profile
-      allow delete: if request.auth != null && 
-                   request.auth.uid == userId;
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isAuthenticated() && request.auth.uid == userId;
+      allow delete: if isAuthenticated() && request.auth.uid == userId;
     }
 
-    // Crews collection: Access restricted to crew members and foreman
+    // Crews collection: Role-based access control
     match /crews/{crewId} {
-      // Allow read for members and foreman
-      allow read: if request.auth != null &&
-        (request.auth.uid in resource.data.memberIds || request.auth.uid == resource.data.foremanId);
-
-      // Allow create for foreman - check if the authenticated user is the foreman
-      allow create: if request.auth != null && request.auth.uid == request.data.foremanId;
-
-      // Allow update for foreman and admins only (check members subcollection for role)
-      allow update: if request.auth != null && (
-        request.auth.uid == resource.data.foremanId ||
-        (exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
-         get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role in ['admin', 'foreman'])
-      );
-
-      // Allow delete for foreman only
-      allow delete: if request.auth != null && request.auth.uid == resource.data.foremanId;
-    }
+      allow read: if isCrewMember(crewId);
+      allow create: if isAuthenticated() && request.auth.uid == request.data.foremanId;
+      allow update: if isForeman(crewId) ||
+                      (isCrewMember(crewId) && hasPermission(crewId, 'manage'));
+      allow delete: if isForeman(crewId);
     }
 
-    // FeedPosts subcollection under crews: Read/create for crew members, update/delete for author or foreman
+    // Crew members subcollection
+    match /crews/{crewId}/members/{memberId} {
+      allow read: if isCrewMember(crewId);
+      allow write: if isForeman(crewId) ||
+                     (request.auth.uid == memberId && isCrewMember(crewId));
+    }
+
+    // Feed posts subcollection
     match /crews/{crewId}/feedPosts/{postId} {
-      allow read: if request.auth != null && 
-        request.auth.uid in get(/databases/$(database)/documents/crews/$(crewId)).data.memberIds;
-      allow create: if request.auth != null && 
-        request.auth.uid in get(/databases/$(database)/documents/crews/$(crewId)).data.memberIds;
-      allow update, delete: if request.auth != null && 
-        (request.auth.uid == resource.data.authorId || 
-         request.auth.uid == get(/databases/$(database)/documents/crews/$(crewId)).data.foremanId);
+      allow read: if isCrewMember(crewId);
+      allow create: if isCrewMember(crewId);
+      allow update, delete: if isCrewMember(crewId) &&
+                               (request.auth.uid == resource.data.authorId ||
+                                isForeman(crewId));
     }
 
-    // Jobs collection: Public jobs visible to all authenticated users
-    // Private/crew jobs visible only to crew members/foreman
+    // Jobs collection: Public read, authenticated write
     match /jobs/{jobId} {
-      allow read: if request.auth != null && (
-        // Allow reading public jobs
-        !resource.data.crewId ||
-        // Or if user is part of the crew
-        (resource.data.crewId in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.crewIds) ||
-        // Or if user is the foreman of the crew
-        (resource.data.crewId && request.auth.uid == get(/databases/$(database)/documents/crews/$(resource.data.crewId)).data.foremanId)
-      );
-      
-      // Allow creation for authenticated users
-      allow create: if request.auth != null;
-      
-      // Allow updates/deletes for job author or crew foreman
-      allow update, delete: if request.auth != null && (
-        request.auth.uid == resource.data.authorId || 
-        (resource.data.crewId && request.auth.uid == get(/databases/$(database)/documents/crews/$(resource.data.crewId)).data.foremanId)
-      );
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() &&
+                               (request.auth.uid == resource.data.authorId ||
+                                (resource.data.crewId != null &&
+                                 isForeman(resource.data.crewId)));
     }
 
-    // Conversations collection: Access for participants
+    // Conversations collection
     match /conversations/{convId} {
-      allow read, update: if request.auth != null && 
-        request.auth.uid in resource.data.participants;
-      allow create: if request.auth != null;
+      allow read, update: if isAuthenticated() &&
+                             request.auth.uid in resource.data.participants;
+      allow create: if isAuthenticated();
     }
 
-    // Messages subcollection under conversations: Read for participants, create for sender (participant), 
-    // update/delete for author
+    // Messages subcollection
     match /conversations/{convId}/messages/{msgId} {
-      allow read: if request.auth != null && 
-        request.auth.uid in get(/databases/$(database)/documents/conversations/$(convId)).data.participants;
-      allow create: if request.auth != null && 
-        request.auth.uid in get(/databases/$(database)/documents/conversations/$(convId)).data.participants;
-      allow update, delete: if request.auth != null && request.auth.uid == resource.data.authorId;
+      allow read: if isAuthenticated() &&
+                    request.auth.uid in get(/databases/$(database)/documents/conversations/$(convId)).data.participants;
+      allow create: if isAuthenticated() &&
+                    request.auth.uid in get(/databases/$(database)/documents/conversations/$(convId)).data.participants;
+      allow update, delete: if isAuthenticated() && request.auth.uid == resource.data.authorId;
     }
 
-    // Locals: Public read-only
+    // FIXED: Locals collection - Require authentication for ALL access
     match /locals/{localId} {
-      allow read: if true;
-      allow write: if false;
+      allow read: if isAuthenticated();
+      allow write: if false; // Read-only for authenticated users
     }
 
-    // Counters: Authenticated users can read/write their own or global counters
+    // Counters collection: Authenticated users only
     match /counters/{document=**} {
-      allow read, write: if request.auth != null;
+      allow read, write: if isAuthenticated();
       allow delete: if false;
     }
   }
