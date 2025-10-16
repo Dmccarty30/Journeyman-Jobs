@@ -23,13 +23,14 @@ logger = logging.getLogger(__name__)
 # Define the specific job classifications to scrape (adapted based on observed job classes in the HTML)
 TARGET_CLASSIFICATIONS = {
     "journeyman-lineman",
+    "journeyman-wireman",
     "teledata-lineman",
     "street-light-technician",
     "operator",
-    "inside-wireman",
-    "journeyman-cbl-splicer",
     "welder",
-    # Add more if needed based on future observations
+    "journeyman-cbl-splicer",
+    "line-equipment-operator",
+    "journeyman-substation-tech",
 }
 
 # Map the parsed keys to the desired JSON keys (adapted from the MD guidance)
@@ -42,17 +43,6 @@ FIELD_MAP = {
     "Comments": "notes",  # Will parse further for sub-fields
 }
 
-def _get_text_safely(element, selector):
-    """Safely extracts and cleans text from a BeautifulSoup element."""
-    if not element:
-        return ""
-    found = element.select_one(selector)
-    if not found:
-        return ""
-    
-    # Handle rich text fields that might have multiple lines or tags
-    return ' '.join(found.stripped_strings)
-
 def parse_comments(comments):
     """Parses the Comments field for sub-details like Location, Hours, etc."""
     parsed = {
@@ -60,13 +50,15 @@ def parse_comments(comments):
         "hours": "",
         "work_type": "",
         "notes": "",
+        "location": "",
     }
     if not comments:
         return parsed
     
-    # Split by ', ' and parse key:value pairs
-    parts = comments.split(', ')
+    # Split on ', ' only if followed by a key like 'Key:'
+    parts = re.split(r',\s*(?=[A-Z][^:]+:)', comments)
     for part in parts:
+        part = part.strip()
         if ':' in part:
             key, value = part.split(':', 1)
             key = key.strip()
@@ -74,13 +66,15 @@ def parse_comments(comments):
             if key in {'Requirement', 'Requirements'}:
                 parsed['qualifications'] = value
             elif key == 'Location':
-                parsed['location'] = value  # Can override if more detailed
+                parsed['location'] = value
             elif key == 'Hours Working':
                 parsed['hours'] = value
             elif key == 'Work Type':
                 parsed['work_type'] = value
             elif key == 'Other Incentives':
                 parsed['notes'] = value  # Per diem or bonuses
+            elif key == 'Position':
+                pass  # Ignore, as we have jobClass
     
     return parsed
 
@@ -117,7 +111,7 @@ async def scrape_ibew71():
         company = strong.text.strip() if strong else ""
         
         # City (often empty)
-        tds[1].text.strip()
+        city = tds[1].text.strip()
         
         # Start date from header
         start_date = tds[2].text.strip()
@@ -136,7 +130,7 @@ async def scrape_ibew71():
         
         # Find the corresponding bodyrow tbody
         row_id = f"row{dispatch_number}" if dispatch_number else ""
-        bodyrow = soup.find("tbody", id=row_id, class_="bodyrow")
+        bodyrow = soup.find("tbody", id=row_id)
         if not bodyrow:
             logger.info(f"No bodyrow found for row {row_id}, skipping.")
             continue
@@ -158,10 +152,19 @@ async def scrape_ibew71():
         
         # Parse the br-separated lines
         details = {}
+        current_key = None
+        current_value = ""
         for line in details_lines:
             if ':' in line:
+                if current_key:
+                    details[current_key] = current_value.strip()
                 key, value = line.split(':', 1)
-                details[key.strip()] = value.strip()
+                current_key = key.strip()
+                current_value = value.strip()
+            else:
+                current_value += " " + line.strip()
+        if current_key:
+            details[current_key] = current_value.strip()
         
         for source_key, json_key in FIELD_MAP.items():
             job_data[json_key] = details.get(source_key, "")
@@ -180,13 +183,15 @@ async def scrape_ibew71():
         # Override location if in parsed_comments
         if parsed_comments.get("location"):
             job_data["location"] = parsed_comments["location"]
+        elif city:
+            job_data["location"] = city
         
         # Set classification from jobClass, normalized to slug
-        job_class = job_data.get("jobClass", "").lower().replace(" ", "-").replace("-out-of-classificaton", "")
-        job_data["classification"] = job_class  # Use as-is for filtering
+        job_class = job_data.get("jobClass", "").lower().replace(" ", "-").replace("-out-of-classificaton", "").replace("-out-of-classification", "")
+        job_data["classification"] = job_class
         
-        # Filter to target classifications (partial match)
-        if not any(target in job_data["classification"] for target in TARGET_CLASSIFICATIONS):
+        # Filter to target classifications
+        if job_data["classification"] not in TARGET_CLASSIFICATIONS:
             logger.info(f"Skipping job with classification '{job_data['classification']}' (not in targets).")
             continue
         
