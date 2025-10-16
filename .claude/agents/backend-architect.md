@@ -2,7 +2,7 @@
 name: backend-architect
 description: Design RESTful APIs, microservice boundaries, and database schemas. Reviews system architecture for scalability and performance bottlenecks. Use PROACTIVELY when creating new backend services or APIs.
 model: sonnet
-tools: Bash, mcp__ElevenLabs__text_to_speech, mcp__ElevenLabs__play_audio
+tools: Bash, mcp__ElevenLabs__text_to_speech, mcp__ElevenLabs__play_audio, Read, Grep, Glob, Write, TodoWrite, Task, SlashCommand
 color: green
 ---
 

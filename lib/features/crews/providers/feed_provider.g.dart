@@ -204,7 +204,7 @@ final class CrewPostsProvider extends $FunctionalProvider<
   }
 }
 
-String _$crewPostsHash() => r'f27f988593fd702fb6bd26681da7cef7a6e53d6a';
+String _$crewPostsHash() => r'f44cbb6199252a9348cc5d20901665ad28fc53ae';
 
 /// Posts for a specific crew
 
@@ -381,7 +381,7 @@ final class PostCommentsProvider extends $FunctionalProvider<
   }
 }
 
-String _$postCommentsHash() => r'64e15609d41dfb557b5333a4cb80b38a8473744e';
+String _$postCommentsHash() => r'fd48317b238915a8f95771d8fd7358364759c4c0';
 
 /// Comments for a specific post
 
@@ -453,7 +453,7 @@ final class SelectedCrewPostsProvider extends $FunctionalProvider<
   }
 }
 
-String _$selectedCrewPostsHash() => r'551e1b4b1f97a21c2094112698e495093eb4ea30';
+String _$selectedCrewPostsHash() => r'c938e43244517cea199cfaeec3a3492cdde1050c';
 
 /// Provider to get pinned posts for a crew
 
@@ -773,8 +773,6 @@ final class PostCreationNotifierProvider extends $FunctionalProvider<
           $allTransitiveDependencies: null,
         );
 
-  Null get notifier => null;
-
   @override
   String debugGetCreateSourceHash() => _$postCreationNotifierHash();
 
@@ -847,7 +845,7 @@ final class PostCreationStateProvider extends $FunctionalProvider<
   }
 }
 
-String _$postCreationStateHash() => r'9997f65f544786b4c7bd0e6e1b9be4ccc2243ef2';
+String _$postCreationStateHash() => r'211ef6732351f047d73271d5d809fcdc9504dc78';
 
 /// Provider for post update notifier
 
@@ -943,7 +941,7 @@ final class PostUpdateStateProvider extends $FunctionalProvider<
   }
 }
 
-String _$postUpdateStateHash() => r'91768fdfd08fc6415f28efa1f4c674ae400c53e6';
+String _$postUpdateStateHash() => r'128318e900ff323065834267e844948ea9adce90';
 
 /// Provider for reaction notifier
 
@@ -1035,7 +1033,7 @@ final class ReactionStateProvider extends $FunctionalProvider<AsyncValue<void>,
   }
 }
 
-String _$reactionStateHash() => r'83bb289e2d6c0450731d2153f1a2fdceca3cfbf9';
+String _$reactionStateHash() => r'26f3c4d1148ddb58a2097fe4c7dcfa390de96923';
 
 /// Provider for comment notifier
 
@@ -1128,7 +1126,7 @@ final class CommentStateProvider extends $FunctionalProvider<
   }
 }
 
-String _$commentStateHash() => r'f5ac4687a41432e786a4e6fb2078f0b7e126de99';
+String _$commentStateHash() => r'fc18eb56484e024ce924a7f06a53cd8294379a84';
 
 /// Provider to get crew post statistics
 
@@ -1280,7 +1278,7 @@ final class PostReactionCountsProvider extends $FunctionalProvider<
 }
 
 String _$postReactionCountsHash() =>
-    r'346cd5a3505d7399259f619c747f04e4205c5dcd';
+    r'08b6a4ec0ba9b7c97a2a2a7c69fbb813aa585243';
 
 /// Provider to get reaction counts for a post
 
@@ -1372,7 +1370,7 @@ final class UserReactionToPostProvider
 }
 
 String _$userReactionToPostHash() =>
-    r'9bc5c86bae25de0f4ab70b78d441513706c9bc5b';
+    r'78c515b1eaf7294f30393306faea4117e258965b';
 
 /// Provider to check if current user has reacted to a post
 

@@ -6,6 +6,8 @@ import '../../domain/enums/enums.dart'; // For Classification and ConstructionTy
 import '../../utils/text_formatting_wrapper.dart'; // For toTitleCase
 import '../../design_system/components/reusable_components.dart' hide JJSnackBar; // For JJTextField, JJButton
 import '../../electrical_components/jj_snack_bar.dart'; // For JJSnackBar
+import '../../models/user_job_preferences.dart';
+import '../../providers/riverpod/user_preferences_riverpod_provider.dart';
 
 class UserJobPreferencesDialog extends ConsumerStatefulWidget {
   final UserJobPreferences? initialPreferences;
@@ -55,20 +57,11 @@ class _UserJobPreferencesDialogState extends ConsumerState<UserJobPreferencesDia
   @override
   void initState() {
     super.initState();
-    _preferences = widget.initialPreferences ?? UserJobPreferences(
-      userId: widget.userId,
-      classifications: [],
-      constructionTypes: [],
-      preferredLocals: [],
-      hoursPerWeek: null,
-      perDiem: null,
-      minimumWage: null,
-      maximumDistance: null,
-    );
+    _preferences = widget.initialPreferences ?? UserJobPreferences.empty();
 
-    _preferredLocalsController = TextEditingController(text: _preferences.preferredLocals.join(', '));
-    _minimumWageController = TextEditingController(text: _preferences.minimumWage?.toStringAsFixed(2) ?? '');
-    _maximumDistanceController = TextEditingController(text: _preferences.maximumDistance?.toString() ?? '');
+    _preferredLocalsController = TextEditingController(text: _preferences.preferredLocals.map((e) => e.toString()).join(', '));
+    _minimumWageController = TextEditingController(text: _preferences.minWage?.toStringAsFixed(2) ?? '');
+    _maximumDistanceController = TextEditingController(text: _preferences.maxDistance?.toString() ?? '');
   }
 
   @override
@@ -288,7 +281,7 @@ class _UserJobPreferencesDialogState extends ConsumerState<UserJobPreferencesDia
       maxLines: 2,
       onChanged: (value) {
         _preferences = _preferences.copyWith(
-          preferredLocals: value.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList(),
+          preferredLocals: value.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).map((e) => int.tryParse(e) ?? 0).toList(),
         );
       },
     );
@@ -364,7 +357,7 @@ class _UserJobPreferencesDialogState extends ConsumerState<UserJobPreferencesDia
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-              value: _preferences.perDiem,
+              value: _preferences.perDiemRequirement,
               hint: Text(
                 'Select per diem preference',
                 style: AppTheme.bodyMedium.copyWith(color: AppTheme.textLight),
@@ -378,7 +371,7 @@ class _UserJobPreferencesDialogState extends ConsumerState<UserJobPreferencesDia
               }).toList(),
               onChanged: (value) {
                 setState(() {
-                  _preferences = _preferences.copyWith(perDiem: value);
+                  _preferences = _preferences.copyWith(perDiemRequirement: value);
                 });
               },
             ),
@@ -412,7 +405,7 @@ class _UserJobPreferencesDialogState extends ConsumerState<UserJobPreferencesDia
       },
       onChanged: (value) {
         final wage = value.isNotEmpty ? double.tryParse(value) : null;
-        _preferences = _preferences.copyWith(minimumWage: wage);
+        _preferences = _preferences.copyWith(minWage: wage);
       },
     );
   }
@@ -441,7 +434,7 @@ class _UserJobPreferencesDialogState extends ConsumerState<UserJobPreferencesDia
       },
       onChanged: (value) {
         final distance = value.isNotEmpty ? int.tryParse(value) : null;
-        _preferences = _preferences.copyWith(maximumDistance: distance);
+        _preferences = _preferences.copyWith(maxDistance: distance);
       },
     );
   }
@@ -491,21 +484,25 @@ class _UserJobPreferencesDialogState extends ConsumerState<UserJobPreferencesDia
     });
 
     try {
-      final userPreferencesProvider = ref.read(userPreferencesNotifierProvider.notifier);
+      final userPreferencesNotifier = ref.read(userPreferencesProvider) as dynamic;
       if (widget.initialPreferences == null) {
-        await userPreferencesProvider.savePreferences(_preferences);
+        await userPreferencesNotifier.savePreferences(widget.userId, _preferences);
       } else {
-        await userPreferencesProvider.updatePreferences(_preferences);
+        await userPreferencesNotifier.updatePreferences(widget.userId, _preferences);
       }
 
+      if (!mounted) return;
+
       JJSnackBar.showSuccess(
-        context,
+        context: context,
         message: 'Job preferences saved successfully!',
       );
+      if (!mounted) return;
       Navigator.of(context).pop(true);
     } catch (e) {
+      if (!mounted) return;
       JJSnackBar.showError(
-        context,
+        context: context,
         message: 'Failed to save job preferences: $e',
       );
     } finally {
@@ -513,73 +510,5 @@ class _UserJobPreferencesDialogState extends ConsumerState<UserJobPreferencesDia
         _isLoading = false;
       });
     }
-  }
-}
-
-// Placeholder for UserJobPreferences model
-class UserJobPreferences {
-  final String userId;
-  final List<String> classifications;
-  final List<String> constructionTypes;
-  final List<String> preferredLocals;
-  final String? hoursPerWeek;
-  final String? perDiem;
-  final double? minimumWage;
-  final int? maximumDistance;
-
-  UserJobPreferences({
-    required this.userId,
-    required this.classifications,
-    required this.constructionTypes,
-    required this.preferredLocals,
-    this.hoursPerWeek,
-    this.perDiem,
-    this.minimumWage,
-    this.maximumDistance,
-  });
-
-  UserJobPreferences copyWith({
-    String? userId,
-    List<String>? classifications,
-    List<String>? constructionTypes,
-    List<String>? preferredLocals,
-    String? hoursPerWeek,
-    String? perDiem,
-    double? minimumWage,
-    int? maximumDistance,
-  }) {
-    return UserJobPreferences(
-      userId: userId ?? this.userId,
-      classifications: classifications ?? this.classifications,
-      constructionTypes: constructionTypes ?? this.constructionTypes,
-      preferredLocals: preferredLocals ?? this.preferredLocals,
-      hoursPerWeek: hoursPerWeek ?? this.hoursPerWeek,
-      perDiem: perDiem ?? this.perDiem,
-      minimumWage: minimumWage ?? this.minimumWage,
-      maximumDistance: maximumDistance ?? this.maximumDistance,
-    );
-  }
-}
-
-// Placeholder for user_preferences_provider.dart
-final userPreferencesNotifierProvider = StateNotifierProvider<UserPreferencesNotifier, UserJobPreferences?>((ref) {
-  return UserPreferencesNotifier();
-});
-
-class UserPreferencesNotifier extends StateNotifier<UserJobPreferences?> {
-  UserPreferencesNotifier() : super(null);
-
-  Future<void> savePreferences(UserJobPreferences preferences) async {
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
-    state = preferences;
-    print('Saved preferences: ${preferences.userId}');
-  }
-
-  Future<void> updatePreferences(UserJobPreferences preferences) async {
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
-    state = preferences;
-    print('Updated preferences: ${preferences.userId}');
   }
 }

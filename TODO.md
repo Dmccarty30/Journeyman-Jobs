@@ -2,6 +2,9 @@
 
 ## APP WIDE CHANGES
 
+- ***I WANT TO USE THE DARK NAVY BLUE COLORED BACKGROUND ON THE `WELCOME SCREEN` WILL BE THE THEME FOR `DARK MODE`. THIS MEANS THAT THERE NEEDS TO BE THE ADDITION OF A `DARK MODE` FEATURE***
+- ***BE SURE TO PROVIDE DETAILED AND COMPREHENSIVE DOCUMENTATIO TO ANY AND ALL CHANGES/MODIFICATIONS/ADDITIONS THAT NEED TO BE MADE***
+
 ## ONBOARDING SCREENS
 
 - I want for you to perform a comprehensive analysis on the User Auth process. I mean a super deep dive into the codebase to ensure that everything is working and is proper. From

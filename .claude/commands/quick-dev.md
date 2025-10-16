@@ -3,11 +3,13 @@
 Instantly setup and start development with optimized configuration.
 
 ## Usage
+
 ```
 @quick-dev [mode]
 ```
 
 ## Modes
+
 - **start** - Quick setup and development start (default)
 - **clean** - Clean rebuild and start
 - **test** - Setup with test environment
@@ -15,6 +17,7 @@ Instantly setup and start development with optimized configuration.
 - **performance** - Development with performance monitoring
 
 ## Features
+
 - Automated dependency installation
 - Firebase emulator startup
 - Hot reload optimization
@@ -23,6 +26,7 @@ Instantly setup and start development with optimized configuration.
 - Intelligent caching
 
 ## Examples
+
 ```bash
 @quick-dev                    # Standard quick start
 @quick-dev clean             # Clean setup and start

@@ -50,6 +50,7 @@ When invoked, you must follow these steps:
    - Include specific file paths and line numbers where applicable
 
 **Best Practices:**
+
 - Always prioritize security vulnerabilities as Critical
 - Consider cascading effects when recommending deletions
 - Provide specific correction examples for complex issues
@@ -146,6 +147,7 @@ When invoked, you must follow these steps:
 ## Output Requirements
 
 Your final response must:
+
 1. Be saved as COMPREHENSIVE_CODEBASE_REPORT.md
 2. Account for every single file in the codebase
 3. Include actionable, specific recommendations

@@ -7,17 +7,19 @@ part 'user_preferences_riverpod_provider.g.dart';
 
 /// User preferences state model for Riverpod
 class UserPreferencesState {
-  const UserPreferencesState({
-    this.preferences = UserJobPreferences.empty(),
+  UserPreferencesState({
+    UserJobPreferences? preferences,
     this.isLoading = false,
     this.error,
     this.lastUpdated,
-  });
+  }) : preferences = preferences ?? UserJobPreferences.empty();
 
   final UserJobPreferences preferences;
   final bool isLoading;
   final String? error;
   final DateTime? lastUpdated;
+
+  bool get hasPreferences => preferences != UserJobPreferences.empty();
 
   UserPreferencesState copyWith({
     UserJobPreferences? preferences,
@@ -31,7 +33,7 @@ class UserPreferencesState {
     lastUpdated: lastUpdated ?? this.lastUpdated,
   );
 
-  UserPreferencesState clearError() => copyWith();
+  UserPreferencesState clearError() => copyWith(error: null);
 }
 
 /// User preferences notifier for managing user job preferences
@@ -42,7 +44,7 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
   @override
   UserPreferencesState build() {
     _operationManager = ConcurrentOperationManager();
-    return const UserPreferencesState();
+    return UserPreferencesState();
   }
 
   /// Load user preferences from Firestore
@@ -190,20 +192,20 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
 /// Convenience provider for user preferences
 @riverpod
 UserJobPreferences userPreferences(Ref ref) {
-  final state = ref.watch(userPreferencesNotifierProvider);
+  final state = ref.watch(userPreferencesProvider);
   return state.preferences;
 }
 
 /// Convenience provider for checking if user has preferences
 @riverpod
 bool hasUserPreferences(Ref ref) {
-  final preferences = ref.watch(userPreferencesProvider);
-  return preferences.hasPreferences;
+  final state = ref.watch(userPreferencesProvider);
+  return state.hasPreferences;
 }
 
 /// Convenience provider for last updated timestamp
 @riverpod
 DateTime? userPreferencesLastUpdated(Ref ref) {
-  final state = ref.watch(userPreferencesNotifierProvider);
+  final state = ref.watch(userPreferencesProvider);
   return state.lastUpdated;
 }
