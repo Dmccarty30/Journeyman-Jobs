@@ -9,13 +9,18 @@
       "name": "sequentialthinking",
       "path": ".gemini/mcp-servers/sequentialthinking/src/sequentialthinking",
       "command": "node dist/index.js"
+    },
+    {
+      "name": "chrome-devtools",
+      "command": "npx chrome-devtools-mcp@latest"
     }
   ],
   "mcp": {
     "serverCommand": "npm run start",
     "allowed": [
       "context7",
-      "sequentialthinking"
+      "sequentialthinking",
+      "chrome-devtools"
     ]
   }
 }

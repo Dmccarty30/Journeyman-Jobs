@@ -4,6 +4,8 @@
 
 ## ONBOARDING SCREENS
 
+- I want for you to perform a comprehensive analysis on the User Auth process. I mean a super deep dive into the codebase to ensure that everything is working and is proper. From
+
 ### WELCOME SCREEN
 
 - **lib\screens\onboarding\welcome_screen.dart**
@@ -38,14 +40,16 @@
 - **lib\screens\storm\home_screen.dart**
 
 - Read "docs\Home-Analysis.md" to get a better understanding of this files structure and potential issues
+- Underneath the `app bar` it needs to have the user's name displayed where it says "Welcome Back, [usersName]!".
 
 - *Quick Actions*
 
-- ADD two `dummy containers` or `placeholders` for future use
+- ADD one more container that will navigate the user directly to the `Resources Screen`
 - REMOVE the light blue shadow from the containers as well.
 
 - *Suggested Jobs*
 
+- Read "docs\plan-personalize-job-recommendations-0.md" to understand what i want to do about this section.
 - REMOVE all colored font from all cards, containers, and or dialog popups. This includes the grey tint behind and around the local number of the job cards.
 
 ## JOB SCREEN
