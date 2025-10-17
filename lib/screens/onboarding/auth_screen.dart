@@ -8,6 +8,7 @@ import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
 import '../../electrical_components/circuit_board_background.dart';
+import '../../electrical_components/jj_snack_bar.dart';
 import '../../services/firestore_service.dart';
 
 class AuthScreen extends StatefulWidget {

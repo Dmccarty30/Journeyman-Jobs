@@ -160,24 +160,42 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
 
     try {
       if (_currentStep == 0) {
-        // Save Step 1 data before proceeding
+        // Save Step 1 data before proceeding - CRITICAL for user document creation
         await _saveStep1Data();
+        
+        // Only proceed to next step if save was successful
+        if (mounted && _currentStep < _totalSteps - 1) {
+          _pageController.nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
       } else if (_currentStep == 1) {
         // Save Step 2 data before proceeding
         await _saveStep2Data();
-      }
-
-      if (_currentStep < _totalSteps - 1) {
-        _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
+        
+        // Only proceed to next step if save was successful
+        if (mounted && _currentStep < _totalSteps - 1) {
+          _pageController.nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
       } else {
+        // Final step - complete onboarding
         _completeOnboarding();
       }
     } catch (e) {
-      // Error already handled in save methods
       debugPrint('Error in _nextStep: $e');
+      // Error already handled in save methods with user feedback
+      // Don't proceed to next step if there was an error
+      if (mounted) {
+        JJElectricalNotifications.showElectricalToast(
+          context: context,
+          message: 'Please fix the errors before continuing.',
+          type: ElectricalNotificationType.error,
+        );
+      }
     }
   }
 
@@ -198,24 +216,40 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
       if (user == null) throw Exception('No authenticated user');
 
       final firestoreService = FirestoreService();
+      
+      // Enhanced Step 1 data with additional required fields for proper user document creation
+      final step1Data = {
+        'firstName': _firstNameController.text.trim(),
+        'lastName': _lastNameController.text.trim(),
+        'phoneNumber': _phoneController.text.trim(),
+        'address1': _address1Controller.text.trim(),
+        'address2': _address2Controller.text.trim(),
+        'city': _cityController.text.trim(),
+        'state': _stateController.text.trim(),
+        'zipcode': int.parse(_zipcodeController.text.trim()),
+        // Ensure core user document fields are set during Step 1
+        'email': user.email ?? '',
+        'username': user.email?.split('@')[0] ?? 'user',
+        'displayName': '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}'.trim(),
+        'role': 'electrician',
+        'onboardingStatus': 'incomplete',
+        'lastActive': FieldValue.serverTimestamp(),
+        'createdTime': FieldValue.serverTimestamp(),
+        'isActive': true,
+        'onlineStatus': false,
+        'crewIds': <String>[],
+        'hasSetJobPreferences': false,
+      };
+
       await firestoreService.setUserWithMerge(
         uid: user.uid,
-        data: {
-          'firstName': _firstNameController.text.trim(),
-          'lastName': _lastNameController.text.trim(),
-          'phoneNumber': _phoneController.text.trim(),
-          'address1': _address1Controller.text.trim(),
-          'address2': _address2Controller.text.trim(),
-          'city': _cityController.text.trim(),
-          'state': _stateController.text.trim(),
-          'zipcode': int.parse(_zipcodeController.text.trim()),
-        },
+        data: step1Data,
       );
 
       if (mounted) {
         JJElectricalNotifications.showElectricalToast(
           context: context,
-          message: 'Basic information saved',
+          message: 'Basic information saved successfully',
           type: ElectricalNotificationType.success,
         );
       }
@@ -244,21 +278,28 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
       if (user == null) throw Exception('No authenticated user');
 
       final firestoreService = FirestoreService();
+      
+      // Enhanced Step 2 data with validation and error handling
+      final step2Data = {
+        'homeLocal': int.parse(_homeLocalController.text.trim()),
+        'ticketNumber': _ticketNumberController.text.trim(),
+        'classification': _selectedClassification ?? '',
+        'isWorking': _isWorking,
+        'booksOn': _booksOnController.text.trim().isEmpty ? null : _booksOnController.text.trim(),
+        // Ensure onboarding status remains consistent
+        'onboardingStatus': 'incomplete',
+        'lastActive': FieldValue.serverTimestamp(),
+      };
+
       await firestoreService.setUserWithMerge(
         uid: user.uid,
-        data: {
-          'homeLocal': int.parse(_homeLocalController.text.trim()),
-          'ticketNumber': _ticketNumberController.text.trim(),
-          'classification': _selectedClassification ?? '',
-          'isWorking': _isWorking,
-          'booksOn': _booksOnController.text.trim().isEmpty ? null : _booksOnController.text.trim(),
-        },
+        data: step2Data,
       );
 
       if (mounted) {
         JJElectricalNotifications.showElectricalToast(
           context: context,
-          message: 'Professional details saved',
+          message: 'Professional details saved successfully',
           type: ElectricalNotificationType.success,
         );
       }
@@ -267,7 +308,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
       if (mounted) {
         JJElectricalNotifications.showElectricalToast(
           context: context,
-          message: 'Error saving data. Please try again.',
+          message: 'Error saving professional details. Please try again.',
           type: ElectricalNotificationType.error,
         );
       }
@@ -384,20 +425,38 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
 
   bool _canProceed() {
     switch (_currentStep) {
-      case 0: // Basic Information
-        return _firstNameController.text.isNotEmpty &&
-               _lastNameController.text.isNotEmpty &&
-               _phoneController.text.isNotEmpty &&
-               _address1Controller.text.isNotEmpty &&
-               _cityController.text.isNotEmpty &&
-               _stateController.text.isNotEmpty &&
-               _zipcodeController.text.isNotEmpty;
-      case 1: // Professional Details
-        return _homeLocalController.text.isNotEmpty &&
-               _ticketNumberController.text.isNotEmpty &&
-               _selectedClassification != null;
+      case 0: // Basic Information - Enhanced validation
+        final firstName = _firstNameController.text.trim();
+        final lastName = _lastNameController.text.trim();
+        final phone = _phoneController.text.trim();
+        final address1 = _address1Controller.text.trim();
+        final city = _cityController.text.trim();
+        final state = _stateController.text.trim();
+        final zipcode = _zipcodeController.text.trim();
+        
+        return firstName.isNotEmpty &&
+               lastName.isNotEmpty &&
+               phone.isNotEmpty &&
+               address1.isNotEmpty &&
+               city.isNotEmpty &&
+               state.isNotEmpty &&
+               zipcode.isNotEmpty &&
+               zipcode.length >= 5 && // Basic zipcode validation
+               int.tryParse(zipcode) != null; // Ensure zipcode is numeric
+               
+      case 1: // Professional Details - Enhanced validation
+        final homeLocal = _homeLocalController.text.trim();
+        final ticketNumber = _ticketNumberController.text.trim();
+        
+        return homeLocal.isNotEmpty &&
+               ticketNumber.isNotEmpty &&
+               _selectedClassification != null &&
+               _selectedClassification!.isNotEmpty &&
+               int.tryParse(homeLocal) != null; // Ensure home local is numeric
+               
       case 2: // Preferences & Feedback
         return _selectedConstructionTypes.isNotEmpty;
+        
       default:
         return false;
     }

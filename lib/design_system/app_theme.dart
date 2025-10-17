@@ -16,6 +16,13 @@ class AppTheme {
   static const Color secondaryNavy = Color(0xFF2D3748);
   static const Color secondaryCopper = Color(0xFFD69E2E);
   
+  // Dark Mode Theme Colors (Phase 1.1)
+  static const Color darkBackground = Color(0xFF1A202C);
+  static const Color darkSurface = Color(0xFF2D3748);
+  static const Color darkTextPrimary = Color(0xFFFFFFFF);
+  static const Color darkTextSecondary = Color(0xFFE2E8F0);
+  static const Color darkTextLight = Color(0xFF9CA3AF);
+  
   // Neutral Colors
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
@@ -555,7 +562,7 @@ class AppTheme {
         ),
       ),
       
-      // Input Decoration Theme
+      // Input Decoration Theme (Phase 1.2: Fixed for light mode readability)
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: white,
@@ -580,8 +587,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radiusMd),
           borderSide: const BorderSide(color: errorRed, width: borderWidthThick),
         ),
-        labelStyle: bodyMedium.copyWith(color: textSecondary),
-        hintStyle: bodyMedium.copyWith(color: textLight),
+        labelStyle: bodyMedium.copyWith(color: textPrimary), // Fixed: Now black/readable
+        hintStyle: bodyMedium.copyWith(color: textSecondary), // Fixed: Dark gray for better readability
         errorStyle: bodySmall.copyWith(color: errorRed),
       ),
       
@@ -675,28 +682,27 @@ class AppTheme {
         brightness: Brightness.dark,
         primary: primaryNavy,
         secondary: accentCopper,
-        surface: secondaryNavy,
-        background: primaryNavy,
+        surface: darkSurface, // Updated to use new dark mode constants
         error: errorRed,
         onPrimary: white,
         onSecondary: white,
-        onSurface: textOnDark,
+        onSurface: darkTextPrimary, // Updated to use new dark mode constants
         onError: white,
       ),
 
       appBarTheme: AppBarTheme(
-        backgroundColor: primaryNavy,
-        foregroundColor: white,
+        backgroundColor: darkBackground, // Updated to use new dark mode constants
+        foregroundColor: darkTextPrimary, // Updated to use new dark mode constants
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: headlineMedium.copyWith(color: white),
-        iconTheme: const IconThemeData(color: white),
+        titleTextStyle: headlineMedium.copyWith(color: darkTextPrimary),
+        iconTheme: IconThemeData(color: darkTextPrimary),
       ),
 
-      scaffoldBackgroundColor: primaryNavy,
+      scaffoldBackgroundColor: darkBackground, // Updated to use new dark mode constants
 
       cardTheme: CardThemeData(
-        color: secondaryNavy,
+        color: darkSurface, // Updated to use new dark mode constants
         elevation: 2,
         shadowColor: Colors.black.withValues(alpha: 0.3),
         shape: RoundedRectangleBorder(
@@ -706,9 +712,10 @@ class AppTheme {
         margin: const EdgeInsets.all(spacingSm),
       ),
 
+      // Input Decoration Theme (Phase 1.2: Fixed for dark mode readability)
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: secondaryNavy,
+        fillColor: darkSurface, // Updated to use new dark mode constants
         contentPadding: const EdgeInsets.all(spacingMd),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
@@ -730,8 +737,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radiusMd),
           borderSide: const BorderSide(color: errorRed, width: borderWidthThick),
         ),
-        labelStyle: bodyMedium.copyWith(color: textOnDark),
-        hintStyle: bodyMedium.copyWith(color: textLight),
+        labelStyle: bodyMedium.copyWith(color: darkTextPrimary), // Fixed: Now white/readable in dark mode
+        hintStyle: bodyMedium.copyWith(color: darkTextSecondary), // Fixed: Light gray for readability in dark mode
         errorStyle: bodySmall.copyWith(color: errorRed),
       ),
 
@@ -750,7 +757,7 @@ class AppTheme {
 
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: white,
+          foregroundColor: darkTextPrimary, // Updated to use new dark mode constants
           side: const BorderSide(color: lightGray, width: borderWidthMedium),
           padding: const EdgeInsets.symmetric(horizontal: spacingLg, vertical: spacingMd),
           shape: RoundedRectangleBorder(
@@ -769,7 +776,7 @@ class AppTheme {
       ),
 
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: primaryNavy,
+        backgroundColor: darkBackground, // Updated to use new dark mode constants
         selectedItemColor: accentCopper,
         unselectedItemColor: mediumGray,
         selectedLabelStyle: labelSmall,
@@ -779,21 +786,21 @@ class AppTheme {
       ),
 
       textTheme: TextTheme(
-        displayLarge: displayLarge.copyWith(color: white),
-        displayMedium: displayMedium.copyWith(color: white),
-        displaySmall: displaySmall.copyWith(color: white),
-        headlineLarge: headlineLarge.copyWith(color: white),
-        headlineMedium: headlineMedium.copyWith(color: white),
-        headlineSmall: headlineSmall.copyWith(color: white),
-        titleLarge: titleLarge.copyWith(color: white),
-        titleMedium: titleMedium.copyWith(color: white),
-        titleSmall: titleSmall.copyWith(color: white),
-        bodyLarge: bodyLarge.copyWith(color: textOnDark),
-        bodyMedium: bodyMedium.copyWith(color: textOnDark),
-        bodySmall: bodySmall.copyWith(color: textOnDark),
-        labelLarge: labelLarge.copyWith(color: textOnDark),
-        labelMedium: labelMedium.copyWith(color: textOnDark),
-        labelSmall: labelSmall.copyWith(color: textOnDark),
+        displayLarge: displayLarge.copyWith(color: darkTextPrimary), // Updated to use new dark mode constants
+        displayMedium: displayMedium.copyWith(color: darkTextPrimary),
+        displaySmall: displaySmall.copyWith(color: darkTextPrimary),
+        headlineLarge: headlineLarge.copyWith(color: darkTextPrimary),
+        headlineMedium: headlineMedium.copyWith(color: darkTextPrimary),
+        headlineSmall: headlineSmall.copyWith(color: darkTextPrimary),
+        titleLarge: titleLarge.copyWith(color: darkTextPrimary),
+        titleMedium: titleMedium.copyWith(color: darkTextPrimary),
+        titleSmall: titleSmall.copyWith(color: darkTextPrimary),
+        bodyLarge: bodyLarge.copyWith(color: darkTextPrimary),
+        bodyMedium: bodyMedium.copyWith(color: darkTextPrimary),
+        bodySmall: bodySmall.copyWith(color: darkTextPrimary),
+        labelLarge: labelLarge.copyWith(color: darkTextSecondary), // Updated to use new dark mode constants
+        labelMedium: labelMedium.copyWith(color: darkTextSecondary),
+        labelSmall: labelSmall.copyWith(color: darkTextSecondary),
       ),
 
       floatingActionButtonTheme: const FloatingActionButtonThemeData(

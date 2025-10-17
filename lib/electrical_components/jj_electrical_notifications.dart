@@ -94,7 +94,6 @@ class JJElectricalNotifications {
       case ElectricalNotificationType.error:
         return const Color(0xFFDC2626); // Red
       case ElectricalNotificationType.info:
-      default:
         return const Color(0xFF00D4FF); // Electric blue
     }
   }
@@ -306,7 +305,6 @@ class _ElectricalToastState extends State<ElectricalToast>
       case ElectricalNotificationType.error:
         return Icons.error;
       case ElectricalNotificationType.info:
-      default:
         return Icons.info;
     }
   }
@@ -320,7 +318,6 @@ class _ElectricalToastState extends State<ElectricalToast>
       case ElectricalNotificationType.error:
         return AppTheme.electricalErrorTheme;
       case ElectricalNotificationType.info:
-      default:
         return AppTheme.electricalInfoTheme;
     }
   }
@@ -441,7 +438,6 @@ class _ElectricalSnackBarContentState extends State<ElectricalSnackBarContent>
       case ElectricalNotificationType.error:
         return AppTheme.electricalErrorTheme;
       case ElectricalNotificationType.info:
-      default:
         return AppTheme.electricalInfoTheme;
     }
   }
@@ -580,7 +576,6 @@ class _ElectricalTooltipState extends State<ElectricalTooltip>
       case ElectricalNotificationType.error:
         return AppTheme.electricalErrorTheme;
       case ElectricalNotificationType.info:
-      default:
         return AppTheme.electricalInfoTheme;
     }
   }
