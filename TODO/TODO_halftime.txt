@@ -1,0 +1,17 @@
+╭───────────────────────────────────────────────────╮
+│ ✻ Welcome to Claude Code!                         │
+│                                                   │
+│   /help for help, /status for your current setup  │
+│                                                   │
+│   cwd: C:\Users\david\Desktop\Journeyman-Jobs     │
+╰───────────────────────────────────────────────────╯
+● Compact summary (ctrl+r to expand)
+  ⎿  Read TODO\TASK_COMPLETION_TRACKER.md (106 lines)
+  ⎿  Read TODO\TEAM_COORDINATION_STATUS.md (142 lines)
+  ⎿  Read TODO\TODO_IMPLEMENTATION_PLAN.md (581 lines)
+  ⎿  Read firebase\firestore.rules (149 lines)
+  ⎿  Todo list read (10 items)
+  ⎿  Claude usage limit reached. Your limit will reset at 5pm (America/New_York).
+
+      • /upgrade to increase your usage limit.
+

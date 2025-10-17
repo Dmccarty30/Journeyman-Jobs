@@ -17,14 +17,63 @@ service cloud.firestore {
              exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid));
     }
 
+    function isCrewMemberFromRoles(crewId) {
+      return isAuthenticated() &&
+             exists(/databases/$(database)/documents/crews/$(crewId)) &&
+             request.auth.uid in get(/databases/$(database)/documents/crews/$(crewId)).data.roles;
+    }
+
     function getMemberRole(crewId) {
-      return get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role;
+      return exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) ?
+             get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role :
+             null;
+    }
+
+    function getMemberRoleFromCrew(crewId) {
+      return exists(/databases/$(database)/documents/crews/$(crewId)) &&
+             request.auth.uid in get(/databases/$(database)/documents/crews/$(crewId)).data.roles ?
+             get(/databases/$(database)/documents/crews/$(crewId)).data.roles[request.auth.uid] :
+             null;
     }
 
     function hasPermission(crewId, requiredPermission) {
       let role = getMemberRole(crewId);
+      if (role == null) {
+        role = getMemberRoleFromCrew(crewId);
+      }
       return (role == 'foreman' && requiredPermission in ['read', 'write', 'delete', 'manage']) ||
+             (role == 'lead' && requiredPermission in ['read', 'write', 'manage']) ||
              (role == 'member' && requiredPermission in ['read', 'write']);
+    }
+
+    function canUpdateCrewPreferences(crewId) {
+      return isForeman(crewId) || 
+             isCrewMember(crewId) || 
+             isCrewMemberFromRoles(crewId);
+    }
+
+    function isValidCrewUpdate() {
+      // Allow updates to these fields by crew members
+      let allowedFields = ['preferences', 'lastActivityAt', 'stats'];
+      
+      // Foreman can update additional fields
+      if (isForeman(resource.id)) {
+        allowedFields = allowedFields.concat(['name', 'logoUrl', 'memberIds', 'roles', 'memberCount', 'isActive']);
+      }
+      
+      // Check if only allowed fields are being updated
+      return request.data.diff(resource.data).affectedKeys().hasOnly(allowedFields);
+    }
+
+    function canUserAccessCrew(crewId) {
+      return isAuthenticated() && (
+        isForeman(crewId) ||
+        isCrewMember(crewId) ||
+        isCrewMemberFromRoles(crewId) ||
+        // Allow if user is explicitly in the memberIds array
+        (exists(/databases/$(database)/documents/crews/$(crewId)) &&
+         request.auth.uid in get(/databases/$(database)/documents/crews/$(crewId)).data.memberIds)
+      );
     }
 
     // Users collection: Authenticated users can read/write their own profiles
@@ -37,25 +86,24 @@ service cloud.firestore {
 
     // Crews collection: Role-based access control
     match /crews/{crewId} {
-      allow read: if isCrewMember(crewId);
+      allow read: if canUserAccessCrew(crewId);
       allow create: if isAuthenticated() && request.auth.uid == request.data.foremanId;
-      allow update: if isForeman(crewId) ||
-                      (isCrewMember(crewId) && hasPermission(crewId, 'manage'));
+      allow update: if canUserAccessCrew(crewId) && isValidCrewUpdate();
       allow delete: if isForeman(crewId);
     }
 
     // Crew members subcollection
     match /crews/{crewId}/members/{memberId} {
-      allow read: if isCrewMember(crewId);
+      allow read: if canUserAccessCrew(crewId);
       allow write: if isForeman(crewId) ||
-                     (request.auth.uid == memberId && isCrewMember(crewId));
+                     (request.auth.uid == memberId && canUserAccessCrew(crewId));
     }
 
     // Feed posts subcollection
     match /crews/{crewId}/feedPosts/{postId} {
-      allow read: if isCrewMember(crewId);
-      allow create: if isCrewMember(crewId);
-      allow update, delete: if isCrewMember(crewId) &&
+      allow read: if canUserAccessCrew(crewId);
+      allow create: if canUserAccessCrew(crewId);
+      allow update, delete: if canUserAccessCrew(crewId) &&
                                (request.auth.uid == resource.data.authorId ||
                                 isForeman(crewId));
     }

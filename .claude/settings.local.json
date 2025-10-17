@@ -13,7 +13,11 @@
       "Edit",
       "Bash(chmod:*)",
       "Bash(touch:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(cat:*)",
+      "Bash(flutter test:*)",
+      "Bash(firebase --version)",
+      "Bash(firebase firestore:rules:*)"
     ],
     "deny": []
   },

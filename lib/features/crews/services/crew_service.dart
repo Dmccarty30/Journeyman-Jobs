@@ -418,7 +418,32 @@ class CrewService {
     } on CrewException {
       rethrow;
     } on FirebaseException catch (e) {
-      throw CrewException('Firestore error updating crew: ${e.message}', code: e.code);
+      // Provide specific error messages for common permission issues
+      if (e.code == 'permission-denied') {
+        throw CrewException(
+          'Permission denied. You do not have the required permissions to update this crew. '
+          'Please ensure you are a member of the crew and try again. '
+          'If you believe this is an error, contact your crew foreman or support.',
+          code: 'permission-denied'
+        );
+      } else if (e.code == 'unauthenticated') {
+        throw CrewException(
+          'Authentication required. Please sign in to update crew preferences.',
+          code: 'unauthenticated'
+        );
+      } else if (e.code == 'not-found') {
+        throw CrewException(
+          'Crew not found. The crew may have been deleted or you may not have access.',
+          code: 'crew-not-found'
+        );
+      } else if (e.code == 'failed-precondition') {
+        throw CrewException(
+          'Update failed due to a validation error. Please check your crew membership status.',
+          code: 'validation-failed'
+        );
+      } else {
+        throw CrewException('Firestore error updating crew: ${e.message}', code: e.code);
+      }
     } catch (e) {
       throw CrewException('An unexpected error occurred while updating crew: $e', code: 'unknown-error');
     }

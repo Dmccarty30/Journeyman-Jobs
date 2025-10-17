@@ -20,7 +20,8 @@ class CreateCrewScreen extends ConsumerStatefulWidget {
   CreateCrewScreenState createState() => CreateCrewScreenState();
 }
 
-class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
+class CreateCrewScreenState extends ConsumerState<CreateCrewScreen>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _crewNameController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -28,15 +29,73 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
   String _selectedJobType = 'Inside Wireman';
   bool _autoShareEnabled = false;
 
+  // Animation controllers for enhanced button
+  late AnimationController _buttonAnimationController;
+  late AnimationController _glowAnimationController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _glowAnimation;
+  late Animation<Offset> _sparkleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _setupAnimations();
+  }
+
+  void _setupAnimations() {
+    // Main button scale animation
+    _buttonAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 150),
+      vsync: this,
+    );
+    
+    // Glow pulse animation
+    _glowAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(
+      parent: _buttonAnimationController,
+      curve: Curves.easeInOut,
+    ));
+
+    _glowAnimation = Tween<double>(
+      begin: 0.3,
+      end: 0.8,
+    ).animate(CurvedAnimation(
+      parent: _glowAnimationController,
+      curve: Curves.easeInOut,
+    ));
+
+    _sparkleAnimation = Tween<Offset>(
+      begin: const Offset(-1.5, 0),
+      end: const Offset(1.5, 0),
+    ).animate(CurvedAnimation(
+      parent: _glowAnimationController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
   @override
   void dispose() {
     _crewNameController.dispose();
     _descriptionController.dispose();
+    _buttonAnimationController.dispose();
+    _glowAnimationController.dispose();
     super.dispose();
   }
 
   Future<void> _createCrew() async {
     if (_formKey.currentState!.validate()) {
+      // Button press animation
+      _buttonAnimationController.forward().then((_) {
+        _buttonAnimationController.reverse();
+      });
+      
       try {
         final crewService = ref.read(crewServiceProvider);
         final currentUser = ref.read(currentUserProvider);
@@ -99,6 +158,148 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
         }
       }
     }
+  }
+
+  Widget _buildEnhancedCreateButton() {
+    final isEnabled = ref.watch(currentUserProvider) != null;
+    
+    return AnimatedBuilder(
+      animation: Listenable.merge([_buttonAnimationController, _glowAnimationController]),
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              boxShadow: isEnabled ? [
+                // Primary glow effect
+                BoxShadow(
+                  color: AppTheme.accentCopper.withValues(alpha: _glowAnimation.value * 0.6),
+                  blurRadius: 20 * _glowAnimation.value,
+                  spreadRadius: 2 * _glowAnimation.value,
+                  offset: const Offset(0, 4),
+                ),
+                // Secondary copper glow
+                BoxShadow(
+                  color: AppTheme.secondaryCopper.withValues(alpha: _glowAnimation.value * 0.3),
+                  blurRadius: 30 * _glowAnimation.value,
+                  spreadRadius: 4 * _glowAnimation.value,
+                  offset: const Offset(0, 6),
+                ),
+                // Depth shadow
+                const BoxShadow(
+                  color: Color(0x26000000),
+                  blurRadius: 8,
+                  spreadRadius: 0,
+                  offset: Offset(0, 4),
+                ),
+              ] : [
+                const BoxShadow(
+                  color: Color(0x1A000000),
+                  blurRadius: 4,
+                  spreadRadius: 0,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: isEnabled 
+                    ? LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppTheme.primaryNavy,
+                          AppTheme.secondaryNavy,
+                          AppTheme.primaryNavy.withValues(alpha: 0.9),
+                        ],
+                        stops: const [0.0, 0.5, 1.0],
+                      )
+                    : LinearGradient(
+                        colors: [Colors.grey.shade400, Colors.grey.shade500],
+                      ),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                border: Border.all(
+                  color: isEnabled 
+                      ? AppTheme.accentCopper.withValues(alpha: 0.8)
+                      : Colors.grey.shade300,
+                  width: 2,
+                ),
+              ),
+              child: Stack(
+                children: [
+                  // Animated sparkle effect
+                  if (isEnabled)
+                    Positioned.fill(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd - 2),
+                        child: Transform.translate(
+                          offset: _sparkleAnimation.value * 50,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [
+                                  Colors.transparent,
+                                  AppTheme.accentCopper.withValues(alpha: 0.2),
+                                  Colors.transparent,
+                                ],
+                                stops: const [0.0, 0.5, 1.0],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  
+                  // Button content
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: isEnabled ? _createCrew : null,
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppTheme.spacingLg,
+                          vertical: AppTheme.spacingMd + 4,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.electrical_services,
+                              color: AppTheme.white,
+                              size: AppTheme.iconMd,
+                            ),
+                            const SizedBox(width: AppTheme.spacingSm),
+                            Text(
+                              'Create Crew',
+                              style: AppTheme.buttonLarge.copyWith(
+                                color: AppTheme.white,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(width: AppTheme.spacingSm),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: AppTheme.accentCopper,
+                              size: AppTheme.iconSm,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -229,23 +430,12 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
                     activeThumbColor: AppTheme.accentCopper,
                     tileColor: AppTheme.secondaryNavy,
                   ),
-                  const SizedBox(height: 32),
-                  ElevatedButton.icon(
-                    onPressed: ref.watch(currentUserProvider) != null ? _createCrew : null,
-                    icon: const Icon(Icons.check, color: AppTheme.white),
-                    label: Text(
-                      'Create Crew',
-                      style: TextStyle(color: AppTheme.white),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ref.watch(currentUserProvider) != null ? AppTheme.primaryNavy : Colors.grey,
-                      foregroundColor: AppTheme.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                      ),
-                      elevation: 4.0, // Use a constant value instead of AppTheme.elevationMd
-                    ),
-                  ),
+                  const SizedBox(height: 40),
+                  
+                  // Enhanced Create Crew Button
+                  _buildEnhancedCreateButton(),
+                  
+                  const SizedBox(height: 24),
                 ],
               ),
             ),

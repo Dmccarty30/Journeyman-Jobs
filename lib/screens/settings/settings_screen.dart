@@ -17,14 +17,82 @@ class SettingsScreen extends ConsumerStatefulWidget {
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+class _SettingsScreenState extends ConsumerState<SettingsScreen>
+    with TickerProviderStateMixin {
   String? _ticketNumber;
+  String? _userName;
+  String? _localNumber;
   bool _isLoading = true;
+
+  // Animation controllers for personalized header
+  late AnimationController _headerAnimationController;
+  late AnimationController _pulseAnimationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _slideAnimation;
+  late Animation<double> _pulseAnimation;
+
+  // Catchy expressions for electrical workers
+  final List<String> _catchyExpressions = [
+    "⚡ Keeping the Power On!",
+    "🔌 Wired for Success",
+    "⚡ Sparking Excellence",
+    "🔧 High Voltage Professional",
+    "⚡ Energizing Communities",
+    "🏗️ Building Tomorrow's Grid",
+    "⚡ Brotherhood Strong",
+    "🔌 Safety First, Quality Always",
+    "⚡ Powering Progress",
+    "🔧 Union Proud & Skilled",
+  ];
 
   @override
   void initState() {
     super.initState();
+    _setupAnimations();
     _loadUserData();
+  }
+
+  void _setupAnimations() {
+    _headerAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    _pulseAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _headerAnimationController,
+      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+    ));
+
+    _slideAnimation = Tween<double>(
+      begin: 30.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(
+      parent: _headerAnimationController,
+      curve: const Interval(0.2, 0.8, curve: Curves.easeOutBack),
+    ));
+
+    _pulseAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _pulseAnimationController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _headerAnimationController.dispose();
+    _pulseAnimationController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadUserData() async {
@@ -37,27 +105,329 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             .get();
         
         if (doc.exists && mounted) {
+          final data = doc.data();
           setState(() {
-            _ticketNumber = doc.data()?['ticket_number']?.toString();
+            _ticketNumber = data?['ticket_number']?.toString();
+            _userName = data?['name'] ?? user.displayName ?? 'Brother';
+            _localNumber = data?['local_number']?.toString();
             _isLoading = false;
           });
+          _headerAnimationController.forward();
         } else if (mounted) {
           setState(() {
+            _userName = user.displayName ?? 'Brother';
             _isLoading = false;
           });
+          _headerAnimationController.forward();
         }
       } catch (e) {
         if (mounted) {
           setState(() {
-            _isLoading = false;
+            _userName = user.displayName ?? 'Brother';
+            _isLoading = false,
           });
+          _headerAnimationController.forward();
         }
       }
     } else {
       setState(() {
+        _userName = 'Brother';
         _isLoading = false;
       });
+      _headerAnimationController.forward();
     }
+  }
+
+  String _getRandomExpression() {
+    final now = DateTime.now();
+    final index = (now.day + now.hour) % _catchyExpressions.length;
+    return _catchyExpressions[index];
+  }
+
+  Widget _buildPersonalizedHeader() {
+    if (_isLoading) {
+      return Container(
+        width: double.infinity,
+        height: 200,
+        padding: const EdgeInsets.all(AppTheme.spacingLg),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppTheme.primaryNavy,
+              AppTheme.secondaryNavy,
+              AppTheme.primaryNavy.withValues(alpha: 0.8),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          boxShadow: [
+            AppTheme.shadowLg,
+            BoxShadow(
+              color: AppTheme.accentCopper.withValues(alpha: 0.2),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: AppTheme.accentCopper,
+          ),
+        ),
+      );
+    }
+
+    return AnimatedBuilder(
+      animation: Listenable.merge([_headerAnimationController, _pulseAnimationController]),
+      builder: (context, child) {
+        return FadeTransition(
+          opacity: _fadeAnimation,
+          child: Transform.translate(
+            offset: Offset(0, _slideAnimation.value),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppTheme.spacingLg),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppTheme.primaryNavy,
+                    AppTheme.secondaryNavy,
+                    AppTheme.primaryNavy.withValues(alpha: 0.8),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                border: Border.all(
+                  color: AppTheme.accentCopper.withValues(alpha: 0.6),
+                  width: 2,
+                ),
+                boxShadow: [
+                  AppTheme.shadowLg,
+                  BoxShadow(
+                    color: AppTheme.accentCopper.withValues(alpha: _pulseAnimation.value * 0.3),
+                    blurRadius: 20 * _pulseAnimation.value,
+                    spreadRadius: 2 * _pulseAnimation.value,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  // Profile avatar with electrical theme
+                  Stack(
+                    children: [
+                      // Glow effect
+                      Container(
+                        width: 90,
+                        height: 90,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.accentCopper.withValues(alpha: _pulseAnimation.value * 0.5),
+                              blurRadius: 30 * _pulseAnimation.value,
+                              spreadRadius: 5 * _pulseAnimation.value,
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Main avatar
+                      Container(
+                        width: 90,
+                        height: 90,
+                        decoration: BoxDecoration(
+                          gradient: AppTheme.buttonGradient,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppTheme.white,
+                            width: 3,
+                          ),
+                        ),
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Icon(
+                                Icons.electrical_services,
+                                size: AppTheme.iconXl + 8,
+                                color: AppTheme.white,
+                              ),
+                            ),
+                            // Sparkle effect
+                            Positioned(
+                              top: 15,
+                              right: 15,
+                              child: Transform.scale(
+                                scale: _pulseAnimation.value,
+                                child: Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.white,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppTheme.white.withValues(alpha: 0.8),
+                                        blurRadius: 8,
+                                        spreadRadius: 2,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: AppTheme.spacingMd),
+                  
+                  // Welcome message
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Welcome back, ',
+                          style: AppTheme.titleLarge.copyWith(
+                            color: AppTheme.white.withValues(alpha: 0.9),
+                          ),
+                        ),
+                        TextSpan(
+                          text: _userName ?? 'Brother',
+                          style: AppTheme.headlineSmall.copyWith(
+                            color: AppTheme.accentCopper,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        TextSpan(
+                          text: '!',
+                          style: AppTheme.titleLarge.copyWith(
+                            color: AppTheme.white.withValues(alpha: 0.9),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(height: AppTheme.spacingSm),
+                  
+                  // Ticket and Local info
+                  if (_ticketNumber != null || _localNumber != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacingMd,
+                        vertical: AppTheme.spacingSm,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.white.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        border: Border.all(
+                          color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_ticketNumber != null) ...[
+                            Icon(
+                              Icons.badge,
+                              size: AppTheme.iconSm,
+                              color: AppTheme.accentCopper,
+                            ),
+                            const SizedBox(width: AppTheme.spacingXs),
+                            Text(
+                              'Ticket #$_ticketNumber',
+                              style: AppTheme.labelMedium.copyWith(
+                                color: AppTheme.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                          if (_ticketNumber != null && _localNumber != null)
+                            Container(
+                              margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingSm),
+                              width: 1,
+                              height: 16,
+                              color: AppTheme.accentCopper.withValues(alpha: 0.5),
+                            ),
+                          if (_localNumber != null) ...[
+                            Icon(
+                              Icons.location_city,
+                              size: AppTheme.iconSm,
+                              color: AppTheme.accentCopper,
+                            ),
+                            const SizedBox(width: AppTheme.spacingXs),
+                            Text(
+                              'Local $_localNumber',
+                              style: AppTheme.labelMedium.copyWith(
+                                color: AppTheme.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  
+                  const SizedBox(height: AppTheme.spacingMd),
+                  
+                  // Catchy expression
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacingMd,
+                      vertical: AppTheme.spacingSm,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppTheme.accentCopper.withValues(alpha: 0.8),
+                          AppTheme.secondaryCopper.withValues(alpha: 0.6),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      _getRandomExpression(),
+                      style: AppTheme.titleMedium.copyWith(
+                        color: AppTheme.white,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  
+                  const SizedBox(height: AppTheme.spacingLg),
+                  
+                  // Edit Profile button with electrical styling
+                  JJPrimaryButton(
+                    text: 'Edit Profile',
+                    icon: Icons.edit,
+                    onPressed: () {
+                      context.push(AppRouter.profile);
+                    },
+                    isFullWidth: true,
+                    variant: JJButtonVariant.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -79,71 +449,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // User profile section
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                gradient: AppTheme.cardGradient,
-                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                border: Border.all(
-                  color: AppTheme.accentCopper,
-                  width: AppTheme.borderWidthThin,
-                ),
-                boxShadow: [AppTheme.shadowMd],
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      gradient: AppTheme.buttonGradient,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.person,
-                      size: AppTheme.iconXl,
-                      color: AppTheme.white,
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spacingMd),
-                  Text(
-                    user?.displayName ?? user?.email ?? 'Journeyman',
-                    style: AppTheme.headlineSmall.copyWith(
-                      color: AppTheme.primaryNavy,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppTheme.spacingSm),
-                  if (_isLoading)
-                    const SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
-                    )
-                  else
-                    Text(
-                      _ticketNumber != null ? 'Ticket #$_ticketNumber' : 'IBEW Member',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.textSecondary,
-                      ),
-                    ),
-                  const SizedBox(height: AppTheme.spacingLg),
-                  JJPrimaryButton(
-                    text: 'Edit Profile',
-                    icon: Icons.edit,
-                    onPressed: () {
-                      context.push(AppRouter.profile);
-                    },
-                    isFullWidth: true,
-                    variant: JJButtonVariant.primary,
-                  ),
-                ],
-              ),
-            ),
+            // Personalized header section
+            _buildPersonalizedHeader(),
 
             const SizedBox(height: AppTheme.spacingLg),
 
