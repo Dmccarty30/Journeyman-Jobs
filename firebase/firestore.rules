@@ -37,10 +37,7 @@ service cloud.firestore {
     }
 
     function hasPermission(crewId, requiredPermission) {
-      let role = getMemberRole(crewId);
-      if (role == null) {
-        role = getMemberRoleFromCrew(crewId);
-      }
+      let role = getMemberRole(crewId) != null ? getMemberRole(crewId) : getMemberRoleFromCrew(crewId);
       return (role == 'foreman' && requiredPermission in ['read', 'write', 'delete', 'manage']) ||
              (role == 'lead' && requiredPermission in ['read', 'write', 'manage']) ||
              (role == 'member' && requiredPermission in ['read', 'write']);
@@ -52,15 +49,15 @@ service cloud.firestore {
              isCrewMemberFromRoles(crewId);
     }
 
-    function isValidCrewUpdate() {
+    function isValidCrewUpdate(crewId) {
       // Allow updates to these fields by crew members
-      let allowedFields = ['preferences', 'lastActivityAt', 'stats'];
-      
+      let memberFields = ['preferences', 'lastActivityAt', 'stats'];
+
       // Foreman can update additional fields
-      if (isForeman(resource.id)) {
-        allowedFields = allowedFields.concat(['name', 'logoUrl', 'memberIds', 'roles', 'memberCount', 'isActive']);
-      }
-      
+      let foremanFields = ['preferences', 'lastActivityAt', 'stats', 'name', 'logoUrl', 'memberIds', 'roles', 'memberCount', 'isActive'];
+
+      let allowedFields = isForeman(crewId) ? foremanFields : memberFields;
+
       // Check if only allowed fields are being updated
       return request.data.diff(resource.data).affectedKeys().hasOnly(allowedFields);
     }
@@ -88,7 +85,7 @@ service cloud.firestore {
     match /crews/{crewId} {
       allow read: if canUserAccessCrew(crewId);
       allow create: if isAuthenticated() && request.auth.uid == request.data.foremanId;
-      allow update: if canUserAccessCrew(crewId) && isValidCrewUpdate();
+      allow update: if canUserAccessCrew(crewId) && isValidCrewUpdate(crewId);
       allow delete: if isForeman(crewId);
     }
 
