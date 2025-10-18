@@ -22,197 +22,104 @@ part 'unified_job_model.g.dart';
 /// Usage:
 /// ```dart
 /// // Create from Firestore
-/// final job = UnifiedJobModel.fromFirestore(snapshot);
+/// final job = UnifiedJobModelFirestore.fromFirestore(snapshot);
 ///
 /// // Update with copyWith
 /// final updated = job.copyWith(wage: 45.50);
 ///
 /// // Save to Firestore
 /// await jobRef.set(job.toFirestore());
+/// Custom converter for Firestore DocumentReference
+class DocumentReferenceConverter
+    implements JsonConverter<DocumentReference?, Object?> {
+  const DocumentReferenceConverter();
+
+  @override
+  DocumentReference? fromJson(Object? json) =>
+      json is DocumentReference ? json : null;
+
+  @override
+  Object? toJson(DocumentReference? object) => object;
+}
 /// ```
-@freezed
+@Freezed(fromJson: true, toJson: true)
 class UnifiedJobModel with _$UnifiedJobModel {
-  const UnifiedJobModel._();
-
-  /// Creates a new UnifiedJobModel instance
-  ///
-  /// All fields are optional except [id], [company], and [location]
-  /// which are required for a valid job posting.
   const factory UnifiedJobModel({
-    /// Unique identifier for the job (typically Firestore document ID)
     required String id,
-
-    /// Firestore DocumentReference (not serialized to JSON)
-    @JsonKey(includeFromJson: false, includeToJson: false)
+    @DocumentReferenceConverter()
     DocumentReference? reference,
-
-    /// User ID of the person who shared/posted this job
     @Default('') String sharerId,
-
-    /// Nested map containing additional job details
-    ///
-    /// May include fields like:
-    /// - hours: int
-    /// - payRate: double
-    /// - perDiem: String
-    /// - contractor: String
-    /// - location: GeoPoint
     @Default({}) Map<String, dynamic> jobDetails,
-
-    /// Whether this job matches the user's search criteria/preferences
     @Default(false) bool matchesCriteria,
-
-    /// Soft delete flag - if true, job should not be displayed
     @Default(false) bool deleted,
-
-    /// IBEW local union number
     int? local,
-
-    /// Worker classification (e.g., "Inside Wireman", "Journeyman Lineman")
     String? classification,
-
-    /// Company/contractor name (required)
     required String company,
-
-    /// Job location city/address (required)
     required String location,
-
-    /// GeoPoint for precise location mapping
-    @OptionalGeoPointConverter() GeoPoint? geoPoint,
-
-    /// Work hours per week or shift length
+    @JsonKey(fromJson: _geoPointFromJsonHelper, toJson: _geoPointToJsonHelper)
+    GeoPoint? geoPoint,
     int? hours,
-
-    /// Hourly wage rate
     double? wage,
-
-    /// Subcontractor information
     String? sub,
-
-    /// Job classification code or category
     String? jobClass,
-
-    /// Local union number (alternative field)
     int? localNumber,
-
-    /// Required qualifications, certifications, or skills
     String? qualifications,
-
-    /// Date the job was posted (string format for compatibility)
     String? datePosted,
-
-    /// Detailed job description
     String? jobDescription,
-
-    /// Job title or position name
     String? jobTitle,
-
-    /// Per diem allowance information
     String? perDiem,
-
-    /// Union agreement or contract type
     String? agreement,
-
-    /// Number of positions available
     String? numberOfJobs,
-
-    /// Timestamp when job was created/posted
-    @TimestampConverter() DateTime? timestamp,
-
-    /// Expected start date for the job
+    @JsonKey(fromJson: _timestampFromJsonHelper, toJson: _timestampToJsonHelper)
+    DateTime? timestamp,
     String? startDate,
-
-    /// Start time for the job/shift
     String? startTime,
-
-    /// Book classifications this job is available for
     List<int>? booksYourOn,
-
-    /// Type of work (e.g., "Commercial", "Industrial", "Residential")
     String? typeOfWork,
-
-    /// Expected duration of the job
     String? duration,
-
-    /// Voltage level classification (e.g., "Low Voltage", "High Voltage")
     String? voltageLevel,
-
-    /// List of required certifications (alternative to qualifications)
     List<String>? certifications,
-
-    /// Client-side flag: whether user has saved this job
     @Default(false) bool isSaved,
-
-    /// Client-side flag: whether user has applied to this job
     @Default(false) bool isApplied,
   }) = _UnifiedJobModel;
 
-  /// Creates a UnifiedJobModel from JSON data
-  ///
-  /// Supports various field name variations from different data sources:
-  /// - Firestore field names (camelCase)
-  /// - Legacy field names (snake_case)
-  /// - Alternative field names from different scrapers
+  const UnifiedJobModel._();
+
   factory UnifiedJobModel.fromJson(Map<String, dynamic> json) =>
       _$UnifiedJobModelFromJson(json);
+}
 
-  /// Creates a UnifiedJobModel from a Firestore DocumentSnapshot
-  ///
-  /// Automatically extracts the document ID and merges it with the data.
-  /// Preserves the DocumentReference for later updates.
-  ///
-  /// Example:
-  /// ```dart
-  /// FirebaseFirestore.instance
-  ///   .collection('jobs')
-  ///   .snapshots()
-  ///   .map((snapshot) => snapshot.docs.map((doc) =>
-  ///       UnifiedJobModel.fromFirestore(doc)
-  ///   ).toList());
-  /// ```
-  factory UnifiedJobModel.fromFirestore(
-    DocumentSnapshot<Map<String, dynamic>> snapshot,
-  ) {
-    if (!snapshot.exists) {
-      throw Exception('Document does not exist: ${snapshot.id}');
-    }
+GeoPoint? _geoPointFromJsonHelper(dynamic json) =>
+    json is GeoPoint ? json : null;
 
-    final data = snapshot.data()!;
-    return UnifiedJobModel.fromJson({
-      ...data,
-      'id': snapshot.id,
-    }).copyWith(reference: snapshot.reference);
-  }
+dynamic _geoPointToJsonHelper(GeoPoint? geoPoint) => geoPoint;
 
-  /// Converts this model to a Firestore-compatible map
-  ///
-  /// Removes client-side fields (isSaved, isApplied, reference)
-  /// and ensures DateTime fields are converted to Firestore Timestamps.
-  ///
-  /// Example:
-  /// ```dart
-  /// await FirebaseFirestore.instance
-  ///   .collection('jobs')
-  ///   .doc(job.id)
-  ///   .set(job.toFirestore());
-  /// ```
-  Map<String, dynamic> toFirestore() {
-    final json = toJson();
+DateTime? _timestampFromJsonHelper(dynamic json) {
+  if (json is Timestamp) return json.toDate();
+  if (json is String) return DateTime.tryParse(json);
+  return null;
+}
 
-    // Remove client-side fields that shouldn't be stored
-    json.remove('isSaved');
-    json.remove('isApplied');
-    json.remove('reference');
+dynamic _timestampToJsonHelper(DateTime? date) =>
+    date != null ? Timestamp.fromDate(date) : null;
 
-    // Ensure DateTime fields are Timestamps
-    if (json['timestamp'] is String) {
-      json['timestamp'] =
-          Timestamp.fromDate(DateTime.parse(json['timestamp'] as String));
-    }
+// Converter helper functions
+GeoPoint? _geoPointFromJson(dynamic json) =>
+    const OptionalGeoPointConverter().fromJson(json);
 
-    return json;
-  }
+dynamic _geoPointToJson(GeoPoint? value) =>
+    const OptionalGeoPointConverter().toJson(value);
 
+DateTime? _timestampFromJson(dynamic json) =>
+    const TimestampConverter().fromJson(json);
+
+dynamic _timestampToJson(DateTime? value) =>
+    const TimestampConverter().toJson(value);
+
+/// Business logic extension for UnifiedJobModel
+///
+/// Contains computed getters and validation methods
+extension UnifiedJobModelLogic on UnifiedJobModel {
   /// Validates whether this job has the minimum required fields
   ///
   /// A valid job must have:
@@ -265,6 +172,68 @@ class UnifiedJobModel with _$UnifiedJobModel {
     }
     if (jobDescription!.length <= 100) return jobDescription!;
     return '${jobDescription!.substring(0, 97)}...';
+  }
+}
+
+/// Firestore-specific extensions for UnifiedJobModel
+///
+/// Handles conversion to/from Firestore documents
+extension UnifiedJobModelFirestore on UnifiedJobModel {
+  /// Creates a UnifiedJobModel from a Firestore DocumentSnapshot
+  ///
+  /// Automatically extracts the document ID and merges it with the data.
+  /// Preserves the DocumentReference for later updates.
+  ///
+  /// Example:
+  /// ```dart
+  /// FirebaseFirestore.instance
+  ///   .collection('jobs')
+  ///   .snapshots()
+  ///   .map((snapshot) => snapshot.docs.map((doc) =>
+  ///       UnifiedJobModelFirestore.fromFirestore(doc)
+  ///   ).toList());
+  /// ```
+  static UnifiedJobModel fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+  ) {
+    if (!snapshot.exists) {
+      throw Exception('Document does not exist: ${snapshot.id}');
+    }
+
+    final data = snapshot.data()!;
+    return UnifiedJobModel.fromJson({
+      ...data,
+      'id': snapshot.id,
+    }).copyWith(reference: snapshot.reference);
+  }
+
+  /// Converts this model to a Firestore-compatible map
+  ///
+  /// Removes client-side fields (isSaved, isApplied, reference)
+  /// and ensures DateTime fields are converted to Firestore Timestamps.
+  ///
+  /// Example:
+  /// ```dart
+  /// await FirebaseFirestore.instance
+  ///   .collection('jobs')
+  ///   .doc(job.id)
+  ///   .set(job.toFirestore());
+  /// ```
+  Map<String, dynamic> toFirestore() {
+    final json = toJson();
+
+    // Remove client-side fields that shouldn't be stored
+    json.remove('isSaved');
+    json.remove('isApplied');
+    json.remove('reference');
+
+    // Ensure DateTime fields are Timestamps
+    if (json['timestamp'] is String) {
+      json['timestamp'] =
+          Timestamp.fromDate(DateTime.parse(json['timestamp'] as String));
+    }
+
+    return json;
   }
 }
 

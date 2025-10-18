@@ -15,47 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UnifiedJobModel {
 
-/// Unique identifier for the job (typically Firestore document ID)
- String get id;/// Firestore DocumentReference (not serialized to JSON)
-@JsonKey(includeFromJson: false, includeToJson: false) DocumentReference? get reference;/// User ID of the person who shared/posted this job
- String get sharerId;/// Nested map containing additional job details
-///
-/// May include fields like:
-/// - hours: int
-/// - payRate: double
-/// - perDiem: String
-/// - contractor: String
-/// - location: GeoPoint
- Map<String, dynamic> get jobDetails;/// Whether this job matches the user's search criteria/preferences
- bool get matchesCriteria;/// Soft delete flag - if true, job should not be displayed
- bool get deleted;/// IBEW local union number
- int? get local;/// Worker classification (e.g., "Inside Wireman", "Journeyman Lineman")
- String? get classification;/// Company/contractor name (required)
- String get company;/// Job location city/address (required)
- String get location;/// GeoPoint for precise location mapping
-@OptionalGeoPointConverter() GeoPoint? get geoPoint;/// Work hours per week or shift length
- int? get hours;/// Hourly wage rate
- double? get wage;/// Subcontractor information
- String? get sub;/// Job classification code or category
- String? get jobClass;/// Local union number (alternative field)
- int? get localNumber;/// Required qualifications, certifications, or skills
- String? get qualifications;/// Date the job was posted (string format for compatibility)
- String? get datePosted;/// Detailed job description
- String? get jobDescription;/// Job title or position name
- String? get jobTitle;/// Per diem allowance information
- String? get perDiem;/// Union agreement or contract type
- String? get agreement;/// Number of positions available
- String? get numberOfJobs;/// Timestamp when job was created/posted
-@TimestampConverter() DateTime? get timestamp;/// Expected start date for the job
- String? get startDate;/// Start time for the job/shift
- String? get startTime;/// Book classifications this job is available for
- List<int>? get booksYourOn;/// Type of work (e.g., "Commercial", "Industrial", "Residential")
- String? get typeOfWork;/// Expected duration of the job
- String? get duration;/// Voltage level classification (e.g., "Low Voltage", "High Voltage")
- String? get voltageLevel;/// List of required certifications (alternative to qualifications)
- List<String>? get certifications;/// Client-side flag: whether user has saved this job
- bool get isSaved;/// Client-side flag: whether user has applied to this job
- bool get isApplied;
+ String get id; DocumentReference? get reference; String get sharerId; Map<String, dynamic> get jobDetails; bool get matchesCriteria; bool get deleted; int? get local; String? get classification; String get company; String get location;@JsonKey(fromJson: _geoPointFromJsonHelper, toJson: _geoPointToJsonHelper) GeoPoint? get geoPoint; int? get hours; double? get wage; String? get sub; String? get jobClass; int? get localNumber; String? get qualifications; String? get datePosted; String? get jobDescription; String? get jobTitle; String? get perDiem; String? get agreement; String? get numberOfJobs;@JsonKey(fromJson: _timestampFromJsonHelper, toJson: _timestampToJsonHelper) DateTime? get timestamp; String? get startDate; String? get startTime; List<int>? get booksYourOn; String? get typeOfWork; String? get duration; String? get voltageLevel; List<String>? get certifications; bool get isSaved; bool get isApplied;
 /// Create a copy of UnifiedJobModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -88,7 +48,7 @@ abstract mixin class $UnifiedJobModelCopyWith<$Res>  {
   factory $UnifiedJobModelCopyWith(UnifiedJobModel value, $Res Function(UnifiedJobModel) _then) = _$UnifiedJobModelCopyWithImpl;
 @useResult
 $Res call({
- String id,@JsonKey(includeFromJson: false, includeToJson: false) DocumentReference? reference, String sharerId, Map<String, dynamic> jobDetails, bool matchesCriteria, bool deleted, int? local, String? classification, String company, String location,@OptionalGeoPointConverter() GeoPoint? geoPoint, int? hours, double? wage, String? sub, String? jobClass, int? localNumber, String? qualifications, String? datePosted, String? jobDescription, String? jobTitle, String? perDiem, String? agreement, String? numberOfJobs,@TimestampConverter() DateTime? timestamp, String? startDate, String? startTime, List<int>? booksYourOn, String? typeOfWork, String? duration, String? voltageLevel, List<String>? certifications, bool isSaved, bool isApplied
+ String id, DocumentReference? reference, String sharerId, Map<String, dynamic> jobDetails, bool matchesCriteria, bool deleted, int? local, String? classification, String company, String location,@JsonKey(fromJson: _geoPointFromJsonHelper, toJson: _geoPointToJsonHelper) GeoPoint? geoPoint, int? hours, double? wage, String? sub, String? jobClass, int? localNumber, String? qualifications, String? datePosted, String? jobDescription, String? jobTitle, String? perDiem, String? agreement, String? numberOfJobs,@JsonKey(fromJson: _timestampFromJsonHelper, toJson: _timestampToJsonHelper) DateTime? timestamp, String? startDate, String? startTime, List<int>? booksYourOn, String? typeOfWork, String? duration, String? voltageLevel, List<String>? certifications, bool isSaved, bool isApplied
 });
 
 
@@ -225,7 +185,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(includeFromJson: false, includeToJson: false)  DocumentReference? reference,  String sharerId,  Map<String, dynamic> jobDetails,  bool matchesCriteria,  bool deleted,  int? local,  String? classification,  String company,  String location, @OptionalGeoPointConverter()  GeoPoint? geoPoint,  int? hours,  double? wage,  String? sub,  String? jobClass,  int? localNumber,  String? qualifications,  String? datePosted,  String? jobDescription,  String? jobTitle,  String? perDiem,  String? agreement,  String? numberOfJobs, @TimestampConverter()  DateTime? timestamp,  String? startDate,  String? startTime,  List<int>? booksYourOn,  String? typeOfWork,  String? duration,  String? voltageLevel,  List<String>? certifications,  bool isSaved,  bool isApplied)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  DocumentReference? reference,  String sharerId,  Map<String, dynamic> jobDetails,  bool matchesCriteria,  bool deleted,  int? local,  String? classification,  String company,  String location, @JsonKey(fromJson: _geoPointFromJsonHelper, toJson: _geoPointToJsonHelper)  GeoPoint? geoPoint,  int? hours,  double? wage,  String? sub,  String? jobClass,  int? localNumber,  String? qualifications,  String? datePosted,  String? jobDescription,  String? jobTitle,  String? perDiem,  String? agreement,  String? numberOfJobs, @JsonKey(fromJson: _timestampFromJsonHelper, toJson: _timestampToJsonHelper)  DateTime? timestamp,  String? startDate,  String? startTime,  List<int>? booksYourOn,  String? typeOfWork,  String? duration,  String? voltageLevel,  List<String>? certifications,  bool isSaved,  bool isApplied)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UnifiedJobModel() when $default != null:
 return $default(_that.id,_that.reference,_that.sharerId,_that.jobDetails,_that.matchesCriteria,_that.deleted,_that.local,_that.classification,_that.company,_that.location,_that.geoPoint,_that.hours,_that.wage,_that.sub,_that.jobClass,_that.localNumber,_that.qualifications,_that.datePosted,_that.jobDescription,_that.jobTitle,_that.perDiem,_that.agreement,_that.numberOfJobs,_that.timestamp,_that.startDate,_that.startTime,_that.booksYourOn,_that.typeOfWork,_that.duration,_that.voltageLevel,_that.certifications,_that.isSaved,_that.isApplied);case _:
@@ -246,7 +206,7 @@ return $default(_that.id,_that.reference,_that.sharerId,_that.jobDetails,_that.m
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(includeFromJson: false, includeToJson: false)  DocumentReference? reference,  String sharerId,  Map<String, dynamic> jobDetails,  bool matchesCriteria,  bool deleted,  int? local,  String? classification,  String company,  String location, @OptionalGeoPointConverter()  GeoPoint? geoPoint,  int? hours,  double? wage,  String? sub,  String? jobClass,  int? localNumber,  String? qualifications,  String? datePosted,  String? jobDescription,  String? jobTitle,  String? perDiem,  String? agreement,  String? numberOfJobs, @TimestampConverter()  DateTime? timestamp,  String? startDate,  String? startTime,  List<int>? booksYourOn,  String? typeOfWork,  String? duration,  String? voltageLevel,  List<String>? certifications,  bool isSaved,  bool isApplied)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  DocumentReference? reference,  String sharerId,  Map<String, dynamic> jobDetails,  bool matchesCriteria,  bool deleted,  int? local,  String? classification,  String company,  String location, @JsonKey(fromJson: _geoPointFromJsonHelper, toJson: _geoPointToJsonHelper)  GeoPoint? geoPoint,  int? hours,  double? wage,  String? sub,  String? jobClass,  int? localNumber,  String? qualifications,  String? datePosted,  String? jobDescription,  String? jobTitle,  String? perDiem,  String? agreement,  String? numberOfJobs, @JsonKey(fromJson: _timestampFromJsonHelper, toJson: _timestampToJsonHelper)  DateTime? timestamp,  String? startDate,  String? startTime,  List<int>? booksYourOn,  String? typeOfWork,  String? duration,  String? voltageLevel,  List<String>? certifications,  bool isSaved,  bool isApplied)  $default,) {final _that = this;
 switch (_that) {
 case _UnifiedJobModel():
 return $default(_that.id,_that.reference,_that.sharerId,_that.jobDetails,_that.matchesCriteria,_that.deleted,_that.local,_that.classification,_that.company,_that.location,_that.geoPoint,_that.hours,_that.wage,_that.sub,_that.jobClass,_that.localNumber,_that.qualifications,_that.datePosted,_that.jobDescription,_that.jobTitle,_that.perDiem,_that.agreement,_that.numberOfJobs,_that.timestamp,_that.startDate,_that.startTime,_that.booksYourOn,_that.typeOfWork,_that.duration,_that.voltageLevel,_that.certifications,_that.isSaved,_that.isApplied);case _:
@@ -266,7 +226,7 @@ return $default(_that.id,_that.reference,_that.sharerId,_that.jobDetails,_that.m
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(includeFromJson: false, includeToJson: false)  DocumentReference? reference,  String sharerId,  Map<String, dynamic> jobDetails,  bool matchesCriteria,  bool deleted,  int? local,  String? classification,  String company,  String location, @OptionalGeoPointConverter()  GeoPoint? geoPoint,  int? hours,  double? wage,  String? sub,  String? jobClass,  int? localNumber,  String? qualifications,  String? datePosted,  String? jobDescription,  String? jobTitle,  String? perDiem,  String? agreement,  String? numberOfJobs, @TimestampConverter()  DateTime? timestamp,  String? startDate,  String? startTime,  List<int>? booksYourOn,  String? typeOfWork,  String? duration,  String? voltageLevel,  List<String>? certifications,  bool isSaved,  bool isApplied)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  DocumentReference? reference,  String sharerId,  Map<String, dynamic> jobDetails,  bool matchesCriteria,  bool deleted,  int? local,  String? classification,  String company,  String location, @JsonKey(fromJson: _geoPointFromJsonHelper, toJson: _geoPointToJsonHelper)  GeoPoint? geoPoint,  int? hours,  double? wage,  String? sub,  String? jobClass,  int? localNumber,  String? qualifications,  String? datePosted,  String? jobDescription,  String? jobTitle,  String? perDiem,  String? agreement,  String? numberOfJobs, @JsonKey(fromJson: _timestampFromJsonHelper, toJson: _timestampToJsonHelper)  DateTime? timestamp,  String? startDate,  String? startTime,  List<int>? booksYourOn,  String? typeOfWork,  String? duration,  String? voltageLevel,  List<String>? certifications,  bool isSaved,  bool isApplied)?  $default,) {final _that = this;
 switch (_that) {
 case _UnifiedJobModel() when $default != null:
 return $default(_that.id,_that.reference,_that.sharerId,_that.jobDetails,_that.matchesCriteria,_that.deleted,_that.local,_that.classification,_that.company,_that.location,_that.geoPoint,_that.hours,_that.wage,_that.sub,_that.jobClass,_that.localNumber,_that.qualifications,_that.datePosted,_that.jobDescription,_that.jobTitle,_that.perDiem,_that.agreement,_that.numberOfJobs,_that.timestamp,_that.startDate,_that.startTime,_that.booksYourOn,_that.typeOfWork,_that.duration,_that.voltageLevel,_that.certifications,_that.isSaved,_that.isApplied);case _:
@@ -281,85 +241,42 @@ return $default(_that.id,_that.reference,_that.sharerId,_that.jobDetails,_that.m
 @JsonSerializable()
 
 class _UnifiedJobModel extends UnifiedJobModel {
-  const _UnifiedJobModel({required this.id, @JsonKey(includeFromJson: false, includeToJson: false) this.reference, this.sharerId = '', final  Map<String, dynamic> jobDetails = const {}, this.matchesCriteria = false, this.deleted = false, this.local, this.classification, required this.company, required this.location, @OptionalGeoPointConverter() this.geoPoint, this.hours, this.wage, this.sub, this.jobClass, this.localNumber, this.qualifications, this.datePosted, this.jobDescription, this.jobTitle, this.perDiem, this.agreement, this.numberOfJobs, @TimestampConverter() this.timestamp, this.startDate, this.startTime, final  List<int>? booksYourOn, this.typeOfWork, this.duration, this.voltageLevel, final  List<String>? certifications, this.isSaved = false, this.isApplied = false}): _jobDetails = jobDetails,_booksYourOn = booksYourOn,_certifications = certifications,super._();
+  const _UnifiedJobModel({required this.id, this.reference, this.sharerId = '', final  Map<String, dynamic> jobDetails = const {}, this.matchesCriteria = false, this.deleted = false, this.local, this.classification, required this.company, required this.location, @JsonKey(fromJson: _geoPointFromJsonHelper, toJson: _geoPointToJsonHelper) this.geoPoint, this.hours, this.wage, this.sub, this.jobClass, this.localNumber, this.qualifications, this.datePosted, this.jobDescription, this.jobTitle, this.perDiem, this.agreement, this.numberOfJobs, @JsonKey(fromJson: _timestampFromJsonHelper, toJson: _timestampToJsonHelper) this.timestamp, this.startDate, this.startTime, final  List<int>? booksYourOn, this.typeOfWork, this.duration, this.voltageLevel, final  List<String>? certifications, this.isSaved = false, this.isApplied = false}): _jobDetails = jobDetails,_booksYourOn = booksYourOn,_certifications = certifications,super._();
   factory _UnifiedJobModel.fromJson(Map<String, dynamic> json) => _$UnifiedJobModelFromJson(json);
 
-/// Unique identifier for the job (typically Firestore document ID)
 @override final  String id;
-/// Firestore DocumentReference (not serialized to JSON)
-@override@JsonKey(includeFromJson: false, includeToJson: false) final  DocumentReference? reference;
-/// User ID of the person who shared/posted this job
+@override final  DocumentReference? reference;
 @override@JsonKey() final  String sharerId;
-/// Nested map containing additional job details
-///
-/// May include fields like:
-/// - hours: int
-/// - payRate: double
-/// - perDiem: String
-/// - contractor: String
-/// - location: GeoPoint
  final  Map<String, dynamic> _jobDetails;
-/// Nested map containing additional job details
-///
-/// May include fields like:
-/// - hours: int
-/// - payRate: double
-/// - perDiem: String
-/// - contractor: String
-/// - location: GeoPoint
 @override@JsonKey() Map<String, dynamic> get jobDetails {
   if (_jobDetails is EqualUnmodifiableMapView) return _jobDetails;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableMapView(_jobDetails);
 }
 
-/// Whether this job matches the user's search criteria/preferences
 @override@JsonKey() final  bool matchesCriteria;
-/// Soft delete flag - if true, job should not be displayed
 @override@JsonKey() final  bool deleted;
-/// IBEW local union number
 @override final  int? local;
-/// Worker classification (e.g., "Inside Wireman", "Journeyman Lineman")
 @override final  String? classification;
-/// Company/contractor name (required)
 @override final  String company;
-/// Job location city/address (required)
 @override final  String location;
-/// GeoPoint for precise location mapping
-@override@OptionalGeoPointConverter() final  GeoPoint? geoPoint;
-/// Work hours per week or shift length
+@override@JsonKey(fromJson: _geoPointFromJsonHelper, toJson: _geoPointToJsonHelper) final  GeoPoint? geoPoint;
 @override final  int? hours;
-/// Hourly wage rate
 @override final  double? wage;
-/// Subcontractor information
 @override final  String? sub;
-/// Job classification code or category
 @override final  String? jobClass;
-/// Local union number (alternative field)
 @override final  int? localNumber;
-/// Required qualifications, certifications, or skills
 @override final  String? qualifications;
-/// Date the job was posted (string format for compatibility)
 @override final  String? datePosted;
-/// Detailed job description
 @override final  String? jobDescription;
-/// Job title or position name
 @override final  String? jobTitle;
-/// Per diem allowance information
 @override final  String? perDiem;
-/// Union agreement or contract type
 @override final  String? agreement;
-/// Number of positions available
 @override final  String? numberOfJobs;
-/// Timestamp when job was created/posted
-@override@TimestampConverter() final  DateTime? timestamp;
-/// Expected start date for the job
+@override@JsonKey(fromJson: _timestampFromJsonHelper, toJson: _timestampToJsonHelper) final  DateTime? timestamp;
 @override final  String? startDate;
-/// Start time for the job/shift
 @override final  String? startTime;
-/// Book classifications this job is available for
  final  List<int>? _booksYourOn;
-/// Book classifications this job is available for
 @override List<int>? get booksYourOn {
   final value = _booksYourOn;
   if (value == null) return null;
@@ -368,15 +285,10 @@ class _UnifiedJobModel extends UnifiedJobModel {
   return EqualUnmodifiableListView(value);
 }
 
-/// Type of work (e.g., "Commercial", "Industrial", "Residential")
 @override final  String? typeOfWork;
-/// Expected duration of the job
 @override final  String? duration;
-/// Voltage level classification (e.g., "Low Voltage", "High Voltage")
 @override final  String? voltageLevel;
-/// List of required certifications (alternative to qualifications)
  final  List<String>? _certifications;
-/// List of required certifications (alternative to qualifications)
 @override List<String>? get certifications {
   final value = _certifications;
   if (value == null) return null;
@@ -385,9 +297,7 @@ class _UnifiedJobModel extends UnifiedJobModel {
   return EqualUnmodifiableListView(value);
 }
 
-/// Client-side flag: whether user has saved this job
 @override@JsonKey() final  bool isSaved;
-/// Client-side flag: whether user has applied to this job
 @override@JsonKey() final  bool isApplied;
 
 /// Create a copy of UnifiedJobModel
@@ -423,7 +333,7 @@ abstract mixin class _$UnifiedJobModelCopyWith<$Res> implements $UnifiedJobModel
   factory _$UnifiedJobModelCopyWith(_UnifiedJobModel value, $Res Function(_UnifiedJobModel) _then) = __$UnifiedJobModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id,@JsonKey(includeFromJson: false, includeToJson: false) DocumentReference? reference, String sharerId, Map<String, dynamic> jobDetails, bool matchesCriteria, bool deleted, int? local, String? classification, String company, String location,@OptionalGeoPointConverter() GeoPoint? geoPoint, int? hours, double? wage, String? sub, String? jobClass, int? localNumber, String? qualifications, String? datePosted, String? jobDescription, String? jobTitle, String? perDiem, String? agreement, String? numberOfJobs,@TimestampConverter() DateTime? timestamp, String? startDate, String? startTime, List<int>? booksYourOn, String? typeOfWork, String? duration, String? voltageLevel, List<String>? certifications, bool isSaved, bool isApplied
+ String id, DocumentReference? reference, String sharerId, Map<String, dynamic> jobDetails, bool matchesCriteria, bool deleted, int? local, String? classification, String company, String location,@JsonKey(fromJson: _geoPointFromJsonHelper, toJson: _geoPointToJsonHelper) GeoPoint? geoPoint, int? hours, double? wage, String? sub, String? jobClass, int? localNumber, String? qualifications, String? datePosted, String? jobDescription, String? jobTitle, String? perDiem, String? agreement, String? numberOfJobs,@JsonKey(fromJson: _timestampFromJsonHelper, toJson: _timestampToJsonHelper) DateTime? timestamp, String? startDate, String? startTime, List<int>? booksYourOn, String? typeOfWork, String? duration, String? voltageLevel, List<String>? certifications, bool isSaved, bool isApplied
 });
 
 
