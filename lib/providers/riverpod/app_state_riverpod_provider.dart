@@ -118,27 +118,30 @@ Stream<bool> connectivityStream(Ref ref) {
 class AppStateNotifier extends _$AppStateNotifier {
   @override
   AppState build() {
-    // Listen to connectivity changes
-    ref.listen(connectivityStreamProvider, (AsyncValue<bool>? previous, AsyncValue<bool> next) {
-      next.when(
-        data: (bool isConnected) {
-          state = state.copyWith(isConnected: isConnected);
-          
-          // Track connectivity events
-          AnalyticsService.logCustomEvent(
-            'connectivity_changed',
-            <String, dynamic>{'is_connected': isConnected},
-          );
-        },
-        loading: () {},
-        error: (Object error, StackTrace stackTrace) {
-          state = state.copyWith(globalError: 'Connectivity error: $error');
-        },
-      );
+    // Watch connectivity changes and update state reactively
+    final connectivityAsync = ref.watch(connectivityStreamProvider);
+
+    // Set up analytics logging for connectivity changes using listenSelf
+    ref.listenSelf((previous, next) {
+      if (previous?.isConnected != next.isConnected) {
+        AnalyticsService.logCustomEvent(
+          'connectivity_changed',
+          <String, dynamic>{'is_connected': next.isConnected},
+        );
+      }
     });
 
+    // Initialize app asynchronously (not blocking build)
     _initializeApp();
-    return const AppState();
+
+    // Return state based on connectivity status
+    return connectivityAsync.when(
+      data: (bool isConnected) => AppState(isConnected: isConnected),
+      loading: () => const AppState(),
+      error: (Object error, StackTrace stackTrace) => AppState(
+        globalError: 'Connectivity error: $error',
+      ),
+    );
   }
 
   /// Initialize the application

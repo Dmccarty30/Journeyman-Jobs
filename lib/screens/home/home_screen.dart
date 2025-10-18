@@ -37,17 +37,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ref.read(jobsProvider.notifier).loadJobs();
       }
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // Listen for preference changes to reload jobs with new filter
+    // This is called in build() as required by Riverpod 2.x
     ref.listen(userPreferencesProvider, (previous, next) {
       if (next.preferences != UserJobPreferences.empty()) {
         final filter = next.preferences.toFilterCriteria();
         ref.read(jobsProvider.notifier).loadJobs(filter: filter);
       }
     });
-  }
 
-  @override
-  Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: AppTheme.offWhite,
       appBar: AppBar(

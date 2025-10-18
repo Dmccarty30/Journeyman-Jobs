@@ -103,6 +103,13 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen>
           throw Exception('User not authenticated');
         }
 
+        // Debug logging for authentication troubleshooting
+        print('🔍 DEBUG - Creating crew with user:');
+        print('   User UID: ${currentUser.uid}');
+        print('   User email: ${currentUser.email}');
+        print('   Is anonymous: ${currentUser.isAnonymous}');
+        print('   Email verified: ${currentUser.emailVerified}');
+
         // Create crew with current user as foreman
         await crewService.createCrew(
           name: _crewNameController.text,
@@ -113,6 +120,8 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen>
             autoShareEnabled: _autoShareEnabled,
           ),
         );
+
+        print('✅ DEBUG - Crew created successfully');
 
         // After successful crew creation, show preferences dialog
         if (mounted) {

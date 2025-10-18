@@ -74,29 +74,33 @@ class AuthNotifier extends _$AuthNotifier {
   @override
   AuthState build() {
     _operationManager = ConcurrentOperationManager();
-    
-    // Listen to auth state changes
-    ref.listen(authStateStreamProvider, (AsyncValue<User?>? previous, AsyncValue<User?> next) {
-      next.when(
-        data: (User? user) {
-          state = state.copyWith(
-            user: user,
-            isLoading: false,
-          );
-        },
-        loading: () {
-          state = state.copyWith(isLoading: true);
-        },
-        error: (Object error, _) {
-          state = state.copyWith(
-            isLoading: false,
-            error: error.toString(),
-          );
-        },
-      );
-    });
 
-    return const AuthState();
+    // Watch the auth state stream to get real-time authentication updates
+    final authStateAsync = ref.watch(authStateStreamProvider);
+
+    // Transform AsyncValue<User?> into AuthState using pattern matching
+    return authStateAsync.when(
+      // User is authenticated - return AuthState with user data
+      data: (user) => AuthState(
+        user: user,
+        isLoading: false,
+        error: null,
+      ),
+
+      // Authentication status is being checked - return loading state
+      loading: () => const AuthState(
+        user: null,
+        isLoading: true,
+        error: null,
+      ),
+
+      // Authentication error occurred - return error state
+      error: (error, stackTrace) => AuthState(
+        user: null,
+        isLoading: false,
+        error: error.toString(),
+      ),
+    );
   }
 
   /// Sign in with email and password
