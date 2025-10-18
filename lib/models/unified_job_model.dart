@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import '../utils/firestore_converters.dart';
 
 part 'unified_job_model.freezed.dart';
 part 'unified_job_model.g.dart';
@@ -29,24 +28,12 @@ part 'unified_job_model.g.dart';
 ///
 /// // Save to Firestore
 /// await jobRef.set(job.toFirestore());
-/// Custom converter for Firestore DocumentReference
-class DocumentReferenceConverter
-    implements JsonConverter<DocumentReference?, Object?> {
-  const DocumentReferenceConverter();
-
-  @override
-  DocumentReference? fromJson(Object? json) =>
-      json is DocumentReference ? json : null;
-
-  @override
-  Object? toJson(DocumentReference? object) => object;
-}
 /// ```
-@Freezed(fromJson: true, toJson: true)
+@freezed
 class UnifiedJobModel with _$UnifiedJobModel {
   const factory UnifiedJobModel({
     required String id,
-    @DocumentReferenceConverter()
+    @JsonKey(includeToJson: false, includeFromJson: false)
     DocumentReference? reference,
     @Default('') String sharerId,
     @Default({}) Map<String, dynamic> jobDetails,
@@ -56,7 +43,7 @@ class UnifiedJobModel with _$UnifiedJobModel {
     String? classification,
     required String company,
     required String location,
-    @JsonKey(fromJson: _geoPointFromJsonHelper, toJson: _geoPointToJsonHelper)
+    @JsonKey(toJson: _geoPointToJson, fromJson: _geoPointFromJson)
     GeoPoint? geoPoint,
     int? hours,
     double? wage,
@@ -70,7 +57,7 @@ class UnifiedJobModel with _$UnifiedJobModel {
     String? perDiem,
     String? agreement,
     String? numberOfJobs,
-    @JsonKey(fromJson: _timestampFromJsonHelper, toJson: _timestampToJsonHelper)
+    @JsonKey(toJson: _timestampToJson, fromJson: _timestampFromJson)
     DateTime? timestamp,
     String? startDate,
     String? startTime,
@@ -89,32 +76,20 @@ class UnifiedJobModel with _$UnifiedJobModel {
       _$UnifiedJobModelFromJson(json);
 }
 
-GeoPoint? _geoPointFromJsonHelper(dynamic json) =>
+// Helper functions for JSON conversion
+GeoPoint? _geoPointFromJson(dynamic json) =>
     json is GeoPoint ? json : null;
 
-dynamic _geoPointToJsonHelper(GeoPoint? geoPoint) => geoPoint;
+dynamic _geoPointToJson(GeoPoint? geoPoint) => geoPoint;
 
-DateTime? _timestampFromJsonHelper(dynamic json) {
+DateTime? _timestampFromJson(dynamic json) {
   if (json is Timestamp) return json.toDate();
   if (json is String) return DateTime.tryParse(json);
   return null;
 }
 
-dynamic _timestampToJsonHelper(DateTime? date) =>
+dynamic _timestampToJson(DateTime? date) =>
     date != null ? Timestamp.fromDate(date) : null;
-
-// Converter helper functions
-GeoPoint? _geoPointFromJson(dynamic json) =>
-    const OptionalGeoPointConverter().fromJson(json);
-
-dynamic _geoPointToJson(GeoPoint? value) =>
-    const OptionalGeoPointConverter().toJson(value);
-
-DateTime? _timestampFromJson(dynamic json) =>
-    const TimestampConverter().fromJson(json);
-
-dynamic _timestampToJson(DateTime? value) =>
-    const TimestampConverter().toJson(value);
 
 /// Business logic extension for UnifiedJobModel
 ///

@@ -61,7 +61,7 @@ dependencies:
   provider: ^6.0.0
 
   # Code generation for immutable models
-  freezed_annotation: 3.1.0
+  freezed_annotation: ^3.1.0
   json_annotation: ^4.9.0
 
   # UI and utilities

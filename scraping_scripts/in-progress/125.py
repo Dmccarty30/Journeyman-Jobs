@@ -299,7 +299,11 @@ def firestore_operation(fn, *args, **kwargs):
     return fn(*args, **kwargs)
 
 def update_database_with_jobs(classification, jobs, local_number):
-    """Adds, updates, or removes job listings in Firestore for a given classification."""
+    """Adds, updates, or removes job listings in Firestore for a given classification.
+    
+    IMPORTANT: This function expects classification in title case (e.g., "Journeyman Lineman")
+    but queries and stores data using slug format (e.g., "journeyman-lineman") for consistency.
+    """
     if FIREBASE_CREDENTIALS_PATH:
         try:
             db = firestore.Client.from_service_account_json(FIREBASE_CREDENTIALS_PATH)
@@ -309,20 +313,26 @@ def update_database_with_jobs(classification, jobs, local_number):
     else:
         db = firestore.Client()
 
-    logger.info(f"Updating Firestore with {len(jobs)} jobs for classification '{classification}' (Local {local_number})")
+    # Convert title case classification to slug for consistency
+    classification_slug = classification.lower().replace(" ", "-")
+    
+    logger.info(f"Updating Firestore with {len(jobs)} jobs for classification '{classification}' (slug: '{classification_slug}') (Local {local_number})")
 
     def fetch_existing():
         return (
             db.collection("jobs")
             .where(filter=firestore.FieldFilter("localNumber", "==", local_number))
-            .where(filter=firestore.FieldFilter("classification", "==", classification))
+            .where(filter=firestore.FieldFilter("classification", "==", classification_slug))  # Query with slug format
             .stream()
         )
 
     try:
         existing_jobs_snapshot = firestore_operation(fetch_existing)
         existing_jobs = {doc.id: doc.to_dict() for doc in existing_jobs_snapshot}
-        logger.info(f"Found {len(existing_jobs)} existing jobs in Firestore for classification '{classification}'")
+        logger.info(f"Found {len(existing_jobs)} existing jobs in Firestore for classification '{classification_slug}'")
+        # Log existing job IDs for debugging
+        if existing_jobs:
+            logger.debug(f"Existing job IDs: {list(existing_jobs.keys())[:5]}...")  # Show first 5
     except Exception as e:
         logger.error(f"Failed to fetch existing jobs from Firestore: {e}")
         return
@@ -330,20 +340,19 @@ def update_database_with_jobs(classification, jobs, local_number):
     valid_job_ids = set()
     for job in jobs:
         sanitized_job = sanitize_job_data(job)
-        # Standardize classification for ID generation (e.g., 'journeyman lineman' -> 'journeyman-lineman')
-        sane_classification = sanitized_job.get("classification", "").lower().replace(" ", "-")
-
-        job_id = generate_job_id(local_number, sane_classification, sanitized_job)
+        # Use the already-converted slug
+        job_id = generate_job_id(local_number, classification_slug, sanitized_job)
         valid_job_ids.add(job_id)
+        logger.debug(f"Generated job ID: {job_id}")
 
         # Map scraped data to the Firestore schema
         job_data = {
             "jobId": job_id,
             "localNumber": local_number,
-            "classification": sanitized_job.get("classification", ""),  # Keep title case for user display
+            "classification": classification_slug,  # Store slug format for consistency with 111.py
             "company": sanitized_job.get("company", ""),
             "datePosted": sanitized_job.get("posted_date", ""),
-            "jobClass": sanitized_job.get("classification", ""),  # Use title case classification as jobClass
+            "jobClass": sanitized_job.get("classification", ""),  # Keep title case for display in jobClass field
             "location": sanitized_job.get("location", "") or "",
             "numberOfJobs": "",
             "hours": sanitized_job.get("hours", ""),
@@ -377,6 +386,9 @@ def update_database_with_jobs(classification, jobs, local_number):
             logger.error(f"Error updating/creating job {job_id}: {e}")
 
     # Delete jobs that are no longer on the dispatch page
+    deleted_count = 0
+    logger.debug(f"Checking for outdated jobs. Valid IDs count: {len(valid_job_ids)}, Existing IDs count: {len(existing_jobs)}")
+    
     for existing_id in existing_jobs:
         if existing_id not in valid_job_ids:
             try:
@@ -384,10 +396,16 @@ def update_database_with_jobs(classification, jobs, local_number):
                     db.collection("jobs").document(existing_id).delete()
                 firestore_operation(delete_fn)
                 logger.info(f"Deleted outdated job {existing_id}")
+                deleted_count += 1
             except Exception as e:
                 logger.error(f"Error deleting job {existing_id}: {e}")
+    
+    if deleted_count > 0:
+        logger.info(f"Deleted {deleted_count} outdated jobs")
+    else:
+        logger.debug(f"No outdated jobs to delete")
 
-    logger.info(f"Firestore update completed for classification '{classification}'")
+    logger.info(f"Firestore update completed for classification '{classification_slug}' - Added/Updated: {len(valid_job_ids)}, Deleted: {deleted_count}")
 
 if __name__ == "__main__":
     logger.info(f"Starting IBEW {LOCAL_NUMBER} scraper...")
