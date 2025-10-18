@@ -11,6 +11,10 @@
         {
           "fieldPath": "isActive",
           "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "lastActivityAt",
+          "order": "DESCENDING"
         }
       ]
     },
@@ -22,16 +26,6 @@
           "fieldPath": "participants",
           "arrayConfig": "CONTAINS"
         },
-        {
-          "fieldPath": "sentAt",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "messages",
-      "queryScope": "COLLECTION_GROUP",
-      "fields": [
         {
           "fieldPath": "sentAt",
           "order": "DESCENDING"
