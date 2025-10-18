@@ -126,12 +126,14 @@ class AppStateNotifier extends _$AppStateNotifier {
     ref.listen(connectivityStreamProvider, (AsyncValue<bool>? previous, AsyncValue<bool> next) {
       next.whenData((bool isConnected) {
         // Only log if connectivity actually changed
-        final previousConnected = previous?.valueOrNull;
-        if (previousConnected != null && previousConnected != isConnected) {
-          AnalyticsService.logCustomEvent(
-            'connectivity_changed',
-            <String, dynamic>{'is_connected': isConnected},
-          );
+        if (previous != null && previous.hasValue) {
+          final previousConnected = previous.value;
+          if (previousConnected != isConnected) {
+            AnalyticsService.logCustomEvent(
+              'connectivity_changed',
+              <String, dynamic>{'is_connected': isConnected},
+            );
+          }
         }
       });
     });
