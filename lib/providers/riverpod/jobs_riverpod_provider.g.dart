@@ -15,21 +15,25 @@ const firestoreServiceProvider = FirestoreServiceProvider._();
 
 /// Firestore service provider
 
-final class FirestoreServiceProvider extends $FunctionalProvider<
-    ResilientFirestoreService,
-    ResilientFirestoreService,
-    ResilientFirestoreService> with $Provider<ResilientFirestoreService> {
+final class FirestoreServiceProvider
+    extends
+        $FunctionalProvider<
+          ResilientFirestoreService,
+          ResilientFirestoreService,
+          ResilientFirestoreService
+        >
+    with $Provider<ResilientFirestoreService> {
   /// Firestore service provider
   const FirestoreServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'firestoreServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'firestoreServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$firestoreServiceHash();
@@ -37,8 +41,8 @@ final class FirestoreServiceProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<ResilientFirestoreService> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   ResilientFirestoreService create(Ref ref) {
@@ -56,25 +60,25 @@ final class FirestoreServiceProvider extends $FunctionalProvider<
 
 String _$firestoreServiceHash() => r'665e0c40804f3306f3afbce70fab7d9fc5247907';
 
-/// Jobs notifier for managing job data and operations
+/// Jobs notifier provider
 
 @ProviderFor(JobsNotifier)
 const jobsProvider = JobsNotifierProvider._();
 
-/// Jobs notifier for managing job data and operations
+/// Jobs notifier provider
 final class JobsNotifierProvider
     extends $NotifierProvider<JobsNotifier, JobsState> {
-  /// Jobs notifier for managing job data and operations
+  /// Jobs notifier provider
   const JobsNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'jobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'jobsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$jobsNotifierHash();
@@ -92,9 +96,9 @@ final class JobsNotifierProvider
   }
 }
 
-String _$jobsNotifierHash() => r'b15e27fb956ad2338db7f5b34b77e63627ae3750';
+String _$jobsNotifierHash() => r'4b1affbe406b2d5504139647a5e6f0d84d635c7d';
 
-/// Jobs notifier for managing job data and operations
+/// Jobs notifier provider
 
 abstract class _$JobsNotifier extends $Notifier<JobsState> {
   JobsState build();
@@ -103,8 +107,14 @@ abstract class _$JobsNotifier extends $Notifier<JobsState> {
   void runBuild() {
     final created = build();
     final ref = this.ref as $Ref<JobsState, JobsState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<JobsState, JobsState>, JobsState, Object?, Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<JobsState, JobsState>,
+              JobsState,
+              Object?,
+              Object?
+            >;
     element.handleValue(ref, created);
   }
 }
@@ -116,20 +126,25 @@ const filteredJobsProvider = FilteredJobsFamily._();
 
 /// Filtered jobs provider using family for auto-dispose
 
-final class FilteredJobsProvider extends $FunctionalProvider<
-        AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
+final class FilteredJobsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Job>>,
+          List<Job>,
+          FutureOr<List<Job>>
+        >
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
   /// Filtered jobs provider using family for auto-dispose
-  const FilteredJobsProvider._(
-      {required FilteredJobsFamily super.from,
-      required JobFilterCriteria super.argument})
-      : super(
-          retry: null,
-          name: r'filteredJobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const FilteredJobsProvider._({
+    required FilteredJobsFamily super.from,
+    required JobFilterCriteria super.argument,
+  }) : super(
+         retry: null,
+         name: r'filteredJobsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$filteredJobsHash();
@@ -149,10 +164,7 @@ final class FilteredJobsProvider extends $FunctionalProvider<
   @override
   FutureOr<List<Job>> create(Ref ref) {
     final argument = this.argument as JobFilterCriteria;
-    return filteredJobs(
-      ref,
-      argument,
-    );
+    return filteredJobs(ref, argument);
   }
 
   @override
@@ -173,19 +185,17 @@ String _$filteredJobsHash() => r'f34109b3e9daa3e8f76eee9badfa2c7817cc0ada';
 final class FilteredJobsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<Job>>, JobFilterCriteria> {
   const FilteredJobsFamily._()
-      : super(
-          retry: null,
-          name: r'filteredJobsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'filteredJobsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Filtered jobs provider using family for auto-dispose
 
-  FilteredJobsProvider call(
-    JobFilterCriteria filter,
-  ) =>
+  FilteredJobsProvider call(JobFilterCriteria filter) =>
       FilteredJobsProvider._(argument: filter, from: this);
 
   @override
@@ -199,19 +209,25 @@ const searchJobsProvider = SearchJobsFamily._();
 
 /// Auto-dispose provider for job search
 
-final class SearchJobsProvider extends $FunctionalProvider<
-        AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
+final class SearchJobsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Job>>,
+          List<Job>,
+          FutureOr<List<Job>>
+        >
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
   /// Auto-dispose provider for job search
-  const SearchJobsProvider._(
-      {required SearchJobsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'searchJobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const SearchJobsProvider._({
+    required SearchJobsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'searchJobsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$searchJobsHash();
@@ -231,10 +247,7 @@ final class SearchJobsProvider extends $FunctionalProvider<
   @override
   FutureOr<List<Job>> create(Ref ref) {
     final argument = this.argument as String;
-    return searchJobs(
-      ref,
-      argument,
-    );
+    return searchJobs(ref, argument);
   }
 
   @override
@@ -255,19 +268,17 @@ String _$searchJobsHash() => r'ddc3acadff3d73c6ab9b471f80bdbc3b95ee5097';
 final class SearchJobsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<Job>>, String> {
   const SearchJobsFamily._()
-      : super(
-          retry: null,
-          name: r'searchJobsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'searchJobsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Auto-dispose provider for job search
 
-  SearchJobsProvider call(
-    String searchTerm,
-  ) =>
+  SearchJobsProvider call(String searchTerm) =>
       SearchJobsProvider._(argument: searchTerm, from: this);
 
   @override
@@ -285,15 +296,16 @@ final class JobByIdProvider
     extends $FunctionalProvider<AsyncValue<Job?>, Job?, FutureOr<Job?>>
     with $FutureModifier<Job?>, $FutureProvider<Job?> {
   /// Job by ID provider
-  const JobByIdProvider._(
-      {required JobByIdFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'jobByIdProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const JobByIdProvider._({
+    required JobByIdFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'jobByIdProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$jobByIdHash();
@@ -313,10 +325,7 @@ final class JobByIdProvider
   @override
   FutureOr<Job?> create(Ref ref) {
     final argument = this.argument as String;
-    return jobById(
-      ref,
-      argument,
-    );
+    return jobById(ref, argument);
   }
 
   @override
@@ -337,19 +346,17 @@ String _$jobByIdHash() => r'fe0b6ad481434b99b4f2dd06952e724f38be0922';
 final class JobByIdFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Job?>, String> {
   const JobByIdFamily._()
-      : super(
-          retry: null,
-          name: r'jobByIdProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'jobByIdProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Job by ID provider
 
-  JobByIdProvider call(
-    String jobId,
-  ) =>
+  JobByIdProvider call(String jobId) =>
       JobByIdProvider._(argument: jobId, from: this);
 
   @override
@@ -363,20 +370,25 @@ const recentJobsProvider = RecentJobsProvider._();
 
 /// Recent jobs provider
 
-final class RecentJobsProvider extends $FunctionalProvider<
-        AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
+final class RecentJobsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Job>>,
+          List<Job>,
+          FutureOr<List<Job>>
+        >
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
   /// Recent jobs provider
   const RecentJobsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'recentJobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'recentJobsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$recentJobsHash();
@@ -401,20 +413,25 @@ const stormJobsProvider = StormJobsProvider._();
 
 /// Storm jobs provider (high priority jobs)
 
-final class StormJobsProvider extends $FunctionalProvider<AsyncValue<List<Job>>,
-        List<Job>, FutureOr<List<Job>>>
+final class StormJobsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Job>>,
+          List<Job>,
+          FutureOr<List<Job>>
+        >
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
   /// Storm jobs provider (high priority jobs)
   const StormJobsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'stormJobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'stormJobsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$stormJobsHash();

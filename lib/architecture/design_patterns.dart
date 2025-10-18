@@ -1,11 +1,13 @@
+/// @nodoc
+library;
+
 /// 🏗️ Journeyman Jobs - Architectural Design Patterns
-/// 
+///
 /// This file contains standardized architectural patterns for phases 3-13
 /// implementation. All new features should follow these patterns for consistency,
 /// maintainability, and scalability.
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/utils/structured_logging.dart';
 
 // =================== BASE SERVICE PATTERN ===================
@@ -29,9 +31,9 @@ abstract class BaseService {
     Map<String, dynamic>? context,
   }) async {
     final stopwatch = Stopwatch()..start();
-    
+
     try {
-      StructuredLogging.info(
+      StructuredLogger.info(
         'Starting operation',
         context: {
           'service': _serviceName,
@@ -39,11 +41,11 @@ abstract class BaseService {
           ...?context,
         },
       );
-      
+
       final result = await operation();
-      
+
       stopwatch.stop();
-      StructuredLogging.info(
+      StructuredLogger.info(
         'Operation completed successfully',
         context: {
           'service': _serviceName,
@@ -52,11 +54,11 @@ abstract class BaseService {
           ...?context,
         },
       );
-      
+
       return result;
     } catch (error, stackTrace) {
       stopwatch.stop();
-      StructuredLogging.error(
+      StructuredLogger.error(
         'Operation failed',
         error: error,
         stackTrace: stackTrace,
@@ -97,94 +99,43 @@ abstract class BaseService {
       await batch.commit();
     }, operationName);
   }
+
+  /// Access to Firestore instance for direct queries when needed
+  FirebaseFirestore get firestore => _firestore;
 }
 
-// =================== RIVERPOD PROVIDER PATTERN ===================
+// =================== FIRESTORE DATA CONVERTER ===================
 
-/// Base state notifier for consistent provider patterns
-abstract class BaseStateNotifier<T> extends StateNotifier<AsyncValue<T>> {
-  final String _providerName;
+/// Generic Firestore data converter interface
+///
+/// This interface provides type-safe conversion between Firestore documents
+/// and Dart model objects. Implementing this pattern ensures consistent
+/// data transformation across the application.
+///
+/// Example usage:
+/// ```dart
+/// class JobConverter implements FirestoreDataConverter<Job> {
+///   @override
+///   Job fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot, SnapshotOptions? options) {
+///     final data = snapshot.data()!;
+///     return Job.fromJson({...data, 'id': snapshot.id});
+///   }
+///
+///   @override
+///   Map<String, Object?> toFirestore(Job model, SetOptions? options) {
+///     return model.toFirestore();
+///   }
+/// }
+/// ```
+abstract class FirestoreDataConverter<T> {
+  /// Convert Firestore document to model object
+  T fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  );
 
-  BaseStateNotifier({
-    required String providerName,
-    AsyncValue<T>? initialState,
-  }) : _providerName = providerName,
-       super(initialState ?? const AsyncValue.loading());
-
-  /// Execute an operation with consistent state management
-  Future<void> executeOperation(
-    Future<T> Function() operation,
-    String operationName, {
-    bool optimistic = false,
-    T? optimisticValue,
-  }) async {
-    try {
-      if (optimistic && optimisticValue != null) {
-        state = AsyncValue.data(optimisticValue);
-      } else if (!optimistic) {
-        state = const AsyncValue.loading();
-      }
-
-      final result = await operation();
-      state = AsyncValue.data(result);
-
-      StructuredLogging.info(
-        'Provider operation completed',
-        context: {
-          'provider': _providerName,
-          'operation': operationName,
-        },
-      );
-    } catch (error, stackTrace) {
-      state = AsyncValue.error(error, stackTrace);
-      
-      StructuredLogging.error(
-        'Provider operation failed',
-        error: error,
-        stackTrace: stackTrace,
-        context: {
-          'provider': _providerName,
-          'operation': operationName,
-        },
-      );
-    }
-  }
-
-  /// Update state with optimistic updates and rollback capability
-  Future<void> optimisticUpdate<R>(
-    T optimisticValue,
-    Future<R> Function() operation,
-    String operationName,
-  ) async {
-    final previousState = state;
-    
-    try {
-      state = AsyncValue.data(optimisticValue);
-      await operation();
-      
-      StructuredLogging.info(
-        'Optimistic update succeeded',
-        context: {
-          'provider': _providerName,
-          'operation': operationName,
-        },
-      );
-    } catch (error, stackTrace) {
-      // Rollback to previous state
-      state = previousState;
-      
-      StructuredLogging.error(
-        'Optimistic update failed, rolled back',
-        error: error,
-        stackTrace: stackTrace,
-        context: {
-          'provider': _providerName,
-          'operation': operationName,
-        },
-      );
-      rethrow;
-    }
-  }
+  /// Convert model object to Firestore document data
+  Map<String, Object?> toFirestore(T model, SetOptions? options);
 }
 
 // =================== DATA MODEL PATTERN ===================
@@ -193,18 +144,18 @@ abstract class BaseStateNotifier<T> extends StateNotifier<AsyncValue<T>> {
 abstract class BaseModel {
   /// Unique identifier for the model
   String get id;
-  
+
   /// Convert model to Firestore document data
   Map<String, dynamic> toFirestore();
-  
+
   /// Create model from Firestore document
   static BaseModel fromFirestore(DocumentSnapshot doc) {
     throw UnimplementedError('fromFirestore must be implemented');
   }
-  
+
   /// Validate model data
   bool isValid() => true;
-  
+
   /// Get validation errors
   List<String> getValidationErrors() => [];
 }
@@ -213,7 +164,7 @@ abstract class BaseModel {
 mixin TimestampedModel on BaseModel {
   DateTime? get createdAt;
   DateTime? get updatedAt;
-  
+
   Map<String, dynamic> addTimestamps(Map<String, dynamic> data) {
     final now = FieldValue.serverTimestamp();
     return {
@@ -228,7 +179,7 @@ mixin TimestampedModel on BaseModel {
 mixin SoftDeletableModel on BaseModel {
   bool get isDeleted;
   DateTime? get deletedAt;
-  
+
   Map<String, dynamic> addDeletionFields(Map<String, dynamic> data) {
     return {
       ...data,
@@ -244,7 +195,7 @@ mixin SoftDeletableModel on BaseModel {
 abstract class Repository<T extends BaseModel> {
   /// Get a single item by ID
   Future<T?> getById(String id);
-  
+
   /// Get multiple items with optional filtering
   Future<List<T>> getAll({
     Map<String, dynamic>? filters,
@@ -252,21 +203,21 @@ abstract class Repository<T extends BaseModel> {
     bool descending = false,
     int? limit,
   });
-  
+
   /// Create a new item
   Future<String> create(T item);
-  
+
   /// Update an existing item
   Future<void> update(String id, T item);
-  
+
   /// Delete an item (hard delete)
   Future<void> delete(String id);
-  
+
   /// Soft delete an item (if supported)
   Future<void> softDelete(String id) {
     throw UnimplementedError('Soft delete not supported');
   }
-  
+
   /// Get a stream of items for real-time updates
   Stream<List<T>> watchAll({
     Map<String, dynamic>? filters,
@@ -274,27 +225,27 @@ abstract class Repository<T extends BaseModel> {
     bool descending = false,
     int? limit,
   });
-  
+
   /// Get a stream of a single item
   Stream<T?> watchById(String id);
 }
 
 /// Base implementation of repository pattern
-abstract class FirestoreRepository<T extends BaseModel> 
+abstract class FirestoreRepository<T extends BaseModel>
     extends BaseService implements Repository<T> {
-  
+
   final String collectionPath;
   final T Function(DocumentSnapshot) fromFirestore;
-  
+
   FirestoreRepository({
-    required FirebaseFirestore firestore,
+    required super.firestore,
     required this.collectionPath,
     required this.fromFirestore,
-    required String serviceName,
-  }) : super(firestore: firestore, serviceName: serviceName);
+    required super.serviceName,
+  });
 
   CollectionReference<Map<String, dynamic>> get _collection =>
-      _firestore.collection(collectionPath);
+      firestore.collection(collectionPath);
 
   @override
   Future<T?> getById(String id) async {
@@ -314,24 +265,24 @@ abstract class FirestoreRepository<T extends BaseModel>
   }) async {
     return executeWithErrorHandling(() async {
       Query query = _collection;
-      
+
       // Apply filters
       if (filters != null) {
         for (final entry in filters.entries) {
           query = query.where(entry.key, isEqualTo: entry.value);
         }
       }
-      
+
       // Apply ordering
       if (orderBy != null) {
         query = query.orderBy(orderBy, descending: descending);
       }
-      
+
       // Apply limit
       if (limit != null) {
         query = query.limit(limit);
       }
-      
+
       final snapshot = await query.get();
       return snapshot.docs.map(fromFirestore).toList();
     }, 'getAll', context: {
@@ -348,7 +299,7 @@ abstract class FirestoreRepository<T extends BaseModel>
       if (!item.isValid()) {
         throw ArgumentError('Invalid model: ${item.getValidationErrors()}');
       }
-      
+
       final docRef = _collection.doc();
       await docRef.set(item.toFirestore());
       return docRef.id;
@@ -361,7 +312,7 @@ abstract class FirestoreRepository<T extends BaseModel>
       if (!item.isValid()) {
         throw ArgumentError('Invalid model: ${item.getValidationErrors()}');
       }
-      
+
       await _collection.doc(id).update(item.toFirestore());
     }, 'update', context: {'id': id});
   }
@@ -381,24 +332,24 @@ abstract class FirestoreRepository<T extends BaseModel>
     int? limit,
   }) {
     Query query = _collection;
-    
+
     // Apply filters
     if (filters != null) {
       for (final entry in filters.entries) {
         query = query.where(entry.key, isEqualTo: entry.value);
       }
     }
-    
+
     // Apply ordering
     if (orderBy != null) {
       query = query.orderBy(orderBy, descending: descending);
     }
-    
+
     // Apply limit
     if (limit != null) {
       query = query.limit(limit);
     }
-    
+
     return query.snapshots().map(
       (snapshot) => snapshot.docs.map(fromFirestore).toList(),
     );
@@ -419,7 +370,7 @@ class PaginationConfig {
   final int pageSize;
   final String orderByField;
   final bool descending;
-  
+
   const PaginationConfig({
     this.pageSize = 20,
     this.orderByField = 'createdAt',
@@ -434,7 +385,7 @@ class PaginatedData<T> {
   final bool isLoading;
   final String? error;
   final DocumentSnapshot? lastDocument;
-  
+
   const PaginatedData({
     required this.items,
     required this.hasMore,
@@ -442,7 +393,7 @@ class PaginatedData<T> {
     this.error,
     this.lastDocument,
   });
-  
+
   PaginatedData<T> copyWith({
     List<T>? items,
     bool? hasMore,
@@ -469,36 +420,36 @@ mixin PaginatedRepository<T extends BaseModel> on FirestoreRepository<T> {
   }) async {
     return executeWithErrorHandling(() async {
       Query query = _collection;
-      
+
       // Apply filters
       if (filters != null) {
         for (final entry in filters.entries) {
           query = query.where(entry.key, isEqualTo: entry.value);
         }
       }
-      
+
       // Apply ordering
       query = query.orderBy(config.orderByField, descending: config.descending);
-      
+
       // Apply pagination
       if (startAfter != null) {
         query = query.startAfterDocument(startAfter);
       }
-      
+
       // Request one more item to check if there are more pages
       query = query.limit(config.pageSize + 1);
-      
+
       final snapshot = await query.get();
       final docs = snapshot.docs;
-      
+
       final hasMore = docs.length > config.pageSize;
       final items = docs
           .take(config.pageSize)
           .map(fromFirestore)
           .toList();
-      
+
       final lastDocument = items.isNotEmpty ? docs[items.length - 1] : null;
-      
+
       return PaginatedData<T>(
         items: items,
         hasMore: hasMore,
@@ -521,15 +472,15 @@ class CommonValidators {
   static bool isValidEmail(String email) {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
-  
+
   static bool isNotEmpty(String? value) {
     return value != null && value.isNotEmpty;
   }
-  
+
   static bool isValidPhoneNumber(String phone) {
     return RegExp(r'^\+?1?[2-9]\d{2}[2-9]\d{2}\d{4}$').hasMatch(phone);
   }
-  
+
   static bool isValidUrl(String url) {
     try {
       final uri = Uri.parse(url);
@@ -547,9 +498,9 @@ abstract class AppException implements Exception {
   final String message;
   final String? code;
   final Map<String, dynamic>? context;
-  
+
   const AppException(this.message, {this.code, this.context});
-  
+
   @override
   String toString() => 'AppException: $message';
 }
@@ -557,166 +508,20 @@ abstract class AppException implements Exception {
 /// Validation exception
 class ValidationException extends AppException {
   final List<String> errors;
-  
-  const ValidationException(this.errors, {String? code, Map<String, dynamic>? context})
-      : super('Validation failed', code: code, context: context);
-  
+
+  const ValidationException(this.errors, {super.code, super.context})
+      : super('Validation failed');
+
   @override
   String toString() => 'ValidationException: ${errors.join(', ')}';
 }
 
 /// Network exception
 class NetworkException extends AppException {
-  const NetworkException(String message, {String? code, Map<String, dynamic>? context})
-      : super(message, code: code, context: context);
+  const NetworkException(super.message, {super.code, super.context});
 }
 
 /// Firestore exception wrapper
 class FirestoreException extends AppException {
-  const FirestoreException(String message, {String? code, Map<String, dynamic>? context})
-      : super(message, code: code, context: context);
+  const FirestoreException(super.message, {super.code, super.context});
 }
-
-// =================== USAGE EXAMPLES ===================
-
-/// Example implementation of the patterns above
-/// This shows how to use the patterns for a new feature
-
-/*
-// 1. Model Implementation
-class FavoriteModel extends BaseModel with TimestampedModel {
-  final String id;
-  final String userId;
-  final String jobId;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  
-  const FavoriteModel({
-    required this.id,
-    required this.userId,
-    required this.jobId,
-    this.createdAt,
-    this.updatedAt,
-  });
-  
-  @override
-  Map<String, dynamic> toFirestore() {
-    return addTimestamps({
-      'userId': userId,
-      'jobId': jobId,
-    });
-  }
-  
-  static FavoriteModel fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return FavoriteModel(
-      id: doc.id,
-      userId: data['userId'] as String,
-      jobId: data['jobId'] as String,
-      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
-      updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
-    );
-  }
-  
-  @override
-  bool isValid() {
-    return userId.isNotEmpty && jobId.isNotEmpty;
-  }
-  
-  @override
-  List<String> getValidationErrors() {
-    final errors = <String>[];
-    if (userId.isEmpty) errors.add('User ID is required');
-    if (jobId.isEmpty) errors.add('Job ID is required');
-    return errors;
-  }
-}
-
-// 2. Repository Implementation
-class FavoritesRepository extends FirestoreRepository<FavoriteModel>
-    with PaginatedRepository<FavoriteModel> {
-  
-  FavoritesRepository({required FirebaseFirestore firestore})
-      : super(
-          firestore: firestore,
-          collectionPath: 'favorites',
-          fromFirestore: FavoriteModel.fromFirestore,
-          serviceName: 'FavoritesRepository',
-        );
-        
-  Future<List<FavoriteModel>> getUserFavorites(String userId) async {
-    return getAll(
-      filters: {'userId': userId},
-      orderBy: 'createdAt',
-      descending: true,
-    );
-  }
-  
-  Future<bool> isFavorite(String userId, String jobId) async {
-    final favorites = await getAll(
-      filters: {'userId': userId, 'jobId': jobId},
-      limit: 1,
-    );
-    return favorites.isNotEmpty;
-  }
-}
-
-// 3. Service Implementation
-class FavoritesService extends BaseService {
-  final FavoritesRepository _repository;
-  
-  FavoritesService({
-    required FirebaseFirestore firestore,
-    required FavoritesRepository repository,
-  }) : _repository = repository,
-       super(firestore: firestore, serviceName: 'FavoritesService');
-  
-  Future<void> toggleFavorite(String userId, String jobId) async {
-    return executeWithErrorHandling(() async {
-      final existing = await _repository.getAll(
-        filters: {'userId': userId, 'jobId': jobId},
-        limit: 1,
-      );
-      
-      if (existing.isNotEmpty) {
-        // Remove favorite
-        await _repository.delete(existing.first.id);
-      } else {
-        // Add favorite
-        final favorite = FavoriteModel(
-          id: '', // Will be set by Firestore
-          userId: userId,
-          jobId: jobId,
-        );
-        await _repository.create(favorite);
-      }
-    }, 'toggleFavorite', context: {'userId': userId, 'jobId': jobId});
-  }
-}
-
-// 4. Provider Implementation
-@riverpod
-class FavoritesNotifier extends _$FavoritesNotifier {
-  @override
-  Future<List<String>> build(String userId) async {
-    final service = ref.read(favoritesServiceProvider);
-    final favorites = await service.getUserFavorites(userId);
-    return favorites.map((f) => f.jobId).toList();
-  }
-  
-  Future<void> toggleFavorite(String jobId) async {
-    final userId = ref.read(currentUserProvider).requireValue!.uid;
-    final service = ref.read(favoritesServiceProvider);
-    
-    await optimisticUpdate(
-      // Optimistic value
-      state.value!.contains(jobId)
-          ? state.value!.where((id) => id != jobId).toList()
-          : [...state.value!, jobId],
-      // Operation
-      () => service.toggleFavorite(userId, jobId),
-      'toggleFavorite',
-    );
-  }
-}
-*/

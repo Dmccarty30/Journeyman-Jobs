@@ -243,22 +243,12 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      if (crew.description != null && crew.description!.isNotEmpty)
-                        Text(
-                          crew.description!,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppTheme.textSecondary,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        )
-                      else
-                        Text(
-                          '${crew.memberIds.length} members',
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppTheme.textSecondary,
-                          ),
+                      Text(
+                        '${crew.memberIds.length} members',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: AppTheme.textSecondary,
                         ),
+                      ),
                     ],
                   ),
                 ),

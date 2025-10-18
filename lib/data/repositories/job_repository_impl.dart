@@ -1,10 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'job_repository.dart' hide Job;
-import '../../models/job_model.dart';
+import 'job_repository.dart';
 
+/// Concrete implementation of [JobRepository] using Cloud Firestore.
+///
+/// This implementation provides Firebase Firestore-specific functionality
+/// for managing job data, including error handling and data transformation.
+///
+/// Features:
+/// - Automatic timestamp management
+/// - Error handling with descriptive exception messages
+/// - Efficient querying with proper indexing
+/// - Data validation before operations
 class JobRepositoryImpl implements JobRepository {
   final FirebaseFirestore firestore;
 
+  /// Creates a new JobRepositoryImpl instance.
+  ///
+  /// The [firestore] parameter is required and should be a configured
+  /// FirebaseFirestore instance. Typically injected via dependency injection.
   JobRepositoryImpl({required this.firestore});
 
   @override
@@ -14,7 +27,7 @@ class JobRepositoryImpl implements JobRepository {
           .collection('jobs')
           .orderBy('timestamp', descending: true)
           .get();
-      
+
       return snapshot.docs.map((doc) {
         final data = doc.data();
         data['id'] = doc.id;
@@ -30,7 +43,7 @@ class JobRepositoryImpl implements JobRepository {
     try {
       final doc = await firestore.collection('jobs').doc(id).get();
       if (!doc.exists) return null;
-      
+
       final data = doc.data()!;
       data['id'] = doc.id;
       return Job.fromJson(data);

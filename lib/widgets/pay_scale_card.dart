@@ -2,6 +2,73 @@ import 'package:flutter/material.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
 import '../models/pay_scale_model.dart';
 
+/// A simple pay scale card widget for displaying pay scale information
+/// This is a placeholder widget that can be used without parameters
+class PayScaleCard extends StatelessWidget {
+  const PayScaleCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingLg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.payments,
+            size: 64,
+            color: AppTheme.accentCopper,
+          ),
+          const SizedBox(height: AppTheme.spacingLg),
+          Text(
+            'Pay Scale Comparison',
+            style: AppTheme.headlineMedium.copyWith(
+              color: AppTheme.primaryNavy,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+          Text(
+            'Compare IBEW pay scales across different locals nationwide.',
+            style: AppTheme.bodyLarge.copyWith(
+              color: AppTheme.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingLg),
+          Container(
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            decoration: BoxDecoration(
+              color: AppTheme.infoBlue.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              border: Border.all(
+                color: AppTheme.infoBlue.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.info_outline,
+                  color: AppTheme.infoBlue,
+                  size: AppTheme.iconMd,
+                ),
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: Text(
+                    'Interactive pay scale comparison tool coming soon!',
+                    style: AppTheme.bodyMedium.copyWith(
+                      color: AppTheme.infoBlue,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// A card widget displaying pay scale details using RichText
 /// Shows pay scale information in a two-span format: bold labels and values
 /// Follows the same structure and styling as RichTextJobCard

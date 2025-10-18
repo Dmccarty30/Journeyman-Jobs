@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
@@ -196,12 +198,6 @@ class _StormScreenState extends State<StormScreen> {
     }
   }
 
-  Future<bool> _checkAdminStatus(String uid) async {
-    // TODO: Check if current user is admin
-    // final isAdmin = await _checkAdminStatus(currentUser.uid);
-    // if (!isAdmin) return SizedBox.shrink();
-    return false; // Placeholder - implement admin check logic
-  }
 
   List<PowerOutageState> get _sortedPowerOutages {
     final sorted = List<PowerOutageState>.from(_powerOutages);
@@ -212,50 +208,6 @@ class _StormScreenState extends State<StormScreen> {
     return sorted;
   }
 
-  Widget _buildStormDetailCard(String title, String description, IconData icon, Color iconColor) {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(
-          color: AppTheme.lightGray,
-          width: 0.5,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                icon,
-                color: iconColor,
-                size: AppTheme.iconMd,
-              ),
-              const SizedBox(width: AppTheme.spacingSm),
-              Expanded(
-                child: Text(
-                  title,
-                  style: AppTheme.bodyMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppTheme.spacingSm),
-          Text(
-            description,
-            style: AppTheme.bodySmall.copyWith(
-              color: AppTheme.textSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -610,7 +562,7 @@ class _StormScreenState extends State<StormScreen> {
                                         color: AppTheme.textSecondary,
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ),
                               // TODO: Add video upload functionality for admins
@@ -698,15 +650,13 @@ class _StormScreenState extends State<StormScreen> {
                               );
                             },
                           ),
-                        ),
-                        const SizedBox(height: AppTheme.spacingXl),
+                        ), const SizedBox(height: AppTheme.spacingXl),                        
                       ],
                     ),
                   ),
-
-
                 ],
               ),
+            ),
             ),
           ),
         ],

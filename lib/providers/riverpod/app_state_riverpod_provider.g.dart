@@ -15,21 +15,25 @@ const connectivityServiceProvider = ConnectivityServiceProvider._();
 
 /// Connectivity service provider
 
-final class ConnectivityServiceProvider extends $FunctionalProvider<
-    ConnectivityService,
-    ConnectivityService,
-    ConnectivityService> with $Provider<ConnectivityService> {
+final class ConnectivityServiceProvider
+    extends
+        $FunctionalProvider<
+          ConnectivityService,
+          ConnectivityService,
+          ConnectivityService
+        >
+    with $Provider<ConnectivityService> {
   /// Connectivity service provider
   const ConnectivityServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'connectivityServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'connectivityServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$connectivityServiceHash();
@@ -37,8 +41,8 @@ final class ConnectivityServiceProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<ConnectivityService> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   ConnectivityService create(Ref ref) {
@@ -60,20 +64,24 @@ String _$connectivityServiceHash() =>
 @ProviderFor(notificationService)
 const notificationServiceProvider = NotificationServiceProvider._();
 
-final class NotificationServiceProvider extends $FunctionalProvider<
-    NotificationServiceAdapter,
-    NotificationServiceAdapter,
-    NotificationServiceAdapter> with $Provider<NotificationServiceAdapter> {
+final class NotificationServiceProvider
+    extends
+        $FunctionalProvider<
+          NotificationServiceAdapter,
+          NotificationServiceAdapter,
+          NotificationServiceAdapter
+        >
+    with $Provider<NotificationServiceAdapter> {
   const NotificationServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'notificationServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'notificationServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$notificationServiceHash();
@@ -81,8 +89,8 @@ final class NotificationServiceProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<NotificationServiceAdapter> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   NotificationServiceAdapter create(Ref ref) {
@@ -104,20 +112,24 @@ String _$notificationServiceHash() =>
 @ProviderFor(analyticsService)
 const analyticsServiceProvider = AnalyticsServiceProvider._();
 
-final class AnalyticsServiceProvider extends $FunctionalProvider<
-    AnalyticsServiceAdapter,
-    AnalyticsServiceAdapter,
-    AnalyticsServiceAdapter> with $Provider<AnalyticsServiceAdapter> {
+final class AnalyticsServiceProvider
+    extends
+        $FunctionalProvider<
+          AnalyticsServiceAdapter,
+          AnalyticsServiceAdapter,
+          AnalyticsServiceAdapter
+        >
+    with $Provider<AnalyticsServiceAdapter> {
   const AnalyticsServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'analyticsServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'analyticsServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$analyticsServiceHash();
@@ -125,8 +137,8 @@ final class AnalyticsServiceProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<AnalyticsServiceAdapter> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   AnalyticsServiceAdapter create(Ref ref) {
@@ -156,15 +168,15 @@ final class ConnectivityStreamProvider
     with $FutureModifier<bool>, $StreamProvider<bool> {
   /// Connectivity state stream
   const ConnectivityStreamProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'connectivityStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'connectivityStreamProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$connectivityStreamHash();
@@ -193,15 +205,15 @@ final class AppStateNotifierProvider
     extends $NotifierProvider<AppStateNotifier, AppState> {
   /// App state notifier
   const AppStateNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'appStateProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'appStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$appStateNotifierHash();
@@ -230,8 +242,14 @@ abstract class _$AppStateNotifier extends $Notifier<AppState> {
   void runBuild() {
     final created = build();
     final ref = this.ref as $Ref<AppState, AppState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<AppState, AppState>, AppState, Object?, Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AppState, AppState>,
+              AppState,
+              Object?,
+              Object?
+            >;
     element.handleValue(ref, created);
   }
 }
@@ -243,21 +261,25 @@ const appStatusProvider = AppStatusProvider._();
 
 /// Combined app status provider
 
-final class AppStatusProvider extends $FunctionalProvider<
-    Map<String, dynamic>,
-    Map<String, dynamic>,
-    Map<String, dynamic>> with $Provider<Map<String, dynamic>> {
+final class AppStatusProvider
+    extends
+        $FunctionalProvider<
+          Map<String, dynamic>,
+          Map<String, dynamic>,
+          Map<String, dynamic>
+        >
+    with $Provider<Map<String, dynamic>> {
   /// Combined app status provider
   const AppStatusProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'appStatusProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'appStatusProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$appStatusHash();
@@ -265,8 +287,8 @@ final class AppStatusProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<Map<String, dynamic>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   Map<String, dynamic> create(Ref ref) {
@@ -296,15 +318,15 @@ final class AllErrorsProvider
     with $Provider<List<String>> {
   /// Error aggregation provider
   const AllErrorsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'allErrorsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'allErrorsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$allErrorsHash();
@@ -341,15 +363,15 @@ final class IsAnyLoadingProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
   /// Loading state aggregation provider
   const IsAnyLoadingProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'isAnyLoadingProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'isAnyLoadingProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$isAnyLoadingHash();

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../app_theme.dart';
-import '../theme_extensions.dart';
 
 /// Enhanced button component with improved dark mode support and accessibility
 class JJEnhancedButton extends StatefulWidget {
@@ -49,7 +48,6 @@ class _JJEnhancedButtonState extends State<JJEnhancedButton>
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final isEnabled = widget.onPressed != null && !widget.isLoading;
 
     return AnimatedBuilder(

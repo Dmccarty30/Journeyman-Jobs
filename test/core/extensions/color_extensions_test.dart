@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:journeyman_jobs/utils/color_extensions.dart';
 
 void main() {
   group('Color Extensions Tests', () {
@@ -13,10 +12,10 @@ void main() {
 
       // Assert
       expect(color, isA<Color>());
-      expect(color.red, equals(0x1A));
-      expect(color.green, equals(0x20));
-      expect(color.blue, equals(0x2C));
-      expect(color.alpha, equals(0xFF));
+      expect((color.r * 255.0).round() & 0xff, equals(0x1A));
+      expect((color.g * 255.0).round() & 0xff, equals(0x20));
+      expect((color.b * 255.0).round() & 0xff, equals(0x2C));
+      expect((color.a * 255.0).round() & 0xff, equals(0xFF));
     });
 
     test('should handle hex string without hash', () {
@@ -28,9 +27,9 @@ void main() {
 
       // Assert
       expect(color, isA<Color>());
-      expect(color.red, equals(0xB4));
-      expect(color.green, equals(0x53));
-      expect(color.blue, equals(0x09));
+      expect((color.r * 255.0).round() & 0xff, equals(0xB4));
+      expect((color.g * 255.0).round() & 0xff, equals(0x53));
+      expect((color.b * 255.0).round() & 0xff, equals(0x09));
     });
 
     test('should convert Color to hex string', () {
@@ -75,10 +74,10 @@ void main() {
       final colorWithOpacity = baseColor.withOpacityValue(opacity);
 
       // Assert
-      expect(colorWithOpacity.opacity, equals(opacity));
-      expect(colorWithOpacity.red, equals(baseColor.red));
-      expect(colorWithOpacity.green, equals(baseColor.green));
-      expect(colorWithOpacity.blue, equals(baseColor.blue));
+      expect(colorWithOpacity.a, closeTo(opacity, 0.01));
+      expect((colorWithOpacity.r * 255.0).round() & 0xff, equals((baseColor.r * 255.0).round() & 0xff));
+      expect((colorWithOpacity.g * 255.0).round() & 0xff, equals((baseColor.g * 255.0).round() & 0xff));
+      expect((colorWithOpacity.b * 255.0).round() & 0xff, equals((baseColor.b * 255.0).round() & 0xff));
     });
 
     test('should blend colors correctly', () {
@@ -93,8 +92,8 @@ void main() {
       // Assert
       expect(blendedColor, isA<Color>());
       // The result should be somewhere between red and blue
-      expect(blendedColor.red, lessThan(color1.red));
-      expect(blendedColor.blue, lessThan(color2.blue));
+      expect((blendedColor.r * 255.0).round() & 0xff, lessThan((color1.r * 255.0).round() & 0xff));
+      expect((blendedColor.b * 255.0).round() & 0xff, lessThan((color2.b * 255.0).round() & 0xff));
     });
 
     test('should create electrical theme gradients', () {
@@ -188,11 +187,15 @@ extension ColorExtensions on Color {
   }
 
   String toHex() {
-    return '#${(value & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+    final argb = toARGB32();
+    return '#${(argb & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
   }
 
   bool get isLight {
-    final luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
+    final redValue = (r * 255.0).round() & 0xff;
+    final greenValue = (g * 255.0).round() & 0xff;
+    final blueValue = (b * 255.0).round() & 0xff;
+    final luminance = (0.299 * redValue + 0.587 * greenValue + 0.114 * blueValue) / 255;
     return luminance > 0.5;
   }
 
@@ -201,7 +204,7 @@ extension ColorExtensions on Color {
   Color get contrastColor => isLight ? Colors.black : Colors.white;
 
   Color withOpacityValue(double opacity) {
-    return withOpacity(opacity);
+    return withValues(alpha: opacity);
   }
 
   Color blendWith(Color other, double factor) {
@@ -225,9 +228,6 @@ extension ColorExtensions on Color {
   }
 
   double _getLuminance() {
-    final r = red / 255.0;
-    final g = green / 255.0;
-    final b = blue / 255.0;
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
 }

@@ -189,9 +189,9 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
   }
 }
 
-/// Convenience provider for user preferences
+/// Convenience provider for current user job preferences
 @riverpod
-UserJobPreferences userPreferences(Ref ref) {
+UserJobPreferences currentUserJobPreferences(Ref ref) {
   final state = ref.watch(userPreferencesProvider);
   return state.preferences;
 }

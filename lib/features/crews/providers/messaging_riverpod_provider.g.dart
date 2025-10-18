@@ -20,15 +20,15 @@ final class MessageServiceProvider
     with $Provider<MessageService> {
   /// MessageService provider
   const MessageServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'messageServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'messageServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$messageServiceHash();
@@ -61,20 +61,25 @@ const crewMessagesStreamProvider = CrewMessagesStreamFamily._();
 
 /// Stream of crew messages
 
-final class CrewMessagesStreamProvider extends $FunctionalProvider<
-        AsyncValue<List<Message>>, List<Message>, Stream<List<Message>>>
+final class CrewMessagesStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Message>>,
+          List<Message>,
+          Stream<List<Message>>
+        >
     with $FutureModifier<List<Message>>, $StreamProvider<List<Message>> {
   /// Stream of crew messages
-  const CrewMessagesStreamProvider._(
-      {required CrewMessagesStreamFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'crewMessagesStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const CrewMessagesStreamProvider._({
+    required CrewMessagesStreamFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'crewMessagesStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$crewMessagesStreamHash();
@@ -89,16 +94,13 @@ final class CrewMessagesStreamProvider extends $FunctionalProvider<
   @$internal
   @override
   $StreamProviderElement<List<Message>> $createElement(
-          $ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
   Stream<List<Message>> create(Ref ref) {
     final argument = this.argument as String;
-    return crewMessagesStream(
-      ref,
-      argument,
-    );
+    return crewMessagesStream(ref, argument);
   }
 
   @override
@@ -120,19 +122,17 @@ String _$crewMessagesStreamHash() =>
 final class CrewMessagesStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Message>>, String> {
   const CrewMessagesStreamFamily._()
-      : super(
-          retry: null,
-          name: r'crewMessagesStreamProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'crewMessagesStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Stream of crew messages
 
-  CrewMessagesStreamProvider call(
-    String crewId,
-  ) =>
+  CrewMessagesStreamProvider call(String crewId) =>
       CrewMessagesStreamProvider._(argument: crewId, from: this);
 
   @override
@@ -150,15 +150,16 @@ final class CrewMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Crew messages
-  const CrewMessagesProvider._(
-      {required CrewMessagesFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'crewMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const CrewMessagesProvider._({
+    required CrewMessagesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'crewMessagesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$crewMessagesHash();
@@ -178,10 +179,7 @@ final class CrewMessagesProvider
   @override
   List<Message> create(Ref ref) {
     final argument = this.argument as String;
-    return crewMessages(
-      ref,
-      argument,
-    );
+    return crewMessages(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -210,19 +208,17 @@ String _$crewMessagesHash() => r'2b788980c72654ed115942ed3c16728af4ac8403';
 final class CrewMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
   const CrewMessagesFamily._()
-      : super(
-          retry: null,
-          name: r'crewMessagesProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'crewMessagesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Crew messages
 
-  CrewMessagesProvider call(
-    String crewId,
-  ) =>
+  CrewMessagesProvider call(String crewId) =>
       CrewMessagesProvider._(argument: crewId, from: this);
 
   @override
@@ -236,24 +232,25 @@ const directMessagesStreamProvider = DirectMessagesStreamFamily._();
 
 /// Stream of direct messages between two users
 
-final class DirectMessagesStreamProvider extends $FunctionalProvider<
-        AsyncValue<List<Message>>, List<Message>, Stream<List<Message>>>
+final class DirectMessagesStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Message>>,
+          List<Message>,
+          Stream<List<Message>>
+        >
     with $FutureModifier<List<Message>>, $StreamProvider<List<Message>> {
   /// Stream of direct messages between two users
-  const DirectMessagesStreamProvider._(
-      {required DirectMessagesStreamFamily super.from,
-      required (
-        String,
-        String,
-      )
-          super.argument})
-      : super(
-          retry: null,
-          name: r'directMessagesStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const DirectMessagesStreamProvider._({
+    required DirectMessagesStreamFamily super.from,
+    required (String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'directMessagesStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$directMessagesStreamHash();
@@ -268,20 +265,13 @@ final class DirectMessagesStreamProvider extends $FunctionalProvider<
   @$internal
   @override
   $StreamProviderElement<List<Message>> $createElement(
-          $ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
   Stream<List<Message>> create(Ref ref) {
-    final argument = this.argument as (
-      String,
-      String,
-    );
-    return directMessagesStream(
-      ref,
-      argument.$1,
-      argument.$2,
-    );
+    final argument = this.argument as (String, String);
+    return directMessagesStream(ref, argument.$1, argument.$2);
   }
 
   @override
@@ -301,32 +291,20 @@ String _$directMessagesStreamHash() =>
 /// Stream of direct messages between two users
 
 final class DirectMessagesStreamFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-            Stream<List<Message>>,
-            (
-              String,
-              String,
-            )> {
+    with $FunctionalFamilyOverride<Stream<List<Message>>, (String, String)> {
   const DirectMessagesStreamFamily._()
-      : super(
-          retry: null,
-          name: r'directMessagesStreamProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'directMessagesStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Stream of direct messages between two users
 
-  DirectMessagesStreamProvider call(
-    String userId1,
-    String userId2,
-  ) =>
-      DirectMessagesStreamProvider._(argument: (
-        userId1,
-        userId2,
-      ), from: this);
+  DirectMessagesStreamProvider call(String userId1, String userId2) =>
+      DirectMessagesStreamProvider._(argument: (userId1, userId2), from: this);
 
   @override
   String toString() => r'directMessagesStreamProvider';
@@ -343,20 +321,16 @@ final class DirectMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Direct messages between two users
-  const DirectMessagesProvider._(
-      {required DirectMessagesFamily super.from,
-      required (
-        String,
-        String,
-      )
-          super.argument})
-      : super(
-          retry: null,
-          name: r'directMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const DirectMessagesProvider._({
+    required DirectMessagesFamily super.from,
+    required (String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'directMessagesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$directMessagesHash();
@@ -375,15 +349,8 @@ final class DirectMessagesProvider
 
   @override
   List<Message> create(Ref ref) {
-    final argument = this.argument as (
-      String,
-      String,
-    );
-    return directMessages(
-      ref,
-      argument.$1,
-      argument.$2,
-    );
+    final argument = this.argument as (String, String);
+    return directMessages(ref, argument.$1, argument.$2);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -410,32 +377,20 @@ String _$directMessagesHash() => r'35d2daa71eee2775122fa32ebd11dabcb29e3da7';
 /// Direct messages between two users
 
 final class DirectMessagesFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-            List<Message>,
-            (
-              String,
-              String,
-            )> {
+    with $FunctionalFamilyOverride<List<Message>, (String, String)> {
   const DirectMessagesFamily._()
-      : super(
-          retry: null,
-          name: r'directMessagesProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'directMessagesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Direct messages between two users
 
-  DirectMessagesProvider call(
-    String userId1,
-    String userId2,
-  ) =>
-      DirectMessagesProvider._(argument: (
-        userId1,
-        userId2,
-      ), from: this);
+  DirectMessagesProvider call(String userId1, String userId2) =>
+      DirectMessagesProvider._(argument: (userId1, userId2), from: this);
 
   @override
   String toString() => r'directMessagesProvider';
@@ -449,18 +404,19 @@ const unreadCrewMessagesCountProvider = UnreadCrewMessagesCountFamily._();
 /// Provider to get unread crew messages count for current user
 
 final class UnreadCrewMessagesCountProvider
-    extends $FunctionalProvider<int, int, int> with $Provider<int> {
+    extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
   /// Provider to get unread crew messages count for current user
-  const UnreadCrewMessagesCountProvider._(
-      {required UnreadCrewMessagesCountFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'unreadCrewMessagesCountProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const UnreadCrewMessagesCountProvider._({
+    required UnreadCrewMessagesCountFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'unreadCrewMessagesCountProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$unreadCrewMessagesCountHash();
@@ -480,10 +436,7 @@ final class UnreadCrewMessagesCountProvider
   @override
   int create(Ref ref) {
     final argument = this.argument as String;
-    return unreadCrewMessagesCount(
-      ref,
-      argument,
-    );
+    return unreadCrewMessagesCount(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -514,19 +467,17 @@ String _$unreadCrewMessagesCountHash() =>
 final class UnreadCrewMessagesCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
   const UnreadCrewMessagesCountFamily._()
-      : super(
-          retry: null,
-          name: r'unreadCrewMessagesCountProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'unreadCrewMessagesCountProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get unread crew messages count for current user
 
-  UnreadCrewMessagesCountProvider call(
-    String crewId,
-  ) =>
+  UnreadCrewMessagesCountProvider call(String crewId) =>
       UnreadCrewMessagesCountProvider._(argument: crewId, from: this);
 
   @override
@@ -541,18 +492,19 @@ const unreadDirectMessagesCountProvider = UnreadDirectMessagesCountFamily._();
 /// Provider to get unread direct messages count for current user
 
 final class UnreadDirectMessagesCountProvider
-    extends $FunctionalProvider<int, int, int> with $Provider<int> {
+    extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
   /// Provider to get unread direct messages count for current user
-  const UnreadDirectMessagesCountProvider._(
-      {required UnreadDirectMessagesCountFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'unreadDirectMessagesCountProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const UnreadDirectMessagesCountProvider._({
+    required UnreadDirectMessagesCountFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'unreadDirectMessagesCountProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$unreadDirectMessagesCountHash();
@@ -572,10 +524,7 @@ final class UnreadDirectMessagesCountProvider
   @override
   int create(Ref ref) {
     final argument = this.argument as String;
-    return unreadDirectMessagesCount(
-      ref,
-      argument,
-    );
+    return unreadDirectMessagesCount(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -606,19 +555,17 @@ String _$unreadDirectMessagesCountHash() =>
 final class UnreadDirectMessagesCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
   const UnreadDirectMessagesCountFamily._()
-      : super(
-          retry: null,
-          name: r'unreadDirectMessagesCountProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'unreadDirectMessagesCountProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get unread direct messages count for current user
 
-  UnreadDirectMessagesCountProvider call(
-    String otherUserId,
-  ) =>
+  UnreadDirectMessagesCountProvider call(String otherUserId) =>
       UnreadDirectMessagesCountProvider._(argument: otherUserId, from: this);
 
   @override
@@ -633,18 +580,19 @@ const totalUnreadMessagesProvider = TotalUnreadMessagesProvider._();
 /// Provider to get total unread messages count for current user across all crews
 
 final class TotalUnreadMessagesProvider
-    extends $FunctionalProvider<int, int, int> with $Provider<int> {
+    extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
   /// Provider to get total unread messages count for current user across all crews
   const TotalUnreadMessagesProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'totalUnreadMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'totalUnreadMessagesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$totalUnreadMessagesHash();
@@ -682,16 +630,16 @@ final class RecentMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get recent messages (last 24 hours)
-  const RecentMessagesProvider._(
-      {required RecentMessagesFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'recentMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const RecentMessagesProvider._({
+    required RecentMessagesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'recentMessagesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$recentMessagesHash();
@@ -711,10 +659,7 @@ final class RecentMessagesProvider
   @override
   List<Message> create(Ref ref) {
     final argument = this.argument as String;
-    return recentMessages(
-      ref,
-      argument,
-    );
+    return recentMessages(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -743,19 +688,17 @@ String _$recentMessagesHash() => r'd93c6f22000cc902144e74a18af6c4c817c755ec';
 final class RecentMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
   const RecentMessagesFamily._()
-      : super(
-          retry: null,
-          name: r'recentMessagesProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'recentMessagesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get recent messages (last 24 hours)
 
-  RecentMessagesProvider call(
-    String crewId,
-  ) =>
+  RecentMessagesProvider call(String crewId) =>
       RecentMessagesProvider._(argument: crewId, from: this);
 
   @override
@@ -773,20 +716,16 @@ final class MessagesBySenderProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get messages by sender
-  const MessagesBySenderProvider._(
-      {required MessagesBySenderFamily super.from,
-      required (
-        String,
-        String,
-      )
-          super.argument})
-      : super(
-          retry: null,
-          name: r'messagesBySenderProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const MessagesBySenderProvider._({
+    required MessagesBySenderFamily super.from,
+    required (String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'messagesBySenderProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$messagesBySenderHash();
@@ -805,15 +744,8 @@ final class MessagesBySenderProvider
 
   @override
   List<Message> create(Ref ref) {
-    final argument = this.argument as (
-      String,
-      String,
-    );
-    return messagesBySender(
-      ref,
-      argument.$1,
-      argument.$2,
-    );
+    final argument = this.argument as (String, String);
+    return messagesBySender(ref, argument.$1, argument.$2);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -840,32 +772,20 @@ String _$messagesBySenderHash() => r'2c748b089dcba2a154a7cd6891cdb4dcfe5832cf';
 /// Provider to get messages by sender
 
 final class MessagesBySenderFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-            List<Message>,
-            (
-              String,
-              String,
-            )> {
+    with $FunctionalFamilyOverride<List<Message>, (String, String)> {
   const MessagesBySenderFamily._()
-      : super(
-          retry: null,
-          name: r'messagesBySenderProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'messagesBySenderProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get messages by sender
 
-  MessagesBySenderProvider call(
-    String crewId,
-    String senderId,
-  ) =>
-      MessagesBySenderProvider._(argument: (
-        crewId,
-        senderId,
-      ), from: this);
+  MessagesBySenderProvider call(String crewId, String senderId) =>
+      MessagesBySenderProvider._(argument: (crewId, senderId), from: this);
 
   @override
   String toString() => r'messagesBySenderProvider';
@@ -882,16 +802,16 @@ final class MessagesWithAttachmentsProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get messages with attachments
-  const MessagesWithAttachmentsProvider._(
-      {required MessagesWithAttachmentsFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'messagesWithAttachmentsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const MessagesWithAttachmentsProvider._({
+    required MessagesWithAttachmentsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'messagesWithAttachmentsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$messagesWithAttachmentsHash();
@@ -911,10 +831,7 @@ final class MessagesWithAttachmentsProvider
   @override
   List<Message> create(Ref ref) {
     final argument = this.argument as String;
-    return messagesWithAttachments(
-      ref,
-      argument,
-    );
+    return messagesWithAttachments(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -945,19 +862,17 @@ String _$messagesWithAttachmentsHash() =>
 final class MessagesWithAttachmentsFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
   const MessagesWithAttachmentsFamily._()
-      : super(
-          retry: null,
-          name: r'messagesWithAttachmentsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'messagesWithAttachmentsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get messages with attachments
 
-  MessagesWithAttachmentsProvider call(
-    String crewId,
-  ) =>
+  MessagesWithAttachmentsProvider call(String crewId) =>
       MessagesWithAttachmentsProvider._(argument: crewId, from: this);
 
   @override
@@ -975,15 +890,16 @@ final class LatestMessageProvider
     extends $FunctionalProvider<Message?, Message?, Message?>
     with $Provider<Message?> {
   /// Provider to get latest message in a crew
-  const LatestMessageProvider._(
-      {required LatestMessageFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'latestMessageProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const LatestMessageProvider._({
+    required LatestMessageFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'latestMessageProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$latestMessageHash();
@@ -1003,10 +919,7 @@ final class LatestMessageProvider
   @override
   Message? create(Ref ref) {
     final argument = this.argument as String;
-    return latestMessage(
-      ref,
-      argument,
-    );
+    return latestMessage(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1035,19 +948,17 @@ String _$latestMessageHash() => r'fcdf1c416b555afe0614a24e3462911627e0e210';
 final class LatestMessageFamily extends $Family
     with $FunctionalFamilyOverride<Message?, String> {
   const LatestMessageFamily._()
-      : super(
-          retry: null,
-          name: r'latestMessageProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'latestMessageProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get latest message in a crew
 
-  LatestMessageProvider call(
-    String crewId,
-  ) =>
+  LatestMessageProvider call(String crewId) =>
       LatestMessageProvider._(argument: crewId, from: this);
 
   @override
@@ -1065,16 +976,16 @@ final class LastMessageTimestampProvider
     extends $FunctionalProvider<DateTime?, DateTime?, DateTime?>
     with $Provider<DateTime?> {
   /// Provider to get last message timestamp
-  const LastMessageTimestampProvider._(
-      {required LastMessageTimestampFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'lastMessageTimestampProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const LastMessageTimestampProvider._({
+    required LastMessageTimestampFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'lastMessageTimestampProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$lastMessageTimestampHash();
@@ -1094,10 +1005,7 @@ final class LastMessageTimestampProvider
   @override
   DateTime? create(Ref ref) {
     final argument = this.argument as String;
-    return lastMessageTimestamp(
-      ref,
-      argument,
-    );
+    return lastMessageTimestamp(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1127,19 +1035,17 @@ String _$lastMessageTimestampHash() =>
 final class LastMessageTimestampFamily extends $Family
     with $FunctionalFamilyOverride<DateTime?, String> {
   const LastMessageTimestampFamily._()
-      : super(
-          retry: null,
-          name: r'lastMessageTimestampProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'lastMessageTimestampProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get last message timestamp
 
-  LastMessageTimestampProvider call(
-    String crewId,
-  ) =>
+  LastMessageTimestampProvider call(String crewId) =>
       LastMessageTimestampProvider._(argument: crewId, from: this);
 
   @override
@@ -1154,18 +1060,19 @@ const hasUnreadCrewMessagesProvider = HasUnreadCrewMessagesFamily._();
 /// Provider to check if crew has unread messages
 
 final class HasUnreadCrewMessagesProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
   /// Provider to check if crew has unread messages
-  const HasUnreadCrewMessagesProvider._(
-      {required HasUnreadCrewMessagesFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'hasUnreadCrewMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const HasUnreadCrewMessagesProvider._({
+    required HasUnreadCrewMessagesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'hasUnreadCrewMessagesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$hasUnreadCrewMessagesHash();
@@ -1185,10 +1092,7 @@ final class HasUnreadCrewMessagesProvider
   @override
   bool create(Ref ref) {
     final argument = this.argument as String;
-    return hasUnreadCrewMessages(
-      ref,
-      argument,
-    );
+    return hasUnreadCrewMessages(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1218,19 +1122,17 @@ String _$hasUnreadCrewMessagesHash() =>
 final class HasUnreadCrewMessagesFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
   const HasUnreadCrewMessagesFamily._()
-      : super(
-          retry: null,
-          name: r'hasUnreadCrewMessagesProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'hasUnreadCrewMessagesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to check if crew has unread messages
 
-  HasUnreadCrewMessagesProvider call(
-    String crewId,
-  ) =>
+  HasUnreadCrewMessagesProvider call(String crewId) =>
       HasUnreadCrewMessagesProvider._(argument: crewId, from: this);
 
   @override
@@ -1248,20 +1150,16 @@ final class MessageByIdProvider
     extends $FunctionalProvider<Message?, Message?, Message?>
     with $Provider<Message?> {
   /// Provider to get message by ID
-  const MessageByIdProvider._(
-      {required MessageByIdFamily super.from,
-      required (
-        String,
-        String,
-      )
-          super.argument})
-      : super(
-          retry: null,
-          name: r'messageByIdProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const MessageByIdProvider._({
+    required MessageByIdFamily super.from,
+    required (String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'messageByIdProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$messageByIdHash();
@@ -1280,15 +1178,8 @@ final class MessageByIdProvider
 
   @override
   Message? create(Ref ref) {
-    final argument = this.argument as (
-      String,
-      String,
-    );
-    return messageById(
-      ref,
-      argument.$1,
-      argument.$2,
-    );
+    final argument = this.argument as (String, String);
+    return messageById(ref, argument.$1, argument.$2);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1315,32 +1206,20 @@ String _$messageByIdHash() => r'546796067825c82a423dcbb8202f5a14dec588d8';
 /// Provider to get message by ID
 
 final class MessageByIdFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-            Message?,
-            (
-              String,
-              String,
-            )> {
+    with $FunctionalFamilyOverride<Message?, (String, String)> {
   const MessageByIdFamily._()
-      : super(
-          retry: null,
-          name: r'messageByIdProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'messageByIdProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get message by ID
 
-  MessageByIdProvider call(
-    String crewId,
-    String messageId,
-  ) =>
-      MessageByIdProvider._(argument: (
-        crewId,
-        messageId,
-      ), from: this);
+  MessageByIdProvider call(String crewId, String messageId) =>
+      MessageByIdProvider._(argument: (crewId, messageId), from: this);
 
   @override
   String toString() => r'messageByIdProvider';
@@ -1353,25 +1232,25 @@ const messageReadReceiptsProvider = MessageReadReceiptsFamily._();
 
 /// Provider to get read receipts for a message
 
-final class MessageReadReceiptsProvider extends $FunctionalProvider<
-    Map<String, DateTime>,
-    Map<String, DateTime>,
-    Map<String, DateTime>> with $Provider<Map<String, DateTime>> {
+final class MessageReadReceiptsProvider
+    extends
+        $FunctionalProvider<
+          Map<String, DateTime>,
+          Map<String, DateTime>,
+          Map<String, DateTime>
+        >
+    with $Provider<Map<String, DateTime>> {
   /// Provider to get read receipts for a message
-  const MessageReadReceiptsProvider._(
-      {required MessageReadReceiptsFamily super.from,
-      required (
-        String,
-        String,
-      )
-          super.argument})
-      : super(
-          retry: null,
-          name: r'messageReadReceiptsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const MessageReadReceiptsProvider._({
+    required MessageReadReceiptsFamily super.from,
+    required (String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'messageReadReceiptsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$messageReadReceiptsHash();
@@ -1386,20 +1265,13 @@ final class MessageReadReceiptsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<Map<String, DateTime>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   Map<String, DateTime> create(Ref ref) {
-    final argument = this.argument as (
-      String,
-      String,
-    );
-    return messageReadReceipts(
-      ref,
-      argument.$1,
-      argument.$2,
-    );
+    final argument = this.argument as (String, String);
+    return messageReadReceipts(ref, argument.$1, argument.$2);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1427,32 +1299,20 @@ String _$messageReadReceiptsHash() =>
 /// Provider to get read receipts for a message
 
 final class MessageReadReceiptsFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-            Map<String, DateTime>,
-            (
-              String,
-              String,
-            )> {
+    with $FunctionalFamilyOverride<Map<String, DateTime>, (String, String)> {
   const MessageReadReceiptsFamily._()
-      : super(
-          retry: null,
-          name: r'messageReadReceiptsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'messageReadReceiptsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get read receipts for a message
 
-  MessageReadReceiptsProvider call(
-    String crewId,
-    String messageId,
-  ) =>
-      MessageReadReceiptsProvider._(argument: (
-        crewId,
-        messageId,
-      ), from: this);
+  MessageReadReceiptsProvider call(String crewId, String messageId) =>
+      MessageReadReceiptsProvider._(argument: (crewId, messageId), from: this);
 
   @override
   String toString() => r'messageReadReceiptsProvider';
@@ -1466,22 +1326,19 @@ const messageReadReceiptCountProvider = MessageReadReceiptCountFamily._();
 /// Provider to get read receipt count for a message
 
 final class MessageReadReceiptCountProvider
-    extends $FunctionalProvider<int, int, int> with $Provider<int> {
+    extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
   /// Provider to get read receipt count for a message
-  const MessageReadReceiptCountProvider._(
-      {required MessageReadReceiptCountFamily super.from,
-      required (
-        String,
-        String,
-      )
-          super.argument})
-      : super(
-          retry: null,
-          name: r'messageReadReceiptCountProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const MessageReadReceiptCountProvider._({
+    required MessageReadReceiptCountFamily super.from,
+    required (String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'messageReadReceiptCountProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$messageReadReceiptCountHash();
@@ -1500,15 +1357,8 @@ final class MessageReadReceiptCountProvider
 
   @override
   int create(Ref ref) {
-    final argument = this.argument as (
-      String,
-      String,
-    );
-    return messageReadReceiptCount(
-      ref,
-      argument.$1,
-      argument.$2,
-    );
+    final argument = this.argument as (String, String);
+    return messageReadReceiptCount(ref, argument.$1, argument.$2);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1537,32 +1387,23 @@ String _$messageReadReceiptCountHash() =>
 /// Provider to get read receipt count for a message
 
 final class MessageReadReceiptCountFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-            int,
-            (
-              String,
-              String,
-            )> {
+    with $FunctionalFamilyOverride<int, (String, String)> {
   const MessageReadReceiptCountFamily._()
-      : super(
-          retry: null,
-          name: r'messageReadReceiptCountProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'messageReadReceiptCountProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get read receipt count for a message
 
-  MessageReadReceiptCountProvider call(
-    String crewId,
-    String messageId,
-  ) =>
-      MessageReadReceiptCountProvider._(argument: (
-        crewId,
-        messageId,
-      ), from: this);
+  MessageReadReceiptCountProvider call(String crewId, String messageId) =>
+      MessageReadReceiptCountProvider._(
+        argument: (crewId, messageId),
+        from: this,
+      );
 
   @override
   String toString() => r'messageReadReceiptCountProvider';
@@ -1576,23 +1417,19 @@ const isMessageReadByProvider = IsMessageReadByFamily._();
 /// Provider to check if message has been read by specific user
 
 final class IsMessageReadByProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
   /// Provider to check if message has been read by specific user
-  const IsMessageReadByProvider._(
-      {required IsMessageReadByFamily super.from,
-      required (
-        String,
-        String,
-        String,
-      )
-          super.argument})
-      : super(
-          retry: null,
-          name: r'isMessageReadByProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const IsMessageReadByProvider._({
+    required IsMessageReadByFamily super.from,
+    required (String, String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'isMessageReadByProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$isMessageReadByHash();
@@ -1611,17 +1448,8 @@ final class IsMessageReadByProvider
 
   @override
   bool create(Ref ref) {
-    final argument = this.argument as (
-      String,
-      String,
-      String,
-    );
-    return isMessageReadBy(
-      ref,
-      argument.$1,
-      argument.$2,
-      argument.$3,
-    );
+    final argument = this.argument as (String, String, String);
+    return isMessageReadBy(ref, argument.$1, argument.$2, argument.$3);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1648,22 +1476,15 @@ String _$isMessageReadByHash() => r'63e7ff7999670cf76964f85026d466ec59ebf69e';
 /// Provider to check if message has been read by specific user
 
 final class IsMessageReadByFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-            bool,
-            (
-              String,
-              String,
-              String,
-            )> {
+    with $FunctionalFamilyOverride<bool, (String, String, String)> {
   const IsMessageReadByFamily._()
-      : super(
-          retry: null,
-          name: r'isMessageReadByProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'isMessageReadByProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to check if message has been read by specific user
 
@@ -1671,12 +1492,10 @@ final class IsMessageReadByFamily extends $Family
     String crewId,
     String messageId,
     String userId,
-  ) =>
-      IsMessageReadByProvider._(argument: (
-        crewId,
-        messageId,
-        userId,
-      ), from: this);
+  ) => IsMessageReadByProvider._(
+    argument: (crewId, messageId, userId),
+    from: this,
+  );
 
   @override
   String toString() => r'isMessageReadByProvider';
@@ -1693,16 +1512,16 @@ final class ChronologicalMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get messages in chronological order
-  const ChronologicalMessagesProvider._(
-      {required ChronologicalMessagesFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'chronologicalMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const ChronologicalMessagesProvider._({
+    required ChronologicalMessagesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'chronologicalMessagesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$chronologicalMessagesHash();
@@ -1722,10 +1541,7 @@ final class ChronologicalMessagesProvider
   @override
   List<Message> create(Ref ref) {
     final argument = this.argument as String;
-    return chronologicalMessages(
-      ref,
-      argument,
-    );
+    return chronologicalMessages(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1755,19 +1571,17 @@ String _$chronologicalMessagesHash() =>
 final class ChronologicalMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
   const ChronologicalMessagesFamily._()
-      : super(
-          retry: null,
-          name: r'chronologicalMessagesProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'chronologicalMessagesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get messages in chronological order
 
-  ChronologicalMessagesProvider call(
-    String crewId,
-  ) =>
+  ChronologicalMessagesProvider call(String crewId) =>
       ChronologicalMessagesProvider._(argument: crewId, from: this);
 
   @override
@@ -1786,16 +1600,16 @@ final class ReverseChronologicalMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get messages in reverse chronological order
-  const ReverseChronologicalMessagesProvider._(
-      {required ReverseChronologicalMessagesFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'reverseChronologicalMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const ReverseChronologicalMessagesProvider._({
+    required ReverseChronologicalMessagesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'reverseChronologicalMessagesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$reverseChronologicalMessagesHash();
@@ -1815,10 +1629,7 @@ final class ReverseChronologicalMessagesProvider
   @override
   List<Message> create(Ref ref) {
     final argument = this.argument as String;
-    return reverseChronologicalMessages(
-      ref,
-      argument,
-    );
+    return reverseChronologicalMessages(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1849,19 +1660,17 @@ String _$reverseChronologicalMessagesHash() =>
 final class ReverseChronologicalMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
   const ReverseChronologicalMessagesFamily._()
-      : super(
-          retry: null,
-          name: r'reverseChronologicalMessagesProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'reverseChronologicalMessagesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get messages in reverse chronological order
 
-  ReverseChronologicalMessagesProvider call(
-    String crewId,
-  ) =>
+  ReverseChronologicalMessagesProvider call(String crewId) =>
       ReverseChronologicalMessagesProvider._(argument: crewId, from: this);
 
   @override
@@ -1879,15 +1688,16 @@ final class TextMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get text messages only
-  const TextMessagesProvider._(
-      {required TextMessagesFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'textMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const TextMessagesProvider._({
+    required TextMessagesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'textMessagesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$textMessagesHash();
@@ -1907,10 +1717,7 @@ final class TextMessagesProvider
   @override
   List<Message> create(Ref ref) {
     final argument = this.argument as String;
-    return textMessages(
-      ref,
-      argument,
-    );
+    return textMessages(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1939,19 +1746,17 @@ String _$textMessagesHash() => r'b30bb47ea6d7e8d97696a722de17d55ff2996cbc';
 final class TextMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
   const TextMessagesFamily._()
-      : super(
-          retry: null,
-          name: r'textMessagesProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'textMessagesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get text messages only
 
-  TextMessagesProvider call(
-    String crewId,
-  ) =>
+  TextMessagesProvider call(String crewId) =>
       TextMessagesProvider._(argument: crewId, from: this);
 
   @override
@@ -1969,16 +1774,16 @@ final class JobShareMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get messages with job shares
-  const JobShareMessagesProvider._(
-      {required JobShareMessagesFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'jobShareMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const JobShareMessagesProvider._({
+    required JobShareMessagesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'jobShareMessagesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$jobShareMessagesHash();
@@ -1998,10 +1803,7 @@ final class JobShareMessagesProvider
   @override
   List<Message> create(Ref ref) {
     final argument = this.argument as String;
-    return jobShareMessages(
-      ref,
-      argument,
-    );
+    return jobShareMessages(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -2030,19 +1832,17 @@ String _$jobShareMessagesHash() => r'514a17dc6ed89176a2409b98534ab0361bb56e88';
 final class JobShareMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
   const JobShareMessagesFamily._()
-      : super(
-          retry: null,
-          name: r'jobShareMessagesProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'jobShareMessagesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get messages with job shares
 
-  JobShareMessagesProvider call(
-    String crewId,
-  ) =>
+  JobShareMessagesProvider call(String crewId) =>
       JobShareMessagesProvider._(argument: crewId, from: this);
 
   @override
@@ -2060,16 +1860,16 @@ final class SystemNotificationMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get system notification messages
-  const SystemNotificationMessagesProvider._(
-      {required SystemNotificationMessagesFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'systemNotificationMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const SystemNotificationMessagesProvider._({
+    required SystemNotificationMessagesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'systemNotificationMessagesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$systemNotificationMessagesHash();
@@ -2089,10 +1889,7 @@ final class SystemNotificationMessagesProvider
   @override
   List<Message> create(Ref ref) {
     final argument = this.argument as String;
-    return systemNotificationMessages(
-      ref,
-      argument,
-    );
+    return systemNotificationMessages(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -2123,19 +1920,17 @@ String _$systemNotificationMessagesHash() =>
 final class SystemNotificationMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
   const SystemNotificationMessagesFamily._()
-      : super(
-          retry: null,
-          name: r'systemNotificationMessagesProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'systemNotificationMessagesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get system notification messages
 
-  SystemNotificationMessagesProvider call(
-    String crewId,
-  ) =>
+  SystemNotificationMessagesProvider call(String crewId) =>
       SystemNotificationMessagesProvider._(argument: crewId, from: this);
 
   @override
@@ -2152,15 +1947,16 @@ const messageCountProvider = MessageCountFamily._();
 final class MessageCountProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
   /// Provider to get message count for a crew
-  const MessageCountProvider._(
-      {required MessageCountFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'messageCountProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const MessageCountProvider._({
+    required MessageCountFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'messageCountProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$messageCountHash();
@@ -2180,10 +1976,7 @@ final class MessageCountProvider extends $FunctionalProvider<int, int, int>
   @override
   int create(Ref ref) {
     final argument = this.argument as String;
-    return messageCount(
-      ref,
-      argument,
-    );
+    return messageCount(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -2212,19 +2005,17 @@ String _$messageCountHash() => r'392355a811a0e713908945c2e23a0a6fb807d4ca';
 final class MessageCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
   const MessageCountFamily._()
-      : super(
-          retry: null,
-          name: r'messageCountProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'messageCountProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get message count for a crew
 
-  MessageCountProvider call(
-    String crewId,
-  ) =>
+  MessageCountProvider call(String crewId) =>
       MessageCountProvider._(argument: crewId, from: this);
 
   @override
@@ -2242,16 +2033,16 @@ final class TodaysMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get today's messages
-  const TodaysMessagesProvider._(
-      {required TodaysMessagesFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'todaysMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const TodaysMessagesProvider._({
+    required TodaysMessagesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'todaysMessagesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$todaysMessagesHash();
@@ -2271,10 +2062,7 @@ final class TodaysMessagesProvider
   @override
   List<Message> create(Ref ref) {
     final argument = this.argument as String;
-    return todaysMessages(
-      ref,
-      argument,
-    );
+    return todaysMessages(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -2303,19 +2091,17 @@ String _$todaysMessagesHash() => r'a9cf9ed2c6402b15b3362ca2cc3d88b58f8fb4cf';
 final class TodaysMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
   const TodaysMessagesFamily._()
-      : super(
-          retry: null,
-          name: r'todaysMessagesProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'todaysMessagesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get today's messages
 
-  TodaysMessagesProvider call(
-    String crewId,
-  ) =>
+  TodaysMessagesProvider call(String crewId) =>
       TodaysMessagesProvider._(argument: crewId, from: this);
 
   @override
@@ -2333,16 +2119,16 @@ final class LastWeekMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get messages from last week
-  const LastWeekMessagesProvider._(
-      {required LastWeekMessagesFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'lastWeekMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const LastWeekMessagesProvider._({
+    required LastWeekMessagesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'lastWeekMessagesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$lastWeekMessagesHash();
@@ -2362,10 +2148,7 @@ final class LastWeekMessagesProvider
   @override
   List<Message> create(Ref ref) {
     final argument = this.argument as String;
-    return lastWeekMessages(
-      ref,
-      argument,
-    );
+    return lastWeekMessages(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -2394,19 +2177,17 @@ String _$lastWeekMessagesHash() => r'1b44f5704cadd7ed136f72e5bd556173df62a8ce';
 final class LastWeekMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
   const LastWeekMessagesFamily._()
-      : super(
-          retry: null,
-          name: r'lastWeekMessagesProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'lastWeekMessagesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get messages from last week
 
-  LastWeekMessagesProvider call(
-    String crewId,
-  ) =>
+  LastWeekMessagesProvider call(String crewId) =>
       LastWeekMessagesProvider._(argument: crewId, from: this);
 
   @override

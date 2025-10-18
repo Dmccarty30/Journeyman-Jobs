@@ -12,20 +12,24 @@ part of 'core_providers.dart';
 @ProviderFor(connectivityService)
 const connectivityServiceProvider = ConnectivityServiceProvider._();
 
-final class ConnectivityServiceProvider extends $FunctionalProvider<
-    ConnectivityService,
-    ConnectivityService,
-    ConnectivityService> with $Provider<ConnectivityService> {
+final class ConnectivityServiceProvider
+    extends
+        $FunctionalProvider<
+          ConnectivityService,
+          ConnectivityService,
+          ConnectivityService
+        >
+    with $Provider<ConnectivityService> {
   const ConnectivityServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'connectivityServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'connectivityServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$connectivityServiceHash();
@@ -33,8 +37,8 @@ final class ConnectivityServiceProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<ConnectivityService> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   ConnectivityService create(Ref ref) {
@@ -58,16 +62,16 @@ const feedPostsProvider = FeedPostsNotifierFamily._();
 
 final class FeedPostsNotifierProvider
     extends $AsyncNotifierProvider<FeedPostsNotifier, List<TailboardPost>> {
-  const FeedPostsNotifierProvider._(
-      {required FeedPostsNotifierFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'feedPostsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const FeedPostsNotifierProvider._({
+    required FeedPostsNotifierFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'feedPostsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$feedPostsNotifierHash();
@@ -98,20 +102,23 @@ String _$feedPostsNotifierHash() => r'c28ccdb46569c46d1177d5733299f6ae3673d39f';
 
 final class FeedPostsNotifierFamily extends $Family
     with
-        $ClassFamilyOverride<FeedPostsNotifier, AsyncValue<List<TailboardPost>>,
-            List<TailboardPost>, FutureOr<List<TailboardPost>>, String> {
+        $ClassFamilyOverride<
+          FeedPostsNotifier,
+          AsyncValue<List<TailboardPost>>,
+          List<TailboardPost>,
+          FutureOr<List<TailboardPost>>,
+          String
+        > {
   const FeedPostsNotifierFamily._()
-      : super(
-          retry: null,
-          name: r'feedPostsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'feedPostsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-  FeedPostsNotifierProvider call(
-    String crewId,
-  ) =>
+  FeedPostsNotifierProvider call(String crewId) =>
       FeedPostsNotifierProvider._(argument: crewId, from: this);
 
   @override
@@ -122,22 +129,21 @@ abstract class _$FeedPostsNotifier extends $AsyncNotifier<List<TailboardPost>> {
   late final _$args = ref.$arg as String;
   String get crewId => _$args;
 
-  FutureOr<List<TailboardPost>> build(
-    String crewId,
-  );
+  FutureOr<List<TailboardPost>> build(String crewId);
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(
-      _$args,
-    );
+    final created = build(_$args);
     final ref =
         this.ref as $Ref<AsyncValue<List<TailboardPost>>, List<TailboardPost>>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<AsyncValue<List<TailboardPost>>, List<TailboardPost>>,
-        AsyncValue<List<TailboardPost>>,
-        Object?,
-        Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<TailboardPost>>, List<TailboardPost>>,
+              AsyncValue<List<TailboardPost>>,
+              Object?,
+              Object?
+            >;
     element.handleValue(ref, created);
   }
 }
@@ -147,15 +153,16 @@ const jobsProvider = JobsNotifierFamily._();
 
 final class JobsNotifierProvider
     extends $AsyncNotifierProvider<JobsNotifier, List<Job>> {
-  const JobsNotifierProvider._(
-      {required JobsNotifierFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'jobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const JobsNotifierProvider._({
+    required JobsNotifierFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'jobsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$jobsNotifierHash();
@@ -186,20 +193,23 @@ String _$jobsNotifierHash() => r'66820b3d77a6373e2f16bcab44b22069d660e4ec';
 
 final class JobsNotifierFamily extends $Family
     with
-        $ClassFamilyOverride<JobsNotifier, AsyncValue<List<Job>>, List<Job>,
-            FutureOr<List<Job>>, String> {
+        $ClassFamilyOverride<
+          JobsNotifier,
+          AsyncValue<List<Job>>,
+          List<Job>,
+          FutureOr<List<Job>>,
+          String
+        > {
   const JobsNotifierFamily._()
-      : super(
-          retry: null,
-          name: r'jobsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'jobsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-  JobsNotifierProvider call(
-    String crewId,
-  ) =>
+  JobsNotifierProvider call(String crewId) =>
       JobsNotifierProvider._(argument: crewId, from: this);
 
   @override
@@ -210,21 +220,20 @@ abstract class _$JobsNotifier extends $AsyncNotifier<List<Job>> {
   late final _$args = ref.$arg as String;
   String get crewId => _$args;
 
-  FutureOr<List<Job>> build(
-    String crewId,
-  );
+  FutureOr<List<Job>> build(String crewId);
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(
-      _$args,
-    );
+    final created = build(_$args);
     final ref = this.ref as $Ref<AsyncValue<List<Job>>, List<Job>>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<AsyncValue<List<Job>>, List<Job>>,
-        AsyncValue<List<Job>>,
-        Object?,
-        Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<Job>>, List<Job>>,
+              AsyncValue<List<Job>>,
+              Object?,
+              Object?
+            >;
     element.handleValue(ref, created);
   }
 }

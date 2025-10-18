@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../design_system/app_theme.dart';
 import '../widgets/chat_input.dart';
 import '../models/chat_message.dart';
-import '../../../electrical_components/circuit_board_background.dart';
 import 'package:intl/intl.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {

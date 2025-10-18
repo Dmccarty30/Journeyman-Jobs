@@ -15,24 +15,27 @@ const sharedPreferencesProvider = SharedPreferencesProvider._();
 
 /// SharedPreferences provider
 
-final class SharedPreferencesProvider extends $FunctionalProvider<
-        AsyncValue<SharedPreferences>,
-        SharedPreferences,
-        FutureOr<SharedPreferences>>
+final class SharedPreferencesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<SharedPreferences>,
+          SharedPreferences,
+          FutureOr<SharedPreferences>
+        >
     with
         $FutureModifier<SharedPreferences>,
         $FutureProvider<SharedPreferences> {
   /// SharedPreferences provider
   const SharedPreferencesProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'sharedPreferencesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sharedPreferencesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$sharedPreferencesHash();
@@ -40,8 +43,8 @@ final class SharedPreferencesProvider extends $FunctionalProvider<
   @$internal
   @override
   $FutureProviderElement<SharedPreferences> $createElement(
-          $ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<SharedPreferences> create(Ref ref) {
@@ -61,15 +64,15 @@ final class JobFilterNotifierProvider
     extends $NotifierProvider<JobFilterNotifier, JobFilterState> {
   /// Job filter notifier for managing filter state and presets
   const JobFilterNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'jobFilterProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'jobFilterProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$jobFilterNotifierHash();
@@ -98,11 +101,14 @@ abstract class _$JobFilterNotifier extends $Notifier<JobFilterState> {
   void runBuild() {
     final created = build();
     final ref = this.ref as $Ref<JobFilterState, JobFilterState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<JobFilterState, JobFilterState>,
-        JobFilterState,
-        Object?,
-        Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<JobFilterState, JobFilterState>,
+              JobFilterState,
+              Object?,
+              Object?
+            >;
     element.handleValue(ref, created);
   }
 }
@@ -114,21 +120,25 @@ const currentJobFilterProvider = CurrentJobFilterProvider._();
 
 /// Current filter provider (computed from state)
 
-final class CurrentJobFilterProvider extends $FunctionalProvider<
-    JobFilterCriteria,
-    JobFilterCriteria,
-    JobFilterCriteria> with $Provider<JobFilterCriteria> {
+final class CurrentJobFilterProvider
+    extends
+        $FunctionalProvider<
+          JobFilterCriteria,
+          JobFilterCriteria,
+          JobFilterCriteria
+        >
+    with $Provider<JobFilterCriteria> {
   /// Current filter provider (computed from state)
   const CurrentJobFilterProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'currentJobFilterProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentJobFilterProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$currentJobFilterHash();
@@ -136,8 +146,8 @@ final class CurrentJobFilterProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<JobFilterCriteria> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   JobFilterCriteria create(Ref ref) {
@@ -162,21 +172,25 @@ const filterPresetsProvider = FilterPresetsProvider._();
 
 /// Presets provider (computed from state)
 
-final class FilterPresetsProvider extends $FunctionalProvider<
-    List<FilterPreset>,
-    List<FilterPreset>,
-    List<FilterPreset>> with $Provider<List<FilterPreset>> {
+final class FilterPresetsProvider
+    extends
+        $FunctionalProvider<
+          List<FilterPreset>,
+          List<FilterPreset>,
+          List<FilterPreset>
+        >
+    with $Provider<List<FilterPreset>> {
   /// Presets provider (computed from state)
   const FilterPresetsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'filterPresetsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'filterPresetsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$filterPresetsHash();
@@ -184,8 +198,8 @@ final class FilterPresetsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<FilterPreset>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<FilterPreset> create(Ref ref) {
@@ -215,15 +229,15 @@ final class RecentSearchesProvider
     with $Provider<List<String>> {
   /// Recent searches provider (computed from state)
   const RecentSearchesProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'recentSearchesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'recentSearchesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$recentSearchesHash();
@@ -256,21 +270,25 @@ const pinnedPresetsProvider = PinnedPresetsProvider._();
 
 /// Pinned presets provider (computed from state)
 
-final class PinnedPresetsProvider extends $FunctionalProvider<
-    List<FilterPreset>,
-    List<FilterPreset>,
-    List<FilterPreset>> with $Provider<List<FilterPreset>> {
+final class PinnedPresetsProvider
+    extends
+        $FunctionalProvider<
+          List<FilterPreset>,
+          List<FilterPreset>,
+          List<FilterPreset>
+        >
+    with $Provider<List<FilterPreset>> {
   /// Pinned presets provider (computed from state)
   const PinnedPresetsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'pinnedPresetsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'pinnedPresetsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$pinnedPresetsHash();
@@ -278,8 +296,8 @@ final class PinnedPresetsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<FilterPreset>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<FilterPreset> create(Ref ref) {
@@ -304,21 +322,25 @@ const recentPresetsProvider = RecentPresetsProvider._();
 
 /// Recent presets provider (computed from state)
 
-final class RecentPresetsProvider extends $FunctionalProvider<
-    List<FilterPreset>,
-    List<FilterPreset>,
-    List<FilterPreset>> with $Provider<List<FilterPreset>> {
+final class RecentPresetsProvider
+    extends
+        $FunctionalProvider<
+          List<FilterPreset>,
+          List<FilterPreset>,
+          List<FilterPreset>
+        >
+    with $Provider<List<FilterPreset>> {
   /// Recent presets provider (computed from state)
   const RecentPresetsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'recentPresetsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'recentPresetsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$recentPresetsHash();
@@ -326,8 +348,8 @@ final class RecentPresetsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<FilterPreset>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<FilterPreset> create(Ref ref) {
@@ -353,18 +375,19 @@ const hasActiveFiltersProvider = HasActiveFiltersProvider._();
 /// Active filters status provider (computed from state)
 
 final class HasActiveFiltersProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
   /// Active filters status provider (computed from state)
   const HasActiveFiltersProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'hasActiveFiltersProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'hasActiveFiltersProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$hasActiveFiltersHash();
@@ -401,15 +424,15 @@ final class ActiveFilterCountProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
   /// Active filter count provider (computed from state)
   const ActiveFilterCountProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'activeFilterCountProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'activeFilterCountProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$activeFilterCountHash();
@@ -442,21 +465,25 @@ const quickFilterSuggestionsProvider = QuickFilterSuggestionsProvider._();
 
 /// Quick filter suggestions provider (computed from state)
 
-final class QuickFilterSuggestionsProvider extends $FunctionalProvider<
-    List<QuickFilterSuggestion>,
-    List<QuickFilterSuggestion>,
-    List<QuickFilterSuggestion>> with $Provider<List<QuickFilterSuggestion>> {
+final class QuickFilterSuggestionsProvider
+    extends
+        $FunctionalProvider<
+          List<QuickFilterSuggestion>,
+          List<QuickFilterSuggestion>,
+          List<QuickFilterSuggestion>
+        >
+    with $Provider<List<QuickFilterSuggestion>> {
   /// Quick filter suggestions provider (computed from state)
   const QuickFilterSuggestionsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'quickFilterSuggestionsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'quickFilterSuggestionsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$quickFilterSuggestionsHash();
@@ -464,8 +491,8 @@ final class QuickFilterSuggestionsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<QuickFilterSuggestion>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<QuickFilterSuggestion> create(Ref ref) {

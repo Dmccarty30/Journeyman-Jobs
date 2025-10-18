@@ -15,21 +15,25 @@ const jobSharingServiceProvider = JobSharingServiceProvider._();
 
 /// JobSharingService provider
 
-final class JobSharingServiceProvider extends $FunctionalProvider<
-    JobSharingService,
-    JobSharingService,
-    JobSharingService> with $Provider<JobSharingService> {
+final class JobSharingServiceProvider
+    extends
+        $FunctionalProvider<
+          JobSharingService,
+          JobSharingService,
+          JobSharingService
+        >
+    with $Provider<JobSharingService> {
   /// JobSharingService provider
   const JobSharingServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'jobSharingServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'jobSharingServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$jobSharingServiceHash();
@@ -37,8 +41,8 @@ final class JobSharingServiceProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<JobSharingService> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   JobSharingService create(Ref ref) {
@@ -63,21 +67,25 @@ const jobMatchingServiceProvider = JobMatchingServiceProvider._();
 
 /// JobMatchingService provider
 
-final class JobMatchingServiceProvider extends $FunctionalProvider<
-    JobMatchingService,
-    JobMatchingService,
-    JobMatchingService> with $Provider<JobMatchingService> {
+final class JobMatchingServiceProvider
+    extends
+        $FunctionalProvider<
+          JobMatchingService,
+          JobMatchingService,
+          JobMatchingService
+        >
+    with $Provider<JobMatchingService> {
   /// JobMatchingService provider
   const JobMatchingServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'jobMatchingServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'jobMatchingServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$jobMatchingServiceHash();
@@ -85,8 +93,8 @@ final class JobMatchingServiceProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<JobMatchingService> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   JobMatchingService create(Ref ref) {
@@ -117,15 +125,15 @@ final class CrewServiceProvider
     with $Provider<CrewService> {
   /// CrewService provider
   const CrewServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'crewServiceProvider',
-          isAutoDispose: false,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'crewServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$crewServiceHash();
@@ -158,20 +166,25 @@ const userCrewsStreamProvider = UserCrewsStreamProvider._();
 
 /// Stream of crews for the current user
 
-final class UserCrewsStreamProvider extends $FunctionalProvider<
-        AsyncValue<List<Crew>>, List<Crew>, Stream<List<Crew>>>
+final class UserCrewsStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Crew>>,
+          List<Crew>,
+          Stream<List<Crew>>
+        >
     with $FutureModifier<List<Crew>>, $StreamProvider<List<Crew>> {
   /// Stream of crews for the current user
   const UserCrewsStreamProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'userCrewsStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'userCrewsStreamProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$userCrewsStreamHash();
@@ -201,15 +214,15 @@ final class UserCrewsProvider
     with $Provider<List<Crew>> {
   /// Current user's crews provider
   const UserCrewsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'userCrewsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'userCrewsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$userCrewsHash();
@@ -243,18 +256,19 @@ const selectedCrewProvider = SelectedCrewProvider._();
 /// Selected crew provider
 
 final class SelectedCrewProvider
-    extends $FunctionalProvider<Crew?, Crew?, Crew?> with $Provider<Crew?> {
+    extends $FunctionalProvider<Crew?, Crew?, Crew?>
+    with $Provider<Crew?> {
   /// Selected crew provider
   const SelectedCrewProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'selectedCrewProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedCrewProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$selectedCrewHash();
@@ -288,21 +302,25 @@ const selectedCrewNotifierProviderProvider =
 
 /// Selected crew notifier provider
 
-final class SelectedCrewNotifierProviderProvider extends $FunctionalProvider<
-    SelectedCrewNotifier,
-    SelectedCrewNotifier,
-    SelectedCrewNotifier> with $Provider<SelectedCrewNotifier> {
+final class SelectedCrewNotifierProviderProvider
+    extends
+        $FunctionalProvider<
+          SelectedCrewNotifier,
+          SelectedCrewNotifier,
+          SelectedCrewNotifier
+        >
+    with $Provider<SelectedCrewNotifier> {
   /// Selected crew notifier provider
   const SelectedCrewNotifierProviderProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'selectedCrewNotifierProviderProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedCrewNotifierProviderProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$selectedCrewNotifierProviderHash();
@@ -310,8 +328,8 @@ final class SelectedCrewNotifierProviderProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<SelectedCrewNotifier> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   SelectedCrewNotifier create(Ref ref) {
@@ -340,15 +358,16 @@ const isUserInCrewProvider = IsUserInCrewFamily._();
 final class IsUserInCrewProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
   /// Provider to check if current user is in a specific crew
-  const IsUserInCrewProvider._(
-      {required IsUserInCrewFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'isUserInCrewProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const IsUserInCrewProvider._({
+    required IsUserInCrewFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'isUserInCrewProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$isUserInCrewHash();
@@ -368,10 +387,7 @@ final class IsUserInCrewProvider extends $FunctionalProvider<bool, bool, bool>
   @override
   bool create(Ref ref) {
     final argument = this.argument as String;
-    return isUserInCrew(
-      ref,
-      argument,
-    );
+    return isUserInCrew(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -400,19 +416,17 @@ String _$isUserInCrewHash() => r'9970cb00a5cf099249f6331ecb0616b399961691';
 final class IsUserInCrewFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
   const IsUserInCrewFamily._()
-      : super(
-          retry: null,
-          name: r'isUserInCrewProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'isUserInCrewProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to check if current user is in a specific crew
 
-  IsUserInCrewProvider call(
-    String crewId,
-  ) =>
+  IsUserInCrewProvider call(String crewId) =>
       IsUserInCrewProvider._(argument: crewId, from: this);
 
   @override
@@ -430,16 +444,16 @@ final class UserRoleInCrewProvider
     extends $FunctionalProvider<MemberRole?, MemberRole?, MemberRole?>
     with $Provider<MemberRole?> {
   /// Provider to get user's role in a specific crew
-  const UserRoleInCrewProvider._(
-      {required UserRoleInCrewFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'userRoleInCrewProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const UserRoleInCrewProvider._({
+    required UserRoleInCrewFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'userRoleInCrewProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$userRoleInCrewHash();
@@ -459,10 +473,7 @@ final class UserRoleInCrewProvider
   @override
   MemberRole? create(Ref ref) {
     final argument = this.argument as String;
-    return userRoleInCrew(
-      ref,
-      argument,
-    );
+    return userRoleInCrew(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -491,19 +502,17 @@ String _$userRoleInCrewHash() => r'a73e143d932db2f300825a10ea2d348ba37c098d';
 final class UserRoleInCrewFamily extends $Family
     with $FunctionalFamilyOverride<MemberRole?, String> {
   const UserRoleInCrewFamily._()
-      : super(
-          retry: null,
-          name: r'userRoleInCrewProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'userRoleInCrewProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get user's role in a specific crew
 
-  UserRoleInCrewProvider call(
-    String crewId,
-  ) =>
+  UserRoleInCrewProvider call(String crewId) =>
       UserRoleInCrewProvider._(argument: crewId, from: this);
 
   @override
@@ -518,22 +527,19 @@ const hasCrewPermissionProvider = HasCrewPermissionFamily._();
 /// Provider to check if user has a specific permission in a crew
 
 final class HasCrewPermissionProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
   /// Provider to check if user has a specific permission in a crew
-  const HasCrewPermissionProvider._(
-      {required HasCrewPermissionFamily super.from,
-      required (
-        String,
-        String,
-      )
-          super.argument})
-      : super(
-          retry: null,
-          name: r'hasCrewPermissionProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const HasCrewPermissionProvider._({
+    required HasCrewPermissionFamily super.from,
+    required (String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'hasCrewPermissionProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$hasCrewPermissionHash();
@@ -552,15 +558,8 @@ final class HasCrewPermissionProvider
 
   @override
   bool create(Ref ref) {
-    final argument = this.argument as (
-      String,
-      String,
-    );
-    return hasCrewPermission(
-      ref,
-      argument.$1,
-      argument.$2,
-    );
+    final argument = this.argument as (String, String);
+    return hasCrewPermission(ref, argument.$1, argument.$2);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -587,32 +586,20 @@ String _$hasCrewPermissionHash() => r'331ba93fa32fe0977fdefee1ad467f9d9b3033e0';
 /// Provider to check if user has a specific permission in a crew
 
 final class HasCrewPermissionFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-            bool,
-            (
-              String,
-              String,
-            )> {
+    with $FunctionalFamilyOverride<bool, (String, String)> {
   const HasCrewPermissionFamily._()
-      : super(
-          retry: null,
-          name: r'hasCrewPermissionProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'hasCrewPermissionProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to check if user has a specific permission in a crew
 
-  HasCrewPermissionProvider call(
-    String crewId,
-    String permission,
-  ) =>
-      HasCrewPermissionProvider._(argument: (
-        crewId,
-        permission,
-      ), from: this);
+  HasCrewPermissionProvider call(String crewId, String permission) =>
+      HasCrewPermissionProvider._(argument: (crewId, permission), from: this);
 
   @override
   String toString() => r'hasCrewPermissionProvider';
@@ -625,22 +612,25 @@ const crewMembersStreamProvider = CrewMembersStreamFamily._();
 
 /// Provider to get crew members stream
 
-final class CrewMembersStreamProvider extends $FunctionalProvider<
-        AsyncValue<List<CrewMember>>,
-        List<CrewMember>,
-        Stream<List<CrewMember>>>
+final class CrewMembersStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<CrewMember>>,
+          List<CrewMember>,
+          Stream<List<CrewMember>>
+        >
     with $FutureModifier<List<CrewMember>>, $StreamProvider<List<CrewMember>> {
   /// Provider to get crew members stream
-  const CrewMembersStreamProvider._(
-      {required CrewMembersStreamFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'crewMembersStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const CrewMembersStreamProvider._({
+    required CrewMembersStreamFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'crewMembersStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$crewMembersStreamHash();
@@ -655,16 +645,13 @@ final class CrewMembersStreamProvider extends $FunctionalProvider<
   @$internal
   @override
   $StreamProviderElement<List<CrewMember>> $createElement(
-          $ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
   Stream<List<CrewMember>> create(Ref ref) {
     final argument = this.argument as String;
-    return crewMembersStream(
-      ref,
-      argument,
-    );
+    return crewMembersStream(ref, argument);
   }
 
   @override
@@ -685,19 +672,17 @@ String _$crewMembersStreamHash() => r'7896f7dcc34e70f8fdfafa4b6c264514baa05da0';
 final class CrewMembersStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<CrewMember>>, String> {
   const CrewMembersStreamFamily._()
-      : super(
-          retry: null,
-          name: r'crewMembersStreamProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'crewMembersStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get crew members stream
 
-  CrewMembersStreamProvider call(
-    String crewId,
-  ) =>
+  CrewMembersStreamProvider call(String crewId) =>
       CrewMembersStreamProvider._(argument: crewId, from: this);
 
   @override
@@ -711,18 +696,25 @@ const crewMembersProvider = CrewMembersFamily._();
 
 /// Provider to get crew members
 
-final class CrewMembersProvider extends $FunctionalProvider<List<CrewMember>,
-    List<CrewMember>, List<CrewMember>> with $Provider<List<CrewMember>> {
+final class CrewMembersProvider
+    extends
+        $FunctionalProvider<
+          List<CrewMember>,
+          List<CrewMember>,
+          List<CrewMember>
+        >
+    with $Provider<List<CrewMember>> {
   /// Provider to get crew members
-  const CrewMembersProvider._(
-      {required CrewMembersFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'crewMembersProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const CrewMembersProvider._({
+    required CrewMembersFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'crewMembersProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$crewMembersHash();
@@ -742,10 +734,7 @@ final class CrewMembersProvider extends $FunctionalProvider<List<CrewMember>,
   @override
   List<CrewMember> create(Ref ref) {
     final argument = this.argument as String;
-    return crewMembers(
-      ref,
-      argument,
-    );
+    return crewMembers(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -774,19 +763,17 @@ String _$crewMembersHash() => r'd9e381c26118c59f15f2aac0e69305358bf47118';
 final class CrewMembersFamily extends $Family
     with $FunctionalFamilyOverride<List<CrewMember>, String> {
   const CrewMembersFamily._()
-      : super(
-          retry: null,
-          name: r'crewMembersProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'crewMembersProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get crew members
 
-  CrewMembersProvider call(
-    String crewId,
-  ) =>
+  CrewMembersProvider call(String crewId) =>
       CrewMembersProvider._(argument: crewId, from: this);
 
   @override
@@ -804,16 +791,16 @@ final class CurrentUserCrewMemberProvider
     extends $FunctionalProvider<CrewMember?, CrewMember?, CrewMember?>
     with $Provider<CrewMember?> {
   /// Provider to get current user's crew member data
-  const CurrentUserCrewMemberProvider._(
-      {required CurrentUserCrewMemberFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'currentUserCrewMemberProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const CurrentUserCrewMemberProvider._({
+    required CurrentUserCrewMemberFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'currentUserCrewMemberProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$currentUserCrewMemberHash();
@@ -833,10 +820,7 @@ final class CurrentUserCrewMemberProvider
   @override
   CrewMember? create(Ref ref) {
     final argument = this.argument as String;
-    return currentUserCrewMember(
-      ref,
-      argument,
-    );
+    return currentUserCrewMember(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -866,19 +850,17 @@ String _$currentUserCrewMemberHash() =>
 final class CurrentUserCrewMemberFamily extends $Family
     with $FunctionalFamilyOverride<CrewMember?, String> {
   const CurrentUserCrewMemberFamily._()
-      : super(
-          retry: null,
-          name: r'currentUserCrewMemberProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'currentUserCrewMemberProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get current user's crew member data
 
-  CurrentUserCrewMemberProvider call(
-    String crewId,
-  ) =>
+  CurrentUserCrewMemberProvider call(String crewId) =>
       CurrentUserCrewMemberProvider._(argument: crewId, from: this);
 
   @override
@@ -895,15 +877,16 @@ const isCrewForemanProvider = IsCrewForemanFamily._();
 final class IsCrewForemanProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
   /// Provider to check if current user is crew foreman
-  const IsCrewForemanProvider._(
-      {required IsCrewForemanFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'isCrewForemanProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const IsCrewForemanProvider._({
+    required IsCrewForemanFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'isCrewForemanProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$isCrewForemanHash();
@@ -923,10 +906,7 @@ final class IsCrewForemanProvider extends $FunctionalProvider<bool, bool, bool>
   @override
   bool create(Ref ref) {
     final argument = this.argument as String;
-    return isCrewForeman(
-      ref,
-      argument,
-    );
+    return isCrewForeman(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -955,19 +935,17 @@ String _$isCrewForemanHash() => r'70ef9c7fb287fefa817e033cecb943cabd92d8f4';
 final class IsCrewForemanFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
   const IsCrewForemanFamily._()
-      : super(
-          retry: null,
-          name: r'isCrewForemanProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'isCrewForemanProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to check if current user is crew foreman
 
-  IsCrewForemanProvider call(
-    String crewId,
-  ) =>
+  IsCrewForemanProvider call(String crewId) =>
       IsCrewForemanProvider._(argument: crewId, from: this);
 
   @override
@@ -984,15 +962,16 @@ const isCrewLeadProvider = IsCrewLeadFamily._();
 final class IsCrewLeadProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
   /// Provider to check if current user is crew lead
-  const IsCrewLeadProvider._(
-      {required IsCrewLeadFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'isCrewLeadProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const IsCrewLeadProvider._({
+    required IsCrewLeadFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'isCrewLeadProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$isCrewLeadHash();
@@ -1012,10 +991,7 @@ final class IsCrewLeadProvider extends $FunctionalProvider<bool, bool, bool>
   @override
   bool create(Ref ref) {
     final argument = this.argument as String;
-    return isCrewLead(
-      ref,
-      argument,
-    );
+    return isCrewLead(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1044,19 +1020,17 @@ String _$isCrewLeadHash() => r'719b23c61f72d11ee0577575441acea28ad721e4';
 final class IsCrewLeadFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
   const IsCrewLeadFamily._()
-      : super(
-          retry: null,
-          name: r'isCrewLeadProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'isCrewLeadProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to check if current user is crew lead
 
-  IsCrewLeadProvider call(
-    String crewId,
-  ) =>
+  IsCrewLeadProvider call(String crewId) =>
       IsCrewLeadProvider._(argument: crewId, from: this);
 
   @override
@@ -1073,15 +1047,16 @@ const crewByIdProvider = CrewByIdFamily._();
 final class CrewByIdProvider extends $FunctionalProvider<Crew?, Crew?, Crew?>
     with $Provider<Crew?> {
   /// Provider to get crew by ID
-  const CrewByIdProvider._(
-      {required CrewByIdFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'crewByIdProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const CrewByIdProvider._({
+    required CrewByIdFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'crewByIdProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$crewByIdHash();
@@ -1101,10 +1076,7 @@ final class CrewByIdProvider extends $FunctionalProvider<Crew?, Crew?, Crew?>
   @override
   Crew? create(Ref ref) {
     final argument = this.argument as String;
-    return crewById(
-      ref,
-      argument,
-    );
+    return crewById(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1133,19 +1105,17 @@ String _$crewByIdHash() => r'7dfbdb4f0e6292ccf36f0ee068b316295f6de322';
 final class CrewByIdFamily extends $Family
     with $FunctionalFamilyOverride<Crew?, String> {
   const CrewByIdFamily._()
-      : super(
-          retry: null,
-          name: r'crewByIdProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'crewByIdProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get crew by ID
 
-  CrewByIdProvider call(
-    String crewId,
-  ) =>
+  CrewByIdProvider call(String crewId) =>
       CrewByIdProvider._(argument: crewId, from: this);
 
   @override
@@ -1164,15 +1134,15 @@ final class ActiveCrewsProvider
     with $Provider<List<Crew>> {
   /// Provider to get active crews only
   const ActiveCrewsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'activeCrewsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'activeCrewsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$activeCrewsHash();
@@ -1209,15 +1179,15 @@ final class CrewCountProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
   /// Provider to get crew count
   const CrewCountProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'crewCountProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'crewCountProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$crewCountHash();
@@ -1254,15 +1224,15 @@ final class CanCreateCrewsProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
   /// Provider to check if user can create crews
   const CanCreateCrewsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'canCreateCrewsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'canCreateCrewsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$canCreateCrewsHash();
@@ -1299,15 +1269,15 @@ final class CrewCreationLimitProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
   /// Provider to get crew creation limit
   const CrewCreationLimitProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'crewCreationLimitProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'crewCreationLimitProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$crewCreationLimitHash();
@@ -1341,18 +1311,19 @@ const hasReachedCrewLimitProvider = HasReachedCrewLimitProvider._();
 /// Provider to check if user has reached crew creation limit
 
 final class HasReachedCrewLimitProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
   /// Provider to check if user has reached crew creation limit
   const HasReachedCrewLimitProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'hasReachedCrewLimitProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'hasReachedCrewLimitProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$hasReachedCrewLimitHash();
@@ -1386,21 +1357,25 @@ const crewCreationProvider = CrewCreationNotifierProvider._();
 
 /// Provider for crew creation notifier
 
-final class CrewCreationNotifierProvider extends $FunctionalProvider<
-    CrewCreationNotifier,
-    CrewCreationNotifier,
-    CrewCreationNotifier> with $Provider<CrewCreationNotifier> {
+final class CrewCreationNotifierProvider
+    extends
+        $FunctionalProvider<
+          CrewCreationNotifier,
+          CrewCreationNotifier,
+          CrewCreationNotifier
+        >
+    with $Provider<CrewCreationNotifier> {
   /// Provider for crew creation notifier
   const CrewCreationNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'crewCreationProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'crewCreationProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$crewCreationNotifierHash();
@@ -1408,8 +1383,8 @@ final class CrewCreationNotifierProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<CrewCreationNotifier> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   CrewCreationNotifier create(Ref ref) {
@@ -1435,21 +1410,25 @@ const crewCreationStateProvider = CrewCreationStateProvider._();
 
 /// Stream of crew creation state
 
-final class CrewCreationStateProvider extends $FunctionalProvider<
-    AsyncValue<void>,
-    AsyncValue<void>,
-    AsyncValue<void>> with $Provider<AsyncValue<void>> {
+final class CrewCreationStateProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<void>,
+          AsyncValue<void>,
+          AsyncValue<void>
+        >
+    with $Provider<AsyncValue<void>> {
   /// Stream of crew creation state
   const CrewCreationStateProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'crewCreationStateProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'crewCreationStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$crewCreationStateHash();

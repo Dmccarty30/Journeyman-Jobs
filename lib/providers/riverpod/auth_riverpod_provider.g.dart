@@ -20,15 +20,15 @@ final class AuthServiceProvider
     with $Provider<AuthService> {
   /// AuthService provider
   const AuthServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'authServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'authServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$authServiceHash();
@@ -66,15 +66,15 @@ final class AuthStateStreamProvider
     with $FutureModifier<User?>, $StreamProvider<User?> {
   /// Auth state stream provider
   const AuthStateStreamProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'authStateStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'authStateStreamProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$authStateStreamHash();
@@ -103,15 +103,15 @@ final class CurrentUserProvider extends $FunctionalProvider<User?, User?, User?>
     with $Provider<User?> {
   /// Current user provider
   const CurrentUserProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'currentUserProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentUserProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$currentUserHash();
@@ -147,15 +147,15 @@ final class AuthNotifierProvider
     extends $NotifierProvider<AuthNotifier, AuthState> {
   /// Auth state notifier for managing authentication operations
   const AuthNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'authProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'authProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$authNotifierHash();
@@ -184,8 +184,14 @@ abstract class _$AuthNotifier extends $Notifier<AuthState> {
   void runBuild() {
     final created = build();
     final ref = this.ref as $Ref<AuthState, AuthState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<AuthState, AuthState>, AuthState, Object?, Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AuthState, AuthState>,
+              AuthState,
+              Object?,
+              Object?
+            >;
     element.handleValue(ref, created);
   }
 }
@@ -198,18 +204,19 @@ const isAuthenticatedProvider = IsAuthenticatedProvider._();
 /// Convenience provider for auth state
 
 final class IsAuthenticatedProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
   /// Convenience provider for auth state
   const IsAuthenticatedProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'isAuthenticatedProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'isAuthenticatedProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$isAuthenticatedHash();
@@ -243,18 +250,19 @@ const isRouteProtectedProvider = IsRouteProtectedFamily._();
 /// Route guard provider
 
 final class IsRouteProtectedProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
   /// Route guard provider
-  const IsRouteProtectedProvider._(
-      {required IsRouteProtectedFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'isRouteProtectedProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const IsRouteProtectedProvider._({
+    required IsRouteProtectedFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'isRouteProtectedProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$isRouteProtectedHash();
@@ -274,10 +282,7 @@ final class IsRouteProtectedProvider
   @override
   bool create(Ref ref) {
     final argument = this.argument as String;
-    return isRouteProtected(
-      ref,
-      argument,
-    );
+    return isRouteProtected(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -306,19 +311,17 @@ String _$isRouteProtectedHash() => r'dbeddd3719f65e93f561fe1263b1ff94a0ded4ab';
 final class IsRouteProtectedFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
   const IsRouteProtectedFamily._()
-      : super(
-          retry: null,
-          name: r'isRouteProtectedProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'isRouteProtectedProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Route guard provider
 
-  IsRouteProtectedProvider call(
-    String routePath,
-  ) =>
+  IsRouteProtectedProvider call(String routePath) =>
       IsRouteProtectedProvider._(argument: routePath, from: this);
 
   @override

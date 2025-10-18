@@ -33,7 +33,7 @@ class FeedTab extends ConsumerWidget {
     }
 
     // Watch for real-time posts - use global feed if no crew selected
-    final postsAsync = selectedCrew != null 
+    final postsAsync = selectedCrew != null
         ? ref.watch(crewPostsProvider(selectedCrew.id))
         : ref.watch(globalFeedProvider);
     final currentUserName = currentUser.displayName ?? currentUser.email ?? 'Unknown User';
@@ -59,12 +59,14 @@ class FeedTab extends ConsumerWidget {
                 Icon(Icons.feed, size: 48, color: AppTheme.mediumGray),
                 const SizedBox(height: 16),
                 Text(
-                  'Feed for ${selectedCrew.name}',
+                  selectedCrew != null ? 'Feed for ${selectedCrew.name}' : 'Global Feed',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Team updates and announcements for ${selectedCrew.name} will appear here',
+                  selectedCrew != null
+                      ? 'Team updates and announcements for ${selectedCrew.name} will appear here'
+                      : 'Posts from all crews will appear here',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.mediumGray),
                   textAlign: TextAlign.center,
                 ),
@@ -76,7 +78,11 @@ class FeedTab extends ConsumerWidget {
         return RefreshIndicator(
           onRefresh: () async {
             // Force refresh the posts provider
-            ref.invalidate(crewPostsStreamProvider(selectedCrew.id));
+            if (selectedCrew != null) {
+              ref.invalidate(crewPostsStreamProvider(selectedCrew.id));
+            } else {
+              ref.invalidate(globalFeedProvider);
+            }
           },
           color: AppTheme.accentCopper,
           backgroundColor: AppTheme.white,
@@ -279,7 +285,7 @@ class MembersTab extends ConsumerWidget {
     }
 
     // Get crew members stream
-    final membersAsync = ref.watch(crewMembersProvider(selectedCrew.id));
+    final membersAsync = ref.watch(crewMembersStreamProvider(selectedCrew.id));
 
     return membersAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -325,23 +331,19 @@ class MembersTab extends ConsumerWidget {
               leading: CircleAvatar(
                 backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.2),
                 child: Text(
-                  member.displayName?.substring(0, 1).toUpperCase() ?? 'U',
+                  (member.customTitle ?? member.role.toString().split('.').last).substring(0, 1).toUpperCase(),
                   style: TextStyle(color: AppTheme.accentCopper),
                 ),
               ),
               title: Text(
-                member.displayName ?? 'Unknown Member',
+                member.customTitle ?? member.role.toString().split('.').last.toUpperCase(),
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (member.homeLocal != null)
-                    Text('Local ${member.homeLocal}'),
-                  if (member.classification != null)
-                    Text(member.classification!),
-                  if (member.customInfo != null && member.customInfo!.isNotEmpty)
-                    Text(member.customInfo!),
+                  Text('Joined: ${member.joinedAt.toString().split(' ')[0]}'),
+                  Text(member.isAvailable ? 'Available' : 'Unavailable'),
                 ],
               ),
               trailing: IconButton(
@@ -358,7 +360,7 @@ class MembersTab extends ConsumerWidget {
                           ListTile(
                             leading: Icon(Icons.message, color: AppTheme.accentCopper),
                             title: Text('Direct Message'),
-                            subtitle: Text('Send a private message to ${member.displayName}'),
+                            subtitle: Text('Send a private message to ${member.customTitle ?? member.role.toString().split('.').last}'),
                             onTap: () {
                               Navigator.pop(context);
                               // TODO: Navigate to direct message screen

@@ -12,23 +12,26 @@ part of 'connectivity_service_provider.dart';
 @ProviderFor(connectivityStream)
 const connectivityStreamProvider = ConnectivityStreamProvider._();
 
-final class ConnectivityStreamProvider extends $FunctionalProvider<
-        AsyncValue<List<ConnectivityResult>>,
-        List<ConnectivityResult>,
-        Stream<List<ConnectivityResult>>>
+final class ConnectivityStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<ConnectivityResult>>,
+          List<ConnectivityResult>,
+          Stream<List<ConnectivityResult>>
+        >
     with
         $FutureModifier<List<ConnectivityResult>>,
         $StreamProvider<List<ConnectivityResult>> {
   const ConnectivityStreamProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'connectivityStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'connectivityStreamProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$connectivityStreamHash();
@@ -36,8 +39,8 @@ final class ConnectivityStreamProvider extends $FunctionalProvider<
   @$internal
   @override
   $StreamProviderElement<List<ConnectivityResult>> $createElement(
-          $ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
   Stream<List<ConnectivityResult>> create(Ref ref) {
@@ -51,20 +54,24 @@ String _$connectivityStreamHash() =>
 @ProviderFor(connectivityService)
 const connectivityServiceProvider = ConnectivityServiceProvider._();
 
-final class ConnectivityServiceProvider extends $FunctionalProvider<
-    AppConnectivityService,
-    AppConnectivityService,
-    AppConnectivityService> with $Provider<AppConnectivityService> {
+final class ConnectivityServiceProvider
+    extends
+        $FunctionalProvider<
+          AppConnectivityService,
+          AppConnectivityService,
+          AppConnectivityService
+        >
+    with $Provider<AppConnectivityService> {
   const ConnectivityServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'connectivityServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'connectivityServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$connectivityServiceHash();
@@ -72,8 +79,8 @@ final class ConnectivityServiceProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<AppConnectivityService> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   AppConnectivityService create(Ref ref) {
@@ -96,20 +103,24 @@ String _$connectivityServiceHash() =>
 const connectivityServiceForOfflineProvider =
     ConnectivityServiceForOfflineProvider._();
 
-final class ConnectivityServiceForOfflineProvider extends $FunctionalProvider<
-    ConnectivityService,
-    ConnectivityService,
-    ConnectivityService> with $Provider<ConnectivityService> {
+final class ConnectivityServiceForOfflineProvider
+    extends
+        $FunctionalProvider<
+          ConnectivityService,
+          ConnectivityService,
+          ConnectivityService
+        >
+    with $Provider<ConnectivityService> {
   const ConnectivityServiceForOfflineProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'connectivityServiceForOfflineProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'connectivityServiceForOfflineProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$connectivityServiceForOfflineHash();
@@ -117,8 +128,8 @@ final class ConnectivityServiceForOfflineProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<ConnectivityService> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   ConnectivityService create(Ref ref) {

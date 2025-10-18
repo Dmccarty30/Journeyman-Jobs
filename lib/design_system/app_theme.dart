@@ -65,6 +65,7 @@ class AppTheme {
   static const Color textPrimary = Color(0xFF1A202C);
   static const Color textSecondary = Color(0xFF4A5568);
   static const Color textLight = Color(0xFF718096);
+  static const Color textMuted = Color(0xFF9CA3AF); // Muted gray for secondary text elements
   static const Color textDark = Color(0xFF1A202C); // Same as textPrimary
   static const Color textOnDark = Color(0xFFFFFFFF);
   

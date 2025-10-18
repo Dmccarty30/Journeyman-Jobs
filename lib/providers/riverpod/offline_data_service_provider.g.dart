@@ -12,20 +12,24 @@ part of 'offline_data_service_provider.dart';
 @ProviderFor(offlineDataService)
 const offlineDataServiceProvider = OfflineDataServiceProvider._();
 
-final class OfflineDataServiceProvider extends $FunctionalProvider<
-    OfflineDataService,
-    OfflineDataService,
-    OfflineDataService> with $Provider<OfflineDataService> {
+final class OfflineDataServiceProvider
+    extends
+        $FunctionalProvider<
+          OfflineDataService,
+          OfflineDataService,
+          OfflineDataService
+        >
+    with $Provider<OfflineDataService> {
   const OfflineDataServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'offlineDataServiceProvider',
-          isAutoDispose: false,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'offlineDataServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$offlineDataServiceHash();
@@ -33,8 +37,8 @@ final class OfflineDataServiceProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<OfflineDataService> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   OfflineDataService create(Ref ref) {

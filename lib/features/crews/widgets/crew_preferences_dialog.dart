@@ -5,7 +5,6 @@ import '../services/crew_service.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../domain/enums/enums.dart';
 import '../../../utils/text_formatting_wrapper.dart';
-import '../../../electrical_components/jj_circuit_breaker_switch.dart';
 
 class CrewPreferencesDialog extends StatefulWidget {
   final CrewPreferences initialPreferences;

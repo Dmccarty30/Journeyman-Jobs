@@ -11,7 +11,6 @@ import '../models/crew_preferences.dart';
 import '../providers/crews_riverpod_provider.dart';
 import '../widgets/crew_preferences_dialog.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
-import '../../../domain/enums/permission.dart';
 
 class CreateCrewScreen extends ConsumerStatefulWidget {
   const CreateCrewScreen({super.key});

@@ -220,7 +220,7 @@ class TransformerTrainer extends StatelessWidget {
         child: AlertDialog(
           backgroundColor: PopupThemeData.alertDialog().backgroundColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(PopupThemeData.alertDialog().borderRadius),
+            borderRadius: PopupThemeData.alertDialog().borderRadius,
             side: BorderSide(
               color: PopupThemeData.alertDialog().borderColor,
               width: PopupThemeData.alertDialog().borderWidth,

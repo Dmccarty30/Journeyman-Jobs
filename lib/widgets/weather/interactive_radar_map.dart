@@ -243,7 +243,6 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               userAgentPackageName: 'com.journeymanjobs.app',
-              tileProvider: CancellableNetworkTileProvider(),
             ),
             
             // Weather radar overlay
@@ -254,8 +253,6 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                     : AlwaysStoppedAnimation(_radarOpacity),
                 child: TileLayer(
                   urlTemplate: _getRadarTileUrl(),
-                  tileProvider: CancellableNetworkTileProvider(),
-                  backgroundColor: Colors.transparent,
                   keepBuffer: 2,
                 ),
               ),
@@ -270,8 +267,6 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                     x: 0, // Will be replaced by flutter_map
                     y: 0, // Will be replaced by flutter_map
                   ).replaceAll('/0/0/', '/{x}/{y}/'),
-                  tileProvider: CancellableNetworkTileProvider(),
-                  backgroundColor: Colors.transparent,
                 ),
               ),
             

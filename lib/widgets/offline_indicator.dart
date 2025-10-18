@@ -37,7 +37,7 @@ class OfflineIndicator extends ConsumerWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       height: height ?? _getIndicatorHeight(connectivity),
-      child: _buildIndicatorContent(context, connectivity),
+      child: _buildIndicatorContent(context, connectivity, ref),
     );
   }
 
@@ -49,11 +49,11 @@ class OfflineIndicator extends ConsumerWidget {
   }
 
   /// Build the main indicator content
-  Widget _buildIndicatorContent(BuildContext context, ConnectivityService connectivity) {
+  Widget _buildIndicatorContent(BuildContext context, ConnectivityService connectivity, WidgetRef ref) {
     if (!connectivity.isOnline) {
       return _buildOfflineIndicator(context, connectivity);
     } else if (connectivity.wasOffline) {
-      return _buildReconnectedIndicator(context, connectivity);
+      return _buildReconnectedIndicator(context, connectivity, ref);
     } else {
       return _buildOnlineIndicator(context, connectivity);
     }
@@ -112,8 +112,8 @@ class OfflineIndicator extends ConsumerWidget {
     );
   }
 
-  /// Build reconnected state indicator  
-  Widget _buildReconnectedIndicator(BuildContext context, ConnectivityService connectivity) {
+  /// Build reconnected state indicator
+  Widget _buildReconnectedIndicator(BuildContext context, ConnectivityService connectivity, WidgetRef ref) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -161,7 +161,7 @@ class OfflineIndicator extends ConsumerWidget {
             ),
             if (showSyncControls) _buildSyncButton(context),
             const SizedBox(width: 8),
-            _buildDismissButton(context),
+            _buildDismissButton(context, ref),
           ],
         ),
       ),
@@ -257,11 +257,11 @@ class OfflineIndicator extends ConsumerWidget {
   }
 
   /// Build dismiss button
-  Widget _buildDismissButton(BuildContext context) {
+  Widget _buildDismissButton(BuildContext context, WidgetRef ref) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => _dismissIndicator(context),
+        onTap: () => _dismissIndicator(context, ref),
         borderRadius: BorderRadius.circular(20),
         child: Container(
           padding: const EdgeInsets.all(4),
@@ -345,26 +345,26 @@ class OfflineIndicator extends ConsumerWidget {
   }
 
   /// Dismiss the connectivity indicator
-  void _dismissIndicator(BuildContext context) {
-    final connectivity = context.read<ConnectivityService>();
+  void _dismissIndicator(BuildContext context, WidgetRef ref) {
+    final connectivity = ref.read(connectivityServiceProvider);
     // Reset the wasOffline flag to hide the indicator
     connectivity.resetOfflineFlag();
   }
 }
 
 /// Compact offline indicator for app bars
-class CompactOfflineIndicator extends StatelessWidget {
+class CompactOfflineIndicator extends ConsumerWidget {
   const CompactOfflineIndicator({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<ConnectivityService>(
-      builder: (context, connectivity, child) {
-        if (connectivity.isOnline && !connectivity.wasOffline) {
-          return const SizedBox.shrink();
-        }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final connectivity = ref.watch(connectivityServiceProvider);
 
-        return Container(
+    if (connectivity.isOnline && !connectivity.wasOffline) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
             color: connectivity.isOnline 
@@ -392,8 +392,6 @@ class CompactOfflineIndicator extends StatelessWidget {
             ],
           ),
         );
-      },
-    );
   }
 }
 

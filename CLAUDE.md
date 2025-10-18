@@ -185,7 +185,7 @@
 - **Mobile-first approach** - Design for phones first, tablets second
 - **Offline capability** - Critical features (union directory) must work offline
 - **Performance matters** - Large lists (797+ locals) need optimization
-- **DO NOT USE ".withOpacity() INSTEAD USE .withValues(alpha: )"**
+- **DO NOT USE ".withValues(alpha: ) INSTEAD USE .withValues(alpha: )"**
 - **Ask for clarification** on:
   - Firebase collection schemas if not documented
   - Specific IBEW terminology or classifications

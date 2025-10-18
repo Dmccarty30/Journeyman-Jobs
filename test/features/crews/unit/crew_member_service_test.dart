@@ -2,6 +2,7 @@ import 'package:test/test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:journeyman_jobs/features/crews/models/crew_member.dart';
 import 'package:journeyman_jobs/features/crews/models/crew.dart';
+import 'package:journeyman_jobs/domain/enums/member_role.dart';
 
 void main() {
   group('CrewMember Management Tests', () {

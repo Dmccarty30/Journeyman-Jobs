@@ -15,20 +15,25 @@ const globalMessagesStreamProvider = GlobalMessagesStreamProvider._();
 
 /// Stream of global messages
 
-final class GlobalMessagesStreamProvider extends $FunctionalProvider<
-        AsyncValue<List<Message>>, List<Message>, Stream<List<Message>>>
+final class GlobalMessagesStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Message>>,
+          List<Message>,
+          Stream<List<Message>>
+        >
     with $FutureModifier<List<Message>>, $StreamProvider<List<Message>> {
   /// Stream of global messages
   const GlobalMessagesStreamProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'globalMessagesStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'globalMessagesStreamProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$globalMessagesStreamHash();
@@ -36,8 +41,8 @@ final class GlobalMessagesStreamProvider extends $FunctionalProvider<
   @$internal
   @override
   $StreamProviderElement<List<Message>> $createElement(
-          $ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
   Stream<List<Message>> create(Ref ref) {
@@ -60,15 +65,15 @@ final class GlobalMessagesProvider
     with $Provider<List<Message>> {
   /// Global messages
   const GlobalMessagesProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'globalMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'globalMessagesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$globalMessagesHash();
@@ -104,15 +109,15 @@ final class SendGlobalMessageNotifierProvider
     extends $NotifierProvider<SendGlobalMessageNotifier, void> {
   /// Provider to send a global message
   const SendGlobalMessageNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'sendGlobalMessageProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sendGlobalMessageProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$sendGlobalMessageNotifierHash();
@@ -142,8 +147,14 @@ abstract class _$SendGlobalMessageNotifier extends $Notifier<void> {
   void runBuild() {
     build();
     final ref = this.ref as $Ref<void, void>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<void, void>, void, Object?, Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
     element.handleValue(ref, null);
   }
 }
@@ -159,15 +170,15 @@ final class UnreadGlobalCountProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
   /// Provider to get unread global messages count
   const UnreadGlobalCountProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'unreadGlobalCountProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'unreadGlobalCountProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$unreadGlobalCountHash();

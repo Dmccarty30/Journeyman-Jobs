@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flutter Analyze Issue Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1A202C 0%, #2D3748 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            background: #f7fafc;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #718096;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            color: #a0aec0;
+            font-size: 0.95em;
+        }
+
+        .error { color: #e53e3e; }
+        .warning { color: #ed8936; }
+        .info { color: #4299e1; }
+        .success { color: #48bb78; }
+
+        .section {
+            padding: 40px;
+        }
+
+        .section h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #2d3748;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+        }
+
+        .priority-list {
+            list-style: none;
+        }
+
+        .priority-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 5px solid;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .priority-item.critical { border-left-color: #e53e3e; background: #fff5f5; }
+        .priority-item.high { border-left-color: #ed8936; background: #fffaf0; }
+        .priority-item.medium { border-left-color: #ecc94b; background: #fffff0; }
+        .priority-item.low { border-left-color: #48bb78; background: #f0fff4; }
+
+        .priority-item h4 {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .priority-item .meta {
+            font-size: 0.9em;
+            color: #718096;
+            margin-bottom: 10px;
+        }
+
+        .priority-item .description {
+            line-height: 1.6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .badge.critical { background: #fed7d7; color: #c53030; }
+        .badge.high { background: #feebc8; color: #c05621; }
+        .badge.medium { background: #fefcbf; color: #975a16; }
+        .badge.low { background: #c6f6d5; color: #276749; }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78 0%, #38a169 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 1s ease;
+        }
+
+        .chart {
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 200px;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+            transform: scaleY(1.05);
+        }
+
+        .bar-label {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: #4a5568;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            color: #2d3748;
+            white-space: nowrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f7fafc;
+            font-weight: 600;
+            color: #4a5568;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .action-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: transform 0.2s;
+            margin: 10px 10px 10px 0;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 9px;
+            top: 20px;
+            width: 2px;
+            height: calc(100% + 10px);
+            background: #e2e8f0;
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        .timeline-item h4 {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .timeline-item .time {
+            color: #718096;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            background: #2d3748;
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Flutter Analyze Issue Dashboard</h1>
+            <p>Comprehensive Analysis Report - Journeyman Jobs</p>
+            <p style="font-size: 0.9em; opacity: 0.8; margin-top: 10px;">Generated: October 18, 2025 | Total Issues: 1,192</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Issues</h3>
+                <div class="number">1,192</div>
+                <div class="label">Across all files</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Errors</h3>
+                <div class="number error">~850</div>
+                <div class="label">71.3% of total</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Warnings</h3>
+                <div class="number warning">~250</div>
+                <div class="label">21.0% of total</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Info Messages</h3>
+                <div class="number info">~92</div>
+                <div class="label">7.7% of total</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Production Code</h3>
+                <div class="number success">40</div>
+                <div class="label">Only 3.4% of issues</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Test Code</h3>
+                <div class="number warning">1,152</div>
+                <div class="label">96.6% of issues</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Critical Blockers</h3>
+                <div class="number error">4</div>
+                <div class="label">Build-blocking errors</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Estimated Fix Time</h3>
+                <div class="number info">10</div>
+                <div class="label">Hours total</div>
+            </div>
+        </div>
+
+        <div class="section" style="background: #f7fafc;">
+            <h2>📊 Issue Distribution</h2>
+
+            <div class="chart">
+                <h3 style="margin-bottom: 15px;">Issues by Location</h3>
+                <div class="bar-chart">
+                    <div style="flex: 0 0 calc(3.4% * 10); min-width: 60px;">
+                        <div class="bar" style="height: 100%; background: linear-gradient(180deg, #48bb78 0%, #38a169 100%);">
+                            <span class="bar-value">40</span>
+                        </div>
+                        <div class="bar-label">Production<br>(lib/)</div>
+                    </div>
+                    <div style="flex: 0 0 calc(96.6% * 10); min-width: 60px;">
+                        <div class="bar" style="height: 100%; background: linear-gradient(180deg, #ed8936 0%, #dd6b20 100%);">
+                            <span class="bar-value">1,152</span>
+                        </div>
+                        <div class="bar-label">Tests<br>(test/)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart">
+                <h3 style="margin-bottom: 15px;">Issues by Severity</h3>
+                <div class="bar-chart">
+                    <div style="flex: 71.3;">
+                        <div class="bar" style="height: 100%; background: linear-gradient(180deg, #e53e3e 0%, #c53030 100%);">
+                            <span class="bar-value">~850</span>
+                        </div>
+                        <div class="bar-label">Errors</div>
+                    </div>
+                    <div style="flex: 21.0;">
+                        <div class="bar" style="height: 29.5%; background: linear-gradient(180deg, #ed8936 0%, #dd6b20 100%);">
+                            <span class="bar-value">~250</span>
+                        </div>
+                        <div class="bar-label">Warnings</div>
+                    </div>
+                    <div style="flex: 7.7;">
+                        <div class="bar" style="height: 10.8%; background: linear-gradient(180deg, #4299e1 0%, #3182ce 100%);">
+                            <span class="bar-value">~92</span>
+                        </div>
+                        <div class="bar-label">Info</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Critical Action Items</h2>
+
+            <ul class="priority-list">
+                <li class="priority-item critical">
+                    <h4><span class="badge critical">CRITICAL</span> Fix BorderRadius Type Errors</h4>
+                    <div class="meta">⏱️ 5 minutes | 📁 4 occurrences | 🔧 Build-blocking</div>
+                    <div class="description">
+                        <strong>Files:</strong> guided_mode.dart (1), quiz_mode.dart (3)<br>
+                        <strong>Fix:</strong> Change <code>borderRadius: BorderRadius.circular(8)</code> to <code>borderRadius: 8.0</code><br>
+                        <strong>Impact:</strong> Production build will succeed
+                    </div>
+                </li>
+
+                <li class="priority-item high">
+                    <h4><span class="badge high">HIGH</span> Create WidgetTestHelpers Class</h4>
+                    <div class="meta">⏱️ 30 minutes | 📁 ~200 errors | 🧪 Test infrastructure</div>
+                    <div class="description">
+                        <strong>Location:</strong> test/helpers/widget_test_helpers.dart (new file)<br>
+                        <strong>Impact:</strong> Fixes ~200 "createTestApp undefined" errors<br>
+                        <strong>Status:</strong> Single file creation, high ROI
+                    </div>
+                </li>
+
+                <li class="priority-item high">
+                    <h4><span class="badge high">HIGH</span> Fix PowerLineLoader Test File</h4>
+                    <div class="meta">⏱️ 1-2 hours | 📁 400+ errors | 🧪 Widget testing</div>
+                    <div class="description">
+                        <strong>File:</strong> test/presentation/widgets/electrical_components/power_line_loader_test.dart<br>
+                        <strong>Issues:</strong> Color type mismatches, undefined parameters, accessibility issues<br>
+                        <strong>Impact:</strong> Single file, 34% of all errors
+                    </div>
+                </li>
+
+                <li class="priority-item medium">
+                    <h4><span class="badge medium">MEDIUM</span> Fix Transformer Trainer Tests</h4>
+                    <div class="meta">⏱️ 2-3 hours | 📁 300+ errors | 🧪 Component testing</div>
+                    <div class="description">
+                        <strong>Files:</strong> guided_mode_test.dart, quiz_mode_test.dart, competitive_mode_test.dart<br>
+                        <strong>Pattern:</strong> Same fixes as PowerLineLoader<br>
+                        <strong>Impact:</strong> 25% of all errors
+                    </div>
+                </li>
+
+                <li class="priority-item low">
+                    <h4><span class="badge low">LOW</span> Migrate Deprecated APIs</h4>
+                    <div class="meta">⏱️ 1 hour | 📁 6 occurrences | 🔄 Future compatibility</div>
+                    <div class="description">
+                        <strong>APIs:</strong> withOpacity → withValues, textScaleFactor → textScaler, window → View.of(context)<br>
+                        <strong>Impact:</strong> Removes deprecation warnings<br>
+                        <strong>Priority:</strong> Optional, non-blocking
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section" style="background: #f7fafc;">
+            <h2>📅 Recommended Timeline</h2>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Week 1: Production Critical</h4>
+                    <div class="time">⏱️ 30 minutes | 🎯 Goal: Production builds successfully</div>
+                    <div class="description">
+                        <strong>Tasks:</strong>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Fix 4 BorderRadius type errors</li>
+                            <li>Remove unnecessary import</li>
+                            <li>Verify: flutter build apk --debug succeeds</li>
+                        </ul>
+                        <strong>Success:</strong> Zero production errors, app runs on device
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <h4>Week 2: Test Infrastructure</h4>
+                    <div class="time">⏱️ 4-6 hours | 🎯 Goal: Tests compile and run</div>
+                    <div class="description">
+                        <strong>Tasks:</strong>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Create WidgetTestHelpers class</li>
+                            <li>Fix PowerLineLoader test file</li>
+                            <li>Fix Transformer Trainer test files</li>
+                            <li>Clean up test_runner.dart</li>
+                        </ul>
+                        <strong>Success:</strong> < 300 total issues, test suite runs
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <h4>Week 3: Code Quality</h4>
+                    <div class="time">⏱️ 2-3 hours | 🎯 Goal: Clean codebase</div>
+                    <div class="description">
+                        <strong>Tasks:</strong>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Migrate deprecated APIs</li>
+                            <li>Remove unused code</li>
+                            <li>Optional: Convert to super parameters</li>
+                        </ul>
+                        <strong>Success:</strong> < 50 total issues, zero warnings
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📈 Progress Tracking</h2>
+
+            <h3 style="margin-bottom: 15px;">Current State → Target State</h3>
+
+            <div style="margin-bottom: 30px;">
+                <h4 style="margin-bottom: 10px;">After Week 1 (30 minutes)</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0.4%;">0.4% Complete</div>
+                </div>
+                <p style="color: #718096; font-size: 0.9em;">Issues: 1,192 → 1,187 | Production: ✅ 0 errors</p>
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <h4 style="margin-bottom: 10px;">After Week 2 (6 hours total)</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 74.8%;">74.8% Complete</div>
+                </div>
+                <p style="color: #718096; font-size: 0.9em;">Issues: 1,192 → ~300 | Tests: ✅ Compile and run</p>
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <h4 style="margin-bottom: 10px;">After Week 3 (10 hours total)</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 95.8%;">95.8% Complete</div>
+                </div>
+                <p style="color: #718096; font-size: 0.9em;">Issues: 1,192 → <50 | Quality: ✅ Zero warnings</p>
+            </div>
+        </div>
+
+        <div class="section" style="background: #f7fafc;">
+            <h2>📋 Top 10 Problematic Files</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>File</th>
+                        <th>Issue Count</th>
+                        <th>Type</th>
+                        <th>Priority</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1</strong></td>
+                        <td>power_line_loader_test.dart</td>
+                        <td><span class="error">400+</span></td>
+                        <td>Test</td>
+                        <td><span class="badge high">HIGH</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2</strong></td>
+                        <td>guided_mode_test.dart</td>
+                        <td><span class="error">100+</span></td>
+                        <td>Test</td>
+                        <td><span class="badge medium">MEDIUM</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>3</strong></td>
+                        <td>quiz_mode_test.dart</td>
+                        <td><span class="error">100+</span></td>
+                        <td>Test</td>
+                        <td><span class="badge medium">MEDIUM</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>4</strong></td>
+                        <td>circuit_board_background_test.dart</td>
+                        <td><span class="error">100+</span></td>
+                        <td>Test</td>
+                        <td><span class="badge medium">MEDIUM</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>5</strong></td>
+                        <td>competitive_mode_test.dart</td>
+                        <td><span class="warning">80+</span></td>
+                        <td>Test</td>
+                        <td><span class="badge medium">MEDIUM</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>6</strong></td>
+                        <td>quiz_mode.dart</td>
+                        <td><span class="error">3</span></td>
+                        <td>Production</td>
+                        <td><span class="badge critical">CRITICAL</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>7</strong></td>
+                        <td>guided_mode.dart</td>
+                        <td><span class="error">1</span></td>
+                        <td>Production</td>
+                        <td><span class="badge critical">CRITICAL</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>8</strong></td>
+                        <td>circuit_board_background.dart</td>
+                        <td><span class="info">1</span></td>
+                        <td>Production</td>
+                        <td><span class="badge low">LOW</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>9</strong></td>
+                        <td>test_runner.dart</td>
+                        <td><span class="error">5</span></td>
+                        <td>Test</td>
+                        <td><span class="badge medium">MEDIUM</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>10</strong></td>
+                        <td>jj_electrical_notifications.dart</td>
+                        <td><span class="warning">5</span></td>
+                        <td>Production</td>
+                        <td><span class="badge low">LOW</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>🚀 Quick Start Actions</h2>
+
+            <p style="margin-bottom: 20px; line-height: 1.6;">
+                Ready to get started? Follow these actionable steps to begin fixing issues immediately:
+            </p>
+
+            <a href="#" class="action-button">📖 View QUICK_FIX_GUIDE.md</a>
+            <a href="#" class="action-button">📊 View Detailed Report</a>
+            <a href="#" class="action-button">📋 View Issue Categories</a>
+
+            <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">🎯 Recommended First Steps</h3>
+                <ol style="line-height: 2; margin-left: 20px;">
+                    <li><strong>Open:</strong> lib/electrical_components/transformer_trainer/modes/quiz_mode.dart</li>
+                    <li><strong>Find:</strong> Lines 313, 376, 482</li>
+                    <li><strong>Replace:</strong> <code>borderRadius: BorderRadius.circular(8)</code> → <code>borderRadius: 8.0</code></li>
+                    <li><strong>Repeat:</strong> Same fix in guided_mode.dart line 339</li>
+                    <li><strong>Verify:</strong> Run <code>flutter analyze lib/</code></li>
+                </ol>
+                <p style="margin-top: 15px; color: #48bb78; font-weight: bold;">✅ Expected result: Zero errors in production code</p>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>Flutter Analyze Issue Dashboard</strong></p>
+            <p style="opacity: 0.8; margin-top: 10px;">Generated: October 18, 2025 | Journeyman Jobs Project</p>
+            <p style="opacity: 0.8; margin-top: 5px;">Analysis Time: 65.7 seconds | Total Issues: 1,192</p>
+        </footer>
+    </div>
+</body>
+</html>

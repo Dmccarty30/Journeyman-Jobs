@@ -15,21 +15,25 @@ const tailboardServiceProvider = TailboardServiceProvider._();
 
 /// TailboardService provider
 
-final class TailboardServiceProvider extends $FunctionalProvider<
-    TailboardService,
-    TailboardService,
-    TailboardService> with $Provider<TailboardService> {
+final class TailboardServiceProvider
+    extends
+        $FunctionalProvider<
+          TailboardService,
+          TailboardService,
+          TailboardService
+        >
+    with $Provider<TailboardService> {
   /// TailboardService provider
   const TailboardServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'tailboardServiceProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'tailboardServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$tailboardServiceHash();
@@ -62,20 +66,25 @@ const tailboardStreamProvider = TailboardStreamFamily._();
 
 /// Stream of tailboard data for a specific crew
 
-final class TailboardStreamProvider extends $FunctionalProvider<
-        AsyncValue<Tailboard?>, Tailboard?, Stream<Tailboard?>>
+final class TailboardStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Tailboard?>,
+          Tailboard?,
+          Stream<Tailboard?>
+        >
     with $FutureModifier<Tailboard?>, $StreamProvider<Tailboard?> {
   /// Stream of tailboard data for a specific crew
-  const TailboardStreamProvider._(
-      {required TailboardStreamFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'tailboardStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const TailboardStreamProvider._({
+    required TailboardStreamFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'tailboardStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$tailboardStreamHash();
@@ -95,10 +104,7 @@ final class TailboardStreamProvider extends $FunctionalProvider<
   @override
   Stream<Tailboard?> create(Ref ref) {
     final argument = this.argument as String;
-    return tailboardStream(
-      ref,
-      argument,
-    );
+    return tailboardStream(ref, argument);
   }
 
   @override
@@ -119,19 +125,17 @@ String _$tailboardStreamHash() => r'695857c8ddee060db4eee0951e34af3a35c347c8';
 final class TailboardStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<Tailboard?>, String> {
   const TailboardStreamFamily._()
-      : super(
-          retry: null,
-          name: r'tailboardStreamProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'tailboardStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Stream of tailboard data for a specific crew
 
-  TailboardStreamProvider call(
-    String crewId,
-  ) =>
+  TailboardStreamProvider call(String crewId) =>
       TailboardStreamProvider._(argument: crewId, from: this);
 
   @override
@@ -149,15 +153,16 @@ final class TailboardProvider
     extends $FunctionalProvider<Tailboard?, Tailboard?, Tailboard?>
     with $Provider<Tailboard?> {
   /// Tailboard data for a specific crew
-  const TailboardProvider._(
-      {required TailboardFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'tailboardProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const TailboardProvider._({
+    required TailboardFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'tailboardProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$tailboardHash();
@@ -177,10 +182,7 @@ final class TailboardProvider
   @override
   Tailboard? create(Ref ref) {
     final argument = this.argument as String;
-    return tailboard(
-      ref,
-      argument,
-    );
+    return tailboard(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -209,19 +211,17 @@ String _$tailboardHash() => r'38db4fadb086a6affdfb17d72c4b97d82b0cb761';
 final class TailboardFamily extends $Family
     with $FunctionalFamilyOverride<Tailboard?, String> {
   const TailboardFamily._()
-      : super(
-          retry: null,
-          name: r'tailboardProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'tailboardProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Tailboard data for a specific crew
 
-  TailboardProvider call(
-    String crewId,
-  ) =>
+  TailboardProvider call(String crewId) =>
       TailboardProvider._(argument: crewId, from: this);
 
   @override
@@ -235,24 +235,27 @@ const suggestedJobsStreamProvider = SuggestedJobsStreamFamily._();
 
 /// Stream of suggested jobs for a specific crew
 
-final class SuggestedJobsStreamProvider extends $FunctionalProvider<
-        AsyncValue<List<SuggestedJob>>,
-        List<SuggestedJob>,
-        Stream<List<SuggestedJob>>>
+final class SuggestedJobsStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<SuggestedJob>>,
+          List<SuggestedJob>,
+          Stream<List<SuggestedJob>>
+        >
     with
         $FutureModifier<List<SuggestedJob>>,
         $StreamProvider<List<SuggestedJob>> {
   /// Stream of suggested jobs for a specific crew
-  const SuggestedJobsStreamProvider._(
-      {required SuggestedJobsStreamFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'suggestedJobsStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const SuggestedJobsStreamProvider._({
+    required SuggestedJobsStreamFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'suggestedJobsStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$suggestedJobsStreamHash();
@@ -267,16 +270,13 @@ final class SuggestedJobsStreamProvider extends $FunctionalProvider<
   @$internal
   @override
   $StreamProviderElement<List<SuggestedJob>> $createElement(
-          $ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
   Stream<List<SuggestedJob>> create(Ref ref) {
     final argument = this.argument as String;
-    return suggestedJobsStream(
-      ref,
-      argument,
-    );
+    return suggestedJobsStream(ref, argument);
   }
 
   @override
@@ -298,19 +298,17 @@ String _$suggestedJobsStreamHash() =>
 final class SuggestedJobsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<SuggestedJob>>, String> {
   const SuggestedJobsStreamFamily._()
-      : super(
-          retry: null,
-          name: r'suggestedJobsStreamProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'suggestedJobsStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Stream of suggested jobs for a specific crew
 
-  SuggestedJobsStreamProvider call(
-    String crewId,
-  ) =>
+  SuggestedJobsStreamProvider call(String crewId) =>
       SuggestedJobsStreamProvider._(argument: crewId, from: this);
 
   @override
@@ -324,20 +322,25 @@ const suggestedJobsProvider = SuggestedJobsFamily._();
 
 /// Suggested jobs for a specific crew
 
-final class SuggestedJobsProvider extends $FunctionalProvider<
-    List<SuggestedJob>,
-    List<SuggestedJob>,
-    List<SuggestedJob>> with $Provider<List<SuggestedJob>> {
+final class SuggestedJobsProvider
+    extends
+        $FunctionalProvider<
+          List<SuggestedJob>,
+          List<SuggestedJob>,
+          List<SuggestedJob>
+        >
+    with $Provider<List<SuggestedJob>> {
   /// Suggested jobs for a specific crew
-  const SuggestedJobsProvider._(
-      {required SuggestedJobsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'suggestedJobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const SuggestedJobsProvider._({
+    required SuggestedJobsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'suggestedJobsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$suggestedJobsHash();
@@ -352,16 +355,13 @@ final class SuggestedJobsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<SuggestedJob>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<SuggestedJob> create(Ref ref) {
     final argument = this.argument as String;
-    return suggestedJobs(
-      ref,
-      argument,
-    );
+    return suggestedJobs(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -390,19 +390,17 @@ String _$suggestedJobsHash() => r'53a7f5f0d20770a686980ef9c1e3c9716a8b486d';
 final class SuggestedJobsFamily extends $Family
     with $FunctionalFamilyOverride<List<SuggestedJob>, String> {
   const SuggestedJobsFamily._()
-      : super(
-          retry: null,
-          name: r'suggestedJobsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'suggestedJobsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Suggested jobs for a specific crew
 
-  SuggestedJobsProvider call(
-    String crewId,
-  ) =>
+  SuggestedJobsProvider call(String crewId) =>
       SuggestedJobsProvider._(argument: crewId, from: this);
 
   @override
@@ -416,24 +414,27 @@ const activityItemsStreamProvider = ActivityItemsStreamFamily._();
 
 /// Stream of activity items for a specific crew
 
-final class ActivityItemsStreamProvider extends $FunctionalProvider<
-        AsyncValue<List<ActivityItem>>,
-        List<ActivityItem>,
-        Stream<List<ActivityItem>>>
+final class ActivityItemsStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<ActivityItem>>,
+          List<ActivityItem>,
+          Stream<List<ActivityItem>>
+        >
     with
         $FutureModifier<List<ActivityItem>>,
         $StreamProvider<List<ActivityItem>> {
   /// Stream of activity items for a specific crew
-  const ActivityItemsStreamProvider._(
-      {required ActivityItemsStreamFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'activityItemsStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const ActivityItemsStreamProvider._({
+    required ActivityItemsStreamFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'activityItemsStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$activityItemsStreamHash();
@@ -448,16 +449,13 @@ final class ActivityItemsStreamProvider extends $FunctionalProvider<
   @$internal
   @override
   $StreamProviderElement<List<ActivityItem>> $createElement(
-          $ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
   Stream<List<ActivityItem>> create(Ref ref) {
     final argument = this.argument as String;
-    return activityItemsStream(
-      ref,
-      argument,
-    );
+    return activityItemsStream(ref, argument);
   }
 
   @override
@@ -479,19 +477,17 @@ String _$activityItemsStreamHash() =>
 final class ActivityItemsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<ActivityItem>>, String> {
   const ActivityItemsStreamFamily._()
-      : super(
-          retry: null,
-          name: r'activityItemsStreamProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'activityItemsStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Stream of activity items for a specific crew
 
-  ActivityItemsStreamProvider call(
-    String crewId,
-  ) =>
+  ActivityItemsStreamProvider call(String crewId) =>
       ActivityItemsStreamProvider._(argument: crewId, from: this);
 
   @override
@@ -505,20 +501,25 @@ const activityItemsProvider = ActivityItemsFamily._();
 
 /// Activity items for a specific crew
 
-final class ActivityItemsProvider extends $FunctionalProvider<
-    List<ActivityItem>,
-    List<ActivityItem>,
-    List<ActivityItem>> with $Provider<List<ActivityItem>> {
+final class ActivityItemsProvider
+    extends
+        $FunctionalProvider<
+          List<ActivityItem>,
+          List<ActivityItem>,
+          List<ActivityItem>
+        >
+    with $Provider<List<ActivityItem>> {
   /// Activity items for a specific crew
-  const ActivityItemsProvider._(
-      {required ActivityItemsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'activityItemsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const ActivityItemsProvider._({
+    required ActivityItemsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'activityItemsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$activityItemsHash();
@@ -533,16 +534,13 @@ final class ActivityItemsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<ActivityItem>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<ActivityItem> create(Ref ref) {
     final argument = this.argument as String;
-    return activityItems(
-      ref,
-      argument,
-    );
+    return activityItems(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -571,19 +569,17 @@ String _$activityItemsHash() => r'f556562361eb3d8a86ba3c2a25f075aab38f5b7d';
 final class ActivityItemsFamily extends $Family
     with $FunctionalFamilyOverride<List<ActivityItem>, String> {
   const ActivityItemsFamily._()
-      : super(
-          retry: null,
-          name: r'activityItemsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'activityItemsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Activity items for a specific crew
 
-  ActivityItemsProvider call(
-    String crewId,
-  ) =>
+  ActivityItemsProvider call(String crewId) =>
       ActivityItemsProvider._(argument: crewId, from: this);
 
   @override
@@ -597,24 +593,27 @@ const tailboardPostsStreamProvider = TailboardPostsStreamFamily._();
 
 /// Stream of tailboard posts for a specific crew
 
-final class TailboardPostsStreamProvider extends $FunctionalProvider<
-        AsyncValue<List<TailboardPost>>,
-        List<TailboardPost>,
-        Stream<List<TailboardPost>>>
+final class TailboardPostsStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<TailboardPost>>,
+          List<TailboardPost>,
+          Stream<List<TailboardPost>>
+        >
     with
         $FutureModifier<List<TailboardPost>>,
         $StreamProvider<List<TailboardPost>> {
   /// Stream of tailboard posts for a specific crew
-  const TailboardPostsStreamProvider._(
-      {required TailboardPostsStreamFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'tailboardPostsStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const TailboardPostsStreamProvider._({
+    required TailboardPostsStreamFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'tailboardPostsStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$tailboardPostsStreamHash();
@@ -629,16 +628,13 @@ final class TailboardPostsStreamProvider extends $FunctionalProvider<
   @$internal
   @override
   $StreamProviderElement<List<TailboardPost>> $createElement(
-          $ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
   Stream<List<TailboardPost>> create(Ref ref) {
     final argument = this.argument as String;
-    return tailboardPostsStream(
-      ref,
-      argument,
-    );
+    return tailboardPostsStream(ref, argument);
   }
 
   @override
@@ -660,19 +656,17 @@ String _$tailboardPostsStreamHash() =>
 final class TailboardPostsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<TailboardPost>>, String> {
   const TailboardPostsStreamFamily._()
-      : super(
-          retry: null,
-          name: r'tailboardPostsStreamProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'tailboardPostsStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Stream of tailboard posts for a specific crew
 
-  TailboardPostsStreamProvider call(
-    String crewId,
-  ) =>
+  TailboardPostsStreamProvider call(String crewId) =>
       TailboardPostsStreamProvider._(argument: crewId, from: this);
 
   @override
@@ -686,21 +680,25 @@ const tailboardPostsProvider = TailboardPostsFamily._();
 
 /// Tailboard posts for a specific crew
 
-final class TailboardPostsProvider extends $FunctionalProvider<
-    List<TailboardPost>,
-    List<TailboardPost>,
-    List<TailboardPost>> with $Provider<List<TailboardPost>> {
+final class TailboardPostsProvider
+    extends
+        $FunctionalProvider<
+          List<TailboardPost>,
+          List<TailboardPost>,
+          List<TailboardPost>
+        >
+    with $Provider<List<TailboardPost>> {
   /// Tailboard posts for a specific crew
-  const TailboardPostsProvider._(
-      {required TailboardPostsFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'tailboardPostsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const TailboardPostsProvider._({
+    required TailboardPostsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'tailboardPostsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$tailboardPostsHash();
@@ -715,16 +713,13 @@ final class TailboardPostsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<TailboardPost>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<TailboardPost> create(Ref ref) {
     final argument = this.argument as String;
-    return tailboardPosts(
-      ref,
-      argument,
-    );
+    return tailboardPosts(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -753,19 +748,17 @@ String _$tailboardPostsHash() => r'529a325af394dc05dcede426137632aedbf55f28';
 final class TailboardPostsFamily extends $Family
     with $FunctionalFamilyOverride<List<TailboardPost>, String> {
   const TailboardPostsFamily._()
-      : super(
-          retry: null,
-          name: r'tailboardPostsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'tailboardPostsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Tailboard posts for a specific crew
 
-  TailboardPostsProvider call(
-    String crewId,
-  ) =>
+  TailboardPostsProvider call(String crewId) =>
       TailboardPostsProvider._(argument: crewId, from: this);
 
   @override
@@ -780,18 +773,19 @@ const unreadActivityCountProvider = UnreadActivityCountFamily._();
 /// Provider to get unread activity items count for current user
 
 final class UnreadActivityCountProvider
-    extends $FunctionalProvider<int, int, int> with $Provider<int> {
+    extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
   /// Provider to get unread activity items count for current user
-  const UnreadActivityCountProvider._(
-      {required UnreadActivityCountFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'unreadActivityCountProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const UnreadActivityCountProvider._({
+    required UnreadActivityCountFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'unreadActivityCountProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$unreadActivityCountHash();
@@ -811,10 +805,7 @@ final class UnreadActivityCountProvider
   @override
   int create(Ref ref) {
     final argument = this.argument as String;
-    return unreadActivityCount(
-      ref,
-      argument,
-    );
+    return unreadActivityCount(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -844,19 +835,17 @@ String _$unreadActivityCountHash() =>
 final class UnreadActivityCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
   const UnreadActivityCountFamily._()
-      : super(
-          retry: null,
-          name: r'unreadActivityCountProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'unreadActivityCountProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get unread activity items count for current user
 
-  UnreadActivityCountProvider call(
-    String crewId,
-  ) =>
+  UnreadActivityCountProvider call(String crewId) =>
       UnreadActivityCountProvider._(argument: crewId, from: this);
 
   @override
@@ -870,20 +859,25 @@ const pinnedPostsProvider = PinnedPostsFamily._();
 
 /// Provider to get pinned posts for a specific crew
 
-final class PinnedPostsProvider extends $FunctionalProvider<
-    List<TailboardPost>,
-    List<TailboardPost>,
-    List<TailboardPost>> with $Provider<List<TailboardPost>> {
+final class PinnedPostsProvider
+    extends
+        $FunctionalProvider<
+          List<TailboardPost>,
+          List<TailboardPost>,
+          List<TailboardPost>
+        >
+    with $Provider<List<TailboardPost>> {
   /// Provider to get pinned posts for a specific crew
-  const PinnedPostsProvider._(
-      {required PinnedPostsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'pinnedPostsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const PinnedPostsProvider._({
+    required PinnedPostsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'pinnedPostsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$pinnedPostsHash();
@@ -898,16 +892,13 @@ final class PinnedPostsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<TailboardPost>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<TailboardPost> create(Ref ref) {
     final argument = this.argument as String;
-    return pinnedPosts(
-      ref,
-      argument,
-    );
+    return pinnedPosts(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -936,19 +927,17 @@ String _$pinnedPostsHash() => r'336120e1f716c5aa7e15579d9da98744da7959c5';
 final class PinnedPostsFamily extends $Family
     with $FunctionalFamilyOverride<List<TailboardPost>, String> {
   const PinnedPostsFamily._()
-      : super(
-          retry: null,
-          name: r'pinnedPostsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'pinnedPostsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get pinned posts for a specific crew
 
-  PinnedPostsProvider call(
-    String crewId,
-  ) =>
+  PinnedPostsProvider call(String crewId) =>
       PinnedPostsProvider._(argument: crewId, from: this);
 
   @override
@@ -962,20 +951,25 @@ const recentPostsProvider = RecentPostsFamily._();
 
 /// Provider to get recent posts (non-pinned) for a specific crew
 
-final class RecentPostsProvider extends $FunctionalProvider<
-    List<TailboardPost>,
-    List<TailboardPost>,
-    List<TailboardPost>> with $Provider<List<TailboardPost>> {
+final class RecentPostsProvider
+    extends
+        $FunctionalProvider<
+          List<TailboardPost>,
+          List<TailboardPost>,
+          List<TailboardPost>
+        >
+    with $Provider<List<TailboardPost>> {
   /// Provider to get recent posts (non-pinned) for a specific crew
-  const RecentPostsProvider._(
-      {required RecentPostsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'recentPostsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const RecentPostsProvider._({
+    required RecentPostsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'recentPostsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$recentPostsHash();
@@ -990,16 +984,13 @@ final class RecentPostsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<TailboardPost>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<TailboardPost> create(Ref ref) {
     final argument = this.argument as String;
-    return recentPosts(
-      ref,
-      argument,
-    );
+    return recentPosts(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1028,19 +1019,17 @@ String _$recentPostsHash() => r'c18014a0c38466a58c9485731b0bd79a8d371734';
 final class RecentPostsFamily extends $Family
     with $FunctionalFamilyOverride<List<TailboardPost>, String> {
   const RecentPostsFamily._()
-      : super(
-          retry: null,
-          name: r'recentPostsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'recentPostsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get recent posts (non-pinned) for a specific crew
 
-  RecentPostsProvider call(
-    String crewId,
-  ) =>
+  RecentPostsProvider call(String crewId) =>
       RecentPostsProvider._(argument: crewId, from: this);
 
   @override
@@ -1054,25 +1043,25 @@ const postsByAuthorProvider = PostsByAuthorFamily._();
 
 /// Provider to get posts by a specific author
 
-final class PostsByAuthorProvider extends $FunctionalProvider<
-    List<TailboardPost>,
-    List<TailboardPost>,
-    List<TailboardPost>> with $Provider<List<TailboardPost>> {
+final class PostsByAuthorProvider
+    extends
+        $FunctionalProvider<
+          List<TailboardPost>,
+          List<TailboardPost>,
+          List<TailboardPost>
+        >
+    with $Provider<List<TailboardPost>> {
   /// Provider to get posts by a specific author
-  const PostsByAuthorProvider._(
-      {required PostsByAuthorFamily super.from,
-      required (
-        String,
-        String,
-      )
-          super.argument})
-      : super(
-          retry: null,
-          name: r'postsByAuthorProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const PostsByAuthorProvider._({
+    required PostsByAuthorFamily super.from,
+    required (String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'postsByAuthorProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$postsByAuthorHash();
@@ -1087,20 +1076,13 @@ final class PostsByAuthorProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<TailboardPost>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<TailboardPost> create(Ref ref) {
-    final argument = this.argument as (
-      String,
-      String,
-    );
-    return postsByAuthor(
-      ref,
-      argument.$1,
-      argument.$2,
-    );
+    final argument = this.argument as (String, String);
+    return postsByAuthor(ref, argument.$1, argument.$2);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1127,32 +1109,20 @@ String _$postsByAuthorHash() => r'771cd1e79ae78e8b225cc3774e273552009c1b12';
 /// Provider to get posts by a specific author
 
 final class PostsByAuthorFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-            List<TailboardPost>,
-            (
-              String,
-              String,
-            )> {
+    with $FunctionalFamilyOverride<List<TailboardPost>, (String, String)> {
   const PostsByAuthorFamily._()
-      : super(
-          retry: null,
-          name: r'postsByAuthorProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'postsByAuthorProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get posts by a specific author
 
-  PostsByAuthorProvider call(
-    String crewId,
-    String authorId,
-  ) =>
-      PostsByAuthorProvider._(argument: (
-        crewId,
-        authorId,
-      ), from: this);
+  PostsByAuthorProvider call(String crewId, String authorId) =>
+      PostsByAuthorProvider._(argument: (crewId, authorId), from: this);
 
   @override
   String toString() => r'postsByAuthorProvider';
@@ -1165,20 +1135,25 @@ const highMatchJobsProvider = HighMatchJobsFamily._();
 
 /// Provider to get suggested jobs with high match score (>70)
 
-final class HighMatchJobsProvider extends $FunctionalProvider<
-    List<SuggestedJob>,
-    List<SuggestedJob>,
-    List<SuggestedJob>> with $Provider<List<SuggestedJob>> {
+final class HighMatchJobsProvider
+    extends
+        $FunctionalProvider<
+          List<SuggestedJob>,
+          List<SuggestedJob>,
+          List<SuggestedJob>
+        >
+    with $Provider<List<SuggestedJob>> {
   /// Provider to get suggested jobs with high match score (>70)
-  const HighMatchJobsProvider._(
-      {required HighMatchJobsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'highMatchJobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const HighMatchJobsProvider._({
+    required HighMatchJobsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'highMatchJobsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$highMatchJobsHash();
@@ -1193,16 +1168,13 @@ final class HighMatchJobsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<SuggestedJob>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<SuggestedJob> create(Ref ref) {
     final argument = this.argument as String;
-    return highMatchJobs(
-      ref,
-      argument,
-    );
+    return highMatchJobs(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1231,19 +1203,17 @@ String _$highMatchJobsHash() => r'788c29e47c6777d56f85bdb9e02bf5131067ed8a';
 final class HighMatchJobsFamily extends $Family
     with $FunctionalFamilyOverride<List<SuggestedJob>, String> {
   const HighMatchJobsFamily._()
-      : super(
-          retry: null,
-          name: r'highMatchJobsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'highMatchJobsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get suggested jobs with high match score (>70)
 
-  HighMatchJobsProvider call(
-    String crewId,
-  ) =>
+  HighMatchJobsProvider call(String crewId) =>
       HighMatchJobsProvider._(argument: crewId, from: this);
 
   @override
@@ -1257,18 +1227,25 @@ const unviewedJobsProvider = UnviewedJobsFamily._();
 
 /// Provider to get jobs not yet viewed by current user
 
-final class UnviewedJobsProvider extends $FunctionalProvider<List<SuggestedJob>,
-    List<SuggestedJob>, List<SuggestedJob>> with $Provider<List<SuggestedJob>> {
+final class UnviewedJobsProvider
+    extends
+        $FunctionalProvider<
+          List<SuggestedJob>,
+          List<SuggestedJob>,
+          List<SuggestedJob>
+        >
+    with $Provider<List<SuggestedJob>> {
   /// Provider to get jobs not yet viewed by current user
-  const UnviewedJobsProvider._(
-      {required UnviewedJobsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'unviewedJobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const UnviewedJobsProvider._({
+    required UnviewedJobsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'unviewedJobsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$unviewedJobsHash();
@@ -1283,16 +1260,13 @@ final class UnviewedJobsProvider extends $FunctionalProvider<List<SuggestedJob>,
   @$internal
   @override
   $ProviderElement<List<SuggestedJob>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<SuggestedJob> create(Ref ref) {
     final argument = this.argument as String;
-    return unviewedJobs(
-      ref,
-      argument,
-    );
+    return unviewedJobs(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1321,19 +1295,17 @@ String _$unviewedJobsHash() => r'7b3e8c51064f6257724e102bc05936e601346a4e';
 final class UnviewedJobsFamily extends $Family
     with $FunctionalFamilyOverride<List<SuggestedJob>, String> {
   const UnviewedJobsFamily._()
-      : super(
-          retry: null,
-          name: r'unviewedJobsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'unviewedJobsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get jobs not yet viewed by current user
 
-  UnviewedJobsProvider call(
-    String crewId,
-  ) =>
+  UnviewedJobsProvider call(String crewId) =>
       UnviewedJobsProvider._(argument: crewId, from: this);
 
   @override
@@ -1347,18 +1319,25 @@ const appliedJobsProvider = AppliedJobsFamily._();
 
 /// Provider to get jobs applied by crew members
 
-final class AppliedJobsProvider extends $FunctionalProvider<List<SuggestedJob>,
-    List<SuggestedJob>, List<SuggestedJob>> with $Provider<List<SuggestedJob>> {
+final class AppliedJobsProvider
+    extends
+        $FunctionalProvider<
+          List<SuggestedJob>,
+          List<SuggestedJob>,
+          List<SuggestedJob>
+        >
+    with $Provider<List<SuggestedJob>> {
   /// Provider to get jobs applied by crew members
-  const AppliedJobsProvider._(
-      {required AppliedJobsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'appliedJobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const AppliedJobsProvider._({
+    required AppliedJobsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'appliedJobsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$appliedJobsHash();
@@ -1373,16 +1352,13 @@ final class AppliedJobsProvider extends $FunctionalProvider<List<SuggestedJob>,
   @$internal
   @override
   $ProviderElement<List<SuggestedJob>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<SuggestedJob> create(Ref ref) {
     final argument = this.argument as String;
-    return appliedJobs(
-      ref,
-      argument,
-    );
+    return appliedJobs(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1411,19 +1387,17 @@ String _$appliedJobsHash() => r'eca87aec178f86e2122d5351e5bdc06a14180fd7';
 final class AppliedJobsFamily extends $Family
     with $FunctionalFamilyOverride<List<SuggestedJob>, String> {
   const AppliedJobsFamily._()
-      : super(
-          retry: null,
-          name: r'appliedJobsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'appliedJobsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get jobs applied by crew members
 
-  AppliedJobsProvider call(
-    String crewId,
-  ) =>
+  AppliedJobsProvider call(String crewId) =>
       AppliedJobsProvider._(argument: crewId, from: this);
 
   @override
@@ -1437,21 +1411,25 @@ const tailboardAnalyticsProvider = TailboardAnalyticsFamily._();
 
 /// Provider to get tailboard analytics
 
-final class TailboardAnalyticsProvider extends $FunctionalProvider<
-    TailboardAnalytics?,
-    TailboardAnalytics?,
-    TailboardAnalytics?> with $Provider<TailboardAnalytics?> {
+final class TailboardAnalyticsProvider
+    extends
+        $FunctionalProvider<
+          TailboardAnalytics?,
+          TailboardAnalytics?,
+          TailboardAnalytics?
+        >
+    with $Provider<TailboardAnalytics?> {
   /// Provider to get tailboard analytics
-  const TailboardAnalyticsProvider._(
-      {required TailboardAnalyticsFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'tailboardAnalyticsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const TailboardAnalyticsProvider._({
+    required TailboardAnalyticsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'tailboardAnalyticsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$tailboardAnalyticsHash();
@@ -1466,16 +1444,13 @@ final class TailboardAnalyticsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<TailboardAnalytics?> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   TailboardAnalytics? create(Ref ref) {
     final argument = this.argument as String;
-    return tailboardAnalytics(
-      ref,
-      argument,
-    );
+    return tailboardAnalytics(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1505,19 +1480,17 @@ String _$tailboardAnalyticsHash() =>
 final class TailboardAnalyticsFamily extends $Family
     with $FunctionalFamilyOverride<TailboardAnalytics?, String> {
   const TailboardAnalyticsFamily._()
-      : super(
-          retry: null,
-          name: r'tailboardAnalyticsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'tailboardAnalyticsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get tailboard analytics
 
-  TailboardAnalyticsProvider call(
-    String crewId,
-  ) =>
+  TailboardAnalyticsProvider call(String crewId) =>
       TailboardAnalyticsProvider._(argument: crewId, from: this);
 
   @override
@@ -1532,18 +1505,19 @@ const engagementRateProvider = EngagementRateFamily._();
 /// Provider to get tailboard engagement rate
 
 final class EngagementRateProvider
-    extends $FunctionalProvider<double, double, double> with $Provider<double> {
+    extends $FunctionalProvider<double, double, double>
+    with $Provider<double> {
   /// Provider to get tailboard engagement rate
-  const EngagementRateProvider._(
-      {required EngagementRateFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'engagementRateProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const EngagementRateProvider._({
+    required EngagementRateFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'engagementRateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$engagementRateHash();
@@ -1563,10 +1537,7 @@ final class EngagementRateProvider
   @override
   double create(Ref ref) {
     final argument = this.argument as String;
-    return engagementRate(
-      ref,
-      argument,
-    );
+    return engagementRate(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1595,19 +1566,17 @@ String _$engagementRateHash() => r'e25abfa2815ce7fcbc775eccc2c72cd8c4b11f26';
 final class EngagementRateFamily extends $Family
     with $FunctionalFamilyOverride<double, String> {
   const EngagementRateFamily._()
-      : super(
-          retry: null,
-          name: r'engagementRateProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'engagementRateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get tailboard engagement rate
 
-  EngagementRateProvider call(
-    String crewId,
-  ) =>
+  EngagementRateProvider call(String crewId) =>
       EngagementRateProvider._(argument: crewId, from: this);
 
   @override
@@ -1624,16 +1593,16 @@ const totalPostsCountProvider = TotalPostsCountFamily._();
 final class TotalPostsCountProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
   /// Provider to get total posts count
-  const TotalPostsCountProvider._(
-      {required TotalPostsCountFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'totalPostsCountProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const TotalPostsCountProvider._({
+    required TotalPostsCountFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'totalPostsCountProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$totalPostsCountHash();
@@ -1653,10 +1622,7 @@ final class TotalPostsCountProvider extends $FunctionalProvider<int, int, int>
   @override
   int create(Ref ref) {
     final argument = this.argument as String;
-    return totalPostsCount(
-      ref,
-      argument,
-    );
+    return totalPostsCount(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1685,19 +1651,17 @@ String _$totalPostsCountHash() => r'517d94ff86cc487db7560fd04565ccac56cae564';
 final class TotalPostsCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
   const TotalPostsCountFamily._()
-      : super(
-          retry: null,
-          name: r'totalPostsCountProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'totalPostsCountProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get total posts count
 
-  TotalPostsCountProvider call(
-    String crewId,
-  ) =>
+  TotalPostsCountProvider call(String crewId) =>
       TotalPostsCountProvider._(argument: crewId, from: this);
 
   @override
@@ -1712,18 +1676,19 @@ const totalActivitiesCountProvider = TotalActivitiesCountFamily._();
 /// Provider to get total activities count
 
 final class TotalActivitiesCountProvider
-    extends $FunctionalProvider<int, int, int> with $Provider<int> {
+    extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
   /// Provider to get total activities count
-  const TotalActivitiesCountProvider._(
-      {required TotalActivitiesCountFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'totalActivitiesCountProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const TotalActivitiesCountProvider._({
+    required TotalActivitiesCountFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'totalActivitiesCountProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$totalActivitiesCountHash();
@@ -1743,10 +1708,7 @@ final class TotalActivitiesCountProvider
   @override
   int create(Ref ref) {
     final argument = this.argument as String;
-    return totalActivitiesCount(
-      ref,
-      argument,
-    );
+    return totalActivitiesCount(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1776,19 +1738,17 @@ String _$totalActivitiesCountHash() =>
 final class TotalActivitiesCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
   const TotalActivitiesCountFamily._()
-      : super(
-          retry: null,
-          name: r'totalActivitiesCountProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'totalActivitiesCountProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get total activities count
 
-  TotalActivitiesCountProvider call(
-    String crewId,
-  ) =>
+  TotalActivitiesCountProvider call(String crewId) =>
       TotalActivitiesCountProvider._(argument: crewId, from: this);
 
   @override
@@ -1803,18 +1763,19 @@ const totalSuggestedJobsCountProvider = TotalSuggestedJobsCountFamily._();
 /// Provider to get total suggested jobs count
 
 final class TotalSuggestedJobsCountProvider
-    extends $FunctionalProvider<int, int, int> with $Provider<int> {
+    extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
   /// Provider to get total suggested jobs count
-  const TotalSuggestedJobsCountProvider._(
-      {required TotalSuggestedJobsCountFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'totalSuggestedJobsCountProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const TotalSuggestedJobsCountProvider._({
+    required TotalSuggestedJobsCountFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'totalSuggestedJobsCountProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$totalSuggestedJobsCountHash();
@@ -1834,10 +1795,7 @@ final class TotalSuggestedJobsCountProvider
   @override
   int create(Ref ref) {
     final argument = this.argument as String;
-    return totalSuggestedJobsCount(
-      ref,
-      argument,
-    );
+    return totalSuggestedJobsCount(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1868,19 +1826,17 @@ String _$totalSuggestedJobsCountHash() =>
 final class TotalSuggestedJobsCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
   const TotalSuggestedJobsCountFamily._()
-      : super(
-          retry: null,
-          name: r'totalSuggestedJobsCountProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'totalSuggestedJobsCountProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get total suggested jobs count
 
-  TotalSuggestedJobsCountProvider call(
-    String crewId,
-  ) =>
+  TotalSuggestedJobsCountProvider call(String crewId) =>
       TotalSuggestedJobsCountProvider._(argument: crewId, from: this);
 
   @override
@@ -1895,18 +1851,19 @@ const isTailboardLoadedProvider = IsTailboardLoadedFamily._();
 /// Provider to check if tailboard is loaded
 
 final class IsTailboardLoadedProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
   /// Provider to check if tailboard is loaded
-  const IsTailboardLoadedProvider._(
-      {required IsTailboardLoadedFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'isTailboardLoadedProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const IsTailboardLoadedProvider._({
+    required IsTailboardLoadedFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'isTailboardLoadedProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$isTailboardLoadedHash();
@@ -1926,10 +1883,7 @@ final class IsTailboardLoadedProvider
   @override
   bool create(Ref ref) {
     final argument = this.argument as String;
-    return isTailboardLoaded(
-      ref,
-      argument,
-    );
+    return isTailboardLoaded(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -1958,19 +1912,17 @@ String _$isTailboardLoadedHash() => r'8fa28e30ff5816ed31611c8aba883a0ac8867a17';
 final class IsTailboardLoadedFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
   const IsTailboardLoadedFamily._()
-      : super(
-          retry: null,
-          name: r'isTailboardLoadedProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'isTailboardLoadedProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to check if tailboard is loaded
 
-  IsTailboardLoadedProvider call(
-    String crewId,
-  ) =>
+  IsTailboardLoadedProvider call(String crewId) =>
       IsTailboardLoadedProvider._(argument: crewId, from: this);
 
   @override
@@ -1988,16 +1940,16 @@ final class TailboardLastUpdatedProvider
     extends $FunctionalProvider<DateTime?, DateTime?, DateTime?>
     with $Provider<DateTime?> {
   /// Provider to get last updated timestamp
-  const TailboardLastUpdatedProvider._(
-      {required TailboardLastUpdatedFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'tailboardLastUpdatedProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const TailboardLastUpdatedProvider._({
+    required TailboardLastUpdatedFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'tailboardLastUpdatedProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$tailboardLastUpdatedHash();
@@ -2017,10 +1969,7 @@ final class TailboardLastUpdatedProvider
   @override
   DateTime? create(Ref ref) {
     final argument = this.argument as String;
-    return tailboardLastUpdated(
-      ref,
-      argument,
-    );
+    return tailboardLastUpdated(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -2050,19 +1999,17 @@ String _$tailboardLastUpdatedHash() =>
 final class TailboardLastUpdatedFamily extends $Family
     with $FunctionalFamilyOverride<DateTime?, String> {
   const TailboardLastUpdatedFamily._()
-      : super(
-          retry: null,
-          name: r'tailboardLastUpdatedProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'tailboardLastUpdatedProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get last updated timestamp
 
-  TailboardLastUpdatedProvider call(
-    String crewId,
-  ) =>
+  TailboardLastUpdatedProvider call(String crewId) =>
       TailboardLastUpdatedProvider._(argument: crewId, from: this);
 
   @override
@@ -2080,15 +2027,16 @@ final class CrewCalendarProvider
     extends $FunctionalProvider<CrewCalendar?, CrewCalendar?, CrewCalendar?>
     with $Provider<CrewCalendar?> {
   /// Provider to get crew calendar
-  const CrewCalendarProvider._(
-      {required CrewCalendarFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'crewCalendarProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const CrewCalendarProvider._({
+    required CrewCalendarFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'crewCalendarProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$crewCalendarHash();
@@ -2108,10 +2056,7 @@ final class CrewCalendarProvider
   @override
   CrewCalendar? create(Ref ref) {
     final argument = this.argument as String;
-    return crewCalendar(
-      ref,
-      argument,
-    );
+    return crewCalendar(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -2140,19 +2085,17 @@ String _$crewCalendarHash() => r'9b3d4ffdf2d6a6ed1f2edcc07e980ef8f5cb7e8f';
 final class CrewCalendarFamily extends $Family
     with $FunctionalFamilyOverride<CrewCalendar?, String> {
   const CrewCalendarFamily._()
-      : super(
-          retry: null,
-          name: r'crewCalendarProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'crewCalendarProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get crew calendar
 
-  CrewCalendarProvider call(
-    String crewId,
-  ) =>
+  CrewCalendarProvider call(String crewId) =>
       CrewCalendarProvider._(argument: crewId, from: this);
 
   @override
@@ -2170,16 +2113,16 @@ final class RecentMessagesProvider
     extends $FunctionalProvider<List<String>, List<String>, List<String>>
     with $Provider<List<String>> {
   /// Provider to get recent messages
-  const RecentMessagesProvider._(
-      {required RecentMessagesFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'recentMessagesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const RecentMessagesProvider._({
+    required RecentMessagesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'recentMessagesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$recentMessagesHash();
@@ -2199,10 +2142,7 @@ final class RecentMessagesProvider
   @override
   List<String> create(Ref ref) {
     final argument = this.argument as String;
-    return recentMessages(
-      ref,
-      argument,
-    );
+    return recentMessages(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -2231,19 +2171,17 @@ String _$recentMessagesHash() => r'd62a6143bf8668517e0923ee013ecea78df28fa2';
 final class RecentMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<String>, String> {
   const RecentMessagesFamily._()
-      : super(
-          retry: null,
-          name: r'recentMessagesProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'recentMessagesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get recent messages
 
-  RecentMessagesProvider call(
-    String crewId,
-  ) =>
+  RecentMessagesProvider call(String crewId) =>
       RecentMessagesProvider._(argument: crewId, from: this);
 
   @override
@@ -2257,25 +2195,25 @@ const activitiesByTypeProvider = ActivitiesByTypeFamily._();
 
 /// Provider to get activity by type
 
-final class ActivitiesByTypeProvider extends $FunctionalProvider<
-    List<ActivityItem>,
-    List<ActivityItem>,
-    List<ActivityItem>> with $Provider<List<ActivityItem>> {
+final class ActivitiesByTypeProvider
+    extends
+        $FunctionalProvider<
+          List<ActivityItem>,
+          List<ActivityItem>,
+          List<ActivityItem>
+        >
+    with $Provider<List<ActivityItem>> {
   /// Provider to get activity by type
-  const ActivitiesByTypeProvider._(
-      {required ActivitiesByTypeFamily super.from,
-      required (
-        String,
-        ActivityType,
-      )
-          super.argument})
-      : super(
-          retry: null,
-          name: r'activitiesByTypeProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const ActivitiesByTypeProvider._({
+    required ActivitiesByTypeFamily super.from,
+    required (String, ActivityType) super.argument,
+  }) : super(
+         retry: null,
+         name: r'activitiesByTypeProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$activitiesByTypeHash();
@@ -2290,20 +2228,13 @@ final class ActivitiesByTypeProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<ActivityItem>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<ActivityItem> create(Ref ref) {
-    final argument = this.argument as (
-      String,
-      ActivityType,
-    );
-    return activitiesByType(
-      ref,
-      argument.$1,
-      argument.$2,
-    );
+    final argument = this.argument as (String, ActivityType);
+    return activitiesByType(ref, argument.$1, argument.$2);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -2330,32 +2261,20 @@ String _$activitiesByTypeHash() => r'cbd0752e4336650f5453e86d9befc0ec3992b696';
 /// Provider to get activity by type
 
 final class ActivitiesByTypeFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-            List<ActivityItem>,
-            (
-              String,
-              ActivityType,
-            )> {
+    with $FunctionalFamilyOverride<List<ActivityItem>, (String, ActivityType)> {
   const ActivitiesByTypeFamily._()
-      : super(
-          retry: null,
-          name: r'activitiesByTypeProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'activitiesByTypeProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get activity by type
 
-  ActivitiesByTypeProvider call(
-    String crewId,
-    ActivityType type,
-  ) =>
-      ActivitiesByTypeProvider._(argument: (
-        crewId,
-        type,
-      ), from: this);
+  ActivitiesByTypeProvider call(String crewId, ActivityType type) =>
+      ActivitiesByTypeProvider._(argument: (crewId, type), from: this);
 
   @override
   String toString() => r'activitiesByTypeProvider';
@@ -2368,21 +2287,25 @@ const recentActivitiesProvider = RecentActivitiesFamily._();
 
 /// Provider to get recent activities (last 7 days)
 
-final class RecentActivitiesProvider extends $FunctionalProvider<
-    List<ActivityItem>,
-    List<ActivityItem>,
-    List<ActivityItem>> with $Provider<List<ActivityItem>> {
+final class RecentActivitiesProvider
+    extends
+        $FunctionalProvider<
+          List<ActivityItem>,
+          List<ActivityItem>,
+          List<ActivityItem>
+        >
+    with $Provider<List<ActivityItem>> {
   /// Provider to get recent activities (last 7 days)
-  const RecentActivitiesProvider._(
-      {required RecentActivitiesFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'recentActivitiesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const RecentActivitiesProvider._({
+    required RecentActivitiesFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'recentActivitiesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$recentActivitiesHash();
@@ -2397,16 +2320,13 @@ final class RecentActivitiesProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<ActivityItem>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<ActivityItem> create(Ref ref) {
     final argument = this.argument as String;
-    return recentActivities(
-      ref,
-      argument,
-    );
+    return recentActivities(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -2435,19 +2355,17 @@ String _$recentActivitiesHash() => r'c82c70514c85fd9e205c2b408559a4eabf901cc4';
 final class RecentActivitiesFamily extends $Family
     with $FunctionalFamilyOverride<List<ActivityItem>, String> {
   const RecentActivitiesFamily._()
-      : super(
-          retry: null,
-          name: r'recentActivitiesProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'recentActivitiesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get recent activities (last 7 days)
 
-  RecentActivitiesProvider call(
-    String crewId,
-  ) =>
+  RecentActivitiesProvider call(String crewId) =>
       RecentActivitiesProvider._(argument: crewId, from: this);
 
   @override
@@ -2461,25 +2379,25 @@ const activitiesByActorProvider = ActivitiesByActorFamily._();
 
 /// Provider to get activities by actor
 
-final class ActivitiesByActorProvider extends $FunctionalProvider<
-    List<ActivityItem>,
-    List<ActivityItem>,
-    List<ActivityItem>> with $Provider<List<ActivityItem>> {
+final class ActivitiesByActorProvider
+    extends
+        $FunctionalProvider<
+          List<ActivityItem>,
+          List<ActivityItem>,
+          List<ActivityItem>
+        >
+    with $Provider<List<ActivityItem>> {
   /// Provider to get activities by actor
-  const ActivitiesByActorProvider._(
-      {required ActivitiesByActorFamily super.from,
-      required (
-        String,
-        String,
-      )
-          super.argument})
-      : super(
-          retry: null,
-          name: r'activitiesByActorProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const ActivitiesByActorProvider._({
+    required ActivitiesByActorFamily super.from,
+    required (String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'activitiesByActorProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$activitiesByActorHash();
@@ -2494,20 +2412,13 @@ final class ActivitiesByActorProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<ActivityItem>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<ActivityItem> create(Ref ref) {
-    final argument = this.argument as (
-      String,
-      String,
-    );
-    return activitiesByActor(
-      ref,
-      argument.$1,
-      argument.$2,
-    );
+    final argument = this.argument as (String, String);
+    return activitiesByActor(ref, argument.$1, argument.$2);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -2534,32 +2445,20 @@ String _$activitiesByActorHash() => r'ab85fe28f6de78ca59f115ebcdcca1e28ecf5de7';
 /// Provider to get activities by actor
 
 final class ActivitiesByActorFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-            List<ActivityItem>,
-            (
-              String,
-              String,
-            )> {
+    with $FunctionalFamilyOverride<List<ActivityItem>, (String, String)> {
   const ActivitiesByActorFamily._()
-      : super(
-          retry: null,
-          name: r'activitiesByActorProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'activitiesByActorProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get activities by actor
 
-  ActivitiesByActorProvider call(
-    String crewId,
-    String actorId,
-  ) =>
-      ActivitiesByActorProvider._(argument: (
-        crewId,
-        actorId,
-      ), from: this);
+  ActivitiesByActorProvider call(String crewId, String actorId) =>
+      ActivitiesByActorProvider._(argument: (crewId, actorId), from: this);
 
   @override
   String toString() => r'activitiesByActorProvider';

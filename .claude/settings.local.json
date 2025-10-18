@@ -18,7 +18,20 @@
       "Bash(flutter test:*)",
       "Bash(firebase --version)",
       "Bash(firebase firestore:rules:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(for dir in .claude .clinerules .roo .gemini .specify)",
+      "Bash(do echo -n \"$dir: \")",
+      "Bash(done)",
+      "Bash(do echo \"$dir:\")",
+      "WebFetch(domain:)",
+      "Bash(git -C /mnt/c/Users/david/Desktop/Journeyman-Jobs status --porcelain)",
+      "Bash(git -C /mnt/c/Users/david/Desktop/Journeyman-Jobs diff --stat)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub get:*)",
+      "Bash(dart analyze:*)",
+      "WebFetch(domain:dart.dev)",
+      "WebFetch(domain:api.flutter.dev)",
+      "Bash(flutter pub run build_runner build:*)"
     ],
     "deny": []
   },

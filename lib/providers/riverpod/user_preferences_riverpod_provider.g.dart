@@ -18,15 +18,15 @@ final class UserPreferencesNotifierProvider
     extends $NotifierProvider<UserPreferencesNotifier, UserPreferencesState> {
   /// User preferences notifier for managing user job preferences
   const UserPreferencesNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'userPreferencesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'userPreferencesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$userPreferencesNotifierHash();
@@ -57,50 +57,57 @@ abstract class _$UserPreferencesNotifier
   void runBuild() {
     final created = build();
     final ref = this.ref as $Ref<UserPreferencesState, UserPreferencesState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<UserPreferencesState, UserPreferencesState>,
-        UserPreferencesState,
-        Object?,
-        Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<UserPreferencesState, UserPreferencesState>,
+              UserPreferencesState,
+              Object?,
+              Object?
+            >;
     element.handleValue(ref, created);
   }
 }
 
-/// Convenience provider for user preferences
-@ProviderFor(userPreferences)
-const userJobPreferencesProvider = UserPreferencesProvider._();
+/// Convenience provider for current user job preferences
 
-/// Convenience provider for user preferences
-final class UserPreferencesProvider extends $FunctionalProvider<
-    UserJobPreferences,
-    UserJobPreferences,
-    UserJobPreferences> with $Provider<UserJobPreferences> {
-  /// Convenience provider for user preferences
-  const UserPreferencesProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'userPreferencesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+@ProviderFor(currentUserJobPreferences)
+const currentUserJobPreferencesProvider = CurrentUserJobPreferencesProvider._();
 
-  ProviderListenable? get notifier => null;
+/// Convenience provider for current user job preferences
+
+final class CurrentUserJobPreferencesProvider
+    extends
+        $FunctionalProvider<
+          UserJobPreferences,
+          UserJobPreferences,
+          UserJobPreferences
+        >
+    with $Provider<UserJobPreferences> {
+  /// Convenience provider for current user job preferences
+  const CurrentUserJobPreferencesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentUserJobPreferencesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
-  String debugGetCreateSourceHash() => _$userPreferencesHash();
+  String debugGetCreateSourceHash() => _$currentUserJobPreferencesHash();
 
   @$internal
   @override
   $ProviderElement<UserJobPreferences> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   UserJobPreferences create(Ref ref) {
-    return userPreferences(ref);
+    return currentUserJobPreferences(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -112,7 +119,8 @@ final class UserPreferencesProvider extends $FunctionalProvider<
   }
 }
 
-String _$userPreferencesHash() => r'562357716dd92fcedf9ee26c94c111f7a6866c24';
+String _$currentUserJobPreferencesHash() =>
+    r'3abbb9040ff584286830387a85e0a8c2249dbf30';
 
 /// Convenience provider for checking if user has preferences
 
@@ -122,18 +130,19 @@ const hasUserPreferencesProvider = HasUserPreferencesProvider._();
 /// Convenience provider for checking if user has preferences
 
 final class HasUserPreferencesProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
   /// Convenience provider for checking if user has preferences
   const HasUserPreferencesProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'hasUserPreferencesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'hasUserPreferencesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$hasUserPreferencesHash();
@@ -173,15 +182,15 @@ final class UserPreferencesLastUpdatedProvider
     with $Provider<DateTime?> {
   /// Convenience provider for last updated timestamp
   const UserPreferencesLastUpdatedProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'userPreferencesLastUpdatedProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'userPreferencesLastUpdatedProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$userPreferencesLastUpdatedHash();

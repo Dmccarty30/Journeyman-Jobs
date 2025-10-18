@@ -15,20 +15,21 @@ const crewFilteredJobsStreamProvider = CrewFilteredJobsStreamFamily._();
 
 /// Crew filtered jobs stream provider - uses JobMatchingService to get jobs filtered by crew preferences
 
-final class CrewFilteredJobsStreamProvider extends $FunctionalProvider<
-        AsyncValue<List<Job>>, List<Job>, Stream<List<Job>>>
+final class CrewFilteredJobsStreamProvider
+    extends
+        $FunctionalProvider<AsyncValue<List<Job>>, List<Job>, Stream<List<Job>>>
     with $FutureModifier<List<Job>>, $StreamProvider<List<Job>> {
   /// Crew filtered jobs stream provider - uses JobMatchingService to get jobs filtered by crew preferences
-  const CrewFilteredJobsStreamProvider._(
-      {required CrewFilteredJobsStreamFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'crewFilteredJobsStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const CrewFilteredJobsStreamProvider._({
+    required CrewFilteredJobsStreamFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'crewFilteredJobsStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$crewFilteredJobsStreamHash();
@@ -48,10 +49,7 @@ final class CrewFilteredJobsStreamProvider extends $FunctionalProvider<
   @override
   Stream<List<Job>> create(Ref ref) {
     final argument = this.argument as String;
-    return crewFilteredJobsStream(
-      ref,
-      argument,
-    );
+    return crewFilteredJobsStream(ref, argument);
   }
 
   @override
@@ -74,19 +72,17 @@ String _$crewFilteredJobsStreamHash() =>
 final class CrewFilteredJobsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Job>>, String> {
   const CrewFilteredJobsStreamFamily._()
-      : super(
-          retry: null,
-          name: r'crewFilteredJobsStreamProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'crewFilteredJobsStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Crew filtered jobs stream provider - uses JobMatchingService to get jobs filtered by crew preferences
 
-  CrewFilteredJobsStreamProvider call(
-    String crewId,
-  ) =>
+  CrewFilteredJobsStreamProvider call(String crewId) =>
       CrewFilteredJobsStreamProvider._(argument: crewId, from: this);
 
   @override
@@ -104,16 +100,16 @@ final class CrewFilteredJobsProvider
     extends $FunctionalProvider<List<Job>, List<Job>, List<Job>>
     with $Provider<List<Job>> {
   /// Crew filtered jobs - extracts data from AsyncValue
-  const CrewFilteredJobsProvider._(
-      {required CrewFilteredJobsFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'crewFilteredJobsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const CrewFilteredJobsProvider._({
+    required CrewFilteredJobsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'crewFilteredJobsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$crewFilteredJobsHash();
@@ -133,10 +129,7 @@ final class CrewFilteredJobsProvider
   @override
   List<Job> create(Ref ref) {
     final argument = this.argument as String;
-    return crewFilteredJobs(
-      ref,
-      argument,
-    );
+    return crewFilteredJobs(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -165,19 +158,17 @@ String _$crewFilteredJobsHash() => r'2febd448c247fe67444a37e57a3a1ed090cf3b92';
 final class CrewFilteredJobsFamily extends $Family
     with $FunctionalFamilyOverride<List<Job>, String> {
   const CrewFilteredJobsFamily._()
-      : super(
-          retry: null,
-          name: r'crewFilteredJobsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'crewFilteredJobsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Crew filtered jobs - extracts data from AsyncValue
 
-  CrewFilteredJobsProvider call(
-    String crewId,
-  ) =>
+  CrewFilteredJobsProvider call(String crewId) =>
       CrewFilteredJobsProvider._(argument: crewId, from: this);
 
   @override
@@ -192,18 +183,19 @@ const isCrewJobsLoadingProvider = IsCrewJobsLoadingFamily._();
 /// Provider to check if crew filtered jobs are loading
 
 final class IsCrewJobsLoadingProvider
-    extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
   /// Provider to check if crew filtered jobs are loading
-  const IsCrewJobsLoadingProvider._(
-      {required IsCrewJobsLoadingFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'isCrewJobsLoadingProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const IsCrewJobsLoadingProvider._({
+    required IsCrewJobsLoadingFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'isCrewJobsLoadingProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$isCrewJobsLoadingHash();
@@ -223,10 +215,7 @@ final class IsCrewJobsLoadingProvider
   @override
   bool create(Ref ref) {
     final argument = this.argument as String;
-    return isCrewJobsLoading(
-      ref,
-      argument,
-    );
+    return isCrewJobsLoading(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -255,19 +244,17 @@ String _$isCrewJobsLoadingHash() => r'72047c801e0524108e71ffc8765d481de9c2dd1d';
 final class IsCrewJobsLoadingFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
   const IsCrewJobsLoadingFamily._()
-      : super(
-          retry: null,
-          name: r'isCrewJobsLoadingProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'isCrewJobsLoadingProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to check if crew filtered jobs are loading
 
-  IsCrewJobsLoadingProvider call(
-    String crewId,
-  ) =>
+  IsCrewJobsLoadingProvider call(String crewId) =>
       IsCrewJobsLoadingProvider._(argument: crewId, from: this);
 
   @override
@@ -285,15 +272,16 @@ final class CrewJobsErrorProvider
     extends $FunctionalProvider<String?, String?, String?>
     with $Provider<String?> {
   /// Provider for crew filtered jobs error
-  const CrewJobsErrorProvider._(
-      {required CrewJobsErrorFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'crewJobsErrorProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const CrewJobsErrorProvider._({
+    required CrewJobsErrorFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'crewJobsErrorProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$crewJobsErrorHash();
@@ -313,10 +301,7 @@ final class CrewJobsErrorProvider
   @override
   String? create(Ref ref) {
     final argument = this.argument as String;
-    return crewJobsError(
-      ref,
-      argument,
-    );
+    return crewJobsError(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -345,19 +330,17 @@ String _$crewJobsErrorHash() => r'2ead0efac25794aa79d159f4978293c938905177';
 final class CrewJobsErrorFamily extends $Family
     with $FunctionalFamilyOverride<String?, String> {
   const CrewJobsErrorFamily._()
-      : super(
-          retry: null,
-          name: r'crewJobsErrorProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'crewJobsErrorProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider for crew filtered jobs error
 
-  CrewJobsErrorProvider call(
-    String crewId,
-  ) =>
+  CrewJobsErrorProvider call(String crewId) =>
       CrewJobsErrorProvider._(argument: crewId, from: this);
 
   @override

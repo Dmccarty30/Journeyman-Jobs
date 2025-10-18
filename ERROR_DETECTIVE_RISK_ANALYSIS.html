@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Detective Risk Analysis - Journeyman Jobs Refactoring</title>
+    <style>
+        :root {
+            --critical: #dc2626;
+            --high: #ea580c;
+            --medium: #eab308;
+            --low: #84cc16;
+            --navy: #1A202C;
+            --copper: #B45309;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--copper) 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 2px solid var(--copper);
+            box-shadow: 0 0 20px rgba(180, 83, 9, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(180, 83, 9, 0.2);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--copper);
+        }
+
+        .risk-section {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--border);
+        }
+
+        .risk-section.critical { border-left-color: var(--critical); }
+        .risk-section.high { border-left-color: var(--high); }
+        .risk-section.medium { border-left-color: var(--medium); }
+        .risk-section.low { border-left-color: var(--low); }
+
+        .risk-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .risk-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .risk-badge.critical { background: var(--critical); color: #fff; }
+        .risk-badge.high { background: var(--high); color: #fff; }
+        .risk-badge.medium { background: var(--medium); color: var(--navy); }
+        .risk-badge.low { background: var(--low); color: var(--navy); }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--copper);
+            margin: 1.5rem 0 1rem;
+        }
+
+        .code-block {
+            background: #0a0e1a;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .file-path {
+            color: #60a5fa;
+            font-family: monospace;
+            background: rgba(96, 165, 250, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .evidence-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .evidence-list li {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: rgba(180, 83, 9, 0.1);
+            border-left: 3px solid var(--copper);
+            border-radius: 4px;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-card {
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            padding: 1rem;
+            border-radius: 6px;
+        }
+
+        .mitigation-steps {
+            counter-reset: step;
+            list-style: none;
+        }
+
+        .mitigation-steps li {
+            counter-increment: step;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(132, 204, 22, 0.1);
+            border-left: 3px solid var(--low);
+            border-radius: 4px;
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .mitigation-steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--low);
+            color: var(--navy);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .atomic-commit-group {
+            background: rgba(234, 88, 12, 0.1);
+            border: 2px dashed var(--high);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 6px;
+        }
+
+        .monitoring-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: rgba(96, 165, 250, 0.1);
+            border-radius: 4px;
+        }
+
+        .metric-name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .metric-threshold {
+            color: var(--copper);
+            font-family: monospace;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: rgba(180, 83, 9, 0.2);
+            color: var(--copper);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(180, 83, 9, 0.05);
+        }
+
+        .alert-box {
+            background: rgba(220, 38, 38, 0.15);
+            border: 2px solid var(--critical);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .alert-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .rollback-strategy {
+            background: var(--bg-card);
+            border: 2px solid var(--copper);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(180, 83, 9, 0.2);
+            color: var(--copper);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ ERROR DETECTIVE RISK ANALYSIS</h1>
+            <div class="subtitle">Journeyman Jobs - Refactoring Risk Assessment & Mitigation Plan</div>
+            <div class="subtitle">Generated: 2025-10-17 | Agent: Error Detective | Status: ACTIVE INVESTIGATION</div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Overall Risk Score</div>
+                <div class="stat-value">7.8/10</div>
+                <div class="stat-label" style="margin-top: 0.5rem; color: var(--critical);">HIGH RISK</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Critical Issues</div>
+                <div class="stat-value">5</div>
+                <div class="stat-label" style="margin-top: 0.5rem;">Immediate Action Required</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">High Risk Files</div>
+                <div class="stat-value">23</div>
+                <div class="stat-label" style="margin-top: 0.5rem;">Atomic Commit Groups: 4</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Predicted Test Failures</div>
+                <div class="stat-value">18</div>
+                <div class="stat-label" style="margin-top: 0.5rem;">Require Test Updates</div>
+            </div>
+        </div>
+
+        <!-- CRITICAL RISKS -->
+        <section class="risk-section critical">
+            <div class="risk-header">
+                <span class="risk-badge critical">🚨 CRITICAL</span>
+                <h2>RISK-001: Dual Job Model Imports & Type Conflicts</h2>
+            </div>
+
+            <div class="alert-box">
+                <span class="alert-icon">⚠️</span>
+                <strong>BREAKING CHANGE ALERT:</strong> Multiple files import both <code>JobModel</code> and <code>JobsRecord</code> simultaneously, creating runtime type conflicts and serialization failures.
+            </div>
+
+            <h3>📍 Affected Files (Evidence-Based)</h3>
+            <ul class="evidence-list">
+                <li>
+                    <span class="file-path">/lib/providers/riverpod/jobs_riverpod_provider.dart</span>
+                    <div>Lines 1-10: Mixed imports of <code>job_model.dart</code> and <code>jobs_record.dart</code></div>
+                    <div class="tag">Type Casting</div>
+                    <div class="tag">Serialization</div>
+                </li>
+                <li>
+                    <span class="file-path">/lib/features/crews/providers/crew_jobs_riverpod_provider.dart</span>
+                    <div>Lines 5-12: Dual model references in crew job filtering</div>
+                    <div class="tag">Firestore Queries</div>
+                </li>
+                <li>
+                    <span class="file-path">/lib/data/repositories/job_repository_impl.dart</span>
+                    <div>Lines 15-25: Repository returns <code>JobsRecord</code> but consumers expect <code>JobModel</code></div>
+                    <div class="tag">Interface Mismatch</div>
+                </li>
+                <li>
+                    <span class="file-path">/lib/services/firestore_service.dart</span>
+                    <div>Lines 200-220: Firestore queries use <code>JobsRecord.fromFirestore()</code> but return as <code>Job</code></div>
+                    <div class="tag">Serialization Failure</div>
+                </li>
+            </ul>
+
+            <h3>💥 Impact Analysis</h3>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <strong>Runtime Failures</strong>
+                    <p>Type casting errors when widgets expect <code>JobModel</code> but receive <code>JobsRecord</code></p>
+                </div>
+                <div class="impact-card">
+                    <strong>Firestore Deserialization</strong>
+                    <p>Dual <code>fromFirestore()</code> implementations cause schema conflicts</p>
+                </div>
+                <div class="impact-card">
+                    <strong>State Management</strong>
+                    <p>Provider state corruption when models change type mid-stream</p>
+                </div>
+                <div class="impact-card">
+                    <strong>Test Breakage</strong>
+                    <p>Mock data assumes single model, tests fail on type assertions</p>
+                </div>
+            </div>
+
+            <h3>🔧 Mitigation Strategy</h3>
+            <ol class="mitigation-steps">
+                <li>
+                    <strong>Pre-Refactor Audit:</strong> Run codebase-wide search for all <code>JobsRecord</code> imports
+                    <div class="code-block">
+grep -r "import.*jobs_record" lib/
+grep -r "JobsRecord\s" lib/
+                    </div>
+                </li>
+                <li>
+                    <strong>Create Migration Adapter:</strong> Temporary <code>JobModelAdapter</code> to bridge legacy/new models during transition
+                    <div class="code-block">
+// lib/models/adapters/job_model_adapter.dart
+class JobModelAdapter {
+  static JobModel fromJobsRecord(JobsRecord record) {
+    return JobModel(
+      id: record.reference.id,
+      title: record.title,
+      // ... field mapping
+    );
+  }
+}
+                    </div>
+                </li>
+                <li>
+                    <strong>Atomic Commit Group #1:</strong> Update all imports simultaneously
+                    <div class="atomic-commit-group">
+                        <strong>Files to update together:</strong>
+                        <ul>
+                            <li>jobs_riverpod_provider.dart</li>
+                            <li>crew_jobs_riverpod_provider.dart</li>
+                            <li>job_repository_impl.dart</li>
+                            <li>firestore_service.dart</li>
+                        </ul>
+                        <div style="margin-top: 1rem; color: var(--critical);">
+                            ⚠️ DO NOT COMMIT THESE FILES SEPARATELY
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <strong>Update Tests First:</strong> Modify test mocks to use consolidated <code>JobModel</code>
+                </li>
+                <li>
+                    <strong>Deploy with Feature Flag:</strong> Use <code>useConsolidatedJobModel</code> flag for gradual rollout
+                </li>
+            </ol>
+
+            <h3>📊 Rollback Strategy</h3>
+            <div class="rollback-strategy">
+                <strong>If Migration Fails:</strong>
+                <ol>
+                    <li>Revert atomic commit group #1</li>
+                    <li>Re-enable <code>JobsRecord</code> imports with <code>@deprecated</code> annotation</li>
+                    <li>Deploy adapter pattern as permanent solution</li>
+                    <li>Schedule full migration for next sprint</li>
+                </ol>
+                <div style="margin-top: 1rem; font-family: monospace;">
+                    Estimated Rollback Time: 15 minutes<br>
+                    Risk of Data Loss: ZERO (models are backward compatible)
+                </div>
+            </div>
+        </section>
+
+        <!-- HIGH RISK -->
+        <section class="risk-section high">
+            <div class="risk-header">
+                <span class="risk-badge high">🔥 HIGH</span>
+                <h2>RISK-002: Duplicate Notification Service State Corruption</h2>
+            </div>
+
+            <h3>📍 Evidence</h3>
+            <ul class="evidence-list">
+                <li>
+                    <span class="file-path">/lib/services/notification_service.dart</span>
+                    <div>Lines 50-80: Legacy notification service with in-memory state</div>
+                    <div class="tag">State Management</div>
+                </li>
+                <li>
+                    <span class="file-path">/lib/services/enhanced_notification_service.dart</span>
+                    <div>Lines 100-150: Enhanced service with separate state cache</div>
+                    <div class="tag">Dual State</div>
+                </li>
+                <li>
+                    <span class="file-path">/lib/services/fcm_service.dart</span>
+                    <div>Lines 200-220: FCM service calls both notification services</div>
+                    <div class="tag">State Divergence</div>
+                </li>
+            </ul>
+
+            <h3>💥 Impact</h3>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <strong>State Desync</strong>
+                    <p>Notification badges show incorrect counts when services diverge</p>
+                </div>
+                <div class="impact-card">
+                    <strong>Memory Leak</strong>
+                    <p>Both services cache notifications, doubling memory usage</p>
+                </div>
+                <div class="impact-card">
+                    <strong>Race Conditions</strong>
+                    <p>FCM messages processed by both services cause duplicate notifications</p>
+                </div>
+            </div>
+
+            <h3>🔧 Mitigation</h3>
+            <ol class="mitigation-steps">
+                <li>
+                    <strong>Audit FCM Integration:</strong> Find all callsites to notification services
+                    <div class="code-block">
+grep -r "NotificationService" lib/ --exclude-dir=services
+grep -r "EnhancedNotificationService" lib/ --exclude-dir=services
+                    </div>
+                </li>
+                <li>
+                    <strong>Atomic Commit Group #2:</strong> Merge services and update all consumers
+                    <div class="atomic-commit-group">
+                        <strong>Files requiring simultaneous update:</strong>
+                        <ul>
+                            <li>notification_service.dart (DELETE)</li>
+                            <li>enhanced_notification_service.dart (RENAME to notification_service.dart)</li>
+                            <li>fcm_service.dart (UPDATE imports)</li>
+                            <li>notification_manager.dart (UPDATE instantiation)</li>
+                            <li>All screens using notifications (UPDATE imports)</li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <strong>Add Integration Test:</strong> Verify FCM messages only trigger one notification
+                </li>
+            </ol>
+        </section>
+
+        <!-- HIGH RISK -->
+        <section class="risk-section high">
+            <div class="risk-header">
+                <span class="risk-badge high">🔥 HIGH</span>
+                <h2>RISK-003: Legacy Provider Pattern Breaking Riverpod Migration</h2>
+            </div>
+
+            <h3>📍 Evidence</h3>
+            <ul class="evidence-list">
+                <li>
+                    <span class="file-path">/lib/screens/jobs/jobs_screen.dart</span>
+                    <div>Lines 25-30: Uses <code>Provider.of&lt;JobProvider&gt;(context)</code></div>
+                    <div class="tag">Legacy Provider</div>
+                </li>
+                <li>
+                    <span class="file-path">/lib/widgets/job_card.dart</span>
+                    <div>Lines 15-20: Consumer&lt;JobProvider&gt; widget</div>
+                    <div class="tag">Provider Dependency</div>
+                </li>
+                <li>
+                    <span class="file-path">/lib/providers/riverpod/jobs_riverpod_provider.dart</span>
+                    <div>Lines 50-60: New Riverpod provider exists but unused</div>
+                    <div class="tag">Migration Incomplete</div>
+                </li>
+            </ul>
+
+            <h3>💥 Impact</h3>
+            <div class="code-block">
+// Current (Provider)
+final jobProvider = Provider.of<JobProvider>(context);
+
+// Target (Riverpod)
+final jobs = ref.watch(jobsProvider);
+
+// CONFLICT: Both exist, causing state duplication
+            </div>
+
+            <h3>🔧 Mitigation</h3>
+            <ol class="mitigation-steps">
+                <li>
+                    <strong>Search for Legacy Pattern:</strong>
+                    <div class="code-block">
+grep -r "Provider\.of" lib/
+grep -r "Consumer<" lib/
+grep -r "ChangeNotifierProvider" lib/
+                    </div>
+                </li>
+                <li>
+                    <strong>Atomic Commit Group #3:</strong> Migrate all Provider usage to Riverpod
+                    <div class="atomic-commit-group">
+                        <strong>Conversion steps:</strong>
+                        <ul>
+                            <li>Wrap app in <code>ProviderScope</code></li>
+                            <li>Convert all <code>Provider.of</code> to <code>ref.watch</code></li>
+                            <li>Update <code>Consumer</code> widgets to <code>ConsumerWidget</code></li>
+                            <li>Delete legacy Provider classes</li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <strong>Add Deprecation Warnings:</strong> Mark legacy providers with <code>@Deprecated</code> first
+                </li>
+            </ol>
+        </section>
+
+        <!-- MEDIUM RISK -->
+        <section class="risk-section medium">
+            <div class="risk-header">
+                <span class="risk-badge medium">⚠️ MEDIUM</span>
+                <h2>RISK-004: Firestore Schema Field Name Mismatches</h2>
+            </div>
+
+            <h3>📍 Evidence</h3>
+            <ul class="evidence-list">
+                <li>
+                    <span class="file-path">/lib/legacy/flutterflow/schema/jobs_record.dart</span>
+                    <div>Lines 100-120: Uses legacy field names (<code>jobDetails</code>, <code>sharerId</code>)</div>
+                    <div class="tag">Schema V1</div>
+                </li>
+                <li>
+                    <span class="file-path">/lib/features/jobs/models/job.dart</span>
+                    <div>Lines 50-70: Uses new field names (<code>description</code>, <code>userId</code>)</div>
+                    <div class="tag">Schema V2</div>
+                </li>
+                <li>
+                    <span class="file-path">firebase/firestore.rules</span>
+                    <div>Lines 30-40: Rules reference old field names</div>
+                    <div class="tag">Security Rules</div>
+                </li>
+            </ul>
+
+            <h3>💥 Impact</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Legacy Field</th>
+                        <th>New Field</th>
+                        <th>Risk</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>jobDetails</code></td>
+                        <td><code>description</code></td>
+                        <td>Queries return null, UI breaks</td>
+                    </tr>
+                    <tr>
+                        <td><code>sharerId</code></td>
+                        <td><code>userId</code></td>
+                        <td>Permission checks fail</td>
+                    </tr>
+                    <tr>
+                        <td><code>matchesCriteria</code></td>
+                        <td><code>isMatch</code></td>
+                        <td>Filtering breaks</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>🔧 Mitigation</h3>
+            <ol class="mitigation-steps">
+                <li>
+                    <strong>Firestore Data Migration:</strong> Add new fields alongside old ones
+                    <div class="code-block">
+// Cloud Function to migrate documents
+exports.migrateJobFields = functions.firestore
+  .document('jobs/{jobId}')
+  .onWrite((change, context) => {
+    const data = change.after.data();
+    const updates = {};
+
+    if (data.jobDetails && !data.description) {
+      updates.description = data.jobDetails;
+    }
+    if (data.sharerId && !data.userId) {
+      updates.userId = data.sharerId;
+    }
+
+    return change.after.ref.update(updates);
+  });
+                    </div>
+                </li>
+                <li>
+                    <strong>Update Firestore Rules:</strong> Support both field names during migration
+                </li>
+                <li>
+                    <strong>Backward Compatible Queries:</strong> Read from both fields with fallback
+                </li>
+            </ol>
+        </section>
+
+        <!-- MEDIUM RISK -->
+        <section class="risk-section medium">
+            <div class="risk-header">
+                <span class="risk-badge medium">⚠️ MEDIUM</span>
+                <h2>RISK-005: Test Suite Assumes Duplicate Models Exist</h2>
+            </div>
+
+            <h3>📍 Predicted Test Failures</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Test File</th>
+                        <th>Failure Reason</th>
+                        <th>Fix Required</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="file-path">test/data/models/job_model_test.dart</span></td>
+                        <td>Mock uses <code>JobsRecord</code> constructor</td>
+                        <td>Update mock factory</td>
+                    </tr>
+                    <tr>
+                        <td><span class="file-path">test/data/repositories/job_repository_test.dart</span></td>
+                        <td>Type assertions expect <code>JobsRecord</code></td>
+                        <td>Change to <code>JobModel</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="file-path">test/features/crews/unit/job_model_test.dart</span></td>
+                        <td>Serialization tests use dual models</td>
+                        <td>Consolidate to single model</td>
+                    </tr>
+                    <tr>
+                        <td><span class="file-path">test/fixtures/mock_data.dart</span></td>
+                        <td>Mock factories for both models</td>
+                        <td>Delete legacy factories</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>🔧 Mitigation</h3>
+            <ol class="mitigation-steps">
+                <li>
+                    <strong>Update Test Fixtures First:</strong> Modify mocks before production code
+                </li>
+                <li>
+                    <strong>Run Test Suite:</strong> Ensure all tests pass with new fixtures
+                    <div class="code-block">
+flutter test
+flutter test --coverage
+                    </div>
+                </li>
+                <li>
+                    <strong>Atomic Commit Group #4:</strong> Update tests and production code together
+                </li>
+            </ol>
+        </section>
+
+        <!-- MONITORING PLAN -->
+        <section class="risk-section low">
+            <div class="risk-header">
+                <span class="risk-badge low">✅ MONITORING</span>
+                <h2>Post-Refactor Validation & Monitoring Plan</h2>
+            </div>
+
+            <h3>📊 Key Metrics to Monitor</h3>
+            <div class="monitoring-metric">
+                <span class="metric-name">App Crash Rate</span>
+                <span class="metric-threshold">Threshold: &lt; 0.5% (baseline: 0.2%)</span>
+            </div>
+            <div class="monitoring-metric">
+                <span class="metric-name">Firestore Read Errors</span>
+                <span class="metric-threshold">Alert if &gt; 1% error rate</span>
+            </div>
+            <div class="monitoring-metric">
+                <span class="metric-name">Type Cast Exceptions</span>
+                <span class="metric-threshold">Zero tolerance (indicates model mismatch)</span>
+            </div>
+            <div class="monitoring-metric">
+                <span class="metric-name">Notification Duplication</span>
+                <span class="metric-threshold">Track badge counts vs expected</span>
+            </div>
+            <div class="monitoring-metric">
+                <span class="metric-name">State Management Errors</span>
+                <span class="metric-threshold">Monitor Riverpod lifecycle events</span>
+            </div>
+
+            <h3>🔍 Validation Checklist (Post-Deploy)</h3>
+            <ol class="mitigation-steps">
+                <li>
+                    <strong>Smoke Test Critical Paths:</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li>Job search and filtering</li>
+                        <li>Crew job sharing</li>
+                        <li>Notification delivery</li>
+                        <li>User preferences sync</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Verify Firestore Queries:</strong> Check Firebase Console for errors
+                </li>
+                <li>
+                    <strong>Monitor User Sessions:</strong> Track 100 user sessions for anomalies
+                </li>
+                <li>
+                    <strong>Review Sentry Logs:</strong> Check for new exception types
+                </li>
+                <li>
+                    <strong>Test Offline Sync:</strong> Verify cached data still works
+                </li>
+            </ol>
+
+            <h3>🚨 Rollback Triggers</h3>
+            <div class="alert-box">
+                <strong>IMMEDIATE ROLLBACK if any of these occur:</strong>
+                <ul style="margin-top: 1rem;">
+                    <li>Crash rate exceeds 2%</li>
+                    <li>More than 5 type cast exceptions reported</li>
+                    <li>Firestore security rule violations detected</li>
+                    <li>Critical user workflow broken (job search, notifications)</li>
+                    <li>Data loss or corruption detected</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ATOMIC COMMIT STRATEGY -->
+        <section class="risk-section high">
+            <div class="risk-header">
+                <span class="risk-badge high">🔥 CRITICAL</span>
+                <h2>Atomic Commit Strategy - DO NOT SPLIT THESE GROUPS</h2>
+            </div>
+
+            <h3>Atomic Commit Group #1: Job Model Consolidation</h3>
+            <div class="atomic-commit-group">
+                <strong>Files to commit together:</strong>
+                <ol style="margin-top: 1rem;">
+                    <li>/lib/models/job_model.dart (UPDATE)</li>
+                    <li>/lib/legacy/flutterflow/schema/jobs_record.dart (DELETE or DEPRECATE)</li>
+                    <li>/lib/providers/riverpod/jobs_riverpod_provider.dart (UPDATE imports)</li>
+                    <li>/lib/features/crews/providers/crew_jobs_riverpod_provider.dart (UPDATE imports)</li>
+                    <li>/lib/data/repositories/job_repository_impl.dart (UPDATE return types)</li>
+                    <li>/lib/services/firestore_service.dart (UPDATE serialization)</li>
+                </ol>
+                <div style="margin-top: 1rem; padding: 1rem; background: rgba(220, 38, 38, 0.2); border-radius: 4px;">
+                    <strong>⚠️ Commit Message:</strong><br>
+                    <code>refactor(models): consolidate JobModel and JobsRecord into single source of truth</code><br><br>
+                    <strong>Breaking Changes:</strong> Yes - all consumers must update imports
+                </div>
+            </div>
+
+            <h3>Atomic Commit Group #2: Notification Service Merge</h3>
+            <div class="atomic-commit-group">
+                <strong>Files to commit together:</strong>
+                <ol style="margin-top: 1rem;">
+                    <li>/lib/services/notification_service.dart (DELETE)</li>
+                    <li>/lib/services/enhanced_notification_service.dart (RENAME)</li>
+                    <li>/lib/services/fcm_service.dart (UPDATE imports)</li>
+                    <li>/lib/services/notification_manager.dart (UPDATE instantiation)</li>
+                    <li>All screens using notifications (UPDATE imports)</li>
+                </ol>
+            </div>
+
+            <h3>Atomic Commit Group #3: Provider to Riverpod Migration</h3>
+            <div class="atomic-commit-group">
+                <strong>Files to commit together:</strong>
+                <ol style="margin-top: 1rem;">
+                    <li>/lib/main.dart (Wrap in ProviderScope)</li>
+                    <li>All Provider.of calls (Convert to ref.watch)</li>
+                    <li>All Consumer widgets (Convert to ConsumerWidget)</li>
+                    <li>Legacy provider classes (DELETE)</li>
+                </ol>
+            </div>
+
+            <h3>Atomic Commit Group #4: Test Suite Updates</h3>
+            <div class="atomic-commit-group">
+                <strong>Files to commit together:</strong>
+                <ol style="margin-top: 1rem;">
+                    <li>test/fixtures/mock_data.dart (UPDATE factories)</li>
+                    <li>test/data/models/job_model_test.dart (UPDATE assertions)</li>
+                    <li>test/data/repositories/job_repository_test.dart (UPDATE types)</li>
+                    <li>test/features/crews/unit/job_model_test.dart (UPDATE serialization)</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- ROLLBACK PLAYBOOK -->
+        <section class="risk-section critical">
+            <div class="risk-header">
+                <span class="risk-badge critical">🚨 EMERGENCY</span>
+                <h2>Emergency Rollback Playbook</h2>
+            </div>
+
+            <h3>If Atomic Commit Group #1 Fails (Job Models)</h3>
+            <div class="rollback-strategy">
+                <strong>Step 1: Immediate Revert</strong>
+                <div class="code-block">
+git revert HEAD
+git push origin main --force-with-lease
+                </div>
+
+                <strong>Step 2: Re-enable Legacy Models</strong>
+                <div class="code-block">
+// Add to jobs_record.dart
+@Deprecated('Use JobModel instead. Will be removed in v2.0')
+class JobsRecord { ... }
+                </div>
+
+                <strong>Step 3: Deploy Adapter as Permanent Bridge</strong>
+                <div class="code-block">
+// Keep adapter indefinitely
+class JobModelAdapter {
+  static JobModel fromJobsRecord(JobsRecord record) { ... }
+  static JobsRecord toJobsRecord(JobModel model) { ... }
+}
+                </div>
+
+                <strong>Step 4: Update Roadmap</strong>
+                <p style="margin-top: 1rem;">Schedule full migration for next sprint with comprehensive testing</p>
+            </div>
+
+            <h3>If Notification Service Merge Fails</h3>
+            <div class="rollback-strategy">
+                <strong>Fallback: Keep Both Services Active</strong>
+                <div class="code-block">
+// Add service selector
+class NotificationServiceFactory {
+  static NotificationService create() {
+    if (useEnhancedNotifications) {
+      return EnhancedNotificationService();
+    }
+    return LegacyNotificationService();
+  }
+}
+                </div>
+            </div>
+
+            <h3>Success Criteria for Rollback</h3>
+            <div class="monitoring-metric">
+                <span class="metric-name">Time to Rollback</span>
+                <span class="metric-threshold">Target: &lt; 15 minutes</span>
+            </div>
+            <div class="monitoring-metric">
+                <span class="metric-name">Data Loss</span>
+                <span class="metric-threshold">Expected: ZERO (models are backward compatible)</span>
+            </div>
+            <div class="monitoring-metric">
+                <span class="metric-name">User Impact</span>
+                <span class="metric-threshold">Minimal (rollback restores all functionality)</span>
+            </div>
+        </section>
+
+        <!-- SUMMARY -->
+        <section class="risk-section low">
+            <div class="risk-header">
+                <span class="risk-badge low">📋 SUMMARY</span>
+                <h2>Recommended Execution Order</h2>
+            </div>
+
+            <ol class="mitigation-steps">
+                <li>
+                    <strong>Phase 0: Pre-Flight Checks</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li>Run full codebase search for all identified patterns</li>
+                        <li>Update all tests to use consolidated models</li>
+                        <li>Set up monitoring and alerting</li>
+                        <li>Create feature flags for gradual rollout</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Phase 1: Low-Risk Changes</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li>Add <code>@Deprecated</code> annotations to legacy code</li>
+                        <li>Create adapter classes for backward compatibility</li>
+                        <li>Update Firestore with dual field names</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Phase 2: Atomic Commit Groups (in order)</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li>Group #4: Test Suite Updates (validate first)</li>
+                        <li>Group #1: Job Model Consolidation</li>
+                        <li>Group #2: Notification Service Merge</li>
+                        <li>Group #3: Provider to Riverpod Migration</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Phase 3: Post-Deploy Validation</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li>Run smoke tests on critical paths</li>
+                        <li>Monitor metrics for 48 hours</li>
+                        <li>Collect user feedback</li>
+                        <li>Remove feature flags if stable</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Phase 4: Cleanup</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li>Delete deprecated code</li>
+                        <li>Remove adapter classes</li>
+                        <li>Update documentation</li>
+                        <li>Archive rollback playbook</li>
+                    </ul>
+                </li>
+            </ol>
+        </section>
+
+        <footer style="margin-top: 3rem; padding: 2rem; text-align: center; color: var(--text-secondary); border-top: 1px solid var(--border);">
+            <p><strong>Error Detective Agent</strong> | Generated: 2025-10-17</p>
+            <p style="margin-top: 0.5rem;">This analysis is based on systematic pattern detection and evidence-based risk assessment.</p>
+            <p style="margin-top: 0.5rem; color: var(--critical);">⚠️ CRITICAL: Do not proceed with refactoring until all atomic commit groups are prepared.</p>
+        </footer>
+    </div>
+</body>
+</html>

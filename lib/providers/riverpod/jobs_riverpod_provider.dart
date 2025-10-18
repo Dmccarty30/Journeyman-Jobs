@@ -63,6 +63,8 @@ class JobsState {
 @riverpod
 ResilientFirestoreService firestoreService(Ref ref) => ResilientFirestoreService();
 
+/// Jobs notifier provider
+@riverpod
 class JobsNotifier extends _$JobsNotifier {
   late final ConcurrentOperationManager _operationManager;
   late final FilterPerformanceEngine _filterEngine;

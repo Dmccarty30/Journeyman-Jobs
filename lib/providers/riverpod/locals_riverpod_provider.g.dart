@@ -18,15 +18,15 @@ final class LocalsNotifierProvider
     extends $NotifierProvider<LocalsNotifier, LocalsState> {
   /// Riverpod notifier that manages loading and searching of locals.
   const LocalsNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'localsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'localsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$localsNotifierHash();
@@ -55,8 +55,14 @@ abstract class _$LocalsNotifier extends $Notifier<LocalsState> {
   void runBuild() {
     final created = build();
     final ref = this.ref as $Ref<LocalsState, LocalsState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<LocalsState, LocalsState>, LocalsState, Object?, Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<LocalsState, LocalsState>,
+              LocalsState,
+              Object?,
+              Object?
+            >;
     element.handleValue(ref, created);
   }
 }
@@ -68,19 +74,25 @@ const localByIdProvider = LocalByIdFamily._();
 
 /// Riverpod provider that fetches a single local by ID.
 
-final class LocalByIdProvider extends $FunctionalProvider<
-        AsyncValue<LocalsRecord?>, LocalsRecord?, FutureOr<LocalsRecord?>>
+final class LocalByIdProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<LocalsRecord?>,
+          LocalsRecord?,
+          FutureOr<LocalsRecord?>
+        >
     with $FutureModifier<LocalsRecord?>, $FutureProvider<LocalsRecord?> {
   /// Riverpod provider that fetches a single local by ID.
-  const LocalByIdProvider._(
-      {required LocalByIdFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'localByIdProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const LocalByIdProvider._({
+    required LocalByIdFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'localByIdProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$localByIdHash();
@@ -95,16 +107,13 @@ final class LocalByIdProvider extends $FunctionalProvider<
   @$internal
   @override
   $FutureProviderElement<LocalsRecord?> $createElement(
-          $ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<LocalsRecord?> create(Ref ref) {
     final argument = this.argument as String;
-    return localById(
-      ref,
-      argument,
-    );
+    return localById(ref, argument);
   }
 
   @override
@@ -125,19 +134,17 @@ String _$localByIdHash() => r'88f2d158c643afb9ad2a961579c6fb1160605970';
 final class LocalByIdFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<LocalsRecord?>, String> {
   const LocalByIdFamily._()
-      : super(
-          retry: null,
-          name: r'localByIdProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'localByIdProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Riverpod provider that fetches a single local by ID.
 
-  LocalByIdProvider call(
-    String localId,
-  ) =>
+  LocalByIdProvider call(String localId) =>
       LocalByIdProvider._(argument: localId, from: this);
 
   @override
@@ -151,20 +158,25 @@ const localsByStateProvider = LocalsByStateFamily._();
 
 /// Riverpod provider that returns locals filtered by state.
 
-final class LocalsByStateProvider extends $FunctionalProvider<
-    List<LocalsRecord>,
-    List<LocalsRecord>,
-    List<LocalsRecord>> with $Provider<List<LocalsRecord>> {
+final class LocalsByStateProvider
+    extends
+        $FunctionalProvider<
+          List<LocalsRecord>,
+          List<LocalsRecord>,
+          List<LocalsRecord>
+        >
+    with $Provider<List<LocalsRecord>> {
   /// Riverpod provider that returns locals filtered by state.
-  const LocalsByStateProvider._(
-      {required LocalsByStateFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'localsByStateProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const LocalsByStateProvider._({
+    required LocalsByStateFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'localsByStateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$localsByStateHash();
@@ -179,16 +191,13 @@ final class LocalsByStateProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<LocalsRecord>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<LocalsRecord> create(Ref ref) {
     final argument = this.argument as String;
-    return localsByState(
-      ref,
-      argument,
-    );
+    return localsByState(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -217,19 +226,17 @@ String _$localsByStateHash() => r'679e8b7e0e7069491671ec211f9e635dcec9fb8d';
 final class LocalsByStateFamily extends $Family
     with $FunctionalFamilyOverride<List<LocalsRecord>, String> {
   const LocalsByStateFamily._()
-      : super(
-          retry: null,
-          name: r'localsByStateProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'localsByStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Riverpod provider that returns locals filtered by state.
 
-  LocalsByStateProvider call(
-    String stateName,
-  ) =>
+  LocalsByStateProvider call(String stateName) =>
       LocalsByStateProvider._(argument: stateName, from: this);
 
   @override
@@ -243,21 +250,25 @@ const localsByClassificationProvider = LocalsByClassificationFamily._();
 
 /// Riverpod provider that returns locals filtered by classification.
 
-final class LocalsByClassificationProvider extends $FunctionalProvider<
-    List<LocalsRecord>,
-    List<LocalsRecord>,
-    List<LocalsRecord>> with $Provider<List<LocalsRecord>> {
+final class LocalsByClassificationProvider
+    extends
+        $FunctionalProvider<
+          List<LocalsRecord>,
+          List<LocalsRecord>,
+          List<LocalsRecord>
+        >
+    with $Provider<List<LocalsRecord>> {
   /// Riverpod provider that returns locals filtered by classification.
-  const LocalsByClassificationProvider._(
-      {required LocalsByClassificationFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'localsByClassificationProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const LocalsByClassificationProvider._({
+    required LocalsByClassificationFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'localsByClassificationProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$localsByClassificationHash();
@@ -272,16 +283,13 @@ final class LocalsByClassificationProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<LocalsRecord>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<LocalsRecord> create(Ref ref) {
     final argument = this.argument as String;
-    return localsByClassification(
-      ref,
-      argument,
-    );
+    return localsByClassification(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -312,19 +320,17 @@ String _$localsByClassificationHash() =>
 final class LocalsByClassificationFamily extends $Family
     with $FunctionalFamilyOverride<List<LocalsRecord>, String> {
   const LocalsByClassificationFamily._()
-      : super(
-          retry: null,
-          name: r'localsByClassificationProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'localsByClassificationProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Riverpod provider that returns locals filtered by classification.
 
-  LocalsByClassificationProvider call(
-    String classification,
-  ) =>
+  LocalsByClassificationProvider call(String classification) =>
       LocalsByClassificationProvider._(argument: classification, from: this);
 
   @override
@@ -338,21 +344,25 @@ const searchedLocalsProvider = SearchedLocalsFamily._();
 
 /// Riverpod provider that returns locals matching a search term.
 
-final class SearchedLocalsProvider extends $FunctionalProvider<
-    List<LocalsRecord>,
-    List<LocalsRecord>,
-    List<LocalsRecord>> with $Provider<List<LocalsRecord>> {
+final class SearchedLocalsProvider
+    extends
+        $FunctionalProvider<
+          List<LocalsRecord>,
+          List<LocalsRecord>,
+          List<LocalsRecord>
+        >
+    with $Provider<List<LocalsRecord>> {
   /// Riverpod provider that returns locals matching a search term.
-  const SearchedLocalsProvider._(
-      {required SearchedLocalsFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'searchedLocalsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const SearchedLocalsProvider._({
+    required SearchedLocalsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'searchedLocalsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$searchedLocalsHash();
@@ -367,16 +377,13 @@ final class SearchedLocalsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<List<LocalsRecord>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   List<LocalsRecord> create(Ref ref) {
     final argument = this.argument as String;
-    return searchedLocals(
-      ref,
-      argument,
-    );
+    return searchedLocals(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -405,19 +412,17 @@ String _$searchedLocalsHash() => r'397212ab6ddf6dbd11529d013bb6d808812e04a4';
 final class SearchedLocalsFamily extends $Family
     with $FunctionalFamilyOverride<List<LocalsRecord>, String> {
   const SearchedLocalsFamily._()
-      : super(
-          retry: null,
-          name: r'searchedLocalsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'searchedLocalsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Riverpod provider that returns locals matching a search term.
 
-  SearchedLocalsProvider call(
-    String searchTerm,
-  ) =>
+  SearchedLocalsProvider call(String searchTerm) =>
       SearchedLocalsProvider._(argument: searchTerm, from: this);
 
   @override
@@ -431,15 +436,15 @@ final class AllStatesProvider
     extends $FunctionalProvider<List<String>, List<String>, List<String>>
     with $Provider<List<String>> {
   const AllStatesProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'allStatesProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'allStatesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$allStatesHash();
@@ -472,15 +477,15 @@ final class AllClassificationsProvider
     extends $FunctionalProvider<List<String>, List<String>, List<String>>
     with $Provider<List<String>> {
   const AllClassificationsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'allClassificationsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'allClassificationsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$allClassificationsHash();

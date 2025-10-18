@@ -19,6 +19,26 @@ class WidgetTestHelpers {
     );
   }
 
+  /// Create a test app wrapper with full provider setup
+  /// This is an alias for createThemedTestWidget for backward compatibility
+  static Widget createTestApp({
+    required Widget child,
+    AuthService? authService,
+    ResilientFirestoreService? firestoreService,
+    ConnectivityService? connectivityService,
+    AppStateProvider? appStateProvider,
+    JobFilterProvider? jobFilterProvider,
+  }) {
+    return createThemedTestWidget(
+      child,
+      authService: authService,
+      firestoreService: firestoreService,
+      connectivityService: connectivityService,
+      appStateProvider: appStateProvider,
+      jobFilterProvider: jobFilterProvider,
+    );
+  }
+
   /// Create a themed wrapper with all necessary providers for widget testing
   static Widget createThemedTestWidget(
     Widget child, {

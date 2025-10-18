@@ -20,15 +20,15 @@ final class FeedServiceProvider
     with $Provider<FeedService> {
   /// FeedService provider
   const FeedServiceProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'feedServiceProvider',
-          isAutoDispose: false,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'feedServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$feedServiceHash();
@@ -61,20 +61,25 @@ const crewPostsStreamProvider = CrewPostsStreamFamily._();
 
 /// Stream of posts for a specific crew
 
-final class CrewPostsStreamProvider extends $FunctionalProvider<
-        AsyncValue<List<PostModel>>, List<PostModel>, Stream<List<PostModel>>>
+final class CrewPostsStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<PostModel>>,
+          List<PostModel>,
+          Stream<List<PostModel>>
+        >
     with $FutureModifier<List<PostModel>>, $StreamProvider<List<PostModel>> {
   /// Stream of posts for a specific crew
-  const CrewPostsStreamProvider._(
-      {required CrewPostsStreamFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'crewPostsStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const CrewPostsStreamProvider._({
+    required CrewPostsStreamFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'crewPostsStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$crewPostsStreamHash();
@@ -89,16 +94,13 @@ final class CrewPostsStreamProvider extends $FunctionalProvider<
   @$internal
   @override
   $StreamProviderElement<List<PostModel>> $createElement(
-          $ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
   Stream<List<PostModel>> create(Ref ref) {
     final argument = this.argument as String;
-    return crewPostsStream(
-      ref,
-      argument,
-    );
+    return crewPostsStream(ref, argument);
   }
 
   @override
@@ -112,31 +114,125 @@ final class CrewPostsStreamProvider extends $FunctionalProvider<
   }
 }
 
-String _$crewPostsStreamHash() => r'077f84fa21f3daa701a55dfaaac8ec36a2a7407e';
+String _$crewPostsStreamHash() => r'41966349539a9bc1f792de28e348aa16366aa7e0';
 
 /// Stream of posts for a specific crew
 
 final class CrewPostsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<PostModel>>, String> {
   const CrewPostsStreamFamily._()
-      : super(
-          retry: null,
-          name: r'crewPostsStreamProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'crewPostsStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Stream of posts for a specific crew
 
-  CrewPostsStreamProvider call(
-    String crewId,
-  ) =>
+  CrewPostsStreamProvider call(String crewId) =>
       CrewPostsStreamProvider._(argument: crewId, from: this);
 
   @override
   String toString() => r'crewPostsStreamProvider';
 }
+
+/// Stream of global feed posts (all crews)
+
+@ProviderFor(globalFeedStream)
+const globalFeedStreamProvider = GlobalFeedStreamProvider._();
+
+/// Stream of global feed posts (all crews)
+
+final class GlobalFeedStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<PostModel>>,
+          List<PostModel>,
+          Stream<List<PostModel>>
+        >
+    with $FutureModifier<List<PostModel>>, $StreamProvider<List<PostModel>> {
+  /// Stream of global feed posts (all crews)
+  const GlobalFeedStreamProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'globalFeedStreamProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$globalFeedStreamHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<List<PostModel>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<PostModel>> create(Ref ref) {
+    return globalFeedStream(ref);
+  }
+}
+
+String _$globalFeedStreamHash() => r'74569f5e500e8b4487adf237d028c404c17ebc6f';
+
+/// Global feed posts provider
+
+@ProviderFor(globalFeed)
+const globalFeedProvider = GlobalFeedProvider._();
+
+/// Global feed posts provider
+
+final class GlobalFeedProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<PostModel>>,
+          AsyncValue<List<PostModel>>,
+          AsyncValue<List<PostModel>>
+        >
+    with $Provider<AsyncValue<List<PostModel>>> {
+  /// Global feed posts provider
+  const GlobalFeedProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'globalFeedProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$globalFeedHash();
+
+  @$internal
+  @override
+  $ProviderElement<AsyncValue<List<PostModel>>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  AsyncValue<List<PostModel>> create(Ref ref) {
+    return globalFeed(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<List<PostModel>> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<List<PostModel>>>(value),
+    );
+  }
+}
+
+String _$globalFeedHash() => r'69896153b343c6ee4a0bf68ee1ec74cebf728e05';
 
 /// Posts for a specific crew
 
@@ -145,20 +241,25 @@ const crewPostsProvider = CrewPostsFamily._();
 
 /// Posts for a specific crew
 
-final class CrewPostsProvider extends $FunctionalProvider<
-    AsyncValue<List<PostModel>>,
-    AsyncValue<List<PostModel>>,
-    AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
+final class CrewPostsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<PostModel>>,
+          AsyncValue<List<PostModel>>,
+          AsyncValue<List<PostModel>>
+        >
+    with $Provider<AsyncValue<List<PostModel>>> {
   /// Posts for a specific crew
-  const CrewPostsProvider._(
-      {required CrewPostsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'crewPostsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const CrewPostsProvider._({
+    required CrewPostsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'crewPostsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$crewPostsHash();
@@ -173,16 +274,13 @@ final class CrewPostsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<AsyncValue<List<PostModel>>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   AsyncValue<List<PostModel>> create(Ref ref) {
     final argument = this.argument as String;
-    return crewPosts(
-      ref,
-      argument,
-    );
+    return crewPosts(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -211,19 +309,17 @@ String _$crewPostsHash() => r'f44cbb6199252a9348cc5d20901665ad28fc53ae';
 final class CrewPostsFamily extends $Family
     with $FunctionalFamilyOverride<AsyncValue<List<PostModel>>, String> {
   const CrewPostsFamily._()
-      : super(
-          retry: null,
-          name: r'crewPostsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'crewPostsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Posts for a specific crew
 
-  CrewPostsProvider call(
-    String crewId,
-  ) =>
+  CrewPostsProvider call(String crewId) =>
       CrewPostsProvider._(argument: crewId, from: this);
 
   @override
@@ -237,20 +333,25 @@ const postCommentsStreamProvider = PostCommentsStreamFamily._();
 
 /// Stream of comments for a specific post
 
-final class PostCommentsStreamProvider extends $FunctionalProvider<
-        AsyncValue<List<Comment>>, List<Comment>, Stream<List<Comment>>>
+final class PostCommentsStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Comment>>,
+          List<Comment>,
+          Stream<List<Comment>>
+        >
     with $FutureModifier<List<Comment>>, $StreamProvider<List<Comment>> {
   /// Stream of comments for a specific post
-  const PostCommentsStreamProvider._(
-      {required PostCommentsStreamFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'postCommentsStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const PostCommentsStreamProvider._({
+    required PostCommentsStreamFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'postCommentsStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$postCommentsStreamHash();
@@ -265,16 +366,13 @@ final class PostCommentsStreamProvider extends $FunctionalProvider<
   @$internal
   @override
   $StreamProviderElement<List<Comment>> $createElement(
-          $ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
   Stream<List<Comment>> create(Ref ref) {
     final argument = this.argument as String;
-    return postCommentsStream(
-      ref,
-      argument,
-    );
+    return postCommentsStream(ref, argument);
   }
 
   @override
@@ -296,19 +394,17 @@ String _$postCommentsStreamHash() =>
 final class PostCommentsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Comment>>, String> {
   const PostCommentsStreamFamily._()
-      : super(
-          retry: null,
-          name: r'postCommentsStreamProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'postCommentsStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Stream of comments for a specific post
 
-  PostCommentsStreamProvider call(
-    String postId,
-  ) =>
+  PostCommentsStreamProvider call(String postId) =>
       PostCommentsStreamProvider._(argument: postId, from: this);
 
   @override
@@ -322,20 +418,25 @@ const postCommentsProvider = PostCommentsFamily._();
 
 /// Comments for a specific post
 
-final class PostCommentsProvider extends $FunctionalProvider<
-    AsyncValue<List<Comment>>,
-    AsyncValue<List<Comment>>,
-    AsyncValue<List<Comment>>> with $Provider<AsyncValue<List<Comment>>> {
+final class PostCommentsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Comment>>,
+          AsyncValue<List<Comment>>,
+          AsyncValue<List<Comment>>
+        >
+    with $Provider<AsyncValue<List<Comment>>> {
   /// Comments for a specific post
-  const PostCommentsProvider._(
-      {required PostCommentsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'postCommentsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const PostCommentsProvider._({
+    required PostCommentsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'postCommentsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$postCommentsHash();
@@ -350,16 +451,13 @@ final class PostCommentsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<AsyncValue<List<Comment>>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   AsyncValue<List<Comment>> create(Ref ref) {
     final argument = this.argument as String;
-    return postComments(
-      ref,
-      argument,
-    );
+    return postComments(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -388,19 +486,17 @@ String _$postCommentsHash() => r'fd48317b238915a8f95771d8fd7358364759c4c0';
 final class PostCommentsFamily extends $Family
     with $FunctionalFamilyOverride<AsyncValue<List<Comment>>, String> {
   const PostCommentsFamily._()
-      : super(
-          retry: null,
-          name: r'postCommentsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'postCommentsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Comments for a specific post
 
-  PostCommentsProvider call(
-    String postId,
-  ) =>
+  PostCommentsProvider call(String postId) =>
       PostCommentsProvider._(argument: postId, from: this);
 
   @override
@@ -414,21 +510,25 @@ const selectedCrewPostsProvider = SelectedCrewPostsProvider._();
 
 /// Provider to get posts for selected crew
 
-final class SelectedCrewPostsProvider extends $FunctionalProvider<
-    AsyncValue<List<PostModel>>,
-    AsyncValue<List<PostModel>>,
-    AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
+final class SelectedCrewPostsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<PostModel>>,
+          AsyncValue<List<PostModel>>,
+          AsyncValue<List<PostModel>>
+        >
+    with $Provider<AsyncValue<List<PostModel>>> {
   /// Provider to get posts for selected crew
   const SelectedCrewPostsProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'selectedCrewPostsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedCrewPostsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$selectedCrewPostsHash();
@@ -436,8 +536,8 @@ final class SelectedCrewPostsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<AsyncValue<List<PostModel>>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   AsyncValue<List<PostModel>> create(Ref ref) {
@@ -462,20 +562,25 @@ const pinnedPostsProvider = PinnedPostsFamily._();
 
 /// Provider to get pinned posts for a crew
 
-final class PinnedPostsProvider extends $FunctionalProvider<
-    AsyncValue<List<PostModel>>,
-    AsyncValue<List<PostModel>>,
-    AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
+final class PinnedPostsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<PostModel>>,
+          AsyncValue<List<PostModel>>,
+          AsyncValue<List<PostModel>>
+        >
+    with $Provider<AsyncValue<List<PostModel>>> {
   /// Provider to get pinned posts for a crew
-  const PinnedPostsProvider._(
-      {required PinnedPostsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'pinnedPostsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const PinnedPostsProvider._({
+    required PinnedPostsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'pinnedPostsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$pinnedPostsHash();
@@ -490,16 +595,13 @@ final class PinnedPostsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<AsyncValue<List<PostModel>>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   AsyncValue<List<PostModel>> create(Ref ref) {
     final argument = this.argument as String;
-    return pinnedPosts(
-      ref,
-      argument,
-    );
+    return pinnedPosts(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -528,19 +630,17 @@ String _$pinnedPostsHash() => r'45530e9922de57a2b4135ebcaa3959c9e425e2e0';
 final class PinnedPostsFamily extends $Family
     with $FunctionalFamilyOverride<AsyncValue<List<PostModel>>, String> {
   const PinnedPostsFamily._()
-      : super(
-          retry: null,
-          name: r'pinnedPostsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'pinnedPostsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get pinned posts for a crew
 
-  PinnedPostsProvider call(
-    String crewId,
-  ) =>
+  PinnedPostsProvider call(String crewId) =>
       PinnedPostsProvider._(argument: crewId, from: this);
 
   @override
@@ -554,20 +654,25 @@ const recentPostsProvider = RecentPostsFamily._();
 
 /// Provider to get recent posts (non-pinned) for a crew
 
-final class RecentPostsProvider extends $FunctionalProvider<
-    AsyncValue<List<PostModel>>,
-    AsyncValue<List<PostModel>>,
-    AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
+final class RecentPostsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<PostModel>>,
+          AsyncValue<List<PostModel>>,
+          AsyncValue<List<PostModel>>
+        >
+    with $Provider<AsyncValue<List<PostModel>>> {
   /// Provider to get recent posts (non-pinned) for a crew
-  const RecentPostsProvider._(
-      {required RecentPostsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'recentPostsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const RecentPostsProvider._({
+    required RecentPostsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'recentPostsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$recentPostsHash();
@@ -582,16 +687,13 @@ final class RecentPostsProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<AsyncValue<List<PostModel>>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   AsyncValue<List<PostModel>> create(Ref ref) {
     final argument = this.argument as String;
-    return recentPosts(
-      ref,
-      argument,
-    );
+    return recentPosts(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -620,19 +722,17 @@ String _$recentPostsHash() => r'396cb352efe2e8153a43836fef7f17a6a51804e6';
 final class RecentPostsFamily extends $Family
     with $FunctionalFamilyOverride<AsyncValue<List<PostModel>>, String> {
   const RecentPostsFamily._()
-      : super(
-          retry: null,
-          name: r'recentPostsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'recentPostsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get recent posts (non-pinned) for a crew
 
-  RecentPostsProvider call(
-    String crewId,
-  ) =>
+  RecentPostsProvider call(String crewId) =>
       RecentPostsProvider._(argument: crewId, from: this);
 
   @override
@@ -646,25 +746,25 @@ const postsByAuthorProvider = PostsByAuthorFamily._();
 
 /// Provider to get posts by a specific author
 
-final class PostsByAuthorProvider extends $FunctionalProvider<
-    AsyncValue<List<PostModel>>,
-    AsyncValue<List<PostModel>>,
-    AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
+final class PostsByAuthorProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<PostModel>>,
+          AsyncValue<List<PostModel>>,
+          AsyncValue<List<PostModel>>
+        >
+    with $Provider<AsyncValue<List<PostModel>>> {
   /// Provider to get posts by a specific author
-  const PostsByAuthorProvider._(
-      {required PostsByAuthorFamily super.from,
-      required (
-        String,
-        String,
-      )
-          super.argument})
-      : super(
-          retry: null,
-          name: r'postsByAuthorProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const PostsByAuthorProvider._({
+    required PostsByAuthorFamily super.from,
+    required (String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'postsByAuthorProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$postsByAuthorHash();
@@ -679,20 +779,13 @@ final class PostsByAuthorProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<AsyncValue<List<PostModel>>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   AsyncValue<List<PostModel>> create(Ref ref) {
-    final argument = this.argument as (
-      String,
-      String,
-    );
-    return postsByAuthor(
-      ref,
-      argument.$1,
-      argument.$2,
-    );
+    final argument = this.argument as (String, String);
+    return postsByAuthor(ref, argument.$1, argument.$2);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -721,30 +814,22 @@ String _$postsByAuthorHash() => r'641b0b7f78df32dbb9b2dbfa6bd21f2cd2a0f6dc';
 final class PostsByAuthorFamily extends $Family
     with
         $FunctionalFamilyOverride<
-            AsyncValue<List<PostModel>>,
-            (
-              String,
-              String,
-            )> {
+          AsyncValue<List<PostModel>>,
+          (String, String)
+        > {
   const PostsByAuthorFamily._()
-      : super(
-          retry: null,
-          name: r'postsByAuthorProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'postsByAuthorProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get posts by a specific author
 
-  PostsByAuthorProvider call(
-    String crewId,
-    String authorId,
-  ) =>
-      PostsByAuthorProvider._(argument: (
-        crewId,
-        authorId,
-      ), from: this);
+  PostsByAuthorProvider call(String crewId, String authorId) =>
+      PostsByAuthorProvider._(argument: (crewId, authorId), from: this);
 
   @override
   String toString() => r'postsByAuthorProvider';
@@ -757,21 +842,25 @@ const postCreationProvider = PostCreationNotifierProvider._();
 
 /// Provider for post creation notifier
 
-final class PostCreationNotifierProvider extends $FunctionalProvider<
-    PostCreationNotifier,
-    PostCreationNotifier,
-    PostCreationNotifier> with $Provider<PostCreationNotifier> {
+final class PostCreationNotifierProvider
+    extends
+        $FunctionalProvider<
+          PostCreationNotifier,
+          PostCreationNotifier,
+          PostCreationNotifier
+        >
+    with $Provider<PostCreationNotifier> {
   /// Provider for post creation notifier
   const PostCreationNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'postCreationProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'postCreationProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$postCreationNotifierHash();
@@ -779,8 +868,8 @@ final class PostCreationNotifierProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<PostCreationNotifier> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   PostCreationNotifier create(Ref ref) {
@@ -806,21 +895,25 @@ const postCreationStateProvider = PostCreationStateProvider._();
 
 /// Stream of post creation state
 
-final class PostCreationStateProvider extends $FunctionalProvider<
-    AsyncValue<String?>,
-    AsyncValue<String?>,
-    AsyncValue<String?>> with $Provider<AsyncValue<String?>> {
+final class PostCreationStateProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<String?>,
+          AsyncValue<String?>,
+          AsyncValue<String?>
+        >
+    with $Provider<AsyncValue<String?>> {
   /// Stream of post creation state
   const PostCreationStateProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'postCreationStateProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'postCreationStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$postCreationStateHash();
@@ -828,8 +921,8 @@ final class PostCreationStateProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<AsyncValue<String?>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   AsyncValue<String?> create(Ref ref) {
@@ -854,21 +947,25 @@ const postUpdateProvider = PostUpdateNotifierProvider._();
 
 /// Provider for post update notifier
 
-final class PostUpdateNotifierProvider extends $FunctionalProvider<
-    PostUpdateNotifier,
-    PostUpdateNotifier,
-    PostUpdateNotifier> with $Provider<PostUpdateNotifier> {
+final class PostUpdateNotifierProvider
+    extends
+        $FunctionalProvider<
+          PostUpdateNotifier,
+          PostUpdateNotifier,
+          PostUpdateNotifier
+        >
+    with $Provider<PostUpdateNotifier> {
   /// Provider for post update notifier
   const PostUpdateNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'postUpdateProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'postUpdateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$postUpdateNotifierHash();
@@ -876,8 +973,8 @@ final class PostUpdateNotifierProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<PostUpdateNotifier> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   PostUpdateNotifier create(Ref ref) {
@@ -903,21 +1000,25 @@ const postUpdateStateProvider = PostUpdateStateProvider._();
 
 /// Stream of post update state
 
-final class PostUpdateStateProvider extends $FunctionalProvider<
-    AsyncValue<void>,
-    AsyncValue<void>,
-    AsyncValue<void>> with $Provider<AsyncValue<void>> {
+final class PostUpdateStateProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<void>,
+          AsyncValue<void>,
+          AsyncValue<void>
+        >
+    with $Provider<AsyncValue<void>> {
   /// Stream of post update state
   const PostUpdateStateProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'postUpdateStateProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'postUpdateStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$postUpdateStateHash();
@@ -950,21 +1051,25 @@ const reactionProvider = ReactionNotifierProvider._();
 
 /// Provider for reaction notifier
 
-final class ReactionNotifierProvider extends $FunctionalProvider<
-    ReactionNotifier,
-    ReactionNotifier,
-    ReactionNotifier> with $Provider<ReactionNotifier> {
+final class ReactionNotifierProvider
+    extends
+        $FunctionalProvider<
+          ReactionNotifier,
+          ReactionNotifier,
+          ReactionNotifier
+        >
+    with $Provider<ReactionNotifier> {
   /// Provider for reaction notifier
   const ReactionNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'reactionProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'reactionProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$reactionNotifierHash();
@@ -997,19 +1102,25 @@ const reactionStateProvider = ReactionStateProvider._();
 
 /// Stream of reaction state
 
-final class ReactionStateProvider extends $FunctionalProvider<AsyncValue<void>,
-    AsyncValue<void>, AsyncValue<void>> with $Provider<AsyncValue<void>> {
+final class ReactionStateProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<void>,
+          AsyncValue<void>,
+          AsyncValue<void>
+        >
+    with $Provider<AsyncValue<void>> {
   /// Stream of reaction state
   const ReactionStateProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'reactionStateProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'reactionStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$reactionStateHash();
@@ -1042,19 +1153,21 @@ const commentProvider = CommentNotifierProvider._();
 
 /// Provider for comment notifier
 
-final class CommentNotifierProvider extends $FunctionalProvider<CommentNotifier,
-    CommentNotifier, CommentNotifier> with $Provider<CommentNotifier> {
+final class CommentNotifierProvider
+    extends
+        $FunctionalProvider<CommentNotifier, CommentNotifier, CommentNotifier>
+    with $Provider<CommentNotifier> {
   /// Provider for comment notifier
   const CommentNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'commentProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'commentProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$commentNotifierHash();
@@ -1087,21 +1200,25 @@ const commentStateProvider = CommentStateProvider._();
 
 /// Stream of comment state
 
-final class CommentStateProvider extends $FunctionalProvider<
-    AsyncValue<String?>,
-    AsyncValue<String?>,
-    AsyncValue<String?>> with $Provider<AsyncValue<String?>> {
+final class CommentStateProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<String?>,
+          AsyncValue<String?>,
+          AsyncValue<String?>
+        >
+    with $Provider<AsyncValue<String?>> {
   /// Stream of comment state
   const CommentStateProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'commentStateProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'commentStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$commentStateHash();
@@ -1109,8 +1226,8 @@ final class CommentStateProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<AsyncValue<String?>> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   AsyncValue<String?> create(Ref ref) {
@@ -1135,23 +1252,27 @@ const crewPostStatsProvider = CrewPostStatsFamily._();
 
 /// Provider to get crew post statistics
 
-final class CrewPostStatsProvider extends $FunctionalProvider<
-        AsyncValue<Map<String, dynamic>>,
-        Map<String, dynamic>,
-        FutureOr<Map<String, dynamic>>>
+final class CrewPostStatsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Map<String, dynamic>>,
+          Map<String, dynamic>,
+          FutureOr<Map<String, dynamic>>
+        >
     with
         $FutureModifier<Map<String, dynamic>>,
         $FutureProvider<Map<String, dynamic>> {
   /// Provider to get crew post statistics
-  const CrewPostStatsProvider._(
-      {required CrewPostStatsFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'crewPostStatsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const CrewPostStatsProvider._({
+    required CrewPostStatsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'crewPostStatsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$crewPostStatsHash();
@@ -1166,16 +1287,13 @@ final class CrewPostStatsProvider extends $FunctionalProvider<
   @$internal
   @override
   $FutureProviderElement<Map<String, dynamic>> $createElement(
-          $ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<Map<String, dynamic>> create(Ref ref) {
     final argument = this.argument as String;
-    return crewPostStats(
-      ref,
-      argument,
-    );
+    return crewPostStats(ref, argument);
   }
 
   @override
@@ -1196,19 +1314,17 @@ String _$crewPostStatsHash() => r'71ef9f6c8917ec6626f75cd26caf6096bca2a3e7';
 final class CrewPostStatsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Map<String, dynamic>>, String> {
   const CrewPostStatsFamily._()
-      : super(
-          retry: null,
-          name: r'crewPostStatsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'crewPostStatsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get crew post statistics
 
-  CrewPostStatsProvider call(
-    String crewId,
-  ) =>
+  CrewPostStatsProvider call(String crewId) =>
       CrewPostStatsProvider._(argument: crewId, from: this);
 
   @override
@@ -1222,24 +1338,27 @@ const postReactionCountsProvider = PostReactionCountsFamily._();
 
 /// Provider to get reaction counts for a post
 
-final class PostReactionCountsProvider extends $FunctionalProvider<
-        AsyncValue<Map<ReactionType, int>>,
-        Map<ReactionType, int>,
-        FutureOr<Map<ReactionType, int>>>
+final class PostReactionCountsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Map<ReactionType, int>>,
+          Map<ReactionType, int>,
+          FutureOr<Map<ReactionType, int>>
+        >
     with
         $FutureModifier<Map<ReactionType, int>>,
         $FutureProvider<Map<ReactionType, int>> {
   /// Provider to get reaction counts for a post
-  const PostReactionCountsProvider._(
-      {required PostReactionCountsFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'postReactionCountsProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const PostReactionCountsProvider._({
+    required PostReactionCountsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'postReactionCountsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$postReactionCountsHash();
@@ -1254,16 +1373,13 @@ final class PostReactionCountsProvider extends $FunctionalProvider<
   @$internal
   @override
   $FutureProviderElement<Map<ReactionType, int>> $createElement(
-          $ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<Map<ReactionType, int>> create(Ref ref) {
     final argument = this.argument as String;
-    return postReactionCounts(
-      ref,
-      argument,
-    );
+    return postReactionCounts(ref, argument);
   }
 
   @override
@@ -1285,19 +1401,17 @@ String _$postReactionCountsHash() =>
 final class PostReactionCountsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Map<ReactionType, int>>, String> {
   const PostReactionCountsFamily._()
-      : super(
-          retry: null,
-          name: r'postReactionCountsProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'postReactionCountsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to get reaction counts for a post
 
-  PostReactionCountsProvider call(
-    String postId,
-  ) =>
+  PostReactionCountsProvider call(String postId) =>
       PostReactionCountsProvider._(argument: postId, from: this);
 
   @override
@@ -1315,20 +1429,16 @@ final class UserReactionToPostProvider
     extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
     with $FutureModifier<bool>, $FutureProvider<bool> {
   /// Provider to check if current user has reacted to a post
-  const UserReactionToPostProvider._(
-      {required UserReactionToPostFamily super.from,
-      required (
-        String,
-        ReactionType,
-      )
-          super.argument})
-      : super(
-          retry: null,
-          name: r'userReactionToPostProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  const UserReactionToPostProvider._({
+    required UserReactionToPostFamily super.from,
+    required (String, ReactionType) super.argument,
+  }) : super(
+         retry: null,
+         name: r'userReactionToPostProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$userReactionToPostHash();
@@ -1347,15 +1457,8 @@ final class UserReactionToPostProvider
 
   @override
   FutureOr<bool> create(Ref ref) {
-    final argument = this.argument as (
-      String,
-      ReactionType,
-    );
-    return userReactionToPost(
-      ref,
-      argument.$1,
-      argument.$2,
-    );
+    final argument = this.argument as (String, ReactionType);
+    return userReactionToPost(ref, argument.$1, argument.$2);
   }
 
   @override
@@ -1375,32 +1478,23 @@ String _$userReactionToPostHash() =>
 /// Provider to check if current user has reacted to a post
 
 final class UserReactionToPostFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-            FutureOr<bool>,
-            (
-              String,
-              ReactionType,
-            )> {
+    with $FunctionalFamilyOverride<FutureOr<bool>, (String, ReactionType)> {
   const UserReactionToPostFamily._()
-      : super(
-          retry: null,
-          name: r'userReactionToPostProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'userReactionToPostProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Provider to check if current user has reacted to a post
 
-  UserReactionToPostProvider call(
-    String postId,
-    ReactionType reactionType,
-  ) =>
-      UserReactionToPostProvider._(argument: (
-        postId,
-        reactionType,
-      ), from: this);
+  UserReactionToPostProvider call(String postId, ReactionType reactionType) =>
+      UserReactionToPostProvider._(
+        argument: (postId, reactionType),
+        from: this,
+      );
 
   @override
   String toString() => r'userReactionToPostProvider';

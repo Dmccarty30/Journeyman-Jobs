@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 
 /// Accessibility utilities for improved app usability
+///
+/// Provides utilities for:
+/// - Screen reader announcements via SemanticsService
+/// - Semantic label generation for interactive elements
+/// - Haptic feedback for user interactions
+/// - High contrast detection and text scaling
 class AccessibilityHelpers {
   /// Announce message to screen readers
+  ///
+  /// Uses SemanticsService to announce text to screen readers.
+  /// This is useful for providing feedback on actions or state changes.
   static void announceToScreenReader(BuildContext context, String message) {
     SemanticsService.announce(message, TextDirection.ltr);
   }
@@ -54,8 +64,12 @@ class AccessibilityHelpers {
   }
 
   /// Get accessible text scale factor
+  ///
+  /// Returns the text scale factor from MediaQuery, clamped to prevent
+  /// layout issues with extremely large or small text.
   static double getAccessibleTextScale(BuildContext context) {
-    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    final textScaler = MediaQuery.of(context).textScaler;
+    final textScaleFactor = textScaler.scale(1.0);
     // Ensure text doesn't become too large for layout
     return textScaleFactor.clamp(0.8, 2.0);
   }

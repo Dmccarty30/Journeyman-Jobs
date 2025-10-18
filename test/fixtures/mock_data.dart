@@ -53,17 +53,28 @@ class MockData {
     int? localNumber,
     double? wage,
     String? constructionType,
+    String? sharerId,
   }) {
     final jobId = id ?? 'job-${DateTime.now().millisecondsSinceEpoch}';
     final jobLocal = localNumber ?? realIBEWLocals.first;
-    
+    final jobWage = wage ?? 42.50;
+    final jobCompany = company ?? 'Test Electric Company';
+
     return Job(
       id: jobId,
-      company: company ?? 'Test Electric Company',
+      sharerId: sharerId ?? 'test-user-12345',
+      jobDetails: {
+        'hours': 8,
+        'payRate': jobWage,
+        'perDiem': 'Health insurance, Retirement plan, Tool allowance',
+        'contractor': jobCompany,
+        'location': const GeoPoint(0, 0),
+      },
+      company: jobCompany,
       location: location ?? 'Test City, TS',
       classification: classification ?? electricalClassifications.first,
       local: jobLocal,
-      wage: wage ?? 42.50,
+      wage: jobWage,
       jobTitle: 'Journeyman Electrician',
       timestamp: DateTime.now(),
       startDate: DateTime.now().add(const Duration(days: 7)).toIso8601String(),
@@ -265,37 +276,4 @@ class MockData {
       'last_sync': DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
     };
   }
-}
-
-/// Constants for testing
-class TestConstants {
-  // Test timeouts
-  static const Duration shortTimeout = Duration(seconds: 5);
-  static const Duration mediumTimeout = Duration(seconds: 15);
-  static const Duration longTimeout = Duration(seconds: 30);
-
-  // Test keys for widget identification
-  static const String jobCardKey = 'job-card';
-  static const String localCardKey = 'local-card';
-  static const String circuitBreakerKey = 'circuit-breaker-switch';
-  static const String electricalLoaderKey = 'electrical-loader';
-  static const String loadingIndicatorKey = 'loading-indicator';
-  static const String errorMessageKey = 'error-message';
-
-  // Test user credentials
-  static const String testEmail = 'test@ibew.local';
-  static const String testPassword = 'TestPassword123!';
-  static const String testUserId = 'test-user-12345';
-
-  // Test Firebase collections
-  static const String jobsCollection = 'jobs';
-  static const String localsCollection = 'locals';
-  static const String usersCollection = 'users';
-  static const String notificationsCollection = 'notifications';
-
-  // Test error messages
-  static const String networkErrorMessage = 'Network connection failed';
-  static const String authErrorMessage = 'Authentication failed';
-  static const String firestoreErrorMessage = 'Firestore operation failed';
-  static const String permissionErrorMessage = 'Permission denied';
 }
