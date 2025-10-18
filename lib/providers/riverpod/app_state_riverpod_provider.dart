@@ -121,14 +121,19 @@ class AppStateNotifier extends _$AppStateNotifier {
     // Watch connectivity changes and update state reactively
     final connectivityAsync = ref.watch(connectivityStreamProvider);
 
-    // Set up analytics logging for connectivity changes using listenSelf
-    ref.listenSelf((previous, next) {
-      if (previous?.isConnected != next.isConnected) {
-        AnalyticsService.logCustomEvent(
-          'connectivity_changed',
-          <String, dynamic>{'is_connected': next.isConnected},
-        );
-      }
+    // Listen for connectivity changes to track analytics
+    // This is called in build() as required by Riverpod 2.x
+    ref.listen(connectivityStreamProvider, (AsyncValue<bool>? previous, AsyncValue<bool> next) {
+      next.whenData((bool isConnected) {
+        // Only log if connectivity actually changed
+        final previousConnected = previous?.valueOrNull;
+        if (previousConnected != null && previousConnected != isConnected) {
+          AnalyticsService.logCustomEvent(
+            'connectivity_changed',
+            <String, dynamic>{'is_connected': isConnected},
+          );
+        }
+      });
     });
 
     // Initialize app asynchronously (not blocking build)
