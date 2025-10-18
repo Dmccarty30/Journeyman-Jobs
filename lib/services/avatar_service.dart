@@ -189,7 +189,7 @@ class AvatarService {
 
       // Update Firestore user document
       await _firestore.collection('users').doc(user.uid).set({
-        'avatar_url': avatarUrl,
+        'avatarUrl': avatarUrl,
         'avatar_updated_at': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
     } catch (e) {

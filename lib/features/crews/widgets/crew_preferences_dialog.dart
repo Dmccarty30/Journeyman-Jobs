@@ -645,7 +645,7 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
                       ),
                     )
                   : Text(
-                      'Save Preferences',
+                      'Save',
                       style: AppTheme.buttonMedium.copyWith(
                         color: AppTheme.white,
                         fontWeight: FontWeight.bold,

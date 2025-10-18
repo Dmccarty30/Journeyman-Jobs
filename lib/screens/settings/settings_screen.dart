@@ -124,7 +124,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         if (mounted) {
           setState(() {
             _userName = user.displayName ?? 'Brother';
-            _isLoading = false,
+            _isLoading = false;
           });
           _headerAnimationController.forward();
         }

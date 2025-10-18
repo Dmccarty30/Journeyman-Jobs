@@ -94,7 +94,6 @@ class CondensedJobCard extends StatelessWidget {
               leftValue: JobDataFormatter.formatCompany(job.company),
               rightLabel: 'Wages',
               rightValue: wageValue != null ? '\$${wageValue.toStringAsFixed(2)}/hr' : 'N/A',
-              rightValueColor: wageValue != null && wageValue > 0 ? AppTheme.successGreen : null,
             ),
             const SizedBox(height: 8),
 
@@ -123,7 +122,7 @@ class CondensedJobCard extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 16,
-                  color: AppTheme.textLight,
+                  color: AppTheme.textDark,
                 ),
               ],
             ),
@@ -148,9 +147,9 @@ class CondensedJobCard extends StatelessWidget {
             child: RichText(
               text: TextSpan(
                 children: [
-                  const TextSpan(
-                    text: 'Contractor: ',
-                    style: TextStyle(
+                  TextSpan(
+                    text: '$leftLabel: ',
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: AppTheme.textDark,
                       fontSize: 12,
@@ -159,7 +158,7 @@ class CondensedJobCard extends StatelessWidget {
                   TextSpan(
                     text: leftValue,
                     style: TextStyle(
-                      color: leftValueColor ?? AppTheme.textLight,
+                      color: leftValueColor ?? AppTheme.textDark,
                       fontSize: 12,
                     ),
                   ),
@@ -184,7 +183,7 @@ class CondensedJobCard extends StatelessWidget {
                   TextSpan(
                     text: rightValue,
                     style: TextStyle(
-                      color: rightValueColor ?? AppTheme.textLight,
+                      color: rightValueColor ?? AppTheme.textDark,
                       fontSize: 12,
                     ),
                   ),

@@ -5,7 +5,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart';
+import '../../design_system/components/reusable_components.dart' hide JJSnackBar;
 import '../../navigation/app_router.dart';
 import '../../electrical_components/circuit_board_background.dart';
 import '../../electrical_components/jj_snack_bar.dart';
@@ -784,10 +784,10 @@ class SegmentedTabBar extends StatefulWidget {
   final Function(int) onTabChanged;
 
   const SegmentedTabBar({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onTabChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<SegmentedTabBar> createState() => _SegmentedTabBarState();

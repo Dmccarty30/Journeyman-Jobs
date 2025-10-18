@@ -153,7 +153,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Welcome back!',
+                                  'Welcome Back, $displayName!',
                                   style: AppTheme.headlineMedium.copyWith(
                                     color: AppTheme.primaryNavy,
                                     fontWeight: FontWeight.bold,
@@ -254,6 +254,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           Icons.calculate_outlined,
                           () {
                             context.push(AppRouter.electricalCalculators);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: _buildElectricalActionCard(
+                          'Resources',
+                          Icons.library_books_outlined,
+                          () {
+                            context.push(AppRouter.resources);
                           },
                         ),
                       ),
@@ -523,7 +533,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           boxShadow: [
             AppTheme.shadowSm,
-            AppTheme.shadowElectricalInfo,
           ],
           border: Border.all(
             color: AppTheme.accentCopper,

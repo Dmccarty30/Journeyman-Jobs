@@ -104,6 +104,7 @@
 - **Navigation**: go_router for type-safe routing
 - **Firebase Integration**: Use FlutterFire packages
 - **Async Operations**: Always handle loading and error states
+- **Context7** - Use the Context7 MCP server tool to quickly reference the most up-to-date and accurate Flutter best practices
 - **Code Style**:
 
   ```dart
@@ -128,6 +129,8 @@
 - **Update `README.md`** when adding features or changing setup
 - **Document Firebase collections** and their schemas
 - **Widget documentation example**:
+- **With every modification, addition, or iteration of any function, method, backend query, navigation, or action,
+      ALWAYS include sufficiant and descriptive commenting and documentation that easily explains the code blocks purpose, functionality, and or action**
 
   ```dart
   /// A card displaying IBEW union local information.
@@ -182,6 +185,7 @@
 - **Mobile-first approach** - Design for phones first, tablets second
 - **Offline capability** - Critical features (union directory) must work offline
 - **Performance matters** - Large lists (797+ locals) need optimization
+- **DO NOT USE ".withOpacity() INSTEAD USE .withValues(alpha: )"**
 - **Ask for clarification** on:
   - Firebase collection schemas if not documented
   - Specific IBEW terminology or classifications
@@ -192,7 +196,8 @@
 
 - **Job Aggregation**: Scraping from legacy union job boards
 - **Bid System**: Users can bid on jobs through the app
-- **Storm Work**: Emergency restoration jobs get priority highlighting
+- **Storm Work**: Users can browse through a comprehensive list of storm contractors and to access thier storm roster sign-up method,
+       locate contractor show-ups, and track up-to-date outage information as well as access an interactive radar
 - **Union Directory**: 797+ IBEW locals with contact integration
 - **Weather Integration**:
   - NOAA radar and alerts for storm tracking

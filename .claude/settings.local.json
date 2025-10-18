@@ -17,7 +17,8 @@
       "Bash(cat:*)",
       "Bash(flutter test:*)",
       "Bash(firebase --version)",
-      "Bash(firebase firestore:rules:*)"
+      "Bash(firebase firestore:rules:*)",
+      "Bash(xargs:*)"
     ],
     "deny": []
   },

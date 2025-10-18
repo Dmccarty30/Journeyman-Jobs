@@ -21,8 +21,36 @@ FeedService feedService(Ref ref) => FeedService();
 Stream<List<PostModel>> crewPostsStream(Ref ref, String crewId) {
   final feedService = ref.watch(feedServiceProvider);
   return feedService.getCrewPosts(crewId: crewId).map((snapshot) {
-    return snapshot.docs.map((doc) => PostModel.fromFirestore(doc)).toList();
+    // Limit to 50 most recent posts
+    final posts = snapshot.docs.map((doc) => PostModel.fromFirestore(doc)).toList();
+    posts.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return posts.take(50).toList();
   });
+}
+
+/// Stream of global feed posts (all crews)
+@riverpod
+Stream<List<PostModel>> globalFeedStream(Ref ref) {
+  return FirebaseFirestore.instance
+      .collection('posts')
+      .orderBy('timestamp', descending: true)
+      .limit(50) // Limit to 50 most recent posts
+      .snapshots()
+      .map((snapshot) {
+        return snapshot.docs.map((doc) => PostModel.fromFirestore(doc)).toList();
+      });
+}
+
+/// Global feed posts provider
+@riverpod
+AsyncValue<List<PostModel>> globalFeed(Ref ref) {
+  final postsAsync = ref.watch(globalFeedStreamProvider);
+  
+  return postsAsync.when(
+    data: (posts) => AsyncValue.data(posts.where((post) => !post.deleted).toList()),
+    loading: () => const AsyncValue.loading(),
+    error: (error, stack) => AsyncValue.error(error, stack),
+  );
 }
 
 /// Posts for a specific crew

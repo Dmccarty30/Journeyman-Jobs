@@ -353,9 +353,11 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen>
                     initialValue: _selectedJobType,
                     items: const [
                       DropdownMenuItem(value: 'Journeyman Lineman', child: Text('Journeyman Lineman')),
+                      DropdownMenuItem(value: 'Journeyman Electrician', child: Text('Journeyman Electrician')),
                       DropdownMenuItem(value: 'Inside Wireman', child: Text('Inside Wireman')),
-                      DropdownMenuItem(value: 'Operator', child: Text('Operator')),
                       DropdownMenuItem(value: 'Journeyman Wireman', child: Text('Journeyman Wireman')),
+                      DropdownMenuItem(value: 'Operator', child: Text('Operator')),
+                      DropdownMenuItem(value: 'Tree Trimmer', child: Text('Tree Trimmer')),
                     ],
                     onChanged: (String? newValue) {
                       setState(() {
@@ -416,19 +418,31 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen>
                     style: TextStyle(color: AppTheme.textPrimary),
                   ),
                   const SizedBox(height: 24),
-                  SwitchListTile(
-                    title: Text(
-                      'Auto-share matching jobs',
-                      style: TextStyle(color: AppTheme.textOnDark),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: AppTheme.accentCopper,
+                        width: AppTheme.borderWidthCopper,
+                      ),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      color: AppTheme.white,
                     ),
-                    value: _autoShareEnabled,
-                    onChanged: (value) {
-                      setState(() {
-                        _autoShareEnabled = value;
-                      });
-                    },
-                    activeThumbColor: AppTheme.accentCopper,
-                    tileColor: AppTheme.secondaryNavy,
+                    child: SwitchListTile(
+                      title: Text(
+                        'Auto-share matching jobs',
+                        style: TextStyle(color: AppTheme.textPrimary),
+                      ),
+                      value: _autoShareEnabled,
+                      onChanged: (value) {
+                        setState(() {
+                          _autoShareEnabled = value;
+                        });
+                      },
+                      activeColor: AppTheme.accentCopper,
+                      activeTrackColor: AppTheme.accentCopper.withValues(alpha: 0.3),
+                      inactiveThumbColor: AppTheme.mediumGray,
+                      inactiveTrackColor: AppTheme.lightGray,
+                    ),
                   ),
                   const SizedBox(height: 40),
                   

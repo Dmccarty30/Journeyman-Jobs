@@ -38,7 +38,6 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     'Transmission',
     'Distribution',
     'Substation',
-    'Storm Work',
   ];
 
 
@@ -89,14 +88,12 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
   List<Job> _getFilteredJobs(List<Job> jobs) {
     List<Job> filtered = jobs;
 
-    // Apply search query
+    // Apply search query - search only by local union number
     if (_searchQuery.isNotEmpty) {
-      final query = _searchQuery.toLowerCase();
+      final query = _searchQuery.trim();
       filtered = filtered.where((job) {
-        return job.company.toLowerCase().contains(query) ||
-               job.location.toLowerCase().contains(query) ||
-               (job.classification?.toLowerCase().contains(query) ?? false) ||
-               (job.jobTitle?.toLowerCase().contains(query) ?? false);
+        final localNumber = job.localNumber?.toString() ?? job.local?.toString() ?? '';
+        return localNumber.contains(query);
       }).toList();
     }
 
@@ -382,6 +379,58 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
               // Filter chips
               const SizedBox(height: 16),
               _buildFilterChips(),
+              const SizedBox(height: 8),
+              
+              // Local Union Search Bar
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search For A Specific Local',
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: AppTheme.accentCopper,
+                    ),
+                    filled: true,
+                    fillColor: AppTheme.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      borderSide: BorderSide(
+                        color: AppTheme.accentCopper,
+                        width: AppTheme.borderWidthCopper,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      borderSide: BorderSide(
+                        color: AppTheme.accentCopper.withValues(alpha: 0.5),
+                        width: AppTheme.borderWidthCopperThin,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      borderSide: BorderSide(
+                        color: AppTheme.accentCopper,
+                        width: AppTheme.borderWidthCopper,
+                      ),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacingMd,
+                      vertical: AppTheme.spacingMd,
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                  },
+                  onSubmitted: (_) {
+                    _applyFilters();
+                  },
+                ),
+              ),
               const SizedBox(height: 8),
               
               // Advanced filters

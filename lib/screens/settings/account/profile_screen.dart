@@ -162,7 +162,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           _address2Controller.text = data['address2'] ?? '';
           _cityController.text = data['city'] ?? '';
           _stateController.text = data['state'] ?? '';
-          _zipcodeController.text = data['zipcode'] ?? '';
+          // Handle zipcode which could be int or String in database
+          final zipcode = data['zipcode'];
+          _zipcodeController.text = zipcode == null ? '' : zipcode.toString();
           _avatarUrl = data['avatarUrl'];
           
           // Professional Information
@@ -211,6 +213,96 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     _hideTooltip();
     setState(() {
       _isEditing = !_isEditing;
+    });
+    
+    // Show tooltip guidance when entering edit mode
+    if (_isEditing) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showEditTooltip();
+      });
+    }
+  }
+  
+  void _showEditTooltip() {
+    _hideTooltip();
+    
+    final renderBox = _editButtonKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+    
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+    
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: offset.dy + size.height + 8,
+        right: 16,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            width: 280,
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryNavy,
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              boxShadow: [AppTheme.shadowLg],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: AppTheme.accentCopper,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Icon(
+                        Icons.edit,
+                        size: 16,
+                        color: AppTheme.white,
+                      ),
+                    ),
+                    const SizedBox(width: AppTheme.spacingSm),
+                    Expanded(
+                      child: Text(
+                        'Edit Mode Active',
+                        style: AppTheme.titleMedium.copyWith(
+                          color: AppTheme.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: _hideTooltip,
+                      child: const Icon(
+                        Icons.close,
+                        size: 18,
+                        color: AppTheme.white,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppTheme.spacingSm),
+                Text(
+                  'Tap any field to edit your information. Press the save button when done or close to cancel changes.',
+                  style: AppTheme.bodySmall.copyWith(
+                    color: AppTheme.white.withValues(alpha: 0.9),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    
+    Overlay.of(context).insert(_overlayEntry!);
+    
+    // Auto-hide after 4 seconds
+    Future.delayed(const Duration(seconds: 4), () {
+      _hideTooltip();
     });
   }
   
@@ -606,29 +698,45 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Display name instead of email in header
                       Text(
-                        user?.displayName ?? '${_firstNameController.text} ${_lastNameController.text}',
+                        '${_firstNameController.text} ${_lastNameController.text}'.trim().isEmpty
+                            ? user?.displayName ?? 'Brother'
+                            : '${_firstNameController.text} ${_lastNameController.text}',
                         style: AppTheme.headlineMedium.copyWith(
                           color: AppTheme.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: AppTheme.spacingXs),
-                      Text(
-                        user?.email ?? _emailController.text,
-                        style: AppTheme.bodyMedium.copyWith(
-                          color: AppTheme.white.withValues(alpha: 0.8),
-                        ),
-                      ),
-                      if (_homeLocalController.text.isNotEmpty) ...[
-                        const SizedBox(height: AppTheme.spacingXs),
+                      // Display IBEW Local with RichText for proper formatting
+                      if (_homeLocalController.text.isNotEmpty)
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'IBEW Local: ',
+                                style: AppTheme.bodyMedium.copyWith(
+                                  color: AppTheme.white.withValues(alpha: 0.8),
+                                ),
+                              ),
+                              TextSpan(
+                                text: _homeLocalController.text,
+                                style: AppTheme.bodyMedium.copyWith(
+                                  color: AppTheme.accentCopper,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      else
                         Text(
-                          _homeLocalController.text,
-                          style: AppTheme.bodySmall.copyWith(
-                            color: AppTheme.accentCopper,
+                          'IBEW Member',
+                          style: AppTheme.bodyMedium.copyWith(
+                            color: AppTheme.white.withValues(alpha: 0.8),
                           ),
                         ),
-                      ],
                     ],
                   ),
                 ),
@@ -921,8 +1029,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             controller: _booksOnController,
             enabled: _isEditing,
             prefixIcon: Icons.menu_book_outlined,
-            hintText: 'e.g., Book 1, Book 2',
-
+            hintText: 'e.g., 84, 222, 111, 1249, 71',
           ),
           const SizedBox(height: AppTheme.spacingLg),
           Text(

@@ -220,7 +220,7 @@ class _StormScreenState extends State<StormScreen> {
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         border: Border.all(
           color: AppTheme.lightGray,
-          width: 1,
+          width: 0.5,
         ),
       ),
       child: Column(
@@ -298,15 +298,25 @@ class _StormScreenState extends State<StormScreen> {
           ),
         ],
       ),
-      body: ElectricalCircuitBackground(
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingMd),
-          child: Container(
+      body: Stack(
+        children: [
+          // Circuit board background properly positioned
+          const Positioned.fill(
+            child: ElectricalCircuitBackground(
+              opacity: 0.08,
+              componentDensity: ComponentDensity.high,
+              enableCurrentFlow: true,
+            ),
+          ),
+          // Main content
+          Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            child: Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(AppTheme.radiusLg),
                 border: Border.all(
                   color: AppTheme.accentCopper,
-                  width: AppTheme.borderWidthCopper,
+                  width: AppTheme.borderWidthCopper * 0.5,
                 ),
                 boxShadow: [
                   AppTheme.shadowElectricalInfo,
@@ -384,7 +394,7 @@ class _StormScreenState extends State<StormScreen> {
                         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                         border: Border.all(
                           color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                          width: 1,
+                          width: 0.5,
                         ),
                       ),
                       child: ListTile(
@@ -468,7 +478,7 @@ class _StormScreenState extends State<StormScreen> {
                             borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                             border: Border.all(
                   color: AppTheme.accentCopper,
-                  width: AppTheme.borderWidthCopper,
+                  width: AppTheme.borderWidthCopper * 0.5,
                 ),
                 boxShadow: [
                   AppTheme.shadowElectricalInfo,
@@ -499,55 +509,31 @@ class _StormScreenState extends State<StormScreen> {
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
 
-                  // Emergency Declarations Section (Admin Only)
-                  FutureBuilder<bool>(
-                    future: _checkAdminStatus('current-user-id'), // TODO: Replace with actual user ID
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(
-                          width: double.infinity,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: AppTheme.white,
-                            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                            border: Border.all(
-                              color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                              width: 1,
+                  // Emergency Declarations Section
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AppTheme.spacingLg),
+                    decoration: BoxDecoration(
+                      color: AppTheme.white,
+                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                      boxShadow: [AppTheme.shadowMd],
+                      border: Border.all(
+                        color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                        width: 0.5,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.video_library,
+                              color: AppTheme.primaryNavy,
+                              size: AppTheme.iconMd,
                             ),
-                          ),
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              color: AppTheme.accentCopper,
-                            ),
-                          ),
-                        );
-                      }
-
-                      if (snapshot.data == true) {
-                        return Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(AppTheme.spacingLg),
-                          decoration: BoxDecoration(
-                            color: AppTheme.white,
-                            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                            boxShadow: [AppTheme.shadowMd],
-                            border: Border.all(
-                              color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                              width: 1,
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.video_library,
-                                    color: AppTheme.primaryNavy,
-                                    size: AppTheme.iconMd,
-                                  ),
-                                  const SizedBox(width: AppTheme.spacingSm),
-                                  Text(
+                            const SizedBox(width: AppTheme.spacingSm),
+                            Text(
                                     'Emergency Declarations',
                                     style: AppTheme.headlineSmall.copyWith(
                                       color: AppTheme.primaryNavy,
@@ -600,7 +586,7 @@ class _StormScreenState extends State<StormScreen> {
                                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                                   border: Border.all(
                                     color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                                    width: 1,
+                                    width: 0.5,
                                   ),
                                 ),
                                 child: Column(
@@ -624,7 +610,7 @@ class _StormScreenState extends State<StormScreen> {
                                         color: AppTheme.textSecondary,
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
                               // TODO: Add video upload functionality for admins
@@ -633,13 +619,7 @@ class _StormScreenState extends State<StormScreen> {
                               // TODO: Implement video list with pagination
                             ],
                           ),
-                        );
-                      }
-
-                      // Non-admin users see nothing
-                      return const SizedBox.shrink();
-                    },
-                  ),
+                        ),
 
                   const SizedBox(height: AppTheme.spacingLg),
 
@@ -653,7 +633,7 @@ class _StormScreenState extends State<StormScreen> {
                       boxShadow: [AppTheme.shadowMd],
                       border: Border.all(
                         color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                        width: 1,
+                        width: 0.5,
                       ),
                     ),
                     child: Column(
@@ -729,7 +709,7 @@ class _StormScreenState extends State<StormScreen> {
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -743,7 +723,7 @@ class _StormScreenState extends State<StormScreen> {
         boxShadow: [AppTheme.shadowSm],
         border: Border.all(
           color: color.withValues(alpha: 0.2),
-          width: 1,
+          width: 0.5,
         ),
       ),
       child: Column(

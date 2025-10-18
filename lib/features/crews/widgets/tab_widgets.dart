@@ -15,7 +15,8 @@ class FeedTab extends ConsumerWidget {
     final selectedCrew = ref.watch(selectedCrewProvider);
     final currentUser = ref.watch(currentUserProvider);
 
-    if (selectedCrew == null || currentUser == null) {
+    // Allow feed access even without a crew
+    if (currentUser == null) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -23,22 +24,18 @@ class FeedTab extends ConsumerWidget {
             Icon(Icons.feed, size: 48, color: AppTheme.mediumGray),
             const SizedBox(height: 16),
             Text(
-              'Select a crew to view team updates and announcements',
+              'Please sign in to view the feed',
               style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Team updates and announcements for your crew will appear here',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.mediumGray),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
       );
     }
 
-    // Watch for real-time posts
-    final postsAsync = ref.watch(crewPostsProvider(selectedCrew.id));
+    // Watch for real-time posts - use global feed if no crew selected
+    final postsAsync = selectedCrew != null 
+        ? ref.watch(crewPostsProvider(selectedCrew.id))
+        : ref.watch(globalFeedProvider);
     final currentUserName = currentUser.displayName ?? currentUser.email ?? 'Unknown User';
 
     return postsAsync.when(
@@ -259,26 +256,130 @@ class MembersTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedCrew = ref.watch(selectedCrewProvider);
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.people_alt_outlined, size: 48, color: AppTheme.mediumGray),
-          const SizedBox(height: 16),
-          Text(
-            selectedCrew != null ? 'Members of ${selectedCrew.name}' : 'Members Tab Content',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            selectedCrew != null
-                ? 'Crew member information for ${selectedCrew.name} appears here'
-                : 'Select a crew to view crew member information',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.mediumGray),
-            textAlign: TextAlign.center,
-          ),
-        ],
+    if (selectedCrew == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.people_alt_outlined, size: 48, color: AppTheme.mediumGray),
+            const SizedBox(height: 16),
+            Text(
+              'No crew selected',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Select a crew to view crew member information',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.mediumGray),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Get crew members stream
+    final membersAsync = ref.watch(crewMembersProvider(selectedCrew.id));
+
+    return membersAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 16),
+            Text('Error loading members: $error'),
+          ],
+        ),
       ),
+      data: (members) {
+        if (members.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.group_outlined, size: 48, color: AppTheme.mediumGray),
+                const SizedBox(height: 16),
+                Text(
+                  'No members yet',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Invite members to join ${selectedCrew.name}',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.mediumGray),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          itemCount: members.length,
+          itemBuilder: (context, index) {
+            final member = members[index];
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.2),
+                child: Text(
+                  member.displayName?.substring(0, 1).toUpperCase() ?? 'U',
+                  style: TextStyle(color: AppTheme.accentCopper),
+                ),
+              ),
+              title: Text(
+                member.displayName ?? 'Unknown Member',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (member.homeLocal != null)
+                    Text('Local ${member.homeLocal}'),
+                  if (member.classification != null)
+                    Text(member.classification!),
+                  if (member.customInfo != null && member.customInfo!.isNotEmpty)
+                    Text(member.customInfo!),
+                ],
+              ),
+              trailing: IconButton(
+                icon: Icon(Icons.message, color: AppTheme.accentCopper),
+                onPressed: () {
+                  // Show direct message option
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: Icon(Icons.message, color: AppTheme.accentCopper),
+                            title: Text('Direct Message'),
+                            subtitle: Text('Send a private message to ${member.displayName}'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              // TODO: Navigate to direct message screen
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Direct messaging coming soon!'),
+                                  backgroundColor: AppTheme.infoBlue,
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

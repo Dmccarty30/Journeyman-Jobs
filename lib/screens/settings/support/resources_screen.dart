@@ -7,6 +7,7 @@ import 'calculators/voltage_drop_calculator.dart';
 import 'calculators/conduit_fill_calculator.dart';
 import 'calculators/load_calculator.dart';
 import 'calculators/wire_size_chart.dart';
+import '../../../widgets/pay_scale_card.dart';
 
 class ResourcesScreen extends StatefulWidget {
   const ResourcesScreen({super.key});
@@ -183,14 +184,32 @@ class _ResourcesScreenState extends State<ResourcesScreen> with SingleTickerProv
     ResourceItem(
       category: 'Safety',
       title: 'NFPA - Fire Safety',
-      description: 'National Fire Protection Association',
+      description: 'National Fire Protection Association Standards',
       type: ResourceType.link,
       icon: Icons.local_fire_department,
       color: AppTheme.errorRed,
-      action: 'https://www.nfpa.org',
+      action: 'https://www.nfpa.org/en/for-professionals/codes-and-standards/list-of-codes-and-standards#sortCriteria=%40computedproductid%20ascending%2C%40productid%20ascending&aq=%40culture%3D%22en%22&cq=%40tagtype%3D%3D(%22Standards%20Development%20Process%22)',
     ),
     ResourceItem(
-      category: 'Government',
+      category: 'Helpful',
+      title: 'Union Pay Scales',
+      description: 'Current pay rates for IBEW linemen nationwide',
+      type: ResourceType.link,
+      icon: Icons.payments,
+      color: AppTheme.accentCopper,
+      action: 'https://unionpayscales.com/trades/ibew-linemen/',
+    ),
+    ResourceItem(
+      category: 'Helpful',
+      title: 'Pay Scale Calculator',
+      description: 'Interactive pay scale comparison tool',
+      type: ResourceType.tool,
+      icon: Icons.calculate_outlined,
+      color: AppTheme.successGreen,
+      action: 'pay_scale_widget',  // Special action to show pay_scale_card widget
+    ),
+    ResourceItem(
+      category: 'Helpful',
       title: 'Department of Labor',
       description: 'Federal employment and labor information',
       type: ResourceType.link,
@@ -518,6 +537,9 @@ class ResourceCard extends StatelessWidget {
       case 'transformer_banks':
         context.go('/tools/transformer-reference');
         return;
+      case 'pay_scale_widget':
+        _showPayScaleCard(context);
+        return;
       default:
         _showToolDialog(context, item);
         return;
@@ -528,6 +550,65 @@ class ResourceCard extends StatelessWidget {
       MaterialPageRoute(builder: (context) => toolScreen!),
     );
     }
+
+  void _showPayScaleCard(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.9,
+        decoration: BoxDecoration(
+          color: AppTheme.white,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(AppTheme.radiusXl),
+            topRight: Radius.circular(AppTheme.radiusXl),
+          ),
+        ),
+        child: Column(
+          children: [
+            // Handle bar
+            Container(
+              margin: const EdgeInsets.only(top: AppTheme.spacingMd),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppTheme.textLight,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Title
+            Padding(
+              padding: const EdgeInsets.all(AppTheme.spacingMd),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'IBEW Pay Scales',
+                    style: AppTheme.headlineMedium.copyWith(
+                      color: AppTheme.primaryNavy,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            // Pay Scale Card Content
+            const Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(AppTheme.spacingMd),
+                child: PayScaleCard(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   void _showToolDialog(BuildContext context, ResourceItem item) {
     showDialog(

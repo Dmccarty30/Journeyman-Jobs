@@ -949,7 +949,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             textInputAction: TextInputAction.done,
             onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
             prefixIcon: Icons.book_outlined,
-            hintText: 'e.g., Book 1, Book 2, Local 456 Book 1',
+            hintText: 'e.g., 84, 222, 111, 1249, 71',
             maxLines: 2,
           ),
           
@@ -1020,7 +1020,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             children: _constructionTypes.map((type) {
               final isSelected = _selectedConstructionTypes.contains(type);
               return JJChip(
-                label: type,
+                label: _capitalizeConstructionType(type),
                 isSelected: isSelected,
                 icon: _getConstructionTypeIcon(type),
                 onTap: () {
@@ -1338,23 +1338,49 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
     );
   }
 
+  String _capitalizeConstructionType(String type) {
+    switch (type) {
+      case 'distribution':
+        return 'Distribution';
+      case 'transmission':
+        return 'Transmission';
+      case 'subStation':
+        return 'Sub Station';
+      case 'residential':
+        return 'Residential';
+      case 'industrial':
+        return 'Industrial';
+      case 'dataCenter':
+        return 'Data Center';
+      case 'commercial':
+        return 'Commercial';
+      case 'underground':
+        return 'Underground';
+      default:
+        // Fallback: capitalize first letter
+        return type.isNotEmpty 
+            ? '${type[0].toUpperCase()}${type.substring(1)}'
+            : type;
+    }
+  }
+
   IconData _getConstructionTypeIcon(String type) {
     switch (type) {
-      case 'Distribution':
+      case 'distribution':
         return Icons.power_outlined;
-      case 'Transmission':
+      case 'transmission':
         return Icons.electrical_services;
-      case 'SubStation':
+      case 'subStation':
         return Icons.transform_outlined;
-      case 'Residential':
+      case 'residential':
         return Icons.home_outlined;
-      case 'Industrial':
+      case 'industrial':
         return Icons.factory_outlined;
-      case 'Data Center':
+      case 'dataCenter':
         return Icons.storage_outlined;
-      case 'Commercial':
+      case 'commercial':
         return Icons.business_outlined;
-      case 'Underground':
+      case 'underground':
         return Icons.layers_outlined;
       default:
         return Icons.construction_outlined;

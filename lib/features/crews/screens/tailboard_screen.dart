@@ -141,7 +141,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
               ),
             ],
           ),
-          floatingActionButton: selectedCrew != null ? _buildFloatingActionButton() : null,
+          floatingActionButton: _buildFloatingActionButton(),
         );
       },
     );
@@ -229,51 +229,43 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          flex: 2,
-                          child: Text(
-                            crew.name,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.textPrimary,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        crew.name,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textPrimary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (crew.description != null && crew.description!.isNotEmpty)
+                        Text(
+                          crew.description!,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppTheme.textSecondary,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        )
+                      else
+                        Text(
+                          '${crew.memberIds.length} members',
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: AppTheme.textSecondary,
                           ),
                         ),
-                        SizedBox(width: 10),
-                        Flexible(
-                          flex: 1,
-                          child: CrewSelectionDropdown(),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      '${crew.memberIds.length} members',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppTheme.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Flexible(
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
-                  child: Text(
-                    '2h',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.mediumGray,
-                    ),
-                    textAlign: TextAlign.end,
+                    ],
                   ),
                 ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
+                child: CrewSelectionDropdown(),
               ),
               IconButton(
                 onPressed: () => _showQuickActions(context),
