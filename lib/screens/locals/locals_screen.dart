@@ -5,12 +5,14 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../models/locals_record.dart';
 import '../../design_system/app_theme.dart';
 import '../../providers/riverpod/locals_riverpod_provider.dart';
+import '../../providers/riverpod/auth_riverpod_provider.dart';
 import 'dart:io' show Platform;
 import '../../widgets/notification_badge.dart';
 import 'package:go_router/go_router.dart';
 import '../../navigation/app_router.dart';
 import '../../utils/text_formatting_wrapper.dart';
 import '../../electrical_components/circuit_board_background.dart';
+import 'locals_skeleton_screen.dart';
 
 class LocalsScreen extends ConsumerStatefulWidget {
   const LocalsScreen({super.key});
@@ -29,9 +31,10 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(localsProvider.notifier).loadLocals();
-    });
+    // NOTE: Data loading removed from initState to prevent permission errors
+    // during auth initialization. Data is now loaded in build() after
+    // authInitializationProvider confirms auth is ready.
+    // Only set up scroll listener here.
     _scrollController.addListener(_onScroll);
   }
 
@@ -64,6 +67,27 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Watch auth initialization status
+    // If auth is still initializing, show skeleton screen to prevent
+    // flash of permission denied errors when accessing Firestore
+    final authInit = ref.watch(authInitializationProvider);
+
+    // Show skeleton screen while auth initializes
+    if (authInit.isLoading) {
+      return const LocalsSkeletonScreen();
+    }
+
+    // Auth initialized - now safe to load data
+    // Router will handle redirect if user is not authenticated
+    // Load locals data once when auth is ready (not in initState)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final localsState = ref.read(localsProvider);
+      // Only load if not already loaded and not currently loading
+      if (localsState.locals.isEmpty && !localsState.isLoading) {
+        ref.read(localsProvider.notifier).loadLocals();
+      }
+    });
+
     return Scaffold(
       backgroundColor: AppTheme.offWhite,
       appBar: AppBar(

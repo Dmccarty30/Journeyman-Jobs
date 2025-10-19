@@ -8,7 +8,7 @@ import '../../../providers/riverpod/auth_riverpod_provider.dart';
 import '../../../design_system/app_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import '../../../navigation/app_router.dart';
-import '../../../providers/core_providers.dart' hide selectedCrewProvider, currentUserProvider;
+import '../../../providers/core_providers.dart' hide currentUserProvider;
 import 'package:journeyman_jobs/electrical_components/jj_electrical_notifications.dart';
 import 'package:journeyman_jobs/providers/riverpod/jobs_riverpod_provider.dart';
 import 'package:journeyman_jobs/widgets/electrical_circuit_background.dart';
@@ -195,9 +195,10 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
             ),
           ),
           const SizedBox(height: 16),
+          // Dropdown has explicit padding to prevent edge overflow
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(30, 0, 30, 0),
-            child: CrewSelectionDropdown(),
+            child: CrewSelectionDropdown(isExpanded: true),
           ),
         ],
       ),
@@ -253,9 +254,14 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
-                child: CrewSelectionDropdown(),
+              // Dropdown needs Flexible constraint in Row to prevent layout issues
+              // This prevents overflow when crew names are long and ensures proper
+              // constraint negotiation with sibling widgets (avatar and menu button)
+              Flexible(
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
+                  child: CrewSelectionDropdown(isExpanded: true),
+                ),
               ),
               IconButton(
                 onPressed: () => _showQuickActions(context),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// Providers
+import '../providers/riverpod/auth_riverpod_provider.dart';
 
 // Screens
 import '../screens/splash/splash_screen.dart';
@@ -253,33 +256,112 @@ class AppRouter {
     ),
   );
 
-  /// Handles route redirection based on authentication state
+  /// Handles route redirection based on authentication state.
+  ///
+  /// Uses Riverpod providers to check:
+  /// - Auth initialization status (authInitializationProvider)
+  /// - User authentication state (authStateProvider)
+  ///
+  /// Redirect logic:
+  /// 1. During auth initialization -> allow navigation (screens show loading)
+  /// 2. Unauthenticated user on protected route -> redirect to /auth with return URL
+  /// 3. Authenticated user on /auth or /welcome -> redirect to intended destination or /home
+  /// 4. Public routes always accessible
+  ///
+  /// Query parameters:
+  /// - `redirect`: Captures the original destination for post-login navigation
+  ///
+  /// Example: `/locals` -> `/auth?redirect=%2Flocals` -> successful login -> `/locals`
   static String? _redirect(BuildContext context, GoRouterState state) {
-    final user = FirebaseAuth.instance.currentUser;
-    final isAuthenticated = user != null;
-    
-    // Get the current location
-    final location = state.matchedLocation;
-    
-    // Define public routes that don't require authentication
-    final publicRoutes = [
+    // Access Riverpod container from context
+    // Note: This assumes the router is wrapped in ProviderScope
+    final container = ProviderScope.containerOf(context, listen: false);
+
+    // Check auth initialization status
+    final authInit = container.read(authInitializationProvider);
+    final authState = container.read(authStateProvider);
+
+    // Get current location
+    final currentPath = state.matchedLocation;
+
+    // Define public routes (accessible without authentication)
+    const publicRoutes = [
       splash,
       welcome,
       auth,
       forgotPassword,
+      onboarding,
     ];
-    
-    // If user is not authenticated and trying to access protected route
-    if (!isAuthenticated && !publicRoutes.contains(location)) {
-      return welcome;
+
+    // If auth is still initializing, allow navigation
+    // Screens will handle loading state with skeleton screens (Wave 3)
+    if (authInit.isLoading) {
+      return null;
     }
-    
-    // If user is authenticated, we need to check onboarding status
-    // Since redirect is synchronous, we'll handle this at the screen level
-    // For now, just allow navigation and let screens handle onboarding checks
-    
-    // No redirection needed - let screens handle onboarding logic
+
+    // Determine if current route requires authentication
+    final requiresAuth = !publicRoutes.contains(currentPath);
+
+    // Get current user (null if not authenticated or still loading)
+    // In Riverpod 3.x, we use pattern matching instead of valueOrNull
+    final user = authState.whenOrNull(
+      data: (user) => user,
+    );
+    final isAuthenticated = user != null;
+
+    // Protected route accessed by unauthenticated user -> redirect to login
+    if (requiresAuth && !isAuthenticated) {
+      // Capture original destination for post-login redirect
+      // Don't redirect if already on a public route to avoid loops
+      if (currentPath != auth && currentPath != welcome) {
+        return '$auth?redirect=${Uri.encodeComponent(currentPath)}';
+      }
+      return auth;
+    }
+
+    // Authenticated user trying to access login/welcome -> redirect
+    if (isAuthenticated && (currentPath == auth || currentPath == welcome)) {
+      // Check for redirect parameter (user was sent to login from protected route)
+      final redirect = state.uri.queryParameters['redirect'];
+
+      if (redirect != null && redirect.isNotEmpty) {
+        // Decode and navigate to original destination
+        final decodedRedirect = Uri.decodeComponent(redirect);
+
+        // Validate redirect path to prevent open redirect vulnerabilities
+        if (_isValidRedirectPath(decodedRedirect)) {
+          return decodedRedirect;
+        }
+      }
+
+      // Default: redirect authenticated users to home
+      return home;
+    }
+
+    // Allow navigation
     return null;
+  }
+
+  /// Validates redirect paths to prevent open redirect vulnerabilities.
+  ///
+  /// Only allows internal app routes (must start with /).
+  /// Prevents redirects to external URLs or malicious paths.
+  ///
+  /// Valid: /home, /locals, /jobs/123
+  /// Invalid: https://evil.com, //evil.com, javascript:alert(1)
+  static bool _isValidRedirectPath(String path) {
+    // Must start with / and not be a protocol-relative URL
+    if (!path.startsWith('/') || path.startsWith('//')) {
+      return false;
+    }
+
+    // Must not contain protocol schemes
+    if (path.contains('://')) {
+      return false;
+    }
+
+    // Path is valid internal route
+    return true;
   }
 
   /// Navigate to a specific route and clear the navigation stack

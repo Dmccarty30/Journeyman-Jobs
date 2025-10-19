@@ -1,5 +1,7 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../services/auth_service.dart';
@@ -53,15 +55,95 @@ Stream<User?> authStateStream(Ref ref) {
   return authService.authStateChanges;
 }
 
-/// Current user provider
+/// Provides the current authenticated user wrapped in AsyncValue.
+///
+/// Use this when you need to distinguish between loading state and unauthenticated state:
+/// - AsyncValue.loading: Firebase Auth is still initializing
+/// - AsyncValue.data(null): User is confirmed unauthenticated
+/// - AsyncValue.data(User): User is authenticated
+/// - AsyncValue.error: Auth initialization failed
+///
+/// Example usage:
+/// ```dart
+/// final authState = ref.watch(authStateProvider);
+/// authState.when(
+///   loading: () => CircularProgressIndicator(),
+///   data: (user) => user != null ? HomeScreen() : LoginScreen(),
+///   error: (err, stack) => ErrorScreen(error: err),
+/// );
+/// ```
+@riverpod
+AsyncValue<User?> authState(Ref ref) {
+  return ref.watch(authStateStreamProvider);
+}
+
+/// Simple provider that returns current user or null.
+///
+/// Returns null in two cases:
+/// - Auth is still loading (Firebase initializing)
+/// - User is confirmed unauthenticated
+///
+/// Use authState provider if you need to distinguish these states.
+///
+/// Example usage:
+/// ```dart
+/// final user = ref.watch(currentUserProvider);
+/// if (user != null) {
+///   // User is authenticated
+/// }
+/// ```
 @riverpod
 User? currentUser(Ref ref) {
   final authState = ref.watch(authStateStreamProvider);
-  return authState.when(
-    data: (user) => user,
-    loading: () => null,
-    error: (_, __) => null,
-  );
+  return authState.whenOrNull(data: (user) => user);
+}
+
+/// Tracks whether Firebase Auth has completed its initial state check.
+///
+/// Returns `AsyncValue<bool>`:
+/// - `AsyncValue.loading`: Auth still initializing
+/// - `AsyncValue.data(true)`: Auth initialized (user may be null or User object)
+/// - `AsyncValue.error`: Auth initialization failed (but app continues)
+///
+/// Use this to show loading screens while auth initializes.
+///
+/// Example usage:
+/// ```dart
+/// final authInit = ref.watch(authInitializationProvider);
+/// authInit.when(
+///   loading: () => SplashScreen(),
+///   data: (initialized) => initialized ? HomeScreen() : LoginScreen(),
+///   error: (err, stack) => HomeScreen(), // Continue on error
+/// );
+/// ```
+@riverpod
+class AuthInitialization extends _$AuthInitialization {
+  /// Maximum time to wait for auth initialization before proceeding.
+  /// Prevents indefinite loading if Firebase Auth has issues.
+  static const _maxInitTimeout = Duration(seconds: 5);
+
+  @override
+  Future<bool> build() async {
+    final authService = ref.watch(authServiceProvider);
+
+    try {
+      // Wait for first auth state emission (indicates Firebase Auth is ready)
+      // This ensures we know whether user is authenticated or not before proceeding
+      await authService.authStateChanges
+        .first
+        .timeout(_maxInitTimeout);
+
+      return true;
+    } on TimeoutException {
+      // Auth initialization took too long - proceed anyway to avoid infinite loading
+      // This is better than blocking the user indefinitely
+      return true;
+    } catch (e) {
+      // Auth initialization error - log it but don't block the app
+      // User can still use offline features or try signing in manually
+      return true;
+    }
+  }
 }
 
 /// Auth state notifier for managing authentication operations
@@ -202,4 +284,67 @@ bool isRouteProtected(Ref ref, String routePath) {
   ];
 
   return protectedRoutes.any((String route) => routePath.startsWith(route));
+}
+
+/// Monitors session validity and triggers re-auth when session expires.
+///
+/// Checks session age every 5 minutes and invalidates sessions >24 hours old.
+/// This ensures compliance with the 24-hour session requirement.
+///
+/// The monitor:
+/// - Runs periodic checks every 5 minutes
+/// - Validates session timestamp against 24-hour limit
+/// - Automatically signs out expired sessions
+/// - Cleans up timer on provider disposal
+///
+/// Example usage:
+/// ```dart
+/// final sessionValid = ref.watch(sessionMonitorProvider);
+/// if (!sessionValid) {
+///   // Session expired - user will be redirected to login
+/// }
+/// ```
+@riverpod
+class SessionMonitor extends _$SessionMonitor {
+  Timer? _checkTimer;
+
+  /// Session validity check interval (5 minutes)
+  static const _checkInterval = Duration(minutes: 5);
+
+  @override
+  bool build() {
+    // Start monitoring when provider initializes
+    _startMonitoring();
+
+    // Clean up timer on dispose
+    ref.onDispose(() {
+      _checkTimer?.cancel();
+    });
+
+    return true; // Session valid initially
+  }
+
+  /// Starts periodic session validation checks.
+  ///
+  /// Runs every 5 minutes to check if session is still within 24-hour window.
+  void _startMonitoring() {
+    _checkTimer?.cancel();
+
+    _checkTimer = Timer.periodic(_checkInterval, (_) async {
+      final authService = ref.read(authServiceProvider);
+      final currentUser = ref.read(currentUserProvider);
+
+      if (currentUser != null) {
+        final isValid = await authService.isTokenValid();
+
+        if (!isValid) {
+          debugPrint('[SessionMonitor] Session expired (>24 hours), signing out');
+
+          // Session expired - force sign out
+          await authService.signOut();
+          state = false; // Update state to invalid
+        }
+      }
+    });
+  }
 }

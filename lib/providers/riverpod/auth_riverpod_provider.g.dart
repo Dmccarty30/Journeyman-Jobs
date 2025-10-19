@@ -92,16 +92,158 @@ final class AuthStateStreamProvider
 
 String _$authStateStreamHash() => r'945c7573a4c44c1e7821e357b4335dfab9831caf';
 
-/// Current user provider
+/// Provides the current authenticated user wrapped in AsyncValue.
+///
+/// Use this when you need to distinguish between loading state and unauthenticated state:
+/// - AsyncValue.loading: Firebase Auth is still initializing
+/// - AsyncValue.data(null): User is confirmed unauthenticated
+/// - AsyncValue.data(User): User is authenticated
+/// - AsyncValue.error: Auth initialization failed
+///
+/// Example usage:
+/// ```dart
+/// final authState = ref.watch(authStateProvider);
+/// authState.when(
+///   loading: () => CircularProgressIndicator(),
+///   data: (user) => user != null ? HomeScreen() : LoginScreen(),
+///   error: (err, stack) => ErrorScreen(error: err),
+/// );
+/// ```
+
+@ProviderFor(authState)
+const authStateProvider = AuthStateProvider._();
+
+/// Provides the current authenticated user wrapped in AsyncValue.
+///
+/// Use this when you need to distinguish between loading state and unauthenticated state:
+/// - AsyncValue.loading: Firebase Auth is still initializing
+/// - AsyncValue.data(null): User is confirmed unauthenticated
+/// - AsyncValue.data(User): User is authenticated
+/// - AsyncValue.error: Auth initialization failed
+///
+/// Example usage:
+/// ```dart
+/// final authState = ref.watch(authStateProvider);
+/// authState.when(
+///   loading: () => CircularProgressIndicator(),
+///   data: (user) => user != null ? HomeScreen() : LoginScreen(),
+///   error: (err, stack) => ErrorScreen(error: err),
+/// );
+/// ```
+
+final class AuthStateProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<User?>,
+          AsyncValue<User?>,
+          AsyncValue<User?>
+        >
+    with $Provider<AsyncValue<User?>> {
+  /// Provides the current authenticated user wrapped in AsyncValue.
+  ///
+  /// Use this when you need to distinguish between loading state and unauthenticated state:
+  /// - AsyncValue.loading: Firebase Auth is still initializing
+  /// - AsyncValue.data(null): User is confirmed unauthenticated
+  /// - AsyncValue.data(User): User is authenticated
+  /// - AsyncValue.error: Auth initialization failed
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final authState = ref.watch(authStateProvider);
+  /// authState.when(
+  ///   loading: () => CircularProgressIndicator(),
+  ///   data: (user) => user != null ? HomeScreen() : LoginScreen(),
+  ///   error: (err, stack) => ErrorScreen(error: err),
+  /// );
+  /// ```
+  const AuthStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'authStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$authStateHash();
+
+  @$internal
+  @override
+  $ProviderElement<AsyncValue<User?>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  AsyncValue<User?> create(Ref ref) {
+    return authState(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<User?> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<User?>>(value),
+    );
+  }
+}
+
+String _$authStateHash() => r'eca78ab53d4d10f44be53705bfb9d589e81f961f';
+
+/// Simple provider that returns current user or null.
+///
+/// Returns null in two cases:
+/// - Auth is still loading (Firebase initializing)
+/// - User is confirmed unauthenticated
+///
+/// Use authState provider if you need to distinguish these states.
+///
+/// Example usage:
+/// ```dart
+/// final user = ref.watch(currentUserProvider);
+/// if (user != null) {
+///   // User is authenticated
+/// }
+/// ```
 
 @ProviderFor(currentUser)
 const currentUserProvider = CurrentUserProvider._();
 
-/// Current user provider
+/// Simple provider that returns current user or null.
+///
+/// Returns null in two cases:
+/// - Auth is still loading (Firebase initializing)
+/// - User is confirmed unauthenticated
+///
+/// Use authState provider if you need to distinguish these states.
+///
+/// Example usage:
+/// ```dart
+/// final user = ref.watch(currentUserProvider);
+/// if (user != null) {
+///   // User is authenticated
+/// }
+/// ```
 
 final class CurrentUserProvider extends $FunctionalProvider<User?, User?, User?>
     with $Provider<User?> {
-  /// Current user provider
+  /// Simple provider that returns current user or null.
+  ///
+  /// Returns null in two cases:
+  /// - Auth is still loading (Firebase initializing)
+  /// - User is confirmed unauthenticated
+  ///
+  /// Use authState provider if you need to distinguish these states.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final user = ref.watch(currentUserProvider);
+  /// if (user != null) {
+  ///   // User is authenticated
+  /// }
+  /// ```
   const CurrentUserProvider._()
     : super(
         from: null,
@@ -135,7 +277,127 @@ final class CurrentUserProvider extends $FunctionalProvider<User?, User?, User?>
   }
 }
 
-String _$currentUserHash() => r'7a7c15dd3ddbe7d5ff4fa9b0c4e9cd832e42c8aa';
+String _$currentUserHash() => r'ae2c45fb2f8f20e35c87ebd7aad344c1d349bbca';
+
+/// Tracks whether Firebase Auth has completed its initial state check.
+///
+/// Returns `AsyncValue<bool>`:
+/// - `AsyncValue.loading`: Auth still initializing
+/// - `AsyncValue.data(true)`: Auth initialized (user may be null or User object)
+/// - `AsyncValue.error`: Auth initialization failed (but app continues)
+///
+/// Use this to show loading screens while auth initializes.
+///
+/// Example usage:
+/// ```dart
+/// final authInit = ref.watch(authInitializationProvider);
+/// authInit.when(
+///   loading: () => SplashScreen(),
+///   data: (initialized) => initialized ? HomeScreen() : LoginScreen(),
+///   error: (err, stack) => HomeScreen(), // Continue on error
+/// );
+/// ```
+
+@ProviderFor(AuthInitialization)
+const authInitializationProvider = AuthInitializationProvider._();
+
+/// Tracks whether Firebase Auth has completed its initial state check.
+///
+/// Returns `AsyncValue<bool>`:
+/// - `AsyncValue.loading`: Auth still initializing
+/// - `AsyncValue.data(true)`: Auth initialized (user may be null or User object)
+/// - `AsyncValue.error`: Auth initialization failed (but app continues)
+///
+/// Use this to show loading screens while auth initializes.
+///
+/// Example usage:
+/// ```dart
+/// final authInit = ref.watch(authInitializationProvider);
+/// authInit.when(
+///   loading: () => SplashScreen(),
+///   data: (initialized) => initialized ? HomeScreen() : LoginScreen(),
+///   error: (err, stack) => HomeScreen(), // Continue on error
+/// );
+/// ```
+final class AuthInitializationProvider
+    extends $AsyncNotifierProvider<AuthInitialization, bool> {
+  /// Tracks whether Firebase Auth has completed its initial state check.
+  ///
+  /// Returns `AsyncValue<bool>`:
+  /// - `AsyncValue.loading`: Auth still initializing
+  /// - `AsyncValue.data(true)`: Auth initialized (user may be null or User object)
+  /// - `AsyncValue.error`: Auth initialization failed (but app continues)
+  ///
+  /// Use this to show loading screens while auth initializes.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final authInit = ref.watch(authInitializationProvider);
+  /// authInit.when(
+  ///   loading: () => SplashScreen(),
+  ///   data: (initialized) => initialized ? HomeScreen() : LoginScreen(),
+  ///   error: (err, stack) => HomeScreen(), // Continue on error
+  /// );
+  /// ```
+  const AuthInitializationProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'authInitializationProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$authInitializationHash();
+
+  @$internal
+  @override
+  AuthInitialization create() => AuthInitialization();
+}
+
+String _$authInitializationHash() =>
+    r'1d9c630c19f2b8d269db2560681a82f7d3a3330d';
+
+/// Tracks whether Firebase Auth has completed its initial state check.
+///
+/// Returns `AsyncValue<bool>`:
+/// - `AsyncValue.loading`: Auth still initializing
+/// - `AsyncValue.data(true)`: Auth initialized (user may be null or User object)
+/// - `AsyncValue.error`: Auth initialization failed (but app continues)
+///
+/// Use this to show loading screens while auth initializes.
+///
+/// Example usage:
+/// ```dart
+/// final authInit = ref.watch(authInitializationProvider);
+/// authInit.when(
+///   loading: () => SplashScreen(),
+///   data: (initialized) => initialized ? HomeScreen() : LoginScreen(),
+///   error: (err, stack) => HomeScreen(), // Continue on error
+/// );
+/// ```
+
+abstract class _$AuthInitialization extends $AsyncNotifier<bool> {
+  FutureOr<bool> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<bool>, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<bool>, bool>,
+              AsyncValue<bool>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
 /// Auth state notifier for managing authentication operations
 
@@ -326,4 +588,131 @@ final class IsRouteProtectedFamily extends $Family
 
   @override
   String toString() => r'isRouteProtectedProvider';
+}
+
+/// Monitors session validity and triggers re-auth when session expires.
+///
+/// Checks session age every 5 minutes and invalidates sessions >24 hours old.
+/// This ensures compliance with the 24-hour session requirement.
+///
+/// The monitor:
+/// - Runs periodic checks every 5 minutes
+/// - Validates session timestamp against 24-hour limit
+/// - Automatically signs out expired sessions
+/// - Cleans up timer on provider disposal
+///
+/// Example usage:
+/// ```dart
+/// final sessionValid = ref.watch(sessionMonitorProvider);
+/// if (!sessionValid) {
+///   // Session expired - user will be redirected to login
+/// }
+/// ```
+
+@ProviderFor(SessionMonitor)
+const sessionMonitorProvider = SessionMonitorProvider._();
+
+/// Monitors session validity and triggers re-auth when session expires.
+///
+/// Checks session age every 5 minutes and invalidates sessions >24 hours old.
+/// This ensures compliance with the 24-hour session requirement.
+///
+/// The monitor:
+/// - Runs periodic checks every 5 minutes
+/// - Validates session timestamp against 24-hour limit
+/// - Automatically signs out expired sessions
+/// - Cleans up timer on provider disposal
+///
+/// Example usage:
+/// ```dart
+/// final sessionValid = ref.watch(sessionMonitorProvider);
+/// if (!sessionValid) {
+///   // Session expired - user will be redirected to login
+/// }
+/// ```
+final class SessionMonitorProvider
+    extends $NotifierProvider<SessionMonitor, bool> {
+  /// Monitors session validity and triggers re-auth when session expires.
+  ///
+  /// Checks session age every 5 minutes and invalidates sessions >24 hours old.
+  /// This ensures compliance with the 24-hour session requirement.
+  ///
+  /// The monitor:
+  /// - Runs periodic checks every 5 minutes
+  /// - Validates session timestamp against 24-hour limit
+  /// - Automatically signs out expired sessions
+  /// - Cleans up timer on provider disposal
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final sessionValid = ref.watch(sessionMonitorProvider);
+  /// if (!sessionValid) {
+  ///   // Session expired - user will be redirected to login
+  /// }
+  /// ```
+  const SessionMonitorProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sessionMonitorProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$sessionMonitorHash();
+
+  @$internal
+  @override
+  SessionMonitor create() => SessionMonitor();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$sessionMonitorHash() => r'afaec5e1e00cdabce5ddddebd2ab9b948591d6cf';
+
+/// Monitors session validity and triggers re-auth when session expires.
+///
+/// Checks session age every 5 minutes and invalidates sessions >24 hours old.
+/// This ensures compliance with the 24-hour session requirement.
+///
+/// The monitor:
+/// - Runs periodic checks every 5 minutes
+/// - Validates session timestamp against 24-hour limit
+/// - Automatically signs out expired sessions
+/// - Cleans up timer on provider disposal
+///
+/// Example usage:
+/// ```dart
+/// final sessionValid = ref.watch(sessionMonitorProvider);
+/// if (!sessionValid) {
+///   // Session expired - user will be redirected to login
+/// }
+/// ```
+
+abstract class _$SessionMonitor extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
 }

@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../domain/exceptions/app_exception.dart';
 import '../../models/filter_criteria.dart';
 import '../../models/job_model.dart';
 import '../../services/resilient_firestore_service.dart';
 import '../../utils/concurrent_operations.dart';
 import '../../utils/filter_performance.dart';
 import '../../utils/memory_management.dart';
+import 'auth_riverpod_provider.dart';
 
 part 'jobs_riverpod_provider.g.dart';
 
@@ -82,13 +86,28 @@ class JobsNotifier extends _$JobsNotifier {
   }
 
   /// Load jobs with pagination
+  ///
+  /// Requires user authentication before loading data.
+  /// Implements defense-in-depth security by checking auth at the provider level.
+  ///
+  /// Throws [UnauthenticatedException] if user is not authenticated.
+  /// Throws [FirebaseException] on Firestore errors.
   Future<void> loadJobs({
     JobFilterCriteria? filter,
     bool isRefresh = false,
     int limit = 20,
+    int retryCount = 0,
   }) async {
     if (_operationManager.isOperationInProgress(OperationType.loadJobs)) {
       return;
+    }
+
+    // WAVE 4: Auth check before data access (defense-in-depth)
+    final currentUser = ref.read(currentUserProvider);
+    if (currentUser == null) {
+      throw UnauthenticatedException(
+        'User must be authenticated to access job listings',
+      );
     }
 
     if (isRefresh) {
@@ -160,18 +179,67 @@ class JobsNotifier extends _$JobsNotifier {
       );
     } catch (e) {
       stopwatch.stop();
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+
+      // WAVE 4: Enhanced error handling with token refresh and retry logic
+      if (e is FirebaseException &&
+          (e.code == 'permission-denied' || e.code == 'unauthenticated')) {
+
+        // Attempt token refresh once
+        final tokenRefreshed = await _attemptTokenRefresh();
+
+        if (tokenRefreshed && retryCount < 1) {
+          // Retry operation once after token refresh
+          return loadJobs(
+            filter: filter,
+            isRefresh: isRefresh,
+            limit: limit,
+            retryCount: retryCount + 1,
+          );
+        } else {
+          // Token refresh failed or retry exhausted - redirect to auth
+          final userError = _mapFirebaseError(e);
+          state = state.copyWith(isLoading: false, error: userError);
+          throw UnauthenticatedException(
+            'Session expired. Please sign in again.',
+          );
+        }
+      }
+
+      // Map error to user-friendly message
+      final userError = _mapFirebaseError(e);
+      state = state.copyWith(isLoading: false, error: userError);
+
+      // Log for debugging
+      if (kDebugMode) {
+        print('[JobsProvider] Error loading jobs: $e');
+      }
+
+      // Rethrow specific exceptions for router handling
+      if (e is UnauthenticatedException || e is InsufficientPermissionsException) {
+        rethrow;
+      }
+
       rethrow;
     }
   }
 
   /// Apply filter to jobs
+  ///
+  /// Requires user authentication before applying filters.
+  /// Implements defense-in-depth security by checking auth at the provider level.
+  ///
+  /// Throws [UnauthenticatedException] if user is not authenticated.
   Future<void> applyFilter(JobFilterCriteria filter) async {
     if (_operationManager.isOperationInProgress(OperationType.loadJobs)) {
       return;
+    }
+
+    // WAVE 4: Auth check before data access (defense-in-depth)
+    final currentUser = ref.read(currentUserProvider);
+    if (currentUser == null) {
+      throw UnauthenticatedException(
+        'User must be authenticated to filter job listings',
+      );
     }
 
     final Stopwatch stopwatch = Stopwatch()..start();
@@ -187,7 +255,13 @@ class JobsNotifier extends _$JobsNotifier {
 
       stopwatch.stop();
     } catch (e) {
-      state = state.copyWith(error: e.toString());
+      final userError = _mapFirebaseError(e);
+      state = state.copyWith(error: userError);
+
+      if (kDebugMode) {
+        print('[JobsProvider] Error applying filter: $e');
+      }
+
       rethrow;
     }
   }
@@ -257,6 +331,78 @@ class JobsNotifier extends _$JobsNotifier {
     // _boundedJobList.dispose(); // Not needed - only manages List<Job>
     // _virtualJobList.dispose(); // Not needed - only manages Map<String, Job> and List<String>
     _filterEngine.clearCaches(); // Clear filter caches to free memory
+  }
+
+  /// Attempts to refresh the user's authentication token.
+  ///
+  /// Returns true if token refresh succeeded, false otherwise.
+  /// Used for automatic recovery from expired token errors.
+  Future<bool> _attemptTokenRefresh() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return false;
+
+      // Force token refresh
+      await user.getIdToken(true);
+
+      if (kDebugMode) {
+        print('[JobsProvider] Token refresh successful');
+      }
+
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('[JobsProvider] Token refresh failed: $e');
+      }
+      return false;
+    }
+  }
+
+  /// Maps Firebase errors to user-friendly error messages.
+  ///
+  /// Provides clear, actionable guidance for common error scenarios.
+  String _mapFirebaseError(Object error) {
+    if (error is UnauthenticatedException) {
+      return 'Please sign in to access job listings';
+    }
+
+    if (error is InsufficientPermissionsException) {
+      return error.message;
+    }
+
+    if (error is FirebaseException) {
+      switch (error.code) {
+        case 'permission-denied':
+          return 'You do not have permission to access this resource. Please sign in.';
+        case 'unauthenticated':
+          return 'Authentication required. Please sign in to continue.';
+        case 'unavailable':
+          return 'Service temporarily unavailable. Please try again.';
+        case 'network-request-failed':
+          return 'Network error. Please check your connection.';
+        case 'deadline-exceeded':
+          return 'Request timed out. Please try again.';
+        case 'not-found':
+          return 'The requested data was not found.';
+        default:
+          return 'An error occurred: ${error.message ?? 'Unknown error'}';
+      }
+    }
+
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'user-token-expired':
+          return 'Your session has expired. Please sign in again.';
+        case 'user-not-found':
+          return 'User account not found. Please sign in.';
+        case 'invalid-user-token':
+          return 'Invalid session. Please sign in again.';
+        default:
+          return 'Authentication error: ${error.message ?? 'Unknown error'}';
+      }
+    }
+
+    return 'An unexpected error occurred. Please try again.';
   }
 }
 

@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../domain/exceptions/app_exception.dart';
 import '../../models/locals_record.dart';
 import '../../utils/concurrent_operations.dart';
+import 'auth_riverpod_provider.dart';
 import 'jobs_riverpod_provider.dart' show firestoreServiceProvider;
 
 part 'locals_riverpod_provider.g.dart';
@@ -82,7 +86,17 @@ class LocalsNotifier extends _$LocalsNotifier {
   }
 
   /// Loads locals from Firestore, optionally forcing a refresh or loading more data.
-  Future<void> loadLocals({bool forceRefresh = false, bool loadMore = false}) async {
+  ///
+  /// Requires user authentication before loading data.
+  /// Implements defense-in-depth security by checking auth at the provider level.
+  ///
+  /// Throws [UnauthenticatedException] if user is not authenticated.
+  /// Throws [FirebaseException] on Firestore errors.
+  Future<void> loadLocals({
+    bool forceRefresh = false,
+    bool loadMore = false,
+    int retryCount = 0,
+  }) async {
     if (state.isLoading) {
       return;
     }
@@ -94,6 +108,14 @@ class LocalsNotifier extends _$LocalsNotifier {
     if (loadMore && state.lastDocument == null && state.locals.isNotEmpty) {
       // No more documents to load if we're trying to load more and lastDocument is null
       return;
+    }
+
+    // WAVE 4: Auth check before data access (defense-in-depth)
+    final currentUser = ref.read(currentUserProvider);
+    if (currentUser == null) {
+      throw UnauthenticatedException(
+        'User must be authenticated to access IBEW locals directory',
+      );
     }
 
     state = state.copyWith(isLoading: true);
@@ -129,9 +151,118 @@ class LocalsNotifier extends _$LocalsNotifier {
         lastDocument: newLocals.isNotEmpty ? snapshot.docs.last : null,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      // WAVE 4: Enhanced error handling with token refresh and retry logic
+      if (e is FirebaseException &&
+          (e.code == 'permission-denied' || e.code == 'unauthenticated')) {
+
+        // Attempt token refresh once
+        final tokenRefreshed = await _attemptTokenRefresh();
+
+        if (tokenRefreshed && retryCount < 1) {
+          // Retry operation once after token refresh
+          return loadLocals(
+            forceRefresh: forceRefresh,
+            loadMore: loadMore,
+            retryCount: retryCount + 1,
+          );
+        } else {
+          // Token refresh failed or retry exhausted - redirect to auth
+          final userError = _mapFirebaseError(e);
+          state = state.copyWith(isLoading: false, error: userError);
+          throw UnauthenticatedException(
+            'Session expired. Please sign in again.',
+          );
+        }
+      }
+
+      // Map error to user-friendly message
+      final userError = _mapFirebaseError(e);
+      state = state.copyWith(isLoading: false, error: userError);
+
+      // Log for debugging
+      if (kDebugMode) {
+        print('[LocalsProvider] Error loading locals: $e');
+      }
+
+      // Rethrow specific exceptions for router handling
+      if (e is UnauthenticatedException || e is InsufficientPermissionsException) {
+        rethrow;
+      }
+
       rethrow;
     }
+  }
+
+  /// Attempts to refresh the user's authentication token.
+  ///
+  /// Returns true if token refresh succeeded, false otherwise.
+  /// Used for automatic recovery from expired token errors.
+  Future<bool> _attemptTokenRefresh() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return false;
+
+      // Force token refresh
+      await user.getIdToken(true);
+
+      if (kDebugMode) {
+        print('[LocalsProvider] Token refresh successful');
+      }
+
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('[LocalsProvider] Token refresh failed: $e');
+      }
+      return false;
+    }
+  }
+
+  /// Maps Firebase errors to user-friendly error messages.
+  ///
+  /// Provides clear, actionable guidance for common error scenarios.
+  String _mapFirebaseError(Object error) {
+    if (error is UnauthenticatedException) {
+      return 'Please sign in to access IBEW locals directory';
+    }
+
+    if (error is InsufficientPermissionsException) {
+      return error.message;
+    }
+
+    if (error is FirebaseException) {
+      switch (error.code) {
+        case 'permission-denied':
+          return 'You do not have permission to access this resource. Please sign in.';
+        case 'unauthenticated':
+          return 'Authentication required. Please sign in to continue.';
+        case 'unavailable':
+          return 'Service temporarily unavailable. Please try again.';
+        case 'network-request-failed':
+          return 'Network error. Please check your connection.';
+        case 'deadline-exceeded':
+          return 'Request timed out. Please try again.';
+        case 'not-found':
+          return 'The requested data was not found.';
+        default:
+          return 'An error occurred: ${error.message ?? 'Unknown error'}';
+      }
+    }
+
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'user-token-expired':
+          return 'Your session has expired. Please sign in again.';
+        case 'user-not-found':
+          return 'User account not found. Please sign in.';
+        case 'invalid-user-token':
+          return 'Invalid session. Please sign in again.';
+        default:
+          return 'Authentication error: ${error.message ?? 'Unknown error'}';
+      }
+    }
+
+    return 'An unexpected error occurred. Please try again.';
   }
 
   /// Searches locals by the given term, updating filteredLocals.

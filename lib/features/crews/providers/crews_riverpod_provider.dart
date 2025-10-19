@@ -1,9 +1,14 @@
 // lib/features/crews/providers/crews_riverpod_provider.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:journeyman_jobs/domain/enums/member_role.dart';
+import 'package:journeyman_jobs/domain/exceptions/app_exception.dart';
 import 'package:journeyman_jobs/features/crews/services/job_matching_service_impl.dart';
 import 'package:journeyman_jobs/features/crews/services/job_sharing_service_impl.dart';
 import '../../../providers/riverpod/app_state_riverpod_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:state_notifier/state_notifier.dart';
 
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
@@ -62,35 +67,8 @@ List<Crew> userCrews(Ref ref) {
   );
 }
 
-/// Selected crew notifier
-class SelectedCrewNotifier extends StateNotifier<Crew?> {
-  SelectedCrewNotifier() : super(null);
-
-  void setCrew(Crew crew) {
-    state = crew;
-    // Additional logic can be added here if needed when a crew is selected
-    // For example, loading crew-specific data for tabs
-  }
-
-  void clearCrew() {
-    state = null;
-    // Additional logic can be added here if needed when a crew is cleared
-  }
-}
-
-/// Selected crew provider
-@riverpod
-Crew? selectedCrew(Ref ref) {
-  final crews = ref.watch(userCrewsProvider);
-  // For now, return the first crew or null
-  return crews.isNotEmpty ? crews.first : null;
-}
-
-/// Selected crew notifier provider
-@riverpod
-SelectedCrewNotifier selectedCrewNotifierProvider(Ref ref) {
-  return SelectedCrewNotifier();
-}
+// Note: SelectedCrewNotifier and selectedCrewProvider are defined in core_providers.dart
+// to maintain compatibility across the app
 
 /// Provider to check if current user is in a specific crew
 @riverpod
@@ -269,12 +247,36 @@ class CrewCreationNotifier extends StateNotifier<AsyncValue<void>> {
 
   final Ref _ref;
 
+  /// Creates a new crew with the specified preferences.
+  ///
+  /// Requires user authentication before creating crew.
+  /// Implements defense-in-depth security by checking auth at the provider level.
+  ///
+  /// Throws [UnauthenticatedException] if user is not authenticated.
+  /// Throws [InsufficientPermissionsException] if user lacks permission.
   Future<void> createCrewWithPreferences({
     required String name,
     required String foremanId,
     required CrewPreferences preferences,
     String? logoUrl,
+    int retryCount = 0,
   }) async {
+    // WAVE 4: Auth check before data access (defense-in-depth)
+    final currentUser = _ref.read(currentUserProvider);
+    if (currentUser == null) {
+      throw UnauthenticatedException(
+        'User must be authenticated to create a crew',
+      );
+    }
+
+    // Verify user is creating crew for themselves
+    if (currentUser.uid != foremanId) {
+      throw InsufficientPermissionsException(
+        'You can only create crews for yourself',
+        requiredPermission: 'crew:create-self',
+      );
+    }
+
     state = const AsyncValue.loading();
     try {
       final crewService = _ref.read(crewServiceProvider);
@@ -286,14 +288,75 @@ class CrewCreationNotifier extends StateNotifier<AsyncValue<void>> {
       );
       state = const AsyncValue.data(null);
     } catch (e, stack) {
+      // WAVE 4: Enhanced error handling with token refresh and retry logic
+      if (e is FirebaseException &&
+          (e.code == 'permission-denied' || e.code == 'unauthenticated')) {
+
+        // Attempt token refresh once
+        final tokenRefreshed = await _attemptTokenRefresh();
+
+        if (tokenRefreshed && retryCount < 1) {
+          // Retry operation once after token refresh
+          return createCrewWithPreferences(
+            name: name,
+            foremanId: foremanId,
+            preferences: preferences,
+            logoUrl: logoUrl,
+            retryCount: retryCount + 1,
+          );
+        } else {
+          // Token refresh failed or retry exhausted - redirect to auth
+          final userError = _mapFirebaseError(e);
+          if (kDebugMode) {
+            print('[CrewsProvider] Error creating crew: $e');
+          }
+          state = AsyncValue.error(
+            UnauthenticatedException('Session expired. Please sign in again.'),
+            stack,
+          );
+          return;
+        }
+      }
+
+      // Map error to user-friendly message
+      final userError = _mapFirebaseError(e);
+      if (kDebugMode) {
+        print('[CrewsProvider] Error creating crew: $userError');
+      }
+
       state = AsyncValue.error(e, stack);
     }
   }
 
+  /// Updates crew preferences.
+  ///
+  /// Requires user authentication and proper permissions before updating.
+  /// Implements defense-in-depth security by checking auth at the provider level.
+  ///
+  /// Throws [UnauthenticatedException] if user is not authenticated.
+  /// Throws [InsufficientPermissionsException] if user lacks permission.
   Future<void> updateCrewPreferences({
     required String crewId,
     required CrewPreferences preferences,
+    int retryCount = 0,
   }) async {
+    // WAVE 4: Auth check before data access (defense-in-depth)
+    final currentUser = _ref.read(currentUserProvider);
+    if (currentUser == null) {
+      throw UnauthenticatedException(
+        'User must be authenticated to update crew preferences',
+      );
+    }
+
+    // Check if user has permission to edit crew
+    final hasPermission = _ref.read(hasCrewPermissionProvider(crewId, 'canEditCrewInfo'));
+    if (!hasPermission) {
+      throw InsufficientPermissionsException(
+        'You do not have permission to edit this crew',
+        requiredPermission: 'crew:edit',
+      );
+    }
+
     state = const AsyncValue.loading();
     try {
       final crewService = _ref.read(crewServiceProvider);
@@ -303,8 +366,116 @@ class CrewCreationNotifier extends StateNotifier<AsyncValue<void>> {
       );
       state = const AsyncValue.data(null);
     } catch (e, stack) {
+      // WAVE 4: Enhanced error handling with token refresh and retry logic
+      if (e is FirebaseException &&
+          (e.code == 'permission-denied' || e.code == 'unauthenticated')) {
+
+        // Attempt token refresh once
+        final tokenRefreshed = await _attemptTokenRefresh();
+
+        if (tokenRefreshed && retryCount < 1) {
+          // Retry operation once after token refresh
+          return updateCrewPreferences(
+            crewId: crewId,
+            preferences: preferences,
+            retryCount: retryCount + 1,
+          );
+        } else {
+          // Token refresh failed or retry exhausted - redirect to auth
+          final userError = _mapFirebaseError(e);
+          if (kDebugMode) {
+            print('[CrewsProvider] Error updating crew: $e');
+          }
+          state = AsyncValue.error(
+            UnauthenticatedException('Session expired. Please sign in again.'),
+            stack,
+          );
+          return;
+        }
+      }
+
+      // Map error to user-friendly message
+      final userError = _mapFirebaseError(e);
+      if (kDebugMode) {
+        print('[CrewsProvider] Error updating crew: $userError');
+      }
+
       state = AsyncValue.error(e, stack);
     }
+  }
+
+  /// Attempts to refresh the user's authentication token.
+  ///
+  /// Returns true if token refresh succeeded, false otherwise.
+  /// Used for automatic recovery from expired token errors.
+  Future<bool> _attemptTokenRefresh() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return false;
+
+      // Force token refresh
+      await user.getIdToken(true);
+
+      if (kDebugMode) {
+        print('[CrewsProvider] Token refresh successful');
+      }
+
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('[CrewsProvider] Token refresh failed: $e');
+      }
+      return false;
+    }
+  }
+
+  /// Maps Firebase errors to user-friendly error messages.
+  ///
+  /// Provides clear, actionable guidance for common error scenarios.
+  String _mapFirebaseError(Object error) {
+    if (error is UnauthenticatedException) {
+      return 'Please sign in to manage crews';
+    }
+
+    if (error is InsufficientPermissionsException) {
+      return error.message;
+    }
+
+    if (error is FirebaseException) {
+      switch (error.code) {
+        case 'permission-denied':
+          return 'You do not have permission to perform this action. Please sign in.';
+        case 'unauthenticated':
+          return 'Authentication required. Please sign in to continue.';
+        case 'unavailable':
+          return 'Service temporarily unavailable. Please try again.';
+        case 'network-request-failed':
+          return 'Network error. Please check your connection.';
+        case 'deadline-exceeded':
+          return 'Request timed out. Please try again.';
+        case 'not-found':
+          return 'The requested crew was not found.';
+        case 'already-exists':
+          return 'A crew with this name already exists.';
+        default:
+          return 'An error occurred: ${error.message ?? 'Unknown error'}';
+      }
+    }
+
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'user-token-expired':
+          return 'Your session has expired. Please sign in again.';
+        case 'user-not-found':
+          return 'User account not found. Please sign in.';
+        case 'invalid-user-token':
+          return 'Invalid session. Please sign in again.';
+        default:
+          return 'Authentication error: ${error.message ?? 'Unknown error'}';
+      }
+    }
+
+    return 'An unexpected error occurred. Please try again.';
   }
 
   void reset() {

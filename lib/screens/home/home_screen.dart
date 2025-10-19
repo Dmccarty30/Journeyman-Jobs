@@ -16,6 +16,7 @@ import '../../legacy/flutterflow/schema/jobs_record.dart';
 import '../../widgets/notification_badge.dart';
 import '../../widgets/condensed_job_card.dart';
 import '../../widgets/dialogs/job_details_dialog.dart';
+import 'home_skeleton_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -25,22 +26,37 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final prefsState = ref.read(userPreferencesProvider);
-      if (prefsState.preferences != UserJobPreferences.empty()) {
-        final filter = prefsState.preferences.toFilterCriteria();
-        ref.read(jobsProvider.notifier).loadJobs(filter: filter);
-      } else {
-        ref.read(jobsProvider.notifier).loadJobs();
-      }
-    });
-  }
+  // Track if we've loaded jobs to prevent duplicate loads
+  bool _hasLoadedJobs = false;
 
   @override
   Widget build(BuildContext context) {
+    // Watch auth initialization status
+    // If auth is still initializing, show skeleton screen to prevent
+    // flash of permission denied errors when accessing Firestore
+    final authInit = ref.watch(authInitializationProvider);
+
+    // Show skeleton screen while auth initializes
+    if (authInit.isLoading) {
+      return const HomeSkeletonScreen();
+    }
+
+    // Auth initialized - now safe to load data
+    // Router will handle redirect if user is not authenticated
+    // Load jobs data once when auth is ready
+    if (!_hasLoadedJobs) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final prefsState = ref.read(userPreferencesProvider);
+        if (prefsState.preferences != UserJobPreferences.empty()) {
+          final filter = prefsState.preferences.toFilterCriteria();
+          ref.read(jobsProvider.notifier).loadJobs(filter: filter);
+        } else {
+          ref.read(jobsProvider.notifier).loadJobs();
+        }
+        _hasLoadedJobs = true;
+      });
+    }
+
     // Listen for preference changes to reload jobs with new filter
     // This is called in build() as required by Riverpod 2.x
     ref.listen(userPreferencesProvider, (previous, next) {

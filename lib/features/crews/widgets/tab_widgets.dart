@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
+import '../../../providers/core_providers.dart' hide currentUserProvider;
 import '../providers/crews_riverpod_provider.dart';
 import '../providers/feed_provider.dart';
 import '../widgets/post_card.dart';
