@@ -1,6 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../providers/riverpod/auth_riverpod_provider.dart';
+import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
 import '../models/tailboard.dart';
 import '../services/tailboard_service.dart';
 
@@ -89,7 +89,7 @@ List<TailboardPost> tailboardPosts(Ref ref, String crewId) {
 /// Provider to get unread activity items count for current user
 @riverpod
 int unreadActivityCount(Ref ref, String crewId) {
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   final activities = ref.watch(activityItemsProvider(crewId));
   
   if (currentUser == null) return 0;
@@ -130,7 +130,7 @@ List<SuggestedJob> highMatchJobs(Ref ref, String crewId) {
 /// Provider to get jobs not yet viewed by current user
 @riverpod
 List<SuggestedJob> unviewedJobs(Ref ref, String crewId) {
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   final jobs = ref.watch(suggestedJobsProvider(crewId));
   
   if (currentUser == null) return [];

@@ -125,8 +125,8 @@ class AppThemeDark {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      primarySurface.withOpacity(0.7),
-      secondarySurface.withOpacity(0.5),
+      primarySurface.withValues(alpha:0.7),
+      secondarySurface.withValues(alpha:0.5),
     ],
   );
 
@@ -134,7 +134,7 @@ class AppThemeDark {
 
   /// Electrical success shadow with copper glow
   static BoxShadow shadowElectricalSuccess = BoxShadow(
-    color: accentCopperGlow.withOpacity(0.4),
+    color: accentCopperGlow.withValues(alpha:0.4),
     blurRadius: 25,
     spreadRadius: 3,
     offset: const Offset(0, 6),
@@ -142,7 +142,7 @@ class AppThemeDark {
 
   /// Electrical info shadow with cyan glow
   static BoxShadow shadowElectricalInfo = BoxShadow(
-    color: infoBlue.withOpacity(0.3),
+    color: infoBlue.withValues(alpha:0.3),
     blurRadius: 20,
     spreadRadius: 2,
     offset: const Offset(0, 4),
@@ -150,7 +150,7 @@ class AppThemeDark {
 
   /// Electrical warning shadow with amber glow
   static BoxShadow shadowElectricalWarning = BoxShadow(
-    color: warningYellow.withOpacity(0.3),
+    color: warningYellow.withValues(alpha:0.3),
     blurRadius: 18,
     spreadRadius: 1,
     offset: const Offset(0, 3),
@@ -158,7 +158,7 @@ class AppThemeDark {
 
   /// Electrical error shadow with red glow
   static BoxShadow shadowElectricalError = BoxShadow(
-    color: errorRed.withOpacity(0.4),
+    color: errorRed.withValues(alpha:0.4),
     blurRadius: 20,
     spreadRadius: 2,
     offset: const Offset(0, 4),
@@ -168,19 +168,19 @@ class AppThemeDark {
   static List<BoxShadow> copperGlowShadows = [
     // Inner glow
     BoxShadow(
-      color: accentCopperGlow.withOpacity(0.2),
+      color: accentCopperGlow.withValues(alpha:0.2),
       blurRadius: 8,
       spreadRadius: -2,
     ),
     // Outer copper radiant glow
     BoxShadow(
-      color: accentCopper.withOpacity(0.3),
+      color: accentCopper.withValues(alpha:0.3),
       blurRadius: 20,
       spreadRadius: 2,
     ),
     // Deep shadow for depth
     BoxShadow(
-      color: Colors.black.withOpacity(0.5),
+      color: Colors.black.withValues(alpha:0.5),
       blurRadius: 10,
       offset: const Offset(0, 4),
     ),
@@ -189,12 +189,12 @@ class AppThemeDark {
   /// Subtle elevation shadows
   static List<BoxShadow> elevationShadows = [
     BoxShadow(
-      color: Colors.black.withOpacity(0.3),
+      color: Colors.black.withValues(alpha:0.3),
       blurRadius: 4,
       offset: const Offset(0, 2),
     ),
     BoxShadow(
-      color: accentCopper.withOpacity(0.05),
+      color: accentCopper.withValues(alpha:0.05),
       blurRadius: 12,
       spreadRadius: -4,
     ),
@@ -317,7 +317,7 @@ class AppThemeDark {
     gradient: RadialGradient(
       colors: [
         primarySurface,
-        primarySurface.withOpacity(0.8),
+        primarySurface.withValues(alpha:0.8),
       ],
     ),
     borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -332,8 +332,8 @@ class AppThemeDark {
   static BoxDecoration tabBarDecoration = BoxDecoration(
     gradient: LinearGradient(
       colors: [
-        primarySurface.withOpacity(0.6),
-        primarySurface.withOpacity(0.3),
+        primarySurface.withValues(alpha:0.6),
+        primarySurface.withValues(alpha:0.3),
       ],
     ),
     borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -344,7 +344,7 @@ class AppThemeDark {
     boxShadow: [
       shadowElectricalInfo,
       BoxShadow(
-        color: accentCopper.withOpacity(0.2),
+        color: accentCopper.withValues(alpha:0.2),
         blurRadius: 15,
         offset: const Offset(0, 4),
       ),
@@ -353,7 +353,7 @@ class AppThemeDark {
 
   /// Form container decoration
   static BoxDecoration formContainerDecoration = BoxDecoration(
-    color: textOnAccent.withOpacity(0.05),
+    color: textOnAccent.withValues(alpha:0.05),
     borderRadius: BorderRadius.circular(AppTheme.radiusLg),
     border: Border.all(
       color: accentCopper,
@@ -362,7 +362,7 @@ class AppThemeDark {
     boxShadow: [
       shadowElectricalInfo,
       BoxShadow(
-        color: navyDeep.withOpacity(0.3),
+        color: navyDeep.withValues(alpha:0.3),
         blurRadius: 15,
         offset: const Offset(0, 5),
       ),
@@ -382,15 +382,15 @@ class AppThemeDark {
 
   /// Text field decoration
   static BoxDecoration textFieldDecoration = BoxDecoration(
-    color: primarySurface.withOpacity(0.5),
+    color: primarySurface.withValues(alpha:0.5),
     borderRadius: BorderRadius.circular(AppTheme.radiusMd),
     border: Border.all(
-      color: accentCopper.withOpacity(0.5),
+      color: accentCopper.withValues(alpha:0.5),
       width: borderWidthThin,
     ),
     boxShadow: [
       BoxShadow(
-        color: accentCopperGlow.withOpacity(0.1),
+        color: accentCopperGlow.withValues(alpha:0.1),
         blurRadius: 8,
         spreadRadius: -2,
       ),
@@ -425,7 +425,7 @@ class AppThemeDark {
         onError: textOnAccent,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: primaryBackground.withOpacity(0.9),
+        backgroundColor: primaryBackground.withValues(alpha:0.9),
         foregroundColor: textPrimary,
         elevation: 0,
         titleTextStyle: headlineMedium,
@@ -461,18 +461,18 @@ class AppThemeDark {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        fillColor: primarySurface.withOpacity(0.5),
+        fillColor: primarySurface.withValues(alpha:0.5),
         filled: true,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           borderSide: BorderSide(
-            color: accentCopper.withOpacity(0.5),
+            color: accentCopper.withValues(alpha:0.5),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           borderSide: BorderSide(
-            color: accentCopper.withOpacity(0.3),
+            color: accentCopper.withValues(alpha:0.3),
           ),
         ),
         focusedBorder: OutlineInputBorder(

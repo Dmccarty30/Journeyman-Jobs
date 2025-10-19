@@ -10,7 +10,7 @@ import '../../../electrical_components/circuit_board_background.dart';
 import '../models/crew_preferences.dart';
 import '../providers/crews_riverpod_provider.dart';
 import '../widgets/crew_preferences_dialog.dart';
-import '../../../providers/riverpod/auth_riverpod_provider.dart';
+import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
 
 class CreateCrewScreen extends ConsumerStatefulWidget {
   const CreateCrewScreen({super.key});
@@ -97,7 +97,7 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen>
       
       try {
         final crewService = ref.read(crewServiceProvider);
-        final currentUser = ref.read(currentUserProvider);
+        final currentUser = ref.read(auth_providers.currentUserProvider);
 
         if (currentUser == null) {
           throw Exception('User not authenticated');
@@ -169,7 +169,7 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen>
   }
 
   Widget _buildEnhancedCreateButton() {
-    final isEnabled = ref.watch(currentUserProvider) != null;
+    final isEnabled = ref.watch(auth_providers.currentUserProvider) != null;
     
     return AnimatedBuilder(
       animation: Listenable.merge([_buttonAnimationController, _glowAnimationController]),

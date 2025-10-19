@@ -4,11 +4,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/crews_riverpod_provider.dart';
 import '../models/models.dart';
-import '../../../providers/riverpod/auth_riverpod_provider.dart';
+import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
 import '../../../design_system/app_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import '../../../navigation/app_router.dart';
-import '../../../providers/core_providers.dart' hide currentUserProvider;
+import '../../../providers/core_providers.dart' hide legacyCurrentUserProvider;
 import 'package:journeyman_jobs/electrical_components/jj_electrical_notifications.dart';
 import 'package:journeyman_jobs/providers/riverpod/jobs_riverpod_provider.dart';
 import 'package:journeyman_jobs/widgets/electrical_circuit_background.dart';
@@ -93,57 +93,60 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<firebase_auth.User?>(
-      stream: firebase_auth.FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Scaffold(
-            body: Center(child: Text('Authentication error occurred')),
-          );
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        if (snapshot.data == null) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.go(AppRouter.auth);
-          });
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        final selectedCrew = ref.watch(selectedCrewProvider);
-
-        return Scaffold(
-          backgroundColor: AppTheme.offWhite,
-          body: Column(
+    final authInit = ref.watch(auth_providers.authInitializationProvider);
+    final user = ref.watch(auth_providers.currentUserProvider);
+ 
+    if (authInit.isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+ 
+    if (user == null) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Header - conditional based on crew
-              selectedCrew != null
-                ? _buildHeader(context, selectedCrew)
-                : _buildNoCrewHeader(context),
-              _buildTabBar(context),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    FeedTab(),
-                    JobsTab(),
-                    ChatTab(),
-                    MembersTab(),
-                  ],
-                ),
+              const Icon(Icons.lock_outline, size: 48),
+              const SizedBox(height: 16),
+              Text('Please sign in to access Tailboard', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => context.go(AppRouter.auth),
+                child: const Text('Go to Sign In'),
               ),
             ],
           ),
-          floatingActionButton: _buildFloatingActionButton(),
-        );
-      },
+        ),
+      );
+    }
+ 
+    final selectedCrew = ref.watch(selectedCrewProvider);
+
+    return Scaffold(
+      backgroundColor: AppTheme.offWhite,
+      body: Column(
+        children: [
+          // Header - conditional based on crew
+          selectedCrew != null
+            ? _buildHeader(context, selectedCrew)
+            : _buildNoCrewHeader(context),
+          _buildTabBar(context),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                FeedTab(),
+                JobsTab(),
+                ChatTab(),
+                MembersTab(),
+              ],
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: _buildFloatingActionButton(),
     );
   }
 
@@ -633,7 +636,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
                                   }
 
                                   final selectedCrew = ref.read(selectedCrewProvider);
-                                  final currentUser = ref.read(currentUserProvider);
+                                  final currentUser = ref.read(auth_providers.currentUserProvider);
 
                                   if (selectedCrew == null) {
                                     JJElectricalNotifications.showElectricalToast(
@@ -840,7 +843,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
                                 return;
                               }
 
-                              final currentUser = ref.read(currentUserProvider);
+                              final currentUser = ref.read(auth_providers.currentUserProvider);
                               if (currentUser == null) {
                                 JJElectricalNotifications.showElectricalToast(
                                   context: context,
@@ -1058,7 +1061,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
                                 return;
                               }
 
-                              final currentUser = ref.read(currentUserProvider);
+                              final currentUser = ref.read(auth_providers.currentUserProvider);
                               if (currentUser == null) {
                                 JJElectricalNotifications.showElectricalToast(
                                   context: context,

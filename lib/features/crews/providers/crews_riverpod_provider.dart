@@ -11,7 +11,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:state_notifier/state_notifier.dart';
 
-import '../../../providers/riverpod/auth_riverpod_provider.dart';
+import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
 import '../models/models.dart';
 import '../services/crew_service.dart';
 
@@ -47,7 +47,7 @@ CrewService crewService(Ref ref) {
 @riverpod
 Stream<List<Crew>> userCrewsStream(Ref ref) {
   final crewService = ref.watch(crewServiceProvider);
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   
   if (currentUser == null) return Stream.value([]);
   return crewService.getUserCrewsStream(currentUser.uid).map((snapshot) {
@@ -73,7 +73,7 @@ List<Crew> userCrews(Ref ref) {
 /// Provider to check if current user is in a specific crew
 @riverpod
 bool isUserInCrew(Ref ref, String crewId) {
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   final crews = ref.watch(userCrewsProvider);
   
   if (currentUser == null) return false;
@@ -84,7 +84,7 @@ bool isUserInCrew(Ref ref, String crewId) {
 /// Provider to get user's role in a specific crew
 @riverpod
 MemberRole? userRoleInCrew(Ref ref, String crewId) {
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   final crews = ref.watch(userCrewsProvider);
   
   if (currentUser == null) return null;
@@ -160,7 +160,7 @@ List<CrewMember> crewMembers(Ref ref, String crewId) {
 /// Provider to get current user's crew member data
 @riverpod
 CrewMember? currentUserCrewMember(Ref ref, String crewId) {
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   final members = ref.watch(crewMembersProvider(crewId));
   
   if (currentUser == null) return null;
@@ -221,7 +221,7 @@ int crewCount(Ref ref) {
 /// Provider to check if user can create crews
 @riverpod
 bool canCreateCrews(Ref ref) {
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   // For now, any authenticated user can create crews
   return currentUser != null;
 }
@@ -262,7 +262,7 @@ class CrewCreationNotifier extends StateNotifier<AsyncValue<void>> {
     int retryCount = 0,
   }) async {
     // WAVE 4: Auth check before data access (defense-in-depth)
-    final currentUser = _ref.read(currentUserProvider);
+    final currentUser = _ref.read(auth_providers.currentUserProvider);
     if (currentUser == null) {
       throw UnauthenticatedException(
         'User must be authenticated to create a crew',
@@ -341,7 +341,7 @@ class CrewCreationNotifier extends StateNotifier<AsyncValue<void>> {
     int retryCount = 0,
   }) async {
     // WAVE 4: Auth check before data access (defense-in-depth)
-    final currentUser = _ref.read(currentUserProvider);
+    final currentUser = _ref.read(auth_providers.currentUserProvider);
     if (currentUser == null) {
       throw UnauthenticatedException(
         'User must be authenticated to update crew preferences',

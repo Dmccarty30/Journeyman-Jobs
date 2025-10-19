@@ -867,22 +867,34 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                       height: 56,
                       padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingSm),
                       decoration: BoxDecoration(
-                        border: Border.all(color: AppTheme.accentCopper),
+                        color: AppTheme.white.withValues(alpha: 0.05),
+                        border: Border.all(
+                          color: AppTheme.accentCopper,
+                          width: AppTheme.borderWidthCopperThin,
+                        ),
                         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                        color: AppTheme.white,
+                        boxShadow: [AppTheme.shadowElectricalInfo],
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           value: _stateController.text.isEmpty ? null : _stateController.text,
                           hint: Text(
                             'State',
-                            style: AppTheme.bodyMedium.copyWith(color: AppTheme.textLight),
+                            style: AppTheme.bodyMedium.copyWith(
+                              color: AppTheme.white.withValues(alpha: 0.7),
+                            ),
                           ),
+                          dropdownColor: AppTheme.primaryNavy,
+                          style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
+                          icon: Icon(Icons.arrow_drop_down, color: AppTheme.accentCopper),
                           isExpanded: true,
                           items: _usStates.map((state) {
                             return DropdownMenuItem(
                               value: state,
-                              child: Text(state, style: AppTheme.bodyMedium),
+                              child: Text(
+                                state,
+                                style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
+                              ),
                             );
                           }).toList(),
                           onChanged: (value) {
@@ -1005,9 +1017,35 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             child: Column(
               children: [
                 JJCircuitBreakerSwitchListTile(
-                  title: Text(
-                    'Currently Working',
-                    style: AppTheme.titleMedium,
+                  title: Row(
+                    children: [
+                      Text(
+                        'Currently Working',
+                        style: AppTheme.titleMedium,
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppTheme.spacingSm,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _isWorking ? AppTheme.successGreen.withValues(alpha: 0.2) : AppTheme.lightGray.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                          border: Border.all(
+                            color: _isWorking ? AppTheme.successGreen : AppTheme.lightGray,
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          _isWorking ? 'YES' : 'NO',
+                          style: AppTheme.labelSmall.copyWith(
+                            color: _isWorking ? AppTheme.successGreen : AppTheme.textLight,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   subtitle: Text(
                     'Are you currently employed?',
@@ -1022,7 +1060,6 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   size: JJCircuitBreakerSize.small,
                   showElectricalEffects: true,
                 ),
-                // YES/NO labels
                 Padding(
                   padding: const EdgeInsets.only(right: AppTheme.spacingMd, top: AppTheme.spacingSm),
                   child: Row(
@@ -1263,9 +1300,13 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
           Container(
             padding: const EdgeInsets.all(AppTheme.spacingSm),
             decoration: BoxDecoration(
-              color: AppTheme.offWhite,
+              color: AppTheme.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              border: Border.all(color: AppTheme.accentCopper, width: 1.5),
+              border: Border.all(
+                color: AppTheme.accentCopper,
+                width: AppTheme.borderWidthCopper,
+              ),
+              boxShadow: [AppTheme.shadowElectricalInfo],
             ),
             child: Column(
               children: [
@@ -1277,7 +1318,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   onChanged: (value) => setState(() => _networkWithOthers = value ?? false),
                   dense: true,
                 ),
-                Divider(color: AppTheme.accentCopper.withOpacity(0.3), height: 1),
+                Divider(color: AppTheme.accentCopper.withValues(alpha: 0.3), height: 1),
                 CheckboxListTile(
                   title: Text('Career Advancement', style: AppTheme.bodyMedium),
                   subtitle: Text('Seek leadership roles', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
@@ -1286,7 +1327,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   onChanged: (value) => setState(() => _careerAdvancements = value ?? false),
                   dense: true,
                 ),
-                Divider(color: AppTheme.accentCopper.withOpacity(0.3), height: 1),
+                Divider(color: AppTheme.accentCopper.withValues(alpha: 0.3), height: 1),
                 CheckboxListTile(
                   title: Text('Better Benefits', style: AppTheme.bodyMedium),
                   subtitle: Text('Improved benefit packages', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
@@ -1295,7 +1336,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   onChanged: (value) => setState(() => _betterBenefits = value ?? false),
                   dense: true,
                 ),
-                Divider(color: AppTheme.accentCopper.withOpacity(0.3), height: 1),
+                Divider(color: AppTheme.accentCopper.withValues(alpha: 0.3), height: 1),
                 CheckboxListTile(
                   title: Text('Higher Pay Rate', style: AppTheme.bodyMedium),
                   subtitle: Text('Increase compensation', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
@@ -1304,7 +1345,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   onChanged: (value) => setState(() => _higherPayRate = value ?? false),
                   dense: true,
                 ),
-                Divider(color: AppTheme.accentCopper.withOpacity(0.3), height: 1),
+                Divider(color: AppTheme.accentCopper.withValues(alpha: 0.3), height: 1),
                 CheckboxListTile(
                   title: Text('Learn New Skills', style: AppTheme.bodyMedium),
                   subtitle: Text('Gain new experience', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
@@ -1313,7 +1354,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   onChanged: (value) => setState(() => _learnNewSkill = value ?? false),
                   dense: true,
                 ),
-                Divider(color: AppTheme.accentCopper.withOpacity(0.3), height: 1),
+                Divider(color: AppTheme.accentCopper.withValues(alpha: 0.3), height: 1),
                 CheckboxListTile(
                   title: Text('Travel to New Locations', style: AppTheme.bodyMedium),
                   subtitle: Text('Work in different areas', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
@@ -1322,7 +1363,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   onChanged: (value) => setState(() => _travelToNewLocation = value ?? false),
                   dense: true,
                 ),
-                Divider(color: AppTheme.accentCopper.withOpacity(0.3), height: 1),
+                Divider(color: AppTheme.accentCopper.withValues(alpha: 0.3), height: 1),
                 CheckboxListTile(
                   title: Text('Find Long-term Work', style: AppTheme.bodyMedium),
                   subtitle: Text('Secure stable employment', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),

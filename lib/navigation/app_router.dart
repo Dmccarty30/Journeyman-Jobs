@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+ 
 // Providers
 import '../providers/riverpod/auth_riverpod_provider.dart';
+import '../utils/structured_logging.dart';
 
 // Screens
 import '../screens/splash/splash_screen.dart';
@@ -285,6 +286,8 @@ class AppRouter {
     final currentPath = state.matchedLocation;
 
     // Define public routes (accessible without authentication)
+    // DEV MODE: Added 'crews' for development testing
+    // TODO: Remove 'crews' from publicRoutes before production deployment
     const publicRoutes = [
       splash,
       welcome,
@@ -308,6 +311,15 @@ class AppRouter {
       data: (user) => user,
     );
     final isAuthenticated = user != null;
+    StructuredLogger.info(
+      'DEBUG Router._redirect',
+      category: LogCategory.authentication,
+      context: {
+        'currentPath': currentPath,
+        'authInitializing': authInit.isLoading,
+        'isAuthenticated': isAuthenticated,
+      },
+    );
 
     // Protected route accessed by unauthenticated user -> redirect to login
     if (requiresAuth && !isAuthenticated) {

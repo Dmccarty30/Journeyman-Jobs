@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../models/message.dart';
-import '../../../providers/riverpod/auth_riverpod_provider.dart';
+import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
 
 part 'global_feed_riverpod_provider.g.dart';
 /// Stream of global messages
@@ -38,7 +38,7 @@ class SendGlobalMessageNotifier extends _$SendGlobalMessageNotifier {
   void build() {} // No initial state needed for a method provider
 
   Future<void> sendGlobalMessage(String text, {required String senderId, required String content}) async {
-    final currentUser = ref.read(currentUserProvider);
+    final currentUser = ref.read(auth_providers.currentUserProvider);
     if (currentUser == null) {
       throw Exception('User not authenticated to send global message.');
     }
@@ -60,7 +60,7 @@ class SendGlobalMessageNotifier extends _$SendGlobalMessageNotifier {
 /// Provider to get unread global messages count
 @riverpod
 int unreadGlobalCount(Ref ref) {
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   final messages = ref.watch(globalMessagesProvider);
   
   if (currentUser == null) return 0;

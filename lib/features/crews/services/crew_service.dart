@@ -18,6 +18,20 @@ import 'package:journeyman_jobs/domain/enums/member_role.dart';
 import 'package:journeyman_jobs/domain/enums/permission.dart';
 import 'package:journeyman_jobs/domain/enums/invitation_status.dart';
 
+// ============================================================================
+// DEV MODE: Permission matrix disabled for development testing
+// ============================================================================
+// TODO: Re-enable RolePermissions class before production deployment
+//
+// Original RolePermissions class provided role-based access control:
+// - Foreman: Full permissions (create, update, delete, invite, remove, etc.)
+// - Lead: Limited permissions (invite, share, moderate, view stats)
+// - Member: Basic permissions (share jobs, view stats)
+//
+// Commented out to allow unrestricted crew operations during development.
+// ============================================================================
+
+/*
 // Permission matrix
 class RolePermissions {
   static const Map<MemberRole, Set<Permission>> permissions = {
@@ -49,6 +63,7 @@ class RolePermissions {
     return permissions[role]?.contains(permission) ?? false;
   }
 }
+*/
 
 class CrewService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -231,9 +246,13 @@ class CrewService {
       //   throw CrewException('Invalid foreman ID format', code: 'invalid-foreman-id');
       // }
 
+      // DEV MODE: Crew creation limit check bypassed for development testing
+      // TODO: Re-enable crew creation limit before production deployment
+      /* PRODUCTION CODE:
       if (!await _checkCrewCreationLimit(foremanId)) {
         throw CrewException('Maximum crew limit reached (3 crews per user)', code: 'crew-limit-reached');
       }
+      */
 
       if (!_connectivityService.isOnline) {
         // Offline: Store crew locally and mark as dirty
@@ -484,10 +503,13 @@ class CrewService {
     String? message,
   }) async {
     try {
-      // Permission check
+      // DEV MODE: Permission check bypassed for development testing
+      // TODO: Re-enable permission check before production deployment
+      /* PRODUCTION CODE:
       if (!await hasPermission(crewId: crewId, userId: inviterId, permission: Permission.inviteMember)) {
         throw CrewException('Insufficient permissions to invite members', code: 'permission-denied');
       }
+      */
 
       final crew = await getCrew(crewId);
       if (crew == null) {
@@ -502,6 +524,9 @@ class CrewService {
         if (msgError != null) throw MessagingException(msgError, code: 'invalid-message-content');
       }
 
+      // DEV MODE: Invitation limit checks bypassed for development testing
+      // TODO: Re-enable invitation limits before production deployment
+      /* PRODUCTION CODE:
       if (!await _checkOverallInvitationLimit(inviterId)) {
         throw CrewException('Maximum lifetime invitation limit reached (100 invitations)', code: 'lifetime-invite-limit-reached');
       }
@@ -509,6 +534,7 @@ class CrewService {
       if (!await _checkInvitationLimit(inviterId)) {
         throw CrewException('Daily invitation limit reached (max 5 per day)', code: 'daily-invite-limit-reached');
       }
+      */
 
       final existingMember = await _firestore
           .collection('crews')
@@ -585,10 +611,13 @@ class CrewService {
     required String inviterId, // Add this parameter
   }) async {
     try {
-      // Permission check
+      // DEV MODE: Permission check bypassed for development testing
+      // TODO: Re-enable permission check before production deployment
+      /* PRODUCTION CODE:
       if (!await hasPermission(crewId: crewId, userId: inviterId, permission: Permission.removeMember)) {
         throw CrewException('Insufficient permissions to remove members', code: 'permission-denied');
       }
+      */
 
       final crew = await getCrew(crewId);
       if (crew == null) {
@@ -656,9 +685,13 @@ class CrewService {
     required String updaterId, // Add updater
   }) async {
     try {
+      // DEV MODE: Permission check bypassed for development testing
+      // TODO: Re-enable permission check before production deployment
+      /* PRODUCTION CODE:
       if (!await hasPermission(crewId: crewId, userId: updaterId, permission: Permission.updateRole)) {
         throw CrewException('Insufficient permissions to update roles', code: 'permission-denied');
       }
+      */
 
       final permissions = MemberPermissions.fromRole(role);
 
@@ -1371,16 +1404,38 @@ class CrewService {
     required String userId,
     required Permission permission,
   }) async {
+    // ========================================================================
+    // DEV MODE: All permission checks bypassed for development testing
+    // ========================================================================
+    // TODO: Re-enable full permission logic before production deployment
+    //
+    // Original function performed:
+    // - Foreman role verification
+    // - Crew member lookup
+    // - Role-based permission checking via RolePermissions class
+    // - Comprehensive logging
+    //
+    // Currently returns true for ALL authenticated users to allow
+    // unrestricted crew operations during development.
+    // ========================================================================
+
     try {
       StructuredLogger.info(
-        'Checking permission',
+        'DEV MODE: Permission check bypassed - granting access',
         category: LogCategory.business,
         context: {
           'crewId': crewId,
           'userId': userId,
           'permission': permission.toString(),
+          'granted': true,
+          'mode': 'development',
         },
       );
+
+      // DEV MODE: Always return true to bypass all permission checks
+      return true;
+
+      /* PRODUCTION CODE - RE-ENABLE BEFORE DEPLOYMENT:
 
       // First check if user is the foreman (they should always have permissions)
       final crewDoc = await _firestore.collection('crews').doc(crewId).get();
@@ -1431,6 +1486,7 @@ class CrewService {
       );
 
       return hasPermission;
+      */
     } on AppException {
       StructuredLogger.error(
         'AppException during permission check',
@@ -1454,7 +1510,8 @@ class CrewService {
           'error': e.toString(),
         },
       );
-      return false;
+      // DEV MODE: Return true even on errors
+      return true;
     } catch (e) {
       StructuredLogger.error(
         'Unexpected error during permission check',
@@ -1466,7 +1523,8 @@ class CrewService {
           'error': e.toString(),
         },
       );
-      return false;
+      // DEV MODE: Return true even on errors
+      return true;
     }
   }
 

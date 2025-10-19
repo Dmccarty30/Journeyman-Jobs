@@ -57,9 +57,10 @@ class SelectedCrewNotifier extends StateNotifier<Crew?> {
   void setCrew(Crew? crew) => state = crew;
 }
 
-// Current User Provider - Note: These are intentionally not using @riverpod
-// to maintain compatibility with existing code that expects StateProvider
-final currentUserProvider = Provider<UserModel?>((ref) => null);
+ // DEPRECATED: Legacy current user stub - returns null.
+ // Use the real Firebase auth provider from providers/riverpod/auth_riverpod_provider.dart
+ @Deprecated('Use auth_riverpod_provider.dart currentUserProvider (Firebase User). This legacy stub will be removed.')
+ final legacyCurrentUserProvider = Provider<UserModel?>((ref) => null);
 
 // Feed Posts Notifier Provider
 @riverpod

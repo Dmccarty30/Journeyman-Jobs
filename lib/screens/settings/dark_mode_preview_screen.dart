@@ -78,8 +78,8 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                     expandedHeight: 120,
                     pinned: true,
                     backgroundColor: _isDarkMode
-                        ? AppThemeDark.primaryBackground.withOpacity(0.9)
-                        : AppTheme.primaryNavy.withOpacity(0.9),
+                        ? AppThemeDark.primaryBackground.withValues(alpha:0.9)
+                        : AppTheme.primaryNavy.withValues(alpha:0.9),
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(
                         'Dark Mode Preview',
@@ -93,7 +93,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                             Shadow(
                               color: (_isDarkMode
                                   ? AppThemeDark.accentCopperGlow
-                                  : AppTheme.accentCopper).withOpacity(0.3),
+                                  : AppTheme.accentCopper).withValues(alpha:0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -162,7 +162,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
     ).animate(onPlay: (controller) => controller.repeat())
       .shimmer(duration: 3.seconds, color: (_isDarkMode
           ? AppThemeDark.accentCopperGlow
-          : AppTheme.accentCopper).withOpacity(0.3));
+          : AppTheme.accentCopper).withValues(alpha:0.3));
   }
 
   Widget _buildThemeToggle() {
@@ -175,7 +175,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
             border: Border.all(
               color: (_isDarkMode
                   ? AppThemeDark.accentCopper
-                  : AppTheme.accentCopper).withOpacity(_glowAnimation.value),
+                  : AppTheme.accentCopper).withValues(alpha:_glowAnimation.value),
               width: 2,
             ),
             borderRadius: BorderRadius.circular(30),
@@ -183,7 +183,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
               BoxShadow(
                 color: (_isDarkMode
                     ? AppThemeDark.accentCopperGlow
-                    : AppTheme.accentCopper).withOpacity(_glowAnimation.value),
+                    : AppTheme.accentCopper).withValues(alpha:_glowAnimation.value),
                 blurRadius: 20,
                 spreadRadius: 2,
               ),
@@ -231,7 +231,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                   BoxShadow(
                     color: (_isDarkMode
                         ? AppThemeDark.accentCopperGlow
-                        : AppTheme.accentCopper).withOpacity(0.5),
+                        : AppTheme.accentCopper).withValues(alpha:0.5),
                     blurRadius: 15,
                     spreadRadius: 2,
                   ),
@@ -247,7 +247,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                   : AppTheme.white)
               : (_isDarkMode
                   ? AppThemeDark.textTertiary
-                  : AppTheme.white.withOpacity(0.5)),
+                  : AppTheme.white.withValues(alpha:0.5)),
         ),
       ),
     );
@@ -259,7 +259,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
       decoration: _isDarkMode
           ? AppThemeDark.formContainerDecoration
           : BoxDecoration(
-              color: AppTheme.white.withOpacity(0.05),
+              color: AppTheme.white.withValues(alpha:0.05),
               borderRadius: BorderRadius.circular(AppTheme.radiusLg),
               border: Border.all(
                 color: AppTheme.accentCopper,
@@ -320,11 +320,11 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
         border: Border.all(
           color: (_isDarkMode
               ? AppThemeDark.borderPrimary
-              : AppTheme.borderLight).withOpacity(0.3),
+              : AppTheme.borderLight).withValues(alpha:0.3),
         ),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha:0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -349,7 +349,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
       decoration: _isDarkMode
           ? AppThemeDark.formContainerDecoration
           : BoxDecoration(
-              color: AppTheme.white.withOpacity(0.05),
+              color: AppTheme.white.withValues(alpha:0.05),
               borderRadius: BorderRadius.circular(AppTheme.radiusLg),
               border: Border.all(
                 color: AppTheme.accentCopper,
@@ -409,10 +409,10 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
             decoration: _isDarkMode
                 ? AppThemeDark.textFieldDecoration
                 : BoxDecoration(
-                    color: AppTheme.white.withOpacity(0.1),
+                    color: AppTheme.white.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                     border: Border.all(
-                      color: AppTheme.accentCopper.withOpacity(0.5),
+                      color: AppTheme.accentCopper.withValues(alpha:0.5),
                     ),
                   ),
             child: Row(
@@ -431,7 +431,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                       : AppTheme.bodyMedium).copyWith(
                     color: _isDarkMode
                         ? AppThemeDark.textTertiary
-                        : AppTheme.white.withOpacity(0.7),
+                        : AppTheme.white.withValues(alpha:0.7),
                   ),
                 ),
               ],
@@ -461,7 +461,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                   BoxShadow(
                     color: (_isDarkMode
                         ? AppThemeDark.accentCopperGlow
-                        : AppTheme.accentCopper).withOpacity(0.3),
+                        : AppTheme.accentCopper).withValues(alpha:0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -494,7 +494,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppThemeDark.primarySurface.withOpacity(0.5),
+                  AppThemeDark.primarySurface.withValues(alpha:0.5),
                   AppThemeDark.primaryBackground,
                 ],
               ),
@@ -504,13 +504,13 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppTheme.white.withOpacity(0.03),
+                  AppTheme.white.withValues(alpha:0.03),
                   AppTheme.primaryNavy,
                 ],
               ),
               borderRadius: BorderRadius.circular(AppTheme.radiusLg),
               border: Border.all(
-                color: AppTheme.accentCopper.withOpacity(0.3),
+                color: AppTheme.accentCopper.withValues(alpha:0.3),
               ),
               boxShadow: [AppTheme.shadowElectricalInfo],
             ),
@@ -538,7 +538,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                     BoxShadow(
                       color: (_isDarkMode
                           ? AppThemeDark.accentCopperGlow
-                          : AppTheme.accentCopper).withOpacity(
+                          : AppTheme.accentCopper).withValues(alpha:
                         0.4 + _glowAnimation.value * 0.3,
                       ),
                       blurRadius: 25 + _glowAnimation.value * 15,
@@ -557,7 +557,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                     Shadow(
                       color: (_isDarkMode
                           ? AppThemeDark.accentCopperGlow
-                          : AppTheme.accentCopper).withOpacity(0.6),
+                          : AppTheme.accentCopper).withValues(alpha:0.6),
                       blurRadius: 12,
                       offset: const Offset(0, 3),
                     ),
@@ -583,7 +583,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                 Shadow(
                   color: (_isDarkMode
                       ? AppThemeDark.navyDeep
-                      : AppTheme.primaryNavy).withOpacity(0.8),
+                      : AppTheme.primaryNavy).withValues(alpha:0.8),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),
@@ -600,7 +600,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
         duration: 2.seconds,
         color: (_isDarkMode
             ? AppThemeDark.accentCopperGlow
-            : AppTheme.accentCopper).withOpacity(0.1),
+            : AppTheme.accentCopper).withValues(alpha:0.1),
       );
   }
 
@@ -610,7 +610,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
       decoration: _isDarkMode
           ? AppThemeDark.formContainerDecoration
           : BoxDecoration(
-              color: AppTheme.white.withOpacity(0.05),
+              color: AppTheme.white.withValues(alpha:0.05),
               borderRadius: BorderRadius.circular(AppTheme.radiusLg),
               border: Border.all(
                 color: AppTheme.accentCopper,
@@ -638,12 +638,12 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
             decoration: BoxDecoration(
               color: (_isDarkMode
                   ? AppThemeDark.primarySurface
-                  : AppTheme.primaryNavy.withOpacity(0.3)),
+                  : AppTheme.primaryNavy.withValues(alpha:0.3)),
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
                 color: _isDarkMode
-                    ? AppThemeDark.accentCopper.withOpacity(0.5)
-                    : AppTheme.accentCopper.withOpacity(0.5),
+                    ? AppThemeDark.accentCopper.withValues(alpha:0.5)
+                    : AppTheme.accentCopper.withValues(alpha:0.5),
               ),
             ),
             child: LayoutBuilder(
@@ -662,7 +662,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                           BoxShadow(
                             color: (_isDarkMode
                                 ? AppThemeDark.accentCopperGlow
-                                : AppTheme.accentCopper).withOpacity(0.5),
+                                : AppTheme.accentCopper).withValues(alpha:0.5),
                             blurRadius: 10,
                           ),
                         ],
@@ -683,7 +683,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                 : AppTheme.labelMedium).copyWith(
               color: _isDarkMode
                   ? AppThemeDark.textSecondary
-                  : AppTheme.white.withOpacity(0.8),
+                  : AppTheme.white.withValues(alpha:0.8),
             ),
           ),
         ],
@@ -697,7 +697,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
       decoration: _isDarkMode
           ? AppThemeDark.formContainerDecoration
           : BoxDecoration(
-              color: AppTheme.white.withOpacity(0.05),
+              color: AppTheme.white.withValues(alpha:0.05),
               borderRadius: BorderRadius.circular(AppTheme.radiusLg),
               border: Border.all(
                 color: AppTheme.accentCopper,
@@ -726,7 +726,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
             decoration: _isDarkMode
                 ? AppThemeDark.tabBarDecoration
                 : BoxDecoration(
-                    color: AppTheme.primaryNavy.withOpacity(0.3),
+                    color: AppTheme.primaryNavy.withValues(alpha:0.3),
                     borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                     border: Border.all(
                       color: AppTheme.accentCopper,
@@ -735,7 +735,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                     boxShadow: [
                       AppTheme.shadowElectricalInfo,
                       BoxShadow(
-                        color: AppTheme.accentCopper.withOpacity(0.2),
+                        color: AppTheme.accentCopper.withValues(alpha:0.2),
                         blurRadius: 15,
                         offset: const Offset(0, 4),
                       ),
@@ -773,14 +773,14 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                         BoxShadow(
                           color: (_isDarkMode
                               ? AppThemeDark.navyDeep
-                              : AppTheme.primaryNavy).withOpacity(0.3),
+                              : AppTheme.primaryNavy).withValues(alpha:0.3),
                           blurRadius: 35,
                           offset: const Offset(0, 12),
                         ),
                         BoxShadow(
                           color: (_isDarkMode
                               ? AppThemeDark.accentCopper
-                              : AppTheme.accentCopper).withOpacity(0.25),
+                              : AppTheme.accentCopper).withValues(alpha:0.25),
                           blurRadius: 18,
                           offset: const Offset(0, 6),
                         ),
@@ -807,7 +807,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                               Shadow(
                                 color: (_isDarkMode
                                     ? AppThemeDark.navyDeep
-                                    : AppTheme.primaryNavy).withOpacity(0.5),
+                                    : AppTheme.primaryNavy).withValues(alpha:0.5),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -826,10 +826,10 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                           colors: [
                             (_isDarkMode
                                 ? AppThemeDark.accentCopper
-                                : AppTheme.accentCopper).withOpacity(0.3),
+                                : AppTheme.accentCopper).withValues(alpha:0.3),
                             (_isDarkMode
                                 ? AppThemeDark.accentCopper
-                                : AppTheme.accentCopper).withOpacity(0.1),
+                                : AppTheme.accentCopper).withValues(alpha:0.1),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(4),
@@ -844,7 +844,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                               : AppTheme.labelLarge).copyWith(
                             color: (_isDarkMode
                                 ? AppThemeDark.textTertiary
-                                : AppTheme.white.withOpacity(0.7)),
+                                : AppTheme.white.withValues(alpha:0.7)),
                             fontWeight: FontWeight.w500,
                           ),
                         ),

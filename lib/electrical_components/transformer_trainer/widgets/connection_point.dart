@@ -44,7 +44,7 @@ class _ConnectionPointWidgetState extends State<ConnectionPointWidget>
   bool _isPressed = false;
   
   // Mobile touch constants
-  static const double _minTouchTarget = 44; // iOS/Android accessibility guidelines
+  static const double _minTouchTarget = 48; // WCAG minimum touch target height
   static const double _visualSize = 28;
   static const double _mobileVisualSize = 32; // Larger on mobile
 

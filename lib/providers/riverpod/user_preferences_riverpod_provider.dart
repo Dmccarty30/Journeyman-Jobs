@@ -104,17 +104,23 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
           
           await firestore.runTransaction((transaction) async {
             final userDoc = await transaction.get(userDocRef);
-            
+
             if (!userDoc.exists) {
-              throw Exception('User document not found');
+              // Create user document if it doesn't exist (edge case for new users)
+              transaction.set(userDocRef, {
+                'jobPreferences': preferences.toJson(),
+                'hasSetJobPreferences': true,
+                'createdAt': FieldValue.serverTimestamp(),
+                'updatedAt': FieldValue.serverTimestamp(),
+              });
+            } else {
+              // Update existing user document
+              transaction.update(userDocRef, {
+                'jobPreferences': preferences.toJson(),
+                'hasSetJobPreferences': true,
+                'updatedAt': FieldValue.serverTimestamp(),
+              });
             }
-            
-            // Update job preferences
-            transaction.update(userDocRef, {
-              'jobPreferences': preferences.toJson(),
-              'hasSetJobPreferences': true,
-              'updatedAt': FieldValue.serverTimestamp(),
-            });
           });
           
           state = state.copyWith(
@@ -147,19 +153,25 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
         operation: () async {
           final firestore = FirebaseFirestore.instance;
           final userDocRef = firestore.collection('users').doc(userId);
-          
+
           await firestore.runTransaction((transaction) async {
             final userDoc = await transaction.get(userDocRef);
-            
+
             if (!userDoc.exists) {
-              throw Exception('User document not found');
+              // Create user document if it doesn't exist (edge case for new users)
+              transaction.set(userDocRef, {
+                'jobPreferences': updatedPreferences.toJson(),
+                'hasSetJobPreferences': true,
+                'createdAt': FieldValue.serverTimestamp(),
+                'updatedAt': FieldValue.serverTimestamp(),
+              });
+            } else {
+              // Update existing user document
+              transaction.update(userDocRef, {
+                'jobPreferences': updatedPreferences.toJson(),
+                'updatedAt': FieldValue.serverTimestamp(),
+              });
             }
-            
-            // Update job preferences
-            transaction.update(userDocRef, {
-              'jobPreferences': updatedPreferences.toJson(),
-              'updatedAt': FieldValue.serverTimestamp(),
-            });
           });
           
           state = state.copyWith(

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../design_system/app_theme.dart';
-import '../../../providers/riverpod/auth_riverpod_provider.dart';
-import '../../../providers/core_providers.dart' hide currentUserProvider;
+import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
+import '../../../providers/core_providers.dart' hide legacyCurrentUserProvider;
 import '../providers/crews_riverpod_provider.dart';
 import '../providers/feed_provider.dart';
 import '../widgets/post_card.dart';
@@ -14,7 +14,7 @@ class FeedTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedCrew = ref.watch(selectedCrewProvider);
-    final currentUser = ref.watch(currentUserProvider);
+    final currentUser = ref.watch(auth_providers.currentUserProvider);
 
     // Allow feed access even without a crew
     if (currentUser == null) {

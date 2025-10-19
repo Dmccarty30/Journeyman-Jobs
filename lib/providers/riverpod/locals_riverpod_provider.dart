@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/exceptions/app_exception.dart';
 import '../../models/locals_record.dart';
 import '../../utils/concurrent_operations.dart';
-import 'auth_riverpod_provider.dart';
+import 'auth_riverpod_provider.dart' as auth_providers;
 import 'jobs_riverpod_provider.dart' show firestoreServiceProvider;
 
 part 'locals_riverpod_provider.g.dart';
@@ -111,7 +111,7 @@ class LocalsNotifier extends _$LocalsNotifier {
     }
 
     // WAVE 4: Auth check before data access (defense-in-depth)
-    final currentUser = ref.read(currentUserProvider);
+    final currentUser = ref.read(auth_providers.currentUserProvider);
     if (currentUser == null) {
       throw UnauthenticatedException(
         'User must be authenticated to access IBEW locals directory',

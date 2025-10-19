@@ -387,14 +387,18 @@ class _OptimizedVirtualJobListState extends ConsumerState<OptimizedVirtualJobLis
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppTheme.spacingLg),
-              ElevatedButton(
-                onPressed: widget.onLoadMore,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: widget.highContrastMode ? Colors.black : AppTheme.accentCopper,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(120, 44), // 44dp minimum touch target
+              Semantics(
+                label: 'Retry loading jobs',
+                button: true,
+                child: ElevatedButton(
+                  onPressed: widget.onLoadMore,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: widget.highContrastMode ? Colors.black : AppTheme.accentCopper,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(120, 48), // 48dp minimum touch target
+                  ),
+                  child: const Text('Retry'),
                 ),
-                child: const Text('Retry'),
               ),
             ],
           ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journeyman_jobs/providers/core_providers.dart';
+import 'package:journeyman_jobs/providers/core_providers.dart' hide legacyCurrentUserProvider;
+import 'package:journeyman_jobs/providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
+import 'package:journeyman_jobs/utils/structured_logging.dart';
 import 'dart:async';
 
 
@@ -48,8 +50,13 @@ class _ChatInputState extends ConsumerState<ChatInput> {
     _typingTimer?.cancel();
     _typingTimer = Timer(const Duration(milliseconds: 400), () {
       final dbService = ref.read(databaseServiceProvider);
-      final currentUserAsync = ref.read(currentUserProvider);
-      final userId = currentUserAsync?.uid ?? '';
+      final currentUser = ref.read(auth_providers.currentUserProvider);
+      final userId = currentUser?.uid ?? '';
+      StructuredLogger.info(
+        'DEBUG ChatInput typing start',
+        category: LogCategory.authentication,
+        context: {'uidResolved': userId.isNotEmpty, 'provider': 'auth', 'crewId': widget.crewId, 'convId': widget.convId},
+      );
       if (userId.isNotEmpty) {
         dbService.updateTyping(widget.crewId, widget.convId, userId, true);
       }
@@ -59,8 +66,13 @@ class _ChatInputState extends ConsumerState<ChatInput> {
   void _stopTyping() {
     _typingTimer?.cancel();
     final dbService = ref.read(databaseServiceProvider);
-    final currentUserAsync = ref.read(currentUserProvider);
-    final userId = currentUserAsync?.uid ?? '';
+    final currentUser = ref.read(auth_providers.currentUserProvider);
+    final userId = currentUser?.uid ?? '';
+    StructuredLogger.info(
+      'DEBUG ChatInput typing stop',
+      category: LogCategory.authentication,
+      context: {'uidResolved': userId.isNotEmpty, 'provider': 'auth', 'crewId': widget.crewId, 'convId': widget.convId},
+    );
     if (userId.isNotEmpty) {
       dbService.updateTyping(widget.crewId, widget.convId, userId, false);
     }

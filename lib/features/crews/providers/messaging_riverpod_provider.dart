@@ -1,6 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../providers/riverpod/auth_riverpod_provider.dart';
+import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
 import '../models/message.dart';
 import '../services/message_service.dart';
 import 'crews_riverpod_provider.dart';
@@ -14,7 +14,7 @@ MessageService messageService(Ref ref) => MessageService();
 /// Stream of crew messages
 @riverpod
 Stream<List<Message>> crewMessagesStream(Ref ref, String crewId) {
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   
   if (currentUser == null) {
     return Stream.value([]);
@@ -43,7 +43,7 @@ Stream<List<Message>> directMessagesStream(
   String userId1,
   String userId2,
 ) {
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   
   if (currentUser == null) {
     return Stream.value([]);
@@ -72,7 +72,7 @@ List<Message> directMessages(
 /// Provider to get unread crew messages count for current user
 @riverpod
 int unreadCrewMessagesCount(Ref ref, String crewId) {
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   final messages = ref.watch(crewMessagesProvider(crewId));
   
   if (currentUser == null) return 0;
@@ -85,7 +85,7 @@ int unreadCrewMessagesCount(Ref ref, String crewId) {
 /// Provider to get unread direct messages count for current user
 @riverpod
 int unreadDirectMessagesCount(Ref ref, String otherUserId) {
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   final messages = ref.watch(directMessagesProvider(
     currentUser?.uid ?? '',
     otherUserId,
@@ -103,7 +103,7 @@ int unreadDirectMessagesCount(Ref ref, String otherUserId) {
 /// Provider to get total unread messages count for current user across all crews
 @riverpod
 int totalUnreadMessages(Ref ref) {
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   final crews = ref.watch(userCrewsProvider);
   
   if (currentUser == null) return 0;

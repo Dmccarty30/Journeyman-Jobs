@@ -3,12 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart';
+import '../../design_system/components/reusable_components.dart' hide JJSnackBar;
 import '../../navigation/app_router.dart';
 import '../../services/onboarding_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../widgets/dialogs/user_job_preferences_dialog.dart';
 import '../../providers/riverpod/user_preferences_riverpod_provider.dart';
+import '../../electrical_components/jj_electrical_notifications.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -222,9 +223,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                   onTap: () async {
                     final user = FirebaseAuth.instance.currentUser;
                     if (user == null) {
-                      JJSnackBar.showError(
+                      JJElectricalNotifications.showElectricalToast(
                         context: context,
                         message: 'User not logged in',
+                        type: ElectricalNotificationType.error,
                       );
                       return;
                     }
@@ -539,9 +541,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
               final onboardingService = OnboardingService();
               await onboardingService.resetOnboarding();
               if (context.mounted) {
-                JJSnackBar.showSuccess(
+                JJElectricalNotifications.showElectricalToast(
                   context: context,
                   message: 'Onboarding status reset. Restart app to test.',
+                  type: ElectricalNotificationType.success,
                 );
               }
             },
@@ -564,9 +567,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       }
     } catch (e) {
       if (mounted) {
-        JJSnackBar.showError(
+        JJElectricalNotifications.showElectricalToast(
           context: context,
           message: 'Error signing out. Please try again.',
+          type: ElectricalNotificationType.error,
         );
       }
     }

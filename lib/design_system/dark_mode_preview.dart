@@ -46,8 +46,8 @@ class DarkModePreview extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            DarkModeTheme.surface.withOpacity(0.8),
-            DarkModeTheme.surface.withOpacity(0.4),
+            DarkModeTheme.surface.withValues(alpha:0.8),
+            DarkModeTheme.surface.withValues(alpha:0.4),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
@@ -57,7 +57,7 @@ class DarkModePreview extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: DarkModeTheme.copperGlow.withOpacity(0.3),
+            color: DarkModeTheme.copperGlow.withValues(alpha:0.3),
             blurRadius: 20,
             spreadRadius: 2,
           ),
@@ -146,7 +146,7 @@ class DarkModePreview extends StatelessWidget {
               color: color,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
-                color: DarkModeTheme.copperAccent.withOpacity(0.3),
+                color: DarkModeTheme.copperAccent.withValues(alpha:0.3),
               ),
             ),
           ),
@@ -222,7 +222,7 @@ class DarkModePreview extends StatelessWidget {
         gradient: RadialGradient(
           colors: [
             DarkModeTheme.surface,
-            DarkModeTheme.surface.withOpacity(0.8),
+            DarkModeTheme.surface.withValues(alpha:0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
@@ -233,19 +233,19 @@ class DarkModePreview extends StatelessWidget {
         boxShadow: [
           // Inner glow
           BoxShadow(
-            color: DarkModeTheme.copperGlow.withOpacity(0.2),
+            color: DarkModeTheme.copperGlow.withValues(alpha:0.2),
             blurRadius: 8,
             spreadRadius: -2,
           ),
           // Outer copper radiant glow (the effect you mentioned!)
           BoxShadow(
-            color: DarkModeTheme.copperAccent.withOpacity(0.3),
+            color: DarkModeTheme.copperAccent.withValues(alpha:0.3),
             blurRadius: 20,
             spreadRadius: 2,
           ),
           // Deep shadow for depth
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withValues(alpha:0.5),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -270,8 +270,8 @@ class DarkModePreview extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            DarkModeTheme.surface.withOpacity(0.6),
-            DarkModeTheme.surface.withOpacity(0.3),
+            DarkModeTheme.surface.withValues(alpha:0.6),
+            DarkModeTheme.surface.withValues(alpha:0.3),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
@@ -281,12 +281,12 @@ class DarkModePreview extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: DarkModeTheme.copperGlow.withOpacity(0.2),
+            color: DarkModeTheme.copperGlow.withValues(alpha:0.2),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha:0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -306,7 +306,7 @@ class DarkModePreview extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: DarkModeTheme.copperGlow.withOpacity(0.4),
+                    color: DarkModeTheme.copperGlow.withValues(alpha:0.4),
                     blurRadius: 12,
                   ),
                 ],
@@ -347,14 +347,14 @@ class DarkModePreview extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: DarkModeTheme.surface.withOpacity(0.5),
+        color: DarkModeTheme.surface.withValues(alpha:0.5),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: DarkModeTheme.copperAccent.withOpacity(0.5),
+          color: DarkModeTheme.copperAccent.withValues(alpha:0.5),
         ),
         boxShadow: [
           BoxShadow(
-            color: DarkModeTheme.copperGlow.withOpacity(0.1),
+            color: DarkModeTheme.copperGlow.withValues(alpha:0.1),
             blurRadius: 8,
             spreadRadius: -2,
           ),
@@ -396,12 +396,12 @@ class DarkModePreview extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: DarkModeTheme.copperGlow.withOpacity(0.4),
+                color: DarkModeTheme.copperGlow.withValues(alpha:0.4),
                 blurRadius: 20,
                 spreadRadius: 2,
               ),
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha:0.3),
                 blurRadius: 10,
                 offset: const Offset(0, 6),
               ),
@@ -416,7 +416,7 @@ class DarkModePreview extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 shadows: [
                   Shadow(
-                    color: DarkModeTheme.navyDark.withOpacity(0.5),
+                    color: DarkModeTheme.navyDark.withValues(alpha:0.5),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -434,12 +434,12 @@ class DarkModePreview extends StatelessWidget {
             color: Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: DarkModeTheme.copperAccent.withOpacity(0.5),
+              color: DarkModeTheme.copperAccent.withValues(alpha:0.5),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: DarkModeTheme.copperGlow.withOpacity(0.1),
+                color: DarkModeTheme.copperGlow.withValues(alpha:0.1),
                 blurRadius: 12,
               ),
             ],
@@ -478,13 +478,13 @@ class DarkModePreview extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            DarkModeTheme.surface.withOpacity(0.3),
+            DarkModeTheme.surface.withValues(alpha:0.3),
             DarkModeTheme.background,
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: DarkModeTheme.copperAccent.withOpacity(0.3),
+          color: DarkModeTheme.copperAccent.withValues(alpha:0.3),
           width: 1,
         ),
       ),
@@ -512,12 +512,12 @@ class DarkModePreview extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: DarkModeTheme.copperGlow.withOpacity(0.5),
+                  color: DarkModeTheme.copperGlow.withValues(alpha:0.5),
                   blurRadius: 30,
                   spreadRadius: 5,
                 ),
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha:0.3),
                   blurRadius: 15,
                   offset: const Offset(0, 8),
                 ),
@@ -544,7 +544,7 @@ class DarkModePreview extends StatelessWidget {
               color: DarkModeTheme.textPrimary,
               shadows: [
                 Shadow(
-                  color: DarkModeTheme.copperGlow.withOpacity(0.3),
+                  color: DarkModeTheme.copperGlow.withValues(alpha:0.3),
                   blurRadius: 8,
                 ),
               ],
@@ -559,10 +559,10 @@ class DarkModePreview extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: DarkModeTheme.surface.withOpacity(0.3),
+        color: DarkModeTheme.surface.withValues(alpha:0.3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: DarkModeTheme.copperAccent.withOpacity(0.3),
+          color: DarkModeTheme.copperAccent.withValues(alpha:0.3),
           width: 1,
         ),
       ),
@@ -584,7 +584,7 @@ class DarkModePreview extends StatelessWidget {
               color: DarkModeTheme.surface,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
-                color: DarkModeTheme.copperAccent.withOpacity(0.3),
+                color: DarkModeTheme.copperAccent.withValues(alpha:0.3),
               ),
             ),
             child: Row(
@@ -597,7 +597,7 @@ class DarkModePreview extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                       boxShadow: [
                         BoxShadow(
-                          color: DarkModeTheme.copperGlow.withOpacity(0.5),
+                          color: DarkModeTheme.copperGlow.withValues(alpha:0.5),
                           blurRadius: 10,
                         ),
                       ],
@@ -697,12 +697,12 @@ extension DarkModeTheme on Never {
   // Shadows (enhanced for dark mode)
   static List<BoxShadow> get electricalGlow => [
     BoxShadow(
-      color: copperGlow.withOpacity(0.3),
+      color: copperGlow.withValues(alpha:0.3),
       blurRadius: 20,
       spreadRadius: 2,
     ),
     BoxShadow(
-      color: Colors.black.withOpacity(0.5),
+      color: Colors.black.withValues(alpha:0.5),
       blurRadius: 10,
       offset: const Offset(0, 4),
     ),
@@ -710,12 +710,12 @@ extension DarkModeTheme on Never {
 
   static List<BoxShadow> get subtleGlow => [
     BoxShadow(
-      color: copperAccent.withOpacity(0.1),
+      color: copperAccent.withValues(alpha:0.1),
       blurRadius: 12,
       spreadRadius: -2,
     ),
     BoxShadow(
-      color: Colors.black.withOpacity(0.3),
+      color: Colors.black.withValues(alpha:0.3),
       blurRadius: 8,
       offset: const Offset(0, 2),
     ),

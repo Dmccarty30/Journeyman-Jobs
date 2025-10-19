@@ -34,6 +34,13 @@ class _AuthScreenState extends State<AuthScreen>
   final _signInEmailController = TextEditingController();
   final _signInPasswordController = TextEditingController();
 
+  // Focus nodes for keyboard navigation
+  final _signUpEmailFocus = FocusNode();
+  final _signUpPasswordFocus = FocusNode();
+  final _signUpConfirmPasswordFocus = FocusNode();
+  final _signInEmailFocus = FocusNode();
+  final _signInPasswordFocus = FocusNode();
+
   bool _obscureSignUpPassword = true;
   bool _obscureSignUpConfirmPassword = true;
   bool _obscureSignInPassword = true;
@@ -56,6 +63,14 @@ class _AuthScreenState extends State<AuthScreen>
     _signUpConfirmPasswordController.dispose();
     _signInEmailController.dispose();
     _signInPasswordController.dispose();
+
+    // Dispose focus nodes for keyboard navigation
+    _signUpEmailFocus.dispose();
+    _signUpPasswordFocus.dispose();
+    _signUpConfirmPasswordFocus.dispose();
+    _signInEmailFocus.dispose();
+    _signInPasswordFocus.dispose();
+
     super.dispose();
   }
 
@@ -541,10 +556,10 @@ class _AuthScreenState extends State<AuthScreen>
                   ),
                 ),
 
-                // Enhanced tab bar
+                // Enhanced tab bar - width matches form containers
                 Container(
                   margin: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingLg,
+                    horizontal: AppTheme.spacingXl,
                   ),
                   decoration: BoxDecoration(
                     border: Border.all(
@@ -583,7 +598,7 @@ class _AuthScreenState extends State<AuthScreen>
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+        // Removed horizontal margin for consistent width with tab bar
         padding: const EdgeInsets.all(AppTheme.spacingLg),
         decoration: BoxDecoration(
           color: AppTheme.white.withValues(alpha: 0.05),
@@ -608,23 +623,29 @@ class _AuthScreenState extends State<AuthScreen>
             children: [
               const SizedBox(height: AppTheme.spacingXl),
 
-              // Email
+              // Email - Keyboard navigation enabled
               JJTextField(
                 label: 'Email',
                 controller: _signUpEmailController,
+                focusNode: _signUpEmailFocus,
                 validator: _validateEmail,
                 keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_signUpPasswordFocus),
                 prefixIcon: Icons.email_outlined,
               ),
 
               const SizedBox(height: AppTheme.spacingLg),
 
-              // Password
+              // Password - Keyboard navigation enabled
               JJTextField(
                 label: 'Password',
                 controller: _signUpPasswordController,
+                focusNode: _signUpPasswordFocus,
                 validator: _validatePassword,
                 obscureText: _obscureSignUpPassword,
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_signUpConfirmPasswordFocus),
                 prefixIcon: Icons.lock_outline,
                 suffixIcon: _obscureSignUpPassword
                     ? Icons.visibility_outlined
@@ -638,12 +659,15 @@ class _AuthScreenState extends State<AuthScreen>
 
               const SizedBox(height: AppTheme.spacingLg),
 
-              // Confirm Password
+              // Confirm Password - Keyboard navigation enabled
               JJTextField(
                 label: 'Confirm Password',
                 controller: _signUpConfirmPasswordController,
+                focusNode: _signUpConfirmPasswordFocus,
                 validator: _validateConfirmPassword,
                 obscureText: _obscureSignUpConfirmPassword,
+                textInputAction: TextInputAction.done,
+                onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
                 prefixIcon: Icons.lock_outline,
                 suffixIcon: _obscureSignUpConfirmPassword
                     ? Icons.visibility_outlined
@@ -691,7 +715,7 @@ class _AuthScreenState extends State<AuthScreen>
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+        // Removed horizontal margin for consistent width with tab bar
         padding: const EdgeInsets.all(AppTheme.spacingLg),
         decoration: BoxDecoration(
           color: AppTheme.white.withValues(alpha: 0.05),
@@ -716,23 +740,29 @@ class _AuthScreenState extends State<AuthScreen>
             children: [
               const SizedBox(height: AppTheme.spacingXl),
 
-              // Email
+              // Email - Keyboard navigation enabled
               JJTextField(
                 label: 'Email',
                 controller: _signInEmailController,
+                focusNode: _signInEmailFocus,
                 validator: _validateEmail,
                 keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_signInPasswordFocus),
                 prefixIcon: Icons.email_outlined,
               ),
 
               const SizedBox(height: AppTheme.spacingLg),
 
-              // Password
+              // Password - Keyboard navigation enabled
               JJTextField(
                 label: 'Password',
                 controller: _signInPasswordController,
+                focusNode: _signInPasswordFocus,
                 validator: _validatePassword,
                 obscureText: _obscureSignInPassword,
+                textInputAction: TextInputAction.done,
+                onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
                 prefixIcon: Icons.lock_outline,
                 suffixIcon: _obscureSignInPassword
                     ? Icons.visibility_outlined
@@ -746,16 +776,30 @@ class _AuthScreenState extends State<AuthScreen>
 
               const SizedBox(height: AppTheme.spacingMd),
 
-              // Forgot Password
+              // Forgot Password - Enhanced visibility with background color
               Align(
                 alignment: Alignment.centerRight,
                 child: Container(
                   decoration: BoxDecoration(
+                    // Subtle copper gradient background for visibility
+                    gradient: LinearGradient(
+                      colors: [
+                        AppTheme.accentCopper.withValues(alpha: 0.15),
+                        AppTheme.secondaryCopper.withValues(alpha: 0.1),
+                      ],
+                    ),
                     border: Border.all(
-                      color: AppTheme.accentCopper.withValues(alpha: 0.5),
-                      width: 1,
+                      color: AppTheme.accentCopper.withValues(alpha: 0.6),
+                      width: 1.5,
                     ),
                     borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.accentCopper.withValues(alpha: 0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: TextButton(
                     onPressed: () {
@@ -765,6 +809,12 @@ class _AuthScreenState extends State<AuthScreen>
                         message: 'Forgot password feature coming soon',
                       );
                     },
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacingMd,
+                        vertical: AppTheme.spacingSm,
+                      ),
+                    ),
                     child: Text(
                       'Forgot Password?',
                       style: AppTheme.labelMedium.copyWith(
@@ -829,8 +879,11 @@ class _AuthScreenState extends State<AuthScreen>
 
         const SizedBox(height: AppTheme.spacingLg),
 
-        // Google Sign In
-        Flexible(
+        // Google Sign In - Wrapped in ConstrainedBox to prevent overflow
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width - 48, // Account for padding
+          ),
           child: JJSocialSignInButton(
             text: 'Continue with Google',
             icon: const Icon(
@@ -845,9 +898,12 @@ class _AuthScreenState extends State<AuthScreen>
 
         const SizedBox(height: AppTheme.spacingMd),
 
-        // Apple Sign In (iOS only)
+        // Apple Sign In (iOS only) - Wrapped in ConstrainedBox to prevent overflow
         if (Theme.of(context).platform == TargetPlatform.iOS)
-          Flexible(
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width - 48, // Account for padding
+            ),
             child: JJSocialSignInButton(
               text: 'Continue with Apple',
               icon: const Icon(Icons.apple, size: 24, color: AppTheme.black),
@@ -936,153 +992,163 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 60,
-      decoration: BoxDecoration(
-        color: AppTheme.primaryNavy.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(
-          color: AppTheme.accentCopper,
-          width: AppTheme.borderWidthCopper,
-        ),
-        boxShadow: [
-          AppTheme.shadowElectricalInfo,
-          BoxShadow(
-            color: AppTheme.accentCopper.withValues(alpha: 0.2),
-            blurRadius: 15,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Background
-          Container(
-            margin: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryNavy.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd - 4),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate exact half width for equal tabs
+        final double tabWidth = (constraints.maxWidth - 8) / 2; // 8 = 4px margin on each side
+
+        return Container(
+          height: 60,
+          decoration: BoxDecoration(
+            color: AppTheme.primaryNavy.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            border: Border.all(
+              color: AppTheme.accentCopper,
+              width: AppTheme.borderWidthCopper,
             ),
-          ),
-
-          // Animated indicator
-          AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              final double position = _currentIndex.toDouble();
-              return Transform.translate(
-                offset: Offset(
-                  position * (MediaQuery.of(context).size.width - 72) / 2,
-                  0,
-                ),
-                child: Container(
-                  width: (MediaQuery.of(context).size.width - 72) / 2,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    gradient: _getGradient(_currentIndex),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd - 4),
-                    border: Border.all(
-                      color: AppTheme.accentCopper,
-                      width: AppTheme.borderWidthCopper,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.primaryNavy.withValues(alpha: 0.3),
-                        blurRadius: 35,
-                        offset: const Offset(0, 12),
-                      ),
-                      BoxShadow(
-                        color: AppTheme.accentCopper.withValues(alpha: 0.25),
-                        blurRadius: 18,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-
-          // Tab buttons
-          Row(
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    widget.controller.animateTo(0);
-                    widget.onTabChanged(0);
-                  },
-                  child: Text(
-                    'Sign Up',
-                    style: _currentIndex == 0
-                        ? AppTheme.labelLarge.copyWith(
-                            color: AppTheme.white,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(
-                                color: AppTheme.primaryNavy.withValues(
-                                  alpha: 0.5,
-                                ),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          )
-                        : AppTheme.labelLarge.copyWith(
-                            color: AppTheme.white.withValues(alpha: 0.7),
-                            fontWeight: FontWeight.w500,
-                          ),
-                  ),
-                ),
-              ),
-              Container(
-                width: 2,
-                height: 0.6,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      AppTheme.accentCopper.withValues(alpha: 0.3),
-                      AppTheme.accentCopper.withValues(alpha: 0.1),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    widget.controller.animateTo(1);
-                    widget.onTabChanged(1);
-                  },
-                  child: Text(
-                    'Sign In',
-                    style: _currentIndex == 1
-                        ? AppTheme.labelLarge.copyWith(
-                            color: AppTheme.white,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(
-                                color: AppTheme.primaryNavy.withValues(
-                                  alpha: 0.5,
-                                ),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          )
-                        : AppTheme.labelLarge.copyWith(
-                            color: AppTheme.white.withValues(alpha: 0.7),
-                            fontWeight: FontWeight.w500,
-                          ),
-                  ),
-                ),
+            boxShadow: [
+              AppTheme.shadowElectricalInfo,
+              BoxShadow(
+                color: AppTheme.accentCopper.withValues(alpha: 0.2),
+                blurRadius: 15,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
-        ],
-      ),
+          child: Stack(
+            children: [
+              // Background
+              Container(
+                margin: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryNavy.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd - 4),
+                ),
+              ),
+
+              // Animated indicator - ensures exact equal width for both tabs
+              AnimatedBuilder(
+                animation: _animation,
+                builder: (context, child) {
+                  final double position = _currentIndex.toDouble();
+                  return Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Transform.translate(
+                      offset: Offset(
+                        position * tabWidth,
+                        0,
+                      ),
+                      child: Container(
+                        width: tabWidth,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          gradient: _getGradient(_currentIndex),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusMd - 4),
+                          border: Border.all(
+                            color: AppTheme.accentCopper,
+                            width: AppTheme.borderWidthCopper,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.primaryNavy.withValues(alpha: 0.3),
+                              blurRadius: 35,
+                              offset: const Offset(0, 12),
+                            ),
+                            BoxShadow(
+                              color: AppTheme.accentCopper.withValues(alpha: 0.25),
+                              blurRadius: 18,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+
+              // Tab buttons - equal width for both tabs
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        widget.controller.animateTo(0);
+                        widget.onTabChanged(0);
+                      },
+                      child: Text(
+                        'Sign Up',
+                        style: _currentIndex == 0
+                            ? AppTheme.labelLarge.copyWith(
+                                color: AppTheme.white,
+                                fontWeight: FontWeight.bold,
+                                shadows: [
+                                  Shadow(
+                                    color: AppTheme.primaryNavy.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              )
+                            : AppTheme.labelLarge.copyWith(
+                                color: AppTheme.white.withValues(alpha: 0.7),
+                                fontWeight: FontWeight.w500,
+                              ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 2,
+                    height: 0.6,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          AppTheme.accentCopper.withValues(alpha: 0.3),
+                          AppTheme.accentCopper.withValues(alpha: 0.1),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        widget.controller.animateTo(1);
+                        widget.onTabChanged(1);
+                      },
+                      child: Text(
+                        'Sign In',
+                        style: _currentIndex == 1
+                            ? AppTheme.labelLarge.copyWith(
+                                color: AppTheme.white,
+                                fontWeight: FontWeight.bold,
+                                shadows: [
+                                  Shadow(
+                                    color: AppTheme.primaryNavy.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              )
+                            : AppTheme.labelLarge.copyWith(
+                                color: AppTheme.white.withValues(alpha: 0.7),
+                                fontWeight: FontWeight.w500,
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

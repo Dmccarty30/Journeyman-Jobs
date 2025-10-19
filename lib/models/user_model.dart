@@ -1,51 +1,176 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:journeyman_jobs/domain/enums/onboarding_status.dart';
 
+/// User Model - IBEW Electrical Worker Profile
+///
+/// Represents a complete user profile for IBEW electrical workers in the
+/// Journeyman Jobs application. This model stores all personal, professional,
+/// and preference data collected during onboarding and maintained throughout
+/// the user's lifecycle.
+///
+/// ## Key Sections:
+///
+/// ### Authentication & Identity
+/// - Basic user identification (uid, username, email)
+/// - Display information (displayName, avatarUrl)
+/// - Online status tracking for real-time features
+///
+/// ### IBEW Professional Information
+/// - Classification: Type of electrical worker (Journeyman Lineman, Wireman, etc.)
+/// - Home Local: IBEW local union number where member holds their ticket
+/// - Ticket Number: IBEW membership/journeyman ticket identifier
+/// - Books On: Which local's out-of-work books they're currently on
+/// - Work Status: Current employment status (isWorking)
+///
+/// ### Personal Information
+/// - Contact details (phone, address)
+/// - Required for job dispatch and emergency contacts
+/// - Privacy-protected, never shared without consent
+///
+/// ### Job Search Preferences
+/// - Construction types (Commercial, Industrial, Residential, Utility)
+/// - Hours per week preference (40-50, 50-60, 60-70, 70+)
+/// - Per diem requirements for travel work
+/// - Preferred locals for finding work opportunities
+/// - Maximum travel distance for jobs
+///
+/// ### Career Goals & Motivations
+/// - Professional development goals (networking, advancement, skills)
+/// - Compensation preferences (pay rate, benefits)
+/// - Work preferences (long-term, travel opportunities)
+///
+/// ### System Metadata
+/// - Account creation and last active timestamps
+/// - FCM token for push notifications
+/// - Crew associations for team features
+/// - Onboarding status tracking
+///
+/// ## Firebase Integration:
+/// All fields map directly to Firestore document structure.
+/// Uses single consolidated write during onboarding completion
+/// to prevent duplicate fields and ensure data consistency.
+///
+/// ## Privacy & Security:
+/// - Sensitive fields (ticketNumber) are never exposed in public queries
+/// - Personal information is only shared with user consent
+/// - Location data is approximate for privacy protection
+///
+/// ## IBEW Terminology:
+/// - "Home Local": The IBEW local where a member holds their primary membership
+/// - "Books On": The out-of-work list at a local union hall
+/// - "Ticket Number": Journeyman certification identifier
+/// - "Classification": Specific trade specialization within IBEW
+/// - "Brother/Sister": Traditional respectful greeting among union members
 class UserModel {
+  /// Firebase Authentication unique identifier
   final String uid;
+
+  /// User's chosen username (typically email prefix)
   final String username;
+
+  /// IBEW electrical classification (e.g., 'Journeyman Lineman', 'Journeyman Wireman')
   final String classification;
+
+  /// IBEW home local union number (e.g., 26 for Washington DC)
   final int homeLocal;
+
+  /// User role in the system ('electrician', 'contractor', 'admin')
   final String role;
+
+  /// IDs of crews the user belongs to for team features
   final List<String> crewIds;
+
+  /// User's email address for authentication and communication
   final String email;
+
+  /// Profile picture URL from Firebase Storage or social provider
   final String? avatarUrl;
+
+  /// Real-time online status for presence features (default: true after onboarding)
   final bool onlineStatus;
+
+  /// Timestamp of last user activity for presence tracking
   final Timestamp lastActive;
+
+  /// Personal information - Required for job dispatch
   final String firstName;
   final String lastName;
   final String phoneNumber;
+
+  /// Address information - Required for job location matching
   final String address1;
-  final String? address2;
+  final String? address2;  // Optional: apartment, unit, etc.
   final String city;
   final String state;
   final int zipcode;
+
+  /// IBEW membership ticket/book number - Sensitive, handle with care
   final String ticketNumber;
+
+  /// Current employment status
   final bool isWorking;
+
+  /// Which local's out-of-work books they're signed on (e.g., "Local 103")
   final String? booksOn;
+
+  /// Types of construction work preferred (Commercial, Industrial, Residential, Utility)
   final List<String> constructionTypes;
+
+  /// Preferred weekly hours range (40-50, 50-60, 60-70, 70+)
   final String? hoursPerWeek;
+
+  /// Minimum per diem requirement for travel work ($50-75, $75-100, etc.)
   final String? perDiemRequirement;
+
+  /// Comma-separated list of preferred IBEW locals for work
   final String? preferredLocals;
+
+  /// Firebase Cloud Messaging token for push notifications
   final String? fcmToken;
+
+  /// Full display name (firstName + lastName or custom)
   final String displayName;
+
+  /// Account active status for soft deletion
   final bool isActive;
+
+  /// Account creation timestamp
   final DateTime? createdTime;
+
+  /// Professional certifications held (OSHA 10, OSHA 30, etc.)
   final List<String> certifications;
+
+  /// Years of experience in the trade
   final int yearsExperience;
+
+  /// Maximum distance willing to travel for work (miles)
   final int preferredDistance;
+
+  /// Alternative field for local number (legacy support)
   final String localNumber;
-  final bool networkWithOthers;
-  final bool careerAdvancements;
-  final bool betterBenefits;
-  final bool higherPayRate;
-  final bool learnNewSkill;
-  final bool travelToNewLocation;
-  final bool findLongTermWork;
+
+  /// Career goals and motivations - Job search preferences
+  final bool networkWithOthers;      // Connect with other electricians
+  final bool careerAdvancements;      // Seek leadership roles
+  final bool betterBenefits;          // Improved benefit packages
+  final bool higherPayRate;           // Increase compensation
+  final bool learnNewSkill;           // Gain new experience
+  final bool travelToNewLocation;     // Work in different areas
+  final bool findLongTermWork;        // Stable, long-term positions
+
+  /// Free-form career goals text
   final String? careerGoals;
+
+  /// Marketing: How user discovered the app
   final String? howHeardAboutUs;
+
+  /// User's primary goal with the app
   final String? lookingToAccomplish;
+
+  /// Tracks onboarding completion status
   final OnboardingStatus? onboardingStatus;
+
+  /// Whether user has configured job search preferences
   final bool hasSetJobPreferences;
 
   UserModel({

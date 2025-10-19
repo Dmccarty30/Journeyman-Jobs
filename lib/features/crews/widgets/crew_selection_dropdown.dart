@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/features/crews/models/crew.dart';
 import 'package:journeyman_jobs/features/crews/providers/crews_riverpod_provider.dart';
-import 'package:journeyman_jobs/providers/core_providers.dart';
+import 'package:journeyman_jobs/providers/core_providers.dart' hide legacyCurrentUserProvider;
 
 /// A dropdown widget for selecting a crew from the user's available crews.
 /// 

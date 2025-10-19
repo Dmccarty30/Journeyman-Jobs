@@ -10,7 +10,7 @@ import '../../services/resilient_firestore_service.dart';
 import '../../utils/concurrent_operations.dart';
 import '../../utils/filter_performance.dart';
 import '../../utils/memory_management.dart';
-import 'auth_riverpod_provider.dart';
+import 'auth_riverpod_provider.dart' as auth_providers;
 
 part 'jobs_riverpod_provider.g.dart';
 
@@ -103,7 +103,7 @@ class JobsNotifier extends _$JobsNotifier {
     }
 
     // WAVE 4: Auth check before data access (defense-in-depth)
-    final currentUser = ref.read(currentUserProvider);
+    final currentUser = ref.read(auth_providers.currentUserProvider);
     if (currentUser == null) {
       throw UnauthenticatedException(
         'User must be authenticated to access job listings',
@@ -235,7 +235,7 @@ class JobsNotifier extends _$JobsNotifier {
     }
 
     // WAVE 4: Auth check before data access (defense-in-depth)
-    final currentUser = ref.read(currentUserProvider);
+    final currentUser = ref.read(auth_providers.currentUserProvider);
     if (currentUser == null) {
       throw UnauthenticatedException(
         'User must be authenticated to filter job listings',

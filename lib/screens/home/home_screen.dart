@@ -122,13 +122,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 children: [
                   Consumer(
                     builder: (context, ref, child) {
+                      // Watch both auth state and initialization
                       final authState = ref.watch(authProvider);
-                      if (!authState.isAuthenticated) {
+                      final authInit = ref.watch(authInitializationProvider);
+
+                      // Show loading state during initialization
+                      if (authInit.isLoading) {
+                        return const SizedBox(
+                          height: 80,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: AppTheme.accentCopper,
+                            ),
+                          ),
+                        );
+                      }
+
+                      // Check authentication status after initialization complete
+                      if (!authState.isAuthenticated || authState.user == null) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Welcome back!',
+                              'Welcome!',
                               style: AppTheme.headlineMedium.copyWith(
                                 color: AppTheme.primaryNavy,
                                 fontWeight: FontWeight.bold,
@@ -136,7 +152,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                             const SizedBox(height: AppTheme.spacingSm),
                             Text(
-                              'Guest User',
+                              'Sign in to view personalized job opportunities',
                               style: AppTheme.bodyLarge.copyWith(
                                 color: AppTheme.textSecondary,
                               ),
@@ -145,6 +161,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         );
                       }
 
+                      // User is authenticated - show personalized greeting
                       // IBEW terminology: "Brother" is traditional respectful greeting in electrical unions
                       // Fallback chain: displayName → email prefix → default "Brother"
                       final displayName = authState.user?.displayName

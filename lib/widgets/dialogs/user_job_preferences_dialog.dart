@@ -5,6 +5,7 @@ import '../../models/user_job_preferences.dart';
 import '../../providers/riverpod/user_preferences_riverpod_provider.dart';
 import '../../design_system/app_theme.dart';
 import '../../electrical_components/jj_electrical_notifications.dart';
+import '../../design_system/accessibility/accessibility_helpers.dart';
 
 class UserJobPreferencesDialog extends ConsumerWidget {
   final UserJobPreferences? initialPreferences;
@@ -20,26 +21,46 @@ class UserJobPreferencesDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.height < 600;
+
+    // Responsive dialog sizing
+    final dialogWidth = screenSize.width > 600
+        ? 500.0
+        : screenSize.width * 0.9;
+    final dialogHeight = isSmallScreen
+        ? screenSize.height * 0.95  // More space on small screens
+        : screenSize.height * 0.85;
+
     return Dialog(
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: screenSize.width > 600 ? 40.0 : 16.0,
+        vertical: isSmallScreen ? 8.0 : 24.0,
+      ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
       ),
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.8,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-          gradient: AppTheme.electricalGradient,
-          border: Border.all(
-            color: AppTheme.borderCopper,
-            width: AppTheme.borderWidthThin,
-          ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: dialogWidth,
+          maxHeight: dialogHeight,
+          minHeight: 400,  // Minimum height for usability
         ),
-        child: _UserJobPreferencesDialogContent(
-          initialPreferences: initialPreferences,
-          userId: userId,
-          isFirstTime: isFirstTime,
-          ref: ref,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+            gradient: AppTheme.electricalGradient,
+            border: Border.all(
+              color: AppTheme.borderCopper,
+              width: AppTheme.borderWidthThin,
+            ),
+          ),
+          child: _UserJobPreferencesDialogContent(
+            initialPreferences: initialPreferences,
+            userId: userId,
+            isFirstTime: isFirstTime,
+            ref: ref,
+          ),
         ),
       ),
     );
@@ -194,6 +215,8 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
             message: 'Job preferences saved successfully',
             type: ElectricalNotificationType.success,
           );
+          // Announce for screen readers
+          AccessibilityHelpers.announceToScreenReader(context, 'Job preferences saved successfully');
 
           // Safe to close dialog now that save is complete
           Navigator.of(context).pop(true);
@@ -210,6 +233,8 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
             message: 'Error saving preferences. Please try again.',
             type: ElectricalNotificationType.error,
           );
+          // Announce for screen readers
+          AccessibilityHelpers.announceToScreenReader(context, 'Error saving preferences. Please try again.');
         }
       } finally {
         // Always clear loading state when operation completes
@@ -239,6 +264,7 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
             child: Form(
               key: _formKey,
               child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -498,7 +524,7 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
         ),
         const SizedBox(height: AppTheme.spacingSm),
         DropdownButtonFormField<String>(
-          value: _currentPreferences.hoursPerWeek,
+          initialValue: _currentPreferences.hoursPerWeek,
           decoration: InputDecoration(
             labelText: 'Preferred hours per week',
             border: OutlineInputBorder(
@@ -551,7 +577,7 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
         ),
         const SizedBox(height: AppTheme.spacingSm),
         DropdownButtonFormField<String>(
-          value: _currentPreferences.perDiemRequirement,
+          initialValue: _currentPreferences.perDiemRequirement,
           decoration: InputDecoration(
             labelText: 'Minimum per diem amount',
             border: OutlineInputBorder(
@@ -646,60 +672,8 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
     );
   }
 
-  Widget _buildMaximumDistanceSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Maximum Travel Distance',
-          style: AppTheme.titleLarge.copyWith(
-            color: AppTheme.textPrimary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        TextFormField(
-          initialValue: _currentPreferences.maxDistance?.toString(),
-          decoration: InputDecoration(
-            labelText: 'Maximum distance (miles)',
-            hintText: 'e.g., 50',
-            prefixIcon: Icon(Icons.location_on, color: AppTheme.accentCopper),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-              borderSide: BorderSide(color: AppTheme.borderLight),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-              borderSide: BorderSide(color: AppTheme.borderLight),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-              borderSide: BorderSide(color: AppTheme.accentCopper),
-            ),
-            filled: true,
-            fillColor: AppTheme.offWhite,
-          ),
-          keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-          ],
-          validator: (value) {
-            if (value != null && value.isNotEmpty) {
-              final distance = int.tryParse(value);
-              if (distance == null || distance < 0) {
-                return 'Please enter a valid distance';
-              }
-            }
-            return null;
-          },
-          onSaved: (value) {
-            final distance = value != null && value.isNotEmpty ? int.tryParse(value) : null;
-            _currentPreferences = _currentPreferences.copyWith(maxDistance: distance);
-          },
-        ),
-      ],
-    );
-  }
+  /// Removed per Phase 3 cleanup: maxDistance input no longer used
+  Widget _buildMaximumDistanceSection() => const SizedBox.shrink();
 
   /// Footer with responsive Save and Cancel buttons
   /// Prevents overflow on smaller screens by using Flexible widgets
@@ -719,39 +693,49 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Flexible(
-            child: TextButton(
-              onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
-              style: TextButton.styleFrom(
-                foregroundColor: AppTheme.textSecondary,
+            child: Semantics(
+              label: 'Cancel and close dialog',
+              button: true,
+              child: TextButton(
+                onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppTheme.textSecondary,
+                  minimumSize: const Size(120, 48),
+                ),
+                child: const Text('Cancel'),
               ),
-              child: Text('Cancel'),
             ),
           ),
           const SizedBox(width: AppTheme.spacingSm),
           Flexible(
-            child: ElevatedButton(
-              onPressed: _isSaving ? null : _savePreferences,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.accentCopper,
-                foregroundColor: AppTheme.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+            child: Semantics(
+              label: _isSaving ? 'Saving preferences' : 'Save preferences',
+              button: true,
+              child: ElevatedButton(
+                onPressed: _isSaving ? null : _savePreferences,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.accentCopper,
+                  foregroundColor: AppTheme.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingMd,
+                    vertical: AppTheme.spacingSm,
+                  ),
+                  minimumSize: const Size(120, 48),
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingMd,
-                  vertical: AppTheme.spacingSm,
-                ),
+                child: _isSaving
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppTheme.white),
+                      ),
+                    )
+                  : const Text('Save Preferences', overflow: TextOverflow.ellipsis),
               ),
-              child: _isSaving
-                ? SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.white),
-                    ),
-                  )
-                : Text('Save Preferences', overflow: TextOverflow.ellipsis),
             ),
           ),
         ],

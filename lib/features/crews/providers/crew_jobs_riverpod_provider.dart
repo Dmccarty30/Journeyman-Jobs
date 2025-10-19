@@ -2,7 +2,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../features/jobs/models/job.dart';
-import '../../../providers/riverpod/auth_riverpod_provider.dart';
+import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
 import 'crews_riverpod_provider.dart';
 
 part 'crew_jobs_riverpod_provider.g.dart';
@@ -10,7 +10,7 @@ part 'crew_jobs_riverpod_provider.g.dart';
 /// Crew filtered jobs stream provider - uses JobMatchingService to get jobs filtered by crew preferences
 @riverpod
 Stream<List<Job>> crewFilteredJobsStream(Ref ref, String crewId) {
-  final currentUser = ref.watch(currentUserProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
   final jobMatchingService = ref.watch(jobMatchingServiceProvider as ProviderListenable);
   final crew = ref.watch(crewByIdProvider(crewId));
 
