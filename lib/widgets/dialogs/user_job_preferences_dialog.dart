@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/user_job_preferences.dart';
 import '../../providers/riverpod/user_preferences_riverpod_provider.dart';
 import '../../design_system/app_theme.dart';
+import '../../electrical_components/jj_electrical_notifications.dart';
 
 class UserJobPreferencesDialog extends ConsumerWidget {
   final UserJobPreferences? initialPreferences;
@@ -67,31 +68,28 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _localsController = TextEditingController();
 
-  // Available options for form fields
+  /// Tracks whether the save operation is currently in progress
+  /// to prevent duplicate saves and provide visual feedback
+  bool _isSaving = false;
+
+  // Available options for form fields - IBEW-specific classifications only
   final List<String> _availableClassifications = [
+    'Journeyman Lineman',
+    'Journeyman Wireman',
     'Journeyman Electrician',
-    'Apprentice Electrician',
-    'Master Electrician',
-    'Electrical Engineer',
-    'Power Systems Technician',
-    'Industrial Electrician',
-    'Commercial Electrician',
-    'Residential Electrician',
-    'Maintenance Electrician',
-    'Instrumentation Technician'
+    'Journeyman Tree Trimmer',
+    'Equipment Operator',
   ];
 
+  // IBEW-relevant construction types only
   final List<String> _availableConstructionTypes = [
     'Commercial',
     'Industrial',
     'Residential',
     'Utility/Power',
-    'Renewable Energy',
-    'Data Centers',
-    'Healthcare',
-    'Education',
-    'Transportation',
-    'Manufacturing'
+    'Distribution',
+    'Transmission',
+    'Substation',
   ];
 
   final List<String> _hoursPerWeekOptions = [
@@ -125,41 +123,100 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
     super.dispose();
   }
 
-  void _savePreferences() {
+  /// Parses the comma-separated list of local numbers from the text field
+  /// Returns a list of valid integers, filtering out invalid entries
+  List<int> _parseLocals() {
+    final localsText = _localsController.text.trim();
+    final locals = <int>[];
+    if (localsText.isNotEmpty) {
+      final localStrings = localsText.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty);
+      for (final localStr in localStrings) {
+        final local = int.tryParse(localStr);
+        if (local != null) {
+          locals.add(local);
+        }
+      }
+    }
+    return locals;
+  }
+
+  /// Saves or updates user job preferences to Firebase
+  ///
+  /// This method is async to properly await Firebase operations before
+  /// closing the dialog. It includes comprehensive error handling and
+  /// user feedback via electrical toast notifications.
+  ///
+  /// The save operation follows these steps:
+  /// 1. Validate form input
+  /// 2. Check user authentication
+  /// 3. Parse and prepare preference data
+  /// 4. Await Firebase save/update operation
+  /// 5. Show success/error notification
+  /// 6. Close dialog only after successful save
+  Future<void> _savePreferences() async {
+    // Validate all form fields before proceeding
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      // Parse locals from text input
-      final localsText = _localsController.text.trim();
-      final locals = <int>[];
-      if (localsText.isNotEmpty) {
-        final localStrings = localsText.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty);
-        for (final localStr in localStrings) {
-          final local = int.tryParse(localStr);
-          if (local != null) {
-            locals.add(local);
-          }
+      // Ensure user is authenticated before attempting Firebase operations
+      if (widget.userId.isEmpty) {
+        JJElectricalNotifications.showElectricalToast(
+          context: context,
+          message: 'Error: User not authenticated',
+          type: ElectricalNotificationType.error,
+        );
+        return;
+      }
+
+      // Parse preferred locals from the text input field
+      final updatedPreferences = _currentPreferences.copyWith(
+        preferredLocals: _parseLocals(),
+      );
+
+      try {
+        // Set loading state to prevent duplicate saves and show visual feedback
+        setState(() => _isSaving = true);
+
+        final provider = widget.ref.read(userPreferencesProvider.notifier);
+
+        // Await Firebase operation based on whether this is first-time setup or update
+        if (widget.isFirstTime) {
+          await provider.savePreferences(widget.userId, updatedPreferences);
+        } else {
+          await provider.updatePreferences(widget.userId, updatedPreferences);
+        }
+
+        // Only proceed if widget is still mounted (user hasn't navigated away)
+        if (mounted) {
+          // Show success notification using electrical-themed toast
+          JJElectricalNotifications.showElectricalToast(
+            context: context,
+            message: 'Job preferences saved successfully',
+            type: ElectricalNotificationType.success,
+          );
+
+          // Safe to close dialog now that save is complete
+          Navigator.of(context).pop(true);
+        }
+      } catch (e) {
+        // Log error for debugging purposes
+        debugPrint('Error saving preferences: $e');
+
+        // Only show error UI if widget is still mounted
+        if (mounted) {
+          // Show error notification with electrical-themed toast
+          JJElectricalNotifications.showElectricalToast(
+            context: context,
+            message: 'Error saving preferences. Please try again.',
+            type: ElectricalNotificationType.error,
+          );
+        }
+      } finally {
+        // Always clear loading state when operation completes
+        if (mounted) {
+          setState(() => _isSaving = false);
         }
       }
-
-      final updatedPreferences = _currentPreferences.copyWith(
-        preferredLocals: locals,
-      );
-
-      final provider = widget.ref.read(userPreferencesProvider.notifier);
-      if (widget.isFirstTime) {
-        provider.savePreferences(widget.userId, updatedPreferences);
-      } else {
-        provider.updatePreferences(widget.userId, updatedPreferences);
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Job preferences saved successfully!'),
-          backgroundColor: AppTheme.successGreen,
-        )
-      );
-      Navigator.of(context).pop();
     }
   }
 
@@ -644,6 +701,8 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
     );
   }
 
+  /// Footer with responsive Save and Cancel buttons
+  /// Prevents overflow on smaller screens by using Flexible widgets
   Widget _buildFooter() {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -659,24 +718,41 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            style: TextButton.styleFrom(
-              foregroundColor: AppTheme.textSecondary,
+          Flexible(
+            child: TextButton(
+              onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(
+                foregroundColor: AppTheme.textSecondary,
+              ),
+              child: Text('Cancel'),
             ),
-            child: Text('Cancel'),
           ),
           const SizedBox(width: AppTheme.spacingSm),
-          ElevatedButton(
-            onPressed: _savePreferences,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.accentCopper,
-              foregroundColor: AppTheme.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+          Flexible(
+            child: ElevatedButton(
+              onPressed: _isSaving ? null : _savePreferences,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.accentCopper,
+                foregroundColor: AppTheme.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingMd,
+                  vertical: AppTheme.spacingSm,
+                ),
               ),
+              child: _isSaving
+                ? SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.white),
+                    ),
+                  )
+                : Text('Save Preferences', overflow: TextOverflow.ellipsis),
             ),
-            child: Text('Save Preferences'),
           ),
         ],
       ),

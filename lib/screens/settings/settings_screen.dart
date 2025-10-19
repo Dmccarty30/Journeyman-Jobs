@@ -144,289 +144,35 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
     return _catchyExpressions[index];
   }
 
-  Widget _buildPersonalizedHeader() {
-    if (_isLoading) {
-      return Container(
-        width: double.infinity,
-        height: 200,
-        padding: const EdgeInsets.all(AppTheme.spacingLg),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppTheme.primaryNavy,
-              AppTheme.secondaryNavy,
-              AppTheme.primaryNavy.withValues(alpha: 0.8),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-          boxShadow: [
-            AppTheme.shadowLg,
-            BoxShadow(
-              color: AppTheme.accentCopper.withValues(alpha: 0.2),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
+  /// Simple header for settings screen
+  /// Displays "Settings" title with electrical theme
+  Widget _buildHeader() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppTheme.spacingLg),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.primaryNavy,
+            AppTheme.secondaryNavy,
           ],
         ),
-        child: const Center(
-          child: CircularProgressIndicator(
-            color: AppTheme.accentCopper,
-          ),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        border: Border.all(
+          color: AppTheme.accentCopper,
+          width: 2,
         ),
-      );
-    }
-
-    return AnimatedBuilder(
-      animation: Listenable.merge([_headerAnimationController, _pulseAnimationController]),
-      builder: (context, child) {
-        return FadeTransition(
-          opacity: _fadeAnimation,
-          child: Transform.translate(
-            offset: Offset(0, _slideAnimation.value),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.primaryNavy,
-                    AppTheme.secondaryNavy,
-                    AppTheme.primaryNavy.withValues(alpha: 0.8),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                border: Border.all(
-                  color: AppTheme.accentCopper.withValues(alpha: 0.6),
-                  width: 2,
-                ),
-                boxShadow: [
-                  AppTheme.shadowLg,
-                  BoxShadow(
-                    color: AppTheme.accentCopper.withValues(alpha: _pulseAnimation.value * 0.3),
-                    blurRadius: 20 * _pulseAnimation.value,
-                    spreadRadius: 2 * _pulseAnimation.value,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  // Profile avatar with electrical theme
-                  Stack(
-                    children: [
-                      // Glow effect
-                      Container(
-                        width: 90,
-                        height: 90,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.accentCopper.withValues(alpha: _pulseAnimation.value * 0.5),
-                              blurRadius: 30 * _pulseAnimation.value,
-                              spreadRadius: 5 * _pulseAnimation.value,
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Main avatar
-                      Container(
-                        width: 90,
-                        height: 90,
-                        decoration: BoxDecoration(
-                          gradient: AppTheme.buttonGradient,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppTheme.white,
-                            width: 3,
-                          ),
-                        ),
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: Icon(
-                                Icons.electrical_services,
-                                size: AppTheme.iconXl + 8,
-                                color: AppTheme.white,
-                              ),
-                            ),
-                            // Sparkle effect
-                            Positioned(
-                              top: 15,
-                              right: 15,
-                              child: Transform.scale(
-                                scale: _pulseAnimation.value,
-                                child: Container(
-                                  width: 12,
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.white,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppTheme.white.withValues(alpha: 0.8),
-                                        blurRadius: 8,
-                                        spreadRadius: 2,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  const SizedBox(height: AppTheme.spacingMd),
-                  
-                  // Welcome message
-                  RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Welcome back, ',
-                          style: AppTheme.titleLarge.copyWith(
-                            color: AppTheme.white.withValues(alpha: 0.9),
-                          ),
-                        ),
-                        TextSpan(
-                          text: _userName ?? 'Brother',
-                          style: AppTheme.headlineSmall.copyWith(
-                            color: AppTheme.accentCopper,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        TextSpan(
-                          text: '!',
-                          style: AppTheme.titleLarge.copyWith(
-                            color: AppTheme.white.withValues(alpha: 0.9),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  
-                  const SizedBox(height: AppTheme.spacingSm),
-                  
-                  // Ticket and Local info
-                  if (_ticketNumber != null || _localNumber != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacingMd,
-                        vertical: AppTheme.spacingSm,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppTheme.white.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                        border: Border.all(
-                          color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (_ticketNumber != null) ...[
-                            Icon(
-                              Icons.badge,
-                              size: AppTheme.iconSm,
-                              color: AppTheme.accentCopper,
-                            ),
-                            const SizedBox(width: AppTheme.spacingXs),
-                            Text(
-                              'Ticket #$_ticketNumber',
-                              style: AppTheme.labelMedium.copyWith(
-                                color: AppTheme.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                          if (_ticketNumber != null && _localNumber != null)
-                            Container(
-                              margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingSm),
-                              width: 1,
-                              height: 16,
-                              color: AppTheme.accentCopper.withValues(alpha: 0.5),
-                            ),
-                          if (_localNumber != null) ...[
-                            Icon(
-                              Icons.location_city,
-                              size: AppTheme.iconSm,
-                              color: AppTheme.accentCopper,
-                            ),
-                            const SizedBox(width: AppTheme.spacingXs),
-                            Text(
-                              'Local $_localNumber',
-                              style: AppTheme.labelMedium.copyWith(
-                                color: AppTheme.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  
-                  const SizedBox(height: AppTheme.spacingMd),
-                  
-                  // Catchy expression
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.spacingMd,
-                      vertical: AppTheme.spacingSm,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppTheme.accentCopper.withValues(alpha: 0.8),
-                          AppTheme.secondaryCopper.withValues(alpha: 0.6),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      _getRandomExpression(),
-                      style: AppTheme.titleMedium.copyWith(
-                        color: AppTheme.white,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  
-                  const SizedBox(height: AppTheme.spacingLg),
-                  
-                  // Edit Profile button with electrical styling
-                  JJPrimaryButton(
-                    text: 'Edit Profile',
-                    icon: Icons.edit,
-                    onPressed: () {
-                      context.push(AppRouter.profile);
-                    },
-                    isFullWidth: true,
-                    variant: JJButtonVariant.primary,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+      ),
+      child: Text(
+        'Settings',
+        style: AppTheme.headlineLarge.copyWith(
+          color: AppTheme.white,
+          fontWeight: FontWeight.bold,
+        ),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 
@@ -449,7 +195,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Personalized header section
-            _buildPersonalizedHeader(),
+            _buildHeader(),
 
             const SizedBox(height: AppTheme.spacingLg),
 

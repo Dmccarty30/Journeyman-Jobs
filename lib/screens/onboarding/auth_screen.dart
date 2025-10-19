@@ -830,26 +830,30 @@ class _AuthScreenState extends State<AuthScreen>
         const SizedBox(height: AppTheme.spacingLg),
 
         // Google Sign In
-        JJSocialSignInButton(
-          text: 'Continue with Google',
-          icon: const Icon(
-            Icons.g_mobiledata,
-            size: 24,
-            color: AppTheme.errorRed,
+        Flexible(
+          child: JJSocialSignInButton(
+            text: 'Continue with Google',
+            icon: const Icon(
+              Icons.g_mobiledata,
+              size: 24,
+              color: AppTheme.errorRed,
+            ),
+            onPressed: _signInWithGoogle,
+            isLoading: _isGoogleLoading,
           ),
-          onPressed: _signInWithGoogle,
-          isLoading: _isGoogleLoading,
         ),
 
         const SizedBox(height: AppTheme.spacingMd),
 
         // Apple Sign In (iOS only)
         if (Theme.of(context).platform == TargetPlatform.iOS)
-          JJSocialSignInButton(
-            text: 'Continue with Apple',
-            icon: const Icon(Icons.apple, size: 24, color: AppTheme.black),
-            onPressed: _signInWithApple,
-            isLoading: _isAppleLoading,
+          Flexible(
+            child: JJSocialSignInButton(
+              text: 'Continue with Apple',
+              icon: const Icon(Icons.apple, size: 24, color: AppTheme.black),
+              onPressed: _signInWithApple,
+              isLoading: _isAppleLoading,
+            ),
           ),
       ],
     );

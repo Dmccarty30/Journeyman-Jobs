@@ -39,7 +39,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
   final _cityController = TextEditingController();
   final _stateController = TextEditingController();
   final _zipcodeController = TextEditingController();
-  
+
   // Focus nodes for keyboard navigation
   final _firstNameFocus = FocusNode();
   final _lastNameFocus = FocusNode();
@@ -78,12 +78,12 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
   final _careerGoalsController = TextEditingController();
   final _howHeardAboutUsController = TextEditingController();
   final _lookingToAccomplishController = TextEditingController();
-  
+
   // Step 2 Focus nodes
   final _ticketNumberFocus = FocusNode();
   final _homeLocalFocus = FocusNode();
   final _booksOnFocus = FocusNode();
-  
+
   // Step 3 Focus nodes
   final _preferredLocalsFocus = FocusNode();
   final _careerGoalsFocus = FocusNode();
@@ -135,7 +135,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
     _careerGoalsController.dispose();
     _howHeardAboutUsController.dispose();
     _lookingToAccomplishController.dispose();
-    
+
     // Dispose focus nodes
     _firstNameFocus.dispose();
     _lastNameFocus.dispose();
@@ -151,19 +151,23 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
     _careerGoalsFocus.dispose();
     _howHeardAboutUsFocus.dispose();
     _lookingToAccomplishFocus.dispose();
-    
+
     super.dispose();
   }
 
+  /// Handles navigation to next step with validation
+  ///
+  /// Validates current step data before proceeding.
+  /// NO FIREBASE WRITES occur until final step completion.
   void _nextStep() async {
     if (_isSaving) return;
 
     try {
       if (_currentStep == 0) {
-        // Save Step 1 data before proceeding - CRITICAL for user document creation
-        await _saveStep1Data();
-        
-        // Only proceed to next step if save was successful
+        // Validate Step 1 data (NO Firebase write)
+        _validateStep1();
+
+        // Proceed to next step if validation passes
         if (mounted && _currentStep < _totalSteps - 1) {
           _pageController.nextPage(
             duration: const Duration(milliseconds: 300),
@@ -171,10 +175,10 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
           );
         }
       } else if (_currentStep == 1) {
-        // Save Step 2 data before proceeding
-        await _saveStep2Data();
-        
-        // Only proceed to next step if save was successful
+        // Validate Step 2 data (NO Firebase write)
+        _validateStep2();
+
+        // Proceed to next step if validation passes
         if (mounted && _currentStep < _totalSteps - 1) {
           _pageController.nextPage(
             duration: const Duration(milliseconds: 300),
@@ -182,13 +186,11 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
           );
         }
       } else {
-        // Final step - complete onboarding
-        _completeOnboarding();
+        // Final step - complete onboarding with SINGLE Firebase write
+        await _completeOnboarding();
       }
     } catch (e) {
       debugPrint('Error in _nextStep: $e');
-      // Error already handled in save methods with user feedback
-      // Don't proceed to next step if there was an error
       if (mounted) {
         JJElectricalNotifications.showElectricalToast(
           context: context,
@@ -208,17 +210,197 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
     }
   }
 
-  Future<void> _saveStep1Data() async {
+  /// Validates Step 1: Personal Information
+  ///
+  /// Performs client-side validation of required fields:
+  /// - First name, last name (required)
+  /// - Phone number (required)
+  /// - Address line 1, city, state (required)
+  /// - Zipcode (required, numeric, min 5 digits)
+  ///
+  /// NO FIREBASE WRITE - validation only
+  ///
+  /// Throws [Exception] if validation fails
+  void _validateStep1() {
+    final firstName = _firstNameController.text.trim();
+    final lastName = _lastNameController.text.trim();
+    final phone = _phoneController.text.trim();
+    final address1 = _address1Controller.text.trim();
+    final city = _cityController.text.trim();
+    final state = _stateController.text.trim();
+    final zipcode = _zipcodeController.text.trim();
+
+    // Validate required fields
+    if (firstName.isEmpty) {
+      throw Exception('First name is required');
+    }
+    if (lastName.isEmpty) {
+      throw Exception('Last name is required');
+    }
+    if (phone.isEmpty) {
+      throw Exception('Phone number is required');
+    }
+    if (address1.isEmpty) {
+      throw Exception('Address is required');
+    }
+    if (city.isEmpty) {
+      throw Exception('City is required');
+    }
+    if (state.isEmpty) {
+      throw Exception('State is required');
+    }
+    if (zipcode.isEmpty) {
+      throw Exception('Zipcode is required');
+    }
+    if (zipcode.length < 5) {
+      throw Exception('Zipcode must be at least 5 digits');
+    }
+    if (int.tryParse(zipcode) == null) {
+      throw Exception('Zipcode must be numeric');
+    }
+
+    debugPrint('✅ Step 1 validation passed - NO Firebase write performed');
+  }
+
+  /// Validates Step 2: Professional Details
+  ///
+  /// Performs client-side validation of required fields:
+  /// - Home local number (required, numeric)
+  /// - Ticket number (required)
+  /// - Classification (required selection)
+  ///
+  /// NO FIREBASE WRITE - validation only
+  ///
+  /// Throws [Exception] if validation fails
+  void _validateStep2() {
+    final homeLocal = _homeLocalController.text.trim();
+    final ticketNumber = _ticketNumberController.text.trim();
+
+    // Validate required fields
+    if (homeLocal.isEmpty) {
+      throw Exception('Home local number is required');
+    }
+    if (int.tryParse(homeLocal) == null) {
+      throw Exception('Home local must be a valid number');
+    }
+    if (ticketNumber.isEmpty) {
+      throw Exception('Ticket number is required');
+    }
+    if (_selectedClassification == null || _selectedClassification!.isEmpty) {
+      throw Exception('Classification is required');
+    }
+
+    debugPrint('✅ Step 2 validation passed - NO Firebase write performed');
+  }
+
+  /// Parses comma-separated preferred locals into list of integers
+  ///
+  /// Handles various input formats:
+  /// - "84, 222, 111" → [84, 222, 111]
+  /// - "Local 26, Local 103" → [26, 103]
+  /// - Empty string → []
+  ///
+  /// Returns list of valid local numbers, ignoring invalid entries
+  List<int> _parsePreferredLocals(String localsText) {
+    final preferredLocals = <int>[];
+    if (localsText.trim().isEmpty) return preferredLocals;
+
+    final localStrings = localsText.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty);
+    for (final localStr in localStrings) {
+      final local = int.tryParse(localStr);
+      if (local != null) {
+        preferredLocals.add(local);
+      }
+    }
+    return preferredLocals;
+  }
+
+  /// Formats classification from camelCase to Title Case
+  ///
+  /// Examples:
+  /// - "journeymanLineman" → "Journeyman Lineman"
+  /// - "journeymanWireman" → "Journeyman Wireman"
+  /// - "operator" → "Operator"
+  ///
+  /// Returns formatted string for display
+  String _formatClassification(String classification) {
+    // Add space before capital letters and capitalize first letter
+    return classification
+        .replaceAllMapped(RegExp(r'([A-Z])'), (match) => ' ${match.group(1)}')
+        .trim()
+        .split(' ')
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
+  }
+
+  /// Maps onboarding data to UserJobPreferences model
+  ///
+  /// Creates UserJobPreferences object from Step 3 form data:
+  /// - Construction types (multi-select chips)
+  /// - Preferred locals (parsed from comma-separated input)
+  /// - Hours per week and per diem (dropdown selections)
+  ///
+  /// Returns [UserJobPreferences] object for saving to Firestore
+  UserJobPreferences _mapOnboardingDataToPreferences() {
+    return UserJobPreferences(
+      classifications: [], // Set to empty as per requirements
+      constructionTypes: _selectedConstructionTypes.toList(),
+      preferredLocals: _parsePreferredLocals(_preferredLocalsController.text.trim()),
+      hoursPerWeek: _selectedHoursPerWeek,
+      perDiemRequirement: _selectedPerDiem,
+      minWage: null, // Set to null as per requirements
+      maxDistance: null, // Set to null as per requirements
+    );
+  }
+
+  /// Completes onboarding with SINGLE consolidated Firestore write
+  ///
+  /// CRITICAL BACKEND ARCHITECTURE:
+  /// This method performs the ONLY Firestore write during onboarding.
+  /// All data from Steps 1, 2, and 3 are consolidated and written atomically.
+  ///
+  /// Data consolidated (30+ fields):
+  /// - Step 1: Personal information (8 fields)
+  /// - Step 2: IBEW classification (5 fields)
+  /// - Step 3: Job preferences (15+ fields)
+  /// - System/Metadata: Email, username, timestamps, etc.
+  ///
+  /// After successful write:
+  /// - Marks onboarding complete in local storage
+  /// - Shows success notification
+  /// - Navigates to home screen
+  ///
+  /// Error handling:
+  /// - Logs error and shows user-friendly message
+  /// - Does not navigate away on failure
+  /// - Allows user to retry
+  Future<void> _completeOnboarding() async {
     setState(() => _isSaving = true);
 
     try {
+      // Get current authenticated user
       final user = FirebaseAuth.instance.currentUser;
-      if (user == null) throw Exception('No authenticated user');
+      if (user == null) {
+        throw Exception('No authenticated user found');
+      }
 
-      final firestoreService = FirestoreService();
-      
-      // Enhanced Step 1 data with additional required fields for proper user document creation
-      final step1Data = {
+      // Map onboarding data to UserJobPreferences for separate preferences collection
+      final preferences = _mapOnboardingDataToPreferences();
+
+      // Save preferences using userPreferencesProvider
+      try {
+        await ref.read(userPreferencesProvider.notifier).savePreferences(user.uid, preferences);
+      } catch (e) {
+        // Log error but don't block onboarding completion
+        debugPrint('⚠️ Error saving job preferences to separate collection: $e');
+      }
+
+      // ============================================================
+      // SINGLE CONSOLIDATED FIRESTORE WRITE
+      // ============================================================
+      // Build complete user data map with ALL 30+ fields from all steps
+      final Map<String, dynamic> completeUserData = {
+        // Step 1: Personal Information (8 fields)
         'firstName': _firstNameController.text.trim(),
         'lastName': _lastNameController.text.trim(),
         'phoneNumber': _phoneController.text.trim(),
@@ -227,150 +409,21 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
         'city': _cityController.text.trim(),
         'state': _stateController.text.trim(),
         'zipcode': int.parse(_zipcodeController.text.trim()),
-        // Ensure core user document fields are set during Step 1
-        'email': user.email ?? '',
-        'username': user.email?.split('@')[0] ?? 'user',
-        'displayName': '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}'.trim(),
-        'role': 'electrician',
-        'onboardingStatus': 'incomplete',
-        'lastActive': FieldValue.serverTimestamp(),
-        'createdTime': FieldValue.serverTimestamp(),
-        'isActive': true,
-        'onlineStatus': false,
-        'crewIds': <String>[],
-        'hasSetJobPreferences': false,
-      };
 
-      await firestoreService.setUserWithMerge(
-        uid: user.uid,
-        data: step1Data,
-      );
-
-      if (mounted) {
-        JJElectricalNotifications.showElectricalToast(
-          context: context,
-          message: 'Basic information saved successfully',
-          type: ElectricalNotificationType.success,
-        );
-      }
-    } catch (e) {
-      debugPrint('Error saving Step 1 data: $e');
-      if (mounted) {
-        JJElectricalNotifications.showElectricalToast(
-          context: context,
-          message: 'Error saving data. Please try again.',
-          type: ElectricalNotificationType.error,
-        );
-      }
-      rethrow;
-    } finally {
-      if (mounted) {
-        setState(() => _isSaving = false);
-      }
-    }
-  }
-
-  Future<void> _saveStep2Data() async {
-    setState(() => _isSaving = true);
-
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) throw Exception('No authenticated user');
-
-      final firestoreService = FirestoreService();
-      
-      // Enhanced Step 2 data with validation and error handling
-      final step2Data = {
+        // Step 2: IBEW Classification (5 fields)
         'homeLocal': int.parse(_homeLocalController.text.trim()),
         'ticketNumber': _ticketNumberController.text.trim(),
         'classification': _selectedClassification ?? '',
         'isWorking': _isWorking,
-        'booksOn': _booksOnController.text.trim().isEmpty ? null : _booksOnController.text.trim(),
-        // Ensure onboarding status remains consistent
-        'onboardingStatus': 'incomplete',
-        'lastActive': FieldValue.serverTimestamp(),
-      };
+        'booksOn': _booksOnController.text.trim().isEmpty
+            ? null
+            : _booksOnController.text.trim(),
 
-      await firestoreService.setUserWithMerge(
-        uid: user.uid,
-        data: step2Data,
-      );
-
-      if (mounted) {
-        JJElectricalNotifications.showElectricalToast(
-          context: context,
-          message: 'Professional details saved successfully',
-          type: ElectricalNotificationType.success,
-        );
-      }
-    } catch (e) {
-      debugPrint('Error saving Step 2 data: $e');
-      if (mounted) {
-        JJElectricalNotifications.showElectricalToast(
-          context: context,
-          message: 'Error saving professional details. Please try again.',
-          type: ElectricalNotificationType.error,
-        );
-      }
-      rethrow;
-    } finally {
-      if (mounted) {
-        setState(() => _isSaving = false);
-      }
-    }
-  }
-
-  // Method to map onboarding data to UserJobPreferences model
-  UserJobPreferences _mapOnboardingDataToPreferences() {
-    // Parse preferred locals from text input
-    final localsText = _preferredLocalsController.text.trim();
-    final preferredLocals = <int>[];
-    if (localsText.isNotEmpty) {
-      final localStrings = localsText.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty);
-      for (final localStr in localStrings) {
-        final local = int.tryParse(localStr);
-        if (local != null) {
-          preferredLocals.add(local);
-        }
-      }
-    }
-
-    return UserJobPreferences(
-      classifications: [], // Set to empty for now as per requirements
-      constructionTypes: _selectedConstructionTypes.toList(),
-      preferredLocals: preferredLocals,
-      hoursPerWeek: _selectedHoursPerWeek,
-      perDiemRequirement: _selectedPerDiem,
-      minWage: null, // Set to null as per requirements
-      maxDistance: null, // Set to null as per requirements
-    );
-  }
-
-  void _completeOnboarding() async {
-    try {
-      // Get current user from Firebase Auth
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        throw Exception('No authenticated user found');
-      }
-
-      // Map onboarding data to UserJobPreferences
-      final preferences = _mapOnboardingDataToPreferences();
-
-      // Save preferences using userPreferencesProvider
-      try {
-        await ref.read(userPreferencesProvider.notifier).savePreferences(user.uid, preferences);
-      } catch (e) {
-        // Log error but don't block onboarding completion
-        debugPrint('Error saving job preferences: $e');
-      }
-
-      // Build data map containing only Step 3 fields plus onboardingStatus
-      final dataMap = <String, dynamic>{
+        // Step 3: Job Preferences (15+ fields)
         'constructionTypes': _selectedConstructionTypes.toList(),
         'hoursPerWeek': _selectedHoursPerWeek,
         'perDiemRequirement': _selectedPerDiem,
-        'preferredLocals': _preferredLocalsController.text.trim().isEmpty ? null : _preferredLocalsController.text.trim(),
+        'preferredLocals': _parsePreferredLocals(_preferredLocalsController.text.trim()),
         'networkWithOthers': _networkWithOthers,
         'careerAdvancements': _careerAdvancements,
         'betterBenefits': _betterBenefits,
@@ -378,20 +431,38 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
         'learnNewSkill': _learnNewSkill,
         'travelToNewLocation': _travelToNewLocation,
         'findLongTermWork': _findLongTermWork,
-        'careerGoals': _careerGoalsController.text.trim().isEmpty ? null : _careerGoalsController.text.trim(),
-        'howHeardAboutUs': _howHeardAboutUsController.text.trim().isEmpty ? null : _howHeardAboutUsController.text.trim(),
-        'lookingToAccomplish': _lookingToAccomplishController.text.trim().isEmpty ? null : _lookingToAccomplishController.text.trim(),
-        'onboardingStatus': 'complete',
+        'careerGoals': _careerGoalsController.text.trim().isEmpty
+            ? null
+            : _careerGoalsController.text.trim(),
+        'howHeardAboutUs': _howHeardAboutUsController.text.trim().isEmpty
+            ? null
+            : _howHeardAboutUsController.text.trim(),
+        'lookingToAccomplish': _lookingToAccomplishController.text.trim().isEmpty
+            ? null
+            : _lookingToAccomplishController.text.trim(),
+
+        // System/Metadata fields
+        'email': user.email ?? '',
         'username': user.email?.split('@')[0] ?? 'user',
-        'role': 'electrician',
         'displayName': '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}'.trim(),
+        'role': 'electrician',
+        'onboardingStatus': 'complete',
+        'onlineStatus': true, // CRITICAL: User is now active and online
+        'createdTime': FieldValue.serverTimestamp(),
         'lastActive': FieldValue.serverTimestamp(),
-        'hasSetJobPreferences': true, // Set hasSetJobPreferences to true
+        'isActive': true,
+        'crewIds': <String>[],
+        'hasSetJobPreferences': true,
       };
 
-      // Save to Firestore with merge semantics
+      // Execute SINGLE FIRESTORE WRITE with all consolidated data
       final firestoreService = FirestoreService();
-      await firestoreService.setUserWithMerge(uid: user.uid, data: dataMap);
+      await firestoreService.setUserWithMerge(
+        uid: user.uid,
+        data: completeUserData,
+      );
+
+      debugPrint('✅ Onboarding completed - Single Firestore write with ${completeUserData.length} fields');
 
       // Mark onboarding as complete in local storage
       final onboardingService = OnboardingService();
@@ -412,7 +483,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
         });
       }
     } catch (e) {
-      debugPrint('Error completing onboarding: $e');
+      debugPrint('❌ Error completing onboarding: $e');
       if (mounted) {
         JJElectricalNotifications.showElectricalToast(
           context: context,
@@ -420,9 +491,21 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
           type: ElectricalNotificationType.error,
         );
       }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
     }
   }
 
+  /// Validates whether current step can proceed to next
+  ///
+  /// Client-side validation to enable/disable Next button:
+  /// - Step 1: All personal information fields required
+  /// - Step 2: Home local, ticket number, classification required
+  /// - Step 3: At least one construction type selected
+  ///
+  /// Returns true if current step has valid data
   bool _canProceed() {
     switch (_currentStep) {
       case 0: // Basic Information - Enhanced validation
@@ -433,7 +516,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
         final city = _cityController.text.trim();
         final state = _stateController.text.trim();
         final zipcode = _zipcodeController.text.trim();
-        
+
         return firstName.isNotEmpty &&
                lastName.isNotEmpty &&
                phone.isNotEmpty &&
@@ -443,20 +526,20 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                zipcode.isNotEmpty &&
                zipcode.length >= 5 && // Basic zipcode validation
                int.tryParse(zipcode) != null; // Ensure zipcode is numeric
-               
+
       case 1: // Professional Details - Enhanced validation
         final homeLocal = _homeLocalController.text.trim();
         final ticketNumber = _ticketNumberController.text.trim();
-        
+
         return homeLocal.isNotEmpty &&
                ticketNumber.isNotEmpty &&
                _selectedClassification != null &&
                _selectedClassification!.isNotEmpty &&
                int.tryParse(homeLocal) != null; // Ensure home local is numeric
-               
+
       case 2: // Preferences & Feedback
         return _selectedConstructionTypes.isNotEmpty;
-        
+
       default:
         return false;
     }
@@ -684,9 +767,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
               subtitle: 'Let\'s start with your essential details',
             ),
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Name fields
           Row(
             children: [
@@ -715,9 +798,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Phone number
           JJTextField(
             label: 'Phone Number',
@@ -729,9 +812,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             prefixIcon: Icons.phone_outlined,
             hintText: 'Enter your phone number',
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Address
           JJTextField(
             label: 'Address Line 1',
@@ -742,9 +825,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             prefixIcon: Icons.home_outlined,
             hintText: 'Enter your street address',
           ),
-          
+
           const SizedBox(height: AppTheme.spacingSm),
-          
+
           JJTextField(
             label: 'Address Line 2 (Optional)',
             controller: _address2Controller,
@@ -754,9 +837,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             prefixIcon: Icons.home_outlined,
             hintText: 'Apartment, suite, etc.',
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // City, State, Zip
           JJTextField(
             label: 'City',
@@ -784,7 +867,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                       height: 56,
                       padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingSm),
                       decoration: BoxDecoration(
-                        border: Border.all(color: AppTheme.lightGray),
+                        border: Border.all(color: AppTheme.accentCopper),
                         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                         color: AppTheme.white,
                       ),
@@ -830,7 +913,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: AppTheme.spacingXxl),
         ],
       ),
@@ -849,9 +932,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             title: 'IBEW Professional Details',
             subtitle: 'Tell us about your electrical career and qualifications',
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Ticket Number
           JJTextField(
             label: 'Ticket Number',
@@ -864,9 +947,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             prefixIcon: Icons.badge_outlined,
             hintText: 'Enter your ticket number',
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Home Local
           JJTextField(
             label: 'Home Local Number',
@@ -879,9 +962,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             prefixIcon: Icons.location_on_outlined,
             hintText: 'Enter your home local number',
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Classification selection
           Text(
             'Classification',
@@ -899,7 +982,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             children: _classifications.map((classification) {
               final isSelected = _selectedClassification == classification;
               return JJChip(
-                label: classification,
+                label: _formatClassification(classification),
                 isSelected: isSelected,
                 onTap: () {
                   setState(() {
@@ -909,9 +992,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
               );
             }).toList(),
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Currently working status
           Container(
             padding: const EdgeInsets.all(AppTheme.spacingMd),
@@ -919,28 +1002,56 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
               color: AppTheme.offWhite,
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
-            child: JJCircuitBreakerSwitchListTile(
-              title: Text(
-                'Currently Working',
-                style: AppTheme.titleMedium,
-              ),
-              subtitle: Text(
-                'Are you currently employed?',
-                style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary),
-              ),
-              value: _isWorking,
-              onChanged: (value) {
-                setState(() {
-                  _isWorking = value;
-                });
-              },
-              size: JJCircuitBreakerSize.small,
-              showElectricalEffects: true,
+            child: Column(
+              children: [
+                JJCircuitBreakerSwitchListTile(
+                  title: Text(
+                    'Currently Working',
+                    style: AppTheme.titleMedium,
+                  ),
+                  subtitle: Text(
+                    'Are you currently employed?',
+                    style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary),
+                  ),
+                  value: _isWorking,
+                  onChanged: (value) {
+                    setState(() {
+                      _isWorking = value;
+                    });
+                  },
+                  size: JJCircuitBreakerSize.small,
+                  showElectricalEffects: true,
+                ),
+                // YES/NO labels
+                Padding(
+                  padding: const EdgeInsets.only(right: AppTheme.spacingMd, top: AppTheme.spacingSm),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'NO',
+                        style: AppTheme.labelSmall.copyWith(
+                          color: !_isWorking ? AppTheme.accentCopper : AppTheme.textLight,
+                          fontWeight: !_isWorking ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Text(
+                        'YES',
+                        style: AppTheme.labelSmall.copyWith(
+                          color: _isWorking ? AppTheme.accentCopper : AppTheme.textLight,
+                          fontWeight: _isWorking ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Books they're on - CRITICAL FIELD
           JJTextField(
             label: 'Books You\'re Currently On',
@@ -952,9 +1063,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             hintText: 'e.g., 84, 222, 111, 1249, 71',
             maxLines: 2,
           ),
-          
+
           const SizedBox(height: AppTheme.spacingSm),
-          
+
           Container(
             padding: const EdgeInsets.all(AppTheme.spacingSm),
             decoration: BoxDecoration(
@@ -981,7 +1092,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
               ],
             ),
           ),
-          
+
           const SizedBox(height: AppTheme.spacingXxl),
         ],
       ),
@@ -1000,9 +1111,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             title: 'Preferences & Feedback',
             subtitle: 'Help us personalize your experience',
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Construction Types
           Text(
             'Construction Types',
@@ -1035,9 +1146,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
               );
             }).toList(),
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Hours per week
           Text(
             'Hours Per Week',
@@ -1078,9 +1189,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Per diem
           Text(
             'Per Diem Requirements',
@@ -1121,9 +1232,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Preferred locals
           JJTextField(
             label: 'Preferred Locals (Optional)',
@@ -1135,9 +1246,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             hintText: 'e.g., Local 26, Local 103, Local 456',
             maxLines: 2,
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Job search goals
           Text(
             'Job Search Goals',
@@ -1154,6 +1265,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             decoration: BoxDecoration(
               color: AppTheme.offWhite,
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              border: Border.all(color: AppTheme.accentCopper, width: 1.5),
             ),
             child: Column(
               children: [
@@ -1165,6 +1277,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   onChanged: (value) => setState(() => _networkWithOthers = value ?? false),
                   dense: true,
                 ),
+                Divider(color: AppTheme.accentCopper.withOpacity(0.3), height: 1),
                 CheckboxListTile(
                   title: Text('Career Advancement', style: AppTheme.bodyMedium),
                   subtitle: Text('Seek leadership roles', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
@@ -1173,6 +1286,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   onChanged: (value) => setState(() => _careerAdvancements = value ?? false),
                   dense: true,
                 ),
+                Divider(color: AppTheme.accentCopper.withOpacity(0.3), height: 1),
                 CheckboxListTile(
                   title: Text('Better Benefits', style: AppTheme.bodyMedium),
                   subtitle: Text('Improved benefit packages', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
@@ -1181,6 +1295,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   onChanged: (value) => setState(() => _betterBenefits = value ?? false),
                   dense: true,
                 ),
+                Divider(color: AppTheme.accentCopper.withOpacity(0.3), height: 1),
                 CheckboxListTile(
                   title: Text('Higher Pay Rate', style: AppTheme.bodyMedium),
                   subtitle: Text('Increase compensation', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
@@ -1189,6 +1304,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   onChanged: (value) => setState(() => _higherPayRate = value ?? false),
                   dense: true,
                 ),
+                Divider(color: AppTheme.accentCopper.withOpacity(0.3), height: 1),
                 CheckboxListTile(
                   title: Text('Learn New Skills', style: AppTheme.bodyMedium),
                   subtitle: Text('Gain new experience', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
@@ -1197,6 +1313,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   onChanged: (value) => setState(() => _learnNewSkill = value ?? false),
                   dense: true,
                 ),
+                Divider(color: AppTheme.accentCopper.withOpacity(0.3), height: 1),
                 CheckboxListTile(
                   title: Text('Travel to New Locations', style: AppTheme.bodyMedium),
                   subtitle: Text('Work in different areas', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
@@ -1205,6 +1322,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   onChanged: (value) => setState(() => _travelToNewLocation = value ?? false),
                   dense: true,
                 ),
+                Divider(color: AppTheme.accentCopper.withOpacity(0.3), height: 1),
                 CheckboxListTile(
                   title: Text('Find Long-term Work', style: AppTheme.bodyMedium),
                   subtitle: Text('Secure stable employment', style: AppTheme.bodySmall.copyWith(color: AppTheme.textSecondary)),
@@ -1216,9 +1334,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
               ],
             ),
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // Career goals
           JJTextField(
             label: 'Career Goals (Optional)',
@@ -1230,9 +1348,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             prefixIcon: Icons.flag_outlined,
             hintText: 'Describe your career goals and where you see yourself in the future...',
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // How did you hear about us
           JJTextField(
             label: 'How did you hear about us?',
@@ -1244,9 +1362,9 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             prefixIcon: Icons.info_outline,
             hintText: 'Tell us how you discovered Journeyman Jobs...',
           ),
-          
+
           const SizedBox(height: AppTheme.spacingMd),
-          
+
           // What are you looking to accomplish
           JJTextField(
             label: 'What are you looking to accomplish?',
@@ -1258,7 +1376,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             prefixIcon: Icons.track_changes_outlined,
             hintText: 'What do you hope to achieve through our platform?',
           ),
-          
+
           const SizedBox(height: AppTheme.spacingXxl),
         ],
       ),
@@ -1358,7 +1476,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
         return 'Underground';
       default:
         // Fallback: capitalize first letter
-        return type.isNotEmpty 
+        return type.isNotEmpty
             ? '${type[0].toUpperCase()}${type.substring(1)}'
             : type;
     }

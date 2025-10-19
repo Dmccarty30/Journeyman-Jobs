@@ -145,7 +145,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         );
                       }
 
-                      final displayName = authState.user?.displayName ?? 'User';
+                      // IBEW terminology: "Brother" is traditional respectful greeting in electrical unions
+                      // Fallback chain: displayName → email prefix → default "Brother"
+                      final displayName = authState.user?.displayName
+                          ?? authState.user?.email?.split('@')[0]
+                          ?? 'Brother';
                       final photoUrl = authState.user?.photoURL;
                       final userInitial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
 

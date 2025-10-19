@@ -277,7 +277,7 @@ class JJTextField extends StatelessWidget {
           style: AppTheme.bodyMedium.copyWith(color: AppTheme.black),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: AppTheme.bodyMedium.copyWith(color: AppTheme.darkGray),
+            hintStyle: AppTheme.bodyMedium.copyWith(color: AppTheme.textLight),
             prefixIcon: prefixIcon != null
                 ? Icon(prefixIcon, color: AppTheme.textLight)
                 : null,
