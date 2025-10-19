@@ -5,7 +5,8 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart' hide JJSnackBar;
+import '../../design_system/components/reusable_components.dart'
+    hide JJSnackBar;
 import '../../navigation/app_router.dart';
 import '../../electrical_components/circuit_board_background.dart';
 import '../../electrical_components/jj_snack_bar.dart';
@@ -23,16 +24,16 @@ class _AuthScreenState extends State<AuthScreen>
   late TabController _tabController;
   final _signUpFormKey = GlobalKey<FormState>();
   final _signInFormKey = GlobalKey<FormState>();
-  
+
   // Sign Up Controllers
   final _signUpEmailController = TextEditingController();
   final _signUpPasswordController = TextEditingController();
   final _signUpConfirmPasswordController = TextEditingController();
-  
+
   // Sign In Controllers
   final _signInEmailController = TextEditingController();
   final _signInPasswordController = TextEditingController();
-  
+
   bool _obscureSignUpPassword = true;
   bool _obscureSignUpConfirmPassword = true;
   bool _obscureSignInPassword = true;
@@ -89,6 +90,42 @@ class _AuthScreenState extends State<AuthScreen>
     return null;
   }
 
+  /// Gets the redirect destination from query parameters.
+  ///
+  /// Returns the decoded redirect path if present and valid, otherwise null.
+  /// Used to navigate users back to their intended destination after login.
+  String? _getRedirectDestination() {
+    final uri = GoRouterState.of(context).uri;
+    final redirect = uri.queryParameters['redirect'];
+
+    if (redirect != null && redirect.isNotEmpty) {
+      final decodedRedirect = Uri.decodeComponent(redirect);
+
+      // Validate redirect path for security
+      if (decodedRedirect.startsWith('/') &&
+          !decodedRedirect.startsWith('//') &&
+          !decodedRedirect.contains('://')) {
+        return decodedRedirect;
+      }
+    }
+
+    return null;
+  }
+
+  /// Navigates to the appropriate destination after successful authentication.
+  ///
+  /// Priority:
+  /// 1. Redirect query parameter (if valid)
+  /// 2. Home screen (default)
+  void _navigateAfterAuth() {
+    final redirect = _getRedirectDestination();
+
+    if (redirect != null) {
+      context.go(redirect);
+    } else {
+      context.go(AppRouter.home);
+    }
+  }
 
   // Authentication Methods
   Future<void> _signUpWithEmail() async {
@@ -97,28 +134,38 @@ class _AuthScreenState extends State<AuthScreen>
     setState(() => _isSignUpLoading = true);
 
     try {
-      final UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _signUpEmailController.text.trim(),
         password: _signUpPasswordController.text,
       );
 
-      final User? user = userCredential.user;
-      if (user != null) {
-        try {
-          final FirestoreService firestoreService = FirestoreService();
-          await firestoreService.createUser(
-            uid: user.uid,
-            userData: {
-              'email': user.email,
-            },
+      // Wait for FirebaseAuth.authStateChanges() so Riverpod providers update before navigating.
+      // Prevents showing 'Guest' after sign-in.
+      final User? user = await FirebaseAuth.instance.authStateChanges().first;
+
+      if (user == null) {
+        if (mounted) {
+          JJSnackBar.showError(
+            context: context,
+            message: 'Authentication failed. Please try again.',
           );
-        } catch (firestoreError) {
-          if (mounted) {
-            JJSnackBar.showError(
-              context: context,
-              message: 'Account created but profile setup failed. Please complete onboarding.',
-            );
-          }
+        }
+        return;
+      }
+
+      try {
+        final FirestoreService firestoreService = FirestoreService();
+        await firestoreService.createUser(
+          uid: user.uid,
+          userData: {'email': user.email},
+        );
+      } catch (firestoreError) {
+        if (mounted) {
+          JJSnackBar.showError(
+            context: context,
+            message:
+                'Account created but profile setup failed. Please complete onboarding.',
+          );
         }
       }
 
@@ -162,42 +209,54 @@ class _AuthScreenState extends State<AuthScreen>
         password: _signInPasswordController.text,
       );
 
-      final User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        try {
-          final FirestoreService firestoreService = FirestoreService();
-          final DocumentSnapshot userDoc = await firestoreService.getUser(user.uid);
-          
-          if (!userDoc.exists) {
-            await firestoreService.createUser(
-              uid: user.uid,
-              userData: {
-                'email': user.email,
-              },
-            );
+      // Wait for FirebaseAuth.authStateChanges() so Riverpod providers update before navigating.
+      // Prevents showing 'Guest' after sign-in.
+      final User? user = await FirebaseAuth.instance.authStateChanges().first;
+
+      if (user == null) {
+        if (mounted) {
+          JJSnackBar.showError(
+            context: context,
+            message: 'Authentication failed. Please try again.',
+          );
+        }
+        return;
+      }
+
+      try {
+        final FirestoreService firestoreService = FirestoreService();
+        final DocumentSnapshot userDoc = await firestoreService.getUser(
+          user.uid,
+        );
+
+        if (!userDoc.exists) {
+          await firestoreService.createUser(
+            uid: user.uid,
+            userData: {'email': user.email},
+          );
+          if (mounted) {
+            _navigateToOnboarding();
+          }
+        } else {
+          final String? onboardingStatus = userDoc.get('onboardingStatus');
+          if (onboardingStatus == 'incomplete' || onboardingStatus == null) {
             if (mounted) {
               _navigateToOnboarding();
             }
-          } else {
-            final String? onboardingStatus = userDoc.get('onboardingStatus');
-            if (onboardingStatus == 'incomplete' || onboardingStatus == null) {
-              if (mounted) {
-                _navigateToOnboarding();
-              }
-            } else if (onboardingStatus == 'complete') {
-              if (mounted) {
-                context.go(AppRouter.home);
-              }
+          } else if (onboardingStatus == 'complete') {
+            if (mounted) {
+              _navigateAfterAuth();
             }
           }
-        } catch (firestoreError) {
-          if (mounted) {
-            JJSnackBar.showError(
-              context: context,
-              message: 'Sign in successful but profile check failed. Please complete onboarding.',
-            );
-            _navigateToOnboarding();
-          }
+        }
+      } catch (firestoreError) {
+        if (mounted) {
+          JJSnackBar.showError(
+            context: context,
+            message:
+                'Sign in successful but profile check failed. Please complete onboarding.',
+          );
+          _navigateToOnboarding();
         }
       }
     } on FirebaseAuthException catch (e) {
@@ -234,38 +293,51 @@ class _AuthScreenState extends State<AuthScreen>
     try {
       // Initialize GoogleSignIn if not already done
       await GoogleSignIn.instance.initialize();
-      
+
       // Try to authenticate the user
-      final GoogleSignInAccount googleUser = await GoogleSignIn.instance.authenticate();
+      final GoogleSignInAccount googleUser = await GoogleSignIn.instance
+          .authenticate();
 
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
       );
 
-      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-      final User? user = userCredential.user;
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
-      if (user != null) {
-        try {
-          final FirestoreService firestoreService = FirestoreService();
-          final bool userExists = await firestoreService.userProfileExists(user.uid);
-          
-          if (!userExists) {
-            await firestoreService.createUser(
-              uid: user.uid,
-              userData: {
-                'email': user.email,
-              },
-            );
-          }
-        } catch (firestoreError) {
-          if (mounted) {
-            JJSnackBar.showError(
-              context: context,
-              message: 'Google sign in successful but profile setup failed. Please complete onboarding.',
-            );
-          }
+      // Wait for FirebaseAuth.authStateChanges() so Riverpod providers update before navigating.
+      // Prevents showing 'Guest' after sign-in.
+      final User? user = await FirebaseAuth.instance.authStateChanges().first;
+
+      if (user == null) {
+        if (mounted) {
+          JJSnackBar.showError(
+            context: context,
+            message: 'Authentication failed. Please try again.',
+          );
+        }
+        return;
+      }
+
+      try {
+        final FirestoreService firestoreService = FirestoreService();
+        final bool userExists = await firestoreService.userProfileExists(
+          user.uid,
+        );
+
+        if (!userExists) {
+          await firestoreService.createUser(
+            uid: user.uid,
+            userData: {'email': user.email},
+          );
+        }
+      } catch (firestoreError) {
+        if (mounted) {
+          JJSnackBar.showError(
+            context: context,
+            message:
+                'Google sign in successful but profile setup failed. Please complete onboarding.',
+          );
         }
       }
 
@@ -279,13 +351,11 @@ class _AuthScreenState extends State<AuthScreen>
           message = 'Google sign in was canceled.';
         } else if (e.code == GoogleSignInExceptionCode.interrupted) {
           message = 'Sign in was interrupted. Please try again.';
-        } else if (e.code == GoogleSignInExceptionCode.clientConfigurationError) {
+        } else if (e.code ==
+            GoogleSignInExceptionCode.clientConfigurationError) {
           message = 'Configuration error. Please contact support.';
         }
-        JJSnackBar.showError(
-          context: context,
-          message: message,
-        );
+        JJSnackBar.showError(context: context, message: message);
       }
     } catch (e) {
       if (mounted) {
@@ -317,29 +387,41 @@ class _AuthScreenState extends State<AuthScreen>
         accessToken: credential.authorizationCode,
       );
 
-      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-      final User? user = userCredential.user;
+      await FirebaseAuth.instance.signInWithCredential(oauthCredential);
 
-      if (user != null) {
-        try {
-          final FirestoreService firestoreService = FirestoreService();
-          final bool userExists = await firestoreService.userProfileExists(user.uid);
-          
-          if (!userExists) {
-            await firestoreService.createUser(
-              uid: user.uid,
-              userData: {
-                'email': user.email,
-              },
-            );
-          }
-        } catch (firestoreError) {
-          if (mounted) {
-            JJSnackBar.showError(
-              context: context,
-              message: 'Apple sign in successful but profile setup failed. Please complete onboarding.',
-            );
-          }
+      // Wait for FirebaseAuth.authStateChanges() so Riverpod providers update before navigating.
+      // Prevents showing 'Guest' after sign-in.
+      final User? user = await FirebaseAuth.instance.authStateChanges().first;
+
+      if (user == null) {
+        if (mounted) {
+          JJSnackBar.showError(
+            context: context,
+            message: 'Authentication failed. Please try again.',
+          );
+        }
+        return;
+      }
+
+      try {
+        final FirestoreService firestoreService = FirestoreService();
+        final bool userExists = await firestoreService.userProfileExists(
+          user.uid,
+        );
+
+        if (!userExists) {
+          await firestoreService.createUser(
+            uid: user.uid,
+            userData: {'email': user.email},
+          );
+        }
+      } catch (firestoreError) {
+        if (mounted) {
+          JJSnackBar.showError(
+            context: context,
+            message:
+                'Apple sign in successful but profile setup failed. Please complete onboarding.',
+          );
         }
       }
 
@@ -380,114 +462,117 @@ class _AuthScreenState extends State<AuthScreen>
             ),
           ),
           SafeArea(
-        child: Column(
-          children: [
-            // Enhanced header with electrical theming
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              child: Column(
-                children: [
-                  // Enhanced logo with copper borders and glow
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      gradient: AppTheme.buttonGradient,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppTheme.accentCopper,
-                        width: AppTheme.borderWidthCopper,
+            child: Column(
+              children: [
+                // Enhanced header with electrical theming
+                Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingLg),
+                  child: Column(
+                    children: [
+                      // Enhanced logo with copper borders and glow
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          gradient: AppTheme.buttonGradient,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppTheme.accentCopper,
+                            width: AppTheme.borderWidthCopper,
+                          ),
+                          boxShadow: [
+                            AppTheme.shadowElectricalSuccess,
+                            BoxShadow(
+                              color: AppTheme.accentCopper.withValues(
+                                alpha: 0.4,
+                              ),
+                              blurRadius: 25,
+                              spreadRadius: 3,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.electrical_services,
+                          size: 50,
+                          color: AppTheme.white,
+                          shadows: [
+                            Shadow(
+                              color: AppTheme.accentCopper.withValues(
+                                alpha: 0.6,
+                              ),
+                              blurRadius: 12,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
                       ),
-                      boxShadow: [
-                        AppTheme.shadowElectricalSuccess,
-                        BoxShadow(
-                          color: AppTheme.accentCopper.withValues(alpha: 0.4),
-                          blurRadius: 25,
-                          spreadRadius: 3,
-                          offset: const Offset(0, 6),
+
+                      const SizedBox(height: AppTheme.spacingMd),
+
+                      Text(
+                        'Join Journeyman Jobs',
+                        style: AppTheme.displaySmall.copyWith(
+                          color: AppTheme.white,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(
+                              color: AppTheme.primaryNavy.withValues(
+                                alpha: 0.8,
+                              ),
+                              blurRadius: 6,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: Icon(
-                      Icons.electrical_services,
-                      size: 50,
-                      color: AppTheme.white,
-                      shadows: [
-                        Shadow(
-                          color: AppTheme.accentCopper.withValues(alpha: 0.6),
-                          blurRadius: 12,
-                          offset: const Offset(0, 3),
+                      ),
+
+                      const SizedBox(height: AppTheme.spacingSm),
+
+                      Text(
+                        'Connect with electrical opportunities',
+                        style: AppTheme.bodyLarge.copyWith(
+                          color: AppTheme.white.withValues(alpha: 0.9),
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
-                    ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-
-                  const SizedBox(height: AppTheme.spacingMd),
-
-                  Text(
-                    'Join Journeyman Jobs',
-                    style: AppTheme.displaySmall.copyWith(
-                      color: AppTheme.white,
-                      fontWeight: FontWeight.bold,
-                      shadows: [
-                        Shadow(
-                          color: AppTheme.primaryNavy.withValues(alpha: 0.8),
-                          blurRadius: 6,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: AppTheme.spacingSm),
-
-                  Text(
-                    'Connect with electrical opportunities',
-                    style: AppTheme.bodyLarge.copyWith(
-                      color: AppTheme.white.withValues(alpha: 0.9),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-
-            // Enhanced tab bar
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: AppTheme.accentCopper,
-                  width: AppTheme.borderWidthCopperThin,
                 ),
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                boxShadow: [
-                  AppTheme.shadowElectricalInfo,
-                ],
-              ),
-              child: SegmentedTabBar(
-                controller: _tabController,
-                onTabChanged: (index) {
-                  setState(() {
-                    // Update any state if needed
-                  });
-                },
-              ),
-            ),
 
-            // Tab content
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildSignUpForm(),
-                  _buildSignInForm(),
-                ],
-              ),
+                // Enhanced tab bar
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingLg,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: AppTheme.accentCopper,
+                      width: AppTheme.borderWidthCopperThin,
+                    ),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    boxShadow: [AppTheme.shadowElectricalInfo],
+                  ),
+                  child: SegmentedTabBar(
+                    controller: _tabController,
+                    onTabChanged: (index) {
+                      setState(() {
+                        // Update any state if needed
+                      });
+                    },
+                  ),
+                ),
+
+                // Tab content
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [_buildSignUpForm(), _buildSignInForm()],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
           ),
         ],
       ),
@@ -565,7 +650,8 @@ class _AuthScreenState extends State<AuthScreen>
                     : Icons.visibility_off_outlined,
                 onSuffixIconPressed: () {
                   setState(() {
-                    _obscureSignUpConfirmPassword = !_obscureSignUpConfirmPassword;
+                    _obscureSignUpConfirmPassword =
+                        !_obscureSignUpConfirmPassword;
                   });
                 },
               ),
@@ -580,9 +666,7 @@ class _AuthScreenState extends State<AuthScreen>
                     width: AppTheme.borderWidthCopper,
                   ),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  boxShadow: [
-                    AppTheme.shadowElectricalSuccess,
-                  ],
+                  boxShadow: [AppTheme.shadowElectricalSuccess],
                 ),
                 child: JJPrimaryButton(
                   text: 'Create Account',
@@ -702,9 +786,7 @@ class _AuthScreenState extends State<AuthScreen>
                     width: AppTheme.borderWidthCopper,
                   ),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  boxShadow: [
-                    AppTheme.shadowElectricalSuccess,
-                  ],
+                  boxShadow: [AppTheme.shadowElectricalSuccess],
                 ),
                 child: JJPrimaryButton(
                   text: 'Sign In',
@@ -733,20 +815,20 @@ class _AuthScreenState extends State<AuthScreen>
           children: [
             const Expanded(child: Divider()),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingMd,
+              ),
               child: Text(
                 'or continue with',
-                style: AppTheme.bodySmall.copyWith(
-                  color: AppTheme.textLight,
-                ),
+                style: AppTheme.bodySmall.copyWith(color: AppTheme.textLight),
               ),
             ),
             const Expanded(child: Divider()),
           ],
         ),
-        
+
         const SizedBox(height: AppTheme.spacingLg),
-        
+
         // Google Sign In
         JJSocialSignInButton(
           text: 'Continue with Google',
@@ -758,18 +840,14 @@ class _AuthScreenState extends State<AuthScreen>
           onPressed: _signInWithGoogle,
           isLoading: _isGoogleLoading,
         ),
-        
+
         const SizedBox(height: AppTheme.spacingMd),
-        
+
         // Apple Sign In (iOS only)
         if (Theme.of(context).platform == TargetPlatform.iOS)
           JJSocialSignInButton(
             text: 'Continue with Apple',
-            icon: const Icon(
-              Icons.apple,
-              size: 24,
-              color: AppTheme.black,
-            ),
+            icon: const Icon(Icons.apple, size: 24, color: AppTheme.black),
             onPressed: _signInWithApple,
             isLoading: _isAppleLoading,
           ),
@@ -807,10 +885,9 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
       vsync: this,
       duration: const Duration(milliseconds: 420),
     );
-    _animation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurveTween(curve: Curves.easeInOut).animate(_animationController));
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurveTween(curve: Curves.easeInOut).animate(_animationController),
+    );
 
     widget.controller.addListener(_handleTabControllerTick);
   }
@@ -835,12 +912,20 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
     if (index == 0) {
       // Sign Up: Orange on left, Navy on right
       return const LinearGradient(
-        colors: [AppTheme.accentCopper, AppTheme.secondaryCopper, AppTheme.primaryNavy],
+        colors: [
+          AppTheme.accentCopper,
+          AppTheme.secondaryCopper,
+          AppTheme.primaryNavy,
+        ],
       );
     } else {
       // Sign In: Navy on left, Orange on right
       return const LinearGradient(
-        colors: [AppTheme.primaryNavy, AppTheme.secondaryCopper, AppTheme.accentCopper],
+        colors: [
+          AppTheme.primaryNavy,
+          AppTheme.secondaryCopper,
+          AppTheme.accentCopper,
+        ],
       );
     }
   }
@@ -852,7 +937,10 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
       decoration: BoxDecoration(
         color: AppTheme.primaryNavy.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(color: AppTheme.accentCopper, width: AppTheme.borderWidthCopper),
+        border: Border.all(
+          color: AppTheme.accentCopper,
+          width: AppTheme.borderWidthCopper,
+        ),
         boxShadow: [
           AppTheme.shadowElectricalInfo,
           BoxShadow(
@@ -879,14 +967,20 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
             builder: (context, child) {
               final double position = _currentIndex.toDouble();
               return Transform.translate(
-                offset: Offset(position * (MediaQuery.of(context).size.width - 72) / 2, 0),
+                offset: Offset(
+                  position * (MediaQuery.of(context).size.width - 72) / 2,
+                  0,
+                ),
                 child: Container(
                   width: (MediaQuery.of(context).size.width - 72) / 2,
                   height: 56,
                   decoration: BoxDecoration(
                     gradient: _getGradient(_currentIndex),
                     borderRadius: BorderRadius.circular(AppTheme.radiusMd - 4),
-                    border: Border.all(color: AppTheme.accentCopper, width: AppTheme.borderWidthCopper),
+                    border: Border.all(
+                      color: AppTheme.accentCopper,
+                      width: AppTheme.borderWidthCopper,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: AppTheme.primaryNavy.withValues(alpha: 0.3),
@@ -922,7 +1016,9 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
                             fontWeight: FontWeight.bold,
                             shadows: [
                               Shadow(
-                                color: AppTheme.primaryNavy.withValues(alpha: 0.5),
+                                color: AppTheme.primaryNavy.withValues(
+                                  alpha: 0.5,
+                                ),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -964,7 +1060,9 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
                             fontWeight: FontWeight.bold,
                             shadows: [
                               Shadow(
-                                color: AppTheme.primaryNavy.withValues(alpha: 0.5),
+                                color: AppTheme.primaryNavy.withValues(
+                                  alpha: 0.5,
+                                ),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
