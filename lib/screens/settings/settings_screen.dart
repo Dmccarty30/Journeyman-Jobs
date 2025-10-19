@@ -432,7 +432,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     
     return Scaffold(
       backgroundColor: AppTheme.offWhite,

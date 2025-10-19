@@ -259,7 +259,7 @@ class JJTextField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: AppTheme.labelMedium.copyWith(color: AppTheme.textSecondary),
+          style: AppTheme.labelMedium.copyWith(color: AppTheme.black),
         ),
         const SizedBox(height: AppTheme.spacingSm),
         TextFormField(
@@ -274,9 +274,10 @@ class JJTextField extends StatelessWidget {
           focusNode: focusNode,
           textInputAction: textInputAction,
           onFieldSubmitted: onFieldSubmitted,
-          style: AppTheme.bodyMedium,
+          style: AppTheme.bodyMedium.copyWith(color: AppTheme.black),
           decoration: InputDecoration(
             hintText: hintText,
+            hintStyle: AppTheme.bodyMedium.copyWith(color: AppTheme.darkGray),
             prefixIcon: prefixIcon != null
                 ? Icon(prefixIcon, color: AppTheme.textLight)
                 : null,
