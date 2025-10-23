@@ -275,6 +275,7 @@ class JJTextField extends StatelessWidget {
           textInputAction: textInputAction,
           onFieldSubmitted: onFieldSubmitted,
           style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
+          cursorColor: AppTheme.accentCopper, // Copper cursor for visibility against dark background
           decoration: InputDecoration(
             filled: true,
             fillColor: AppTheme.white.withValues(alpha: 0.05),

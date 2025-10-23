@@ -98,8 +98,25 @@ class FirestoreService {
     required Map<String, dynamic> data,
   }) async {
     try {
+      if (kDebugMode) {
+        print('\n🔧 DEBUG FirestoreService.setUserWithMerge:');
+        print('  - User ID: $uid');
+        print('  - Data keys: ${data.keys.toList()}');
+        print('  - Field count: ${data.length}');
+        print('  - Merge: true');
+      }
+
       await usersCollection.doc(uid).set(data, SetOptions(merge: true));
-    } catch (e) {
+
+      if (kDebugMode) {
+        print('✅ DEBUG: Firestore write completed successfully');
+      }
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print('\n❌ DEBUG ERROR in setUserWithMerge:');
+        print('Error: $e');
+        print('Stack trace: $stackTrace');
+      }
       throw Exception('Error setting user with merge: $e');
     }
   }

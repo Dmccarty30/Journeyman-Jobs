@@ -339,9 +339,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                   Consumer(
                     builder: (context, ref, child) {
-                      final jobsState = ref.watch(jobsProvider);
-                      if (jobsState.isLoading) {
-                        return Center(
+                      final suggestedJobsAsync = ref.watch(suggestedJobsProvider);
+
+                      return suggestedJobsAsync.when(
+                        loading: () => Center(
                           child: Padding(
                             padding: const EdgeInsets.all(AppTheme.spacingLg),
                             child: Container(
@@ -370,7 +371,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   ),
                                   const SizedBox(height: AppTheme.spacingSm),
                                   Text(
-                                    'Loading electrical opportunities...',
+                                    'Finding your perfect matches...',
                                     style: AppTheme.bodyMedium.copyWith(
                                       color: AppTheme.primaryNavy,
                                       fontWeight: FontWeight.w500,
@@ -380,175 +381,175 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ),
                             ),
                           ),
-                        );
-                      }
-
-                      if (jobsState.error != null) {
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(AppTheme.spacingLg),
-                            child: Container(
+                        ),
+                        error: (error, stack) {
+                          return Center(
+                            child: Padding(
                               padding: const EdgeInsets.all(AppTheme.spacingLg),
-                              decoration: BoxDecoration(
-                                color: AppTheme.white.withValues(alpha: 0.9),
-                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                border: Border.all(
-                                  color: AppTheme.errorRed,
-                                  width: AppTheme.borderWidthCopper,
-                                ),
-                                boxShadow: [
-                                  AppTheme.shadowElectricalError,
-                                ],
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.error_outline,
-                                    size: 48,
+                              child: Container(
+                                padding: const EdgeInsets.all(AppTheme.spacingLg),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.white.withValues(alpha: 0.9),
+                                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                  border: Border.all(
                                     color: AppTheme.errorRed,
+                                    width: AppTheme.borderWidthCopper,
                                   ),
-                                  const SizedBox(height: AppTheme.spacingMd),
-                                  Text(
-                                    'Circuit malfunction detected',
-                                    style: AppTheme.headlineSmall.copyWith(
-                                      color: AppTheme.primaryNavy,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: AppTheme.spacingSm),
-                                  Text(
-                                    'Unable to load electrical opportunities. Please check your connection and try again.',
-                                    style: AppTheme.bodyMedium.copyWith(
-                                      color: AppTheme.textSecondary,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: AppTheme.spacingLg),
-                                  Container(
-                                    width: double.infinity,
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                      gradient: AppTheme.buttonGradient,
-                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                      border: Border.all(
-                                        color: AppTheme.accentCopper,
-                                        width: AppTheme.borderWidthCopper,
-                                      ),
-                                      boxShadow: [
-                                        AppTheme.shadowElectricalInfo,
-                                      ],
-                                    ),
-                                    child: ElevatedButton(
-                                      onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.transparent,
-                                        shadowColor: Colors.transparent,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        '🔄 Reconnect Power',
-                                        style: AppTheme.buttonMedium.copyWith(
-                                          color: AppTheme.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-
-                      if (jobsState.jobs.isEmpty) {
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(AppTheme.spacingLg),
-                            child: Container(
-                              padding: const EdgeInsets.all(AppTheme.spacingLg),
-                              decoration: BoxDecoration(
-                                color: AppTheme.white.withValues(alpha: 0.9),
-                                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                border: Border.all(
-                                  color: AppTheme.warningYellow,
-                                  width: AppTheme.borderWidthCopper,
+                                  boxShadow: [
+                                    AppTheme.shadowElectricalError,
+                                  ],
                                 ),
-                                boxShadow: [
-                                  AppTheme.shadowElectricalWarning,
-                                ],
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.flash_off_outlined,
-                                    size: 48,
-                                    color: AppTheme.warningYellow,
-                                  ),
-                                  const SizedBox(height: AppTheme.spacingMd),
-                                  Text(
-                                    'Power Grid Status: Standby',
-                                    style: AppTheme.headlineSmall.copyWith(
-                                      color: AppTheme.primaryNavy,
-                                      fontWeight: FontWeight.bold,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.error_outline,
+                                      size: 48,
+                                      color: AppTheme.errorRed,
                                     ),
-                                  ),
-                                  const SizedBox(height: AppTheme.spacingSm),
-                                  Text(
-                                    'No electrical opportunities available right now. Check back soon for new connections.',
-                                    style: AppTheme.bodyMedium.copyWith(
-                                      color: AppTheme.textSecondary,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: AppTheme.spacingLg),
-                                  Container(
-                                    width: double.infinity,
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                      gradient: AppTheme.buttonGradient,
-                                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                      border: Border.all(
-                                        color: AppTheme.accentCopper,
-                                        width: AppTheme.borderWidthCopper,
+                                    const SizedBox(height: AppTheme.spacingMd),
+                                    Text(
+                                      'Circuit malfunction detected',
+                                      style: AppTheme.headlineSmall.copyWith(
+                                        color: AppTheme.primaryNavy,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      boxShadow: [
-                                        AppTheme.shadowElectricalInfo,
-                                      ],
                                     ),
-                                    child: TextButton(
-                                      onPressed: () => ref.read(jobsProvider.notifier).refreshJobs(),
-                                      style: TextButton.styleFrom(
-                                        foregroundColor: AppTheme.white,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                    const SizedBox(height: AppTheme.spacingSm),
+                                    Text(
+                                      'Unable to load job matches. Please check your connection and try again.',
+                                      style: AppTheme.bodyMedium.copyWith(
+                                        color: AppTheme.textSecondary,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: AppTheme.spacingLg),
+                                    Container(
+                                      width: double.infinity,
+                                      height: 48,
+                                      decoration: BoxDecoration(
+                                        gradient: AppTheme.buttonGradient,
+                                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                        border: Border.all(
+                                          color: AppTheme.accentCopper,
+                                          width: AppTheme.borderWidthCopper,
+                                        ),
+                                        boxShadow: [
+                                          AppTheme.shadowElectricalInfo,
+                                        ],
+                                      ),
+                                      child: ElevatedButton(
+                                        onPressed: () => ref.invalidate(suggestedJobsProvider),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.transparent,
+                                          shadowColor: Colors.transparent,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          '🔄 Reconnect Power',
+                                          style: AppTheme.buttonMedium.copyWith(
+                                            color: AppTheme.white,
+                                          ),
                                         ),
                                       ),
-                                      child: Text(
-                                        '🔄 Scan for Power',
-                                        style: AppTheme.buttonMedium.copyWith(
-                                          color: AppTheme.white,
-                                        ),
-                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      }
-
-                      return Column(
-                        children: jobsState.jobs.take(5).map((job) {
-                          return CondensedJobCard(
-                            job: job,
-                            onTap: () => _showJobDetailsDialog(context, job),
                           );
-                        }).toList(),
+                        },
+                        data: (jobs) {
+                          if (jobs.isEmpty) {
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(AppTheme.spacingLg),
+                                child: Container(
+                                  padding: const EdgeInsets.all(AppTheme.spacingLg),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.white.withValues(alpha: 0.9),
+                                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                    border: Border.all(
+                                      color: AppTheme.warningYellow,
+                                      width: AppTheme.borderWidthCopper,
+                                    ),
+                                    boxShadow: [
+                                      AppTheme.shadowElectricalWarning,
+                                    ],
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.flash_off_outlined,
+                                        size: 48,
+                                        color: AppTheme.warningYellow,
+                                      ),
+                                      const SizedBox(height: AppTheme.spacingMd),
+                                      Text(
+                                        'No Perfect Matches Yet',
+                                        style: AppTheme.headlineSmall.copyWith(
+                                          color: AppTheme.primaryNavy,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: AppTheme.spacingSm),
+                                      Text(
+                                        'No jobs match your preferences right now. Check back soon or adjust your job preferences.',
+                                        style: AppTheme.bodyMedium.copyWith(
+                                          color: AppTheme.textSecondary,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      const SizedBox(height: AppTheme.spacingLg),
+                                      Container(
+                                        width: double.infinity,
+                                        height: 48,
+                                        decoration: BoxDecoration(
+                                          gradient: AppTheme.buttonGradient,
+                                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                          border: Border.all(
+                                            color: AppTheme.accentCopper,
+                                            width: AppTheme.borderWidthCopper,
+                                          ),
+                                          boxShadow: [
+                                            AppTheme.shadowElectricalInfo,
+                                          ],
+                                        ),
+                                        child: TextButton(
+                                          onPressed: () => ref.invalidate(suggestedJobsProvider),
+                                          style: TextButton.styleFrom(
+                                            foregroundColor: AppTheme.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            '🔄 Refresh Matches',
+                                            style: AppTheme.buttonMedium.copyWith(
+                                              color: AppTheme.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          return Column(
+                            children: jobs.take(5).map((job) {
+                              return CondensedJobCard(
+                                job: job,
+                                onTap: () => _showJobDetailsDialog(context, job),
+                              );
+                            }).toList(),
+                          );
+                        },
                       );
                     },
                   ),

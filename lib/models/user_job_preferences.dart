@@ -56,15 +56,19 @@ class UserJobPreferences {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    final Map<String, dynamic> json = {
       'classifications': classifications,
       'constructionTypes': constructionTypes,
       'preferredLocals': preferredLocals,
-      'hoursPerWeek': hoursPerWeek,
-      'perDiemRequirement': perDiemRequirement,
-      'minWage': minWage,
-      'maxDistance': maxDistance,
     };
+
+    // Only include optional fields if they have values
+    if (hoursPerWeek != null) json['hoursPerWeek'] = hoursPerWeek;
+    if (perDiemRequirement != null) json['perDiemRequirement'] = perDiemRequirement;
+    if (minWage != null) json['minWage'] = minWage;
+    if (maxDistance != null) json['maxDistance'] = maxDistance;
+
+    return json;
   }
 
   static UserJobPreferences fromJson(Map<String, dynamic> json) {

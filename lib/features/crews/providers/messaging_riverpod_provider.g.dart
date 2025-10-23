@@ -115,7 +115,7 @@ final class CrewMessagesStreamProvider
 }
 
 String _$crewMessagesStreamHash() =>
-    r'903679ba6624d817e27e8d80946d749b35110bf4';
+    r'653277f966c6f319198ce599ac3f5191693725df';
 
 /// Stream of crew messages
 
@@ -286,7 +286,7 @@ final class DirectMessagesStreamProvider
 }
 
 String _$directMessagesStreamHash() =>
-    r'8f09c28902277c7f5600a93b26599257c715ad2e';
+    r'd4e21f389d4c0552347d7aacac000dfe8967a18f';
 
 /// Stream of direct messages between two users
 
@@ -460,7 +460,7 @@ final class UnreadCrewMessagesCountProvider
 }
 
 String _$unreadCrewMessagesCountHash() =>
-    r'66f940db2600c43798c7313c12588d5892594e1c';
+    r'59e8bcf7bbe21f9e628ae08c1476e3897288f5f6';
 
 /// Provider to get unread crew messages count for current user
 
@@ -548,7 +548,7 @@ final class UnreadDirectMessagesCountProvider
 }
 
 String _$unreadDirectMessagesCountHash() =>
-    r'2b3a4ee3839057579e9588ea50118aac2a239778';
+    r'a00b551707af03837f9c767c7de28dac2f647cff';
 
 /// Provider to get unread direct messages count for current user
 
@@ -617,7 +617,7 @@ final class TotalUnreadMessagesProvider
 }
 
 String _$totalUnreadMessagesHash() =>
-    r'9b8fd81d5967fa3e90e48ba5cf2357f568bf5bac';
+    r'16c030ac461d71f4aa3b638fbf16abc46c244734';
 
 /// Provider to get recent messages (last 24 hours)
 

@@ -9,14 +9,12 @@ import 'package:journeyman_jobs/domain/enums/enums.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
-import '../../services/onboarding_service.dart';
 import '../../services/firestore_service.dart';
 import '../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
 import '../../electrical_components/circuit_board_background.dart';
 import '../../electrical_components/jj_electrical_notifications.dart';
 import '../../models/user_job_preferences.dart';
-import '../../providers/riverpod/user_preferences_riverpod_provider.dart';
 
 class OnboardingStepsScreen extends ConsumerStatefulWidget {
   const OnboardingStepsScreen({super.key});
@@ -118,6 +116,86 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // Load saved onboarding progress when screen initializes
+    _loadOnboardingProgress();
+  }
+
+  /// Loads saved onboarding progress from Firestore
+  ///
+  /// Checks if user has partially completed onboarding and restores:
+  /// - Current onboarding step (to resume at correct page)
+  /// - Previously entered form data (to avoid re-entry)
+  ///
+  /// This enables seamless resume capability if user exits mid-onboarding.
+  Future<void> _loadOnboardingProgress() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      final firestoreService = FirestoreService();
+      final userDoc = await firestoreService.getUser(user.uid);
+
+      if (!userDoc.exists) return;
+
+      final data = userDoc.data() as Map<String, dynamic>?;
+      if (data == null) return;
+
+      // Check if onboarding was previously started
+      final savedStep = data['onboardingStep'] as int?;
+      final onboardingStatus = data['onboardingStatus'] as String?;
+
+      // Only resume if onboarding is incomplete
+      if (onboardingStatus == 'complete') return;
+
+      if (mounted) {
+        setState(() {
+          // Restore Step 1 data if available
+          if (data.containsKey('firstName')) {
+            _firstNameController.text = data['firstName'] ?? '';
+            _lastNameController.text = data['lastName'] ?? '';
+            _phoneController.text = data['phoneNumber'] ?? '';
+            _address1Controller.text = data['address1'] ?? '';
+            _address2Controller.text = data['address2'] ?? '';
+            _cityController.text = data['city'] ?? '';
+            _stateController.text = data['state'] ?? '';
+            if (data['zipcode'] != null && data['zipcode'] != 0) {
+              _zipcodeController.text = data['zipcode'].toString();
+            }
+          }
+
+          // Restore Step 2 data if available
+          if (data.containsKey('homeLocal')) {
+            if (data['homeLocal'] != null && data['homeLocal'] != 0) {
+              _homeLocalController.text = data['homeLocal'].toString();
+            }
+            _ticketNumberController.text = data['ticketNumber'] ?? '';
+            _selectedClassification = data['classification'];
+            _isWorking = data['isWorking'] ?? false;
+            _booksOnController.text = data['booksOn'] ?? '';
+          }
+
+          // Resume at saved step (default to 0 if no saved step or savedStep is 1)
+          if (savedStep != null && savedStep > 1) {
+            _currentStep = savedStep - 1; // Convert to 0-indexed
+            // Navigate to saved page after build completes
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && _currentStep < _totalSteps) {
+                _pageController.jumpToPage(_currentStep);
+                debugPrint('✅ Resumed onboarding at Step ${_currentStep + 1}');
+              }
+            });
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint('⚠️ Error loading onboarding progress: $e');
+      // Continue with fresh onboarding if load fails
+    }
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     _firstNameController.dispose();
@@ -155,17 +233,19 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
     super.dispose();
   }
 
-  /// Handles navigation to next step with validation
+  /// Handles navigation to next step with validation and progress saving
   ///
-  /// Validates current step data before proceeding.
-  /// NO FIREBASE WRITES occur until final step completion.
+  /// Validates current step data and saves progress to Firestore.
+  /// This enables resume capability if user exits before completing onboarding.
   void _nextStep() async {
     if (_isSaving) return;
 
     try {
+      setState(() => _isSaving = true);
+
       if (_currentStep == 0) {
-        // Validate Step 1 data (NO Firebase write)
-        _validateStep1();
+        // Validate and save Step 1 data
+        await _validateStep1();
 
         // Proceed to next step if validation passes
         if (mounted && _currentStep < _totalSteps - 1) {
@@ -175,8 +255,8 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
           );
         }
       } else if (_currentStep == 1) {
-        // Validate Step 2 data (NO Firebase write)
-        _validateStep2();
+        // Validate and save Step 2 data
+        await _validateStep2();
 
         // Proceed to next step if validation passes
         if (mounted && _currentStep < _totalSteps - 1) {
@@ -186,7 +266,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
           );
         }
       } else {
-        // Final step - complete onboarding with SINGLE Firebase write
+        // Final step - complete onboarding with split collection writes
         await _completeOnboarding();
       }
     } catch (e) {
@@ -197,6 +277,10 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
           message: 'Please fix the errors before continuing.',
           type: ElectricalNotificationType.error,
         );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
       }
     }
   }
@@ -210,7 +294,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
     }
   }
 
-  /// Validates Step 1: Personal Information
+  /// Validates and saves Step 1: Personal Information
   ///
   /// Performs client-side validation of required fields:
   /// - First name, last name (required)
@@ -218,10 +302,11 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
   /// - Address line 1, city, state (required)
   /// - Zipcode (required, numeric, min 5 digits)
   ///
-  /// NO FIREBASE WRITE - validation only
+  /// After validation, saves Step 1 data to Firestore and updates onboardingStep to 2
+  /// to enable resume capability if user exits the app.
   ///
   /// Throws [Exception] if validation fails
-  void _validateStep1() {
+  Future<void> _validateStep1() async {
     final firstName = _firstNameController.text.trim();
     final lastName = _lastNameController.text.trim();
     final phone = _phoneController.text.trim();
@@ -259,20 +344,59 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
       throw Exception('Zipcode must be numeric');
     }
 
-    debugPrint('✅ Step 1 validation passed - NO Firebase write performed');
+    debugPrint('✅ Step 1 validation passed');
+
+    // Save Step 1 progress to Firestore
+    await _saveStep1Progress();
   }
 
-  /// Validates Step 2: Professional Details
+  /// Saves Step 1 data to Firestore with progress tracking
+  ///
+  /// Writes personal information to users/{uid} and sets onboardingStep to 2.
+  /// This enables resume capability if user exits before completing onboarding.
+  Future<void> _saveStep1Progress() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      final step1Data = {
+        'firstName': _firstNameController.text.trim(),
+        'lastName': _lastNameController.text.trim(),
+        'phoneNumber': _phoneController.text.trim(),
+        'address1': _address1Controller.text.trim(),
+        'address2': _address2Controller.text.trim(),
+        'city': _cityController.text.trim(),
+        'state': _stateController.text.trim(),
+        'zipcode': int.parse(_zipcodeController.text.trim()),
+        'displayName': '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}'.trim(),
+        'email': user.email ?? '',
+        'username': user.email?.split('@')[0] ?? 'user',
+        'onboardingStep': 2, // Mark ready for step 2
+        'onboardingStatus': 'incomplete',
+        'lastActive': FieldValue.serverTimestamp(),
+      };
+
+      final firestoreService = FirestoreService();
+      await firestoreService.setUserWithMerge(uid: user.uid, data: step1Data);
+      debugPrint('✅ Step 1 progress saved - User can resume at Step 2');
+    } catch (e) {
+      debugPrint('⚠️ Error saving Step 1 progress: $e');
+      // Don't block progression even if save fails
+    }
+  }
+
+  /// Validates and saves Step 2: Professional Details
   ///
   /// Performs client-side validation of required fields:
   /// - Home local number (required, numeric)
   /// - Ticket number (required)
   /// - Classification (required selection)
   ///
-  /// NO FIREBASE WRITE - validation only
+  /// After validation, saves Step 2 data to Firestore and updates onboardingStep to 3
+  /// to enable resume capability if user exits the app.
   ///
   /// Throws [Exception] if validation fails
-  void _validateStep2() {
+  Future<void> _validateStep2() async {
     final homeLocal = _homeLocalController.text.trim();
     final ticketNumber = _ticketNumberController.text.trim();
 
@@ -290,7 +414,41 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
       throw Exception('Classification is required');
     }
 
-    debugPrint('✅ Step 2 validation passed - NO Firebase write performed');
+    debugPrint('✅ Step 2 validation passed');
+
+    // Save Step 2 progress to Firestore
+    await _saveStep2Progress();
+  }
+
+  /// Saves Step 2 data to Firestore with progress tracking
+  ///
+  /// Writes IBEW professional information to users/{uid} and sets onboardingStep to 3.
+  /// This enables resume capability if user exits before completing onboarding.
+  Future<void> _saveStep2Progress() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      final step2Data = {
+        'homeLocal': int.parse(_homeLocalController.text.trim()),
+        'ticketNumber': _ticketNumberController.text.trim(),
+        'classification': _selectedClassification ?? '',
+        'isWorking': _isWorking,
+        'booksOn': _booksOnController.text.trim().isEmpty
+            ? null
+            : _booksOnController.text.trim(),
+        'onboardingStep': 3, // Mark ready for step 3
+        'onboardingStatus': 'incomplete',
+        'lastActive': FieldValue.serverTimestamp(),
+      };
+
+      final firestoreService = FirestoreService();
+      await firestoreService.setUserWithMerge(uid: user.uid, data: step2Data);
+      debugPrint('✅ Step 2 progress saved - User can resume at Step 3');
+    } catch (e) {
+      debugPrint('⚠️ Error saving Step 2 progress: $e');
+      // Don't block progression even if save fails
+    }
   }
 
   /// Parses comma-separated preferred locals into list of integers
@@ -353,20 +511,15 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
     );
   }
 
-  /// Completes onboarding with SINGLE consolidated Firestore write
+  /// Completes onboarding by saving all data to users/{uid} collection
   ///
-  /// CRITICAL BACKEND ARCHITECTURE:
-  /// This method performs the ONLY Firestore write during onboarding.
-  /// All data from Steps 1, 2, and 3 are consolidated and written atomically.
-  ///
-  /// Data consolidated (30+ fields):
-  /// - Step 1: Personal information (8 fields)
-  /// - Step 2: IBEW classification (5 fields)
-  /// - Step 3: Job preferences (15+ fields)
-  /// - System/Metadata: Email, username, timestamps, etc.
+  /// BACKEND ARCHITECTURE:
+  /// Saves complete user profile with embedded job preferences in a single write:
+  /// - users/{uid}: Personal info, IBEW details, job search goals, metadata
+  /// - users/{uid}.jobPreferences: Construction types, hours, per diem, preferred locals (nested)
   ///
   /// After successful write:
-  /// - Marks onboarding complete in local storage
+  /// - Sets onboardingStatus to 'complete' in Firestore
   /// - Shows success notification
   /// - Navigates to home screen
   ///
@@ -384,21 +537,20 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
         throw Exception('No authenticated user found');
       }
 
-      // Map onboarding data to UserJobPreferences for separate preferences collection
+      debugPrint('\n🔍 DEBUG: Starting onboarding completion for user: ${user.uid}');
+      debugPrint('📧 User email: ${user.email}');
+
+      // Initialize Firestore service
+      final firestoreService = FirestoreService();
+
+      // Map onboarding data to UserJobPreferences for job matching
       final preferences = _mapOnboardingDataToPreferences();
-
-      // Save preferences using userPreferencesProvider
-      try {
-        await ref.read(userPreferencesProvider.notifier).savePreferences(user.uid, preferences);
-      } catch (e) {
-        // Log error but don't block onboarding completion
-        debugPrint('⚠️ Error saving job preferences to separate collection: $e');
-      }
+      debugPrint('✅ Preferences mapped successfully');
 
       // ============================================================
-      // SINGLE CONSOLIDATED FIRESTORE WRITE
+      // Build complete user data with embedded job preferences
       // ============================================================
-      // Build complete user data map with ALL 30+ fields from all steps
+      // All data saved to users/{uid} collection in a single write
       final Map<String, dynamic> completeUserData = {
         // Step 1: Personal Information (8 fields)
         'firstName': _firstNameController.text.trim(),
@@ -419,11 +571,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             ? null
             : _booksOnController.text.trim(),
 
-        // Step 3: Job Preferences (15+ fields)
-        'constructionTypes': _selectedConstructionTypes.toList(),
-        'hoursPerWeek': _selectedHoursPerWeek,
-        'perDiemRequirement': _selectedPerDiem,
-        'preferredLocals': _parsePreferredLocals(_preferredLocalsController.text.trim()),
+        // Step 3: Job Search Goals (NOT preferences - these describe user's situation)
         'networkWithOthers': _networkWithOthers,
         'careerAdvancements': _careerAdvancements,
         'betterBenefits': _betterBenefits,
@@ -441,12 +589,16 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             ? null
             : _lookingToAccomplishController.text.trim(),
 
+        // Job Preferences - Embedded as nested object
+        'jobPreferences': preferences.toJson(),
+
         // System/Metadata fields
         'email': user.email ?? '',
-        'username': user.email?.split('@')[0] ?? 'user',
+        'username': '${_firstNameController.text.trim()}${_lastNameController.text.trim()}',
         'displayName': '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}'.trim(),
-        'role': 'electrician',
         'onboardingStatus': 'complete',
+        'onboardingStep': 3, // Track completion at step 3
+        'preferencesCompleted': true, // Flag for preferences completion
         'onlineStatus': true, // CRITICAL: User is now active and online
         'createdTime': FieldValue.serverTimestamp(),
         'lastActive': FieldValue.serverTimestamp(),
@@ -455,18 +607,26 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
         'hasSetJobPreferences': true,
       };
 
-      // Execute SINGLE FIRESTORE WRITE with all consolidated data
-      final firestoreService = FirestoreService();
+      debugPrint('\n📦 DEBUG: completeUserData map built with ${completeUserData.length} fields');
+      debugPrint('📝 Fields: ${completeUserData.keys.toList()}');
+      debugPrint('🎯 Sample data:');
+      debugPrint('  - firstName: ${completeUserData['firstName']}');
+      debugPrint('  - lastName: ${completeUserData['lastName']}');
+      debugPrint('  - email: ${completeUserData['email']}');
+      debugPrint('  - onboardingStatus: ${completeUserData['onboardingStatus']}');
+      debugPrint('  - hasSetJobPreferences: ${completeUserData['hasSetJobPreferences']}');
+
+      // Execute single Firestore write with embedded job preferences
+      debugPrint('\n🔄 DEBUG: Calling setUserWithMerge...');
       await firestoreService.setUserWithMerge(
         uid: user.uid,
         data: completeUserData,
       );
+      debugPrint('✅ DEBUG: setUserWithMerge completed successfully!');
 
-      debugPrint('✅ Onboarding completed - Single Firestore write with ${completeUserData.length} fields');
-
-      // Mark onboarding as complete in local storage
-      final onboardingService = OnboardingService();
-      await onboardingService.markOnboardingComplete();
+      debugPrint('✅ User data saved to users/{${user.uid}} with ${completeUserData.length} fields');
+      debugPrint('✅ Job preferences embedded in users/{${user.uid}}.jobPreferences');
+      debugPrint('✅ Onboarding completed successfully');
 
       if (mounted) {
         JJElectricalNotifications.showElectricalToast(
@@ -482,12 +642,18 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
           }
         });
       }
-    } catch (e) {
-      debugPrint('❌ Error completing onboarding: $e');
+    } catch (e, stackTrace) {
+      debugPrint('\n❌❌❌ ERROR COMPLETING ONBOARDING ❌❌❌');
+      debugPrint('Error type: ${e.runtimeType}');
+      debugPrint('Error message: $e');
+      debugPrint('Stack trace:');
+      debugPrint(stackTrace.toString());
+      debugPrint('❌❌❌ END ERROR ❌❌❌\n');
+
       if (mounted) {
         JJElectricalNotifications.showElectricalToast(
           context: context,
-          message: 'Error saving profile. Please try again.',
+          message: 'Error saving profile: ${e.toString()}',
           type: ElectricalNotificationType.error,
         );
       }

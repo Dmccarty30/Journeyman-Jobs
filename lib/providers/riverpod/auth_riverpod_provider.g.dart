@@ -435,7 +435,7 @@ final class AuthNotifierProvider
   }
 }
 
-String _$authNotifierHash() => r'73543e1954495a07bd1a8ee25b60be7480773fa6';
+String _$authNotifierHash() => r'e5373df5d0b99fb14216e487f206b7ea6f2ee9c7';
 
 /// Auth state notifier for managing authentication operations
 
@@ -716,3 +716,98 @@ abstract class _$SessionMonitor extends $Notifier<bool> {
     element.handleValue(ref, created);
   }
 }
+
+/// Provides the current user's onboarding completion status from Firestore.
+///
+/// Returns `AsyncValue<bool>`:
+/// - `AsyncValue.loading`: Checking onboarding status
+/// - `AsyncValue.data(true)`: Onboarding is complete
+/// - `AsyncValue.data(false)`: Onboarding is incomplete or user document doesn't exist
+/// - `AsyncValue.error`: Error checking status
+///
+/// This is the source of truth for onboarding status (Firestore, not SharedPreferences).
+/// Used by the router to redirect users to onboarding if incomplete.
+///
+/// Example usage:
+/// ```dart
+/// final onboardingStatus = ref.watch(onboardingStatusProvider);
+/// onboardingStatus.when(
+///   loading: () => CircularProgressIndicator(),
+///   data: (isComplete) => isComplete ? HomeScreen() : OnboardingScreen(),
+///   error: (err, stack) => ErrorScreen(error: err),
+/// );
+/// ```
+
+@ProviderFor(onboardingStatus)
+const onboardingStatusProvider = OnboardingStatusProvider._();
+
+/// Provides the current user's onboarding completion status from Firestore.
+///
+/// Returns `AsyncValue<bool>`:
+/// - `AsyncValue.loading`: Checking onboarding status
+/// - `AsyncValue.data(true)`: Onboarding is complete
+/// - `AsyncValue.data(false)`: Onboarding is incomplete or user document doesn't exist
+/// - `AsyncValue.error`: Error checking status
+///
+/// This is the source of truth for onboarding status (Firestore, not SharedPreferences).
+/// Used by the router to redirect users to onboarding if incomplete.
+///
+/// Example usage:
+/// ```dart
+/// final onboardingStatus = ref.watch(onboardingStatusProvider);
+/// onboardingStatus.when(
+///   loading: () => CircularProgressIndicator(),
+///   data: (isComplete) => isComplete ? HomeScreen() : OnboardingScreen(),
+///   error: (err, stack) => ErrorScreen(error: err),
+/// );
+/// ```
+
+final class OnboardingStatusProvider
+    extends $FunctionalProvider<AsyncValue<bool>, bool, Stream<bool>>
+    with $FutureModifier<bool>, $StreamProvider<bool> {
+  /// Provides the current user's onboarding completion status from Firestore.
+  ///
+  /// Returns `AsyncValue<bool>`:
+  /// - `AsyncValue.loading`: Checking onboarding status
+  /// - `AsyncValue.data(true)`: Onboarding is complete
+  /// - `AsyncValue.data(false)`: Onboarding is incomplete or user document doesn't exist
+  /// - `AsyncValue.error`: Error checking status
+  ///
+  /// This is the source of truth for onboarding status (Firestore, not SharedPreferences).
+  /// Used by the router to redirect users to onboarding if incomplete.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final onboardingStatus = ref.watch(onboardingStatusProvider);
+  /// onboardingStatus.when(
+  ///   loading: () => CircularProgressIndicator(),
+  ///   data: (isComplete) => isComplete ? HomeScreen() : OnboardingScreen(),
+  ///   error: (err, stack) => ErrorScreen(error: err),
+  /// );
+  /// ```
+  const OnboardingStatusProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'onboardingStatusProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$onboardingStatusHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<bool> create(Ref ref) {
+    return onboardingStatus(ref);
+  }
+}
+
+String _$onboardingStatusHash() => r'3df842eb0d17d677c8dbe0a127056b78473fedc7';

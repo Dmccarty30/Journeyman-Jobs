@@ -828,7 +828,7 @@ final class UnreadActivityCountProvider
 }
 
 String _$unreadActivityCountHash() =>
-    r'd844558f988e90da8d31e215a7d51f435a2417f0';
+    r'86d9ee11212a452fdb5fff88e495efd4f498e771';
 
 /// Provider to get unread activity items count for current user
 
@@ -1288,7 +1288,7 @@ final class UnviewedJobsProvider
   }
 }
 
-String _$unviewedJobsHash() => r'7b3e8c51064f6257724e102bc05936e601346a4e';
+String _$unviewedJobsHash() => r'32bdb1addbfa5dee81dbe5779fd268c4ecb0bace';
 
 /// Provider to get jobs not yet viewed by current user
 

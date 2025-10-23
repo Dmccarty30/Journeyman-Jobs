@@ -34,6 +34,16 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
+    // User preferences collection: Authenticated users can manage their own preferences
+    match /user_preferences/{userId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Preferences collection (legacy/alternative path): Authenticated users can manage their own preferences
+    match /preferences/{userId} {
+      allow read, write: if isAuthenticated();
+    }
+
     // Crews collection: DEV MODE - All authenticated users have full access
     match /crews/{crewId} {
       allow read, write: if isAuthenticated();

@@ -96,7 +96,7 @@ final class JobsNotifierProvider
   }
 }
 
-String _$jobsNotifierHash() => r'770580976659725a98d3e522e0e63fdf8e31fdb1';
+String _$jobsNotifierHash() => r'0bbbfa63f7c7e1fd2836836ff50eebf1c7075872';
 
 /// Jobs notifier provider
 
@@ -448,3 +448,97 @@ final class StormJobsProvider
 }
 
 String _$stormJobsHash() => r'd996a8a060f5630019fcddb8edd0c1fa279dcfad';
+
+/// Suggested jobs provider - matches jobs against user's jobPreferences with cascading fallback
+///
+/// Architecture:
+/// 1. Fetches user's embedded jobPreferences from users/{uid}.jobPreferences
+/// 2. Implements cascading fallback strategy to ALWAYS show jobs:
+///    - Level 1: Exact match on all preferences (locals + construction types + hours + per diem)
+///    - Level 2: Relaxed match (locals + construction types only)
+///    - Level 3: Minimal match (preferred locals only)
+///    - Level 4: Fallback to recent jobs (if no preferences or no matches at all)
+/// 3. Queries jobs collection using most selective server-side filter (preferredLocals)
+/// 4. Applies client-side filtering for remaining criteria
+///
+/// Performance optimization:
+/// - Uses Firestore whereIn for preferredLocals (most selective filter)
+/// - Client-side filtering avoids Firestore query limitations (max 1 whereIn per query)
+/// - Limits to 20 results for home screen display
+///
+/// UX guarantee: Users ALWAYS see jobs on home screen, even without exact matches
+
+@ProviderFor(suggestedJobs)
+const suggestedJobsProvider = SuggestedJobsProvider._();
+
+/// Suggested jobs provider - matches jobs against user's jobPreferences with cascading fallback
+///
+/// Architecture:
+/// 1. Fetches user's embedded jobPreferences from users/{uid}.jobPreferences
+/// 2. Implements cascading fallback strategy to ALWAYS show jobs:
+///    - Level 1: Exact match on all preferences (locals + construction types + hours + per diem)
+///    - Level 2: Relaxed match (locals + construction types only)
+///    - Level 3: Minimal match (preferred locals only)
+///    - Level 4: Fallback to recent jobs (if no preferences or no matches at all)
+/// 3. Queries jobs collection using most selective server-side filter (preferredLocals)
+/// 4. Applies client-side filtering for remaining criteria
+///
+/// Performance optimization:
+/// - Uses Firestore whereIn for preferredLocals (most selective filter)
+/// - Client-side filtering avoids Firestore query limitations (max 1 whereIn per query)
+/// - Limits to 20 results for home screen display
+///
+/// UX guarantee: Users ALWAYS see jobs on home screen, even without exact matches
+
+final class SuggestedJobsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Job>>,
+          List<Job>,
+          FutureOr<List<Job>>
+        >
+    with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
+  /// Suggested jobs provider - matches jobs against user's jobPreferences with cascading fallback
+  ///
+  /// Architecture:
+  /// 1. Fetches user's embedded jobPreferences from users/{uid}.jobPreferences
+  /// 2. Implements cascading fallback strategy to ALWAYS show jobs:
+  ///    - Level 1: Exact match on all preferences (locals + construction types + hours + per diem)
+  ///    - Level 2: Relaxed match (locals + construction types only)
+  ///    - Level 3: Minimal match (preferred locals only)
+  ///    - Level 4: Fallback to recent jobs (if no preferences or no matches at all)
+  /// 3. Queries jobs collection using most selective server-side filter (preferredLocals)
+  /// 4. Applies client-side filtering for remaining criteria
+  ///
+  /// Performance optimization:
+  /// - Uses Firestore whereIn for preferredLocals (most selective filter)
+  /// - Client-side filtering avoids Firestore query limitations (max 1 whereIn per query)
+  /// - Limits to 20 results for home screen display
+  ///
+  /// UX guarantee: Users ALWAYS see jobs on home screen, even without exact matches
+  const SuggestedJobsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'suggestedJobsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$suggestedJobsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<Job>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<Job>> create(Ref ref) {
+    return suggestedJobs(ref);
+  }
+}
+
+String _$suggestedJobsHash() => r'22dfbce49690d0397fd099cc3f384061d4620a26';

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -149,13 +150,20 @@ class AuthInitialization extends _$AuthInitialization {
 /// Auth state notifier for managing authentication operations
 @riverpod
 class AuthNotifier extends _$AuthNotifier {
-  late final ConcurrentOperationManager _operationManager;
+  ConcurrentOperationManager? _operationManager;
   int _signInAttempts = 0;
   int _successfulSignIns = 0;
 
+  /// Lazy initialization getter for operation manager
+  ConcurrentOperationManager get operationManager {
+    _operationManager ??= ConcurrentOperationManager();
+    return _operationManager!;
+  }
+
   @override
   AuthState build() {
-    _operationManager = ConcurrentOperationManager();
+    // Ensure operation manager is initialized
+    _operationManager ??= ConcurrentOperationManager();
 
     // Watch the auth state stream to get real-time authentication updates
     final authStateAsync = ref.watch(authStateStreamProvider);
@@ -190,7 +198,7 @@ class AuthNotifier extends _$AuthNotifier {
     required String email,
     required String password,
   }) async {
-    if (_operationManager.isOperationInProgress(OperationType.signIn)) {
+    if (operationManager.isOperationInProgress(OperationType.signIn)) {
       return;
     }
 
@@ -200,7 +208,7 @@ class AuthNotifier extends _$AuthNotifier {
     final Stopwatch stopwatch = Stopwatch()..start();
 
     try {
-      await _operationManager.executeOperation(
+      await operationManager.executeOperation(
         type: OperationType.signIn,
         operation: () => ref.read(authServiceProvider).signInWithEmailAndPassword(
           email: email,
@@ -230,14 +238,14 @@ class AuthNotifier extends _$AuthNotifier {
 
   /// Sign out
   Future<void> signOut() async {
-    if (_operationManager.isOperationInProgress(OperationType.signOut)) {
+    if (operationManager.isOperationInProgress(OperationType.signOut)) {
       return;
     }
 
     state = state.copyWith(isLoading: true);
 
     try {
-      await _operationManager.executeOperation(
+      await operationManager.executeOperation(
         type: OperationType.signOut,
         operation: () => ref.read(authServiceProvider).signOut(),
       );
@@ -259,7 +267,7 @@ class AuthNotifier extends _$AuthNotifier {
 
   /// Dispose resources
   void dispose() {
-    _operationManager.dispose();
+    operationManager.dispose();
   }
 }
 
@@ -347,4 +355,55 @@ class SessionMonitor extends _$SessionMonitor {
       }
     });
   }
+}
+
+/// Provides the current user's onboarding completion status from Firestore.
+///
+/// Returns `AsyncValue<bool>`:
+/// - `AsyncValue.loading`: Checking onboarding status
+/// - `AsyncValue.data(true)`: Onboarding is complete
+/// - `AsyncValue.data(false)`: Onboarding is incomplete or user document doesn't exist
+/// - `AsyncValue.error`: Error checking status
+///
+/// This is the source of truth for onboarding status (Firestore, not SharedPreferences).
+/// Used by the router to redirect users to onboarding if incomplete.
+///
+/// Example usage:
+/// ```dart
+/// final onboardingStatus = ref.watch(onboardingStatusProvider);
+/// onboardingStatus.when(
+///   loading: () => CircularProgressIndicator(),
+///   data: (isComplete) => isComplete ? HomeScreen() : OnboardingScreen(),
+///   error: (err, stack) => ErrorScreen(error: err),
+/// );
+/// ```
+@riverpod
+Stream<bool> onboardingStatus(Ref ref) async* {
+  final user = ref.watch(currentUserProvider);
+
+  // If no user is authenticated, onboarding status is irrelevant
+  if (user == null) {
+    yield false;
+    return;
+  }
+
+  // Watch the user's Firestore document for onboarding status changes
+  yield* FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .snapshots()
+      .map((snapshot) {
+        if (!snapshot.exists) {
+          return false; // User document doesn't exist yet
+        }
+
+        final data = snapshot.data();
+        if (data == null) {
+          return false;
+        }
+
+        // Check onboardingStatus field (enum stored as string)
+        final status = data['onboardingStatus'] as String?;
+        return status == 'complete';
+      });
 }

@@ -257,17 +257,19 @@ class AppRouter {
     ),
   );
 
-  /// Handles route redirection based on authentication state.
+  /// Handles route redirection based on authentication state and onboarding status.
   ///
   /// Uses Riverpod providers to check:
   /// - Auth initialization status (authInitializationProvider)
   /// - User authentication state (authStateProvider)
+  /// - Onboarding completion status (onboardingStatusProvider) - from Firestore
   ///
   /// Redirect logic:
   /// 1. During auth initialization -> allow navigation (screens show loading)
   /// 2. Unauthenticated user on protected route -> redirect to /auth with return URL
-  /// 3. Authenticated user on /auth or /welcome -> redirect to intended destination or /home
-  /// 4. Public routes always accessible
+  /// 3. Authenticated user with incomplete onboarding -> redirect to /onboarding
+  /// 4. Authenticated user on /auth or /welcome -> redirect to intended destination or /home
+  /// 5. Public routes always accessible
   ///
   /// Query parameters:
   /// - `redirect`: Captures the original destination for post-login navigation
@@ -281,6 +283,7 @@ class AppRouter {
     // Check auth initialization status
     final authInit = container.read(authInitializationProvider);
     final authState = container.read(authStateProvider);
+    final onboardingStatusAsync = container.read(onboardingStatusProvider);
 
     // Get current location
     final currentPath = state.matchedLocation;
@@ -329,6 +332,19 @@ class AppRouter {
         return '$auth?redirect=${Uri.encodeComponent(currentPath)}';
       }
       return auth;
+    }
+
+    // Check onboarding status for authenticated users (except on onboarding/auth routes)
+    if (isAuthenticated && currentPath != onboarding && currentPath != auth) {
+      // Get onboarding status from Firestore
+      final onboardingComplete = onboardingStatusAsync.whenOrNull(
+        data: (isComplete) => isComplete,
+      ) ?? false;
+
+      // Redirect to onboarding if incomplete
+      if (!onboardingComplete) {
+        return onboarding;
+      }
     }
 
     // Authenticated user trying to access login/welcome -> redirect
