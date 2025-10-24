@@ -8,6 +8,7 @@ import '../../navigation/app_router.dart';
 import '../../providers/riverpod/jobs_riverpod_provider.dart';
 import '../../providers/riverpod/auth_riverpod_provider.dart';
 import '../../providers/riverpod/user_preferences_riverpod_provider.dart';
+import '../../providers/riverpod/user_riverpod_provider.dart';
 import '../../widgets/dialogs/user_job_preferences_dialog.dart';
 import '../../models/user_job_preferences.dart';
 import '../../features/crews/providers/crews_riverpod_provider.dart';
@@ -125,6 +126,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       // Watch both auth state and initialization
                       final authState = ref.watch(authProvider);
                       final authInit = ref.watch(authInitializationProvider);
+                      final userModelAsync = ref.watch(currentUserModelProvider);
 
                       // Show loading state during initialization
                       if (authInit.isLoading) {
@@ -161,55 +163,130 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         );
                       }
 
-                      // User is authenticated - show personalized greeting
-                      // IBEW terminology: "Brother" is traditional respectful greeting in electrical unions
-                      // Fallback chain: displayName → email prefix → default "Brother"
-                      final displayName = authState.user?.displayName
-                          ?? authState.user?.email?.split('@')[0]
-                          ?? 'Brother';
-                      final photoUrl = authState.user?.photoURL;
-                      final userInitial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
-
-                      return Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundColor: AppTheme.primaryNavy,
-                            backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
-                            child: photoUrl == null
-                                ? Text(
-                                    userInitial,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                                : null,
-                          ),
-                          const SizedBox(width: AppTheme.spacingMd),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Welcome Back, $displayName!',
-                                  style: AppTheme.headlineMedium.copyWith(
-                                    color: AppTheme.primaryNavy,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: AppTheme.spacingSm),
-                                Text(
-                                  displayName,
-                                  style: AppTheme.bodyLarge.copyWith(
-                                    color: AppTheme.textSecondary,
-                                  ),
-                                ),
-                              ],
+                      // User is authenticated - fetch UserModel for firstName and lastName
+                      // Handle async UserModel loading states
+                      return userModelAsync.when(
+                        loading: () => const SizedBox(
+                          height: 80,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: AppTheme.accentCopper,
                             ),
                           ),
-                        ],
+                        ),
+                        error: (error, stack) {
+                          // Fallback to Firebase Auth displayName if UserModel fails to load
+                          final displayName = authState.user?.displayName
+                              ?? authState.user?.email?.split('@')[0]
+                              ?? 'Brother';
+                          final photoUrl = authState.user?.photoURL;
+                          final userInitial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
+
+                          return Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundColor: AppTheme.primaryNavy,
+                                backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+                                child: photoUrl == null
+                                    ? Text(
+                                        userInitial,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                    : null,
+                              ),
+                              const SizedBox(width: AppTheme.spacingMd),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Welcome Back, $displayName!',
+                                      style: AppTheme.headlineMedium.copyWith(
+                                        color: AppTheme.primaryNavy,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: AppTheme.spacingSm),
+                                    Text(
+                                      displayName,
+                                      style: AppTheme.bodyLarge.copyWith(
+                                        color: AppTheme.textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        data: (userModel) {
+                          // User is authenticated and UserModel loaded successfully
+                          // Use firstName + lastName from Firestore UserModel
+                          // IBEW terminology: "Brother" is traditional respectful greeting in electrical unions
+                          // Fallback chain: firstName + lastName → displayName → email prefix → default "Brother"
+                          final String displayName;
+                          if (userModel != null && userModel.firstName.isNotEmpty && userModel.lastName.isNotEmpty) {
+                            displayName = '${userModel.firstName} ${userModel.lastName}';
+                          } else if (userModel != null && userModel.firstName.isNotEmpty) {
+                            displayName = userModel.firstName;
+                          } else if (authState.user?.displayName != null && authState.user!.displayName!.isNotEmpty) {
+                            displayName = authState.user!.displayName!;
+                          } else if (authState.user?.email != null) {
+                            displayName = authState.user!.email!.split('@')[0];
+                          } else {
+                            displayName = 'Brother';
+                          }
+
+                          final photoUrl = userModel?.avatarUrl ?? authState.user?.photoURL;
+                          final userInitial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
+
+                          return Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundColor: AppTheme.primaryNavy,
+                                backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+                                child: photoUrl == null
+                                    ? Text(
+                                        userInitial,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                    : null,
+                              ),
+                              const SizedBox(width: AppTheme.spacingMd),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Welcome Back, $displayName!',
+                                      style: AppTheme.headlineMedium.copyWith(
+                                        color: AppTheme.primaryNavy,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: AppTheme.spacingSm),
+                                    Text(
+                                      userModel?.classification ?? 'Journeyman',
+                                      style: AppTheme.bodyLarge.copyWith(
+                                        color: AppTheme.textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
                   ),

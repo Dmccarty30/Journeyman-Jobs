@@ -1,0 +1,602 @@
+---
+metadata:
+  title: SuperClaude Framework - Comprehensive Integration Guide
+  version: 2.0.1
+  type: Evidence-Based AI Development System
+  author: SuperClaude Team
+  date: 2025-01-24
+  tags:
+    - claude-code
+    - ai-development
+    - mcp-servers
+    - personas
+    - orchestration
+
+primary_directive: "Evidence > assumptions | Code > documentation | Efficiency > verbosity"
+
+overview:
+  description: Advanced AI development framework for Claude Code
+  components:
+    commands: 19
+    personas: 11
+    mcp_servers: 4
+    features:
+      - Intelligent Routing with auto-activation
+      - Wave Orchestration for complex operations
+      - Sub-Agent Delegation for parallel processing
+      - Evidence-Based Methodology with quality gates
+      - Token Optimization (30-50% reduction)
+
+quick_start_examples:
+  - name: Build React app
+    command: "/build --react --magic --tdd"
+  - name: Security audit
+    command: "/scan --security --owasp --persona-security"
+  - name: Performance optimization
+    command: "/analyze --performance --pup --persona-performance"
+  - name: Complex debugging
+    command: "/troubleshoot --investigate --seq --think"
+  - name: Documentation
+    command: "/document --api --examples --persona-scribe=en"
+
+configuration_files:
+  core: .claude/settings.local.json
+  shared:
+    - superclaude-core.yml
+    - superclaude-mcp.yml
+    - superclaude-rules.yml
+    - superclaude-personas.yml
+
+command_architecture:
+  total_commands: 19
+  categories:
+    development:
+      count: 3
+      commands:
+        - name: build
+          description: Universal project builder
+        - name: dev-setup
+          description: Development environment
+        - name: test
+          description: Comprehensive testing
+    analysis:
+      count: 5
+      commands:
+        - name: review
+          description: AI-powered code review
+        - name: analyze
+          description: Multi-dimensional analysis
+        - name: troubleshoot
+          description: Professional debugging
+        - name: improve
+          description: Enhancement & optimization
+        - name: explain
+          description: Technical documentation
+    operations:
+      count: 6
+      commands:
+        - name: deploy
+          description: Application deployment
+        - name: migrate
+          description: Database & code migration
+        - name: scan
+          description: Security & validation
+        - name: estimate
+          description: Project estimation
+        - name: cleanup
+          description: Project maintenance
+        - name: git
+          description: Git workflow management
+    design:
+      count: 1
+      commands:
+        - name: design
+          description: System architecture
+    workflow:
+      count: 4
+      commands:
+        - name: spawn
+          description: Specialized agents
+        - name: document
+          description: Documentation creation
+        - name: load
+          description: Project context loading
+        - name: task
+          description: Task management
+
+universal_flags:
+  thinking_depth:
+    - flag: --think
+      description: Multi-file analysis
+      tokens: 4K
+    - flag: --think-hard
+      description: Architecture-level depth
+      tokens: 10K
+    - flag: --ultrathink
+      description: Critical system analysis
+      tokens: 32K
+  
+  token_optimization:
+    - flag: --uc / --ultracompressed
+      description: 30-50% token reduction
+    - flag: --answer-only
+      description: Direct response without workflow
+    - flag: --validate
+      description: Pre-operation validation
+    - flag: --safe-mode
+      description: Maximum validation
+  
+  mcp_control:
+    - flag: --c7 / --context7
+      description: Enable Context7 documentation
+    - flag: --seq / --sequential
+      description: Enable Sequential thinking
+    - flag: --magic
+      description: Enable Magic UI generation
+    - flag: --pup / --playwright
+      description: Enable Playwright automation
+    - flag: --all-mcp
+      description: Enable all MCP servers
+    - flag: --no-mcp
+      description: Disable all MCP servers
+  
+  delegation:
+    - flag: --delegate [files|folders|auto]
+      description: Sub-agent delegation
+      auto_activates: ">7 directories or >50 files"
+      performance: "40-70% time savings"
+  
+  wave_orchestration:
+    - flag: --wave-mode [auto|force|off]
+      description: Wave orchestration control
+      auto_activates: "complexity >0.8"
+      performance: "30-50% better results"
+  
+  iterative:
+    - flag: --loop
+      description: Iterative improvement mode
+      default_iterations: 3
+    - flag: --iterations [n]
+      description: Control improvement cycles
+      range: "1-10"
+
+flag_precedence:
+  1: Safety flags (--safe-mode) > optimization flags
+  2: Explicit flags > auto-activation
+  3: Thinking depth (--ultrathink > --think-hard > --think)
+  4: --no-mcp overrides all individual MCP flags
+  5: Scope (system > project > module > file)
+  6: Wave mode (--wave-mode off > force > auto)
+  7: Sub-Agent delegation (explicit > auto-detection)
+  8: Loop mode (explicit > auto-detection)
+  9: --uc auto-activation overrides verbose flags
+
+personas:
+  technical_specialists:
+    - name: architect
+      flag: --persona-architect
+      identity: Systems architecture specialist
+      priority: Long-term maintainability > scalability > performance
+      mcp_preferences:
+        primary: Sequential
+        secondary: Context7
+      optimized_commands:
+        - /analyze
+        - /estimate
+        - /improve --arch
+        - /design
+      auto_activation:
+        keywords:
+          - architecture
+          - design
+          - scalability
+    
+    - name: frontend
+      flag: --persona-frontend
+      identity: UX specialist, accessibility advocate
+      priority: User needs > accessibility > performance
+      performance_budgets:
+        load_time: "<3s on 3G, <1s on WiFi"
+        bundle_size: "<500KB initial, <2MB total"
+        accessibility: "WCAG 2.1 AA minimum (90%+)"
+        core_web_vitals: "LCP <2.5s, FID <100ms, CLS <0.1"
+      mcp_preferences:
+        primary: Magic
+        secondary: Playwright
+      auto_activation:
+        keywords:
+          - component
+          - responsive
+          - accessibility
+    
+    - name: backend
+      flag: --persona-backend
+      identity: Reliability engineer, API specialist
+      priority: Reliability > security > performance
+      reliability_budgets:
+        uptime: "99.9% (8.7h/year downtime)"
+        error_rate: "<0.1% for critical operations"
+        response_time: "<200ms for API calls"
+        recovery_time: "<5 minutes for critical services"
+      mcp_preferences:
+        primary: Context7
+        secondary: Sequential
+      auto_activation:
+        keywords:
+          - API
+          - database
+          - service
+          - reliability
+    
+    - name: security
+      flag: --persona-security
+      identity: Threat modeler, compliance expert
+      priority: Security > compliance > reliability
+      core_principles:
+        - Security by Default
+        - Zero Trust Architecture
+        - Defense in Depth
+      mcp_preferences:
+        primary: Sequential
+        secondary: Context7
+      auto_activation:
+        keywords:
+          - vulnerability
+          - threat
+          - compliance
+    
+    - name: performance
+      flag: --persona-performance
+      identity: Optimization specialist
+      priority: Measure first > optimize critical path > user experience
+      performance_budgets:
+        load_time: "<3s on 3G, <1s on WiFi, <500ms API"
+        bundle_size: "<500KB initial, <2MB total"
+        memory: "<100MB mobile, <500MB desktop"
+        cpu: "<30% average, <80% peak for 60fps"
+      mcp_preferences:
+        primary: Playwright
+        secondary: Sequential
+      auto_activation:
+        keywords:
+          - optimize
+          - performance
+          - bottleneck
+  
+  process_quality:
+    - name: analyzer
+      flag: --persona-analyzer
+      identity: Root cause specialist
+      priority: Evidence > systematic approach > thoroughness
+      mcp_preferences:
+        primary: Sequential
+        secondary: Context7
+      auto_activation:
+        keywords:
+          - analyze
+          - investigate
+          - root cause
+    
+    - name: qa
+      flag: --persona-qa
+      identity: Quality advocate, testing specialist
+      priority: Prevention > detection > correction
+      mcp_preferences:
+        primary: Playwright
+        secondary: Sequential
+      auto_activation:
+        keywords:
+          - test
+          - quality
+          - validation
+    
+    - name: refactorer
+      flag: --persona-refactorer
+      identity: Code quality specialist
+      priority: Simplicity > maintainability > readability
+      mcp_preferences:
+        primary: Sequential
+        secondary: Context7
+      auto_activation:
+        keywords:
+          - refactor
+          - cleanup
+          - technical debt
+    
+    - name: devops
+      flag: --persona-devops
+      identity: Infrastructure specialist
+      priority: Automation > observability > reliability
+      mcp_preferences:
+        primary: Sequential
+        secondary: Context7
+      auto_activation:
+        keywords:
+          - deploy
+          - infrastructure
+          - automation
+  
+  communication:
+    - name: mentor
+      flag: --persona-mentor
+      identity: Knowledge transfer specialist
+      priority: Understanding > knowledge transfer > teaching
+      mcp_preferences:
+        primary: Context7
+        secondary: Sequential
+      auto_activation:
+        keywords:
+          - explain
+          - learn
+          - understand
+    
+    - name: scribe
+      flag: --persona-scribe=lang
+      identity: Professional writer, documentation specialist
+      priority: Clarity > audience needs > cultural sensitivity
+      language_support:
+        - en
+        - es
+        - fr
+        - de
+        - ja
+        - zh
+        - pt
+        - it
+        - ru
+        - ko
+      mcp_preferences:
+        primary: Context7
+        secondary: Sequential
+      auto_activation:
+        keywords:
+          - document
+          - write
+          - guide
+
+mcp_servers:
+  context7:
+    purpose: Official library documentation & research
+    activation:
+      automatic: External library imports, framework questions
+      manual: --c7, --context7 flags
+    workflow:
+      - Library Detection
+      - ID Resolution
+      - Documentation Retrieval
+      - Pattern Extraction
+      - Implementation
+      - Validation
+      - Caching
+    integration_commands:
+      - /build
+      - /analyze
+      - /improve
+      - /design
+      - /document
+      - /explain
+      - /git
+  
+  sequential:
+    purpose: Multi-step problem solving & architectural analysis
+    activation:
+      automatic: Complex debugging, system design, --think flags
+      manual: --seq, --sequential flags
+    workflow:
+      - Problem Decomposition
+      - Server Coordination
+      - Systematic Analysis
+      - Relationship Mapping
+      - Hypothesis Generation
+      - Evidence Gathering
+      - Multi-Server Synthesis
+      - Recommendation Generation
+      - Validation
+    use_cases:
+      - Root cause analysis
+      - Performance bottleneck identification
+      - Architecture review
+      - Security threat modeling
+      - Code quality assessment
+      - Iterative improvement analysis
+  
+  magic:
+    purpose: UI component generation & design system integration
+    activation:
+      automatic: UI component requests, design system queries
+      manual: --magic flag
+    workflow:
+      - Requirement Parsing
+      - Pattern Search
+      - Framework Detection
+      - Server Coordination
+      - Code Generation
+      - Design System Integration
+      - Accessibility Compliance
+      - Responsive Design
+      - Optimization
+      - Quality Assurance
+    framework_support:
+      - React
+      - Vue
+      - Angular
+      - Vanilla
+  
+  playwright:
+    purpose: Cross-browser E2E testing & performance monitoring
+    activation:
+      automatic: Testing workflows, performance monitoring
+      manual: --play, --playwright flags
+    capabilities:
+      - Multi-Browser Support
+      - Visual Testing
+      - Performance Metrics
+      - User Simulation
+      - Data Extraction
+      - Mobile Testing
+      - Parallel Execution
+
+orchestration:
+  resource_management_thresholds:
+    green:
+      range: 0-60%
+      action: Full operations, predictive monitoring
+    yellow:
+      range: 60-75%
+      action: Resource optimization, suggest --uc
+    orange:
+      range: 75-85%
+      action: Warning alerts, defer non-critical
+    red:
+      range: 85-95%
+      action: Force efficiency modes
+    critical:
+      range: 95%+
+      action: Emergency protocols only
+  
+  wave_orchestration:
+    wave_enabled_commands:
+      - /analyze
+      - /build
+      - /implement
+      - /improve
+      - /design
+      - /task
+    auto_activation: "complexity ≥0.7 AND files >20 AND operation_types >2"
+    performance: "30-50% better results"
+    strategies:
+      progressive: Incremental enhancement
+      systematic: Methodical analysis
+      adaptive: Dynamic configuration
+      enterprise: Large-scale orchestration
+  
+  validation_cycle:
+    step_1:
+      name: Syntax
+      description: Language parsers, Context7 validation
+    step_2:
+      name: Type
+      description: Sequential analysis, type compatibility
+    step_3:
+      name: Lint
+      description: Context7 rules, quality analysis
+    step_4:
+      name: Security
+      description: Sequential analysis, OWASP compliance
+    step_5:
+      name: Test
+      description: Playwright E2E, coverage (≥80% unit, ≥70% integration)
+    step_6:
+      name: Performance
+      description: Sequential analysis, benchmarking
+    step_7:
+      name: Documentation
+      description: Context7 patterns, completeness validation
+    step_8:
+      name: Integration
+      description: Playwright testing, deployment validation
+
+core_principles:
+  solid:
+    - Single Responsibility
+    - Open/Closed
+    - Liskov Substitution
+    - Interface Segregation
+    - Dependency Inversion
+  
+  design:
+    - DRY (Don't Repeat Yourself)
+    - KISS (Keep It Simple, Stupid)
+    - YAGNI (You Aren't Gonna Need It)
+    - Composition Over Inheritance
+    - Separation of Concerns
+    - Loose Coupling
+    - High Cohesion
+  
+  evidence_based:
+    required_language:
+      - may
+      - could
+      - potentially
+      - typically
+      - measured
+      - documented
+    prohibited_language:
+      - best
+      - optimal
+      - faster
+      - secure
+      - always
+      - never
+      - guaranteed
+
+workflow_patterns:
+  full_stack_development:
+    - "/design --api --ddd --persona-architect --seq"
+    - "/build --fullstack --tdd --magic"
+    - "/test --coverage --e2e --pup"
+    - "/deploy --env staging --validate"
+  
+  security_first:
+    - "/scan --security --owasp --deps --persona-security"
+    - "/analyze --security --forensic --seq"
+    - "/improve --security --validate --strict"
+    - "/test --security --coverage"
+  
+  performance_optimization:
+    - "/analyze --profile --deep --persona-performance"
+    - "/troubleshoot --perf --investigate --pup"
+    - "/improve --performance --iterate --threshold 90%"
+    - "/test --performance --load"
+
+decision_matrix:
+  - scenario: New React Feature
+    persona: frontend
+    mcp: "magic, c7"
+    command: "/build --feature"
+    flags: "--react --tdd"
+  
+  - scenario: API Design
+    persona: architect
+    mcp: "seq, c7"
+    command: "/design --api"
+    flags: "--ddd --ultrathink"
+  
+  - scenario: Security Audit
+    persona: security
+    mcp: seq
+    command: "/scan --security"
+    flags: "--owasp --strict"
+  
+  - scenario: Performance Issue
+    persona: performance
+    mcp: "pup, seq"
+    command: "/analyze --performance"
+    flags: "--profile --iterate"
+  
+  - scenario: Bug Investigation
+    persona: analyzer
+    mcp: all-mcp
+    command: /troubleshoot
+    flags: "--investigate --seq"
+
+best_practices:
+  high_risk_operations: "Always use --validate or --dry-run"
+  documentation_tasks: "Enable --c7 for library lookups"
+  complex_analysis: "Use --seq for reasoning"
+  ui_development: "Enable --magic for AI components"
+  testing: "Use --pup for browser automation"
+  token_saving: "Add --uc for 30-50% reduction"
+
+summary:
+  professional_commands: "19 commands covering development, analysis, operations, workflows"
+  specialized_personas: "11 personas with domain expertise and auto-activation"
+  mcp_servers: "4 servers providing documentation, analysis, UI generation, testing"
+  intelligent_orchestration: "Wave modes and sub-agent delegation"
+  evidence_based_methodology: "Quality gates and validation frameworks"
+  token_optimization: "30-50% reduction while preserving quality"
+
+version_info:
+  version: 2.0.1
+  release_date: 2025-01-24
+  motto: "Evidence-based development | Senior developer mindset | Quality-first approach"

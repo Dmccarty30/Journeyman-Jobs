@@ -14,7 +14,7 @@
 
 ### Architecture
 
-```
+```dart
 ┌─────────────────────────────────────────────────────────────┐
 │                    Token Management System                   │
 ├─────────────────────────────────────────────────────────────┤
@@ -55,6 +55,7 @@
 ### ✅ Task 1: Understand Firebase Token Lifecycle
 
 **Analysis**:
+
 - Firebase tokens expire after ~60 minutes
 - SDK auto-refreshes transparently when token requested
 - Existing timestamp tracking only monitored SESSION age, not TOKEN age
@@ -71,6 +72,7 @@
 **File**: `lib/services/auth_service.dart`
 
 **Changes**:
+
 1. Added `_TokenExpirationMonitor` private class (lines 375-434)
 2. Integrated token monitor into `AuthService` (line 32)
 3. Updated all sign-in methods to start monitoring:
@@ -81,6 +83,7 @@
 4. Updated `signOut()` to stop monitoring (line 190)
 
 **Token Monitor Features**:
+
 ```dart
 class _TokenExpirationMonitor {
   Timer? _refreshTimer;
@@ -98,6 +101,7 @@ class _TokenExpirationMonitor {
 ```
 
 **Validation**:
+
 - ✅ Token monitor started on all sign-in methods
 - ✅ Token refreshed every 50 minutes automatically
 - ✅ Monitoring stopped on sign-out
@@ -112,6 +116,7 @@ class _TokenExpirationMonitor {
 **File**: `lib/services/auth_service.dart`
 
 **Enhanced `isTokenValid()` method** (lines 280-329):
+
 - Added clock skew detection (future timestamp check)
 - Improved documentation distinguishing session age vs token age
 - Returns `false` for:
@@ -122,6 +127,7 @@ class _TokenExpirationMonitor {
 **File**: `lib/providers/riverpod/auth_riverpod_provider.dart`
 
 **Added `SessionMonitor` provider** (lines 289-350):
+
 ```dart
 @riverpod
 class SessionMonitor extends _$SessionMonitor {
@@ -136,12 +142,14 @@ class SessionMonitor extends _$SessionMonitor {
 ```
 
 **Features**:
+
 - Automatic session validation every 5 minutes
 - Graceful sign-out on expiration
 - Provider lifecycle management (auto-cleanup on dispose)
 - Integration with existing auth providers
 
 **Validation**:
+
 - ✅ Session expires after 24 hours
 - ✅ Periodic checks run every 5 minutes
 - ✅ Clock skew handled
@@ -156,6 +164,7 @@ class SessionMonitor extends _$SessionMonitor {
 **New File**: `lib/services/app_lifecycle_service.dart` (97 lines)
 
 **Service Features**:
+
 ```dart
 class AppLifecycleService extends WidgetsBindingObserver {
   // Monitors app lifecycle state changes
@@ -168,11 +177,13 @@ class AppLifecycleService extends WidgetsBindingObserver {
 **Integration**: `lib/main.dart`
 
 **Changes**:
+
 - Imported `AuthService` and `AppLifecycleService` (lines 11-12)
 - Created global lifecycle service instance (line 18)
 - Initialized after Firebase setup (lines 54-58)
 
 **Lifecycle Flow**:
+
 1. App resumes from background
 2. Check if user authenticated
 3. Validate session age (<24 hours)
@@ -181,6 +192,7 @@ class AppLifecycleService extends WidgetsBindingObserver {
 6. If refresh fails → sign out (safety)
 
 **Validation**:
+
 - ✅ Service initialized on app start
 - ✅ Token validated on app resume
 - ✅ Proactive token refresh on resume
@@ -196,6 +208,7 @@ class AppLifecycleService extends WidgetsBindingObserver {
 **File**: `lib/services/auth_service.dart`
 
 **Enhanced `signOut()` method** (lines 187-211):
+
 ```dart
 Future<void> signOut() async {
   try {
@@ -224,12 +237,14 @@ Future<void> signOut() async {
 ```
 
 **Features**:
+
 - Firestore cache terminated and cleared on sign-out
 - Prevents stale data from persisting across sessions
 - Best-effort approach (logs errors but doesn't block sign-out)
 - Integrated with existing sign-out flow
 
 **Validation**:
+
 - ✅ Cache cleared on session expiry
 - ✅ Cache cleared on manual sign-out
 - ✅ Error handling prevents sign-out blocking
@@ -242,6 +257,7 @@ Future<void> signOut() async {
 **Status**: Not implemented (MEDIUM priority)
 
 **Rationale**:
+
 - Token refresh already handled by:
   - 50-minute periodic refresh
   - App resume proactive refresh
@@ -288,6 +304,7 @@ Future<void> signOut() async {
 ## Testing Performed
 
 ### Static Analysis
+
 ```bash
 flutter analyze lib/services/auth_service.dart
                 lib/services/app_lifecycle_service.dart
@@ -298,6 +315,7 @@ Result: ✅ No issues found!
 ```
 
 ### Code Generation
+
 ```bash
 dart run build_runner build --delete-conflicting-outputs
 
@@ -308,6 +326,7 @@ Result: ✅ Successfully generated providers
 ```
 
 ### Integration Validation
+
 - ✅ All imports resolved
 - ✅ No compilation errors
 - ✅ Riverpod providers generated correctly
@@ -356,18 +375,22 @@ Result: ✅ Successfully generated providers
 ## Integration with Previous Waves
 
 ### Wave 1: Race Condition Fix
+
 - **Integration**: Token monitoring complements race condition prevention
 - **Result**: Both systems work together - race condition fixed, tokens managed
 
 ### Wave 2: Router Enhancement
+
 - **Integration**: Session expiration triggers auth state change → router redirect
 - **Result**: Expired sessions automatically redirect to login
 
 ### Wave 3: Skeleton Screens
+
 - **Integration**: Token refresh shows loading state via skeleton screens
 - **Result**: Seamless UX during token operations
 
 ### Wave 4: Error Recovery
+
 - **Integration**: Token expiration handled via UnauthenticatedException flow
 - **Result**: Graceful error recovery if token refresh fails
 
@@ -472,6 +495,7 @@ Result: ✅ Successfully generated providers
 **Risk Level**: Low - All critical functionality tested and validated
 
 **Rollback Plan**:
+
 - Git revert commits if issues arise
 - All changes isolated to auth layer
 - No database schema changes

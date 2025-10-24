@@ -1,0 +1,446 @@
+---
+title: 'SuperClaude Framework - Comprehensive Integration Guide'
+version: '2.0.1'
+description: 'Evidence-Based AI Development System'
+author: 'SuperClaude Team'
+date: '2025-01-24'
+tags: ['claude-code', 'ai-development', 'mcp-servers', 'personas', 'orchestration']
+---
+
+import { Callout, Card, CardGrid, Badge, CodeBlock, Tabs, TabPanel } from '@/components'
+
+# SuperClaude Framework
+
+## Comprehensive Integration Guide v2.0.1
+
+<Callout type="info">
+**Primary Directive**: Evidence > assumptions | Code > documentation | Efficiency > verbosity
+</Callout>
+
+---
+
+## Overview & Quick Start
+
+### What is SuperClaude?
+
+<CardGrid cols={3}>
+  <Card title="⚡ 19 Professional Commands" href="#commands">
+    Development, analysis, and operations
+  </Card>
+  <Card title="🎭 11 Specialized Personas" href="#personas">
+    Domain expertise with auto-activation
+  </Card>
+  <Card title="🔌 4 MCP Servers" href="#mcp">
+    Context7, Sequential, Magic, Playwright
+  </Card>
+  <Card title="🧠 Intelligent Routing" href="#orchestration">
+    Auto-activation and optimization
+  </Card>
+  <Card title="🌊 Wave Orchestration" href="#orchestration">
+    Complex multi-stage operations
+  </Card>
+  <Card title="📊 Evidence-Based" href="#principles">
+    Quality gates and validation
+  </Card>
+</CardGrid>
+
+### Quick Start Examples
+
+<Tabs>
+  <TabPanel label="React Development">
+    ```bash
+    /build --react --magic --tdd
+    ```
+  </TabPanel>
+  <TabPanel label="Security Audit">
+    ```bash
+    /scan --security --owasp --persona-security
+    ```
+  </TabPanel>
+  <TabPanel label="Performance Optimization">
+    ```bash
+    /analyze --performance --pup --persona-performance
+    ```
+  </TabPanel>
+  <TabPanel label="Debugging">
+    ```bash
+    /troubleshoot --investigate --seq --think
+    ```
+  </TabPanel>
+</Tabs>
+
+---
+
+## Core Architecture
+
+### System Components
+
+```yaml
+Configuration_Files:
+  Core: .claude/settings.local.json
+  Shared:
+    - superclaude-core.yml
+    - superclaude-mcp.yml
+    - superclaude-rules.yml
+    - superclaude-personas.yml
+
+Command_Architecture:
+  Total_Commands: 19
+  Categories:
+    Development: 3
+    Analysis: 5
+    Operations: 6
+    Design: 1
+    Workflow: 4
+
+MCP_Servers:
+  Context7: Library documentation & research
+  Sequential: Complex analysis & reasoning
+  Magic: UI component generation
+  Playwright: Browser automation & testing
+
+Personas:
+  Technical: architect, frontend, backend, security, performance
+  Process: analyzer, qa, refactorer, devops
+  Communication: mentor, scribe
+```
+
+<Callout type="success">
+**Required Language**: may, could, potentially, typically, measured, documented
+</Callout>
+
+<Callout type="warning">
+**Prohibited Language**: best, optimal, faster, secure, always, never, guaranteed
+</Callout>
+
+---
+
+## Command System
+
+### Universal Command Syntax
+
+```bash
+/command [flags] [arguments]
+```
+
+### 🛠️ Development Commands
+
+#### `/build` - Universal Project Builder
+
+<Card title="Build Command Flags">
+  - `--init` - Initialize new project
+  - `--feature` - Implement feature
+  - `--tdd` - Test-driven development
+  - `--react` - React with Vite, TypeScript
+  - `--api` - Express.js API
+  - `--fullstack` - Complete React + Node.js
+</Card>
+
+**Examples:**
+
+```bash
+/build --init --react --magic
+/build --feature "auth system" --tdd
+/build --api --openapi --seq
+```
+
+### 🔍 Analysis Commands
+
+#### `/review` - AI-Powered Code Review
+
+<Badge variant="primary">Quality Focus</Badge>
+<Badge variant="success">Evidence-Based</Badge>
+
+```bash
+/review --files src/auth.ts --persona-security
+/review --pr 123 --quality --evidence
+```
+
+#### `/analyze` - Multi-Dimensional Analysis
+
+```bash
+/analyze --code --architecture --seq
+/analyze --profile --deep --persona-performance
+```
+
+### ⚙️ Operations Commands
+
+#### `/deploy` - Application Deployment
+
+```bash
+/deploy --env prod --canary --monitor
+/deploy --rollback --env prod
+```
+
+#### `/scan` - Security & Validation
+
+```bash
+/scan --security --owasp --deps
+/scan --compliance --gdpr --strict
+```
+
+---
+
+## Flag System
+
+### 🎛 Universal Flags
+
+<Tabs>
+  <TabPanel label="Thinking Depth">
+    | Flag | Description | Token Usage |
+    |------|-------------|-------------|
+    | `--think` | Multi-file analysis | ~4K tokens |
+    | `--think-hard` | Architecture-level depth | ~10K tokens |
+    | `--ultrathink` | Critical system analysis | ~32K tokens |
+  </TabPanel>
+  
+  <TabPanel label="MCP Control">
+    - `--c7 / --context7` - Enable Context7 documentation
+    - `--seq / --sequential` - Enable Sequential thinking
+    - `--magic` - Enable Magic UI generation
+    - `--pup / --playwright` - Enable Playwright automation
+    - `--all-mcp` - Enable all MCP servers
+    - `--no-mcp` - Disable all MCP servers
+  </TabPanel>
+  
+  <TabPanel label="Optimization">
+    - `--uc / --ultracompressed` - 30-50% token reduction
+    - `--validate` - Pre-operation validation
+    - `--safe-mode` - Maximum validation
+    - `--dry-run` - Preview changes
+  </TabPanel>
+</Tabs>
+
+### Sub-Agent Delegation
+
+<Callout type="info">
+**--delegate [files|folders|auto]**
+
+- Auto-activates: >7 directories or >50 files
+- Performance: 40-70% time savings
+- Dynamic allocation based on resources
+</Callout>
+
+### Wave Orchestration
+
+<Callout type="info">
+**--wave-mode [auto|force|off]**
+
+- Auto: Activates on complexity >0.8
+- Force: Override auto-detection
+- Off: Disable wave mode
+- Performance: 30-50% better results
+</Callout>
+
+---
+
+## Persona System
+
+### Technical Specialists
+
+<CardGrid cols={2}>
+  <Card title="🏗️ --persona-architect">
+    **Priority**: Maintainability > scalability > performance
+    
+    **MCP**: Sequential, Context7
+    
+    **Commands**: /analyze, /estimate, /improve --arch, /design
+  </Card>
+  
+  <Card title="🎨 --persona-frontend">
+    **Priority**: User needs > accessibility > performance
+    
+    **Budgets**:
+    - Load: <3s on 3G
+    - Bundle: <500KB initial
+    - WCAG 2.1 AA (90%+)
+  </Card>
+  
+  <Card title="🔧 --persona-backend">
+    **Priority**: Reliability > security > performance
+    
+    **Budgets**:
+    - Uptime: 99.9%
+    - Error Rate: <0.1%
+    - Response: <200ms
+  </Card>
+  
+  <Card title="🛡️ --persona-security">
+    **Priority**: Security > compliance > reliability
+    
+    **Principles**: Zero Trust, Defense in Depth
+  </Card>
+</CardGrid>
+
+### Process & Quality Experts
+
+<CardGrid cols={3}>
+  <Card title="🔍 --persona-analyzer">
+    Evidence-based investigation
+  </Card>
+  <Card title="✅ --persona-qa">
+    Prevention > detection > correction
+  </Card>
+  <Card title="🔄 --persona-refactorer">
+    Simplicity > maintainability
+  </Card>
+</CardGrid>
+
+---
+
+## MCP Server Integration
+
+<CardGrid cols={2}>
+  <Card title="📚 Context7">
+    **Purpose**: Official library documentation
+    
+    **Activation**: Library imports, framework questions
+    
+    **Use Cases**: Framework patterns, official docs
+  </Card>
+  
+  <Card title="🧠 Sequential">
+    **Purpose**: Multi-step problem solving
+    
+    **Activation**: Complex debugging, --think flags
+    
+    **Use Cases**: Root cause analysis, architecture review
+  </Card>
+  
+  <Card title="✨ Magic">
+    **Purpose**: UI component generation
+    
+    **Activation**: UI component requests
+    
+    **Use Cases**: React/Vue/Angular components
+  </Card>
+  
+  <Card title="🎭 Playwright">
+    **Purpose**: Cross-browser testing
+    
+    **Activation**: Testing workflows
+    
+    **Use Cases**: E2E testing, performance metrics
+  </Card>
+</CardGrid>
+
+---
+
+## Orchestration & Routing
+
+### Resource Management Thresholds
+
+| Zone | Range | Action |
+|------|-------|--------|
+| <Badge variant="success">Green</Badge> | 0-60% | Full operations |
+| <Badge variant="warning">Yellow</Badge> | 60-75% | Resource optimization |
+| <Badge variant="warning">Orange</Badge> | 75-85% | Warning alerts |
+| <Badge variant="danger">Red</Badge> | 85-95% | Force efficiency modes |
+| <Badge variant="danger">Critical</Badge> | 95%+ | Emergency protocols |
+
+### 8-Step Validation Cycle
+
+1. **Syntax**: Language parsers, Context7 validation
+2. **Type**: Sequential analysis, type compatibility
+3. **Lint**: Context7 rules, quality analysis
+4. **Security**: Sequential analysis, OWASP compliance
+5. **Test**: Playwright E2E, coverage analysis (≥80% unit, ≥70% integration)
+6. **Performance**: Sequential analysis, benchmarking
+7. **Documentation**: Context7 patterns, completeness validation
+8. **Integration**: Playwright testing, deployment validation
+
+---
+
+## Workflow Patterns
+
+### Full-Stack Development
+
+```bash
+# 1. Design architecture
+/design --api --ddd --persona-architect --seq
+
+# 2. Build application
+/build --fullstack --tdd --magic
+
+# 3. Test comprehensively
+/test --coverage --e2e --pup
+
+# 4. Deploy safely
+/deploy --env staging --validate
+```
+
+### Security-First Development
+
+```bash
+/scan --security --owasp --deps --persona-security
+/analyze --security --forensic --seq
+/improve --security --validate --strict
+/test --security --coverage
+```
+
+### Performance Optimization
+
+```bash
+/analyze --profile --deep --persona-performance
+/troubleshoot --perf --investigate --pup
+/improve --performance --iterate --threshold 90%
+/test --performance --load
+```
+
+---
+
+## Best Practices
+
+### Decision Matrix
+
+| Scenario | Persona | MCP | Command | Flags |
+|----------|---------|-----|---------|-------|
+| New React Feature | frontend | magic, c7 | /build --feature | --react --tdd |
+| API Design | architect | seq, c7 | /design --api | --ddd --ultrathink |
+| Security Audit | security | seq | /scan --security | --owasp --strict |
+| Performance Issue | performance | pup, seq | /analyze --performance | --profile --iterate |
+| Bug Investigation | analyzer | all-mcp | /troubleshoot | --investigate --seq |
+
+### Quick Reference
+
+- **High-Risk Operations**: Always use `--validate` or `--dry-run`
+- **Documentation Tasks**: Enable `--c7` for library lookups
+- **Complex Analysis**: Use `--seq` for reasoning
+- **UI Development**: Enable `--magic` for AI components
+- **Testing**: Use `--pup` for browser automation
+- **Token Saving**: Add `--uc` for 30-50% reduction
+
+---
+
+## Summary
+
+<CardGrid cols={3}>
+  <Card title="✅ Professional Commands">
+    19 commands covering development, analysis, operations, and workflows
+  </Card>
+  <Card title="✅ Specialized Personas">
+    11 personas with domain expertise and auto-activation
+  </Card>
+  <Card title="✅ MCP Servers">
+    4 servers providing documentation, analysis, UI generation, and testing
+  </Card>
+  <Card title="✅ Intelligent Orchestration">
+    Wave modes and sub-agent delegation
+  </Card>
+  <Card title="✅ Evidence-Based Methodology">
+    Quality gates and validation frameworks
+  </Card>
+  <Card title="✅ Token Optimization">
+    30-50% reduction while preserving quality
+  </Card>
+</CardGrid>
+
+<Callout type="success">
+**SuperClaude v2.0.1**
+
+Evidence-based development | Senior developer mindset | Quality-first approach
+</Callout>
+
+---
+
+*For detailed information on specific components, refer to individual sections or the original documentation files.*

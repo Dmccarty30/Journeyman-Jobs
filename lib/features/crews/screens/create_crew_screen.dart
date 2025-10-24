@@ -9,7 +9,7 @@ import '../../../electrical_components/circuit_board_background.dart';
 
 import '../models/crew_preferences.dart';
 import '../providers/crews_riverpod_provider.dart';
-import '../../../widgets/dialogs/user_job_preferences_dialog.dart';
+import '../widgets/crew_preferences_dialog.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
 
 class CreateCrewScreen extends ConsumerStatefulWidget {
@@ -103,34 +103,45 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen>
           throw Exception('User not authenticated');
         }
 
-        // Create crew with current user as foreman
-        await crewService.createCrew(
-          name: _crewNameController.text,
-          foremanId: currentUser.uid, // Use current user's UID as foremanId
-          preferences: CrewPreferences(
-            jobTypes: [_selectedJobType],
-            constructionTypes: ['Commercial', 'Industrial'], // Default construction types
-            autoShareEnabled: _autoShareEnabled,
-          ),
-        );
-
-
-        // After successful crew creation, show user job preferences dialog
+        // Show crew preferences dialog to set crew-level job preferences
+        // Using isNewCrew: true returns preferences without creating crew yet
         if (mounted) {
-          // Show user job preferences dialog to set personal preferences after crew creation
-          await showDialog<bool>(
+          final CrewPreferences? crewPreferences = await showDialog<CrewPreferences>(
             context: context,
             barrierDismissible: false, // Require user to complete or cancel
-            builder: (context) => UserJobPreferencesDialog(
-              userId: currentUser.uid,
-              isFirstTime: true,
-              initialPreferences: null,
+            builder: (context) => CrewPreferencesDialog(
+              initialPreferences: CrewPreferences(
+                jobTypes: [_selectedJobType],
+                constructionTypes: ['Commercial', 'Industrial'], // Default construction types
+                autoShareEnabled: _autoShareEnabled,
+              ),
+              crewId: '', // Empty for new crew - not needed when isNewCrew: true
+              crewService: crewService,
+              isNewCrew: true, // Returns preferences instead of updating crew
             ),
           );
 
-          // Navigate to Tailboard screen
-          // FIX: Navigate to /crews without crew ID parameter since TailboardScreen manages crew selection internally
+          // If user cancelled the dialog, abort crew creation
+          if (crewPreferences == null) {
+            return;
+          }
+
+          // Create crew with the preferences set in the dialog
+          await crewService.createCrew(
+            name: _crewNameController.text,
+            foremanId: currentUser.uid, // Use current user's UID as foremanId
+            preferences: crewPreferences,
+          );
+
+          // Navigate to Tailboard screen after successful crew creation
           if (mounted) {
+            // Success notification
+            JJElectricalToast.showSuccess(
+              context: context,
+              message: 'Crew created successfully with preferences set!',
+            );
+
+            // FIX: Navigate to /crews without crew ID parameter since TailboardScreen manages crew selection internally
             context.go(AppRouter.crews);
           }
         }

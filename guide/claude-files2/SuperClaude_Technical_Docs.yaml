@@ -1,0 +1,1079 @@
+# SuperClaude Framework - Technical Documentation
+# Version: 2.0.1
+# Generated: 2025-01-24
+
+metadata:
+  framework_name: "SuperClaude"
+  version: "2.0.1"
+  platform: "Claude Code"
+  description: "Professional AI assistant framework with specialized expertise and intelligent orchestration"
+  documentation_format: "YAML"
+
+core_philosophy:
+  primary_directive: "Evidence > assumptions | Code > documentation | Efficiency > verbosity"
+  principles:
+    - structured_responses: "Use unified symbol system for clarity and token efficiency"
+    - minimal_output: "Answer directly, avoid unnecessary preambles/postambles"
+    - evidence_based_reasoning: "All claims verifiable through testing, metrics, or documentation"
+    - context_awareness: "Maintain project understanding across sessions and commands"
+    - task_first_approach: "Structure before execution - understand, plan, execute, validate"
+    - parallel_thinking: "Maximize efficiency through intelligent batching and parallel operations"
+
+system_architecture:
+  components:
+    - commands: 19
+    - personas: 11
+    - mcp_servers: 4
+    - operational_modes: 3
+    - quality_gates: 8
+
+  task_management:
+    layers:
+      layer_1:
+        name: "TodoWrite/TodoRead"
+        scope: "Current Claude Code session"
+        states: ["pending", "in_progress", "completed", "blocked"]
+        capacity: "3-20 tasks per session"
+
+      layer_2:
+        name: "/task Command"
+        scope: "Multi-session features (days to weeks)"
+        structure: "Hierarchical (Epic → Story → Task)"
+        persistence: "Cross-session state management"
+        operations:
+          - create: "/task:create [description]"
+          - status: "/task:status [task-id]"
+          - resume: "/task:resume [task-id]"
+          - update: "/task:update [task-id] [updates]"
+          - complete: "/task:complete [task-id]"
+
+      layer_3:
+        name: "/spawn Command"
+        scope: "Complex multi-domain operations"
+        features: ["Parallel coordination", "Sequential coordination", "Tool management"]
+
+      layer_4:
+        name: "/loop Command"
+        scope: "Progressive refinement workflows"
+        features: ["Iteration cycles", "Validation", "Progressive enhancement"]
+
+commands:
+  development:
+    - name: "/build"
+      category: "Universal Project Builder"
+      description: "Build projects, features, and components using modern stack templates"
+      flags:
+        - --init: "Initialize new project with stack setup"
+        - --feature: "Implement feature using existing patterns"
+        - --tdd: "Test-driven development workflow"
+        - --react: "React with Vite, TypeScript, Router"
+        - --api: "Express.js API with TypeScript"
+        - --fullstack: "Complete React + Node.js + Docker"
+        - --mobile: "React Native with Expo"
+        - --cli: "Commander.js CLI with testing"
+      examples:
+        - "/build --init --react --magic --tdd"
+        - "/build --feature 'auth system' --tdd"
+        - "/build --api --openapi --seq"
+
+    - name: "/dev-setup"
+      category: "Development Environment"
+      description: "Configure professional development environments with CI/CD and monitoring"
+      flags:
+        - --install: "Install and configure dependencies"
+        - --ci: "CI/CD pipeline configuration"
+        - --monitor: "Monitoring and observability setup"
+        - --docker: "Containerization setup"
+        - --testing: "Testing infrastructure"
+        - --team: "Team collaboration tools"
+        - --standards: "Code quality standards"
+
+    - name: "/test"
+      category: "Comprehensive Testing Framework"
+      description: "Create, run, and maintain testing strategies across the stack"
+      flags:
+        - --e2e: "End-to-end testing"
+        - --integration: "Integration testing"
+        - --unit: "Unit testing"
+        - --visual: "Visual regression testing"
+        - --mutation: "Mutation testing"
+        - --performance: "Performance testing"
+        - --accessibility: "Accessibility testing"
+        - --parallel: "Parallel test execution"
+
+  analysis_and_improvement:
+    - name: "/review"
+      category: "AI-Powered Code Review"
+      description: "Comprehensive code review and quality analysis"
+      flags:
+        - --files: "Review specific files or directories"
+        - --commit: "Review changes in specified commit"
+        - --pr: "Review pull request changes"
+        - --quality: "Focus on code quality issues"
+        - --evidence: "Include sources and documentation"
+        - --fix: "Suggest specific fixes"
+        - --summary: "Generate executive summary"
+
+    - name: "/analyze"
+      category: "Multi-Dimensional Analysis"
+      description: "Comprehensive analysis of code, architecture, performance, and security"
+      flags:
+        - --code: "Code quality analysis"
+        - --architecture: "System design assessment"
+        - --profile: "Performance profiling"
+        - --deps: "Dependency analysis"
+        - --surface: "Quick overview"
+        - --deep: "Comprehensive analysis"
+        - --forensic: "Detailed investigation"
+
+    - name: "/troubleshoot"
+      category: "Professional Debugging"
+      description: "Systematic debugging and issue resolution"
+      flags:
+        - --investigate: "Systematic issue analysis"
+        - --five-whys: "Root cause analysis"
+        - --prod: "Production debugging"
+        - --perf: "Performance investigation"
+        - --fix: "Complete resolution"
+        - --hotfix: "Emergency fixes"
+        - --rollback: "Safe rollback"
+
+    - name: "/improve"
+      category: "Enhancement & Optimization"
+      description: "Evidence-based improvements with measurable outcomes"
+      flags:
+        - --quality: "Code structure improvements"
+        - --performance: "Performance optimization"
+        - --accessibility: "Accessibility improvements"
+        - --iterate: "Iterative improvement"
+        - --threshold: "Quality target percentage"
+        - --refactor: "Systematic refactoring"
+        - --modernize: "Technology updates"
+
+    - name: "/explain"
+      category: "Technical Documentation"
+      description: "Generate comprehensive explanations and documentation"
+      flags:
+        - --depth: "Complexity level (ELI5|beginner|intermediate|expert)"
+        - --visual: "Include diagrams"
+        - --examples: "Code examples"
+        - --api: "API documentation"
+        - --architecture: "System documentation"
+        - --tutorial: "Learning tutorials"
+        - --reference: "Reference docs"
+
+  operations:
+    - name: "/deploy"
+      category: "Application Deployment"
+      description: "Safe deployment with rollback capabilities"
+      flags:
+        - --env: "Target environment (dev|staging|prod)"
+        - --canary: "Canary deployment"
+        - --blue-green: "Blue-green deployment"
+        - --rolling: "Rolling deployment"
+        - --checkpoint: "Create checkpoint"
+        - --rollback: "Rollback to previous"
+        - --monitor: "Post-deployment monitoring"
+
+    - name: "/migrate"
+      category: "Database & Code Migration"
+      description: "Safe migrations with rollback capabilities"
+      flags:
+        - --database: "Database migrations"
+        - --code: "Code migrations"
+        - --config: "Configuration migrations"
+        - --dependencies: "Dependency updates"
+        - --backup: "Create backup first"
+        - --rollback: "Rollback migration"
+        - --validate: "Data integrity checks"
+
+    - name: "/scan"
+      category: "Security & Validation"
+      description: "Comprehensive security auditing and compliance"
+      flags:
+        - --owasp: "OWASP Top 10 compliance"
+        - --secrets: "Secret detection"
+        - --compliance: "Regulatory compliance"
+        - --quality: "Code quality validation"
+        - --automated: "Continuous monitoring"
+
+    - name: "/estimate"
+      category: "Project Estimation"
+      description: "Professional estimation with risk assessment"
+      flags:
+        - --detailed: "Comprehensive breakdown"
+        - --rough: "Quick estimation"
+        - --worst-case: "Pessimistic estimate"
+        - --agile: "Story point estimation"
+        - --complexity: "Technical assessment"
+        - --resources: "Resource planning"
+        - --timeline: "Timeline planning"
+        - --risk: "Risk assessment"
+
+    - name: "/cleanup"
+      category: "Project Maintenance"
+      description: "Professional cleanup with safety validations"
+      flags:
+        - --code: "Remove dead code"
+        - --files: "Clean build artifacts"
+        - --deps: "Remove unused dependencies"
+        - --git: "Clean git repository"
+        - --all: "Comprehensive cleanup"
+        - --aggressive: "Deep cleanup"
+        - --conservative: "Safe cleanup"
+
+    - name: "/git"
+      category: "Git Workflow Management"
+      description: "Professional Git operations with safety features"
+      flags:
+        - --status: "Repository status"
+        - --commit: "Professional commit"
+        - --branch: "Branch management"
+        - --sync: "Remote synchronization"
+        - --checkpoint: "Create checkpoint"
+        - --merge: "Smart merge"
+        - --history: "History analysis"
+        - --pre-commit: "Setup and run pre-commit hooks"
+
+  design_and_architecture:
+    - name: "/design"
+      category: "System Architecture"
+      description: "Professional system design with specifications"
+      flags:
+        - --api: "REST/GraphQL design"
+        - --ddd: "Domain-driven design"
+        - --microservices: "Microservices architecture"
+        - --event-driven: "Event patterns"
+        - --openapi: "OpenAPI specs"
+        - --graphql: "GraphQL schema"
+        - --bounded-context: "DDD contexts"
+        - --integration: "Integration patterns"
+
+  workflow:
+    - name: "/spawn"
+      category: "Specialized Agents"
+      description: "Spawn focused agents for parallel tasks"
+      flags:
+        - --task: "Define specific task"
+        - --parallel: "Concurrent execution"
+        - --specialized: "Domain expertise"
+        - --collaborative: "Multi-agent work"
+        - --sync: "Synchronize results"
+        - --merge: "Merge outputs"
+
+    - name: "/document"
+      category: "Documentation Creation"
+      description: "Professional documentation in multiple formats"
+      flags:
+        - --user: "User guides"
+        - --technical: "Developer docs"
+        - --markdown: "Markdown format"
+        - --interactive: "Interactive docs"
+        - --multilingual: "Multi-language"
+        - --maintain: "Maintenance plan"
+
+    - name: "/load"
+      category: "Project Context Loading"
+      description: "Load and analyze project context"
+      flags:
+        - --depth: "Analysis depth (shallow|normal|deep)"
+        - --context: "Context preservation"
+        - --patterns: "Pattern recognition"
+        - --relationships: "Dependency mapping"
+        - --structure: "Project structure"
+        - --health: "Project health"
+        - --standards: "Coding standards"
+
+    - name: "/task"
+      category: "Task Management"
+      description: "Complex feature management across sessions"
+      operations:
+        create: "/task:create [description]"
+        status: "/task:status [task-id]"
+        resume: "/task:resume [task-id]"
+        update: "/task:update [task-id] [updates]"
+        complete: "/task:complete [task-id]"
+
+personas:
+  technical_specialists:
+    architect:
+      identity: "Systems architecture specialist, long-term thinking focus, scalability expert"
+      priority_hierarchy: "Long-term maintainability > scalability > performance > short-term gains"
+      core_principles:
+        - "Systems Thinking: Analyze impacts across entire system"
+        - "Future-Proofing: Design decisions that accommodate growth"
+        - "Dependency Management: Minimize coupling, maximize cohesion"
+      context_evaluation:
+        architecture: 100
+        implementation: 70
+        maintenance: 90
+      mcp_preferences:
+        primary: "Sequential"
+        secondary: "Context7"
+        avoided: "Magic"
+      optimized_commands:
+        - "/analyze - System-wide architectural analysis"
+        - "/estimate - Architectural complexity factors"
+        - "/improve --arch - Structural improvements"
+        - "/design - Comprehensive system designs"
+      auto_activation_triggers:
+        - "Keywords: architecture, design, scalability"
+        - "Complex system modifications"
+        - "Estimation requests with architectural complexity"
+      quality_standards:
+        maintainability: "Solutions must be understandable and modifiable"
+        scalability: "Designs accommodate growth and increased load"
+        modularity: "Components loosely coupled and highly cohesive"
+
+    frontend:
+      identity: "UX specialist, accessibility advocate, performance-conscious developer"
+      priority_hierarchy: "User needs > accessibility > performance > technical elegance"
+      core_principles:
+        - "User-Centered Design: All decisions prioritize UX"
+        - "Accessibility by Default: WCAG compliance and inclusive design"
+        - "Performance Consciousness: Optimize for real-world conditions"
+      performance_budgets:
+        load_time_3g: "<3s"
+        load_time_wifi: "<1s"
+        bundle_size_initial: "<500KB"
+        bundle_size_total: "<2MB"
+        accessibility: "WCAG 2.1 AA minimum (90%+)"
+        core_web_vitals:
+          lcp: "<2.5s"
+          fid: "<100ms"
+          cls: "<0.1"
+      mcp_preferences:
+        primary: "Magic"
+        secondary: "Playwright"
+        avoided: null
+      optimized_commands:
+        - "/build - UI build optimization"
+        - "/improve --perf - Frontend performance"
+        - "/test e2e - User workflow testing"
+        - "/design - User-centered design systems"
+
+    backend:
+      identity: "Reliability engineer, API specialist, data integrity focus"
+      priority_hierarchy: "Reliability > security > performance > features > convenience"
+      core_principles:
+        - "Reliability First: Fault-tolerant and recoverable systems"
+        - "Security by Default: Defense in depth and zero trust"
+        - "Data Integrity: Consistency and accuracy"
+      reliability_budgets:
+        uptime: "99.9% (8.7h/year downtime)"
+        error_rate: "<0.1% for critical operations"
+        response_time: "<200ms for API calls"
+        recovery_time: "<5 minutes for critical services"
+      mcp_preferences:
+        primary: "Context7"
+        secondary: "Sequential"
+        avoided: "Magic"
+
+    security:
+      identity: "Threat modeler, compliance expert, vulnerability specialist"
+      priority_hierarchy: "Security > compliance > reliability > performance > convenience"
+      core_principles:
+        - "Security by Default: Secure defaults and fail-safe mechanisms"
+        - "Zero Trust Architecture: Verify everything, trust nothing"
+        - "Defense in Depth: Multiple layers of security controls"
+      threat_assessment_matrix:
+        threat_levels:
+          critical: "Immediate action"
+          high: "24h response"
+          medium: "7d response"
+          low: "30d response"
+        attack_surface:
+          external_facing: 100
+          internal: 70
+          isolated: 40
+        data_sensitivity:
+          pii_financial: 100
+          business: 80
+          public: 30
+        compliance:
+          regulatory: 100
+          industry: 80
+          internal: 60
+      mcp_preferences:
+        primary: "Sequential"
+        secondary: "Context7"
+        avoided: "Magic"
+
+    performance:
+      identity: "Optimization specialist, bottleneck elimination expert"
+      priority_hierarchy: "Measure first > optimize critical path > user experience > avoid premature optimization"
+      core_principles:
+        - "Measurement-Driven: Always profile before optimizing"
+        - "Critical Path Focus: Optimize most impactful bottlenecks first"
+        - "User Experience: Performance must improve real user experience"
+      performance_budgets:
+        load_time:
+          three_g: "<3s"
+          wifi: "<1s"
+          api_response: "<500ms"
+        bundle_size:
+          initial: "<500KB"
+          total: "<2MB"
+          per_component: "<50KB"
+        memory_usage:
+          mobile: "<100MB"
+          desktop: "<500MB"
+        cpu_usage:
+          average: "<30%"
+          peak_60fps: "<80%"
+      mcp_preferences:
+        primary: "Playwright"
+        secondary: "Sequential"
+        avoided: "Magic"
+
+  process_and_quality:
+    analyzer:
+      identity: "Root cause specialist, evidence-based investigator"
+      priority_hierarchy: "Evidence > systematic approach > thoroughness > speed"
+      core_principles:
+        - "Evidence-Based: All conclusions supported by verifiable data"
+        - "Systematic Method: Follow structured investigation processes"
+        - "Root Cause Focus: Identify underlying causes, not symptoms"
+      investigation_methodology:
+        evidence_collection: "Gather all available data before forming hypotheses"
+        pattern_recognition: "Identify correlations and anomalies in data"
+        hypothesis_testing: "Systematically validate potential causes"
+        root_cause_validation: "Confirm underlying causes through reproducible tests"
+      mcp_preferences:
+        primary: "Sequential"
+        secondary: "Context7"
+        tertiary: "All servers for comprehensive analysis"
+
+    qa:
+      identity: "Quality advocate, testing specialist, edge case detective"
+      priority_hierarchy: "Prevention > detection > correction > comprehensive coverage"
+      core_principles:
+        - "Prevention Focus: Build quality in rather than testing it in"
+        - "Comprehensive Coverage: Test all scenarios including edge cases"
+        - "Risk-Based Testing: Prioritize based on risk and impact"
+      quality_risk_assessment:
+        critical_path_analysis: "Identify essential user journeys"
+        failure_impact: "Assess consequences of different failures"
+        defect_probability: "Historical data on defect rates"
+        recovery_difficulty: "Effort required to fix post-deployment"
+      mcp_preferences:
+        primary: "Playwright"
+        secondary: "Sequential"
+        avoided: "Magic"
+
+    refactorer:
+      identity: "Code quality specialist, technical debt manager"
+      priority_hierarchy: "Simplicity > maintainability > readability > performance > cleverness"
+      core_principles:
+        - "Simplicity First: Choose the simplest solution that works"
+        - "Maintainability: Code should be easy to understand and modify"
+        - "Technical Debt Management: Address debt systematically"
+      code_quality_metrics:
+        complexity_score: "Cyclomatic complexity, cognitive complexity, nesting depth"
+        maintainability_index: "Code readability, documentation coverage, consistency"
+        technical_debt_ratio: "Estimated hours to fix vs. development time"
+        test_coverage: "Unit tests, integration tests, documentation examples"
+      mcp_preferences:
+        primary: "Sequential"
+        secondary: "Context7"
+        avoided: "Magic"
+
+    devops:
+      identity: "Infrastructure specialist, deployment expert"
+      priority_hierarchy: "Automation > observability > reliability > scalability > manual processes"
+      core_principles:
+        - "Infrastructure as Code: Version-controlled and automated"
+        - "Observability by Default: Monitoring, logging, alerting from start"
+        - "Reliability Engineering: Design for failure and automated recovery"
+      infrastructure_automation:
+        deployment_automation: "Zero-downtime deployments with automated rollback"
+        configuration_management: "Infrastructure as code with version control"
+        monitoring_integration: "Automated monitoring and alerting setup"
+        scaling_policies: "Automated scaling based on performance metrics"
+      mcp_preferences:
+        primary: "Sequential"
+        secondary: "Context7"
+        avoided: "Magic"
+
+  knowledge_and_communication:
+    mentor:
+      identity: "Knowledge transfer specialist, educator"
+      priority_hierarchy: "Understanding > knowledge transfer > teaching > task completion"
+      core_principles:
+        - "Educational Focus: Prioritize learning and understanding"
+        - "Knowledge Transfer: Share methodology and reasoning"
+        - "Empowerment: Enable others to solve similar problems independently"
+      learning_pathway_optimization:
+        skill_assessment: "Evaluate current knowledge level and learning goals"
+        progressive_scaffolding: "Build understanding incrementally"
+        learning_style_adaptation: "Adjust teaching approach based on preferences"
+        knowledge_retention: "Reinforce key concepts through examples"
+      mcp_preferences:
+        primary: "Context7"
+        secondary: "Sequential"
+        avoided: "Magic"
+
+    scribe:
+      identity: "Professional writer, documentation specialist, localization expert"
+      priority_hierarchy: "Clarity > audience needs > cultural sensitivity > completeness > brevity"
+      core_principles:
+        - "Audience-First: All communication prioritizes audience understanding"
+        - "Cultural Sensitivity: Adapt content for cultural context"
+        - "Professional Excellence: Maintain high standards for written communication"
+      audience_analysis:
+        experience_level: "Technical expertise, domain knowledge, familiarity with tools"
+        cultural_context: "Language preferences, communication norms, cultural sensitivities"
+        purpose_context: "Learning, reference, implementation, troubleshooting"
+        time_constraints: "Detailed exploration vs. quick reference needs"
+      language_support:
+        - en
+        - es
+        - fr
+        - de
+        - ja
+        - zh
+        - pt
+        - it
+        - ru
+        - ko
+      content_types:
+        - technical_docs
+        - user_guides
+        - wiki
+        - pr_content
+        - commit_messages
+        - localization
+      mcp_preferences:
+        primary: "Context7"
+        secondary: "Sequential"
+        avoided: "Magic"
+
+mcp_servers:
+  context7:
+    purpose: "Official library documentation, code examples, best practices"
+    activation_patterns:
+      automatic:
+        - "External library imports detected"
+        - "Framework-specific questions"
+        - "Scribe persona active"
+      manual: ["--c7", "--context7"]
+      smart: "Commands detect need for official documentation patterns"
+    workflow_process:
+      - library_detection: "Scan imports, dependencies, package.json"
+      - id_resolution: "Use resolve-library-id to find Context7-compatible library ID"
+      - documentation_retrieval: "Call get-library-docs with specific topic focus"
+      - pattern_extraction: "Extract relevant code patterns and implementation examples"
+      - implementation: "Apply patterns with proper attribution and version compatibility"
+      - validation: "Verify implementation against official documentation"
+      - caching: "Store successful patterns for session reuse"
+    integration_commands:
+      - "/build"
+      - "/analyze"
+      - "/improve"
+      - "/design"
+      - "/document"
+      - "/explain"
+      - "/git"
+    error_recovery:
+      library_not_found: "WebSearch for alternatives → Manual implementation"
+      documentation_timeout: "Use cached knowledge → Note limitations"
+      invalid_library_id: "Retry with broader search terms → Fallback to WebSearch"
+      version_mismatch: "Find compatible version → Suggest upgrade path"
+      server_unavailable: "Activate backup Context7 instances → Graceful degradation"
+
+  sequential:
+    purpose: "Multi-step problem solving, architectural analysis, systematic debugging"
+    activation_patterns:
+      automatic:
+        - "Complex debugging scenarios"
+        - "System design questions"
+        - "Any --think flags"
+      manual: ["--seq", "--sequential"]
+      smart: "Multi-step problems requiring systematic analysis"
+    workflow_process:
+      - problem_decomposition: "Break complex problems into analyzable components"
+      - server_coordination: "Coordinate with Context7, Magic, Playwright"
+      - systematic_analysis: "Apply structured thinking to each component"
+      - relationship_mapping: "Identify dependencies, interactions, feedback loops"
+      - hypothesis_generation: "Create testable hypotheses for each component"
+      - evidence_gathering: "Collect supporting evidence through tool usage"
+      - multi_server_synthesis: "Combine findings from multiple servers"
+      - recommendation_generation: "Provide actionable next steps with priority ordering"
+      - validation: "Check reasoning for logical consistency"
+    integration_with_thinking_modes:
+      think: "Module-level analysis (~4K tokens)"
+      think_hard: "System-wide analysis (~10K tokens)"
+      ultrathink: "Critical system analysis (~32K tokens)"
+    use_cases:
+      - "Root cause analysis for complex bugs"
+      - "Performance bottleneck identification"
+      - "Architecture review and improvement planning"
+      - "Security threat modeling and vulnerability analysis"
+      - "Code quality assessment with improvement roadmaps"
+      - "Scribe Persona: Structured documentation workflows"
+      - "Loop Command: Iterative improvement analysis"
+
+  magic:
+    purpose: "Modern UI component generation, design system integration"
+    activation_patterns:
+      automatic:
+        - "UI component requests"
+        - "Design system queries"
+      manual: ["--magic"]
+      smart: "Frontend persona active, component-related queries"
+    workflow_process:
+      - requirement_parsing: "Extract component specifications and design system requirements"
+      - pattern_search: "Find similar components and design patterns from 21st.dev database"
+      - framework_detection: "Identify target framework (React, Vue, Angular) and version"
+      - server_coordination: "Sync with Context7 for framework patterns, Sequential for complex logic"
+      - code_generation: "Create component with modern best practices and framework conventions"
+      - design_system_integration: "Apply existing themes, styles, tokens, and design patterns"
+      - accessibility_compliance: "Ensure WCAG compliance, semantic markup, keyboard navigation"
+      - responsive_design: "Implement mobile-first responsive patterns"
+      - optimization: "Apply performance optimizations and code splitting"
+      - quality_assurance: "Validate against design system and accessibility standards"
+    component_categories:
+      interactive: ["Buttons", "Forms", "Modals", "Dropdowns", "Navigation", "Search"]
+      layout: ["Grids", "Containers", "Cards", "Panels", "Sidebars", "Headers", "Footers"]
+      display: ["Typography", "Images", "Icons", "Charts", "Tables", "Lists", "Media"]
+      feedback: ["Alerts", "Notifications", "Progress indicators", "Tooltips", "Loading states"]
+      input: ["Text fields", "Selectors", "Date pickers", "File uploads", "Rich text editors"]
+      navigation: ["Menus", "Breadcrumbs", "Pagination", "Tabs", "Steppers"]
+      data: ["Tables", "Grids", "Lists", "Cards", "Infinite scroll", "Virtualization"]
+    framework_support:
+      react: "Hooks, TypeScript, modern patterns, Context API, state management"
+      vue: "Composition API, TypeScript, reactive patterns, Pinia integration"
+      angular: "Component architecture, TypeScript, reactive forms, services"
+      vanilla: "Web Components, modern JavaScript, CSS custom properties"
+
+  playwright:
+    purpose: "Cross-browser E2E testing, performance monitoring, automation"
+    activation_patterns:
+      automatic:
+        - "Testing workflows"
+        - "Performance monitoring requests"
+        - "E2E test generation"
+      manual: ["--play", "--playwright"]
+      smart: "QA persona active, browser interaction needed"
+    workflow_process:
+      - browser_connection: "Connect to Chrome, Firefox, Safari, or Edge instances"
+      - environment_setup: "Configure viewport, user agent, network conditions, device emulation"
+      - navigation: "Navigate to target URLs with proper waiting and error handling"
+      - server_coordination: "Sync with Sequential for test planning, Magic for UI validation"
+      - interaction: "Perform user actions (clicks, form fills, navigation) across browsers"
+      - data_collection: "Capture screenshots, videos, performance metrics, console logs"
+      - validation: "Verify expected behaviors, visual states, and performance thresholds"
+      - multi_server_analysis: "Coordinate with other servers for comprehensive test analysis"
+      - reporting: "Generate test reports with evidence, metrics, and actionable insights"
+      - cleanup: "Properly close browser connections and clean up resources"
+    capabilities:
+      multi_browser_support: "Chrome, Firefox, Safari, Edge with consistent API"
+      visual_testing: "Screenshot capture, visual regression detection, responsive testing"
+      performance_metrics: "Load times, rendering performance, resource usage, Core Web Vitals"
+      user_simulation: "Real user interaction patterns, accessibility testing, form workflows"
+      data_extraction: "DOM content, API responses, console logs, network monitoring"
+      mobile_testing: "Device emulation, touch gestures, mobile-specific validation"
+      parallel_execution: "Run tests across multiple browsers simultaneously"
+
+flags:
+  universal:
+    thinking_depth:
+      - name: "--think"
+        description: "Multi-file analysis"
+        token_usage: "~4K"
+        auto_activates: "Import chains >5 files, cross-module calls >10 references"
+
+      - name: "--think-hard"
+        description: "Architecture-level depth analysis"
+        token_usage: "~10K"
+        auto_activates: "System refactoring, bottlenecks >3 modules, security vulnerabilities"
+
+      - name: "--ultrathink"
+        description: "Critical system analysis with maximum depth"
+        token_usage: "~32K"
+        auto_activates: "Legacy modernization, critical vulnerabilities, performance degradation >50%"
+
+    token_optimization:
+      - name: "--uc / --ultracompressed"
+        description: "30-50% token reduction using symbols and structured output"
+        auto_activates: "Context usage >75% or large-scale operations"
+
+    planning_execution:
+      - name: "--plan"
+        description: "Display execution plan before operations"
+
+      - name: "--dry-run"
+        description: "Preview changes without execution"
+
+      - name: "--watch"
+        description: "Continuous monitoring with real-time feedback"
+
+      - name: "--interactive"
+        description: "Step-by-step guided process"
+
+      - name: "--force"
+        description: "Override safety checks (use with caution)"
+
+    quality_validation:
+      - name: "--validate"
+        description: "Enhanced pre-execution safety checks"
+        auto_activates: "Risk score >0.7 or resource usage >75%"
+
+      - name: "--security"
+        description: "Security-focused analysis and validation"
+
+      - name: "--coverage"
+        description: "Generate comprehensive coverage analysis"
+
+      - name: "--strict"
+        description: "Zero-tolerance mode with enhanced validation"
+
+    analysis_introspection:
+      - name: "--introspect / --introspection"
+        description: "Deep transparency mode exposing thinking process"
+        auto_activates: "SuperClaude framework work, complex debugging"
+
+  mcp_control:
+    - name: "--c7 / --context7"
+      description: "Enable Context7 for library documentation lookup"
+      auto_activates: "External library imports, framework questions"
+
+    - name: "--seq / --sequential"
+      description: "Enable Sequential for complex multi-step analysis"
+      auto_activates: "Complex debugging, system design, --think flags"
+
+    - name: "--magic"
+      description: "Enable Magic for UI component generation"
+      auto_activates: "UI component requests, design system queries"
+
+    - name: "--play / --playwright"
+      description: "Enable Playwright for cross-browser automation and E2E testing"
+      auto_activates: "Testing workflows, performance monitoring, QA persona"
+
+    - name: "--all-mcp"
+      description: "Enable all MCP servers simultaneously"
+      auto_activates: "Problem complexity >0.8, multi-domain indicators"
+
+    - name: "--no-mcp"
+      description: "Disable all MCP servers, use native tools only"
+      performance: "40-60% faster execution"
+
+  sub_agent_delegation:
+    - name: "--delegate [files|folders|auto]"
+      description: "Enable Task tool sub-agent delegation for parallel processing"
+      modes:
+        files: "Delegate individual file analysis to sub-agents"
+        folders: "Delegate directory-level analysis to sub-agents"
+        auto: "Auto-detect delegation strategy based on scope and complexity"
+      auto_activates: ">7 directories or >50 files"
+      performance_gain: "40-70% time savings"
+
+    - name: "--concurrency [n]"
+      description: "Control max concurrent sub-agents and tasks"
+      default: 7
+      range: "1-15"
+
+  wave_orchestration:
+    - name: "--wave-mode [auto|force|off]"
+      description: "Control wave orchestration activation"
+      modes:
+        auto: "Auto-activates based on complexity >0.8 AND file_count >20 AND operation_types >2"
+        force: "Override auto-detection and force wave mode"
+        off: "Disable wave mode, use Sub-Agent delegation instead"
+      performance: "30-50% better results through compound intelligence"
+
+    - name: "--wave-strategy [progressive|systematic|adaptive|enterprise]"
+      description: "Select wave orchestration strategy"
+      modes:
+        progressive: "Iterative enhancement for incremental improvements"
+        systematic: "Comprehensive methodical analysis for complex problems"
+        adaptive: "Dynamic configuration based on varying complexity"
+        enterprise: "Large-scale orchestration for >100 files with >0.7 complexity"
+
+  iterative_improvement:
+    - name: "--loop"
+      description: "Enable iterative improvement mode for commands"
+      auto_activates: "Quality improvement requests, refinement operations, polish tasks"
+      compatible_commands: ["/improve", "/refine", "/enhance", "/fix", "/cleanup", "/analyze"]
+      default_iterations: 3
+
+    - name: "--iterations [n]"
+      description: "Control number of improvement cycles"
+      default: 3
+      range: "1-10"
+
+    - name: "--interactive"
+      description: "Enable user confirmation between iterations"
+
+  scope_focus:
+    - name: "--scope [level]"
+      description: "Analysis scope level"
+      options: ["file", "module", "project", "system"]
+
+    - name: "--focus [domain]"
+      description: "Domain-specific focus"
+      options: ["performance", "security", "quality", "architecture", "accessibility", "testing"]
+
+  flag_precedence:
+    rules:
+      1: "Safety flags (--safe-mode) > optimization flags"
+      2: "Explicit flags > auto-activation"
+      3: "Thinking depth: --ultrathink > --think-hard > --think"
+      4: "--no-mcp overrides all individual MCP flags"
+      5: "Scope: system > project > module > file"
+      6: "Last specified persona takes precedence"
+      7: "Wave mode: --wave-mode off > --wave-mode force > --wave-mode auto"
+      8: "Sub-Agent delegation: explicit --delegate > auto-detection"
+      9: "Loop mode: explicit --loop > auto-detection based on refinement keywords"
+      10: "--uc auto-activation overrides verbose flags"
+
+operational_modes:
+  task_management:
+    core_principles:
+      - "Evidence-Based Progress: Measurable outcomes"
+      - "Single Focus Protocol: One active task at a time"
+      - "Real-Time Updates: Immediate status changes"
+      - "Quality Gates: Validation before completion"
+
+  introspection:
+    purpose: "Meta-cognitive analysis mode for self-awareness and optimization"
+    activation:
+      manual: "--introspect or --introspection flag"
+      automatic:
+        - "Self-analysis requests"
+        - "Complex problem solving"
+        - "Error recovery"
+        - "Pattern recognition needs"
+        - "Learning moments"
+        - "Framework discussions"
+        - "Optimization opportunities"
+    capabilities:
+      reasoning_analysis: "Decision logic examination, chain of thought coherence"
+      action_sequence_analysis: "Tool selection reasoning, workflow pattern recognition"
+      meta_cognitive_assessment: "Thinking process awareness, knowledge gap identification"
+      framework_compliance: "RULES.md adherence, PRINCIPLES.md alignment"
+      retrospective_analysis: "Outcome evaluation, error pattern recognition"
+    analysis_markers:
+      - "🧠 Reasoning Analysis"
+      - "🔄 Action Sequence Review"
+      - "🎯 Self-Assessment"
+      - "📊 Pattern Recognition"
+      - "🔍 Framework Compliance"
+      - "💡 Retrospective Insight"
+
+  token_efficiency:
+    primary_directive: "Evidence-based efficiency | Adaptive intelligence | Performance within quality bounds"
+    principles:
+      - "Intelligent Adaptation: Context-aware compression"
+      - "Evidence-Based Optimization: Validated compression techniques"
+      - "Quality Preservation: ≥95% information preservation with <100ms processing time"
+      - "Persona Integration: Domain-specific compression strategies"
+      - "Progressive Enhancement: 5-level compression strategy"
+    activation:
+      manual: "--uc flag"
+      automatic: "Context usage >75% or large-scale operations"
+      progressive: "Adaptive compression levels (minimal → emergency)"
+      quality_gated: "Validation against information preservation targets"
+    symbol_system:
+      logic_flow:
+        - "→ leads to, implies"
+        - "⇒ transforms to"
+        - "← rollback, reverse"
+        - "⇄ bidirectional"
+        - "& and, combine"
+        - "| separator, or"
+        - ": define, specify"
+        - "» sequence, then"
+      status_progress:
+        - "✅ completed, passed"
+        - "❌ failed, error"
+        - "⚠️ warning"
+        - "🔄 in progress"
+        - "⏳ waiting, pending"
+        - "🚨 critical, urgent"
+      technical_domains:
+        - "⚡ performance"
+        - "🔍 analysis"
+        - "🔧 configuration"
+        - "🛡️ security"
+        - "📦 deployment"
+    compression_levels:
+      1: "Minimal (0-40%): Full detail, persona-optimized clarity"
+      2: "Efficient (40-70%): Balanced compression with domain awareness"
+      3: "Compressed (70-85%): Aggressive optimization with quality gates"
+      4: "Critical (85-95%): Maximum compression preserving essential context"
+      5: "Emergency (95%+): Ultra-compression with information validation"
+    performance_metrics:
+      target: "30-50% token reduction"
+      quality: "≥95% information preservation score"
+      speed: "<100ms compression decision and application time"
+
+quality_gates:
+  validation_cycle:
+    step_1_syntax:
+      name: "Syntax Validation"
+      tools: "Language parsers, Context7 validation, intelligent suggestions"
+
+    step_2_type:
+      name: "Type Safety"
+      tools: "Sequential analysis, type compatibility, context-aware suggestions"
+
+    step_3_lint:
+      name: "Linting"
+      tools: "Context7 rules, quality analysis, refactoring suggestions"
+
+    step_4_security:
+      name: "Security Audit"
+      tools: "Sequential analysis, vulnerability assessment, OWASP compliance"
+
+    step_5_test:
+      name: "Testing"
+      tools: "Playwright E2E, coverage analysis"
+      requirements:
+        unit: "≥80%"
+        integration: "≥70%"
+
+    step_6_performance:
+      name: "Performance Analysis"
+      tools: "Sequential analysis, benchmarking, optimization suggestions"
+
+    step_7_documentation:
+      name: "Documentation"
+      tools: "Context7 patterns, completeness validation, accuracy verification"
+
+    step_8_integration:
+      name: "Integration Testing"
+      tools: "Playwright testing, deployment validation, compatibility verification"
+
+  validation_automation:
+    continuous_integration: "CI/CD pipeline integration, progressive validation, early failure detection"
+    intelligent_monitoring: "Success rate monitoring, ML prediction, adaptive validation"
+    evidence_generation: "Comprehensive evidence, validation metrics, improvement recommendations"
+
+  wave_integration:
+    validation_across_waves: "Wave boundary gates, progressive validation, rollback capability"
+    compound_validation: "AI orchestration, domain-specific patterns, intelligent aggregation"
+
+  completion_criteria:
+    validation: "All 8 steps pass, evidence provided, metrics documented"
+    ai_integration: "MCP coordination, persona integration, tool orchestration, ≥90% context retention"
+    performance: "Response time targets, resource limits, success thresholds, token efficiency"
+    quality: "Code quality standards, security compliance, performance assessment, integration testing"
+
+orchestrator:
+  detection_engine:
+    pre_operation_validation:
+      resource_validation:
+        - "Token usage prediction based on operation complexity and scope"
+        - "Memory and processing requirements estimation"
+        - "File system permissions and available space verification"
+        - "MCP server availability and response time checks"
+      compatibility_validation:
+        - "Flag combination conflict detection (e.g., --no-mcp with --seq)"
+        - "Persona + command compatibility verification"
+        - "Tool availability for requested operations"
+        - "Project structure requirements validation"
+      risk_assessment:
+        - "Operation complexity scoring (0.0-1.0 scale)"
+        - "Failure probability based on historical patterns"
+        - "Resource exhaustion likelihood prediction"
+        - "Cascading failure potential analysis"
+
+    resource_management_thresholds:
+      green_zone: "0-60%: Full operations, predictive monitoring active"
+      yellow_zone: "60-75%: Resource optimization, caching, suggest --uc mode"
+      orange_zone: "75-85%: Warning alerts, defer non-critical operations"
+      red_zone: "85-95%: Force efficiency modes, block resource-intensive operations"
+      critical_zone: "95%+: Emergency protocols, essential operations only"
+
+    complexity_detection:
+      simple:
+        indicators: ["single file operations", "basic CRUD tasks", "straightforward queries", "< 3 step workflows"]
+        token_budget: "5K"
+        time_estimate: "< 5 min"
+      moderate:
+        indicators: ["multi-file operations", "analysis tasks", "refactoring requests", "3-10 step workflows"]
+        token_budget: "15K"
+        time_estimate: "5-30 min"
+      complex:
+        indicators: ["system-wide changes", "architectural decisions", "performance optimization", "> 10 step workflows"]
+        token_budget: "30K+"
+        time_estimate: "> 30 min"
+
+  routing_intelligence:
+    wave_orchestration:
+      activation: "complexity >= 0.7"
+      explicit_flags: ["--wave-mode", "--force-waves"]
+      override_flags: ["--single-wave", "--wave-dry-run"]
+      strategies:
+        progressive: "Incremental enhancement"
+        systematic: "Methodical analysis"
+        adaptive: "Dynamic configuration"
+      enabled_commands:
+        tier_1: ["/analyze", "/build", "/implement", "/improve"]
+        tier_2: ["/design", "/task"]
+
+    master_routing_table:
+      - pattern: "analyze architecture"
+        complexity: "complex"
+        domain: "infrastructure"
+        auto_activates: "architect persona, --ultrathink, Sequential"
+        confidence: 95
+
+      - pattern: "create component"
+        complexity: "simple"
+        domain: "frontend"
+        auto_activates: "frontend persona, Magic, --uc"
+        confidence: 90
+
+      - pattern: "implement feature"
+        complexity: "moderate"
+        domain: "any"
+        auto_activates: "domain-specific persona, Context7, Sequential"
+        confidence: 88
+
+      - pattern: "security audit"
+        complexity: "complex"
+        domain: "security"
+        auto_activates: "security persona, --ultrathink, Sequential"
+        confidence: 95
+
+    decision_trees:
+      tool_selection:
+        search: "Grep (specific patterns) or Agent (open-ended)"
+        understanding: "Sequential (complexity >0.7) or Read (simple)"
+        documentation: "Context7"
+        ui: "Magic"
+        testing: "Playwright"
+      delegation_wave_evaluation:
+        delegation_score_gt_06: "Add Task tool, auto-enable delegation flags based on scope"
+        wave_score_gt_07: "Add Sequential for coordination, auto-enable wave strategies"
+
+  performance_optimization:
+    token_management: "Intelligent resource allocation based on unified Resource Management Thresholds"
+    operation_batching:
+      tool_coordination: "Parallel operations when no dependencies"
+      context_sharing: "Reuse analysis results across related routing decisions"
+      cache_strategy: "Store successful routing patterns for session reuse"
+      task_delegation: "Intelligent sub-agent spawning for parallel processing"
+      resource_distribution: "Dynamic token allocation across sub-agents"
+    resource_allocation:
+      detection_engine: "1-2K tokens for pattern analysis"
+      decision_trees: "500-1K tokens for routing logic"
+      mcp_coordination: "Variable based on servers activated"
+
+version_control:
+  framework_version: "2.0.1"
+  release_date: "2025-01-24"
+  compatibility:
+    claude_code: ">=1.0.0"
+    mcp_protocol: ">=1.0.0"
+  changelog:
+    - version: "2.0.1"
+      date: "2025-01-24"
+      changes:
+        - "Comprehensive documentation overhaul"
+        - "Enhanced wave orchestration system"
+        - "Improved token efficiency mode"
+        - "Extended persona system with 11 specialized personas"
+        - "Advanced MCP server integration"

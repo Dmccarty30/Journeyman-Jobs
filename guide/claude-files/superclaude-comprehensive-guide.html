@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperClaude Framework - Comprehensive Integration Guide</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-bg: #1e293b;
+            --light-bg: #f8fafc;
+            --code-bg: #0f172a;
+            --border-color: #e2e8f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #334155;
+            background-color: var(--light-bg);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        header .version {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        nav {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 1rem;
+            z-index: 100;
+        }
+        
+        nav h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        nav ul {
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        nav a {
+            color: #64748b;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        nav a:hover {
+            color: var(--primary-color);
+        }
+        
+        section {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1, h2, h3, h4 {
+            color: #1e293b;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        h1 { font-size: 2rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; }
+        h2 { font-size: 1.75rem; color: var(--primary-color); }
+        h3 { font-size: 1.5rem; color: var(--secondary-color); }
+        h4 { font-size: 1.25rem; }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        code {
+            background: var(--code-bg);
+            color: #e2e8f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        pre code {
+            background: transparent;
+            padding: 0;
+        }
+        
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background: var(--light-bg);
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        tr:hover {
+            background: #f8fafc;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        
+        .badge-primary { background: #dbeafe; color: var(--primary-color); }
+        .badge-success { background: #d1fae5; color: var(--success-color); }
+        .badge-warning { background: #fef3c7; color: var(--warning-color); }
+        .badge-danger { background: #fee2e2; color: var(--danger-color); }
+        
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            background: white;
+        }
+        
+        .card-header {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            border-left: 4px solid;
+        }
+        
+        .alert-info {
+            background: #dbeafe;
+            border-color: var(--primary-color);
+            color: #1e40af;
+        }
+        
+        .alert-success {
+            background: #d1fae5;
+            border-color: var(--success-color);
+            color: #065f46;
+        }
+        
+        .alert-warning {
+            background: #fef3c7;
+            border-color: var(--warning-color);
+            color: #92400e;
+        }
+        
+        .example-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .example-box h4 {
+            margin-top: 0;
+            color: var(--secondary-color);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+            border-top: 1px solid var(--border-color);
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            nav {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🚀 SuperClaude Framework</h1>
+            <p class="subtitle">Comprehensive Integration Guide</p>
+            <span class="version">Version 2.0.1</span>
+            <p style="margin-top: 1rem; opacity: 0.9;">Evidence-Based AI Development System</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav>
+            <h2>📋 Navigation</h2>
+            <ul>
+                <li><a href="#overview">Overview & Quick Start</a></li>
+                <li><a href="#architecture">Core Architecture</a></li>
+                <li><a href="#commands">Command System</a></li>
+                <li><a href="#flags">Flag System</a></li>
+                <li><a href="#personas">Persona System</a></li>
+                <li><a href="#mcp">MCP Server Integration</a></li>
+                <li><a href="#orchestration">Orchestration & Routing</a></li>
+                <li><a href="#principles">Core Principles</a></li>
+                <li><a href="#modes">Operational Modes</a></li>
+                <li><a href="#workflows">Workflow Patterns</a></li>
+                <li><a href="#best-practices">Best Practices</a></li>
+            </ul>
+        </nav>
+
+        <section id="overview">
+            <h1>Overview & Quick Start</h1>
+            
+            <h2>What is SuperClaude?</h2>
+            <p>SuperClaude is an advanced AI development framework for Claude Code that provides:</p>
+            
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">⚡ 19 Professional Commands</div>
+                    <p>Development, analysis, and operations</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">🎭 11 Specialized Personas</div>
+                    <p>Domain expertise with auto-activation</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">🔌 4 MCP Servers</div>
+                    <p>Context7, Sequential, Magic, Playwright</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">🧠 Intelligent Routing</div>
+                    <p>Auto-activation and optimization</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">🌊 Wave Orchestration</div>
+                    <p>Complex multi-stage operations</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">📊 Evidence-Based</div>
+                    <p>Quality gates and validation</p>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>Primary Directive:</strong> "Evidence > assumptions | Code > documentation | Efficiency > verbosity"
+            </div>
+
+            <h3>Quick Start Examples</h3>
+            <pre><code># Build React app with AI components
+/build --react --magic --tdd
+
+# Security audit with threat modeling
+/scan --security --owasp --persona-security
+
+# Performance optimization
+/analyze --performance --pup --persona-performance
+
+# Complex debugging
+/troubleshoot --investigate --seq --think
+
+# Documentation generation
+/document --api --examples --persona-scribe=en</code></pre>
+        </section>
+
+        <section id="architecture">
+            <h1>Core Architecture</h1>
+            
+            <h2>System Components</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">📁 Configuration Files</div>
+                    <ul>
+                        <li>Core: .claude/settings.local.json</li>
+                        <li>superclaude-core.yml</li>
+                        <li>superclaude-mcp.yml</li>
+                        <li>superclaude-rules.yml</li>
+                        <li>superclaude-personas.yml</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">⚡ Command Architecture</div>
+                    <ul>
+                        <li>Total Commands: <strong>19</strong></li>
+                        <li>Development: 3</li>
+                        <li>Analysis: 5</li>
+                        <li>Operations: 6</li>
+                        <li>Design: 1</li>
+                        <li>Workflow: 4</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">🔌 MCP Servers</div>
+                    <ul>
+                        <li><strong>Context7:</strong> Library documentation</li>
+                        <li><strong>Sequential:</strong> Complex analysis</li>
+                        <li><strong>Magic:</strong> UI generation</li>
+                        <li><strong>Playwright:</strong> Browser automation</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">🎭 Personas</div>
+                    <ul>
+                        <li><strong>Technical:</strong> architect, frontend, backend, security, performance</li>
+                        <li><strong>Process:</strong> analyzer, qa, refactorer, devops</li>
+                        <li><strong>Communication:</strong> mentor, scribe</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Evidence-Based Philosophy</h3>
+            <div class="alert alert-success">
+                <strong>Required Language:</strong> may, could, potentially, typically, measured, documented
+            </div>
+            <div class="alert alert-warning">
+                <strong>Prohibited Language:</strong> best, optimal, faster, secure, always, never, guaranteed
+            </div>
+        </section>
+
+        <section id="commands">
+            <h1>Command System</h1>
+            
+            <h2>Universal Command Syntax</h2>
+            <pre><code>/command [flags] [arguments]</code></pre>
+
+            <h2>🛠️ Development Commands</h2>
+            
+            <h3>/build - Universal Project Builder</h3>
+            <p>Build projects, features, and components using modern stack templates.</p>
+            
+            <div class="example-box">
+                <h4>Flags</h4>
+                <ul>
+                    <li><code>--init</code> - Initialize new project</li>
+                    <li><code>--feature</code> - Implement feature</li>
+                    <li><code>--tdd</code> - Test-driven development</li>
+                    <li><code>--react</code> - React with Vite, TypeScript</li>
+                    <li><code>--api</code> - Express.js API</li>
+                    <li><code>--fullstack</code> - Complete React + Node.js</li>
+                </ul>
+                
+                <h4>Examples</h4>
+                <pre><code>/build --init --react --magic
+/build --feature "auth system" --tdd
+/build --api --openapi --seq</code></pre>
+            </div>
+
+            <h2>🔍 Analysis Commands</h2>
+            
+            <h3>/review - AI-Powered Code Review</h3>
+            <div class="example-box">
+                <h4>Flags</h4>
+                <ul>
+                    <li><code>--files</code> - Review specific files</li>
+                    <li><code>--commit</code> - Review commit changes</li>
+                    <li><code>--pr</code> - Review pull request</li>
+                    <li><code>--quality</code> - Focus on code quality</li>
+                    <li><code>--evidence</code> - Include sources</li>
+                </ul>
+            </div>
+
+            <h3>/analyze - Multi-Dimensional Analysis</h3>
+            <div class="example-box">
+                <h4>Flags</h4>
+                <ul>
+                    <li><code>--code</code> - Code quality analysis</li>
+                    <li><code>--architecture</code> - System design</li>
+                    <li><code>--profile</code> - Performance profiling</li>
+                    <li><code>--security</code> - Security audit</li>
+                    <li><code>--deps</code> - Dependency analysis</li>
+                </ul>
+            </div>
+
+            <h2>⚙️ Operations Commands</h2>
+            
+            <h3>/deploy - Application Deployment</h3>
+            <div class="example-box">
+                <h4>Flags</h4>
+                <ul>
+                    <li><code>--env</code> - Target environment</li>
+                    <li><code>--canary</code> - Canary deployment</li>
+                    <li><code>--blue-green</code> - Blue-green deployment</li>
+                    <li><code>--rollback</code> - Rollback to previous</li>
+                    <li><code>--monitor</code> - Post-deployment monitoring</li>
+                </ul>
+            </div>
+
+            <h3>/scan - Security & Validation</h3>
+            <div class="example-box">
+                <h4>Flags</h4>
+                <ul>
+                    <li><code>--security</code> - Security audit</li>
+                    <li><code>--owasp</code> - OWASP Top 10</li>
+                    <li><code>--secrets</code> - Secret detection</li>
+                    <li><code>--compliance</code> - Regulatory compliance</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="flags">
+            <h1>Flag System</h1>
+            
+            <h2>🎛 Universal Flags (Available on ALL Commands)</h2>
+            
+            <h3>Thinking Depth Control</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Flag</th>
+                        <th>Description</th>
+                        <th>Token Usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>--think</code></td>
+                        <td>Multi-file analysis</td>
+                        <td>~4K tokens</td>
+                    </tr>
+                    <tr>
+                        <td><code>--think-hard</code></td>
+                        <td>Architecture-level depth</td>
+                        <td>~10K tokens</td>
+                    </tr>
+                    <tr>
+                        <td><code>--ultrathink</code></td>
+                        <td>Critical system analysis</td>
+                        <td>~32K tokens</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Token Optimization</h3>
+            <ul>
+                <li><code>--uc / --ultracompressed</code> - 30-50% token reduction</li>
+                <li><code>--answer-only</code> - Direct response without workflow</li>
+                <li><code>--validate</code> - Pre-operation validation</li>
+                <li><code>--safe-mode</code> - Maximum validation with conservative execution</li>
+            </ul>
+
+            <h3>MCP Server Control</h3>
+            <ul>
+                <li><code>--c7 / --context7</code> - Enable Context7 documentation</li>
+                <li><code>--seq / --sequential</code> - Enable Sequential thinking</li>
+                <li><code>--magic</code> - Enable Magic UI generation</li>
+                <li><code>--pup / --playwright</code> - Enable Playwright automation</li>
+                <li><code>--all-mcp</code> - Enable all MCP servers</li>
+                <li><code>--no-mcp</code> - Disable all MCP servers</li>
+            </ul>
+
+            <h3>Sub-Agent Delegation</h3>
+            <div class="alert alert-info">
+                <strong>--delegate [files|folders|auto]</strong><br>
+                • Auto-activates: >7 directories or >50 files<br>
+                • Performance: 40-70% time savings<br>
+                • Dynamic allocation based on resources
+            </div>
+
+            <h3>Wave Orchestration</h3>
+            <div class="alert alert-info">
+                <strong>--wave-mode [auto|force|off]</strong><br>
+                • Auto: Activates on complexity >0.8<br>
+                • Force: Override auto-detection<br>
+                • Off: Disable wave mode<br>
+                • Performance: 30-50% better results
+            </div>
+        </section>
+
+        <section id="personas">
+            <h1>Persona System</h1>
+            
+            <h2>Overview</h2>
+            <p>11 specialized personas with unique decision frameworks, technical preferences, and command specializations.</p>
+            
+            <div class="alert alert-success">
+                <strong>Auto-Activation System:</strong> Multi-factor scoring (keyword 30%, context 40%, history 20%, performance 10%)
+            </div>
+
+            <h2>Technical Specialists</h2>
+            
+            <div class="card">
+                <div class="card-header">🏗️ --persona-architect</div>
+                <p><strong>Identity:</strong> Systems architecture specialist, long-term thinking focus</p>
+                <p><strong>Priority:</strong> Long-term maintainability > scalability > performance > short-term gains</p>
+                <p><strong>MCP Preferences:</strong> Sequential (primary), Context7 (secondary)</p>
+                <p><strong>Optimized Commands:</strong> /analyze, /estimate, /improve --arch, /design</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🎨 --persona-frontend</div>
+                <p><strong>Identity:</strong> UX specialist, accessibility advocate, performance-conscious</p>
+                <p><strong>Priority:</strong> User needs > accessibility > performance > technical elegance</p>
+                <p><strong>Performance Budgets:</strong></p>
+                <ul>
+                    <li>Load Time: <3s on 3G, <1s on WiFi</li>
+                    <li>Bundle Size: <500KB initial, <2MB total</li>
+                    <li>Accessibility: WCAG 2.1 AA minimum (90%+)</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🔧 --persona-backend</div>
+                <p><strong>Identity:</strong> Reliability engineer, API specialist, data integrity focus</p>
+                <p><strong>Priority:</strong> Reliability > security > performance > features > convenience</p>
+                <p><strong>Reliability Budgets:</strong></p>
+                <ul>
+                    <li>Uptime: 99.9% (8.7h/year downtime)</li>
+                    <li>Error Rate: <0.1% for critical operations</li>
+                    <li>Response Time: <200ms for API calls</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🛡️ --persona-security</div>
+                <p><strong>Identity:</strong> Threat modeler, compliance expert, vulnerability specialist</p>
+                <p><strong>Priority:</strong> Security > compliance > reliability > performance > convenience</p>
+                <p><strong>Core Principles:</strong> Security by Default, Zero Trust Architecture, Defense in Depth</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">⚡ --persona-performance</div>
+                <p><strong>Identity:</strong> Optimization specialist, bottleneck elimination expert</p>
+                <p><strong>Priority:</strong> Measure first > optimize critical path > user experience > avoid premature optimization</p>
+                <p><strong>MCP Preferences:</strong> Playwright (primary), Sequential (secondary)</p>
+            </div>
+
+            <h2>Process & Quality Experts</h2>
+            
+            <div class="card">
+                <div class="card-header">🔍 --persona-analyzer</div>
+                <p><strong>Identity:</strong> Root cause specialist, evidence-based investigator</p>
+                <p><strong>Priority:</strong> Evidence > systematic approach > thoroughness > speed</p>
+                <p><strong>Optimized Commands:</strong> /analyze, /troubleshoot, /explain --detailed</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">✅ --persona-qa</div>
+                <p><strong>Identity:</strong> Quality advocate, testing specialist, edge case detective</p>
+                <p><strong>Priority:</strong> Prevention > detection > correction > comprehensive coverage</p>
+                <p><strong>MCP Preferences:</strong> Playwright (primary), Sequential (secondary)</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🔄 --persona-refactorer</div>
+                <p><strong>Identity:</strong> Code quality specialist, technical debt manager</p>
+                <p><strong>Priority:</strong> Simplicity > maintainability > readability > performance > cleverness</p>
+                <p><strong>Optimized Commands:</strong> /improve --quality, /cleanup, /analyze --quality</p>
+            </div>
+        </section>
+
+        <section id="mcp">
+            <h1>MCP Server Integration</h1>
+            
+            <h2>Overview</h2>
+            <p>Model Context Protocol (MCP) enables communication with locally running servers providing specialized capabilities.</p>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">📚 Context7</div>
+                    <p><strong>Purpose:</strong> Official library documentation, code examples, best practices</p>
+                    <p><strong>Activation:</strong> Automatic on library imports, framework questions</p>
+                    <p><strong>Use Cases:</strong> Framework patterns, library documentation, official docs</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">🧠 Sequential</div>
+                    <p><strong>Purpose:</strong> Multi-step problem solving, architectural analysis</p>
+                    <p><strong>Activation:</strong> Complex debugging, system design, --think flags</p>
+                    <p><strong>Use Cases:</strong> Root cause analysis, architecture review, security modeling</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">✨ Magic</div>
+                    <p><strong>Purpose:</strong> UI component generation, design system integration</p>
+                    <p><strong>Activation:</strong> UI component requests, design system queries</p>
+                    <p><strong>Use Cases:</strong> React/Vue/Angular components, responsive design, accessibility</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">🎭 Playwright</div>
+                    <p><strong>Purpose:</strong> Cross-browser testing, performance monitoring</p>
+                    <p><strong>Activation:</strong> Testing workflows, performance monitoring</p>
+                    <p><strong>Use Cases:</strong> E2E testing, visual testing, performance metrics</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="orchestration">
+            <h1>Orchestration & Routing</h1>
+            
+            <h2>Detection Engine</h2>
+            <p>Analyzes requests to understand intent, complexity, and requirements.</p>
+
+            <h3>Resource Management Thresholds</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Zone</th>
+                        <th>Range</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-success">Green</span></td>
+                        <td>0-60%</td>
+                        <td>Full operations, predictive monitoring</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-warning">Yellow</span></td>
+                        <td>60-75%</td>
+                        <td>Resource optimization, suggest --uc</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-warning">Orange</span></td>
+                        <td>75-85%</td>
+                        <td>Warning alerts, defer non-critical</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-danger">Red</span></td>
+                        <td>85-95%</td>
+                        <td>Force efficiency modes</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-danger">Critical</span></td>
+                        <td>95%+</td>
+                        <td>Emergency protocols only</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Wave Orchestration Engine</h3>
+            <p>Multi-stage command execution with compound intelligence.</p>
+            <div class="alert alert-info">
+                <strong>Wave-Enabled Commands:</strong> /analyze, /build, /implement, /improve, /design, /task<br>
+                <strong>Auto-Activation:</strong> complexity ≥0.7 AND files >20 AND operation_types >2<br>
+                <strong>Performance:</strong> 30-50% better results through progressive enhancement
+            </div>
+
+            <h3>8-Step Validation Cycle</h3>
+            <ol>
+                <li><strong>Syntax:</strong> Language parsers, Context7 validation</li>
+                <li><strong>Type:</strong> Sequential analysis, type compatibility</li>
+                <li><strong>Lint:</strong> Context7 rules, quality analysis</li>
+                <li><strong>Security:</strong> Sequential analysis, OWASP compliance</li>
+                <li><strong>Test:</strong> Playwright E2E, coverage analysis (≥80% unit, ≥70% integration)</li>
+                <li><strong>Performance:</strong> Sequential analysis, benchmarking</li>
+                <li><strong>Documentation:</strong> Context7 patterns, completeness validation</li>
+                <li><strong>Integration:</strong> Playwright testing, deployment validation</li>
+            </ol>
+        </section>
+
+        <section id="principles">
+            <h1>Core Principles</h1>
+            
+            <h2>Primary Directive</h2>
+            <div class="alert alert-info">
+                <strong>"Evidence > assumptions | Code > documentation | Efficiency > verbosity"</strong>
+            </div>
+
+            <h2>SOLID Principles</h2>
+            <ul>
+                <li><strong>S</strong>ingle Responsibility: Each class, function, or module has one reason to change</li>
+                <li><strong>O</strong>pen/Closed: Open for extension but closed for modification</li>
+                <li><strong>L</strong>iskov Substitution: Derived classes must be substitutable for base classes</li>
+                <li><strong>I</strong>nterface Segregation: Clients shouldn't depend on unused interfaces</li>
+                <li><strong>D</strong>ependency Inversion: Depend on abstractions, not concretions</li>
+            </ul>
+
+            <h2>Core Design Principles</h2>
+            <ul>
+                <li><strong>DRY:</strong> Abstract common functionality, eliminate duplication</li>
+                <li><strong>KISS:</strong> Prefer simplicity over complexity</li>
+                <li><strong>YAGNI:</strong> Implement only current requirements</li>
+                <li><strong>Composition Over Inheritance:</strong> Favor object composition</li>
+                <li><strong>Separation of Concerns:</strong> Divide functionality into distinct sections</li>
+                <li><strong>Loose Coupling:</strong> Minimize dependencies</li>
+                <li><strong>High Cohesion:</strong> Group related functionality</li>
+            </ul>
+        </section>
+
+        <section id="workflows">
+            <h1>Workflow Patterns</h1>
+            
+            <h2>Full-Stack Development</h2>
+            <pre><code># 1. Design architecture
+/design --api --ddd --persona-architect --seq
+
+# 2. Build application
+/build --fullstack --tdd --magic
+
+# 3. Test comprehensively
+/test --coverage --e2e --pup
+
+# 4. Deploy safely
+/deploy --env staging --validate</code></pre>
+
+            <h2>Security-First Development</h2>
+            <pre><code># 1. Security scan
+/scan --security --owasp --deps --persona-security
+
+# 2. Security analysis
+/analyze --security --forensic --seq
+
+# 3. Security improvements
+/improve --security --validate --strict
+
+# 4. Security testing
+/test --security --coverage</code></pre>
+
+            <h2>Performance Optimization</h2>
+            <pre><code># 1. Performance analysis
+/analyze --profile --deep --persona-performance
+
+# 2. Performance investigation
+/troubleshoot --perf --investigate --pup
+
+# 3. Performance improvements
+/improve --performance --iterate --threshold 90%
+
+# 4. Performance testing
+/test --performance --load</code></pre>
+        </section>
+
+        <section id="best-practices">
+            <h1>Best Practices</h1>
+            
+            <h2>Evidence-Based Development</h2>
+            <div class="alert alert-success">
+                <strong>Required Language:</strong> may, could, potentially, typically, measured, documented
+            </div>
+            <div class="alert alert-warning">
+                <strong>Prohibited Language:</strong> best, optimal, faster, secure, better, always, never, guaranteed
+            </div>
+
+            <h2>Decision Matrix</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Persona</th>
+                        <th>MCP</th>
+                        <th>Command</th>
+                        <th>Flags</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>New React Feature</td>
+                        <td>frontend</td>
+                        <td>magic, c7</td>
+                        <td>/build --feature</td>
+                        <td>--react --tdd</td>
+                    </tr>
+                    <tr>
+                        <td>API Design</td>
+                        <td>architect</td>
+                        <td>seq, c7</td>
+                        <td>/design --api</td>
+                        <td>--ddd --ultrathink</td>
+                    </tr>
+                    <tr>
+                        <td>Security Audit</td>
+                        <td>security</td>
+                        <td>seq</td>
+                        <td>/scan --security</td>
+                        <td>--owasp --strict</td>
+                    </tr>
+                    <tr>
+                        <td>Performance Issue</td>
+                        <td>performance</td>
+                        <td>pup, seq</td>
+                        <td>/analyze --performance</td>
+                        <td>--profile --iterate</td>
+                    </tr>
+                    <tr>
+                        <td>Bug Investigation</td>
+                        <td>analyzer</td>
+                        <td>all-mcp</td>
+                        <td>/troubleshoot</td>
+                        <td>--investigate --seq</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Quick Reference</h2>
+            <ul>
+                <li><strong>High-Risk Operations:</strong> Always use <code>--validate</code> or <code>--dry-run</code></li>
+                <li><strong>Documentation Tasks:</strong> Enable <code>--c7</code> for library lookups</li>
+                <li><strong>Complex Analysis:</strong> Use <code>--seq</code> for reasoning</li>
+                <li><strong>UI Development:</strong> Enable <code>--magic</code> for AI components</li>
+                <li><strong>Testing:</strong> Use <code>--pup</code> for browser automation</li>
+                <li><strong>Token Saving:</strong> Add <code>--uc</code> for 30-50% reduction</li>
+            </ul>
+        </section>
+
+        <section>
+            <h1>Summary</h1>
+            
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">✅ Professional Commands</div>
+                    <p>19 commands covering development, analysis, operations, and workflows</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">✅ Specialized Personas</div>
+                    <p>11 personas with domain expertise and auto-activation</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">✅ MCP Servers</div>
+                    <p>4 servers providing documentation, analysis, UI generation, and testing</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">✅ Intelligent Orchestration</div>
+                    <p>Wave modes and sub-agent delegation</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">✅ Evidence-Based Methodology</div>
+                    <p>Quality gates and validation frameworks</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">✅ Token Optimization</div>
+                    <p>30-50% reduction while preserving quality</p>
+                </div>
+            </div>
+
+            <div class="alert alert-success" style="margin-top: 2rem;">
+                <strong>SuperClaude v2.0.1</strong><br>
+                Evidence-based development | Senior developer mindset | Quality-first approach
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 SuperClaude Framework v2.0.1</p>
+        <p>Evidence-Based AI Development System for Claude Code</p>
+    </footer>
+</body>
+</html>
