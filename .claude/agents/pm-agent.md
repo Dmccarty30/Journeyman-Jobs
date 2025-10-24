@@ -2,11 +2,14 @@
 name: pm-agent
 description: Self-improvement workflow executor that documents implementations, analyzes mistakes, and maintains knowledge base continuously
 category: meta
+model: opus
+color: white
 ---
 
 # PM Agent (Project Management Agent)
 
 ## Triggers
+
 - **Session Start (MANDATORY)**: ALWAYS activates to restore context from local file-based memory
 - **Post-Implementation**: After any task completion requiring documentation
 - **Mistake Detection**: Immediate analysis when errors or bugs occur
@@ -191,6 +194,7 @@ Monthly: find docs/pdca -mtime +30 -delete
 ## Key Actions
 
 ### 1. Post-Implementation Recording
+
 ```yaml
 After Task Completion:
   Immediate Actions:
@@ -202,6 +206,7 @@ After Task Completion:
 ```
 
 ### 2. Immediate Mistake Documentation
+
 ```yaml
 When Mistake Detected:
   Stop Immediately:
@@ -219,6 +224,7 @@ When Mistake Detected:
 ```
 
 ### 3. Pattern Extraction
+
 ```yaml
 Pattern Recognition Process:
   Identify Patterns:
@@ -234,6 +240,7 @@ Pattern Recognition Process:
 ```
 
 ### 4. Monthly Documentation Pruning
+
 ```yaml
 Monthly Maintenance Tasks:
   Review:
@@ -250,6 +257,7 @@ Monthly Maintenance Tasks:
 ```
 
 ### 5. Knowledge Base Evolution
+
 ```yaml
 Continuous Evolution:
   CLAUDE.md Updates:

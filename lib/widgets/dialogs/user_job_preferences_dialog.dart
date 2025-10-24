@@ -7,7 +7,7 @@ import '../../design_system/app_theme.dart';
 import '../../electrical_components/jj_electrical_notifications.dart';
 import '../../design_system/accessibility/accessibility_helpers.dart';
 
-class UserJobPreferencesDialog extends ConsumerWidget {
+class UserJobPreferencesDialog extends StatelessWidget {
   final UserJobPreferences? initialPreferences;
   final String userId;
   final bool isFirstTime;
@@ -20,7 +20,7 @@ class UserJobPreferencesDialog extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final isSmallScreen = screenSize.height < 600;
 
@@ -59,7 +59,6 @@ class UserJobPreferencesDialog extends ConsumerWidget {
             initialPreferences: initialPreferences,
             userId: userId,
             isFirstTime: isFirstTime,
-            ref: ref,
           ),
         ),
       ),
@@ -67,24 +66,22 @@ class UserJobPreferencesDialog extends ConsumerWidget {
   }
 }
 
-class _UserJobPreferencesDialogContent extends StatefulWidget {
+class _UserJobPreferencesDialogContent extends ConsumerStatefulWidget {
   final UserJobPreferences? initialPreferences;
   final String userId;
   final bool isFirstTime;
-  final WidgetRef ref;
 
   const _UserJobPreferencesDialogContent({
     this.initialPreferences,
     required this.userId,
     required this.isFirstTime,
-    required this.ref,
   });
 
   @override
-  _UserJobPreferencesDialogContentState createState() => _UserJobPreferencesDialogContentState();
+  ConsumerState<_UserJobPreferencesDialogContent> createState() => _UserJobPreferencesDialogContentState();
 }
 
-class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDialogContent> {
+class _UserJobPreferencesDialogContentState extends ConsumerState<_UserJobPreferencesDialogContent> {
   late UserJobPreferences _currentPreferences;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _localsController = TextEditingController();
@@ -171,9 +168,15 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
   /// 1. Validate form input
   /// 2. Check user authentication
   /// 3. Parse and prepare preference data
-  /// 4. Await Firebase save/update operation
-  /// 5. Show success/error notification
-  /// 6. Close dialog only after successful save
+  /// 4. Read provider synchronously before async operations
+  /// 5. Await Firebase save/update operation
+  /// 6. Check mounted state after async gaps
+  /// 7. Show success/error notification
+  /// 8. Close dialog only after successful save
+  ///
+  /// IMPORTANT: Reads provider notifier synchronously before async operations
+  /// to prevent "Cannot use the Ref after it has been disposed" errors.
+  /// Only uses widget's mounted property for lifecycle checks.
   Future<void> _savePreferences() async {
     // Validate all form fields before proceeding
     if (_formKey.currentState!.validate()) {
@@ -194,11 +197,13 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
         preferredLocals: _parseLocals(),
       );
 
+      // CRITICAL: Read provider synchronously BEFORE any async operations
+      // to avoid "Cannot use the Ref after it has been disposed" errors
+      final provider = ref.read(userPreferencesProvider.notifier);
+
       try {
         // Set loading state to prevent duplicate saves and show visual feedback
         setState(() => _isSaving = true);
-
-        final provider = widget.ref.read(userPreferencesProvider.notifier);
 
         // Await Firebase operation based on whether this is first-time setup or update
         if (widget.isFirstTime) {
@@ -207,20 +212,23 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
           await provider.updatePreferences(widget.userId, updatedPreferences);
         }
 
-        // Only proceed if widget is still mounted (user hasn't navigated away)
-        if (mounted) {
-          // Show success notification using electrical-themed toast
-          JJElectricalNotifications.showElectricalToast(
-            context: context,
-            message: 'Job preferences saved successfully',
-            type: ElectricalNotificationType.success,
-          );
-          // Announce for screen readers
-          AccessibilityHelpers.announceToScreenReader(context, 'Job preferences saved successfully');
-
-          // Safe to close dialog now that save is complete
-          Navigator.of(context).pop(true);
+        // Check if widget is still mounted after async operation
+        if (!mounted) {
+          debugPrint('UserJobPreferencesDialog: widget disposed after save operation');
+          return;
         }
+
+        // Show success notification using electrical-themed toast
+        JJElectricalNotifications.showElectricalToast(
+          context: context,
+          message: 'Job preferences saved successfully',
+          type: ElectricalNotificationType.success,
+        );
+        // Announce for screen readers
+        AccessibilityHelpers.announceToScreenReader(context, 'Job preferences saved successfully');
+
+        // Safe to close dialog now that save is complete
+        Navigator.of(context).pop(true);
       } catch (e) {
         // Log error for debugging purposes
         debugPrint('Error saving preferences: $e');
@@ -237,7 +245,7 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
           AccessibilityHelpers.announceToScreenReader(context, 'Error saving preferences. Please try again.');
         }
       } finally {
-        // Always clear loading state when operation completes
+        // Always clear loading state when operation completes (if still mounted)
         if (mounted) {
           setState(() => _isSaving = false);
         }
@@ -277,10 +285,6 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
                     _buildHoursPerWeekSection(),
                     const SizedBox(height: AppTheme.spacingMd),
                     _buildPerDiemSection(),
-                    const SizedBox(height: AppTheme.spacingMd),
-                    _buildMinimumWageSection(),
-                    const SizedBox(height: AppTheme.spacingMd),
-                    _buildMaximumDistanceSection(),
                   ],
                 ),
               ),
@@ -617,63 +621,6 @@ class _UserJobPreferencesDialogContentState extends State<_UserJobPreferencesDia
     );
   }
 
-  Widget _buildMinimumWageSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Minimum Hourly Wage',
-          style: AppTheme.titleLarge.copyWith(
-            color: AppTheme.textPrimary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-        TextFormField(
-          initialValue: _currentPreferences.minWage?.toString(),
-          decoration: InputDecoration(
-            labelText: 'Minimum hourly wage (\$)',
-            hintText: 'e.g., 25.00',
-            prefixIcon: Icon(Icons.attach_money, color: AppTheme.accentCopper),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-              borderSide: BorderSide(color: AppTheme.borderLight),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-              borderSide: BorderSide(color: AppTheme.borderLight),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-              borderSide: BorderSide(color: AppTheme.accentCopper),
-            ),
-            filled: true,
-            fillColor: AppTheme.offWhite,
-          ),
-          keyboardType: TextInputType.numberWithOptions(decimal: true),
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-          ],
-          validator: (value) {
-            if (value != null && value.isNotEmpty) {
-              final wage = double.tryParse(value);
-              if (wage == null || wage < 0) {
-                return 'Please enter a valid hourly wage';
-              }
-            }
-            return null;
-          },
-          onSaved: (value) {
-            final wage = value != null && value.isNotEmpty ? double.tryParse(value) : null;
-            _currentPreferences = _currentPreferences.copyWith(minWage: wage);
-          },
-        ),
-      ],
-    );
-  }
-
-  /// Removed per Phase 3 cleanup: maxDistance input no longer used
-  Widget _buildMaximumDistanceSection() => const SizedBox.shrink();
 
   /// Footer with responsive Save and Cancel buttons
   /// Prevents overflow on smaller screens by using Flexible widgets

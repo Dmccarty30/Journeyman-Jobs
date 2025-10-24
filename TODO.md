@@ -208,6 +208,8 @@ The specific RenderFlex in question is: RenderFlex#3948c relayoutBoundary=up9 OV
 
 - **lib\widgets\dialogs\user_job_preferences_dialog.dart**
 
+- When i press `save preferences button` on the dialog popup, i get an " error saving preferences, try again" notification. I need to investigate this
+
 ### JOBS
 
 - **docs\tailboard\jobs-tab.png**
@@ -216,9 +218,12 @@ The specific RenderFlex in question is: RenderFlex#3948c relayoutBoundary=up9 OV
 
 - **docs\tailboard\feed-tab.png**
 
+- When a user posts a massage using the `feed tab` that message should post and be displayed immediately after sending
+
 ### CHAT
 
 - **docs\tailboard\chat-tab.png**
+- When a user sends a massage to the crew using the `chat tab` that message should post and be displayed immediately after sending
 
 ### MEMBERS
 
