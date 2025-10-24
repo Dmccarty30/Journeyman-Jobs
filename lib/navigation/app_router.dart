@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -53,7 +52,7 @@ part 'app_router.g.dart';
 /// Without this, the router would only check auth on initial navigation,
 /// causing auth state to appear "lost" during bottom navigation.
 class _RouterRefreshNotifier extends ChangeNotifier {
-  final WidgetRef _ref;
+  final Ref _ref;
 
   _RouterRefreshNotifier(this._ref) {
     // Listen to auth state changes
@@ -85,7 +84,7 @@ class _RouterRefreshNotifier extends ChangeNotifier {
 /// always have up-to-date authentication information.
 @riverpod
 GoRouter router(Ref ref) {
-  return AppRouter.createRouter(ref as WidgetRef);
+  return AppRouter.createRouter(ref);
 }
 
 class AppRouter {
@@ -121,7 +120,7 @@ class AppRouter {
   ///
   /// The [ref] parameter allows the router to watch auth state changes
   /// and automatically refresh when the user signs in/out.
-  static GoRouter createRouter(WidgetRef ref) {
+  static GoRouter createRouter(Ref ref) {
     return GoRouter(
       initialLocation: splash,
       redirect: (context, state) => _redirect(context, state, ref),
@@ -362,13 +361,12 @@ class AppRouter {
   /// Parameters:
   /// - context: BuildContext for accessing theme and navigation
   /// - state: GoRouterState containing current location and query parameters
-  /// - ref: WidgetRef for accessing Riverpod providers (reactive auth state)
-  static String? _redirect(BuildContext context, GoRouterState state, WidgetRef ref) {
+  /// - ref: Ref for accessing Riverpod providers (reactive auth state)
+  static String? _redirect(BuildContext context, GoRouterState state, Ref ref) {
     // Read auth state from Riverpod providers
     // Using ref.read instead of container ensures reactivity when auth changes
     final authInit = ref.read(authInitializationProvider);
     final authState = ref.read(authStateProvider);
-    final onboardingStatusAsync = ref.read(onboardingStatusProvider);
 
     // Get current location
     final currentPath = state.matchedLocation;
@@ -419,20 +417,8 @@ class AppRouter {
       return auth;
     }
 
-    // Check onboarding status for authenticated users (except on onboarding/auth routes)
-    if (isAuthenticated && currentPath != onboarding && currentPath != auth) {
-      // Get onboarding status from Firestore
-      final onboardingComplete = onboardingStatusAsync.whenOrNull(
-        data: (isComplete) => isComplete,
-      ) ?? false;
-
-      // Redirect to onboarding if incomplete
-      if (!onboardingComplete) {
-        return onboarding;
-      }
-    }
-
-    // Authenticated user trying to access login/welcome -> redirect
+    // Authenticated user trying to access login/welcome -> redirect first
+    // This prevents onboarding check from interfering with welcome screen flow
     if (isAuthenticated && (currentPath == auth || currentPath == welcome)) {
       // Check for redirect parameter (user was sent to login from protected route)
       final redirect = state.uri.queryParameters['redirect'];
@@ -449,6 +435,21 @@ class AppRouter {
 
       // Default: redirect authenticated users to home
       return home;
+    }
+
+    // Check onboarding status for authenticated users (except on public routes)
+    // This runs AFTER welcome/auth redirect to avoid interfering with those flows
+    if (isAuthenticated && currentPath != onboarding && currentPath != auth && currentPath != welcome && currentPath != splash) {
+      // Get onboarding status from Firestore
+      final onboardingStatusAsync = ref.read(onboardingStatusProvider);
+      final onboardingComplete = onboardingStatusAsync.whenOrNull(
+        data: (isComplete) => isComplete,
+      ) ?? false;
+
+      // Redirect to onboarding if incomplete
+      if (!onboardingComplete) {
+        return onboarding;
+      }
     }
 
     // Allow navigation

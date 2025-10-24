@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
-import '../../services/onboarding_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -176,30 +174,18 @@ class _SplashScreenState extends State<SplashScreen>
     });
   }
 
-  void _navigateToNextScreen() async {
-    // Check authentication status
-    final user = FirebaseAuth.instance.currentUser;
-    final isAuthenticated = user != null;
-
-    if (!isAuthenticated) {
-      // User not authenticated, go to welcome
-      context.go(AppRouter.welcome);
-      return;
-    }
-
-    // User is authenticated, check onboarding status
-    final onboardingService = OnboardingService();
-    final isOnboardingComplete = await onboardingService.isOnboardingComplete();
-
-    if (mounted) {
-      if (isOnboardingComplete) {
-        // User authenticated and onboarding complete, go to home
-        context.go(AppRouter.home);
-      } else {
-        // User authenticated but onboarding not complete, go to onboarding
-        context.go(AppRouter.onboarding);
-      }
-    }
+  /// Navigates to welcome screen after splash animation completes.
+  ///
+  /// The router's redirect logic (app_router.dart) will handle proper routing:
+  /// - Unauthenticated → /auth
+  /// - Authenticated + incomplete onboarding → /onboarding
+  /// - Authenticated + complete onboarding → /home
+  ///
+  /// This ensures a single source of truth for routing decisions based on
+  /// Firestore onboarding status rather than SharedPreferences.
+  void _navigateToNextScreen() {
+    // Navigate to welcome - router redirect will handle proper destination
+    context.go(AppRouter.welcome);
   }
 
   @override

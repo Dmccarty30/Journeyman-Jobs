@@ -9,7 +9,7 @@ import '../../../electrical_components/circuit_board_background.dart';
 
 import '../models/crew_preferences.dart';
 import '../providers/crews_riverpod_provider.dart';
-import '../widgets/crew_preferences_dialog.dart';
+import '../../../widgets/dialogs/user_job_preferences_dialog.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
 
 class CreateCrewScreen extends ConsumerStatefulWidget {
@@ -115,41 +115,23 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen>
         );
 
 
-        // After successful crew creation, show preferences dialog
+        // After successful crew creation, show user job preferences dialog
         if (mounted) {
-          final crew = await crewService.getUserCrews(currentUser.uid);
-          if (crew.isNotEmpty) {
-            final crewId = crew.first.id;
-            final updatedPreferences = await showDialog<CrewPreferences>(
-              context: context,
-              builder: (context) => CrewPreferencesDialog(
-                initialPreferences: CrewPreferences(
-                  jobTypes: [_selectedJobType],
-                  constructionTypes: ['Commercial', 'Industrial'], // Default construction types
-                  autoShareEnabled: _autoShareEnabled,
-                ),
-                crewId: crewId,
-                crewService: crewService,
-                isNewCrew: true, // Indicate this is for a new crew
-              ),
-            );
+          // Show user job preferences dialog to set personal preferences after crew creation
+          await showDialog<bool>(
+            context: context,
+            barrierDismissible: false, // Require user to complete or cancel
+            builder: (context) => UserJobPreferencesDialog(
+              userId: currentUser.uid,
+              isFirstTime: true,
+              initialPreferences: null,
+            ),
+          );
 
-            if (updatedPreferences != null && mounted) {
-              // Update crew with final preferences
-              await crewService.updateCrew(
-                crewId: crewId,
-                preferences: updatedPreferences,
-              );
-            }
-
-            // Navigate to Tailboard screen
-            // FIX: Navigate to /crews without crew ID parameter since TailboardScreen manages crew selection internally
-            if (mounted) {
-              context.go(AppRouter.crews);
-            }
-          } else {
-            // Fallback if crew creation didn't return the crew
-            throw Exception('Crew creation failed - crew not found');
+          // Navigate to Tailboard screen
+          // FIX: Navigate to /crews without crew ID parameter since TailboardScreen manages crew selection internally
+          if (mounted) {
+            context.go(AppRouter.crews);
           }
         }
 

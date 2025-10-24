@@ -355,7 +355,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         children: [
           Icon(
             icon,
@@ -369,11 +369,14 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
               color: AppTheme.mediumGray,
             ),
           ),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppTheme.darkGray,
+          Expanded(
+            child: Text(
+              value,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppTheme.darkGray,
+              ),
             ),
           ),
         ],

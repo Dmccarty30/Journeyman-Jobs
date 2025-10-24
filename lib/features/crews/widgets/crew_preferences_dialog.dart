@@ -29,6 +29,9 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
+  // Job types/classifications available for electrical workers
+  final List<String> _availableJobTypes = Classification.all.map((e) => toTitleCase(e)).toList();
+
   // Common construction types
   final List<String> _availableConstructionTypes = ConstructionTypes.all.map((e) => toTitleCase(e)).toList();
 
@@ -136,6 +139,14 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Quick presets section for fast configuration
+                        _buildPresetsSection(),
+                        const SizedBox(height: AppTheme.spacingLg),
+
+                        // Job types/classifications section (ADDED)
+                        _buildJobTypesSection(),
+                        const SizedBox(height: AppTheme.spacingMd),
+
                         _buildConstructionTypesSection(),
                         const SizedBox(height: AppTheme.spacingMd),
                         _buildWageRangeSection(),
@@ -163,16 +174,217 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
     );
   }
 
+  /// Quick preset templates for common crew configurations
+  /// Allows rapid setup with industry-standard preferences
+  Widget _buildPresetsSection() {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppTheme.accentCopper.withValues(alpha: 0.1),
+            AppTheme.primaryNavy.withValues(alpha: 0.05),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        border: Border.all(
+          color: AppTheme.accentCopper.withValues(alpha: 0.3),
+          width: AppTheme.borderWidthThin,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.flash_on, color: AppTheme.accentCopper, size: AppTheme.iconSm),
+              const SizedBox(width: AppTheme.spacingXs),
+              Text(
+                'Quick Setup',
+                style: AppTheme.titleMedium.copyWith(
+                  color: AppTheme.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spacingXs),
+          Text(
+            'Select a preset to quickly configure common job preferences',
+            style: AppTheme.bodySmall.copyWith(
+              color: AppTheme.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacingSm),
+          Wrap(
+            spacing: AppTheme.spacingXs,
+            runSpacing: AppTheme.spacingXs,
+            children: [
+              _buildPresetChip(
+                label: 'Lineman',
+                icon: Icons.electrical_services,
+                onTap: () => _applyPreset(_linemanPreset()),
+              ),
+              _buildPresetChip(
+                label: 'Inside Wireman',
+                icon: Icons.business,
+                onTap: () => _applyPreset(_insideWiremanPreset()),
+              ),
+              _buildPresetChip(
+                label: 'Tree Trimmer',
+                icon: Icons.nature,
+                onTap: () => _applyPreset(_treeTrimmerPreset()),
+              ),
+              _buildPresetChip(
+                label: 'Storm Work',
+                icon: Icons.storm,
+                onTap: () => _applyPreset(_stormWorkPreset()),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Individual preset chip button
+  Widget _buildPresetChip({
+    required String label,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingSm,
+          vertical: AppTheme.spacingXs,
+        ),
+        decoration: BoxDecoration(
+          color: AppTheme.white,
+          borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+          border: Border.all(
+            color: AppTheme.accentCopper.withValues(alpha: 0.3),
+            width: AppTheme.borderWidthThin,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: AppTheme.accentCopper, size: AppTheme.iconXs),
+            const SizedBox(width: AppTheme.spacingXs),
+            Text(
+              label,
+              style: AppTheme.bodySmall.copyWith(
+                color: AppTheme.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Job types/classifications section for electrical workers
+  /// Allows selection of multiple worker classifications
+  Widget _buildJobTypesSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.work, color: AppTheme.accentCopper, size: AppTheme.iconSm),
+            const SizedBox(width: AppTheme.spacingXs),
+            Text(
+              'Job Classifications',
+              style: AppTheme.titleLarge.copyWith(
+                color: AppTheme.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppTheme.spacingXs),
+        Text(
+          'Select the job types your crew is qualified for',
+          style: AppTheme.bodySmall.copyWith(
+            color: AppTheme.textSecondary,
+          ),
+        ),
+        const SizedBox(height: AppTheme.spacingSm),
+        Wrap(
+          spacing: AppTheme.spacingXs,
+          runSpacing: AppTheme.spacingXs,
+          children: _availableJobTypes.map((jobType) {
+            final isSelected = _preferences.jobTypes.contains(jobType);
+            return FilterChip(
+              label: Text(
+                jobType,
+                style: AppTheme.bodySmall.copyWith(
+                  color: isSelected ? AppTheme.white : AppTheme.textPrimary,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+              ),
+              selected: isSelected,
+              onSelected: (selected) {
+                setState(() {
+                  if (selected) {
+                    _preferences = _preferences.copyWith(
+                      jobTypes: [..._preferences.jobTypes, jobType],
+                    );
+                  } else {
+                    _preferences = _preferences.copyWith(
+                      jobTypes: _preferences.jobTypes.where((type) => type != jobType).toList(),
+                    );
+                  }
+                });
+              },
+              backgroundColor: AppTheme.offWhite,
+              selectedColor: AppTheme.accentCopper,
+              checkmarkColor: AppTheme.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                side: BorderSide(
+                  color: isSelected ? AppTheme.accentCopper : AppTheme.borderLight,
+                  width: isSelected ? 2 : AppTheme.borderWidthThin,
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+        if (_preferences.jobTypes.isEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: AppTheme.spacingXs),
+            child: Text(
+              '⚠️ Select at least one job classification',
+              style: AppTheme.bodySmall.copyWith(
+                color: AppTheme.warningOrange,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _buildConstructionTypesSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Construction Types',
-          style: AppTheme.titleLarge.copyWith(
-            color: AppTheme.textPrimary,
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          children: [
+            Icon(Icons.construction, color: AppTheme.accentCopper, size: AppTheme.iconSm),
+            const SizedBox(width: AppTheme.spacingXs),
+            Text(
+              'Construction Types',
+              style: AppTheme.titleLarge.copyWith(
+                color: AppTheme.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: AppTheme.spacingSm),
         Text(
@@ -647,8 +859,112 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
     );
   }
 
+  /// Apply a preset configuration to preferences
+  void _applyPreset(CrewPreferences preset) {
+    setState(() {
+      _preferences = preset;
+    });
+
+    // Show feedback to user
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Preset applied! Review and adjust as needed.'),
+        backgroundColor: AppTheme.accentCopper,
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  /// Lineman preset configuration
+  /// Optimized for utility line work, transmission, and distribution
+  CrewPreferences _linemanPreset() {
+    return CrewPreferences(
+      jobTypes: ['Journeyman Lineman'],
+      constructionTypes: ['Distribution', 'Transmission', 'Sub Station'],
+      minHourlyRate: 45.0,
+      maxDistanceMiles: 100,
+      preferredCompanies: ['IBEW Local Unions', 'Quanta Services', 'MYR Group'],
+      requiredSkills: ['Overhead Distribution', 'CDL License'],
+      autoShareEnabled: true,
+      matchThreshold: 60,
+    );
+  }
+
+  /// Inside Wireman preset configuration
+  /// Optimized for commercial and industrial electrical work
+  CrewPreferences _insideWiremanPreset() {
+    return CrewPreferences(
+      jobTypes: ['Journeyman Wireman', 'Journeyman Electrician'],
+      constructionTypes: ['Commercial', 'Industrial', 'Data Center'],
+      minHourlyRate: 35.0,
+      maxDistanceMiles: 50,
+      preferredCompanies: ['NECA Contractors', 'IBEW Local Unions'],
+      requiredSkills: ['OSHA 30'],
+      autoShareEnabled: true,
+      matchThreshold: 50,
+    );
+  }
+
+  /// Tree Trimmer preset configuration
+  /// Optimized for vegetation management and utility clearing
+  CrewPreferences _treeTrimmerPreset() {
+    return CrewPreferences(
+      jobTypes: ['Journeyman Tree Trimmer'],
+      constructionTypes: ['Distribution', 'Transmission'],
+      minHourlyRate: 30.0,
+      maxDistanceMiles: 75,
+      preferredCompanies: ['IBEW Local Unions'],
+      requiredSkills: ['CDL License'],
+      autoShareEnabled: true,
+      matchThreshold: 55,
+    );
+  }
+
+  /// Storm Work preset configuration
+  /// Optimized for emergency restoration and high-mobility crews
+  CrewPreferences _stormWorkPreset() {
+    return CrewPreferences(
+      jobTypes: ['Journeyman Lineman', 'Operator'],
+      constructionTypes: ['Distribution', 'Transmission', 'Underground'],
+      minHourlyRate: 50.0,
+      maxDistanceMiles: 500, // Storm work often requires travel
+      preferredCompanies: ['PowerTeam Services', 'Summit Line Construction', 'Quanta Services'],
+      requiredSkills: ['Overhead Distribution', 'CDL License', 'Crane Operation'],
+      autoShareEnabled: true,
+      matchThreshold: 40, // Lower threshold for urgent storm work
+    );
+  }
+
   Future<void> _savePreferences() async {
+    // Enhanced validation before saving
     if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    // Validate at least one job type is selected
+    if (_preferences.jobTypes.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('⚠️ Please select at least one job classification'),
+          backgroundColor: AppTheme.warningOrange,
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    // Validate at least one construction type is selected
+    if (_preferences.constructionTypes.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('⚠️ Please select at least one construction type'),
+          backgroundColor: AppTheme.warningOrange,
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
       return;
     }
 

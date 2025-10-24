@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/app_theme_dark.dart';
-import '../../design_system/components/reusable_components.dart';
 import '../../electrical_components/circuit_board_background.dart';
 
 /// Dark Mode Preview Screen
@@ -64,7 +63,7 @@ class _DarkModePreviewScreenState extends State<DarkModePreviewScreen>
                 componentDensity: ComponentDensity.high,
                 enableCurrentFlow: true,
                 enableInteractiveComponents: true,
-                circuitColor: _isDarkMode
+                currentColor: _isDarkMode
                     ? AppThemeDark.electricalTrace
                     : AppTheme.electricalCircuitTrace,
               ),

@@ -96,7 +96,7 @@ final class JobsNotifierProvider
   }
 }
 
-String _$jobsNotifierHash() => r'0bbbfa63f7c7e1fd2836836ff50eebf1c7075872';
+String _$jobsNotifierHash() => r'd6e7e277fcd3ae1488087d285a01b1ce60abe081';
 
 /// Jobs notifier provider
 
@@ -541,4 +541,4 @@ final class SuggestedJobsProvider
   }
 }
 
-String _$suggestedJobsHash() => r'22dfbce49690d0397fd099cc3f384061d4620a26';
+String _$suggestedJobsHash() => r'97f80f9e409b6c9a49182fc1da54053f0c668a95';

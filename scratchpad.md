@@ -698,3 +698,71 @@ W/WindowOnBackDispatcher(12428): OnBackInvokedCallback is not enabled for the ap
 W/WindowOnBackDispatcher(12428): Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
 I/TRuntime.CctTransportBackend(12428): Making request to: https://crashlyticsreports-pa.googleapis.com/v1/firelog/legacy/batchlog
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
+
+
+---
+
+## NEW TERMINAL OUTPUT
+
+- Regarding the suggested jobs on the homescreen
+
+I/flutter (23394): [RouterRefresh] Onboarding status changed - triggering router refresh
+D/ConnectivityManager(23394): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4671)] [android.net.ConnectivityManager.registerDefaultNetworkCallbackForUid(ConnectivityManager.java:5360)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5327)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5301)] [com.google.firebase.firestore.remote.AndroidConnectivityMonitor.configureNetworkMonitoring(AndroidConnectivityMonitor.java:87)] [com.google.firebase.firestore.remote.AndroidConnectivityMonitor.<init>(AndroidConnectivityMonitor.java:64)] [com.google.firebase.firestore.remote.RemoteComponenetProvider.createConnectivityMonitor(RemoteComponenetProvider.java:94)] [com.google.firebase.firestore.remote.RemoteComponenetProvider.initialize(RemoteComponenetProvider.java:41)] [com.google.firebase.firestore.core.ComponentProvider.initialize(ComponentProvider.java:158)] [com.google.firebase.firestore.core.FirestoreClient.initialize(FirestoreClient.java:284)] [com.google.firebase.firestore.core.FirestoreClient.lambda$new$0$com-google-firebase-firestore-core-FirestoreClient(FirestoreClient.java:109)] [com.google.firebase.firestore.core.FirestoreClient$$ExternalSyntheticLambda10.run(D8$$SyntheticClass:0)] [com.google.firebase.firestore.util.AsyncQueue.lambda$enqueue$2(AsyncQueue.java:445)] [com.google.firebase.firestore.util.AsyncQueue$$ExternalSyntheticLambda4.call(D8$$SyntheticClass:0)] [com.google.firebase.firestore.util.AsyncQueue$SynchronizedShutdownAwareExecutor.lambda$executeAndReportResult$1(AsyncQueue.java:330)] [com.google.firebase.firestore.util.AsyncQueue$SynchronizedShutdownAwareExecutor$$ExternalSyntheticLambda2.run(D8$$SyntheticClass:0)] [java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)] [java.util.concurrent.FutureTask.run(FutureTask.java:264)] [java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)] [com.google.firebase.firestore.util.AsyncQueue$SynchronizedShutdownAwareExecutor$DelayedStartFactory.run(AsyncQueue.java:235)] [java.lang.Thread.run(Thread.java:1012)]
+D/ConnectivityManager(23394): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4671)] [android.net.ConnectivityManager.registerDefaultNetworkCallbackForUid(ConnectivityManager.java:5360)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5327)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5301)] [io.grpc.android.AndroidChannelBuilder$AndroidChannel.configureNetworkMonitoring(AndroidChannelBuilder.java:217)] [io.grpc.android.AndroidChannelBuilder$AndroidChannel.<init>(AndroidChannelBuilder.java:198)] [io.grpc.android.AndroidChannelBuilder.build(AndroidChannelBuilder.java:169)] [com.google.firebase.firestore.remote.GrpcCallProvider.initChannel(GrpcCallProvider.java:116)] [com.google.firebase.firestore.remote.GrpcCallProvider.lambda$initChannelTask$6$com-google-firebase-firestore-remote-GrpcCallProvider(GrpcCallProvider.java:242)] [com.google.firebase.firestore.remote.GrpcCallProvider$$ExternalSyntheticLambda4.call(D8$$SyntheticClass:0)] [com.google.android.gms.tasks.zzz.run(com.google.android.gms:play-services-tasks@@18.1.0:1)] [com.google.firebase.firestore.util.ThrottledForwardingExecutor.lambda$execute$0$com-google-firebase-firestore-util-ThrottledForwardingExecutor(ThrottledForwardingExecutor.java:54)] [com.google.firebase.firestore.util.ThrottledForwardingExecutor$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)] [java.lang.Thread.run(Thread.java:1012)]
+I/flutter (23394): [RouterRefresh] Auth state changed - triggering router refresh
+I/flutter (23394): [RouterRefresh] Onboarding status changed - triggering router refresh
+W/WindowOnBackDispatcher(23394): OnBackInvokedCallback is not enabled for the application.
+W/WindowOnBackDispatcher(23394): Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+I/flutter (23394): ConcurrentOperationManager: Queued operation loadJobs_1761329119209_0 (loadJobs)
+I/flutter (23394): ConcurrentOperationManager: Starting operation loadJobs_1761329119209_0 (loadJobs)
+I/flutter (23394): ConnectivityService initialized - Initial state: Online
+I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
+I/flutter (23394): 📋 User preferences:
+I/flutter (23394):   - Preferred locals: [84, 111, 222]
+I/flutter (23394):   - Construction types: [distribution, transmission, dataCenter, industrial]
+I/flutter (23394):   - Hours per week: >70
+I/flutter (23394):   - Per diem: 200+
+I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
+D/ConnectivityManager(23394): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4671)] [android.net.ConnectivityManager.registerDefaultNetworkCallbackForUid(ConnectivityManager.java:5360)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5327)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5301)] [dev.fluttercommunity.plus.connectivity.ConnectivityBroadcastReceiver.onListen(ConnectivityBroadcastReceiver.java:77)] [io.flutter.plugin.common.EventChannel$IncomingStreamRequestHandler.onListen(EventChannel.java:218)] [io.flutter.plugin.common.EventChannel$IncomingStreamRequestHandler.onMessage(EventChannel.java:197)] [io.flutter.embedding.engine.dart.DartMessenger.invokeHandler(DartMessenger.java:292)] [io.flutter.embedding.engine.dart.DartMessenger.lambda$dispatchMessageToQueue$0$io-flutter-embedding-engine-dart-DartMessenger(DartMessenger.java:319)] [io.flutter.embedding.engine.dart.DartMessenger$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)]
+W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
+I/flutter (23394): 📋 User preferences:
+I/flutter (23394):   - Preferred locals: [84, 111, 222]
+I/flutter (23394):   - Construction types: [distribution, transmission, dataCenter, industrial]
+I/flutter (23394):   - Hours per week: >70
+I/flutter (23394):   - Per diem: 200+
+I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
+W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
+I/flutter (23394): 📋 User preferences:
+I/flutter (23394):   - Preferred locals: [84, 111, 222]
+I/flutter (23394):   - Construction types: [distribution, transmission, dataCenter, industrial]
+I/flutter (23394):   - Hours per week: >70
+I/flutter (23394):   - Per diem: 200+
+I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
+W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+I/VRI[MainActivity]@e4e64a(23394): call setFrameRateCategory for touch hint category=no preference, reason=boost timeout, vri=VRI[MainActivity]@e4e64a
+I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
+I/flutter (23394): 📋 User preferences:
+I/flutter (23394):   - Preferred locals: [84, 111, 222]
+I/flutter (23394):   - Construction types: [distribution, transmission, dataCenter, industrial]
+I/flutter (23394):   - Hours per week: >70
+I/flutter (23394):   - Per diem: 200+
+I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
+W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
+I/flutter (23394): 📋 User preferences:
+I/flutter (23394):   - Preferred locals: [84, 111, 222]
+I/flutter (23394):   - Construction types: [distribution, transmission, dataCenter, industrial]
+I/flutter (23394):   - Hours per week: >70
+I/flutter (23394):   - Per diem: 200+
+I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
+W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
+I/flutter (23394): 📋 User preferences:
+I/flutter (23394):   - Preferred locals: [84, 111, 222]
+I/flutter (23394):   - Construction types: [distribution, transmission, dataCenter, industrial]
+I/flutter (23394):   - Hours per week: >70
+I/flutter (23394):   - Per diem: 200+
+I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
+W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
