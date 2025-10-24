@@ -481,3 +481,4 @@ Slash commands are simple markdown files where:
 - [Subagents Documentation](https://docs.anthropic.com/en/docs/claude-code/sub-agents)
 - [Claude Code GitHub](https://github.com/anthropics/claude-code)
 - [Claude Code Subagents Collection](https://github.com/wshobson/agents) - Specialized subagents used by these commands
+

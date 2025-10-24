@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
- 
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 // Providers
 import '../providers/riverpod/auth_riverpod_provider.dart';
 import '../utils/structured_logging.dart';
@@ -40,6 +42,52 @@ import '../screens/notifications/notifications_screen.dart';
 import '../screens/settings/notification_settings_screen.dart';
 import '../screens/settings/app_settings_screen.dart';
 
+part 'app_router.g.dart';
+
+/// Notifier that triggers GoRouter refresh when auth state changes.
+///
+/// This class implements ChangeNotifier to work with GoRouter's refreshListenable.
+/// It watches auth and onboarding state changes via Riverpod and notifies the
+/// router to re-evaluate navigation guards when state changes.
+///
+/// Without this, the router would only check auth on initial navigation,
+/// causing auth state to appear "lost" during bottom navigation.
+class _RouterRefreshNotifier extends ChangeNotifier {
+  final WidgetRef _ref;
+
+  _RouterRefreshNotifier(this._ref) {
+    // Listen to auth state changes
+    _ref.listen<AsyncValue<User?>>(
+      authStateProvider,
+      (previous, next) {
+        // Notify router to refresh when auth state changes
+        debugPrint('[RouterRefresh] Auth state changed - triggering router refresh');
+        notifyListeners();
+      },
+    );
+
+    // Listen to onboarding status changes
+    _ref.listen<AsyncValue<bool>>(
+      onboardingStatusProvider,
+      (previous, next) {
+        // Notify router to refresh when onboarding status changes
+        debugPrint('[RouterRefresh] Onboarding status changed - triggering router refresh');
+        notifyListeners();
+      },
+    );
+  }
+}
+
+/// Provider for the GoRouter instance with auth state reactivity.
+///
+/// This provider creates a router that automatically refreshes when
+/// auth state or onboarding status changes, ensuring navigation guards
+/// always have up-to-date authentication information.
+@riverpod
+GoRouter router(Ref ref) {
+  return AppRouter.createRouter(ref as WidgetRef);
+}
+
 class AppRouter {
   static const String splash = '/';
   static const String welcome = '/welcome';
@@ -69,10 +117,42 @@ class AppRouter {
   static const String notificationSettings = '/notification-settings';
   static const String appSettings = '/settings/app';
 
+  /// Creates a router instance configured with Riverpod integration.
+  ///
+  /// The [ref] parameter allows the router to watch auth state changes
+  /// and automatically refresh when the user signs in/out.
+  static GoRouter createRouter(WidgetRef ref) {
+    return GoRouter(
+      initialLocation: splash,
+      redirect: (context, state) => _redirect(context, state, ref),
+      // Listen to auth state changes to trigger router refresh
+      // This ensures navigation guards re-evaluate when auth state changes
+      refreshListenable: _RouterRefreshNotifier(ref),
+      routes: _buildRoutes(),
+      errorBuilder: _buildErrorScreen,
+    );
+  }
+
+  /// Legacy router getter for backward compatibility.
+  ///
+  /// Note: This version doesn't support auth state reactivity.
+  /// Use createRouter(ref) instead for proper auth integration.
+  @Deprecated('Use createRouter(ref) instead for proper auth state reactivity')
   static final GoRouter router = GoRouter(
     initialLocation: splash,
-    redirect: _redirect,
-    routes: [
+    redirect: (context, state) {
+      // This version can't access Riverpod properly - will be removed
+      debugPrint('[Router] WARNING: Using deprecated router without Riverpod integration');
+      return null;
+    },
+    routes: _buildRoutes(),
+    errorBuilder: _buildErrorScreen,
+  );
+
+  /// Builds the route configuration.
+  ///
+  /// Extracted to allow reuse between legacy and provider-aware routers.
+  static List<RouteBase> _buildRoutes() => [
       // Public routes (no authentication required)
       GoRoute(
         path: splash,
@@ -225,8 +305,11 @@ class AppRouter {
         name: 'app-settings',
         builder: (context, state) => const AppSettingsScreen(),
       ),
-    ],
-    errorBuilder: (context, state) => Scaffold(
+    ];
+
+  /// Builds the error screen for 404/invalid routes.
+  static Widget _buildErrorScreen(BuildContext context, GoRouterState state) {
+    return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -254,8 +337,8 @@ class AppRouter {
           ],
         ),
       ),
-    ),
-  );
+    );
+  }
 
   /// Handles route redirection based on authentication state and onboarding status.
   ///
@@ -275,15 +358,17 @@ class AppRouter {
   /// - `redirect`: Captures the original destination for post-login navigation
   ///
   /// Example: `/locals` -> `/auth?redirect=%2Flocals` -> successful login -> `/locals`
-  static String? _redirect(BuildContext context, GoRouterState state) {
-    // Access Riverpod container from context
-    // Note: This assumes the router is wrapped in ProviderScope
-    final container = ProviderScope.containerOf(context, listen: false);
-
-    // Check auth initialization status
-    final authInit = container.read(authInitializationProvider);
-    final authState = container.read(authStateProvider);
-    final onboardingStatusAsync = container.read(onboardingStatusProvider);
+  ///
+  /// Parameters:
+  /// - context: BuildContext for accessing theme and navigation
+  /// - state: GoRouterState containing current location and query parameters
+  /// - ref: WidgetRef for accessing Riverpod providers (reactive auth state)
+  static String? _redirect(BuildContext context, GoRouterState state, WidgetRef ref) {
+    // Read auth state from Riverpod providers
+    // Using ref.read instead of container ensures reactivity when auth changes
+    final authInit = ref.read(authInitializationProvider);
+    final authState = ref.read(authStateProvider);
+    final onboardingStatusAsync = ref.read(onboardingStatusProvider);
 
     // Get current location
     final currentPath = state.matchedLocation;

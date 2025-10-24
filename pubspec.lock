@@ -125,10 +125,10 @@ packages:
     dependency: transitive
     description:
       name: build_daemon
-      sha256: "8e928697a82be082206edb0b9c99c5a4ad6bc31c9e9b8b2f291ae65cd4a25daa"
+      sha256: "409002f1adeea601018715d613115cfaf0e31f512cb80ae4534c79867ae2363d"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.4"
+    version: "4.1.0"
   build_resolvers:
     dependency: transitive
     description:
@@ -822,10 +822,10 @@ packages:
     dependency: "direct main"
     description:
       name: font_awesome_flutter
-      sha256: ef8e9591f6de2bf671c3b6f506f5ff85f03d34403084fccced62d3628fb086b9
+      sha256: b9011df3a1fa02993630b8fb83526368cf2206a711259830325bab2f1d2a4eb0
       url: "https://pub.dev"
     source: hosted
-    version: "10.11.0"
+    version: "10.12.0"
   freezed:
     dependency: "direct dev"
     description:
@@ -939,10 +939,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: e1d7ffb0db475e6e845eb58b44768f50b830e23960e3df6908924acd8f7f70ea
+      sha256: d8f590a69729f719177ea68eb1e598295e8dbc41bbc247fed78b2c8a25660d7c
       url: "https://pub.dev"
     source: hosted
-    version: "16.2.5"
+    version: "16.3.0"
   google_fonts:
     dependency: "direct main"
     description:
@@ -1139,10 +1139,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker_platform_interface
-      sha256: "9f143b0dba3e459553209e20cc425c9801af48e6dfa4f01a0fcf927be3f41665"
+      sha256: "567e056716333a1647c64bb6bd873cff7622233a5c3f694be28a583d4715690c"
       url: "https://pub.dev"
     source: hosted
-    version: "2.11.0"
+    version: "2.11.1"
   image_picker_windows:
     dependency: transitive
     description:
@@ -1264,10 +1264,10 @@ packages:
     dependency: transitive
     description:
       name: lucide_icons_flutter
-      sha256: "9847474128d2c419beb3621cc564c7daf80382db76ba2716f47f24b0b068700b"
+      sha256: "1fdb960db91a365e40ebe16cd4f0f856d07dde2ba6e3af16725c3b0d007593c6"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.4"
+    version: "3.1.5"
   matcher:
     dependency: transitive
     description:
@@ -1656,10 +1656,10 @@ packages:
     dependency: "direct main"
     description:
       name: shadcn_ui
-      sha256: "42a76fe16c3ffc7d56cf94ba1ca0568495c5a3cacba7e163b8071550228f5600"
+      sha256: f7f18b1d3c6e10628b72a7bc80fce32c91722800828efbfb248f6d846f36d5cb
       url: "https://pub.dev"
     source: hosted
-    version: "0.38.1"
+    version: "0.38.5"
   shared_preferences:
     dependency: "direct main"
     description:

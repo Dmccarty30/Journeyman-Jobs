@@ -36,7 +36,11 @@
       "Bash(sed -n '995,1100p' lib/design_system/components/reusable_components.dart)",
       "Bash(sed -n '1,100p' lib/screens/onboarding/auth_screen.dart)",
       "Bash(sed -n '600,750p' lib/screens/onboarding/auth_screen.dart)",
-      "Bash(dart run build_runner build --delete-conflicting-outputs)"
+      "Bash(dart run build_runner build --delete-conflicting-outputs)",
+      "Bash(flutter run:*)",
+      "Bash(dart tools/design_system_lint.dart:*)",
+      "Bash(echo:*)",
+      "Bash(dart format:*)"
     ],
     "deny": []
   },

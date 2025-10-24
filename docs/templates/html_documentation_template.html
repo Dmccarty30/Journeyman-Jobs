@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journeyman Jobs - Documentation Template</title>
+    <style>
+        /* =================== JOURNEYMAN JOBS ELECTRICAL THEME =================== */
+
+        :root {
+            /* Primary Colors */
+            --primary-navy: #1A202C;
+            --accent-copper: #B45309;
+            --secondary-navy: #2D3748;
+            --secondary-copper: #D69E2E;
+
+            /* Neutral Colors */
+            --white: #FFFFFF;
+            --off-white: #F7FAFC;
+            --light-gray: #E2E8F0;
+            --medium-gray: #718096;
+            --dark-gray: #4A5568;
+
+            /* Text Colors */
+            --text-primary: #1A202C;
+            --text-secondary: #4A5568;
+            --text-light: #718096;
+
+            /* Status Colors */
+            --success-green: #38A169;
+            --warning-yellow: #D69E2E;
+            --error-red: #E53E3E;
+            --info-blue: #3182CE;
+
+            /* Spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-xxl: 48px;
+
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* =================== BASE STYLES =================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--off-white);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: var(--spacing-lg);
+        }
+
+        /* =================== TYPOGRAPHY =================== */
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-navy);
+            margin-bottom: var(--spacing-lg);
+            border-bottom: 3px solid var(--accent-copper);
+            padding-bottom: var(--spacing-md);
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-navy);
+            margin-top: var(--spacing-xl);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+        }
+
+        h2::before {
+            content: "⚡";
+            margin-right: var(--spacing-sm);
+            color: var(--accent-copper);
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--secondary-navy);
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        p {
+            margin-bottom: var(--spacing-md);
+            color: var(--text-primary);
+        }
+
+        /* =================== CONTAINER =================== */
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--white);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 2px solid var(--accent-copper);
+        }
+
+        /* =================== HEADER =================== */
+
+        .doc-header {
+            background: linear-gradient(135deg, var(--primary-navy), var(--accent-copper));
+            color: var(--white);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .doc-header h1 {
+            color: var(--white);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .doc-meta {
+            display: flex;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .doc-meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        /* =================== CARDS =================== */
+
+        .card {
+            background-color: var(--white);
+            border: 1.5px solid var(--accent-copper);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-navy);
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        /* =================== LISTS =================== */
+
+        ul, ol {
+            margin-left: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        li {
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+        }
+
+        li::marker {
+            color: var(--accent-copper);
+        }
+
+        /* =================== CODE BLOCKS =================== */
+
+        code {
+            background-color: var(--light-gray);
+            color: var(--primary-navy);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        pre {
+            background-color: var(--primary-navy);
+            color: var(--white);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            margin-bottom: var(--spacing-md);
+            border-left: 4px solid var(--accent-copper);
+        }
+
+        pre code {
+            background-color: transparent;
+            color: var(--white);
+            padding: 0;
+        }
+
+        /* =================== TABLES =================== */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--spacing-lg);
+            border: 1.5px solid var(--accent-copper);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+
+        thead {
+            background-color: var(--primary-navy);
+            color: var(--white);
+        }
+
+        th {
+            padding: var(--spacing-md);
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        tbody tr:hover {
+            background-color: rgba(180, 83, 9, 0.05);
+        }
+
+        /* =================== ALERTS =================== */
+
+        .alert {
+            padding: var(--spacing-md);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--spacing-md);
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background-color: rgba(49, 130, 206, 0.1);
+            border-left-color: var(--info-blue);
+            color: var(--text-primary);
+        }
+
+        .alert-success {
+            background-color: rgba(56, 161, 105, 0.1);
+            border-left-color: var(--success-green);
+            color: var(--text-primary);
+        }
+
+        .alert-warning {
+            background-color: rgba(214, 158, 46, 0.1);
+            border-left-color: var(--warning-yellow);
+            color: var(--text-primary);
+        }
+
+        .alert-error {
+            background-color: rgba(229, 62, 62, 0.1);
+            border-left-color: var(--error-red);
+            color: var(--text-primary);
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        /* =================== BADGES =================== */
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: var(--spacing-xs);
+        }
+
+        .badge-primary {
+            background-color: var(--primary-navy);
+            color: var(--white);
+        }
+
+        .badge-copper {
+            background-color: var(--accent-copper);
+            color: var(--white);
+        }
+
+        .badge-success {
+            background-color: var(--success-green);
+            color: var(--white);
+        }
+
+        .badge-warning {
+            background-color: var(--warning-yellow);
+            color: var(--white);
+        }
+
+        /* =================== CIRCUIT PATTERN =================== */
+
+        .circuit-bg {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .circuit-bg::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(90deg, var(--light-gray) 1px, transparent 1px),
+                linear-gradient(var(--light-gray) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        /* =================== FOOTER =================== */
+
+        .doc-footer {
+            margin-top: var(--spacing-xxl);
+            padding-top: var(--spacing-lg);
+            border-top: 2px solid var(--light-gray);
+            text-align: center;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container circuit-bg">
+        <!-- HEADER -->
+        <div class="doc-header">
+            <h1>📄 Documentation Title</h1>
+            <div class="doc-meta">
+                <div class="doc-meta-item">
+                    <span>📅 Date:</span>
+                    <span>2025-01-23</span>
+                </div>
+                <div class="doc-meta-item">
+                    <span>👤 Author:</span>
+                    <span>Claude Code + Developer</span>
+                </div>
+                <div class="doc-meta-item">
+                    <span>🏷️ Version:</span>
+                    <span>1.0.0</span>
+                </div>
+                <div class="doc-meta-item">
+                    <span>📦 Project:</span>
+                    <span>Journeyman Jobs</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLE OF CONTENTS -->
+        <div class="card">
+            <div class="card-header">📑 Table of Contents</div>
+            <ol>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#implementation">Implementation Details</a></li>
+                <li><a href="#testing">Testing & Quality</a></li>
+                <li><a href="#deployment">Deployment</a></li>
+            </ol>
+        </div>
+
+        <!-- OVERVIEW SECTION -->
+        <h2 id="overview">Overview</h2>
+        <p>
+            This is a sample documentation template for the Journeyman Jobs application.
+            It demonstrates the electrical-themed design system with navy blue and copper accents.
+        </p>
+
+        <div class="alert alert-info">
+            <div class="alert-title">ℹ️ Information</div>
+            Use this alert for informational messages and helpful tips.
+        </div>
+
+        <div class="alert alert-success">
+            <div class="alert-title">✅ Success</div>
+            Use this alert for successful operations and confirmations.
+        </div>
+
+        <div class="alert alert-warning">
+            <div class="alert-title">⚠️ Warning</div>
+            Use this alert for warnings and cautions that require attention.
+        </div>
+
+        <div class="alert alert-error">
+            <div class="alert-title">❌ Error</div>
+            Use this alert for critical errors and blocking issues.
+        </div>
+
+        <!-- ARCHITECTURE SECTION -->
+        <h2 id="architecture">Architecture</h2>
+
+        <div class="card">
+            <div class="card-header">🏗️ System Components</div>
+            <ul>
+                <li><strong>Frontend:</strong> Flutter 3.x with Riverpod state management</li>
+                <li><strong>Backend:</strong> Firebase (Authentication, Firestore, Storage)</li>
+                <li><strong>Design System:</strong> Custom electrical-themed components</li>
+                <li><strong>Navigation:</strong> go_router for type-safe routing</li>
+            </ul>
+        </div>
+
+        <h3>Feature Modules</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Module</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>Jobs</code></td>
+                    <td>Job listings and search functionality</td>
+                    <td><span class="badge badge-success">Active</span></td>
+                    <td><span class="badge badge-copper">High</span></td>
+                </tr>
+                <tr>
+                    <td><code>Locals</code></td>
+                    <td>IBEW union local directory</td>
+                    <td><span class="badge badge-success">Active</span></td>
+                    <td><span class="badge badge-copper">High</span></td>
+                </tr>
+                <tr>
+                    <td><code>Storm Work</code></td>
+                    <td>Emergency restoration opportunities</td>
+                    <td><span class="badge badge-success">Active</span></td>
+                    <td><span class="badge badge-copper">High</span></td>
+                </tr>
+                <tr>
+                    <td><code>Contacts</code></td>
+                    <td>Industry contact management</td>
+                    <td><span class="badge badge-warning">In Progress</span></td>
+                    <td><span class="badge badge-primary">Medium</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- IMPLEMENTATION SECTION -->
+        <h2 id="implementation">Implementation Details</h2>
+
+        <h3>Code Example</h3>
+        <pre><code>// Example: Creating a themed card widget
+Container(
+  decoration: BoxDecoration(
+    color: AppTheme.white,
+    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+    border: Border.all(
+      color: AppTheme.accentCopper,
+      width: AppTheme.borderWidthMedium,
+    ),
+    boxShadow: AppTheme.shadowCard,
+  ),
+  child: Padding(
+    padding: const EdgeInsets.all(AppTheme.spacingMd),
+    child: YourContentWidget(),
+  ),
+)</code></pre>
+
+        <h3>Design System Constants</h3>
+        <div class="card">
+            <div class="card-header">🎨 Theme Values</div>
+            <ul>
+                <li><strong>Primary Navy:</strong> <code>#1A202C</code></li>
+                <li><strong>Accent Copper:</strong> <code>#B45309</code></li>
+                <li><strong>Border Width:</strong> <code>1.5px</code> (Medium)</li>
+                <li><strong>Border Radius:</strong> <code>12px</code> (Medium)</li>
+                <li><strong>Shadow:</strong> <code>shadowCard</code></li>
+            </ul>
+        </div>
+
+        <!-- TESTING SECTION -->
+        <h2 id="testing">Testing & Quality</h2>
+        <p>
+            All components should follow the established testing patterns with widget tests,
+            integration tests, and proper error handling.
+        </p>
+
+        <h4>Testing Checklist:</h4>
+        <ul>
+            <li>✅ Widget rendering tests</li>
+            <li>✅ User interaction tests</li>
+            <li>✅ State management tests</li>
+            <li>✅ Error handling tests</li>
+            <li>✅ Accessibility compliance</li>
+        </ul>
+
+        <!-- DEPLOYMENT SECTION -->
+        <h2 id="deployment">Deployment</h2>
+        <p>
+            Deployment procedures and environment configurations for the Journeyman Jobs application.
+        </p>
+
+        <!-- FOOTER -->
+        <div class="doc-footer">
+            <p>
+                ⚡ Journeyman Jobs - Electrical Industry Job Platform<br>
+                Generated with Claude Code | IBEW Theme Documentation
+            </p>
+        </div>
+    </div>
+</body>
+</html>

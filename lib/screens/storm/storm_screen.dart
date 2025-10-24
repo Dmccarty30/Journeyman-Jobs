@@ -232,6 +232,12 @@ class _StormScreenState extends State<StormScreen> {
         ),
         actions: [
           IconButton(
+            iconSize: 24,
+            constraints: const BoxConstraints(
+              minWidth: 48,
+              minHeight: 48,
+            ),
+            padding: const EdgeInsets.all(12),
             icon: Icon(
               _notificationsEnabled ? Icons.notifications_active : Icons.notifications_outlined,
               color: AppTheme.white,
@@ -256,7 +262,7 @@ class _StormScreenState extends State<StormScreen> {
           const Positioned.fill(
             child: ElectricalCircuitBackground(
               opacity: 0.08,
-              componentDensity: ComponentDensity.high,
+              componentDensity: ComponentDensity.medium,
               enableCurrentFlow: true,
             ),
           ),
@@ -268,11 +274,9 @@ class _StormScreenState extends State<StormScreen> {
                 borderRadius: BorderRadius.circular(AppTheme.radiusLg),
                 border: Border.all(
                   color: AppTheme.accentCopper,
-                  width: AppTheme.borderWidthCopper * 0.5,
+                  width: AppTheme.borderWidthMedium,
                 ),
-                boxShadow: [
-                  AppTheme.shadowElectricalInfo,
-                ],
+                boxShadow: AppTheme.shadowCard,
               ),
             child: SingleChildScrollView(
               child: Column(
@@ -429,12 +433,10 @@ class _StormScreenState extends State<StormScreen> {
                             color: AppTheme.white,
                             borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                             border: Border.all(
-                  color: AppTheme.accentCopper,
-                  width: AppTheme.borderWidthCopper * 0.5,
-                ),
-                boxShadow: [
-                  AppTheme.shadowElectricalInfo,
-                ],
+                              color: AppTheme.accentCopper,
+                              width: AppTheme.borderWidthMedium,
+                            ),
+                            boxShadow: AppTheme.shadowCard,
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
@@ -485,33 +487,35 @@ class _StormScreenState extends State<StormScreen> {
                               size: AppTheme.iconMd,
                             ),
                             const SizedBox(width: AppTheme.spacingSm),
-                            Text(
-                                    'Emergency Declarations',
-                                    style: AppTheme.headlineSmall.copyWith(
-                                      color: AppTheme.primaryNavy,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(width: AppTheme.spacingSm),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: AppTheme.spacingSm,
-                                      vertical: AppTheme.spacingXs,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.warningYellow.withValues(alpha: 0.2),
-                                      borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                                    ),
-                                    child: Text(
-                                      'ADMIN ONLY',
-                                      style: AppTheme.labelSmall.copyWith(
-                                        color: AppTheme.warningYellow,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                            Expanded(
+                              child: Text(
+                                'Emergency Declarations',
+                                style: AppTheme.headlineSmall.copyWith(
+                                  color: AppTheme.primaryNavy,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
+                            ),
+                            const SizedBox(width: AppTheme.spacingSm),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppTheme.spacingSm,
+                                vertical: AppTheme.spacingXs,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppTheme.errorRed.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                              ),
+                              child: Text(
+                                'ADMIN ONLY',
+                                style: AppTheme.labelSmall.copyWith(
+                                  color: AppTheme.errorRed,  // WCAG AA compliant: #E53E3E (4.52:1)
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                               const SizedBox(height: AppTheme.spacingMd),
                               Text(
                                 'Real-time video updates from emergency management',
@@ -532,7 +536,7 @@ class _StormScreenState extends State<StormScreen> {
                               //   timestamp: DateTime.now(),
                               // )
                               Container(
-                                height: 120,
+                                padding: const EdgeInsets.all(AppTheme.spacingMd),
                                 decoration: BoxDecoration(
                                   color: AppTheme.lightGray.withValues(alpha: 0.3),
                                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -542,11 +546,12 @@ class _StormScreenState extends State<StormScreen> {
                                   ),
                                 ),
                                 child: Column(
+                                  mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
                                       Icons.video_library_outlined,
-                                      size: 48,
+                                      size: 40,
                                       color: AppTheme.textSecondary,
                                     ),
                                     const SizedBox(height: AppTheme.spacingSm),
@@ -555,12 +560,15 @@ class _StormScreenState extends State<StormScreen> {
                                       style: AppTheme.bodyMedium.copyWith(
                                         color: AppTheme.textSecondary,
                                       ),
+                                      textAlign: TextAlign.center,
                                     ),
+                                    const SizedBox(height: AppTheme.spacingXs),
                                     Text(
                                       'Admin video upload functionality',
                                       style: AppTheme.bodySmall.copyWith(
                                         color: AppTheme.textSecondary,
                                       ),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ],
                                 ),
@@ -599,11 +607,13 @@ class _StormScreenState extends State<StormScreen> {
                               size: AppTheme.iconMd,
                             ),
                             const SizedBox(width: AppTheme.spacingSm),
-                            Text(
-                              'Storm Contractors',
-                              style: AppTheme.headlineSmall.copyWith(
-                                color: AppTheme.primaryNavy,
-                                fontWeight: FontWeight.bold,
+                            Expanded(
+                              child: Text(
+                                'Storm Contractors',
+                                style: AppTheme.headlineSmall.copyWith(
+                                  color: AppTheme.primaryNavy,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],

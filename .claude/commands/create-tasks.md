@@ -28,7 +28,6 @@ When `/create-tasks` is invoked:
 ### Phase 2: Report Coordination
 
 - codebase-coordinator ingests all three reports
-- Synthesizes findings into comprehensive HTML and Markdown report using COMPREHENSIVE_CODEBASE_REPORT.md format
 - Includes unified priorities, dependencies, and implementation roadmap
 
 ### Phase 3: Task Creation

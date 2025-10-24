@@ -21,18 +21,12 @@ class ContractorCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: AppTheme.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         border: Border.all(
           color: AppTheme.accentCopper,
           width: AppTheme.borderWidthMedium,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: AppTheme.shadowCard,
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -99,7 +93,7 @@ class ContractorCard extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // Action buttons
+            // Action buttons with WCAG 2.1 AA compliant touch targets (≥48px)
             Row(
               children: [
                 if (contractor.website != null &&
@@ -112,6 +106,11 @@ class ContractorCard extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryNavy,
                         foregroundColor: AppTheme.white,
+                        minimumSize: const Size(0, 48), // WCAG compliance
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -128,6 +127,11 @@ class ContractorCard extends StatelessWidget {
                         foregroundColor: AppTheme.primaryNavy,
                         side: const BorderSide(
                           color: AppTheme.accentCopper,
+                        ),
+                        minimumSize: const Size(0, 48), // WCAG compliance
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
                         ),
                       ),
                     ),

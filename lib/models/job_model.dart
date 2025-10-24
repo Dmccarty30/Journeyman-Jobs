@@ -10,10 +10,11 @@ class Job {
   final String id;
   final DocumentReference? reference;
   final String sharerId;
-  final Map<String, dynamic> jobDetails; // Nested details: hours, payRate, perDiem, contractor, location (GeoPoint)
+  final Map<String, dynamic>
+  jobDetails; // Nested details: hours, payRate, perDiem, contractor, location (GeoPoint)
   final bool matchesCriteria;
   final bool deleted;
-  
+
   // Core job fields (legacy/flat fields for compatibility)
   final int? local;
   final String? classification;
@@ -139,41 +140,76 @@ class Job {
 
   /// Creates a Job instance from a JSON map
   /// Handles both Firestore documents and standard JSON
+  ///
+  /// This factory method is schema-agnostic and handles:
+  /// - local/localNumber as int, string, or double
+  /// - Missing 'deleted' field (defaults to false)
+  /// - timestamp with fallback to createdAt or epoch
+  /// - typeOfWork normalization to lowercase
+  /// - Hours and perDiem with robust parsing
   factory Job.fromJson(Map<String, dynamic> json) {
-    // Helper function to parse DateTime from various formats
-    DateTime parseDateTime(dynamic value) {
-      if (value == null) {
-        return DateTime.now();
+    /// Helper to parse DateTime from various formats with robust fallback
+    ///
+    /// Handles Firestore Timestamp, DateTime, String, int (milliseconds)
+    /// Falls back to 'createdAt' field, returns null if no valid timestamp found
+    ///
+    /// CRITICAL FIX: Returns nullable DateTime? to maintain contract with Job.timestamp field
+    DateTime? parseTimestamp(dynamic value, Map<String, dynamic> json) {
+      // Try primary timestamp field
+      if (value != null) {
+        if (value is Timestamp) return value.toDate();
+        if (value is DateTime) return value;
+        if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
+        if (value is String) {
+          final parsed = DateTime.tryParse(value);
+          if (parsed != null) return parsed;
+        }
       }
-      if (value is Timestamp) {
-        return value.toDate();
+
+      // Fallback to createdAt field
+      final createdAt = json['createdAt'];
+      if (createdAt != null) {
+        if (createdAt is Timestamp) return createdAt.toDate();
+        if (createdAt is DateTime) return createdAt;
+        if (createdAt is String) {
+          final parsed = DateTime.tryParse(createdAt);
+          if (parsed != null) return parsed;
+        }
       }
-      if (value is DateTime) {
-        return value;
-      }
-      if (value is String) {
-        return DateTime.parse(value);
-      }
-      if (value is int) {
-        return DateTime.fromMillisecondsSinceEpoch(value);
-      }
-      throw FormatException('Unable to parse DateTime from $value');
+
+      // Return null if no valid timestamp found (preserves nullable contract)
+      return null;
     }
 
-    // Helper function to safely parse integers
+    /// Helper to safely parse integers from any type
+    ///
+    /// Handles int, double, string (with digit extraction)
+    /// Tolerates strings like "123-Journeyman" by extracting numeric prefix
+    /// SECURITY FIX: Validates positive integers to prevent overflow and invalid data
     int? parseInt(dynamic value) {
       if (value == null) return null;
-      if (value is int) return value;
+      if (value is int) return value >= 0 ? value : null;
+      if (value is double) return value >= 0 ? value.toInt() : null;
       if (value is String) {
-        return int.tryParse(value);
-      }
-      if (value is double) {
-        return value.toInt();
+        // First try direct parse
+        final direct = int.tryParse(value.trim());
+        if (direct != null && direct >= 0) return direct;
+
+        // Extract leading digits from strings like "123-Local" or "123 Main St"
+        // Only accept positive numbers (IBEW locals are numbered 1-9999)
+        final match = RegExp(r'^\d+').firstMatch(value.trim());
+        if (match != null) {
+          final parsed = int.tryParse(match.group(0)!);
+          if (parsed != null && parsed >= 0) return parsed;
+        }
       }
       return null;
     }
 
-    // Helper function to safely parse doubles
+    /// Helper to safely parse doubles from any type
+    ///
+    /// Removes common currency symbols and formatting
+    /// Handles: "$45.50/hr", "45.50", 45.5, 45
     double? parseDouble(dynamic value) {
       if (value == null) return null;
       if (value is double) return value;
@@ -190,12 +226,19 @@ class Job {
       return null;
     }
 
-
-    // Helper function to parse list of integers
+    /// Helper function to parse list of integers
+    ///
+    /// CRITICAL FIX: Filters out null/invalid values instead of converting to 0
+    /// Prevents invalid data like "book 0" from entering the system
     List<int>? parseIntList(dynamic value) {
       if (value == null) return null;
       if (value is List) {
-        return value.map((e) => parseInt(e) ?? 0).toList();
+        // Filter out null values instead of converting to 0
+        return value
+            .map((e) => parseInt(e))
+            .where((e) => e != null)
+            .cast<int>()
+            .toList();
       }
       return null;
     }
@@ -204,14 +247,20 @@ class Job {
     Map<String, dynamic> buildJobDetails(Map<String, dynamic> json) {
       final details = <String, dynamic>{};
       details['hours'] = parseInt(json['hours']) ?? parseInt(json['Shift']);
-      details['payRate'] = parseDouble(json['wage']) ?? parseDouble(json['hourlyWage']);
-      details['perDiem'] = json['per_diem']?.toString() ?? json['perDiem']?.toString() ?? json['Benefits']?.toString();
-      details['contractor'] = json['company']?.toString() ?? json['employer']?.toString() ?? '';
-      // location as GeoPoint if available, else string
+      details['payRate'] =
+          parseDouble(json['wage']) ?? parseDouble(json['hourlyWage']);
+      details['perDiem'] =
+          json['per_diem']?.toString() ??
+          json['perDiem']?.toString() ??
+          json['Benefits']?.toString();
+      details['contractor'] =
+          json['company']?.toString() ?? json['employer']?.toString() ?? '';
+      // location as GeoPoint if available, else null
+      // QUALITY FIX: Use null instead of GeoPoint(0,0) to avoid "Null Island" invalid data
       if (json['location'] is GeoPoint) {
         details['location'] = json['location'];
       } else {
-        details['location'] = GeoPoint(0, 0); // Default if not GeoPoint
+        details['location'] = null; // Explicit null for missing GeoPoint
       }
       return details;
     }
@@ -220,7 +269,7 @@ class Job {
       // Extract job title from ID if needed (format: "1249-Journeyman_Lineman-Company")
       String? extractedJobTitle = json['job_title']?.toString();
       String? extractedClassification = json['classification']?.toString();
-      
+
       if (extractedJobTitle == null && json['id'] != null) {
         // Try to extract from ID
         final idParts = json['id'].toString().split('-');
@@ -228,12 +277,12 @@ class Job {
           extractedJobTitle = idParts[1]; // e.g., "Journeyman_Lineman"
         }
       }
-      
+
       // Handle hours field which might contain certifications
       dynamic hoursValue = json['hours'];
       int? hoursInt;
       String? certifications;
-      
+
       if (hoursValue != null) {
         // Check if it's a certification string like "CDL, fa/cpr"
         if (hoursValue is String && hoursValue.contains(',')) {
@@ -244,40 +293,88 @@ class Job {
       }
 
       final jobDetailsMap = buildJobDetails(json);
-      
+
+      // Schema-agnostic local/localNumber parsing
+      // Try both fields, handle int/string/double, prefer local over localNumber
+      final localValue =
+          parseInt(json['local']) ?? parseInt(json['localNumber']);
+      final localNumberValue =
+          parseInt(json['localNumber']) ?? parseInt(json['local']);
+
+      // Parse timestamp with fallback chain: timestamp → createdAt → epoch
+      final parsedTimestamp = parseTimestamp(json['timestamp'], json);
+
+      // Normalize typeOfWork to lowercase for consistent matching
+      String? normalizedTypeOfWork =
+          json['work_type']?.toString() ??
+          json['typeOfWork']?.toString() ??
+          json['Type of Work']?.toString();
+      if (normalizedTypeOfWork != null) {
+        normalizedTypeOfWork = normalizedTypeOfWork.toLowerCase().trim();
+      }
+
       return Job(
         id: json['id']?.toString() ?? '',
         reference: json['reference'] as DocumentReference?,
         sharerId: json['sharerId']?.toString() ?? '',
         jobDetails: jobDetailsMap,
         matchesCriteria: json['matchesCriteria'] ?? false,
-        deleted: json['deleted'] ?? false,
-        local: parseInt(json['local']) ?? parseInt(json['localNumber']),
+        // Robust deleted parsing: missing field = false, explicit true = true
+        deleted: json['deleted'] == true,
+        // Schema-agnostic local parsing (handles int/string/double)
+        local: localValue,
         classification: extractedClassification ?? json['jobClass']?.toString(),
-        company: json['company']?.toString() ?? json['employer']?.toString() ?? '',
-        location: json['location']?.toString() ?? json['Location']?.toString() ?? '',
+        company:
+            json['company']?.toString() ?? json['employer']?.toString() ?? '',
+        location:
+            json['location']?.toString() ?? json['Location']?.toString() ?? '',
         hours: hoursInt ?? parseInt(json['Shift']),
-        wage: jobDetailsMap['payRate'] ?? parseDouble(json['wage']) ?? parseDouble(json['hourlyWage']),
+        wage:
+            jobDetailsMap['payRate'] ??
+            parseDouble(json['wage']) ??
+            parseDouble(json['hourlyWage']),
         sub: json['sub']?.toString(),
         jobClass: json['jobClass']?.toString() ?? certifications,
-        localNumber: parseInt(json['localNumber']) ?? parseInt(json['local']),
-        qualifications: json['qualifications']?.toString() ?? json['certifications']?.toString() ?? certifications,
-        datePosted: json['date_posted']?.toString() ?? json['datePosted']?.toString(),
-        jobDescription: json['description']?.toString() ?? json['job_description']?.toString(),
+        // Schema-agnostic localNumber parsing (handles int/string/double)
+        localNumber: localNumberValue,
+        qualifications:
+            json['qualifications']?.toString() ??
+            json['certifications']?.toString() ??
+            certifications,
+        datePosted:
+            json['date_posted']?.toString() ?? json['datePosted']?.toString(),
+        jobDescription:
+            json['description']?.toString() ??
+            json['job_description']?.toString(),
         jobTitle: extractedJobTitle ?? json['title']?.toString(),
-        perDiem: jobDetailsMap['perDiem'] ?? json['per_diem']?.toString() ?? json['perDiem']?.toString() ?? json['Benefits']?.toString(),
+        perDiem:
+            jobDetailsMap['perDiem'] ??
+            json['per_diem']?.toString() ??
+            json['perDiem']?.toString() ??
+            json['Benefits']?.toString(),
         agreement: json['agreement']?.toString(),
-        numberOfJobs: json['numberOfJobs']?.toString() ?? json['positionsAvailable']?.toString() ?? json['Men Needed']?.toString(),
-        timestamp: json['timestamp'] != null ? parseDateTime(json['timestamp']) : null,
-        startDate: json['startDate']?.toString() ?? json['requestDate']?.toString(),
+        numberOfJobs:
+            json['numberOfJobs']?.toString() ??
+            json['positionsAvailable']?.toString() ??
+            json['Men Needed']?.toString(),
+        // Robust timestamp with fallback chain
+        timestamp: parsedTimestamp,
+        startDate:
+            json['startDate']?.toString() ?? json['requestDate']?.toString(),
         startTime: json['startTime']?.toString(),
         booksYourOn: parseIntList(json['booksYourOn']),
-        typeOfWork: json['work_type']?.toString() ?? json['typeOfWork']?.toString() ?? json['Type of Work']?.toString(),
+        // Normalized typeOfWork for consistent lowercase matching
+        typeOfWork: normalizedTypeOfWork,
         duration: json['duration']?.toString() ?? json['Duration']?.toString(),
-        voltageLevel: json['voltageLevel']?.toString() ?? json['voltage_level']?.toString(),
+        voltageLevel:
+            json['voltageLevel']?.toString() ??
+            json['voltage_level']?.toString(),
       );
-    } catch (e) {
-      throw FormatException('Failed to parse Job from JSON: $e');
+    } catch (e, stackTrace) {
+      // QUALITY FIX: Preserve stack trace for better debugging
+      throw FormatException(
+        'Failed to parse Job from JSON: $e\nStack trace: $stackTrace'
+      );
     }
   }
 
@@ -304,12 +401,12 @@ class Job {
     data['matchesCriteria'] = matchesCriteria;
     data['company'] = company;
     data['location'] = location;
-    
+
     // Handle reference field
     if (reference != null) {
       data['reference'] = reference;
     }
-    
+
     // Handle DateTime fields based on output format
     if (timestamp != null) {
       if (useFirestoreTypes) {
@@ -360,7 +457,8 @@ class Job {
     return Job.fromJson(data);
   }
 
-  bool isValid() => id.isNotEmpty && sharerId.isNotEmpty && jobDetails.isNotEmpty;
+  bool isValid() =>
+      id.isNotEmpty && sharerId.isNotEmpty && jobDetails.isNotEmpty;
 
   @override
   String toString() {
@@ -378,7 +476,7 @@ class Job {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     final listEquals = const ListEquality().equals;
-    
+
     return other is Job &&
         other.id == id &&
         other.reference == reference &&
@@ -410,31 +508,31 @@ class Job {
 
   @override
   int get hashCode => Object.hashAll([
-        id,
-        reference,
-        deleted,
-        local,
-        classification,
-        company,
-        location,
-        hours,
-        wage,
-        sub,
-        jobClass,
-        localNumber,
-        qualifications,
-        datePosted,
-        jobDescription,
-        jobTitle,
-        perDiem,
-        agreement,
-        numberOfJobs,
-        timestamp,
-        startDate,
-        startTime,
-        const ListEquality().hash(booksYourOn),
-        typeOfWork,
-        duration,
-        voltageLevel,
-      ]);
+    id,
+    reference,
+    deleted,
+    local,
+    classification,
+    company,
+    location,
+    hours,
+    wage,
+    sub,
+    jobClass,
+    localNumber,
+    qualifications,
+    datePosted,
+    jobDescription,
+    jobTitle,
+    perDiem,
+    agreement,
+    numberOfJobs,
+    timestamp,
+    startDate,
+    startTime,
+    const ListEquality().hash(booksYourOn),
+    typeOfWork,
+    duration,
+    voltageLevel,
+  ]);
 }

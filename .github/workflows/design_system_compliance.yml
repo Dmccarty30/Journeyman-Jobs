@@ -1,0 +1,57 @@
+name: Design System Compliance
+
+# STORM-012: Automated design system compliance checking
+# Ensures all code uses AppTheme constants instead of hardcoded values
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'lib/**/*.dart'
+      - 'tools/design_system_lint.dart'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'lib/**/*.dart'
+      - 'tools/design_system_lint.dart'
+
+jobs:
+  lint-design-system:
+    name: Design System Lint Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Cache Dart dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-dart-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-dart-
+
+      - name: Run Design System Compliance Check
+        run: dart tools/design_system_lint.dart --ci
+        continue-on-error: false
+
+      - name: Report Results
+        if: failure()
+        run: |
+          echo "::error::Design system violations detected. Please fix before merging."
+          echo "Run 'dart tools/design_system_lint.dart --verbose' locally for details."
+          exit 1
+
+      - name: Success Summary
+        if: success()
+        run: |
+          echo "✅ All files comply with design system standards"
+          echo "No hardcoded design values detected"

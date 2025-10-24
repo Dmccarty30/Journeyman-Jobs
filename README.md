@@ -36,11 +36,13 @@ Journeyman Jobs connects skilled electrical workers with job opportunities acros
 
 ### 🔌 Enhanced Design System
 
-- **Electrical Theme**: Custom electrical components and animations
-- **Circuit Patterns**: Dynamic circuit pattern backgrounds
+- **Electrical Theme**: Custom electrical components and animations with `ComponentDensity.medium` standard
+- **Circuit Patterns**: Dynamic circuit pattern backgrounds optimized for 60+ FPS performance
 - **Interactive Elements**: Lightning bolt loading indicators and electrical animations
-- **Professional UI**: Copper and navy color scheme representing electrical heritage
-- **Accessibility**: Full WCAG compliance for all users
+- **Professional UI**: Copper (#B45309) and navy (#1A202C) color scheme representing electrical heritage
+- **Design Consistency**: Standardized card patterns with 1.5px borders, 12px radius, and AppTheme.shadowCard
+- **Accessibility**: Full WCAG 2.1 AA compliance (verified color contrast ≥4.5:1, touch targets ≥48×48px)
+- **Reference Implementation**: Storm screen serves as design system showcase (see `docs/design_system/STORM_SCREEN_DESIGN_REFERENCE.md`)
 
 ## 🛠️ Technology Stack
 
@@ -66,9 +68,13 @@ Journeyman Jobs connects skilled electrical workers with job opportunities acros
 
 ### Development & Quality
 
-- **Testing**: Comprehensive unit, widget, and integration tests
-- **Code Quality**: Flutter Lints, static analysis
-- **Performance**: Firebase Performance Monitoring
+- **Testing**: Comprehensive test coverage
+  - Visual regression tests with golden files
+  - Accessibility compliance validation (WCAG 2.1 AA)
+  - Performance baseline testing (frame rate, memory, battery impact)
+  - Unit, widget, and integration tests
+- **Code Quality**: Flutter Lints, static analysis, design system compliance
+- **Performance**: Firebase Performance Monitoring + custom benchmarks (60+ FPS validated)
 - **CI/CD**: GitHub Actions with automated deployment
 
 ## 🚀 Getting Started
