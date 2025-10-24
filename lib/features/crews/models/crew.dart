@@ -78,8 +78,47 @@ class Crew {
   // toMap alias for consistency
   Map<String, dynamic> toMap() => toFirestore();
 
-  // fromMap alias
+  // fromMap alias with flexible date handling
   factory Crew.fromMap(Map<String, dynamic> map) {
+    // Helper function to parse dates from various formats
+    DateTime parseDate(dynamic value, DateTime fallback) {
+      if (value == null) return fallback;
+
+      // Handle Timestamp objects from Firestore
+      if (value is Timestamp) {
+        return value.toDate();
+      }
+
+      // Handle DateTime objects (already converted)
+      if (value is DateTime) {
+        return value;
+      }
+
+      // Handle String representations (ISO8601)
+      if (value is String) {
+        try {
+          return DateTime.parse(value);
+        } catch (e) {
+          return fallback;
+        }
+      }
+
+      // Handle Map representations from Firestore (with seconds and nanoseconds)
+      if (value is Map<String, dynamic>) {
+        if (value.containsKey('_seconds')) {
+          final seconds = value['_seconds'] as int?;
+          final nanoseconds = value['_nanoseconds'] as int? ?? 0;
+          if (seconds != null) {
+            return DateTime.fromMillisecondsSinceEpoch(
+              seconds * 1000 + (nanoseconds ~/ 1000000)
+            );
+          }
+        }
+      }
+
+      return fallback;
+    }
+
     return Crew(
       id: map['id'] ?? '',
       name: map['name'] ?? '',
@@ -90,12 +129,12 @@ class Crew {
           ? CrewLocation.fromFirestore(map['location'])
           : null,
       preferences: CrewPreferences.fromMap(map['preferences'] ?? {}),
-      createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      createdAt: parseDate(map['createdAt'], DateTime.now()),
       roles: (map['roles'] as Map<String, dynamic>?)?.map((key, value) => MapEntry(key, MemberRole.values.firstWhere((r) => r.toString().split('.').last == value))) ?? {},
       stats: CrewStats.fromMap(map['stats'] ?? {}),
       isActive: map['isActive'] ?? true,
       memberCount: map['memberCount'] ?? 0,
-      lastActivityAt: (map['lastActivityAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      lastActivityAt: parseDate(map['lastActivityAt'], DateTime.now()),
     );
   }
 

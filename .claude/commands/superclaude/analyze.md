@@ -18,7 +18,7 @@ personas: []
 
 ## Usage
 
-```
+```bash
 /sc:analyze [target] [--focus quality|security|performance|architecture] [--depth quick|deep] [--format text|json|report]
 ```
 
@@ -56,7 +56,7 @@ Key behaviors:
 
 ### Comprehensive Project Analysis
 
-```
+```bash
 /sc:analyze
 # Multi-domain analysis of entire project
 # Generates comprehensive report with key findings and roadmap
@@ -64,7 +64,7 @@ Key behaviors:
 
 ### Focused Security Assessment
 
-```
+```bash
 /sc:analyze src/auth --focus security --depth deep
 # Deep security analysis of authentication components
 # Vulnerability assessment with detailed remediation guidance
@@ -72,7 +72,7 @@ Key behaviors:
 
 ### Performance Optimization Analysis
 
-```
+```bash
 /sc:analyze --focus performance --format report
 # Performance bottleneck identification
 # Generates HTML report with optimization recommendations
@@ -80,7 +80,7 @@ Key behaviors:
 
 ### Quick Quality Check
 
-```
+```bash
 /sc:analyze src/components --focus quality --depth quick
 # Rapid quality assessment of component directory
 # Identifies code smells and maintainability issues

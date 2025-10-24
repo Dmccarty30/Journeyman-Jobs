@@ -103,13 +103,6 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen>
           throw Exception('User not authenticated');
         }
 
-        // Debug logging for authentication troubleshooting
-        print('🔍 DEBUG - Creating crew with user:');
-        print('   User UID: ${currentUser.uid}');
-        print('   User email: ${currentUser.email}');
-        print('   Is anonymous: ${currentUser.isAnonymous}');
-        print('   Email verified: ${currentUser.emailVerified}');
-
         // Create crew with current user as foreman
         await crewService.createCrew(
           name: _crewNameController.text,
@@ -121,7 +114,6 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen>
           ),
         );
 
-        print('✅ DEBUG - Crew created successfully');
 
         // After successful crew creation, show preferences dialog
         if (mounted) {
@@ -151,8 +143,9 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen>
             }
 
             // Navigate to Tailboard screen
+            // FIX: Navigate to /crews without crew ID parameter since TailboardScreen manages crew selection internally
             if (mounted) {
-              context.go('${AppRouter.crews}/$crewId');
+              context.go(AppRouter.crews);
             }
           } else {
             // Fallback if crew creation didn't return the crew
@@ -446,7 +439,7 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen>
                           _autoShareEnabled = value;
                         });
                       },
-                      activeColor: AppTheme.accentCopper,
+                      activeThumbColor: AppTheme.accentCopper,
                       activeTrackColor: AppTheme.accentCopper.withValues(alpha: 0.3),
                       inactiveThumbColor: AppTheme.mediumGray,
                       inactiveTrackColor: AppTheme.lightGray,

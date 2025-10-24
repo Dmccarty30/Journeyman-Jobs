@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/job_model.dart';
 import '../models/locals_record.dart';
 import '../features/crews/models/crew.dart';
@@ -281,13 +282,19 @@ class OfflineDataService {
 
   /// Store crews for offline access
   Future<void> storeCrewsOffline(List<Crew> crews, {SyncPriority priority = SyncPriority.medium}) async {
-    final entries = crews.map((crew) => OfflineDataEntry(
-      key: 'crew_${crew.id}',
-      data: crew.toFirestore(), // Assuming toFirestore() returns Map<String, dynamic>
-      cachedAt: DateTime.now(),
-      expiresAt: DateTime.now().add(kOfflineDataRetention),
-      priority: priority,
-    )).toList();
+    final entries = crews.map((crew) {
+      // Convert to Firestore map first, then convert Timestamps to ISO8601 strings for JSON serialization
+      final firestoreData = crew.toFirestore();
+      final jsonData = _convertTimestampsToStrings(firestoreData);
+
+      return OfflineDataEntry(
+        key: 'crew_${crew.id}',
+        data: jsonData,
+        cachedAt: DateTime.now(),
+        expiresAt: DateTime.now().add(kOfflineDataRetention),
+        priority: priority,
+      );
+    }).toList();
 
     await _storeDataEntries(_crewsKey, entries);
     _dataUpdateController.add({'type': 'crews', 'count': crews.length});
@@ -307,13 +314,19 @@ class OfflineDataService {
 
   /// Store crew members for offline access
   Future<void> storeCrewMembersOffline(List<CrewMember> members, {SyncPriority priority = SyncPriority.medium}) async {
-    final entries = members.map((member) => OfflineDataEntry(
-      key: 'member_${member.userId}_${member.crewId}',
-      data: member.toFirestore(), // Assuming toFirestore() returns Map<String, dynamic>
-      cachedAt: DateTime.now(),
-      expiresAt: DateTime.now().add(kOfflineDataRetention),
-      priority: priority,
-    )).toList();
+    final entries = members.map((member) {
+      // Convert to Firestore map first, then convert Timestamps to ISO8601 strings for JSON serialization
+      final firestoreData = member.toFirestore();
+      final jsonData = _convertTimestampsToStrings(firestoreData);
+
+      return OfflineDataEntry(
+        key: 'member_${member.userId}_${member.crewId}',
+        data: jsonData,
+        cachedAt: DateTime.now(),
+        expiresAt: DateTime.now().add(kOfflineDataRetention),
+        priority: priority,
+      );
+    }).toList();
 
     await _storeDataEntries(_crewMembersKey, entries);
     _dataUpdateController.add({'type': 'crew_members', 'count': members.length});
@@ -599,7 +612,7 @@ class OfflineDataService {
         
       } catch (e) {
         debugPrint('Failed to sync change ${entry.key}: $e');
-        throw e; // Re-throw to handle in main sync method
+        rethrow; // Re-throw to handle in main sync method
       }
     }
 
@@ -626,13 +639,44 @@ class OfflineDataService {
            !_wifiOnlySync;
   }
 
+  /// Recursively converts Firestore Timestamp objects to ISO8601 strings for JSON serialization
+  /// This ensures compatibility with jsonEncode() which cannot handle Timestamp objects
+  Map<String, dynamic> _convertTimestampsToStrings(Map<String, dynamic> data) {
+    final result = <String, dynamic>{};
+
+    data.forEach((key, value) {
+      if (value is Timestamp) {
+        // Convert Timestamp to ISO8601 string
+        result[key] = value.toDate().toIso8601String();
+      } else if (value is Map<String, dynamic>) {
+        // Recursively convert nested maps
+        result[key] = _convertTimestampsToStrings(value);
+      } else if (value is List) {
+        // Handle lists that might contain maps or timestamps
+        result[key] = value.map((item) {
+          if (item is Timestamp) {
+            return item.toDate().toIso8601String();
+          } else if (item is Map<String, dynamic>) {
+            return _convertTimestampsToStrings(item);
+          }
+          return item;
+        }).toList();
+      } else {
+        // Keep all other values as-is
+        result[key] = value;
+      }
+    });
+
+    return result;
+  }
+
   Future<void> _cleanupExpiredData() async {
     final keys = [_jobsKey, _localsKey, _searchHistoryKey];
-    
+
     for (final key in keys) {
       final entries = await _getDataEntries(key);
       final validEntries = entries.where((entry) => !entry.isExpired).toList();
-      
+
       if (validEntries.length != entries.length) {
         await _storeDataEntries(key, validEntries);
         debugPrint('Cleaned up ${entries.length - validEntries.length} expired entries from $key');

@@ -38,8 +38,6 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
     'NECA Contractors',
     'Quanta Services',
     'MYR Group',
-    'Mastec',
-    'Pike Corporation',
     'PowerTeam Services',
     'Summit Line Construction',
     'Potelco',
@@ -48,20 +46,12 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
 
   // Common electrical skills
   final List<String> _commonSkills = [
-    'High Voltage',
     'Underground Distribution',
     'Overhead Distribution',
     'Substation',
-    'Transformer',
-    'Motor Control',
-    'PLC Programming',
-    'Fiber Optics',
-    'SCADA Systems',
-    'Safety Training',
     'OSHA 30',
     'CDL License',
     'Crane Operation',
-    'Welding',
   ];
 
   @override
@@ -72,7 +62,7 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
 
   @override
   Widget build(BuildContext context) {
-    Widget _buildHeader() {
+    Widget buildHeader() {
       return Container(
         padding: const EdgeInsets.all(AppTheme.spacingMd),
         decoration: BoxDecoration(
@@ -135,7 +125,7 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
         child: Column(
           children: [
             // Header
-            _buildHeader(),
+            buildHeader(),
             // Content
             Expanded(
               child: Container(
@@ -500,7 +490,7 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
               _preferences = _preferences.copyWith(autoShareEnabled: value);
             });
           },
-          activeColor: AppTheme.accentCopper,
+          activeThumbColor: AppTheme.accentCopper,
           tileColor: AppTheme.offWhite,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppTheme.radiusSm),

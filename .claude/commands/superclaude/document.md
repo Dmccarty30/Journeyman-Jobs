@@ -18,7 +18,7 @@ personas: []
 
 ## Usage
 
-```
+```bash
 /sc:document [target] [--type inline|external|api|guide] [--style brief|detailed]
 ```
 
@@ -55,7 +55,7 @@ Key behaviors:
 
 ### Inline Code Documentation
 
-```
+```bash
 /sc:document src/auth/login.js --type inline
 # Generates JSDoc comments with parameter and return descriptions
 # Adds comprehensive inline documentation for functions and classes
@@ -63,7 +63,7 @@ Key behaviors:
 
 ### API Reference Generation
 
-```
+```bash
 /sc:document src/api --type api --style detailed
 # Creates comprehensive API documentation with endpoints and schemas
 # Generates usage examples and integration guidelines
@@ -71,7 +71,7 @@ Key behaviors:
 
 ### User Guide Creation
 
-```
+```bash
 /sc:document payment-module --type guide --style brief
 # Creates user-focused documentation with practical examples
 # Focuses on implementation patterns and common use cases
@@ -79,7 +79,7 @@ Key behaviors:
 
 ### Component Documentation
 
-```
+```bash
 /sc:document components/ --type external
 # Generates external documentation files for component library
 # Includes props, usage examples, and integration patterns

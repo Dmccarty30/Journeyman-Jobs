@@ -27,6 +27,45 @@ class CrewStats {
   });
 
   factory CrewStats.fromMap(Map<String, dynamic> map) {
+    // Helper function to parse dates from various formats
+    DateTime parseDate(dynamic value, DateTime fallback) {
+      if (value == null) return fallback;
+
+      // Handle Timestamp objects from Firestore
+      if (value is Timestamp) {
+        return value.toDate();
+      }
+
+      // Handle DateTime objects (already converted)
+      if (value is DateTime) {
+        return value;
+      }
+
+      // Handle String representations (ISO8601)
+      if (value is String) {
+        try {
+          return DateTime.parse(value);
+        } catch (e) {
+          return fallback;
+        }
+      }
+
+      // Handle Map representations from Firestore (with seconds and nanoseconds)
+      if (value is Map<String, dynamic>) {
+        if (value.containsKey('_seconds')) {
+          final seconds = value['_seconds'] as int?;
+          final nanoseconds = value['_nanoseconds'] as int? ?? 0;
+          if (seconds != null) {
+            return DateTime.fromMillisecondsSinceEpoch(
+              seconds * 1000 + (nanoseconds ~/ 1000000)
+            );
+          }
+        }
+      }
+
+      return fallback;
+    }
+
     return CrewStats(
       totalJobsShared: map['totalJobsShared'] ?? 0,
       totalApplications: map['totalApplications'] ?? 0,
@@ -37,11 +76,7 @@ class CrewStats {
       jobTypeBreakdown: Map<String, int>.from(
         (map['jobTypeBreakdown'] as Map<String, dynamic>?) ?? {},
       ),
-      lastActivityAt: map['lastActivityAt'] != null
-          ? (map['lastActivityAt'] is Timestamp 
-              ? (map['lastActivityAt'] as Timestamp).toDate()
-              : DateTime.parse(map['lastActivityAt'] as String))
-          : DateTime.now(),
+      lastActivityAt: parseDate(map['lastActivityAt'], DateTime.now()),
       matchScores: List<double>.from((map['matchScores'] as List<dynamic>?) ?? []),
       successRate: (map['successRate'] ?? 0.0).toDouble(),
     );

@@ -99,5 +99,11 @@ service cloud.firestore {
     match /abuse_reports/{reportId} {
       allow read, write: if isAuthenticated();
     }
+
+    // Notifications collection: Users can read and write their own notifications
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      allow write: if isAuthenticated();
+    }
   }
 }

@@ -18,7 +18,7 @@ personas: [devops-engineer]
 
 ## Usage
 
-```
+```bash
 /sc:build [target] [--type dev|prod|test] [--clean] [--optimize] [--verbose]
 ```
 
@@ -62,7 +62,7 @@ Key behaviors:
 
 ### Standard Project Build
 
-```
+```bash
 /sc:build
 # Builds entire project using default configuration
 # Generates artifacts and comprehensive build report
@@ -70,7 +70,7 @@ Key behaviors:
 
 ### Production Optimization Build
 
-```
+```bash
 /sc:build --type prod --clean --optimize
 # Clean production build with advanced optimizations
 # Minification, tree-shaking, and deployment preparation
@@ -78,7 +78,7 @@ Key behaviors:
 
 ### Targeted Component Build
 
-```
+```bash
 /sc:build frontend --verbose
 # Builds specific project component with detailed output
 # Real-time progress monitoring and diagnostic information
@@ -86,7 +86,7 @@ Key behaviors:
 
 ### Development Build with Validation
 
-```
+```bash
 /sc:build --type dev --validate
 # Development build with Playwright validation
 # UI testing and build verification integration

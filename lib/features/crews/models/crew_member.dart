@@ -154,8 +154,47 @@ class CrewMember {
     };
   }
 
-  // fromMap alias
+  // fromMap alias with flexible date handling
   factory CrewMember.fromMap(Map<String, dynamic> map) {
+    // Helper function to parse dates from various formats
+    DateTime parseDate(dynamic value, DateTime fallback) {
+      if (value == null) return fallback;
+
+      // Handle Timestamp objects from Firestore
+      if (value is Timestamp) {
+        return value.toDate();
+      }
+
+      // Handle DateTime objects (already converted)
+      if (value is DateTime) {
+        return value;
+      }
+
+      // Handle String representations (ISO8601)
+      if (value is String) {
+        try {
+          return DateTime.parse(value);
+        } catch (e) {
+          return fallback;
+        }
+      }
+
+      // Handle Map representations from Firestore (with seconds and nanoseconds)
+      if (value is Map<String, dynamic>) {
+        if (value.containsKey('_seconds')) {
+          final seconds = value['_seconds'] as int?;
+          final nanoseconds = value['_nanoseconds'] as int? ?? 0;
+          if (seconds != null) {
+            return DateTime.fromMillisecondsSinceEpoch(
+              seconds * 1000 + (nanoseconds ~/ 1000000)
+            );
+          }
+        }
+      }
+
+      return fallback;
+    }
+
     return CrewMember(
       userId: map['userId'] ?? '',
       crewId: map['crewId'] ?? '',
@@ -163,11 +202,11 @@ class CrewMember {
         (r) => r.toString().split('.').last == (map['role'] ?? 'member'),
         orElse: () => MemberRole.member,
       ),
-      joinedAt: (map['joinedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      joinedAt: parseDate(map['joinedAt'], DateTime.now()),
       permissions: MemberPermissions.fromMap(map['permissions'] ?? {}),
       isAvailable: map['isAvailable'] ?? true,
       customTitle: map['customTitle'],
-      lastActive: (map['lastActive'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      lastActive: parseDate(map['lastActive'], DateTime.now()),
       isActive: map['isActive'] ?? true,
     );
   }

@@ -18,7 +18,7 @@ personas: [architect, analyzer, frontend, backend, security, devops, project-man
 
 ## Usage
 
-```
+```bash
 /sc:task [action] [target] [--strategy systematic|agile|enterprise] [--parallel] [--delegate]
 ```
 
@@ -64,7 +64,7 @@ Key behaviors:
 
 ### Complex Feature Development
 
-```
+```bash
 /sc:task create "enterprise authentication system" --strategy systematic --parallel
 # Comprehensive task breakdown with multi-domain coordination
 # Activates architect, security, backend, frontend personas
@@ -72,7 +72,7 @@ Key behaviors:
 
 ### Agile Sprint Coordination
 
-```
+```bash
 /sc:task execute "feature backlog" --strategy agile --delegate
 # Iterative task execution with intelligent delegation
 # Cross-session persistence for sprint continuity
@@ -80,7 +80,7 @@ Key behaviors:
 
 ### Multi-Domain Integration
 
-```
+```bash
 /sc:task execute "microservices platform" --strategy enterprise --parallel
 # Enterprise-scale coordination with compliance validation
 # Parallel execution across multiple technical domains

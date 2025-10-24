@@ -197,6 +197,9 @@ class JobsNotifier extends _$JobsNotifier {
             retryCount: retryCount + 1,
           );
         } else {
+          // Check if provider is still mounted before updating state
+          if (!ref.mounted) return;
+
           // Token refresh failed or retry exhausted - redirect to auth
           final userError = _mapFirebaseError(e);
           state = state.copyWith(isLoading: false, error: userError);
@@ -205,6 +208,9 @@ class JobsNotifier extends _$JobsNotifier {
           );
         }
       }
+
+      // Check if provider is still mounted before updating state
+      if (!ref.mounted) return;
 
       // Map error to user-friendly message
       final userError = _mapFirebaseError(e);
@@ -558,6 +564,9 @@ Future<List<Job>> suggestedJobs(Ref ref) async {
       .doc(currentUser.uid)
       .get();
 
+  // Check if provider is still mounted after async operation
+  if (!ref.mounted) return <Job>[];
+
   // FALLBACK LEVEL 4: No user data -> show recent jobs
   if (!userDoc.exists) {
     if (kDebugMode) {
@@ -618,6 +627,9 @@ Future<List<Job>> suggestedJobs(Ref ref) async {
         .orderBy('timestamp', descending: true)
         .limit(50) // Fetch 50 to have buffer for client-side filtering
         .get();
+
+    // Check if provider is still mounted after async operation
+    if (!ref.mounted) return <Job>[];
   } else {
     // No preferred locals - query all recent jobs
     if (kDebugMode) {
@@ -630,6 +642,9 @@ Future<List<Job>> suggestedJobs(Ref ref) async {
         .orderBy('timestamp', descending: true)
         .limit(50)
         .get();
+
+    // Check if provider is still mounted after async operation
+    if (!ref.mounted) return <Job>[];
   }
 
   if (kDebugMode) {
