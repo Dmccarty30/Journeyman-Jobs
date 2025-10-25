@@ -9,7 +9,9 @@
       "Bash(dart run build_runner:*)",
       "Bash(flutter test:*)",
       "Bash(cat:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(flutter doctor:*)",
+      "Bash(flutter analyze:*)"
     ],
     "deny": []
   },

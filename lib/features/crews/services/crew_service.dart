@@ -17,6 +17,7 @@ import '../../../utils/structured_logging.dart';
 import 'package:journeyman_jobs/domain/enums/member_role.dart';
 import 'package:journeyman_jobs/domain/enums/permission.dart';
 import 'package:journeyman_jobs/domain/enums/invitation_status.dart';
+import 'package:journeyman_jobs/domain/enums/crew_visibility.dart';
 
 // ============================================================================
 // DEV MODE: Permission matrix disabled for development testing
@@ -279,6 +280,9 @@ class CrewService {
           ),
           isActive: true,
           lastActivityAt: DateTime.now(),
+          visibility: CrewVisibility.private,
+          maxMembers: 50,
+          inviteCodeCounter: 0,
         );
         await _offlineDataService.storeCrewsOffline([crew]);
         await _offlineDataService.markDataDirty('crew_$crewId', crew.toFirestore());
@@ -309,6 +313,9 @@ class CrewService {
           ),
           isActive: true,
           lastActivityAt: DateTime.now(),
+          visibility: CrewVisibility.private,
+          maxMembers: 50,
+          inviteCodeCounter: 0,
         );
 
         // Ensure foreman is added to members subcollection with correct role
@@ -392,6 +399,10 @@ class CrewService {
   }
 
   // Update crew
+  /// Updates crew information including name, logo, or preferences
+  ///
+  /// Enhanced error handling and logging for debugging crew preference save issues
+  /// Validates crew existence, user authentication, and connectivity before attempting updates
   Future<void> updateCrew({
     required String crewId,
     String? name,
@@ -399,6 +410,43 @@ class CrewService {
     CrewPreferences? preferences,
   }) async {
     try {
+      // ENHANCED LOGGING: Log the update attempt with all parameters
+      StructuredLogger.info(
+        'Attempting to update crew',
+        category: LogCategory.business,
+        context: {
+          'crewId': crewId,
+          'hasName': name != null,
+          'hasLogoUrl': logoUrl != null,
+          'hasPreferences': preferences != null,
+          'isOnline': _connectivityService.isOnline,
+        },
+      );
+
+      // Validate crew ID before proceeding
+      if (crewId.isEmpty) {
+        StructuredLogger.error(
+          'Invalid crew ID provided',
+          category: LogCategory.business,
+          context: {'crewId': crewId},
+        );
+        throw CrewException('Invalid crew ID. Cannot update crew without a valid ID.', code: 'invalid-crew-id');
+      }
+
+      // Verify crew exists before attempting update
+      final crewExists = await getCrew(crewId);
+      if (crewExists == null) {
+        StructuredLogger.error(
+          'Crew not found',
+          category: LogCategory.business,
+          context: {'crewId': crewId},
+        );
+        throw CrewException(
+          'Crew not found. The crew may have been deleted or does not exist.',
+          code: 'crew-not-found'
+        );
+      }
+
       if (name != null) {
         final nameError = CrewValidation.validateCrewName(name);
         if (nameError != null) throw CrewException(nameError, code: 'invalid-crew-name');
@@ -411,10 +459,28 @@ class CrewService {
 
       if (name != null) updates['name'] = name;
       if (logoUrl != null) updates['logoUrl'] = logoUrl;
-      if (preferences != null) updates['preferences'] = preferences.toMap();
+      if (preferences != null) {
+        updates['preferences'] = preferences.toMap();
+        StructuredLogger.info(
+          'Crew preferences being updated',
+          category: LogCategory.business,
+          context: {
+            'crewId': crewId,
+            'jobTypes': preferences.jobTypes,
+            'constructionTypes': preferences.constructionTypes,
+            'autoShareEnabled': preferences.autoShareEnabled,
+          },
+        );
+      }
 
       if (updates.isNotEmpty) {
         if (!_connectivityService.isOnline) {
+          StructuredLogger.info(
+            'Offline mode: Storing crew updates locally',
+            category: LogCategory.business,
+            context: {'crewId': crewId, 'updateCount': updates.length},
+          );
+
           // Offline: Update local crew data and mark as dirty
           final existingCrews = await _offlineDataService.getOfflineCrews();
           final crewIndex = existingCrews.indexWhere((c) => c.id == crewId);
@@ -427,16 +493,59 @@ class CrewService {
             existingCrews[crewIndex] = updatedCrew;
             await _offlineDataService.storeCrewsOffline(existingCrews);
             await _offlineDataService.markDataDirty('crew_$crewId', updatedCrew.toFirestore());
+
+            StructuredLogger.info(
+              'Crew updates stored offline successfully',
+              category: LogCategory.business,
+              context: {'crewId': crewId},
+            );
           } else {
+            StructuredLogger.error(
+              'Crew not found in offline cache',
+              category: LogCategory.business,
+              context: {'crewId': crewId},
+            );
             throw CrewException('Crew not found in offline cache', code: 'crew-not-found-offline');
           }
         } else {
+          StructuredLogger.info(
+            'Online mode: Updating crew in Firestore',
+            category: LogCategory.business,
+            context: {
+              'crewId': crewId,
+              'updateFields': updates.keys.toList(),
+            },
+          );
+
           await _firestore.collection('crews').doc(crewId).update(updates);
+
+          StructuredLogger.info(
+            'Crew updated successfully in Firestore',
+            category: LogCategory.business,
+            context: {'crewId': crewId},
+          );
         }
+      } else {
+        StructuredLogger.warning(
+          'No updates to apply',
+          category: LogCategory.business,
+          context: {'crewId': crewId},
+        );
       }
     } on CrewException {
       rethrow;
     } on FirebaseException catch (e) {
+      StructuredLogger.error(
+        'Firebase error updating crew',
+        category: LogCategory.business,
+        context: {
+          'crewId': crewId,
+          'errorCode': e.code,
+          'errorMessage': e.message,
+          'plugin': e.plugin,
+        },
+      );
+
       // Provide specific error messages for common permission issues
       if (e.code == 'permission-denied') {
         throw CrewException(
@@ -464,6 +573,15 @@ class CrewService {
         throw CrewException('Firestore error updating crew: ${e.message}', code: e.code);
       }
     } catch (e) {
+      StructuredLogger.error(
+        'Unexpected error updating crew',
+        category: LogCategory.business,
+        context: {
+          'crewId': crewId,
+          'error': e.toString(),
+          'errorType': e.runtimeType.toString(),
+        },
+      );
       throw CrewException('An unexpected error occurred while updating crew: $e', code: 'unknown-error');
     }
   }

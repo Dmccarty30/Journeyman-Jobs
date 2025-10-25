@@ -10,6 +10,7 @@
 ## 📊 Task Decomposition Matrix
 
 ### Batch 1: Simple UI Fixes (Parallel Execution)
+
 **Estimated Total Time:** 1-2 hours (parallel) vs. 5.75-8.25 hours (sequential)
 **Performance Gain:** 3.8x - 6.9x faster
 **Agent Requirement:** 5 flutter-expert agents
@@ -28,6 +29,7 @@
 ---
 
 ### Batch 2: Settings UI Updates (Parallel Execution)
+
 **Estimated Total Time:** 1 hour (parallel) vs. 4 hours (sequential)
 **Performance Gain:** 4x faster
 **Agent Requirement:** 5 flutter-expert agents
@@ -46,6 +48,7 @@
 ---
 
 ### Batch 3: Resources Links (Parallel Execution)
+
 **Estimated Total Time:** 2 hours (parallel) vs. 3.5 hours (sequential)
 **Performance Gain:** 1.75x faster
 **Agent Requirement:** 3 flutter-expert agents
@@ -62,6 +65,7 @@
 ---
 
 ### Critical Path: Firestore Index & Suggested Jobs (Sequential)
+
 **Estimated Total Time:** 9-12 hours (sequential - cannot parallelize)
 **Agent Requirement:** database-optimizer → flutter-expert + database-optimizer
 
@@ -76,6 +80,7 @@
 ---
 
 ### Complex Tasks: Parallel Independent Execution
+
 **Estimated Total Time:** 8-12 hours (parallel) vs. 24-33 hours (sequential)
 **Performance Gain:** 2.75x - 3x faster
 **Agent Requirement:** Multiple specialized agents
@@ -98,41 +103,49 @@
 ## 🚀 Execution Waves
 
 ### Wave 1: Simple UI Fixes (Priority: High)
+
 **Agents:** 5 parallel flutter-expert agents
 **Time:** 1-2 hours
 **Tasks:** 3.1, 4.1, 5.1, 7.1, 10.1
 
 ### Wave 2: Settings Updates (Priority: Medium)
+
 **Agents:** 5 parallel flutter-expert agents
 **Time:** 1 hour
 **Tasks:** 10.2, 10.3, 10.4, 10.5, 10.6
 
 ### Wave 3: Critical Firestore Index (Priority: Critical)
+
 **Agents:** 1 database-optimizer agent
 **Time:** 3-4 hours
 **Tasks:** 4.2
 
 ### Wave 4: Complex Tasks Wave 1 (Priority: Critical)
+
 **Agents:** Multiple specialized agents (parallel)
 **Time:** 4-6 hours
 **Tasks:** 6.1, 8.1, 10.7
 
 ### Wave 5: Complex Tasks Wave 2 (Priority: High)
+
 **Agents:** Multiple specialized agents (parallel)
 **Time:** 4-6 hours
 **Tasks:** 8.2, 8.3, 9.1
 
 ### Wave 6: Suggested Jobs Implementation (Priority: Critical)
+
 **Agents:** 1 collaborative team (flutter-expert + db-optimizer)
 **Time:** 6-8 hours
 **Tasks:** 4.3 (depends on Wave 3 completion)
 
 ### Wave 7: Resources Links (Priority: Medium)
+
 **Agents:** 3 parallel flutter-expert agents
 **Time:** 2 hours
 **Tasks:** 11.1, 11.2, 11.3
 
 ### Wave 8: Session Grace Period (Priority: Critical)
+
 **Agents:** 1 auth-expert agent
 **Time:** 8-12 hours
 **Tasks:** 1.1
@@ -146,12 +159,14 @@
 **Performance Improvement:** **3x - 3.3x faster**
 
 **Resource Utilization:**
+
 - **Peak Concurrency:** 7 agents (Wave 4)
 - **Average Concurrency:** 4.5 agents
 - **Total Agent-Hours:** 72-99 hours
 - **Wall-Clock Time:** 24-33 hours
 
 **Bottlenecks:**
+
 1. Task 4.2 → 4.3 sequential dependency (9-12 hours)
 2. Task 1.1 complexity (8-12 hours single agent)
 
@@ -163,6 +178,7 @@
 **Blocking Dependencies:** Wave 3 → Wave 6 (Firestore index before Suggested Jobs)
 
 **Optimization Opportunities:**
+
 - Run Waves 1, 2, 4, 5, 7, 8 in parallel with Wave 3
 - Parallelize Wave 4 and Wave 5 tasks
 - Start Wave 8 early as it has no dependencies
@@ -172,6 +188,7 @@
 ## ✅ Validation Gates
 
 After each wave:
+
 1. **Syntax Validation:** Flutter analyze
 2. **Type Checking:** Dart type system validation
 3. **Linting:** Flutter lint rules
@@ -190,6 +207,7 @@ After each wave:
 - **Blocked:** 1 (Task 4.3 blocked by Task 4.2)
 
 **By Priority:**
+
 - **Critical (6):** 4.2, 4.3, 1.1, 6.1, 8.1, 10.7
 - **High (5):** 4.1, 7.1, 8.2, 8.3, 10.2
 - **Medium (12):** All others

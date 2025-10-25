@@ -7,13 +7,14 @@ import 'auth_riverpod_provider.dart';
 
 part 'session_timeout_provider.g.dart';
 
-/// Session state model for timeout tracking
+/// Session state model for timeout tracking with grace period.
 ///
-/// Includes grace period tracking:
-/// - User becomes idle after 2 minutes of inactivity
-/// - Grace period of 5 minutes begins when idle
-/// - Warning shown at 4 minutes into grace period (6 minutes total)
-/// - Logout occurs at 5 minutes into grace period (7 minutes total)
+/// Grace period workflow:
+/// - User becomes idle after 30 minutes of inactivity
+/// - Grace period of 15 minutes begins when idle
+/// - Warning shown at 10 minutes into grace period (40 minutes total, 5 min before logout)
+/// - Logout occurs at 15 minutes into grace period (45 minutes total from last activity)
+/// - Any activity during grace period restores the session and resets all timers
 class SessionState {
   final bool isActive;
   final DateTime? lastActivity;

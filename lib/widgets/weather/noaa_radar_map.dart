@@ -6,7 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../services/noaa_weather_service.dart';
 import '../../services/location_service.dart';
 import '../../design_system/app_theme.dart';
-import '../../electrical_components/electrical_loader.dart';
+import '../../design_system/components/reusable_components.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// NOAA Weather Radar Map - Official US government weather data
@@ -129,16 +129,10 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElectricalLoader(
-                size: 60,
-                color: AppTheme.accentCopper,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Loading NOAA Weather Data...',
-                style: AppTheme.bodyLarge.copyWith(
-                  color: AppTheme.textLight,
-                ),
+              JJElectricalLoader(
+                width: 200,
+                height: 60,
+                message: 'Loading NOAA Weather Data...',
               ),
             ],
           ),

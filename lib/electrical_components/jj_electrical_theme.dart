@@ -24,7 +24,6 @@ export 'jj_electrical_page_transitions.dart';
 export 'electrical_rotation_meter.dart';
 export 'power_line_loader.dart';
 export 'three_phase_sine_wave_loader.dart';
-export 'electrical_loader.dart';
 
 // Electrical Controls
 export 'jj_circuit_breaker_switch.dart';

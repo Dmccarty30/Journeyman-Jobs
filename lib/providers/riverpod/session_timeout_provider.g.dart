@@ -191,7 +191,7 @@ final class SessionTimeoutNotifierProvider
 }
 
 String _$sessionTimeoutNotifierHash() =>
-    r'd7716e61be4da32d5f81d656278974099e30f864';
+    r'8f160c4ee0387e6cded6219f881e86f3de6018f5';
 
 /// Manages session timeout state and coordinates with auth system.
 ///

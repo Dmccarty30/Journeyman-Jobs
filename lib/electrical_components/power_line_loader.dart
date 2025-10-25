@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-/// Power Line Loader
-/// 
+/// **Internal Component** - Use [JJPowerLineLoader] instead
+///
+/// This component is maintained for internal use only.
+/// Direct usage is discouraged. Use the [JJPowerLineLoader]
+/// wrapper which provides AppTheme styling and message support.
+///
 /// Animates electrical transmission lines with power flowing through them.
 /// Features transmission towers and animated electrical energy flowing
 /// from left to right through the power lines.
-/// 
-/// Example usage:
+///
+/// **Recommended usage:**
 /// ```dart
-/// PowerLineLoader(
+/// JJPowerLineLoader(
 ///   width: 300,
 ///   height: 80,
-///   pulseColor: AppTheme.accentCopper,
-///   lineColor: AppTheme.darkGray,
+///   message: 'Loading...',
 /// )
 /// ```
 class PowerLineLoader extends StatefulWidget {

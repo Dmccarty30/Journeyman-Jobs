@@ -264,14 +264,64 @@ class CrewJob {
         const CircuitPatternBackground(),
         Center(
           child: JJElectricalLoader(
-            size: 80,
-            color: AppTheme.accentCopper,
+            width: 200,
+            height: 60,
+            message: 'Loading...',
           ),
         ),
       ],
     ),
   )
   ```
+
+## 🔄 Loader Components (Consolidated)
+
+**IMPORTANT**: Use the recommended loader components. DO NOT use base components directly.
+
+### Recommended Loaders (Use These)
+
+1. **JJElectricalLoader** - Primary full-screen loader
+   - **Import**: `import 'package:journeyman_jobs/design_system/components/reusable_components.dart';`
+   - **Use For**: Full-screen loading, feature initialization, authentication flows
+   - **Example**:
+     ```dart
+     JJElectricalLoader(
+       width: 200,
+       height: 60,
+       message: 'Loading...',
+     )
+     ```
+
+2. **JJPowerLineLoader** - Power line transmission loader
+   - **Import**: `import 'package:journeyman_jobs/design_system/components/reusable_components.dart';`
+   - **Use For**: Inline loading, contextual loading indicators
+   - **Example**:
+     ```dart
+     JJPowerLineLoader(
+       width: 300,
+       height: 80,
+       message: 'Processing...',
+     )
+     ```
+
+3. **JJSkeletonLoader** - Content placeholder shimmer
+   - **Import**: `import 'package:journeyman_jobs/widgets/jj_skeleton_loader.dart';`
+   - **Use For**: Content skeleton screens, list placeholders, image loading
+   - **Example**:
+     ```dart
+     JJSkeletonLoader(
+       width: double.infinity,
+       height: 100,
+       borderRadius: 8,
+       showCircuitPattern: true,
+     )
+     ```
+
+### Base Components (Internal Use Only - DO NOT USE)
+
+- **ThreePhaseSineWaveLoader**: Internal base for JJElectricalLoader
+- **PowerLineLoader**: Internal base for JJPowerLineLoader
+- ~~**ElectricalLoader**~~: DELETED (use JJElectricalLoader instead)
 
 ## 🧠 AI Behavior Rules
 

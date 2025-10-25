@@ -8,6 +8,8 @@ import 'design_system/app_theme.dart';
 import 'firebase_options.dart';
 import 'navigation/app_router.dart';
 import 'providers/riverpod/theme_riverpod_provider.dart';
+import 'widgets/activity_detector.dart';
+import 'widgets/session_timeout_listener.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,17 +59,21 @@ class JourneymanJobsApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp.router(
-      title: 'Journeyman Jobs',
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
-      themeMode: ref.watch(themeModeNotifierProvider),
-      routerConfig: AppRouter.router,
-      debugShowCheckedModeBanner: false,
-      builder: (BuildContext context, Widget? child) {
-        // Global error handler or overlays
-        return child ?? const SizedBox.shrink();
-      },
+    return SessionTimeoutListener(
+      child: MaterialApp.router(
+        title: 'Journeyman Jobs',
+        theme: AppTheme.light(),
+        darkTheme: AppTheme.dark(),
+        themeMode: ref.watch(themeModeNotifierProvider),
+        routerConfig: AppRouter.router,
+        debugShowCheckedModeBanner: false,
+        builder: (BuildContext context, Widget? child) {
+          // Wrap with ActivityDetector for global activity monitoring
+          return ActivityDetector(
+            child: child ?? const SizedBox.shrink(),
+          );
+        },
+      ),
     );
   }
 }

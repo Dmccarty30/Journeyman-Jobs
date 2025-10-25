@@ -44,6 +44,12 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
+    // App settings subcollection under users: Users can only access their own settings
+    match /users/{userId}/appSettings/{settingsId} {
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
     // Crews collection: DEV MODE - All authenticated users have full access
     match /crews/{crewId} {
       allow read, write: if isAuthenticated();

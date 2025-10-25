@@ -4,15 +4,34 @@ A comprehensive collection of electrical-themed Flutter components designed for 
 
 ## Components Overview
 
-### 🔄 Loading Components
+### 🔄 Loading Components (Use These)
 
-#### ThreePhaseSineWaveLoader
+#### JJElectricalLoader ⭐ Recommended
 
-Animated 3-phase AC power visualization with sine waves.
+Primary full-screen loader with 3-phase sine wave animation.
 
-- **Purpose**: Display electrical power flow in 3-phase systems
-- **Features**: Three sine waves with 120° phase difference, smooth animation
-- **Customization**: Colors, size, animation duration
+- **Purpose**: General loading states, full-screen loading, feature initialization
+- **Features**: Three sine waves with 120° phase difference, AppTheme styling, optional message
+- **Customization**: Width, height, message text
+- **Location**: `design_system/components/reusable_components.dart`
+
+#### JJPowerLineLoader ⭐ Recommended
+
+Power line transmission animation loader.
+
+- **Purpose**: Inline loading, contextual loading indicators
+- **Features**: Transmission towers, animated energy pulses, AppTheme styling
+- **Customization**: Width, height, message text
+- **Location**: `design_system/components/reusable_components.dart`
+
+#### JJSkeletonLoader
+
+Content placeholder shimmer loader.
+
+- **Purpose**: Content skeleton screens, list placeholders, image loading
+- **Features**: Shimmer gradient animation, optional circuit pattern overlay
+- **Customization**: Width, height, border radius, show circuit pattern
+- **Location**: `widgets/jj_skeleton_loader.dart`
 
 #### ElectricalRotationMeter
 
@@ -22,13 +41,12 @@ Gauge-style loading indicator resembling electrical meters.
 - **Features**: Analog meter with needle animation, tick marks, optional label
 - **Customization**: Size, colors, label text, animation duration
 
-#### PowerLineLoader
+### 🔧 Base Components (Internal Use - Do Not Use Directly)
 
-Transmission line-inspired loading animation.
+> **Note**: These components are maintained for internal use by the wrapper components above. Use `JJElectricalLoader` or `JJPowerLineLoader` instead.
 
-- **Purpose**: Represent electrical transmission and power flow
-- **Features**: Transmission towers, animated pulse with spark effects
-- **Customization**: Size, colors, animation speed
+- **ThreePhaseSineWaveLoader**: Base component for JJElectricalLoader
+- **PowerLineLoader**: Base component for JJPowerLineLoader
 
 ### 🔧 Interactive Components
 
@@ -71,13 +89,29 @@ All components use a consistent electrical industry color palette:
 ## Usage Examples
 
 ```dart
-import 'package:your_app/electrical_components/electrical_components.dart';
+import 'package:journeyman_jobs/design_system/components/reusable_components.dart';
+import 'package:journeyman_jobs/widgets/jj_skeleton_loader.dart';
 
-// 3-Phase Sine Wave Loader
-ThreePhaseSineWaveLoader(
+// ⭐ JJElectricalLoader (Recommended for full-screen loading)
+JJElectricalLoader(
   width: 200,
   height: 60,
-  duration: Duration(milliseconds: 2000),
+  message: 'Loading...',
+)
+
+// ⭐ JJPowerLineLoader (Recommended for inline/contextual loading)
+JJPowerLineLoader(
+  width: 300,
+  height: 80,
+  message: 'Processing data...',
+)
+
+// JJSkeletonLoader (for content placeholders)
+JJSkeletonLoader(
+  width: double.infinity,
+  height: 100,
+  borderRadius: 8,
+  showCircuitPattern: true,
 )
 
 // Electrical Rotation Meter
@@ -95,13 +129,6 @@ CircuitBreakerToggle(
   },
   width: 80,
   height: 40,
-)
-
-// Power Line Loader
-PowerLineLoader(
-  width: 300,
-  height: 80,
-  duration: Duration(milliseconds: 1500),
 )
 
 // Hard Hat Icon

@@ -21,7 +21,6 @@ abstract class ElectricalLoaders {
   // Basic loaders - lightweight, frequently used
   static List<String> export() {
     return <String>[
-      'electrical_loader.dart',
       'three_phase_sine_wave_loader.dart',
       'power_line_loader.dart',
     ];
@@ -202,14 +201,13 @@ abstract class TransformerState {
 abstract class CommonElectricalComponents {
   static const List<String> exports = <String>[
     // Core loaders (lightweight)
-    'electrical_loader.dart',
     'three_phase_sine_wave_loader.dart',
-    
+
     // Essential icons
     'hard_hat_icon.dart',
     'transmission_tower_icon.dart',
     'circuit_pattern_painter.dart',
-    
+
     // Basic interactive components
     'jj_circuit_breaker_switch.dart',
     'circuit_breaker_toggle.dart',

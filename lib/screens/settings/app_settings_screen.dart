@@ -2,106 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/riverpod/theme_riverpod_provider.dart';
+import '../../providers/riverpod/app_settings_riverpod_provider.dart';
+import '../../providers/riverpod/auth_riverpod_provider.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
 
-class AppSettingsScreen extends StatefulWidget {
+class AppSettingsScreen extends ConsumerStatefulWidget {
   const AppSettingsScreen({super.key});
 
   @override
-  State<AppSettingsScreen> createState() => _AppSettingsScreenState();
+  ConsumerState<AppSettingsScreen> createState() => _AppSettingsScreenState();
 }
 
-class _AppSettingsScreenState extends State<AppSettingsScreen> {
-  // Appearance Settings
-  bool _darkModeEnabled = false;
-  bool _highContrastMode = false;
-  bool _electricalEffects = true;
-  String _selectedFontSize = 'Medium';
-  
-  // Job Search Preferences
-  double _defaultSearchRadius = 50.0;
-  String _units = 'Miles';
-  bool _autoApplyEnabled = false;
-  double _minimumHourlyRate = 35.0;
-  
-  // Data & Storage
-  bool _offlineModeEnabled = false;
-  bool _autoDownloadEnabled = true;
-  bool _wifiOnlyDownloads = true;
+class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
   String _cacheSize = 'Calculating...';
-  
-  // Privacy & Security
-  String _profileVisibility = 'Union Members Only';
-  bool _locationServicesEnabled = true;
-  bool _biometricLoginEnabled = false;
-  bool _twoFactorEnabled = false;
-  
-  // Language & Region
-  String _selectedLanguage = 'English';
-  String _dateFormat = 'MM/DD/YYYY';
-  String _timeFormat = '12-hour';
-  
-  // Storm Work Settings
-  double _stormAlertRadius = 100.0;
-  double _stormRateMultiplier = 1.5;
-  
+
   @override
   void initState() {
     super.initState();
-    _loadSettings();
     _calculateCacheSize();
-  }
-  
-  Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    
-    setState(() {
-      // Appearance
-      _darkModeEnabled = prefs.getBool('dark_mode') ?? false;
-      _highContrastMode = prefs.getBool('high_contrast') ?? false;
-      _electricalEffects = prefs.getBool('electrical_effects') ?? true;
-      _selectedFontSize = prefs.getString('font_size') ?? 'Medium';
-      
-      // Job Search
-      _defaultSearchRadius = prefs.getDouble('default_search_radius') ?? 50.0;
-      _units = prefs.getString('units') ?? 'Miles';
-      _autoApplyEnabled = prefs.getBool('auto_apply') ?? false;
-      _minimumHourlyRate = prefs.getDouble('minimum_hourly_rate') ?? 35.0;
-      
-      // Data & Storage
-      _offlineModeEnabled = prefs.getBool('offline_mode') ?? false;
-      _autoDownloadEnabled = prefs.getBool('auto_download') ?? true;
-      _wifiOnlyDownloads = prefs.getBool('wifi_only_downloads') ?? true;
-      
-      // Privacy & Security
-      _profileVisibility = prefs.getString('profile_visibility') ?? 'Union Members Only';
-      _locationServicesEnabled = prefs.getBool('location_services') ?? true;
-      _biometricLoginEnabled = prefs.getBool('biometric_login') ?? false;
-      _twoFactorEnabled = prefs.getBool('two_factor') ?? false;
-      
-      // Language & Region
-      _selectedLanguage = prefs.getString('language') ?? 'English';
-      _dateFormat = prefs.getString('date_format') ?? 'MM/DD/YYYY';
-      _timeFormat = prefs.getString('time_format') ?? '12-hour';
-      
-      // Storm Work
-      _stormAlertRadius = prefs.getDouble('storm_alert_radius') ?? 100.0;
-      _stormRateMultiplier = prefs.getDouble('storm_rate_multiplier') ?? 1.5;
+
+    // Load settings when screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = ref.read(currentUserProvider);
+      if (user != null) {
+        ref.read(appSettingsNotifierProvider.notifier).loadSettings(user.uid);
+      }
     });
   }
-  
-  Future<void> _saveSetting(String key, dynamic value) async {
-    final prefs = await SharedPreferences.getInstance();
-    
-    if (value is bool) {
-      await prefs.setBool(key, value);
-    } else if (value is double) {
-      await prefs.setDouble(key, value);
-    } else if (value is String) {
-      await prefs.setString(key, value);
-    }
+
+  /// Get current user ID or empty string if not authenticated
+  String _getUserId() {
+    final user = ref.read(currentUserProvider);
+    return user?.uid ?? '';
   }
   
   Future<void> _calculateCacheSize() async {
@@ -199,6 +133,9 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
               Consumer(
                 builder: (context, ref, _) {
                   final mode = ref.watch(themeModeNotifierProvider);
+                  final settings = ref.watch(currentAppSettingsProvider);
+                  final userId = _getUserId();
+
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -213,9 +150,13 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
                       RadioListTile<ThemeMode>(
                         value: ThemeMode.light,
                         groupValue: mode,
-                        onChanged: (m) {
+                        onChanged: (m) async {
                           if (m != null) {
-                            ref.read(themeModeNotifierProvider.notifier).setThemeMode(m);
+                            // Update both theme provider and app settings
+                            await ref.read(themeModeNotifierProvider.notifier).setThemeMode(m);
+                            if (userId.isNotEmpty) {
+                              ref.read(appSettingsNotifierProvider.notifier).updateThemeMode(userId, 'light');
+                            }
                           }
                         },
                         title: const Text('Light'),
@@ -223,9 +164,12 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
                       RadioListTile<ThemeMode>(
                         value: ThemeMode.dark,
                         groupValue: mode,
-                        onChanged: (m) {
+                        onChanged: (m) async {
                           if (m != null) {
-                            ref.read(themeModeNotifierProvider.notifier).setThemeMode(m);
+                            await ref.read(themeModeNotifierProvider.notifier).setThemeMode(m);
+                            if (userId.isNotEmpty) {
+                              ref.read(appSettingsNotifierProvider.notifier).updateThemeMode(userId, 'dark');
+                            }
                           }
                         },
                         title: const Text('Dark'),
@@ -233,9 +177,12 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
                       RadioListTile<ThemeMode>(
                         value: ThemeMode.system,
                         groupValue: mode,
-                        onChanged: (m) {
+                        onChanged: (m) async {
                           if (m != null) {
-                            ref.read(themeModeNotifierProvider.notifier).setThemeMode(m);
+                            await ref.read(themeModeNotifierProvider.notifier).setThemeMode(m);
+                            if (userId.isNotEmpty) {
+                              ref.read(appSettingsNotifierProvider.notifier).updateThemeMode(userId, 'system');
+                            }
                           }
                         },
                         title: const Text('System'),
@@ -245,36 +192,105 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
                 },
               ),
               const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.contrast,
-                title: 'High Contrast',
-                subtitle: 'Better visibility in bright sunlight',
-                value: _highContrastMode,
-                onChanged: (value) {
-                  setState(() => _highContrastMode = value);
-                  _saveSetting('high_contrast', value);
+              Consumer(
+                builder: (context, ref, _) {
+                  final settings = ref.watch(currentAppSettingsProvider);
+                  final userId = _getUserId();
+
+                  return _buildSwitchTile(
+                    icon: Icons.contrast,
+                    title: 'High Contrast',
+                    subtitle: 'Better visibility in bright sunlight',
+                    value: settings.highContrastMode,
+                    onChanged: (value) async {
+                      if (userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsNotifierProvider.notifier).updateHighContrastMode(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'High contrast ${value ? 'enabled' : 'disabled'}',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  );
                 },
               ),
               const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.bolt,
-                title: 'Electrical Effects',
-                subtitle: 'Animations and visual effects',
-                value: _electricalEffects,
-                onChanged: (value) {
-                  setState(() => _electricalEffects = value);
-                  _saveSetting('electrical_effects', value);
+              Consumer(
+                builder: (context, ref, _) {
+                  final settings = ref.watch(currentAppSettingsProvider);
+                  final userId = _getUserId();
+
+                  return _buildSwitchTile(
+                    icon: Icons.bolt,
+                    title: 'Electrical Effects',
+                    subtitle: 'Animations and visual effects',
+                    value: settings.electricalEffects,
+                    onChanged: (value) async {
+                      if (userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsNotifierProvider.notifier).updateElectricalEffects(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Electrical effects ${value ? 'enabled' : 'disabled'}',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  );
                 },
               ),
               const Divider(height: 1),
-              _buildDropdownTile(
-                icon: Icons.text_fields,
-                title: 'Font Size',
-                value: _selectedFontSize,
-                options: ['Small', 'Medium', 'Large', 'Extra Large'],
-                onChanged: (value) {
-                  setState(() => _selectedFontSize = value!);
-                  _saveSetting('font_size', value);
+              Consumer(
+                builder: (context, ref, _) {
+                  final settings = ref.watch(currentAppSettingsProvider);
+                  final userId = _getUserId();
+
+                  return _buildDropdownTile(
+                    icon: Icons.text_fields,
+                    title: 'Font Size',
+                    value: settings.fontSize,
+                    options: ['Small', 'Medium', 'Large', 'Extra Large'],
+                    onChanged: (value) async {
+                      if (value != null && userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsNotifierProvider.notifier).updateFontSize(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Font size updated to $value',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  );
                 },
               ),
             ]),
@@ -581,6 +597,8 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
+    final isLoading = ref.watch(appSettingsLoadingProvider);
+
     return Padding(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
       child: Row(
@@ -618,12 +636,19 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
               ],
             ),
           ),
-          JJCircuitBreakerSwitch(
-            value: value,
-            onChanged: onChanged,
-            size: JJCircuitBreakerSize.small,
-            showElectricalEffects: true,
-          ),
+          if (isLoading)
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          else
+            JJCircuitBreakerSwitch(
+              value: value,
+              onChanged: onChanged,
+              size: JJCircuitBreakerSize.small,
+              showElectricalEffects: true,
+            ),
         ],
       ),
     );

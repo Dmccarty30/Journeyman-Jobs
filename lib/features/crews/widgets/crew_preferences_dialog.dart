@@ -936,35 +936,54 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
     );
   }
 
+  /// Saves crew preferences with comprehensive validation and error handling
+  ///
+  /// IMPORTANT: This method handles two scenarios:
+  /// 1. New Crew Creation: Returns preferences to caller (no Firestore operation)
+  /// 2. Existing Crew Update: Saves preferences to Firestore via CrewService
+  ///
+  /// Enhanced error handling includes:
+  /// - Pre-save validation (job types, construction types, form fields)
+  /// - Detailed error logging for debugging
+  /// - User-friendly error messages based on error codes
+  /// - Offline mode support
+  /// - Authentication state checking
   Future<void> _savePreferences() async {
     // Enhanced validation before saving
     if (!_formKey.currentState!.validate()) {
+      debugPrint('[CrewPreferencesDialog] Form validation failed');
       return;
     }
 
     // Validate at least one job type is selected
     if (_preferences.jobTypes.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('⚠️ Please select at least one job classification'),
-          backgroundColor: AppTheme.warningOrange,
-          duration: const Duration(seconds: 3),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      debugPrint('[CrewPreferencesDialog] Validation failed: No job types selected');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('⚠️ Please select at least one job classification'),
+            backgroundColor: AppTheme.warningOrange,
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
       return;
     }
 
     // Validate at least one construction type is selected
     if (_preferences.constructionTypes.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('⚠️ Please select at least one construction type'),
-          backgroundColor: AppTheme.warningOrange,
-          duration: const Duration(seconds: 3),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      debugPrint('[CrewPreferencesDialog] Validation failed: No construction types selected');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('⚠️ Please select at least one construction type'),
+            backgroundColor: AppTheme.warningOrange,
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
       return;
     }
 
@@ -975,18 +994,36 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
     });
 
     try {
+      debugPrint('[CrewPreferencesDialog] Starting save operation');
+      debugPrint('[CrewPreferencesDialog] isNewCrew: ${widget.isNewCrew}');
+      debugPrint('[CrewPreferencesDialog] crewId: ${widget.crewId}');
+      debugPrint('[CrewPreferencesDialog] jobTypes: ${_preferences.jobTypes}');
+      debugPrint('[CrewPreferencesDialog] constructionTypes: ${_preferences.constructionTypes}');
+      debugPrint('[CrewPreferencesDialog] autoShareEnabled: ${_preferences.autoShareEnabled}');
+
       if (widget.isNewCrew) {
         // For new crews, we'll return the preferences to the creator
         // The creator will handle the actual crew creation with these preferences
+        debugPrint('[CrewPreferencesDialog] Returning preferences to creator (new crew scenario)');
         if (mounted) {
           Navigator.of(context).pop(_preferences);
         }
       } else {
+        // For existing crews, validate crew ID before attempting update
+        if (widget.crewId.isEmpty) {
+          debugPrint('[CrewPreferencesDialog] ERROR: Empty crew ID provided');
+          throw Exception('Invalid crew ID. Cannot save preferences without a valid crew.');
+        }
+
+        debugPrint('[CrewPreferencesDialog] Calling CrewService.updateCrew for existing crew');
+
         // For existing crews, update the preferences directly
         await widget.crewService.updateCrew(
           crewId: widget.crewId,
           preferences: _preferences,
         );
+
+        debugPrint('[CrewPreferencesDialog] Crew preferences updated successfully');
 
         if (mounted) {
           Navigator.of(context).pop();
@@ -995,17 +1032,47 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
               content: const Text('Crew preferences updated successfully!'),
               backgroundColor: AppTheme.successGreen,
               duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
             ),
           );
         }
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('[CrewPreferencesDialog] ERROR: Failed to save preferences');
+      debugPrint('[CrewPreferencesDialog] Error: $e');
+      debugPrint('[CrewPreferencesDialog] Stack trace: $stackTrace');
+
       if (mounted) {
+        // Determine user-friendly error message based on error type
+        String errorMessage = 'Failed to ${widget.isNewCrew ? 'set' : 'update'} preferences';
+
+        final errorString = e.toString().toLowerCase();
+
+        if (errorString.contains('permission') || errorString.contains('denied')) {
+          errorMessage = 'Permission denied. Please ensure you are a crew member and try again.';
+        } else if (errorString.contains('unauthenticated') || errorString.contains('authentication')) {
+          errorMessage = 'Authentication required. Please sign in and try again.';
+        } else if (errorString.contains('not found') || errorString.contains('crew-not-found')) {
+          errorMessage = 'Crew not found. The crew may have been deleted.';
+        } else if (errorString.contains('network') || errorString.contains('unavailable')) {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        } else if (errorString.contains('invalid crew id')) {
+          errorMessage = 'Invalid crew. Please navigate back and try again.';
+        }
+
+        debugPrint('[CrewPreferencesDialog] Showing error to user: $errorMessage');
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to ${widget.isNewCrew ? 'set' : 'update'} preferences: $e'),
+            content: Text(errorMessage),
             backgroundColor: AppTheme.errorRed,
             duration: const Duration(seconds: 5),
+            behavior: SnackBarBehavior.floating,
+            action: SnackBarAction(
+              label: 'Retry',
+              textColor: AppTheme.white,
+              onPressed: () => _savePreferences(),
+            ),
           ),
         );
       }

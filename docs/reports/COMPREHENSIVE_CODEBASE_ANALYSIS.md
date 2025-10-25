@@ -152,7 +152,7 @@ class Job with _$Job {
 
 ##### Job Card Components (6 implementations, ~2,000 lines)
 
-```
+```dart
 lib/design_system/components/job_card.dart           (452 lines)
 lib/design_system/components/optimized_job_card.dart (296 lines)
 lib/widgets/enhanced_job_card.dart                   (654 lines)
@@ -178,7 +178,7 @@ JobCard(
 
 ##### Circuit Pattern Painter (5 implementations, ~400 lines)
 
-```
+```dart
 lib/electrical_components/circuit_pattern_painter.dart      (58 lines)
 lib/electrical_components/enhanced_backgrounds.dart:224     (CircuitPatternPainter)
 lib/screens/splash/splash_screen.dart:378                   (CircuitPatternPainter)
@@ -193,7 +193,7 @@ lib/electrical_components/circuit_board_background.dart:279 (_CircuitBoardPainte
 
 ##### Loader Components (7 implementations)
 
-```
+```dart
 JJElectricalLoader (reusable_components.dart:618)
 JJPowerLineLoader (reusable_components.dart:666 AND jj_power_line_loader.dart:7) ← DUPLICATE!
 ElectricalLoader (electrical_loader.dart:8)

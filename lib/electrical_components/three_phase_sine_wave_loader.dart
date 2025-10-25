@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-/// 3-Phase Sine Wave Loader
-/// 
+/// **Internal Component** - Use [JJElectricalLoader] instead
+///
+/// This component is maintained for internal use only.
+/// Direct usage is discouraged. Use the [JJElectricalLoader]
+/// wrapper which provides AppTheme styling and message support.
+///
 /// Displays three electrical sine waves representing AC power phases.
 /// Each wave is offset by 120 degrees (2π/3 radians) to accurately
 /// represent three-phase electrical power.
-/// 
-/// Example usage:
+///
+/// **Recommended usage:**
 /// ```dart
-/// ThreePhaseSineWaveLoader(
+/// JJElectricalLoader(
 ///   width: 200,
 ///   height: 60,
-///   primaryColor: Colors.orange,
-///   secondaryColor: Colors.blue,
-///   tertiaryColor: Colors.green,
-///   duration: Duration(milliseconds: 2000),
+///   message: 'Loading...',
 /// )
 /// ```
 class ThreePhaseSineWaveLoader extends StatefulWidget {

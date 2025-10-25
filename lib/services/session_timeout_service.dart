@@ -3,14 +3,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Service that manages user session timeout based on inactivity.
+/// Service that manages user session timeout based on inactivity with grace period.
 ///
 /// Features:
 /// - Tracks user activity across the entire app
-/// - Auto-logout after 10 minutes of inactivity (configurable)
+/// - 30-minute inactivity threshold before grace period begins
+/// - 15-minute grace period with option to restore session
+/// - Warning notification 5 minutes before auto-logout (at 40-minute mark)
 /// - Auto-logout when app is closed/terminated
-/// - Session persistence tracking
-/// - Callbacks for timeout events
+/// - Session persistence tracking across app restarts
+/// - Callbacks for timeout and warning events
 ///
 /// Integration:
 /// - Initialize in main.dart after auth initialization
@@ -41,18 +43,22 @@ class SessionTimeoutService {
   // Configuration Constants
   // ============================================================================
 
-  /// Idle detection threshold (2 minutes of inactivity)
-  static const Duration idleThreshold = Duration(minutes: 2);
+  /// Idle detection threshold (30 minutes of inactivity)
+  /// After this duration without activity, the grace period begins.
+  static const Duration idleThreshold = Duration(minutes: 30);
 
-  /// Grace period duration after idle detection (5 minutes)
-  static const Duration gracePeriodDuration = Duration(minutes: 5);
+  /// Grace period duration after idle detection (15 minutes)
+  /// User has this much time to resume activity before automatic logout.
+  static const Duration gracePeriodDuration = Duration(minutes: 15);
 
-  /// Total timeout duration (idle + grace period = 7 minutes)
-  static const Duration timeoutDuration = Duration(minutes: 7);
+  /// Total timeout duration (idle + grace period = 45 minutes)
+  /// Maximum time from last activity to automatic logout.
+  static const Duration timeoutDuration = Duration(minutes: 45);
 
-  /// Warning notification timing (4 minutes into grace period, 1 minute before timeout)
-  /// This means 6 minutes after inactivity (2 min idle + 4 min grace)
-  static const Duration warningThreshold = Duration(minutes: 6);
+  /// Warning notification timing (10 minutes into grace period, 5 minutes before timeout)
+  /// This means 40 minutes after inactivity (30 min idle + 10 min grace).
+  /// User gets 5-minute warning before automatic logout.
+  static const Duration warningThreshold = Duration(minutes: 40);
 
   /// How often to check for timeout (15 seconds for better precision)
   static const Duration _checkInterval = Duration(seconds: 15);
@@ -294,7 +300,7 @@ class SessionTimeoutService {
       _gracePeriodStartTime = now;
       _warningShown = false;
 
-      debugPrint('[SessionTimeout] User idle for ${idleThreshold.inMinutes} minutes - starting ${gracePeriodDuration.inMinutes}-minute grace period');
+      debugPrint('[SessionTimeout] User idle for ${idleThreshold.inMinutes} minutes - starting ${gracePeriodDuration.inMinutes}-minute grace period (${gracePeriodDuration.inMinutes - (warningThreshold - idleThreshold).inMinutes} minutes until warning)');
 
       // Persist grace period start
       try {
@@ -311,10 +317,10 @@ class SessionTimeoutService {
       final gracePeriodElapsed = now.difference(_gracePeriodStartTime!);
       final totalInactiveTime = inactiveDuration;
 
-      // Show warning at 4 minutes into grace period (6 minutes total inactivity)
+      // Show warning at 10 minutes into grace period (40 minutes total inactivity, 5 min before logout)
       if (!_warningShown && totalInactiveTime >= warningThreshold) {
         _warningShown = true;
-        debugPrint('[SessionTimeout] Warning: 1 minute until automatic logout');
+        debugPrint('[SessionTimeout] Warning: ${(timeoutDuration - warningThreshold).inMinutes} minutes until automatic logout');
 
         // Persist warning shown state
         try {

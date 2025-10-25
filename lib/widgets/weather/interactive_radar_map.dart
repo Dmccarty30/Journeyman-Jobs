@@ -5,7 +5,7 @@ import 'package:latlong2/latlong.dart';
 import '../../services/weather_radar_service.dart';
 import '../../services/location_service.dart';
 import '../../design_system/app_theme.dart';
-import '../../electrical_components/electrical_loader.dart';
+import '../../design_system/components/reusable_components.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Interactive weather radar map widget with real-time storm tracking
@@ -164,16 +164,10 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElectricalLoader(
-                size: 60,
-                color: AppTheme.accentCopper,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Loading Weather Radar...',
-                style: AppTheme.bodyLarge.copyWith(
-                  color: AppTheme.textLight,
-                ),
+              JJElectricalLoader(
+                width: 200,
+                height: 60,
+                message: 'Loading Weather Radar...',
               ),
             ],
           ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Riverpod ThemeNotifier that exposes ThemeMode (light/dark/system)
@@ -39,8 +39,7 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
       case ThemeMode.dark:
         return 'dark';
       case ThemeMode.system:
-      default:
-        return 'system';
+      return 'system';
     }
   }
 
