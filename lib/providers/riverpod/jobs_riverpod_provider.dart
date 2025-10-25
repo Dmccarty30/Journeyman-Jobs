@@ -287,6 +287,160 @@ class JobsNotifier extends _$JobsNotifier {
     await loadJobs(isRefresh: true);
   }
 
+  /// Load suggested jobs based on user preferences
+  ///
+  /// This method integrates with the suggestedJobs provider to load
+  /// jobs that match the user's preferences with cascading fallback.
+  ///
+  /// Architecture:
+  /// 1. Fetches user's jobPreferences from Firestore
+  /// 2. Uses cascading fallback to always show jobs
+  /// 3. Caches results for offline access
+  ///
+  /// Throws [UnauthenticatedException] if user is not authenticated.
+  Future<void> loadSuggestedJobs() async {
+    if (_operationManager.isOperationInProgress(OperationType.loadJobs)) {
+      return;
+    }
+
+    // Auth check
+    final currentUser = ref.read(auth_providers.currentUserProvider);
+    if (currentUser == null) {
+      throw UnauthenticatedException(
+        'User must be authenticated to view suggested jobs',
+      );
+    }
+
+    state = state.copyWith(isLoading: true);
+
+    try {
+      final result = await _operationManager.executeOperation(
+        type: OperationType.loadJobs,
+        operation: () async {
+          // Use the suggestedJobs provider to get matched jobs
+          final jobs = await ref.read(suggestedJobsProvider.future);
+          return jobs;
+        },
+      );
+
+      // Update state with suggested jobs
+      state = state.copyWith(
+        jobs: result,
+        visibleJobs: result,
+        isLoading: false,
+        hasMoreJobs: false, // Suggested jobs are limited to 20
+        totalJobsLoaded: result.length,
+      );
+
+      if (kDebugMode) {
+        print('✅ Loaded ${result.length} suggested jobs');
+      }
+    } catch (e) {
+      // Check if provider is still mounted
+      if (!ref.mounted) return;
+
+      final userError = _mapFirebaseError(e);
+      state = state.copyWith(isLoading: false, error: userError);
+
+      if (kDebugMode) {
+        print('[JobsProvider] Error loading suggested jobs: $e');
+      }
+
+      // Rethrow auth exceptions for router handling
+      if (e is UnauthenticatedException) {
+        rethrow;
+      }
+    }
+  }
+
+  /// Load all jobs without filtering
+  ///
+  /// This method loads jobs from Firestore without any user preference filtering.
+  /// Used for the Jobs screen where users browse all available jobs.
+  ///
+  /// Implements pagination and offline caching.
+  Future<void> loadAllJobs({
+    int limit = 20,
+    bool isRefresh = false,
+  }) async {
+    if (_operationManager.isOperationInProgress(OperationType.loadJobs)) {
+      return;
+    }
+
+    // Auth check
+    final currentUser = ref.read(auth_providers.currentUserProvider);
+    if (currentUser == null) {
+      throw UnauthenticatedException(
+        'User must be authenticated to view jobs',
+      );
+    }
+
+    if (isRefresh) {
+      state = state.copyWith(
+        jobs: <Job>[],
+        visibleJobs: <Job>[],
+        hasMoreJobs: true,
+        isLoading: true,
+      );
+      _boundedJobList.clear();
+      _virtualJobList.clear();
+    } else {
+      state = state.copyWith(isLoading: true);
+    }
+
+    try {
+      final result = await _operationManager.executeOperation(
+        type: OperationType.loadJobs,
+        operation: () async {
+          final firestoreService = ref.read(firestoreServiceProvider);
+          final stream = firestoreService.getJobs(
+            startAfter: isRefresh ? null : state.lastDocument,
+            limit: limit,
+          );
+          return await stream.first;
+        },
+      );
+
+      // Convert QuerySnapshot to Job objects
+      final jobs = result.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
+        return Job.fromJson(data);
+      }).toList();
+
+      // Update state
+      final List<Job> updatedJobs = isRefresh ? jobs : [...state.jobs, ...jobs];
+
+      state = state.copyWith(
+        jobs: updatedJobs,
+        visibleJobs: updatedJobs,
+        isLoading: false,
+        hasMoreJobs: jobs.length >= limit,
+        lastDocument: result.docs.isNotEmpty ? result.docs.last : null,
+        totalJobsLoaded: updatedJobs.length,
+      );
+
+      if (kDebugMode) {
+        print('✅ Loaded ${jobs.length} jobs (total: ${updatedJobs.length})');
+      }
+    } catch (e) {
+      // Check if provider is still mounted
+      if (!ref.mounted) return;
+
+      final userError = _mapFirebaseError(e);
+      state = state.copyWith(isLoading: false, error: userError);
+
+      if (kDebugMode) {
+        print('[JobsProvider] Error loading all jobs: $e');
+      }
+
+      // Rethrow auth exceptions
+      if (e is UnauthenticatedException) {
+        rethrow;
+      }
+    }
+  }
+
   /// Update visible jobs for virtual scrolling
   void updateVisibleJobsRange(int startIndex, int endIndex) {
     if (startIndex < 0 || endIndex < 0 || startIndex > endIndex) {

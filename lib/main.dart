@@ -11,6 +11,8 @@ import 'package:journeyman_jobs/services/auth_service.dart';
 import 'package:journeyman_jobs/services/app_lifecycle_service.dart';
 import 'package:journeyman_jobs/services/session_timeout_service.dart';
 import 'package:journeyman_jobs/widgets/activity_detector.dart';
+import 'package:journeyman_jobs/widgets/session_activity_detector.dart';
+import 'package:journeyman_jobs/widgets/grace_period_warning_banner.dart';
 import 'firebase_options.dart';
 import 'design_system/app_theme.dart';
 import 'navigation/app_router.dart'; // For route constants
@@ -92,11 +94,22 @@ class MyApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
       routerConfig: router,
-      // Wrap the entire app with ActivityDetector to track user interactions
-      // This monitors all gestures and records activity for session timeout
+      // Wrap the entire app with activity detectors and grace period warning
+      // This monitors all gestures and shows warnings when session is about to expire
       builder: (context, child) {
-        return ActivityDetector(
-          child: child ?? const SizedBox.shrink(),
+        return SessionActivityDetector(
+          child: Column(
+            children: [
+              // Grace period warning banner (only shows when in grace period)
+              const GracePeriodWarningBanner(),
+              // Main app content
+              Expanded(
+                child: ActivityDetector(
+                  child: child ?? const SizedBox.shrink(),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

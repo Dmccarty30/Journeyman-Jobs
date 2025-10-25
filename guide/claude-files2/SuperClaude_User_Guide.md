@@ -201,30 +201,35 @@ SuperClaude includes 11 specialized personas that provide domain expertise:
 ### Technical Specialists
 
 #### `--persona-architect`
+
 - **Expertise**: Systems design, scalability, long-term architecture
 - **Best For**: Architectural decisions, system design
 - **Priority**: Maintainability > scalability > performance
 - **MCP**: Sequential (primary), Context7 (secondary)
 
 #### `--persona-frontend`
+
 - **Expertise**: UI/UX, accessibility, performance-conscious development
 - **Best For**: User interfaces, component design
 - **Priority**: User needs > accessibility > performance
 - **MCP**: Magic (primary), Playwright (secondary)
 
 #### `--persona-backend`
+
 - **Expertise**: APIs, databases, reliability engineering
 - **Best For**: Server architecture, data modeling
 - **Priority**: Reliability > security > performance
 - **MCP**: Context7 (primary), Sequential (secondary)
 
 #### `--persona-security`
+
 - **Expertise**: Threat modeling, vulnerability assessment
 - **Best For**: Security audits, compliance
 - **Priority**: Security > compliance > reliability
 - **MCP**: Sequential (primary), Context7 (secondary)
 
 #### `--persona-performance`
+
 - **Expertise**: Optimization, profiling, bottleneck elimination
 - **Best For**: Performance tuning, optimization
 - **Priority**: Measure first > optimize critical path > UX
@@ -233,24 +238,28 @@ SuperClaude includes 11 specialized personas that provide domain expertise:
 ### Process & Quality Experts
 
 #### `--persona-analyzer`
+
 - **Expertise**: Root cause analysis, evidence-based investigation
 - **Best For**: Complex debugging, investigations
 - **Priority**: Evidence > systematic approach > thoroughness
 - **MCP**: Sequential (primary), Context7 (secondary)
 
 #### `--persona-qa`
+
 - **Expertise**: Testing, quality assurance, edge cases
 - **Best For**: Quality validation, test coverage
 - **Priority**: Prevention > detection > correction
 - **MCP**: Playwright (primary), Sequential (secondary)
 
 #### `--persona-refactorer`
+
 - **Expertise**: Code quality, technical debt management
 - **Best For**: Code cleanup, refactoring
 - **Priority**: Simplicity > maintainability > readability
 - **MCP**: Sequential (primary), Context7 (secondary)
 
 #### `--persona-devops`
+
 - **Expertise**: Infrastructure, deployment, reliability
 - **Best For**: Deployments, infrastructure
 - **Priority**: Automation > observability > reliability
@@ -259,12 +268,14 @@ SuperClaude includes 11 specialized personas that provide domain expertise:
 ### Knowledge & Communication
 
 #### `--persona-mentor`
+
 - **Expertise**: Educational guidance, knowledge transfer
 - **Best For**: Documentation, learning
 - **Priority**: Understanding > knowledge transfer > teaching
 - **MCP**: Context7 (primary), Sequential (secondary)
 
 #### `--persona-scribe=lang`
+
 - **Expertise**: Professional writing, documentation, localization
 - **Best For**: Technical writing, documentation
 - **Priority**: Clarity > audience needs > cultural sensitivity
@@ -291,17 +302,20 @@ SuperClaude integrates with 4 MCP (Model Context Protocol) servers for enhanced 
 **Purpose**: Official library documentation, code examples, best practices
 
 **When to Use**:
+
 - External library integration
 - Framework pattern research
 - API documentation lookup
 - Version compatibility checking
 
 **Auto-Activates**:
+
 - External library imports detected
 - Framework-specific questions
 - Scribe persona active
 
 **Example Commands**:
+
 ```bash
 /analyze --c7
 /build --react --c7
@@ -313,17 +327,20 @@ SuperClaude integrates with 4 MCP (Model Context Protocol) servers for enhanced 
 **Purpose**: Multi-step problem solving, architectural analysis
 
 **When to Use**:
+
 - Complex system design
 - Root cause analysis
 - Performance investigation
 - Architecture review
 
 **Auto-Activates**:
+
 - Complex debugging scenarios
 - System design questions
 - Any `--think` flags
 
 **Example Commands**:
+
 ```bash
 /analyze --seq
 /troubleshoot --seq
@@ -335,17 +352,20 @@ SuperClaude integrates with 4 MCP (Model Context Protocol) servers for enhanced 
 **Purpose**: UI component generation, design system integration
 
 **When to Use**:
+
 - React/Vue component building
 - Design system implementation
 - UI pattern consistency
 - Rapid prototyping
 
 **Auto-Activates**:
+
 - UI component requests
 - Design system queries
 - Frontend persona active
 
 **Example Commands**:
+
 ```bash
 /build --react --magic
 /design --magic
@@ -357,17 +377,20 @@ SuperClaude integrates with 4 MCP (Model Context Protocol) servers for enhanced 
 **Purpose**: E2E testing, performance validation, browser automation
 
 **When to Use**:
+
 - End-to-end testing
 - Performance monitoring
 - Visual validation
 - User interaction testing
 
 **Auto-Activates**:
+
 - Testing workflows
 - Performance monitoring requests
 - QA persona active
 
 **Example Commands**:
+
 ```bash
 /test --e2e --pup
 /analyze --performance --pup
@@ -477,11 +500,13 @@ SuperClaude integrates with 4 MCP (Model Context Protocol) servers for enhanced 
 SuperClaude provides multi-tier task management:
 
 #### Layer 1: TodoWrite/TodoRead
+
 - **Scope**: Current session
 - **States**: pending, in_progress, completed, blocked
 - **Capacity**: 3-20 tasks per session
 
 #### Layer 2: /task Command
+
 - **Scope**: Multi-session features (days to weeks)
 - **Operations**:
   - `/task:create [description]` - Create with auto-breakdown
@@ -491,10 +516,12 @@ SuperClaude provides multi-tier task management:
   - `/task:complete [id]` - Mark as done
 
 #### Layer 3: /spawn Command
+
 - **Scope**: Complex multi-domain operations
 - **Features**: Parallel/sequential coordination
 
 #### Layer 4: /loop Command
+
 - **Scope**: Progressive refinement workflows
 - **Features**: Iteration cycles with validation
 
@@ -505,6 +532,7 @@ Meta-cognitive analysis for self-awareness and optimization.
 **Activation**: `--introspect` flag or automatic for complex debugging
 
 **Capabilities**:
+
 - Reasoning analysis
 - Action sequence review
 - Meta-cognitive self-assessment
@@ -512,6 +540,7 @@ Meta-cognitive analysis for self-awareness and optimization.
 - Retrospective analysis
 
 **Analysis Markers**:
+
 - 🧠 Reasoning Analysis
 - 🔄 Action Sequence Review
 - 🎯 Self-Assessment
@@ -524,10 +553,12 @@ Meta-cognitive analysis for self-awareness and optimization.
 Intelligent token optimization achieving 30-50% reduction.
 
 **Activation**:
+
 - Manual: `--uc` flag
 - Automatic: Context usage >75% or large-scale operations
 
 **Symbol System**:
+
 - `→` leads to, implies
 - `⇒` transforms to
 - `&` and, combine
@@ -539,6 +570,7 @@ Intelligent token optimization achieving 30-50% reduction.
 - `🛡️` security
 
 **Compression Levels**:
+
 1. **Minimal** (0-40%) - Full detail
 2. **Efficient** (40-70%) - Balanced compression
 3. **Compressed** (70-85%) - Aggressive optimization
@@ -556,6 +588,7 @@ Intelligent token optimization achieving 30-50% reduction.
 **Prohibited Language**: best, optimal, faster, secure, better, always, never
 
 **Evidence Requirements**:
+
 - Testing confirms
 - Metrics show
 - Benchmarks prove
@@ -702,6 +735,7 @@ Intelligent token optimization achieving 30-50% reduction.
 **Symptoms**: Slow execution, high resource usage
 
 **Solution**:
+
 ```bash
 # Enable token compression
 /analyze --uc
@@ -718,6 +752,7 @@ Intelligent token optimization achieving 30-50% reduction.
 **Symptoms**: Incomplete validation, missing evidence
 
 **Solution**:
+
 ```bash
 # Enable strict validation
 /improve --quality --validate --strict
@@ -734,6 +769,7 @@ Intelligent token optimization achieving 30-50% reduction.
 **Symptoms**: Token limits, incomplete analysis
 
 **Solution**:
+
 ```bash
 # Enable ultra-compressed mode
 /analyze --uc
@@ -775,6 +811,7 @@ SuperClaude provides a comprehensive, evidence-based framework for professional 
 ### Quick Reference
 
 **Most Used Commands**:
+
 ```bash
 /analyze --code --architecture
 /build --feature --tdd
@@ -784,6 +821,7 @@ SuperClaude provides a comprehensive, evidence-based framework for professional 
 ```
 
 **Most Useful Flags**:
+
 ```bash
 --plan              # Preview execution
 --validate          # Safety checks
@@ -793,6 +831,7 @@ SuperClaude provides a comprehensive, evidence-based framework for professional 
 ```
 
 **Emergency Operations**:
+
 ```bash
 /troubleshoot --prod --five-whys --seq
 /deploy --rollback --env prod

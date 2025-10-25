@@ -485,7 +485,7 @@ class AppThemeDark {
         labelStyle: labelMedium,
         hintStyle: bodyMedium.copyWith(color: textTertiary),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: primarySurface,
         elevation: 0,
         shape: RoundedRectangleBorder(

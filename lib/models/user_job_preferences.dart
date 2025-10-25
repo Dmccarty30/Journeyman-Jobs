@@ -21,6 +21,43 @@ class UserJobPreferences {
     this.maxDistance,
   });
 
+  /// Validates user job preferences before saving to Firestore
+  ///
+  /// Returns true if preferences are valid and can be saved.
+  /// At minimum, user must select at least one classification,
+  /// one construction type, and one preferred local.
+  bool validate() {
+    // At least one classification selected
+    if (classifications.isEmpty) return false;
+
+    // At least one construction type selected
+    if (constructionTypes.isEmpty) return false;
+
+    // At least one local selected
+    if (preferredLocals.isEmpty) return false;
+
+    return true;
+  }
+
+  /// Returns a user-friendly validation error message
+  ///
+  /// Returns null if preferences are valid.
+  String? get validationError {
+    if (classifications.isEmpty) {
+      return 'Please select at least one job classification';
+    }
+
+    if (constructionTypes.isEmpty) {
+      return 'Please select at least one construction type';
+    }
+
+    if (preferredLocals.isEmpty) {
+      return 'Please select at least one preferred local';
+    }
+
+    return null;
+  }
+
   factory UserJobPreferences.empty() {
     return UserJobPreferences(
       classifications: [],

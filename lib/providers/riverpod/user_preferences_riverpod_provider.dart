@@ -88,9 +88,23 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
   }
 
   /// Save user preferences to Firestore
+  ///
+  /// Validates preferences before saving and provides comprehensive error handling.
+  /// Throws Exception with user-friendly error messages on validation or save failures.
   Future<void> savePreferences(String userId, UserJobPreferences preferences) async {
     if (_operationManager.isOperationInProgress(OperationType.updateUserProfile)) {
-      return;
+      throw Exception('A save operation is already in progress');
+    }
+
+    // Validate user ID
+    if (userId.isEmpty) {
+      throw Exception('User not authenticated');
+    }
+
+    // Validate preferences before attempting to save
+    if (!preferences.validate()) {
+      final validationError = preferences.validationError ?? 'Invalid preferences';
+      throw Exception(validationError);
     }
 
     state = state.copyWith(isLoading: true);
@@ -101,48 +115,119 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
         operation: () async {
           final firestore = FirebaseFirestore.instance;
           final userDocRef = firestore.collection('users').doc(userId);
-          
+
+          print('[UserPreferencesProvider] 🔄 Starting save operation for user: $userId');
+          print('[UserPreferencesProvider] 📋 Preferences data:');
+          print('  - Classifications: ${preferences.classifications}');
+          print('  - Construction Types: ${preferences.constructionTypes}');
+          print('  - Preferred Locals: ${preferences.preferredLocals}');
+          print('  - Hours per week: ${preferences.hoursPerWeek}');
+          print('  - Per diem: ${preferences.perDiemRequirement}');
+
+          // Convert preferences to JSON
+          final prefsJson = preferences.toJson();
+          print('[UserPreferencesProvider] 📦 JSON payload: $prefsJson');
+
           await firestore.runTransaction((transaction) async {
             final userDoc = await transaction.get(userDocRef);
 
             if (!userDoc.exists) {
               // Create user document if it doesn't exist (edge case for new users)
+              print('[UserPreferencesProvider] ⚠️ User document does not exist - creating new document');
               transaction.set(userDocRef, {
-                'jobPreferences': preferences.toJson(),
+                'jobPreferences': prefsJson,
                 'hasSetJobPreferences': true,
                 'createdAt': FieldValue.serverTimestamp(),
                 'updatedAt': FieldValue.serverTimestamp(),
               });
             } else {
               // Update existing user document
+              print('[UserPreferencesProvider] ✏️ Updating existing user document');
+              print('[UserPreferencesProvider] 📄 Current data keys: ${userDoc.data()?.keys.toList()}');
               transaction.update(userDocRef, {
-                'jobPreferences': preferences.toJson(),
+                'jobPreferences': prefsJson,
                 'hasSetJobPreferences': true,
                 'updatedAt': FieldValue.serverTimestamp(),
               });
             }
           });
-          
+
+          print('[UserPreferencesProvider] ✅ Transaction completed successfully');
+          print('[UserPreferencesProvider] 🔍 Verifying save by reading back document...');
+
+          // Verify the save by reading back the document
+          final verifyDoc = await userDocRef.get();
+          if (verifyDoc.exists && verifyDoc.data()!.containsKey('jobPreferences')) {
+            print('[UserPreferencesProvider] ✅ Save verified - jobPreferences field exists');
+            final savedPrefs = verifyDoc.data()!['jobPreferences'];
+            print('[UserPreferencesProvider] 📋 Saved data: $savedPrefs');
+          } else {
+            print('[UserPreferencesProvider] ❌ WARNING: Save verification failed - jobPreferences field not found');
+          }
+
           state = state.copyWith(
             preferences: preferences,
             isLoading: false,
             lastUpdated: DateTime.now(),
+            error: null, // Clear any previous errors
           );
         },
       );
-    } catch (e) {
+    } on FirebaseException catch (e) {
+      print('[UserPreferencesProvider] ❌ Firebase error during save:');
+      print('  - Error code: ${e.code}');
+      print('  - Error message: ${e.message}');
+      print('  - Plugin: ${e.plugin}');
+      print('  - Stack trace: ${e.stackTrace}');
+
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
       );
-      rethrow;
+
+      // Provide user-friendly error messages based on Firebase error codes
+      if (e.code == 'permission-denied') {
+        throw Exception('Permission denied. Please check your account settings.');
+      } else if (e.code == 'unavailable') {
+        throw Exception('Network error. Please check your connection.');
+      } else if (e.code == 'unauthenticated') {
+        throw Exception('Authentication required. Please sign in again.');
+      } else if (e.code == 'not-found') {
+        throw Exception('User document not found. Please try signing out and back in.');
+      } else {
+        throw Exception('Error saving preferences: ${e.message}');
+      }
+    } catch (e) {
+      print('[UserPreferencesProvider] ❌ Unexpected error during save: $e');
+      print('[UserPreferencesProvider] 📚 Error type: ${e.runtimeType}');
+
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+
+      throw Exception('Failed to save preferences. Please try again.');
     }
   }
 
   /// Update existing user preferences
+  ///
+  /// Validates preferences before updating and provides comprehensive error handling.
+  /// Throws Exception with user-friendly error messages on validation or update failures.
   Future<void> updatePreferences(String userId, UserJobPreferences updatedPreferences) async {
     if (_operationManager.isOperationInProgress(OperationType.updateUserProfile)) {
-      return;
+      throw Exception('An update operation is already in progress');
+    }
+
+    // Validate user ID
+    if (userId.isEmpty) {
+      throw Exception('User not authenticated');
+    }
+
+    // Validate preferences before attempting to update
+    if (!updatedPreferences.validate()) {
+      final validationError = updatedPreferences.validationError ?? 'Invalid preferences';
+      throw Exception(validationError);
     }
 
     state = state.copyWith(isLoading: true);
@@ -154,39 +239,96 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
           final firestore = FirebaseFirestore.instance;
           final userDocRef = firestore.collection('users').doc(userId);
 
+          print('[UserPreferencesProvider] 🔄 Starting update operation for user: $userId');
+          print('[UserPreferencesProvider] 📋 Updated preferences:');
+          print('  - Classifications: ${updatedPreferences.classifications}');
+          print('  - Construction Types: ${updatedPreferences.constructionTypes}');
+          print('  - Preferred Locals: ${updatedPreferences.preferredLocals}');
+          print('  - Hours per week: ${updatedPreferences.hoursPerWeek}');
+          print('  - Per diem: ${updatedPreferences.perDiemRequirement}');
+
+          // Convert preferences to JSON
+          final prefsJson = updatedPreferences.toJson();
+          print('[UserPreferencesProvider] 📦 JSON payload: $prefsJson');
+
           await firestore.runTransaction((transaction) async {
             final userDoc = await transaction.get(userDocRef);
 
             if (!userDoc.exists) {
               // Create user document if it doesn't exist (edge case for new users)
+              print('[UserPreferencesProvider] ⚠️ User document does not exist - creating during update');
               transaction.set(userDocRef, {
-                'jobPreferences': updatedPreferences.toJson(),
+                'jobPreferences': prefsJson,
                 'hasSetJobPreferences': true,
                 'createdAt': FieldValue.serverTimestamp(),
                 'updatedAt': FieldValue.serverTimestamp(),
               });
             } else {
               // Update existing user document
+              print('[UserPreferencesProvider] ✏️ Updating existing user document');
+              print('[UserPreferencesProvider] 📄 Current data keys: ${userDoc.data()?.keys.toList()}');
               transaction.update(userDocRef, {
-                'jobPreferences': updatedPreferences.toJson(),
+                'jobPreferences': prefsJson,
                 'updatedAt': FieldValue.serverTimestamp(),
               });
             }
           });
-          
+
+          print('[UserPreferencesProvider] ✅ Transaction completed successfully');
+          print('[UserPreferencesProvider] 🔍 Verifying update by reading back document...');
+
+          // Verify the update by reading back the document
+          final verifyDoc = await userDocRef.get();
+          if (verifyDoc.exists && verifyDoc.data()!.containsKey('jobPreferences')) {
+            print('[UserPreferencesProvider] ✅ Update verified - jobPreferences field exists');
+            final savedPrefs = verifyDoc.data()!['jobPreferences'];
+            print('[UserPreferencesProvider] 📋 Updated data: $savedPrefs');
+          } else {
+            print('[UserPreferencesProvider] ❌ WARNING: Update verification failed - jobPreferences field not found');
+          }
+
           state = state.copyWith(
             preferences: updatedPreferences,
             isLoading: false,
             lastUpdated: DateTime.now(),
+            error: null, // Clear any previous errors
           );
         },
       );
-    } catch (e) {
+    } on FirebaseException catch (e) {
+      print('[UserPreferencesProvider] ❌ Firebase error during update:');
+      print('  - Error code: ${e.code}');
+      print('  - Error message: ${e.message}');
+      print('  - Plugin: ${e.plugin}');
+      print('  - Stack trace: ${e.stackTrace}');
+
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
       );
-      rethrow;
+
+      // Provide user-friendly error messages based on Firebase error codes
+      if (e.code == 'permission-denied') {
+        throw Exception('Permission denied. Please check your account settings.');
+      } else if (e.code == 'unavailable') {
+        throw Exception('Network error. Please check your connection.');
+      } else if (e.code == 'unauthenticated') {
+        throw Exception('Authentication required. Please sign in again.');
+      } else if (e.code == 'not-found') {
+        throw Exception('User document not found. Please try signing out and back in.');
+      } else {
+        throw Exception('Error updating preferences: ${e.message}');
+      }
+    } catch (e) {
+      print('[UserPreferencesProvider] ❌ Unexpected error during update: $e');
+      print('[UserPreferencesProvider] 📚 Error type: ${e.runtimeType}');
+
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+
+      throw Exception('Failed to update preferences. Please try again.');
     }
   }
 
