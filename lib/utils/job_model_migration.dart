@@ -1,187 +1,140 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/unified_job_model.dart';
+import '../models/job_model.dart';
 
-/// Migration utilities for transitioning from legacy Job models to UnifiedJobModel
+/// Utility functions for Job model operations and validations
 ///
 /// This file provides helpers for:
-/// - Converting from old Job/JobsRecord models
-/// - Batch migration of collections
-/// - Data validation during migration
-/// - Rollback support
+/// - Job model validation
+/// - Field mapping between different job representations
+/// - Data parsing and normalization
+/// - Firestore batch operations
 ///
-/// Usage during migration:
+/// Usage:
 /// ```dart
-/// // Convert single job
-/// final unified = JobModelMigration.convertLegacyToUnified(oldJob);
+/// // Validate job
+/// final isValid = JobModelUtils.validateJob(job);
 ///
-/// // Migrate entire collection
-/// await JobModelMigration.migrateJobsCollection();
+/// // Normalize job data
+/// final normalized = JobModelUtils.normalizeJobData(data);
 /// ```
-class JobModelMigration {
-  /// Converts a legacy Job model (from job_model.dart) to UnifiedJobModel
+class JobModelUtils {
+  /// Validates that a Job has all required fields
   ///
-  /// Handles:
-  /// - jobDetails map extraction
-  /// - sharerId preservation
-  /// - matchesCriteria flag
-  /// - DocumentReference preservation
-  static UnifiedJobModel convertLegacyToUnified(
-    Map<String, dynamic> legacyData, {
-    DocumentReference? reference,
-  }) {
-    // Extract wage from jobDetails if not in top level
-    final wage = legacyData['wage'] ??
-        legacyData['jobDetails']?['payRate'] as double?;
-
-    // Extract hours from jobDetails if not in top level
-    final hours = legacyData['hours'] ??
-        legacyData['jobDetails']?['hours'] as int?;
-
-    // Extract per diem from jobDetails if not in top level
-    final perDiem = legacyData['perDiem'] ??
-        legacyData['per_diem'] ??
-        legacyData['jobDetails']?['perDiem']?.toString();
-
-    return UnifiedJobModel(
-      id: legacyData['id']?.toString() ?? '',
-      reference: reference,
-      sharerId: legacyData['sharerId']?.toString() ?? '',
-      jobDetails: legacyData['jobDetails'] as Map<String, dynamic>? ?? {},
-      matchesCriteria: legacyData['matchesCriteria'] ?? false,
-      deleted: legacyData['deleted'] ?? false,
-      local: legacyData['local'] as int?,
-      classification: legacyData['classification']?.toString(),
-      company: legacyData['company']?.toString() ?? '',
-      location: legacyData['location']?.toString() ?? '',
-      hours: hours,
-      wage: wage,
-      sub: legacyData['sub']?.toString(),
-      jobClass: legacyData['jobClass']?.toString(),
-      localNumber: legacyData['localNumber'] as int?,
-      qualifications: legacyData['qualifications']?.toString(),
-      datePosted: legacyData['datePosted']?.toString() ??
-          legacyData['date_posted']?.toString(),
-      jobDescription: legacyData['jobDescription']?.toString() ??
-          legacyData['job_description']?.toString(),
-      jobTitle: legacyData['jobTitle']?.toString() ??
-          legacyData['job_title']?.toString(),
-      perDiem: perDiem,
-      agreement: legacyData['agreement']?.toString(),
-      numberOfJobs: legacyData['numberOfJobs']?.toString(),
-      timestamp: _parseDateTime(legacyData['timestamp']),
-      startDate: legacyData['startDate']?.toString(),
-      startTime: legacyData['startTime']?.toString(),
-      booksYourOn: _parseIntList(legacyData['booksYourOn']),
-      typeOfWork: legacyData['typeOfWork']?.toString() ??
-          legacyData['work_type']?.toString(),
-      duration: legacyData['duration']?.toString(),
-      voltageLevel: legacyData['voltageLevel']?.toString() ??
-          legacyData['voltage_level']?.toString(),
-    );
-  }
-
-  /// Converts a JobsRecord (from jobs_record.dart) to UnifiedJobModel
-  ///
-  /// JobsRecord is simpler, so most fields map directly
-  static UnifiedJobModel convertJobsRecordToUnified(
-    Map<String, dynamic> recordData, {
-    DocumentReference? reference,
-  }) {
-    return UnifiedJobModel(
-      id: recordData['id']?.toString() ?? '',
-      reference: reference,
-      company: recordData['company']?.toString() ?? '',
-      location: recordData['location']?.toString() ?? '',
-      classification: recordData['classification']?.toString(),
-      hours: recordData['hours'] as int?,
-      wage: recordData['wage'] as double?,
-      jobTitle: recordData['jobTitle']?.toString(),
-      timestamp: _parseDateTime(recordData['timestamp']),
-      startDate: recordData['startDate']?.toString(),
-      jobDescription: recordData['jobDescription']?.toString(),
-      qualifications: recordData['qualifications']?.toString(),
-      perDiem: recordData['perDiem']?.toString(),
-      typeOfWork: recordData['typeOfWork']?.toString(),
-      duration: recordData['duration']?.toString(),
-      voltageLevel: recordData['voltageLevel']?.toString(),
-      localNumber: recordData['localNumber'] as int?,
-      certifications: _parseStringList(recordData['certifications']),
-      deleted: recordData['deleted'] ?? false,
-    );
-  }
-
-  /// Migrates an entire Firestore collection from legacy to unified model
-  ///
-  /// Process:
-  /// 1. Read all documents
-  /// 2. Convert to UnifiedJobModel
-  /// 3. Validate each conversion
-  /// 4. Write back to Firestore
-  /// 5. Report any failures
-  ///
-  /// **IMPORTANT:** This is a destructive operation. Create backup first!
+  /// Required fields:
+  /// - id (non-empty)
+  /// - sharerId (non-empty)
+  /// - company (non-empty)
+  /// - location (non-empty)
+  /// - jobDetails (non-empty map)
   ///
   /// Example:
   /// ```dart
-  /// final result = await JobModelMigration.migrateJobsCollection();
-  /// print('Migrated: ${result.successCount}');
-  /// print('Failed: ${result.failureCount}');
+  /// if (!JobModelUtils.validateJob(job)) {
+  ///   print('Invalid job: missing required fields');
+  /// }
   /// ```
-  static Future<MigrationResult> migrateJobsCollection({
-    String collectionName = 'jobs',
-    bool dryRun = true,
-    int batchSize = 500,
-  }) async {
-    final firestore = FirebaseFirestore.instance;
-    final result = MigrationResult();
-
-    try {
-      final snapshot = await firestore.collection(collectionName).get();
-
-      for (var doc in snapshot.docs) {
-        try {
-          final data = doc.data();
-
-          // Try to detect which model type this is
-          UnifiedJobModel unified;
-          if (data.containsKey('jobDetails')) {
-            // Legacy Job model
-            unified = convertLegacyToUnified(data, reference: doc.reference);
-          } else {
-            // JobsRecord model
-            unified = convertJobsRecordToUnified(data,
-                reference: doc.reference);
-          }
-
-          // Validate conversion
-          if (!unified.isValid) {
-            result.addFailure(doc.id, 'Invalid job after conversion');
-            continue;
-          }
-
-          // Write back if not dry run
-          if (!dryRun) {
-            await doc.reference.set(unified.toFirestore());
-          }
-
-          result.addSuccess(doc.id);
-        } catch (e) {
-          result.addFailure(doc.id, e.toString());
-        }
-      }
-    } catch (e) {
-      result.error = e.toString();
-    }
-
-    return result;
+  static bool validateJob(Job job) {
+    return job.id.isNotEmpty &&
+           job.sharerId.isNotEmpty &&
+           job.company.isNotEmpty &&
+           job.location.isNotEmpty &&
+           job.jobDetails.isNotEmpty;
   }
 
-  /// Validates that all jobs in a collection match UnifiedJobModel schema
+  /// Normalizes job data from various sources to consistent format
+  ///
+  /// Handles:
+  /// - Field name variations (company vs companyName, wage vs hourlyRate)
+  /// - Type conversions (string to int/double)
+  /// - Null safety and default values
+  /// - jobDetails map construction
+  ///
+  /// Example:
+  /// ```dart
+  /// final normalized = JobModelUtils.normalizeJobData({
+  ///   'companyName': 'ABC Electric',  // → company
+  ///   'hourlyRate': '45.50',          // → wage as double
+  /// });
+  /// ```
+  static Map<String, dynamic> normalizeJobData(Map<String, dynamic> data) {
+    final normalized = <String, dynamic>{};
+
+    // Normalize company field
+    normalized['company'] = data['company'] ??
+                           data['companyName'] ??
+                           data['employer'] ??
+                           '';
+
+    // Normalize wage field
+    normalized['wage'] = _parseDouble(data['wage']) ??
+                        _parseDouble(data['hourlyRate']) ??
+                        _parseDouble(data['payRate']);
+
+    // Normalize location
+    normalized['location'] = data['location'] ??
+                            data['Location'] ??
+                            '';
+
+    // Copy other standard fields
+    normalized['id'] = data['id'] ?? '';
+    normalized['sharerId'] = data['sharerId'] ?? '';
+    normalized['matchesCriteria'] = data['matchesCriteria'] ?? false;
+    normalized['deleted'] = data['deleted'] ?? false;
+    normalized['local'] = _parseInt(data['local'] ?? data['localNumber']);
+    normalized['classification'] = data['classification'] ?? data['jobClass'];
+    normalized['hours'] = _parseInt(data['hours'] ?? data['Shift']);
+    normalized['sub'] = data['sub'];
+    normalized['jobClass'] = data['jobClass'];
+    normalized['localNumber'] = _parseInt(data['localNumber'] ?? data['local']);
+    normalized['qualifications'] = data['qualifications'];
+    normalized['datePosted'] = data['datePosted'] ?? data['date_posted'];
+    normalized['jobDescription'] = data['jobDescription'] ?? data['job_description'];
+    normalized['jobTitle'] = data['jobTitle'] ?? data['job_title'] ?? data['title'];
+    normalized['perDiem'] = data['perDiem'] ?? data['per_diem'];
+    normalized['agreement'] = data['agreement'];
+    normalized['numberOfJobs'] = data['numberOfJobs'];
+    normalized['timestamp'] = _parseDateTime(data['timestamp']);
+    normalized['startDate'] = data['startDate'];
+    normalized['startTime'] = data['startTime'];
+    normalized['booksYourOn'] = _parseIntList(data['booksYourOn']);
+    normalized['typeOfWork'] = data['typeOfWork'] ?? data['work_type'];
+    normalized['duration'] = data['duration'];
+    normalized['voltageLevel'] = data['voltageLevel'] ?? data['voltage_level'];
+
+    // Build jobDetails map if not present
+    if (data['jobDetails'] == null) {
+      normalized['jobDetails'] = {
+        'hours': normalized['hours'],
+        'payRate': normalized['wage'],
+        'perDiem': normalized['perDiem'],
+        'contractor': normalized['company'],
+        'location': data['geoPoint'], // GeoPoint if available
+      };
+    } else {
+      normalized['jobDetails'] = data['jobDetails'];
+    }
+
+    return normalized;
+  }
+
+  /// Validates all jobs in a Firestore collection
   ///
   /// Returns a report of:
   /// - Total jobs
-  /// - Valid jobs
+  /// - Valid jobs (have all required fields)
   /// - Invalid jobs with reasons
+  ///
+  /// Example:
+  /// ```dart
+  /// final report = await JobModelUtils.validateJobsCollection();
+  /// print('Valid: ${report.validPercent}%');
+  /// if (report.invalidCount > 0) {
+  ///   print('Invalid jobs:');
+  ///   report.invalidJobs.forEach((id, reason) {
+  ///     print('  $id: $reason');
+  ///   });
+  /// }
+  /// ```
   static Future<ValidationReport> validateJobsCollection({
     String collectionName = 'jobs',
   }) async {
@@ -195,9 +148,9 @@ class JobModelMigration {
       for (var doc in snapshot.docs) {
         try {
           final data = doc.data();
-          final unified = UnifiedJobModel.fromJson({...data, 'id': doc.id});
+          final job = Job.fromJson({...data, 'id': doc.id});
 
-          if (unified.isValid) {
+          if (validateJob(job)) {
             report.validCount++;
           } else {
             report.addInvalid(doc.id, 'Missing required fields');
@@ -211,6 +164,49 @@ class JobModelMigration {
     }
 
     return report;
+  }
+
+  /// Helper to safely parse double from any type
+  ///
+  /// Handles: int, double, string (with currency symbols)
+  /// Examples: "$45.50/hr", "45.50", 45.5, 45
+  static double? _parseDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) {
+      // Remove currency symbols and formatting
+      String cleanValue = value
+          .replaceAll(RegExp(r'[\$,]'), '')
+          .replaceAll('/hr', '')
+          .replaceAll('/hour', '')
+          .trim();
+      return double.tryParse(cleanValue);
+    }
+    return null;
+  }
+
+  /// Helper to safely parse integer from any type
+  ///
+  /// Handles: int, double, string (with digit extraction)
+  /// Validates positive integers to prevent invalid data
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value >= 0 ? value : null;
+    if (value is double) return value >= 0 ? value.toInt() : null;
+    if (value is String) {
+      // First try direct parse
+      final direct = int.tryParse(value.trim());
+      if (direct != null && direct >= 0) return direct;
+
+      // Extract leading digits (e.g., "123-Local" → 123)
+      final match = RegExp(r'^\d+').firstMatch(value.trim());
+      if (match != null) {
+        final parsed = int.tryParse(match.group(0)!);
+        if (parsed != null && parsed >= 0) return parsed;
+      }
+    }
+    return null;
   }
 
   /// Helper to parse DateTime from various formats
@@ -232,51 +228,6 @@ class JobModelMigration {
     return null;
   }
 
-  /// Helper to parse list of strings
-  static List<String>? _parseStringList(dynamic value) {
-    if (value == null) return null;
-    if (value is List) {
-      return value.map((e) => e.toString()).toList();
-    }
-    if (value is String) {
-      return value.split(',').map((s) => s.trim()).toList();
-    }
-    return null;
-  }
-}
-
-/// Result of a migration operation
-class MigrationResult {
-  final List<String> successfulIds = [];
-  final Map<String, String> failedIds = {};
-  String? error;
-
-  int get successCount => successfulIds.length;
-  int get failureCount => failedIds.length;
-
-  void addSuccess(String id) => successfulIds.add(id);
-  void addFailure(String id, String reason) => failedIds[id] = reason;
-
-  @override
-  String toString() {
-    final buffer = StringBuffer();
-    buffer.writeln('Migration Result:');
-    buffer.writeln('  Success: $successCount');
-    buffer.writeln('  Failures: $failureCount');
-
-    if (error != null) {
-      buffer.writeln('  Error: $error');
-    }
-
-    if (failedIds.isNotEmpty) {
-      buffer.writeln('\nFailed IDs:');
-      failedIds.forEach((id, reason) {
-        buffer.writeln('  - $id: $reason');
-      });
-    }
-
-    return buffer.toString();
-  }
 }
 
 /// Result of a validation operation
@@ -315,39 +266,30 @@ class ValidationReport {
   }
 }
 
-/// Example usage and migration script
-///
-/// Run this to perform the actual migration:
+/// Example usage:
 ///
 /// ```dart
 /// void main() async {
-///   // 1. Validate first (safe, read-only)
-///   final validation = await JobModelMigration.validateJobsCollection();
+///   // Validate jobs collection
+///   final validation = await JobModelUtils.validateJobsCollection();
 ///   print(validation);
 ///
 ///   if (validation.validPercent < 95) {
 ///     print('Warning: ${validation.invalidCount} invalid jobs found!');
-///     print('Review validation report before migrating.');
-///     return;
-///   }
-///
-///   // 2. Dry run (safe, no writes)
-///   final dryRun = await JobModelMigration.migrateJobsCollection(
-///     dryRun: true,
-///   );
-///   print(dryRun);
-///
-///   // 3. Actual migration (destructive!)
-///   print('Starting real migration...');
-///   final result = await JobModelMigration.migrateJobsCollection(
-///     dryRun: false,
-///   );
-///   print(result);
-///
-///   if (result.failureCount > 0) {
-///     print('Migration completed with ${result.failureCount} failures!');
+///     print('Review validation report:');
+///     validation.invalidJobs.forEach((id, reason) {
+///       print('  $id: $reason');
+///     });
 ///   } else {
-///     print('Migration completed successfully!');
+///     print('All jobs valid! ${validation.validPercent.toStringAsFixed(1)}%');
 ///   }
+///
+///   // Normalize data from external source
+///   final externalData = {
+///     'companyName': 'ABC Electric',  // Different field name
+///     'hourlyRate': '\$45.50/hr',     // String with formatting
+///   };
+///   final normalized = JobModelUtils.normalizeJobData(externalData);
+///   print('Normalized: ${normalized['company']}, ${normalized['wage']}');
 /// }
 /// ```

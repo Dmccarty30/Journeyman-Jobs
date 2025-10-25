@@ -516,7 +516,7 @@ class CrewService {
         throw CrewException('Crew not found', code: 'crew-not-found');
       }
       if (!CrewValidation.isUnderMemberLimit(crew.memberIds.length)) {
-        throw CrewException('Crew has reached maximum member limit (50)', code: 'member-limit-reached');
+        throw CrewException('Crew has reached maximum member limit (10)', code: 'member-limit-reached');
       }
 
       if (message != null) {
@@ -765,6 +765,11 @@ class CrewService {
     required String userId,
   }) async {
     try {
+      // Check if user can join another crew (max 3 crews per user)
+      if (!await CrewValidation.canJoinAnotherCrew(userId, _firestore)) {
+        throw MemberException('You have reached the maximum crew membership limit (3 crews)', code: 'user-crew-limit-reached');
+      }
+
       if (!_connectivityService.isOnline) {
         // Offline: Update local data and mark as dirty
         final existingCrews = await _offlineDataService.getOfflineCrews();

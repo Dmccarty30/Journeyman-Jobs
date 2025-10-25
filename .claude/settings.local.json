@@ -7,8 +7,17 @@
       "Bash(npx claude-flow@alpha hooks notify:*)",
       "Bash(find:*)",
       "Bash(dart run build_runner:*)",
-      "Bash(flutter test:*)"
+      "Bash(flutter test:*)",
+      "Bash(cat:*)",
+      "Bash(test:*)"
     ],
     "deny": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "claude-flow@alpha",
+    "ruv-swarm",
+    "flow-nexus",
+    "agentic-payments"
+  ]
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../electrical_components/circuit_board_background.dart' show ComponentDensity;
+import 'theme_extensions.dart';
+import 'app_theme_dark.dart';
 
 /// Comprehensive electrical-themed design system for JJElectricalComponents
 /// Provides consistent theming across all electrical circuit-inspired UI components
@@ -665,6 +667,11 @@ class AppTheme {
         color: darkGray,
         size: iconMd,
       ),
+
+      // Register light-mode theme extensions for electrical components
+      extensions: const <ThemeExtension<dynamic>>[
+        ElectricalThemeExtension.light,
+      ],
       
       // FloatingActionButton Theme
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
@@ -776,6 +783,10 @@ class AppTheme {
         ),
       ),
 
+      extensions: const <ThemeExtension<dynamic>>[
+        ElectricalThemeExtension.dark,
+      ],
+
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: darkBackground, // Updated to use new dark mode constants
         selectedItemColor: accentCopper,
@@ -811,4 +822,8 @@ class AppTheme {
       ),
     );
   }
+
+  // Factory-style accessors for parity with AppTheme.light()/AppTheme.dark()
+  static ThemeData light() => lightTheme;
+  static ThemeData dark() => AppThemeDark.getThemeData();
 }

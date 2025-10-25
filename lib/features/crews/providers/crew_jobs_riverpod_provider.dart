@@ -1,7 +1,7 @@
 // lib/features/crews/providers/crew_jobs_riverpod_provider.dart
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../features/jobs/models/job.dart';
+import '../../../models/job_model.dart'; // Canonical Job model
 import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
 import 'crews_riverpod_provider.dart';
 

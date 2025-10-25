@@ -3,32 +3,49 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../services/session_timeout_service.dart';
-import '../../services/auth_service.dart';
 import 'auth_riverpod_provider.dart';
 
 part 'session_timeout_provider.g.dart';
 
 /// Session state model for timeout tracking
+///
+/// Includes grace period tracking:
+/// - User becomes idle after 2 minutes of inactivity
+/// - Grace period of 5 minutes begins when idle
+/// - Warning shown at 4 minutes into grace period (6 minutes total)
+/// - Logout occurs at 5 minutes into grace period (7 minutes total)
 class SessionState {
   final bool isActive;
   final DateTime? lastActivity;
   final Duration? timeUntilTimeout;
+  final bool isInGracePeriod;
+  final DateTime? gracePeriodStartTime;
+  final bool warningShown;
 
   const SessionState({
     this.isActive = false,
     this.lastActivity,
     this.timeUntilTimeout,
+    this.isInGracePeriod = false,
+    this.gracePeriodStartTime,
+    this.warningShown = false,
   });
 
   SessionState copyWith({
     bool? isActive,
     DateTime? lastActivity,
     Duration? timeUntilTimeout,
+    bool? isInGracePeriod,
+    DateTime? gracePeriodStartTime,
+    bool? warningShown,
   }) {
     return SessionState(
       isActive: isActive ?? this.isActive,
       lastActivity: lastActivity ?? this.lastActivity,
       timeUntilTimeout: timeUntilTimeout ?? this.timeUntilTimeout,
+      isInGracePeriod: isInGracePeriod ?? this.isInGracePeriod,
+      gracePeriodStartTime: gracePeriodStartTime ?? this.gracePeriodStartTime,
+      warningShown: warningShown ?? this.warningShown,
     );
   }
 }
@@ -109,6 +126,11 @@ class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
   }
 
   /// Initializes the session timeout service with callbacks.
+  ///
+  /// Sets up three callbacks:
+  /// 1. onTimeout: Handles final logout after grace period expires
+  /// 2. onWarning: Shows warning notification 1 minute before logout
+  /// 3. onSessionStateChanged: Updates session state for UI
   Future<void> _initializeService() async {
     _service = ref.read(sessionTimeoutServiceProvider);
 
@@ -122,12 +144,31 @@ class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
       state = const SessionState(isActive: false);
     };
 
+    // Configure warning callback (4 minutes into grace period)
+    _service?.onWarning = () {
+      // Update state to reflect warning
+      state = SessionState(
+        isActive: state.isActive,
+        lastActivity: _service?.lastActivity,
+        timeUntilTimeout: _service?.timeUntilTimeout,
+        isInGracePeriod: _service?.isInGracePeriod ?? false,
+        gracePeriodStartTime: _service?.gracePeriodStartTime,
+        warningShown: true,
+      );
+
+      // Note: UI can watch for warningShown to display notification
+      // The notification UI will be handled by a listener in the app
+    };
+
     // Configure session state change callback
     _service?.onSessionStateChanged = (isActive) {
       state = SessionState(
         isActive: isActive,
         lastActivity: _service?.lastActivity,
         timeUntilTimeout: _service?.timeUntilTimeout,
+        isInGracePeriod: _service?.isInGracePeriod ?? false,
+        gracePeriodStartTime: _service?.gracePeriodStartTime,
+        warningShown: _service?.warningShown ?? false,
       );
     };
 
@@ -145,6 +186,9 @@ class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
       isActive: true,
       lastActivity: _service?.lastActivity,
       timeUntilTimeout: _service?.timeUntilTimeout,
+      isInGracePeriod: false,
+      gracePeriodStartTime: null,
+      warningShown: false,
     );
   }
 
@@ -161,14 +205,18 @@ class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
   ///
   /// Call this method whenever user interacts with the app.
   /// This is typically handled automatically by the ActivityDetector widget.
+  /// If user was in grace period, this will resume normal session.
   Future<void> recordActivity() async {
     await _service?.recordActivity();
 
-    // Update state with new activity time
+    // Update state with new activity time and grace period info
     state = SessionState(
       isActive: state.isActive,
       lastActivity: _service?.lastActivity,
       timeUntilTimeout: _service?.timeUntilTimeout,
+      isInGracePeriod: _service?.isInGracePeriod ?? false,
+      gracePeriodStartTime: _service?.gracePeriodStartTime,
+      warningShown: _service?.warningShown ?? false,
     );
   }
 

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'design_system/app_theme.dart';
 import 'firebase_options.dart';
 import 'navigation/app_router.dart';
+import 'providers/riverpod/theme_riverpod_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,8 +59,9 @@ class JourneymanJobsApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
       title: 'Journeyman Jobs',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: ref.watch(themeModeNotifierProvider),
       routerConfig: AppRouter.router,
       debugShowCheckedModeBanner: false,
       builder: (BuildContext context, Widget? child) {

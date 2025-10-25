@@ -11,12 +11,14 @@ This document summarizes the Firestore and Flutter performance optimizations imp
 ### Task 8.2: Feed Tab Message Display ✅
 
 **Files Created/Modified:**
+
 - `lib/features/crews/services/crew_message_service.dart` ✅
 - `lib/features/crews/providers/crew_messages_provider.dart` ✅
 - `lib/features/crews/widgets/tab_widgets.dart` (to be updated)
 
 **Firestore Structure:**
-```
+
+```dart
 crews/{crewId}/messages/{messageId}
   - senderId: string
   - content: string
@@ -29,6 +31,7 @@ crews/{crewId}/messages/{messageId}
 ```
 
 **Key Optimizations:**
+
 1. **Pagination:** 50 messages per page with DocumentSnapshot cursors
 2. **Real-time Listeners:** Automatic updates with Firestore snapshots
 3. **Optimistic UI:** Message IDs generated client-side for instant feedback
@@ -36,6 +39,7 @@ crews/{crewId}/messages/{messageId}
 5. **Batch Operations:** Batch mark-as-read for multiple messages
 
 **Provider Architecture:**
+
 ```dart
 // Real-time stream of messages
 final crewFeedMessagesStreamProvider = StreamProvider.autoDispose.family<List<Message>, String>
@@ -48,6 +52,7 @@ final messageReadNotifierProvider = StateNotifierProvider.autoDispose
 ```
 
 **Performance Metrics:**
+
 - Initial load: <500ms (with offline cache)
 - Real-time updates: <100ms latency
 - Pagination: <200ms per page
@@ -58,19 +63,22 @@ final messageReadNotifierProvider = StateNotifierProvider.autoDispose
 ### Task 8.3: Chat Tab Message Display ✅
 
 **Firestore Structure:**
-```
+
+```dart
 crews/{crewId}/chat/{messageId}
   - Same structure as feed messages
   - Optimized for chronological ordering (ascending)
 ```
 
 **Key Optimizations:**
+
 1. **Message Ordering:** Ascending timestamp (oldest first) for chat UX
 2. **Auto-scroll:** Automatic scroll to latest message
 3. **Read Receipts:** Individual read tracking per user
 4. **Delivery Status:** Sender sees real-time delivery confirmations
 
 **Chat-Specific Features:**
+
 - Message editing with timestamp
 - Soft delete (content replaced with "[Message deleted]")
 - Typing indicators (future enhancement)
@@ -83,6 +91,7 @@ crews/{crewId}/chat/{messageId}
 ### Task 9.1: Optimize Locals Screen Performance ✅
 
 **Current Implementation Analysis:**
+
 - **Dataset Size:** 797+ IBEW locals
 - **Current Approach:** ListView.builder with full dataset
 - **Performance Issue:** No virtualization, loads all data at once
@@ -90,6 +99,7 @@ crews/{crewId}/chat/{messageId}
 **Optimizations Implemented:**
 
 1. **Pagination with Firestore:**
+
 ```dart
 // lib/services/firestore_service.dart (already optimized)
 Stream<QuerySnapshot> getLocals({
@@ -100,11 +110,13 @@ Stream<QuerySnapshot> getLocals({
 ```
 
 2. **State Filtering:**
+
 - Composite index: `state (ASC) + local_union (ASC)`
 - Reduces query size by 90%+ when filtered
 - Instant filtering with cached results
 
 3. **Search Optimization:**
+
 ```dart
 // Prefix search with state filter
 Query query = localsCollection
@@ -115,12 +127,14 @@ Query query = localsCollection
 ```
 
 4. **Offline Caching:**
+
 - Firestore persistence enabled
 - First load: network query
 - Subsequent loads: instant cache
 - Background sync for updates
 
 **Performance Improvements:**
+
 - **Before:** 797 docs loaded, 3-5s initial load
 - **After:** 20 docs per page, <500ms per page
 - **Memory:** 95% reduction (from ~800KB to ~40KB)
@@ -133,19 +147,22 @@ Query query = localsCollection
 ### Critical Indexes for Performance
 
 1. **Crew Feed Messages:**
-   ```
+
+   ```dart
    Collection: crews/{crewId}/messages
    Fields: sentAt (DESC), __name__ (DESC)
    ```
 
 2. **Crew Chat Messages:**
-   ```
+
+   ```dart
    Collection: crews/{crewId}/chat
    Fields: sentAt (ASC), __name__ (ASC)
    ```
 
 3. **Locals State Filter:**
-   ```
+
+   ```dart
    Collection: locals
    Fields: state (ASC), local_union (ASC), __name__ (ASC)
    ```
@@ -160,6 +177,7 @@ See `docs/firestore-indexes-required.md` for complete CLI commands and deploymen
 ### Flutter/Firestore Integration Patterns
 
 1. **StreamProvider for Real-time Data:**
+
 ```dart
 final messagesStream = StreamProvider.autoDispose.family<List<Message>, String>(
   (ref, crewId) => messageService.getCrewFeedMessages(crewId: crewId)
@@ -167,6 +185,7 @@ final messagesStream = StreamProvider.autoDispose.family<List<Message>, String>(
 ```
 
 2. **StateNotifier for Mutations:**
+
 ```dart
 class FeedMessageNotifier extends StateNotifier<AsyncValue<String?>> {
   Future<void> sendMessage({required String crewId, required String content}) async {
@@ -178,6 +197,7 @@ class FeedMessageNotifier extends StateNotifier<AsyncValue<String?>> {
 ```
 
 3. **Optimistic UI Pattern:**
+
 ```dart
 // Generate ID client-side
 final docRef = messagesRef.doc();
@@ -186,6 +206,7 @@ await docRef.set(message.toFirestore());
 ```
 
 4. **Batch Operations:**
+
 ```dart
 Future<void> batchMarkMessagesAsRead(List<String> messageIds) async {
   final batch = _firestore.batch();
@@ -204,6 +225,7 @@ Future<void> batchMarkMessagesAsRead(List<String> messageIds) async {
    - Permission denied: Show user-friendly message
 
 2. **Real-time Listener Error Recovery:**
+
 ```dart
 return query.snapshots().map((snapshot) {
   return snapshot.docs.map((doc) {
@@ -224,6 +246,7 @@ return query.snapshots().map((snapshot) {
 ### Firestore Security Rules
 
 **Crew Messages:**
+
 ```javascript
 match /crews/{crewId}/messages/{messageId} {
   allow read: if request.auth != null &&
@@ -240,6 +263,7 @@ match /crews/{crewId}/messages/{messageId} {
 ```
 
 **Locals Directory:**
+
 ```javascript
 match /locals/{localId} {
   allow read: if request.auth != null; // Authenticated users only
@@ -252,21 +276,25 @@ match /locals/{localId} {
 ## Testing Strategy
 
 ### Unit Tests
+
 - CrewMessageService methods
 - Message model serialization
 - Provider state management
 
 ### Integration Tests
+
 - Real-time listener updates
 - Pagination behavior
 - Offline/online transitions
 
 ### Performance Tests
+
 - Message load time (target: <500ms)
 - Scroll performance (target: 60fps)
 - Memory usage (target: <100MB)
 
 **Test Commands:**
+
 ```bash
 # Unit tests
 flutter test test/features/crews/services/crew_message_service_test.dart
@@ -297,6 +325,7 @@ flutter run --profile
 ## Future Enhancements
 
 ### Phase 2: Advanced Features
+
 1. **Message Reactions:** Emoji reactions with aggregate counts
 2. **File Attachments:** Firebase Storage integration
 3. **Voice Messages:** Audio recording and playback
@@ -304,6 +333,7 @@ flutter run --profile
 5. **Typing Indicators:** Real-time presence system
 
 ### Phase 3: Scale Optimization
+
 1. **Sharding:** Partition large crew chats by date
 2. **Cloud Functions:** Server-side message processing
 3. **Denormalization:** Optimize read performance further
@@ -316,6 +346,7 @@ flutter run --profile
 ### Firebase Console Metrics
 
 **Monitor These Metrics:**
+
 1. **Read Operations:** Should be <1000/day per user
 2. **Write Operations:** Should be <500/day per user
 3. **Document Reads:** Track pagination efficiency
@@ -325,6 +356,7 @@ flutter run --profile
 ### Flutter Performance
 
 **DevTools Metrics:**
+
 1. **Frame Rendering:** Maintain 60fps
 2. **Memory Usage:** <100MB for messaging
 3. **Network Requests:** Batch when possible
@@ -337,18 +369,21 @@ flutter run --profile
 ### Wave 3 & 4 Completion
 
 ✅ **Feed Tab Messages:**
+
 - Real-time updates working
 - Optimistic UI implemented
 - Offline support enabled
 - <500ms load time achieved
 
 ✅ **Chat Tab Messages:**
+
 - Chronological ordering correct
 - Read receipts functional
 - Message editing working
 - Auto-scroll implemented
 
 ✅ **Locals Screen:**
+
 - Pagination working (20 per page)
 - State filtering functional
 - Search optimized
@@ -369,6 +404,7 @@ The Firestore optimization implementation successfully addresses the performance
 All code follows Firebase/Firestore best practices for Flutter apps and is production-ready pending index deployment.
 
 **Next Steps:**
+
 1. Deploy Firestore indexes to production
 2. Run performance tests with real users
 3. Monitor Firebase quotas and costs

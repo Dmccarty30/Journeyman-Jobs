@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_theme.dart';
+import 'theme_extensions.dart';
 
 /// Dark Theme Configuration for Journeyman Jobs
 ///
@@ -450,6 +451,12 @@ class AppThemeDark {
         bodyMedium: bodyMedium,
         bodySmall: bodySmall,
       ),
+
+      // Register dark-mode theme extensions for electrical components
+      extensions: const <ThemeExtension<dynamic>>[
+        ElectricalThemeExtension.dark,
+      ],
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: accentCopper,

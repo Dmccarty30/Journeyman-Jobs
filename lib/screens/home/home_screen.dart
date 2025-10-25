@@ -226,21 +226,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         },
                         data: (userModel) {
                           // User is authenticated and UserModel loaded successfully
-                          // Use firstName + lastName from Firestore UserModel
-                          // IBEW terminology: "Brother" is traditional respectful greeting in electrical unions
-                          // Fallback chain: firstName + lastName → displayName → email prefix → default "Brother"
-                          final String displayName;
-                          if (userModel != null && userModel.firstName.isNotEmpty && userModel.lastName.isNotEmpty) {
-                            displayName = '${userModel.firstName} ${userModel.lastName}';
-                          } else if (userModel != null && userModel.firstName.isNotEmpty) {
-                            displayName = userModel.firstName;
-                          } else if (authState.user?.displayName != null && authState.user!.displayName!.isNotEmpty) {
-                            displayName = authState.user!.displayName!;
-                          } else if (authState.user?.email != null) {
-                            displayName = authState.user!.email!.split('@')[0];
-                          } else {
-                            displayName = 'Brother';
-                          }
+                          // Display name is ONLY the combination of firstName and lastName
+                          final String displayName = (userModel != null && 
+                                  userModel.firstName.isNotEmpty && 
+                                  userModel.lastName.isNotEmpty)
+                              ? '${userModel.firstName} ${userModel.lastName}'
+                              : '';
 
                           final photoUrl = userModel?.avatarUrl ?? authState.user?.photoURL;
                           final userInitial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
@@ -268,7 +259,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Welcome Back, $displayName!',
+                                      displayName.isNotEmpty ? 'Welcome Back, $displayName!' : 'Welcome Back!',
                                       style: AppTheme.headlineMedium.copyWith(
                                         color: AppTheme.primaryNavy,
                                         fontWeight: FontWeight.bold,

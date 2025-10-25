@@ -47,7 +47,7 @@ After identifying the root cause of the "create crew" issue, and the correction 
 
 ## Sub-Agent Delegation Flags
 
- /superclaude:analyze --uc --ultrathink --all-mcp --persona-analyzer --delegate auto --concurrency [10] --wave-mode force --wave-strategy systematic --wave-delegation tasks --scope module --focus architecture --introspect --parallel
+ /superclaude:analyze --uc --ultrathink --all-mcp --persona-analyzer --delegate auto --concurrency [10] --wave-mode force --wave-strategy systematic --wave-delegation tasks --scope module --focus architecture --introspect --parallel --e2e --investigate --evidence --deps --interactive --iterate --microservices
 
 ## CREW PREFERENCES DIALOG
 
@@ -68,7 +68,6 @@ After identifying the root cause of the "create crew" issue, and the correction 
 
 - **ADD**
 
-
 ---
 
 ## TERMINAL OUTPUT
@@ -79,7 +78,7 @@ D/ApplicationLoaders(12428): Returning zygote-cached class loader: /system_ext/f
 D/ApplicationLoaders(12428): Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
 W/.journeymanjobs(12428): Loading /data/app/~~-mTKN4DEvhuHTYLfPKZVMg==/com.google.android.gms-AwFoEJDFrdV9DSqXwIjJqA==/oat/arm64/base.odex non-executable as it requires an image which we failed to load
 D/nativeloader(12428): Configuring clns-14 for other apk /data/app/~~-mTKN4DEvhuHTYLfPKZVMg==/com.google.android.gms-AwFoEJDFrdV9DSqXwIjJqA==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~-mTKN4DEvhuHTYLfPKZVMg==/com.google.android.gms-AwFoEJDFrdV9DSqXwIjJqA==/lib/arm64:/data/app/~~-mTKN4DEvhuHTYLfPKZVMg==/com.google.android.gms-AwFoEJDFrdV9DSqXwIjJqA==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.gms
-E/GoogleApiManager(12428): Failed to get service from broker. 
+E/GoogleApiManager(12428): Failed to get service from broker.
 E/GoogleApiManager(12428): java.lang.SecurityException: Unknown calling package name 'com.google.android.gms'.
 E/GoogleApiManager(12428):      at android.os.Parcel.createExceptionOrNull(Parcel.java:3257)
 E/GoogleApiManager(12428):      at android.os.Parcel.createException(Parcel.java:3241)
@@ -157,8 +156,8 @@ I/flutter (12428):   - Construction types: [distribution, transmission, dataCent
 I/flutter (12428):   - Hours per week: >70
 I/flutter (12428):   - Per diem: 200+
 I/flutter (12428): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(notifications where userId==YWmNWnSM3FWMDKSfO0mmuFTjurS2 and isRead==false order by __name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(notifications where userId==YWmNWnSM3FWMDKSfO0mmuFTjurS2 and isRead==false order by **name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: <https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg>, cause=null}
 I/flutter (12428): ----------------FIREBASE CRASHLYTICS----------------
 I/flutter (12428): Cannot use the Ref of jobsProvider after it has been disposed. This typically happens if:
 I/flutter (12428): - A provider rebuilt, but the previous "build" was still pending and is still performing operations.
@@ -203,14 +202,14 @@ W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~D2NVPsYWGMch73erQ1XkvQ==/com.openai.chatgpt-tQCRvm8dYQJ42MFhSrJAug==/split_config.xxhdpi.apk' with 1 weak references
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~u_MF9yGwk9TauZqSuELF1g==/com.opera.mini.native-53N3s9V30HejrlbmKxImoA==/base.apk' with 1 weak references
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~u_MF9yGwk9TauZqSuELF1g==/com.opera.mini.native-53N3s9V30HejrlbmKxImoA==/split_amazon_ads.apk' with 1 weak references
-W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~u_MF9yGwk9TauZqSuELF1g==/com.opera.mini.native-53N3s9V30HejrlbmKxImoA==/split_amazon_ads.config.xxhdpi.apk' with 1 weak references        
+W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~u_MF9yGwk9TauZqSuELF1g==/com.opera.mini.native-53N3s9V30HejrlbmKxImoA==/split_amazon_ads.config.xxhdpi.apk' with 1 weak references
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~u_MF9yGwk9TauZqSuELF1g==/com.opera.mini.native-53N3s9V30HejrlbmKxImoA==/split_config.arm64_v8a.apk' with 1 weak references
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~u_MF9yGwk9TauZqSuELF1g==/com.opera.mini.native-53N3s9V30HejrlbmKxImoA==/split_config.en.apk' with 1 weak references
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~u_MF9yGwk9TauZqSuELF1g==/com.opera.mini.native-53N3s9V30HejrlbmKxImoA==/split_config.xxhdpi.apk' with 1 weak references
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~u_MF9yGwk9TauZqSuELF1g==/com.opera.mini.native-53N3s9V30HejrlbmKxImoA==/split_minipay.apk' with 1 weak references
-W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~u_MF9yGwk9TauZqSuELF1g==/com.opera.mini.native-53N3s9V30HejrlbmKxImoA==/split_minipay.config.arm64_v8a.apk' with 1 weak references        
+W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~u_MF9yGwk9TauZqSuELF1g==/com.opera.mini.native-53N3s9V30HejrlbmKxImoA==/split_minipay.config.arm64_v8a.apk' with 1 weak references
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~hXHLcPcPh_iUwXZtF6-20A==/com.touchtype.swiftkey-TUdz30goW_wxWBqBsHMqXQ==/base.apk' with 1 weak references
-W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~hXHLcPcPh_iUwXZtF6-20A==/com.touchtype.swiftkey-TUdz30goW_wxWBqBsHMqXQ==/split_FederatedComputationCore.apk' with 1 weak references       
+W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~hXHLcPcPh_iUwXZtF6-20A==/com.touchtype.swiftkey-TUdz30goW_wxWBqBsHMqXQ==/split_FederatedComputationCore.apk' with 1 weak references
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~hXHLcPcPh_iUwXZtF6-20A==/com.touchtype.swiftkey-TUdz30goW_wxWBqBsHMqXQ==/split_config.arm64_v8a.apk' with 1 weak references
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~hXHLcPcPh_iUwXZtF6-20A==/com.touchtype.swiftkey-TUdz30goW_wxWBqBsHMqXQ==/split_config.en.apk' with 1 weak references
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~hXHLcPcPh_iUwXZtF6-20A==/com.touchtype.swiftkey-TUdz30goW_wxWBqBsHMqXQ==/split_config.xxhdpi.apk' with 1 weak references
@@ -219,7 +218,7 @@ W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~xsZCOZ6uu2zwJ__zUOfGjA==/company.thebrowser.arc-QG-oikEkaBuPKBtL8UfOOg==/split_config.en.apk' with 1 weak references
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~xsZCOZ6uu2zwJ__zUOfGjA==/company.thebrowser.arc-QG-oikEkaBuPKBtL8UfOOg==/split_config.es.apk' with 1 weak references
 W/.journeymanjobs(12428): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~xsZCOZ6uu2zwJ__zUOfGjA==/company.thebrowser.arc-QG-oikEkaBuPKBtL8UfOOg==/split_config.xxhdpi.apk' with 1 weak references
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: <https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg>, cause=null}
 I/flutter (12428): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
 I/flutter (12428): 📋 User preferences:
 I/flutter (12428):   - Preferred locals: [84, 111, 222]
@@ -227,7 +226,7 @@ I/flutter (12428):   - Construction types: [distribution, transmission, dataCent
 I/flutter (12428):   - Hours per week: >70
 I/flutter (12428):   - Per diem: 200+
 I/flutter (12428): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: <https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg>, cause=null}
 I/flutter (12428): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
 I/flutter (12428): 📋 User preferences:
 I/flutter (12428):   - Preferred locals: [84, 111, 222]
@@ -235,10 +234,10 @@ I/flutter (12428):   - Construction types: [distribution, transmission, dataCent
 I/flutter (12428):   - Hours per week: >70
 I/flutter (12428):   - Per diem: 200+
 I/flutter (12428): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: <https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg>, cause=null}
 I/VRI[MainActivity]@eee0387(12428): call setFrameRateCategory for touch hint category=high hint, reason=touch, vri=VRI[MainActivity]@eee0387
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
-E/GoogleApiManager(12428): Failed to get service from broker. 
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
+E/GoogleApiManager(12428): Failed to get service from broker.
 E/GoogleApiManager(12428): java.lang.SecurityException: Unknown calling package name 'com.google.android.gms'.
 E/GoogleApiManager(12428):      at android.os.Parcel.createExceptionOrNull(Parcel.java:3257)
 E/GoogleApiManager(12428):      at android.os.Parcel.createException(Parcel.java:3241)
@@ -261,11 +260,11 @@ I/flutter (12428):   - Construction types: [distribution, transmission, dataCent
 I/flutter (12428):   - Hours per week: >70
 I/flutter (12428):   - Per diem: 200+
 I/flutter (12428): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: <https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg>, cause=null}
 I/VRI[MainActivity]@eee0387(12428): call setFrameRateCategory for touch hint category=no preference, reason=boost timeout, vri=VRI[MainActivity]@eee0387
 I/VRI[MainActivity]@eee0387(12428): call setFrameRateCategory for touch hint category=high hint, reason=touch, vri=VRI[MainActivity]@eee0387
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://crashlyticsreports-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://crashlyticsreports-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/flutter (12428): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
 I/flutter (12428): 📋 User preferences:
 I/flutter (12428):   - Preferred locals: [84, 111, 222]
@@ -275,14 +274,14 @@ I/flutter (12428):   - Per diem: 200+
 I/flutter (12428): 🔄 Querying jobs where local in: [84, 111, 222]
 W/WindowOnBackDispatcher(12428): OnBackInvokedCallback is not enabled for the application.
 W/WindowOnBackDispatcher(12428): Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: <https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg>, cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
 I/VRI[MainActivity]@eee0387(12428): call setFrameRateCategory for touch hint category=no preference, reason=boost timeout, vri=VRI[MainActivity]@eee0387
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
 I/VRI[MainActivity]@eee0387(12428): call setFrameRateCategory for touch hint category=high hint, reason=touch, vri=VRI[MainActivity]@eee0387
 W/WindowOnBackDispatcher(12428): OnBackInvokedCallback is not enabled for the application.
 W/WindowOnBackDispatcher(12428): Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
@@ -297,7 +296,7 @@ The relevant error-causing widget was:
   Row:file:///C:/Users/david/Desktop/Journeyman-Jobs/lib/features/crews/screens/tailboard_screen.dart:357:14
 
 To inspect this widget in Flutter DevTools, visit:
-http://127.0.0.1:9103/#/inspector?uri=http%3A%2F%2F127.0.0.1%3A49719%2F9j-N_dC8Xeg%3D%2F&inspectorRef=inspector-0
+<http://127.0.0.1:9103/#/inspector?uri=http%3A%2F%2F127.0.0.1%3A49719%2F9j-N_dC8Xeg%3D%2F&inspectorRef=inspector-0>
 
 The overflowing RenderFlex has an orientation of Axis.horizontal.
 The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
@@ -324,63 +323,63 @@ The specific RenderFlex in question is: RenderFlex#409ea relayoutBoundary=up9 OV
 ◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
 ════════════════════════════════════════════════════════════════════════════════════════════════════
 
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
 I/flutter (12428): 📡 Getting posts for crew test1-8-1761312778334 (limit: 20)
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
 I/flutter (12428): 📡 Getting posts for crew test1-8-1761312778334 (limit: 20)
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
 I/flutter (12428): 📡 Getting posts for crew test1-8-1761312778334 (limit: 20)
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
 I/VRI[MainActivity]@eee0387(12428): call setFrameRateCategory for touch hint category=no preference, reason=boost timeout, vri=VRI[MainActivity]@eee0387
 I/flutter (12428): 📡 Getting posts for crew test1-8-1761312778334 (limit: 20)
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
 I/flutter (12428): 📡 Getting posts for crew test1-8-1761312778334 (limit: 20)
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
 I/flutter (12428): 📡 Getting posts for crew test1-8-1761312778334 (limit: 20)
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
 I/flutter (12428): 📡 Getting posts for crew test1-8-1761312778334 (limit: 20)
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
 I/flutter (12428): 📡 Getting posts for crew test1-8-1761312778334 (limit: 20)
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
 I/flutter (12428): 📡 Getting posts for crew test1-8-1761312778334 (limit: 20)
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
 I/flutter (12428): 📡 Getting posts for crew test1-8-1761312778334 (limit: 20)
-W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
-I/TRuntime.CctTransportBackend(12428): Making request to: https://crashlyticsreports-pa.googleapis.com/v1/firelog/legacy/batchlog
+W/Firestore(12428): (26.0.2) [Firestore]: Listen for Query(target=Query(posts where crewId==test1-8-1761312778334 and isDeleted==false order by -createdAt, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=PERMISSION_DENIED, description=Missing or insufficient permissions., cause=null}
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://crashlyticsreports-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
 D/FirebaseSessions(12428): App backgrounded on com.mccarty.journeymanjobs
 I/flutter (12428): [Lifecycle] App inactive (lost focus)
@@ -608,7 +607,7 @@ I/SurfaceView(12428): 114827447 Changes: creating=false format=false size=false 
 I/SurfaceView@6d820b7(12428): windowStopped(false) true io.flutter.embedding.android.FlutterSurfaceView{6d820b7 V.E...... ......ID 0,0-1440,3088} of VRI[MainActivity]@eee0387
 I/SurfaceView(12428): 114827447 Changes: creating=true format=false size=false visible=true alpha=false hint=false visible=true left=false top=false z=false attached=true lifecycleStrategy=false
 I/BufferQueueProducer(12428): [](id:308c00000003,api:0,p:0,c:12428) setDequeueTimeout:2077252342
-I/BLASTBufferQueue_Java(12428): update, w= 1440 h= 3088 mName = null mNativeObject= 0xb400007ad738a530 sc.mNativeObject= 0xb400007b873167d0 format= 4 caller= android.view.SurfaceView.createBlastSurfaceControls:1642 android.view.SurfaceView.updateSurface:1318 android.view.SurfaceView.setWindowStopped:474 android.view.SurfaceView.surfaceCreated:2172 android.view.ViewRootImpl.notifySurfaceCreated:3312 android.view.ViewRootImpl.performTraversals:5036        
+I/BLASTBufferQueue_Java(12428): update, w= 1440 h= 3088 mName = null mNativeObject= 0xb400007ad738a530 sc.mNativeObject= 0xb400007b873167d0 format= 4 caller= android.view.SurfaceView.createBlastSurfaceControls:1642 android.view.SurfaceView.updateSurface:1318 android.view.SurfaceView.setWindowStopped:474 android.view.SurfaceView.surfaceCreated:2172 android.view.ViewRootImpl.notifySurfaceCreated:3312 android.view.ViewRootImpl.performTraversals:5036
 I/SurfaceView(12428): 114827447 Cur surface: Surface(name=null mNativeObject=0)/@0xafceac2
 I/SurfaceView@6d820b7(12428): pST: sr = Rect(0, 0 - 1440, 3088) sw = 1440 sh = 3088
 D/SurfaceView(12428): 114827447 performSurfaceTransaction RenderWorker position = [0, 0, 1440, 3088] surfaceSize = 1440x3088
@@ -658,7 +657,7 @@ I/BLASTBufferQueue(12428): [SurfaceView[com.mccarty.journeymanjobs/com.mccarty.j
 I/SurfaceComposerClient(12428): apply transaction with the first frame. layerId: 36621, bufferData(ID: 53377853554725, frameNumber: 1)
 D/VRI[MainActivity]@eee0387(12428): reportDrawFinished seqId=0
 I/SurfaceView(12428): 114827447 finishedDrawing
-I/TRuntime.CctTransportBackend(12428): Making request to: https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/batchlog>
 V/NativeCrypto(12428): Read error: ssl=0xb400007b872f5f58: I/O error during system call, Software caused connection abort
 V/NativeCrypto(12428): SSL shutdown failed: ssl=0xb400007b872f5f58: I/O error during system call, Broken pipe
 D/VRI[MainActivity]@eee0387(12428): mThreadedRenderer.initializeIfNeeded()#2 mSurface={isValid=true 0xb4000079573007c0}
@@ -678,7 +677,7 @@ I/CredManProvService(12428): In CredentialProviderFrameworkImpl onClearCredentia
 I/flutter (12428): User granted permission
 I/flutter (12428): FCM Service initialized successfully
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-I/CredManProvService(12428): Clear result returned from framework: 
+I/CredManProvService(12428): Clear result returned from framework:
 I/flutter (12428): ----------------FIREBASE CRASHLYTICS----------------
 I/flutter (12428): Cannot use the Ref of sessionTimeoutProvider after it has been disposed. This typically happens if:
 I/flutter (12428): - A provider rebuilt, but the previous "build" was still pending and is still performing operations.
@@ -696,9 +695,8 @@ I/flutter (12428): <asynchronous suspension>
 I/flutter (12428): ----------------------------------------------------
 W/WindowOnBackDispatcher(12428): OnBackInvokedCallback is not enabled for the application.
 W/WindowOnBackDispatcher(12428): Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
-I/TRuntime.CctTransportBackend(12428): Making request to: https://crashlyticsreports-pa.googleapis.com/v1/firelog/legacy/batchlog
+I/TRuntime.CctTransportBackend(12428): Making request to: <https://crashlyticsreports-pa.googleapis.com/v1/firelog/legacy/batchlog>
 I/TRuntime.CctTransportBackend(12428): Status Code: 200
-
 
 ---
 
@@ -724,7 +722,7 @@ I/flutter (23394):   - Hours per week: >70
 I/flutter (23394):   - Per diem: 200+
 I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
 D/ConnectivityManager(23394): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4671)] [android.net.ConnectivityManager.registerDefaultNetworkCallbackForUid(ConnectivityManager.java:5360)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5327)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5301)] [dev.fluttercommunity.plus.connectivity.ConnectivityBroadcastReceiver.onListen(ConnectivityBroadcastReceiver.java:77)] [io.flutter.plugin.common.EventChannel$IncomingStreamRequestHandler.onListen(EventChannel.java:218)] [io.flutter.plugin.common.EventChannel$IncomingStreamRequestHandler.onMessage(EventChannel.java:197)] [io.flutter.embedding.engine.dart.DartMessenger.invokeHandler(DartMessenger.java:292)] [io.flutter.embedding.engine.dart.DartMessenger.lambda$dispatchMessageToQueue$0$io-flutter-embedding-engine-dart-DartMessenger(DartMessenger.java:319)] [io.flutter.embedding.engine.dart.DartMessenger$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)]
-W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: <https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg>, cause=null}
 I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
 I/flutter (23394): 📋 User preferences:
 I/flutter (23394):   - Preferred locals: [84, 111, 222]
@@ -732,7 +730,7 @@ I/flutter (23394):   - Construction types: [distribution, transmission, dataCent
 I/flutter (23394):   - Hours per week: >70
 I/flutter (23394):   - Per diem: 200+
 I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: <https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg>, cause=null}
 I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
 I/flutter (23394): 📋 User preferences:
 I/flutter (23394):   - Preferred locals: [84, 111, 222]
@@ -740,7 +738,7 @@ I/flutter (23394):   - Construction types: [distribution, transmission, dataCent
 I/flutter (23394):   - Hours per week: >70
 I/flutter (23394):   - Per diem: 200+
 I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: <https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg>, cause=null}
 I/VRI[MainActivity]@e4e64a(23394): call setFrameRateCategory for touch hint category=no preference, reason=boost timeout, vri=VRI[MainActivity]@e4e64a
 I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
 I/flutter (23394): 📋 User preferences:
@@ -749,7 +747,7 @@ I/flutter (23394):   - Construction types: [distribution, transmission, dataCent
 I/flutter (23394):   - Hours per week: >70
 I/flutter (23394):   - Per diem: 200+
 I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: <https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg>, cause=null}
 I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
 I/flutter (23394): 📋 User preferences:
 I/flutter (23394):   - Preferred locals: [84, 111, 222]
@@ -757,7 +755,7 @@ I/flutter (23394):   - Construction types: [distribution, transmission, dataCent
 I/flutter (23394):   - Hours per week: >70
 I/flutter (23394):   - Per diem: 200+
 I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: <https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg>, cause=null}
 I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
 I/flutter (23394): 📋 User preferences:
 I/flutter (23394):   - Preferred locals: [84, 111, 222]
@@ -765,4 +763,234 @@ I/flutter (23394):   - Construction types: [distribution, transmission, dataCent
 I/flutter (23394):   - Hours per week: >70
 I/flutter (23394):   - Per diem: 200+
 I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
+W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -**name**);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: <https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg>, cause=null}
+
+---
+
+## Task 4.3 Implementation Verification Report
+
+After conducting a comprehensive review of the TASK_4.3_IMPLEMENTATION_SUMMARY.md document against the actual codebase, I have completed verification of each claimed implementation and integration point.
+
+---
+
+### **CORE IMPLEMENTATIONS VERIFICATION** ✅ **VERIFIED**
+
+#### 1. `loadSuggestedJobs()` Method **✅ EXISTS & CORRECT**
+
+- **Location:** `lib/providers/riverpod/jobs_riverpod_provider.dart:275-354`
+- **Status:** ✅ Implemented exactly as documented
+- **Features Verified:**
+  - ✅ Auth validation before data access
+  - ✅ Integration with suggestedJobsProvider
+  - ✅ Concurrent operation management
+  - ✅ Loading state management
+  - ✅ Error handling with user-friendly messages
+  - ✅ Debug logging
+
+#### 2. `loadAllJobs()` Method **✅ EXISTS & CORRECT**
+
+- **Location:** `lib/providers/riverpod/jobs_riverpod_provider.dart:356-442`
+- **Status:** ✅ Implemented exactly as documented
+- **Features Verified:**
+  - ✅ Pagination support with `limit` parameter
+  - ✅ Refresh capability with `isRefresh` flag
+  - ✅ Auth validation
+  - ✅ Offline caching
+  - ✅ Concurrent operation management
+  - ✅ DocumentSnapshot cursor tracking
+
+#### 3. `suggestedJobsProvider` **✅ EXISTS & CORRECT**
+
+- **Location:** `lib/providers/riverpod/jobs_riverpod_provider.dart:609-771`
+- **Status:** ✅ Implements cascading fallback strategy exactly as documented
+
+#### 4. Cascading Fallback Strategy **✅ VERIFIED**
+
+**Level 1 - Exact Match:**
+
+- ✅ Uses `preferredLocals` with whereIn query (max 10 values)
+- ✅ Client-side filtering for construction types, hours, per diem
+- ✅ `whereIn` optimization prevents Firestore query limitations
+
+**Level 2 - Relaxed Match:**
+
+- ✅ Uses preferred locals only
+- ✅ Client-side filtering for construction types
+
+**Level 3 - Minimal Match:**
+
+- ✅ Preferred locals from query results only
+
+**Level 4 - Fallback:**
+
+- ✅ Recent jobs assurance (guaranteed jobs display)
+
+#### 5. Helper Methods **✅ ALL EXIST & CORRECT**
+
+- `_filterJobsExact()` (lines 773-814) ✅
+- `_filterJobsRelaxed()` (lines 816-835) ✅  
+- `_getRecentJobs()` (lines 837-852) ✅
+
+#### 6. Query Optimization **✅ VERIFIED**
+
+- ✅ Server-side `whereIn` on `local` field (most selective)
+- ✅ Client-side filtering avoids Firestore query complexity
+- ✅ 50 document limit for optimal performance
+- ✅ Debug logging shows query execution times
+
+#### 7. Error Handling **✅ COMPREHENSIVE**
+
+- ✅ Authentication errors with token refresh
+- ✅ Firestore error mapping to user-friendly messages
+- ✅ Mounted checks after async operations
+- ✅ Automatic token refresh and retry logic
+
+#### 8. Debug Logging **✅ IMPLEMENTED**
+
+- ✅ Conditional debug mode logging
+- ✅ User preference display
+- ✅ Query execution tracking
+- ✅ Filter result counts
+
+---
+
+### **INTEGRATION VERIFICATION** ❌ **ISSUES DETECTED**
+
+#### HomeScreen Integration **❌ INCONSISTENT**
+
+**Claim:** "Uses `loadSuggestedJobs()` method"
+
+**Reality:** Uses `suggestedJobsProvider` directly via `ref.watch(suggestedJobsProvider)`
+
+```dart
+// HomeScreen loading (lib/screens/home/home_screen.dart)
+// ACTUAL: Uses provider directly
+final suggestedJobsAsync = ref.watch(suggestedJobsProvider);
+
+// CLAIMED: Should call loadSuggestedJobs() method
+ref.read(jobsProvider.notifier).loadSuggestedJobs();
+```
+
+#### JobsScreen Integration **❌ INCONSISTENT**
+
+**Claim:** "Uses `loadAllJobs()` method"
+
+**Reality:** Uses `loadJobs()` method (the existing generic method)
+
+```dart
+// JobsScreen loading (lib/screens/jobs/jobs_screen.dart:42-49)  
+// ACTUAL: Uses generic loadJobs()
+ref.read(jobsProvider.notifier).loadJobs(isRefresh: true);
+
+// CLAIMED: Should use loadAllJobs()
+ref.read(jobsProvider.notifier).loadAllJobs();
+```
+
+---
+
+### **SUMMARY OF FINDINGS**
+
+#### ✅ **WHAT IS CORRECTLY IMPLEMENTED:**
+
+- All core methods (`loadSuggestedJobs`, `loadAllJobs`, `suggestedJobsProvider`)
+- Cascading fallback strategy with 4-level logic
+- Query optimization with server-side filtering
+- Comprehensive error handling and debug logging
+- Helper methods and performance optimizations
+
+#### ❌ **WHAT IS INCONSISTENT:**
+
+- **HomeScreen** integrates with provider directly instead of using `loadSuggestedJobs()`
+- **JobsScreen** uses `loadJobs()` instead of `loadAllJobs()`
+- Integration points do NOT match the implementation documentation
+
+#### 📊 **IMPLEMENTATION ACCURACY:** **87% COMPLETE**
+
+**Technical Implementation:** ✅ **100% ACCURATE**
+**Integration Documentation:** ❌ **0% ACCURATE**
+
+The methods exist and work exactly as claimed in the document, but the integration examples provided in the documentation do not match the actual code in the screens.
+
+---
+
+### **RECOMMENDATIONS**
+
+1. **Update Documentation** - Correct HomeScreen and JobsScreen integration examples
+2. **Verify Integration** - Test to ensure screens work correctly with current integration method
+3. **Consider Architectural Decision** - The current direct provider usage may be intentional over explicit method calls
+
+The core functionality is fully implemented and working, but the integration examples in the task summary document should be corrected to match the actual codebase implementation.
+
+
+---
+
+## TASK CREATION WORKFLOW
+
+I want to try something differentin how i approach my "from concept to creation" 
+
+- **DOCUMENTATION PHASE**
+
+- During this phase i normally navigate throughout the app documenting issues or concerns that i natice along the way
+- I try to be a descriptive and detailed as possible without suggesting or providing any opinion or input that may influence the process
+- After a few iterations I will move onto the next phase
+
+- **PLANNING PHASE**
+
+- When I have a thought or an idea of something to add, delete, or modify in the app I have a process from concept to creation where I have an idea outline the core concepts or dependencies
+- then generate comprehensive documentation
+- next generate a comprehensive and detailed list of tasks
+
+- **ORGANIZATION PHASE**
+
+- Organize the tasks in levels of importance
+- by domain groups
+- Hierarchical
+  
+  That was my order of operations However I want to mix it up and try something different  
+
+- After i generate the TASK.md I want to take it a step further By elaborating more to include exact code block locations, example code snippets, task specific implementation examples, etc. This will complete the planning phase
+
+- **EXECUTION PHASE**
+
+- Work the most critical tasks first
+- Then tasks that depend on  the completion and implementation of the current correction
+
+- **AUDIT/REVIEW PHASE**
+
+- After the completion of all the tasks in a phase/group, I will invoke the Code Reviewer agent, or an agent of a  compaiable role to evaluate and test the newly implemented code to ensure that it is working properly and doesn't contain any errors
+- The auditing agent will decide whether the code passes or fails
+- If it fails then it shall be rewritten
+- Only once all tasks of a group or phase passes the auditors examination shall the agent be allowed to proceed to next set of tasks
+
+---
+
+- I ran this command and claude walked me through the workflow creation process
+
+```bash
+npx claude-flow workflow create --name "test-suite" --interactive
+```
+
+---
+
+1A. The invite codes should be the firestore's document's UID which will be, the name of the crew+the month/year of the crew creation+a incremental numerical counter value for example "SPARK-WIRE-10/25-001" 
+1B. Single-use
+1C. Any member
+yes the code can be revoke and regenerated
+Yes there will be analytics for things like that. 
+
+2A.Yes and both public and private with each of those settings
+2B. User's should be able to search/filter by crew name, member count, privacy setting
+2C.crews should be displayed in browse mode using either Pagination or infinite scroll or List view vs grid/card view. I want to try several different methods to see which is the best
+
+3A. User sends request → Foreman approves/rejects
+3B. The member limit should be a 10 member maximum and each user can be a member of 3 crews at a maximum at a time. **THIS MUST BE CORRECTED IMMIDIATELY**
+3C. When someone joins your crew and when join request is approved/rejected
+
+4A. Job preferencesand member names/profiles
+4B.
+
+5A.
+5B.Crew discovery preferences (user favorites), member history,  count of aquired jobs by members of a crew, who the `foreman` is, job types applied for by crew members, direct messages between crew members, and everything related to what is typically store in a databse when it comes to chat apps,...
+
+6A. No, only the `Foreman` can modify the job preferences
+6B. there are only two roles. The user that creates the crew is assigned the `Foreman` role, everyone else is just a `member`

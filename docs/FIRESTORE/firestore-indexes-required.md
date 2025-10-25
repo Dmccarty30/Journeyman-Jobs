@@ -5,6 +5,7 @@ This document lists all composite indexes required for optimal query performance
 ## Crew Messages - Feed Tab
 
 ### Index 1: Feed Messages by Timestamp (Descending)
+
 ```
 Collection: crews/{crewId}/messages
 Fields:
@@ -13,6 +14,7 @@ Fields:
 ```
 
 **CLI Command:**
+
 ```bash
 firebase firestore:indexes:create \
   --collection-group messages \
@@ -23,6 +25,7 @@ firebase firestore:indexes:create \
 **Purpose:** Efficient pagination for crew feed messages (newest first)
 
 **Query Pattern:**
+
 ```dart
 crews.doc(crewId).collection('messages')
   .orderBy('sentAt', descending: true)
@@ -35,6 +38,7 @@ crews.doc(crewId).collection('messages')
 ## Crew Messages - Chat Tab
 
 ### Index 2: Chat Messages by Timestamp (Ascending)
+
 ```
 Collection: crews/{crewId}/chat
 Fields:
@@ -43,6 +47,7 @@ Fields:
 ```
 
 **CLI Command:**
+
 ```bash
 firebase firestore:indexes:create \
   --collection-group chat \
@@ -53,6 +58,7 @@ firebase firestore:indexes:create \
 **Purpose:** Efficient pagination for crew chat messages (oldest first, like messaging apps)
 
 **Query Pattern:**
+
 ```dart
 crews.doc(crewId).collection('chat')
   .orderBy('sentAt', descending: false)
@@ -65,6 +71,7 @@ crews.doc(crewId).collection('chat')
 ## Locals Directory - State Filtering
 
 ### Index 3: Locals by State and Local Union Number
+
 ```
 Collection: locals
 Fields:
@@ -74,6 +81,7 @@ Fields:
 ```
 
 **CLI Command:**
+
 ```bash
 firebase firestore:indexes:create \
   --collection locals \
@@ -85,6 +93,7 @@ firebase firestore:indexes:create \
 **Purpose:** Filter locals by state with efficient pagination
 
 **Query Pattern:**
+
 ```dart
 localsCollection
   .where('state', isEqualTo: selectedState)
@@ -98,6 +107,7 @@ localsCollection
 ## Locals Directory - Search Queries
 
 ### Index 4: Locals Search with State Filter
+
 ```
 Collection: locals
 Fields:
@@ -107,6 +117,7 @@ Fields:
 ```
 
 **CLI Command:**
+
 ```bash
 firebase firestore:indexes:create \
   --collection locals \
@@ -118,6 +129,7 @@ firebase firestore:indexes:create \
 **Purpose:** Search locals by name with state filtering
 
 **Query Pattern:**
+
 ```dart
 localsCollection
   .where('state', isEqualTo: selectedState)
@@ -131,6 +143,7 @@ localsCollection
 ## Jobs - Filtering and Sorting
 
 ### Index 5: Jobs by Local and Timestamp
+
 ```
 Collection: jobs
 Fields:
@@ -140,6 +153,7 @@ Fields:
 ```
 
 **CLI Command:**
+
 ```bash
 firebase firestore:indexes:create \
   --collection jobs \
@@ -151,6 +165,7 @@ firebase firestore:indexes:create \
 **Purpose:** Filter jobs by local union with timestamp ordering
 
 **Query Pattern:**
+
 ```dart
 jobsCollection
   .where('local', isEqualTo: localId)
@@ -161,6 +176,7 @@ jobsCollection
 ---
 
 ### Index 6: Jobs by Classification and Timestamp
+
 ```
 Collection: jobs
 Fields:
@@ -170,6 +186,7 @@ Fields:
 ```
 
 **CLI Command:**
+
 ```bash
 firebase firestore:indexes:create \
   --collection jobs \
@@ -185,6 +202,7 @@ firebase firestore:indexes:create \
 ## Deployment Commands
 
 ### Create All Indexes at Once
+
 ```bash
 # Navigate to your Firebase project directory
 cd path/to/your/project
@@ -231,11 +249,13 @@ firebase firestore:indexes:create --collection jobs --field classification --ord
 ### Monitoring Query Performance
 
 **Firebase Console:**
+
 1. Go to Firestore > Usage tab
 2. Monitor "Read Operations" and "Query Time"
 3. Check "Index Usage" for missing indexes
 
 **Flutter Debug Logs:**
+
 ```dart
 // Enable Firestore debug logging
 FirebaseFirestore.setLoggingEnabled(true);
@@ -255,6 +275,7 @@ FirebaseFirestore.setLoggingEnabled(true);
 | 6 | jobs | ⏳ Pending | - | Classification filter |
 
 **Legend:**
+
 - ⏳ Pending - Index needs to be created
 - 🔄 Building - Index is being built by Firebase
 - ✅ Active - Index is ready and serving queries
@@ -285,11 +306,13 @@ If queries are slow despite indexes:
 ### Missing Index Errors
 
 Flutter will show errors like:
+
 ```
 FAILED_PRECONDITION: The query requires an index
 ```
 
 **Solution:**
+
 1. Click the error link to auto-create index in Firebase Console
 2. Or use CLI commands above to create manually
 3. Wait 5-15 minutes for index to build

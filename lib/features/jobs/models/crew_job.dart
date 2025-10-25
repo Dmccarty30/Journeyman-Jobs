@@ -1,7 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Model representing a job posting
-class Job {
+/// Model representing a lightweight job posting for crew sharing
+///
+/// This is a simplified job model used specifically within the crews feature
+/// for sharing job opportunities between crew members. For the full canonical
+/// job model used throughout the app, see lib/models/job_model.dart (Job class).
+///
+/// Key differences from canonical Job:
+/// - Uses `companyName` instead of `company`
+/// - Uses `hourlyRate` instead of `wage`
+/// - Has fewer fields (17 vs 30+)
+/// - Optimized for crew-specific job sharing
+class CrewJob {
   final String id;
   final String title;
   final String description;
@@ -15,7 +25,7 @@ class Job {
   final List<String> requiredSkills;
   final String? companyName;
 
-  const Job({
+  const CrewJob({
     required this.id,
     required this.title,
     required this.description,
@@ -30,10 +40,10 @@ class Job {
     this.companyName,
   });
 
-  /// Creates a Job instance from Firestore data
-  factory Job.fromFirestore(DocumentSnapshot doc) {
+  /// Creates a CrewJob instance from Firestore data
+  factory CrewJob.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-    return Job(
+    return CrewJob(
       id: doc.id,
       title: data['title'] ?? '',
       description: data['description'] ?? '',
@@ -49,7 +59,7 @@ class Job {
     );
   }
 
-  /// Converts Job to Firestore data
+  /// Converts CrewJob to Firestore data
   Map<String, dynamic> toFirestore() {
     return {
       'title': title,
@@ -66,7 +76,7 @@ class Job {
     };
   }
 
-  Job copyWith({
+  CrewJob copyWith({
     String? id,
     String? title,
     String? description,
@@ -80,7 +90,7 @@ class Job {
     List<String>? requiredSkills,
     String? companyName,
   }) {
-    return Job(
+    return CrewJob(
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,

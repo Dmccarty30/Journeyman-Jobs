@@ -1,10 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:journeyman_jobs/features/jobs/models/job.dart';
+import 'package:journeyman_jobs/models/job_model.dart';
 
 /// Represents a job that has been shared with a crew
+///
+/// IMPORTANT: Uses the canonical Job model from lib/models/job_model.dart
+/// (NOT the CrewJob model from features/jobs/models/crew_job.dart)
+///
+/// This is because Firestore data uses the canonical Job schema:
+/// - `company` field (not `companyName`)
+/// - `wage` field (not `hourlyRate`)
+/// - 30+ fields with full job details
 class SharedJob {
   final String id;
-  final Job job;
+  final Job job; // Canonical Job from models/job_model.dart
   final String sharedByUserId;
   final DateTime sharedAt;
   final String? comment;
@@ -22,10 +30,13 @@ class SharedJob {
   });
 
   /// Create from Firestore document
+  ///
+  /// Parses the nested 'job' field using canonical Job.fromJson
+  /// because Firestore stores jobs with the full canonical schema
   factory SharedJob.fromFirestore(Map<String, dynamic> data, String id) {
     return SharedJob(
       id: id,
-      job: Job.fromFirestore(data['job']),
+      job: Job.fromJson(data['job'] as Map<String, dynamic>),
       sharedByUserId: data['sharedByUserId'],
       sharedAt: (data['sharedAt'] as Timestamp).toDate(),
       comment: data['comment'],
@@ -58,6 +69,6 @@ class SharedJob {
 
   @override
   String toString() {
-    return 'SharedJob{id: $id, job: ${job.title}, sharedBy: $sharedByUserId, source: $source}';
+    return 'SharedJob{id: $id, job: ${job.jobTitle ?? job.company}, sharedBy: $sharedByUserId, source: $source}';
   }
 }

@@ -1,0 +1,383 @@
+---
+name: UI Iterations
+description: Comprehensive workflow for iterative UI development with electrical theme compliance
+category: development
+version: 1.0.0
+
+# Target: Storm Screen UI iterations with full design system compliance
+scope:
+  primary_screen: storm_screen
+  components:
+    - layout
+    - navigation
+    - animations
+    - loading_indicators
+    - weather_radar_integration
+  theme_compliance: electrical
+
+# Workflow Configuration
+config:
+  auto_test: true
+  theme_validation: true
+  performance_tracking: true
+  approval_required: user_only
+  max_iterations: 10
+
+# Workflow Stages
+stages:
+  # Stage 1: Design Review & Planning
+  - name: design_review
+    description: Review design requirements and plan UI changes
+    tasks:
+      - name: analyze_requirements
+        type: analysis
+        prompt: |
+          Review the current design requirements for Storm Screen:
+          - Check [guide/screens.md](d:\Journeyman-Jobs\guide\screens.md) for specifications
+          - Identify gaps between current implementation and requirements
+          - List specific UI components needing updates
+        outputs:
+          - requirements_summary
+          - component_checklist
+          - design_gaps
+
+      - name: electrical_theme_check
+        type: validation
+        prompt: |
+          Validate electrical theme compliance:
+          - Verify AppTheme color usage (Navy #1A202C, Copper #B45309)
+          - Check for CircuitPatternBackground integration
+          - Validate JJ-prefixed custom components
+          - Review lightning animations and electrical motifs
+        outputs:
+          - theme_compliance_report
+          - non_compliant_components
+
+      - name: create_iteration_plan
+        type: planning
+        prompt: |
+          Create detailed iteration plan:
+          - Prioritize components by impact
+          - Estimate complexity for each update
+          - Define success criteria
+          - Plan testing approach
+        outputs:
+          - iteration_roadmap
+          - success_metrics
+
+  # Stage 2: Component Implementation
+  - name: component_updates
+    description: Implement UI component changes with electrical theme
+    tasks:
+      - name: update_storm_screen_layout
+        type: implementation
+        files:
+          - lib/screens/storm/storm_screen.dart
+          - lib/widgets/storm/*.dart
+        prompt: |
+          Update Storm Screen layout:
+          - Implement responsive design (mobile-first)
+          - Add CircuitPatternBackground
+          - Integrate JJElectricalLoader for loading states
+          - Ensure proper spacing using AppTheme constants
+        validation:
+          - check_file_exists: lib/screens/storm/storm_screen.dart
+          - verify_imports: [design_system/app_theme.dart, electrical_components/]
+
+      - name: implement_navigation
+        type: implementation
+        files:
+          - lib/navigation/app_router.dart
+          - lib/screens/storm/storm_screen.dart
+        prompt: |
+          Enhance Storm Screen navigation:
+          - Configure go_router routes
+          - Add smooth transitions with electrical animations
+          - Implement back navigation handling
+          - Add deep linking support
+        validation:
+          - check_router_config: true
+          - verify_route_paths: ['/storm', '/storm/:id']
+
+      - name: add_animations
+        type: implementation
+        files:
+          - lib/screens/storm/widgets/
+          - lib/electrical_components/
+        prompt: |
+          Implement electrical-themed animations:
+          - Use flutter_animate for transitions
+          - Add LightningAnimation for loading states
+          - Create circuit-flow animations for data updates
+          - Ensure 60fps performance
+        validation:
+          - check_animation_performance: true
+          - verify_electrical_motifs: true
+
+      - name: create_loading_indicators
+        type: implementation
+        files:
+          - lib/electrical_components/jj_electrical_loader.dart
+          - lib/widgets/storm/loading_states.dart
+        prompt: |
+          Create custom loading indicators:
+          - Design JJElectricalLoader variants
+          - Add spark/lightning effects
+          - Implement skeleton screens for data loading
+          - Use AppTheme.accentCopper for accents
+        validation:
+          - component_prefix: JJ
+          - theme_compliance: true
+
+  # Stage 3: Theme & Design System Validation
+  - name: design_system_validation
+    description: Ensure electrical theme compliance and design consistency
+    tasks:
+      - name: color_validation
+        type: validation
+        prompt: |
+          Validate color usage across Storm Screen:
+          - Check all colors use AppTheme constants
+          - Verify Navy/Copper color scheme
+          - Ensure proper contrast ratios (WCAG AA)
+          - Validate dark mode support
+        checks:
+          - no_hardcoded_colors: true
+          - accessibility_contrast: AA
+          - theme_constants_only: true
+
+      - name: component_consistency
+        type: validation
+        prompt: |
+          Check component consistency:
+          - All custom components use JJ prefix
+          - Typography uses AppTheme text styles
+          - Spacing follows design system grid
+          - Icons are electrical-themed
+        checks:
+          - jj_prefix_compliance: true
+          - typography_consistency: true
+          - spacing_grid: 8px
+
+      - name: animation_review
+        type: validation
+        prompt: |
+          Review animations and transitions:
+          - All animations use electrical motifs
+          - Transition durations follow design system
+          - Performance is 60fps minimum
+          - Animations respect reduce_motion preference
+        checks:
+          - fps_minimum: 60
+          - electrical_theme: true
+          - accessibility_support: true
+
+  # Stage 4: Testing & Performance
+  - name: testing_validation
+    description: Run widget tests and performance benchmarks
+    tasks:
+      - name: widget_tests
+        type: testing
+        prompt: |
+          Create and run widget tests for Storm Screen:
+          - Test widget rendering
+          - Test user interactions (taps, swipes)
+          - Test state management
+          - Test error handling
+          - Verify electrical theme elements render
+        commands:
+          - flutter test test/screens/storm/storm_screen_test.dart
+          - flutter test test/widgets/storm/
+        validation:
+          - min_coverage: 80
+          - all_tests_pass: true
+
+      - name: performance_benchmarks
+        type: testing
+        prompt: |
+          Run performance benchmarks:
+          - Measure frame rendering times
+          - Check memory usage
+          - Test animation smoothness
+          - Benchmark list scrolling (if applicable)
+          - Test on low-end device profiles
+        commands:
+          - flutter run --profile --trace-startup
+        metrics:
+          - target_fps: 60
+          - max_memory_mb: 150
+          - startup_time_ms: 2000
+
+      - name: accessibility_testing
+        type: testing
+        prompt: |
+          Validate accessibility:
+          - Run Flutter's accessibility checker
+          - Test with screen reader
+          - Verify semantic labels
+          - Check touch target sizes (min 48x48)
+        validation:
+          - min_touch_target: 48
+          - semantic_labels: required
+          - screen_reader_compatible: true
+
+  # Stage 5: Documentation & Screenshots
+  - name: documentation_updates
+    description: Update documentation and capture screenshots
+    tasks:
+      - name: update_screenshots
+        type: documentation
+        prompt: |
+          Capture updated Storm Screen screenshots:
+          - Take screenshots of main view
+          - Capture loading states
+          - Document animation sequences
+          - Show electrical theme elements
+          - Include both light and dark modes
+        outputs:
+          - screenshots/storm_screen_main.png
+          - screenshots/storm_screen_loading.png
+          - screenshots/storm_screen_animations.gif
+
+      - name: update_code_documentation
+        type: documentation
+        files:
+          - lib/screens/storm/storm_screen.dart
+          - lib/widgets/storm/*.dart
+        prompt: |
+          Add comprehensive documentation:
+          - Document all widget classes with /// comments
+          - Explain electrical theme usage
+          - Document animation parameters
+          - Add usage examples for custom components
+        validation:
+          - all_classes_documented: true
+          - public_methods_documented: true
+
+      - name: update_guides
+        type: documentation
+        files:
+          - guide/screens.md
+          - TASK.md
+        prompt: |
+          Update project documentation:
+          - Update guide/screens.md with Storm Screen details
+          - Add implementation notes to TASK.md
+          - Document any discovered issues or improvements
+          - Update feature completion status
+        outputs:
+          - updated_guide
+          - updated_tasks
+
+  # Stage 6: User Approval & Deployment
+  - name: review_deploy
+    description: User review and deployment
+    approval_required: true
+    tasks:
+      - name: user_review
+        type: approval
+        prompt: |
+          Present changes for approval:
+
+          ## Changes Summary
+          - Layout updates
+          - Navigation improvements
+          - Animation implementations
+          - Loading indicators
+          - Theme compliance fixes
+
+          ## Test Results
+          - Widget tests: [status]
+          - Performance benchmarks: [metrics]
+          - Accessibility: [compliance]
+
+          ## Screenshots
+          [Include screenshots]
+
+          Please review and approve to proceed with deployment.
+        outputs:
+          - approval_status
+          - feedback_notes
+
+      - name: deploy_changes
+        type: deployment
+        depends_on: user_review
+        prompt: |
+          Deploy approved UI changes:
+          - Commit changes with descriptive message
+          - Update TASK.md with completion
+          - Tag version if applicable
+          - Push to repository
+        commands:
+          - git add .
+          - git commit -m "feat(storm): UI iterations - [iteration number]"
+          - git push
+        validation:
+          - commit_created: true
+          - changes_pushed: true
+
+# Iteration Loop Configuration
+iteration:
+  enabled: true
+  max_cycles: 10
+  continue_condition: user_requests_changes
+  checkpoint_stages:
+    - design_review
+    - testing_validation
+    - review_deploy
+
+# Success Criteria
+success_criteria:
+  - electrical_theme_compliance: 100%
+  - widget_test_coverage: ">80%"
+  - performance_fps: ">=60"
+  - accessibility_compliance: WCAG_AA
+  - user_approval: required
+  - documentation_complete: true
+
+# Failure Handling
+error_handling:
+  on_test_failure:
+    action: pause
+    notify: user
+    allow_continue: false
+  on_performance_issue:
+    action: flag
+    notify: user
+    allow_continue: true
+  on_theme_violation:
+    action: pause
+    notify: user
+    allow_continue: false
+
+# Integration
+integrations:
+  firebase: false  # Not needed for UI iterations
+  testing: true
+  documentation: true
+  version_control: true
+
+# Metadata
+metadata:
+  created: 2025-02-01
+  author: AI Assistant
+  project: Journeyman Jobs
+  target_screen: Storm Screen
+  flutter_version: ">=3.0.0"
+
+# Notes
+notes: |
+  This workflow is optimized for Storm Screen UI iterations but can be adapted
+  for other screens by updating the 'scope' section. The workflow enforces
+  electrical theme compliance and includes comprehensive testing before deployment.
+
+  Key Features:
+  - Electrical theme validation at every stage
+  - Performance benchmarking (60fps target)
+  - Widget testing automation
+  - User approval before deployment
+  - Comprehensive documentation updates
+  - Iterative refinement support
+
+  Usage:
+  npx claude-flow workflow execute ui-iterations --interactive

@@ -27,6 +27,101 @@
 - **Use consistent imports** - Prefer relative imports within the same feature, absolute for cross-feature.
 - **Maintain electrical design theme** in all components, animations, and features.
 
+## 📦 Job Model Architecture
+
+**IMPORTANT**: This app uses a **single canonical Job model** with one specialized variant.
+
+### Canonical Job Model (Primary)
+
+**Location**: `lib/models/job_model.dart` (539 lines)
+**Usage**: 99% of job operations in the app
+
+```dart
+import 'package:journeyman_jobs/models/job_model.dart';
+
+class Job {
+  final String company;        // ← Firestore field name
+  final double? wage;          // ← Firestore field name
+  final int? local;
+  final String? classification;
+  final String location;
+  final Map<String, dynamic> jobDetails;
+  // ... 30+ fields total
+}
+```
+
+**When to Use**:
+- ✅ Loading jobs from Firestore
+- ✅ Displaying jobs anywhere in the app
+- ✅ Job cards, lists, search, filtering
+- ✅ Shared jobs in crews feature
+- ✅ Job details screens
+- ✅ **Default choice for all job operations**
+
+**Schema Details**:
+- 30+ fields with comprehensive job information
+- Matches Firestore `jobs` collection schema exactly
+- Robust parsing handles multiple data formats
+- Includes `jobDetails` nested map for compatibility
+
+### CrewJob Model (Specialized - Currently Unused)
+
+**Location**: `lib/features/jobs/models/crew_job.dart` (108 lines)
+**Usage**: Reserved for future crew-specific features
+
+```dart
+import 'package:journeyman_jobs/features/jobs/models/crew_job.dart';
+
+class CrewJob {
+  final String? companyName;   // ← Different field name!
+  final double hourlyRate;     // ← Different field name!
+  final String title;
+  final String description;
+  // ... 17 fields total (lightweight)
+}
+```
+
+**When to Use**:
+- ⚠️ **Currently unused** - reserved for future features
+- Potential use: Lightweight crew-to-crew job forwarding
+- Potential use: Quick job sharing without full details
+
+**Key Differences**:
+| Field | Canonical Job | CrewJob |
+|-------|---------------|---------|
+| Company | `company` | `companyName` |
+| Pay | `wage` | `hourlyRate` |
+| Fields | 30+ | 17 |
+| Source | Firestore | Crew sharing |
+
+### Migration History
+
+**Date**: 2025-10-25
+**Action**: Consolidated 3 competing Job models → 1 canonical + 1 specialized
+
+**What Was Fixed**:
+- ❌ Deleted `UnifiedJobModel` (239 lines dead code)
+- ❌ Fixed naming collision (2 classes named "Job")
+- ✅ Established clear model hierarchy
+- ✅ Fixed critical SharedJob import bug
+
+**See**: `docs/migrations/JOB_MODEL_CONSOLIDATION_COMPLETE.md` for full details
+
+### Best Practices
+
+**DO**:
+- ✅ Use canonical `Job` model by default
+- ✅ Import from `lib/models/job_model.dart`
+- ✅ Check Firestore schema matches Job model
+- ✅ Use `Job.fromJson()` for Firestore data
+- ✅ Use `job.toFirestore()` when saving
+
+**DON'T**:
+- ❌ Don't use CrewJob unless explicitly needed
+- ❌ Don't create new job models without discussion
+- ❌ Don't mix field names (company vs companyName)
+- ❌ Don't assume all jobs have the same schema
+
 ## 🎨 Design System & Theme
 
 - **Primary Colors**: Navy (`#1A202C`) and Copper (`#B45309`)

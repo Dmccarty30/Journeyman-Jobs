@@ -31,9 +31,19 @@ class CrewValidation {
     return snapshot.docs.isEmpty;
   }
 
-  /// Validate member limit (max 50)
+  /// Validate member limit (max 10 members per crew)
   static bool isUnderMemberLimit(int currentCount) {
-    return currentCount < 50;
+    return currentCount < 10;
+  }
+
+  /// Validate user crew membership limit (max 3 crews per user)
+  static Future<bool> canJoinAnotherCrew(String userId, FirebaseFirestore firestore) async {
+    final snapshot = await firestore
+        .collection('crews')
+        .where('memberIds', arrayContains: userId)
+        .where('isActive', isEqualTo: true)
+        .get();
+    return snapshot.docs.length < 3;
   }
 }
 

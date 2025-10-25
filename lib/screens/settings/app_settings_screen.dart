@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/riverpod/theme_riverpod_provider.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
@@ -194,17 +196,51 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
             // Appearance Section
             _buildSectionHeader('Appearance & Display'),
             _buildSettingsCard([
-              _buildSwitchTile(
-                icon: Icons.dark_mode,
-                title: 'Dark Mode',
-                subtitle: 'TODO: Implement dark theme',
-                value: _darkModeEnabled,
-                onChanged: (value) {
-                  setState(() => _darkModeEnabled = value);
-                  _saveSetting('dark_mode', value);
-                  JJSnackBar.showInfo(
-                    context: context,
-                    message: 'Dark mode coming soon!',
+              Consumer(
+                builder: (context, ref, _) {
+                  final mode = ref.watch(themeModeNotifierProvider);
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.dark_mode),
+                        title: Text(
+                          'Appearance',
+                          style: AppTheme.titleMedium,
+                        ),
+                        subtitle: const Text('Choose Light, Dark, or System'),
+                      ),
+                      RadioListTile<ThemeMode>(
+                        value: ThemeMode.light,
+                        groupValue: mode,
+                        onChanged: (m) {
+                          if (m != null) {
+                            ref.read(themeModeNotifierProvider.notifier).setThemeMode(m);
+                          }
+                        },
+                        title: const Text('Light'),
+                      ),
+                      RadioListTile<ThemeMode>(
+                        value: ThemeMode.dark,
+                        groupValue: mode,
+                        onChanged: (m) {
+                          if (m != null) {
+                            ref.read(themeModeNotifierProvider.notifier).setThemeMode(m);
+                          }
+                        },
+                        title: const Text('Dark'),
+                      ),
+                      RadioListTile<ThemeMode>(
+                        value: ThemeMode.system,
+                        groupValue: mode,
+                        onChanged: (m) {
+                          if (m != null) {
+                            ref.read(themeModeNotifierProvider.notifier).setThemeMode(m);
+                          }
+                        },
+                        title: const Text('System'),
+                      ),
+                    ],
                   );
                 },
               ),

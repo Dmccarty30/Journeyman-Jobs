@@ -160,6 +160,7 @@ W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs whe
 - **lib\features\crews\screens\tailboard_screen.dart**
 
 - ***FIX OVERFLOW ERROR***
+- MODIFY the `succes snack bar/toast` that appears when  the `Foreman` adjusts the crew settings on the tailboard screen.to implement the app theme `electrical toast`
 
 ```terminal
 ══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════

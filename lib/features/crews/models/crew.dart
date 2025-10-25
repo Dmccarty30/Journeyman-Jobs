@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'crew_location.dart';
 import 'crew_preferences.dart';
 import 'crew_stats.dart';
+import 'package:journeyman_jobs/domain/enums/crew_visibility.dart';
 import 'package:journeyman_jobs/domain/enums/member_role.dart';
 
 class Crew {
@@ -19,6 +20,10 @@ class Crew {
   final Map<String, MemberRole> roles; // Added
   final int memberCount; // Added
   final DateTime lastActivityAt; // Added
+  final CrewVisibility visibility;
+  final int maxMembers;
+  final String? activeInviteCode;
+  final int inviteCodeCounter;
 
   const Crew({
     required this.id,
@@ -35,6 +40,10 @@ class Crew {
     required this.roles,
     this.memberCount = 0,
     required this.lastActivityAt,
+    required this.visibility,
+    required this.maxMembers,
+    this.activeInviteCode,
+    required this.inviteCodeCounter,
   });
 
   factory Crew.fromFirestore(DocumentSnapshot doc) {
@@ -55,6 +64,10 @@ class Crew {
       isActive: data['isActive'] ?? true,
       memberCount: data['memberCount'] ?? 0,
       lastActivityAt: (data['lastActivityAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      visibility: (data['visibility'] as String?)?.toCrewVisibility() ?? CrewVisibility.private,
+      maxMembers: data['maxMembers'] ?? 50,
+      activeInviteCode: data['activeInviteCode'],
+      inviteCodeCounter: data['inviteCodeCounter'] ?? 0,
     );
   }
 
@@ -72,6 +85,10 @@ class Crew {
       'isActive': isActive,
       'memberCount': memberCount,
       'lastActivityAt': Timestamp.fromDate(lastActivityAt),
+      'visibility': visibility.name,
+      'maxMembers': maxMembers,
+      'activeInviteCode': activeInviteCode,
+      'inviteCodeCounter': inviteCodeCounter,
     };
   }
 
@@ -135,6 +152,10 @@ class Crew {
       isActive: map['isActive'] ?? true,
       memberCount: map['memberCount'] ?? 0,
       lastActivityAt: parseDate(map['lastActivityAt'], DateTime.now()),
+      visibility: (map['visibility'] as String?)?.toCrewVisibility() ?? CrewVisibility.private,
+      maxMembers: map['maxMembers'] ?? 50,
+      activeInviteCode: map['activeInviteCode'],
+      inviteCodeCounter: map['inviteCodeCounter'] ?? 0,
     );
   }
 
@@ -153,6 +174,10 @@ class Crew {
     Map<String, MemberRole>? roles,
     int? memberCount,
     DateTime? lastActivityAt,
+    CrewVisibility? visibility,
+    int? maxMembers,
+    String? activeInviteCode,
+    int? inviteCodeCounter,
   }) {
     return Crew(
       id: id ?? this.id,
@@ -169,6 +194,16 @@ class Crew {
       roles: roles ?? this.roles,
       memberCount: memberCount ?? this.memberCount,
       lastActivityAt: lastActivityAt ?? this.lastActivityAt,
+      visibility: visibility ?? this.visibility,
+      maxMembers: maxMembers ?? this.maxMembers,
+      activeInviteCode: activeInviteCode ?? this.activeInviteCode,
+      inviteCodeCounter: inviteCodeCounter ?? this.inviteCodeCounter,
     );
+  }
+}
+
+extension CrewVisibilityExtension on String {
+  CrewVisibility toCrewVisibility() {
+    return CrewVisibility.values.firstWhere((e) => e.name == this, orElse: () => CrewVisibility.private);
   }
 }
