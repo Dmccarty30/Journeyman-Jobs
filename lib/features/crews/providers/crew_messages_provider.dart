@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:state_notifier/state_notifier.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../services/crew_message_service.dart';
 import '../models/message.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;

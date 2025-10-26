@@ -47,7 +47,6 @@ class AppSettingsService {
   final Map<String, AppSettingsModel> _cache = {};
 
   // Debounce timer for batching rapid updates
-  static const Duration _debounceDuration = Duration(milliseconds: 500);
 
   AppSettingsService({
     FirebaseFirestore? firestore,
@@ -73,56 +72,46 @@ class AppSettingsService {
 
     // Check session cache first
     if (_cache.containsKey(userId)) {
-      print('[AppSettingsService] 📦 Returning cached settings for user: $userId');
       return _cache[userId]!;
     }
 
-    print('[AppSettingsService] 🔄 Loading settings for user: $userId');
 
     try {
       // Try loading from Firestore first
       final settings = await _loadFromFirestore(userId);
 
       if (settings != null) {
-        print('[AppSettingsService] ✅ Settings loaded from Firestore');
         _cache[userId] = settings;
 
         // Update local cache asynchronously
         _saveToLocalCache(userId, settings).catchError((error) {
-          print('[AppSettingsService] ⚠️ Failed to update local cache: $error');
         });
 
         return settings;
       }
-    } on FirebaseException catch (e) {
-      print('[AppSettingsService] ⚠️ Firestore error (${e.code}): ${e.message}');
+    } on FirebaseException {
 
       // Try loading from local cache as fallback
       final cachedSettings = await _loadFromLocalCache(userId);
       if (cachedSettings != null) {
-        print('[AppSettingsService] ✅ Settings loaded from local cache (offline mode)');
         _cache[userId] = cachedSettings;
         return cachedSettings;
       }
     } catch (e) {
-      print('[AppSettingsService] ❌ Unexpected error loading settings: $e');
 
       // Try local cache before giving up
       final cachedSettings = await _loadFromLocalCache(userId);
       if (cachedSettings != null) {
-        print('[AppSettingsService] ✅ Settings loaded from local cache (fallback)');
         _cache[userId] = cachedSettings;
         return cachedSettings;
       }
     }
 
     // No settings found - create defaults
-    print('[AppSettingsService] 🆕 No settings found - creating defaults');
     final defaultSettings = AppSettingsModel.defaults(userId);
 
     // Save defaults for future use (don't wait for completion)
     saveSettings(userId, defaultSettings).catchError((error) {
-      print('[AppSettingsService] ⚠️ Failed to save default settings: $error');
     });
 
     _cache[userId] = defaultSettings;
@@ -134,7 +123,6 @@ class AppSettingsService {
   /// Forces reload from server to get latest settings across devices.
   /// Use when explicit sync is needed (e.g., after switching accounts)
   Future<AppSettingsModel> refreshSettings(String userId) async {
-    print('[AppSettingsService] 🔄 Refreshing settings from server for user: $userId');
 
     // Clear cache to force reload
     _cache.remove(userId);
@@ -163,11 +151,6 @@ class AppSettingsService {
       throw Exception(error);
     }
 
-    print('[AppSettingsService] 💾 Saving settings for user: $userId');
-    print('[AppSettingsService] 📋 Settings summary:');
-    print('  - Theme: ${settings.themeMode}');
-    print('  - Search radius: ${settings.defaultSearchRadius} ${settings.distanceUnits}');
-    print('  - Min hourly rate: \$${settings.minimumHourlyRate}');
 
     // Update cache immediately for optimistic UI
     _cache[userId] = settings;
@@ -179,16 +162,11 @@ class AppSettingsService {
         _saveToLocalCache(userId, settings),
       ]);
 
-      print('[AppSettingsService] ✅ Settings saved successfully');
     } on FirebaseException catch (e) {
-      print('[AppSettingsService] ❌ Firebase error during save:');
-      print('  - Code: ${e.code}');
-      print('  - Message: ${e.message}');
 
       // Save to local cache succeeded, but Firestore failed
       // This is acceptable for offline scenarios
       if (e.code == 'unavailable' || e.code == 'permission-denied') {
-        print('[AppSettingsService] ⚠️ Settings saved locally only (offline mode)');
         return; // Don't throw - local save succeeded
       }
 
@@ -196,7 +174,6 @@ class AppSettingsService {
       _cache.remove(userId);
       _provideFriendlyError(e);
     } catch (e) {
-      print('[AppSettingsService] ❌ Unexpected error during save: $e');
 
       // Remove from cache on failure
       _cache.remove(userId);
@@ -311,7 +288,6 @@ class AppSettingsService {
       throw Exception('User ID is required to delete settings');
     }
 
-    print('[AppSettingsService] 🗑️ Deleting settings for user: $userId');
 
     try {
       // Delete from Firestore
@@ -329,9 +305,7 @@ class AppSettingsService {
       // Clear from session cache
       _cache.remove(userId);
 
-      print('[AppSettingsService] ✅ Settings deleted successfully');
     } catch (e) {
-      print('[AppSettingsService] ❌ Error deleting settings: $e');
       throw Exception('Failed to delete settings');
     }
   }
@@ -390,7 +364,6 @@ class AppSettingsService {
       final json = jsonDecode(jsonString) as Map<String, dynamic>;
       return AppSettingsModel.fromJson(json, userId);
     } catch (e) {
-      print('[AppSettingsService] ⚠️ Error loading from local cache: $e');
       return null;
     }
   }
@@ -404,7 +377,6 @@ class AppSettingsService {
       final jsonString = jsonEncode(settings.toJson());
       await prefs.setString('jj.appSettings.$userId', jsonString);
     } catch (e) {
-      print('[AppSettingsService] ⚠️ Error saving to local cache: $e');
       // Don't throw - local cache save failure is not critical
     }
   }
@@ -441,7 +413,6 @@ class AppSettingsService {
   /// Use when switching users or for memory management.
   void clearCache() {
     _cache.clear();
-    print('[AppSettingsService] 🧹 Session cache cleared');
   }
 
   /// Clear cache for specific user
@@ -449,6 +420,5 @@ class AppSettingsService {
   /// Removes cached settings for given user ID
   void clearUserCache(String userId) {
     _cache.remove(userId);
-    print('[AppSettingsService] 🧹 Cache cleared for user: $userId');
   }
 }

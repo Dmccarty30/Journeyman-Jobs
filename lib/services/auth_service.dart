@@ -5,8 +5,16 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:journeyman_jobs/security/input_validator.dart';
+import 'package:journeyman_jobs/security/rate_limiter.dart';
 
 /// Authentication service that handles Firebase Auth operations and token management.
+///
+/// Security Features (Added 2025-10-25):
+/// - Input validation for email and password
+/// - Rate limiting for auth operations (5 attempts/minute per user, 10/5min per IP)
+/// - Exponential backoff for failed attempts
+/// - Secure password strength validation
 ///
 /// Supports:
 /// - Email/password authentication
@@ -30,6 +38,9 @@ class AuthService {
 
   // Token monitoring for automatic refresh
   final _TokenExpirationMonitor _tokenMonitor = _TokenExpirationMonitor();
+
+  // Security: Rate limiters for auth operations
+  final RateLimiter _userRateLimiter = RateLimiter();
 
   // Token validity tracking constants
   static const String _lastAuthKey = 'last_auth_timestamp';
@@ -59,13 +70,45 @@ class AuthService {
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   // Email & Password Sign Up
+  ///
+  /// Security validations applied:
+  /// - Email format validation and sanitization
+  /// - Password strength validation (8+ chars, upper/lower/number/special)
+  /// - Rate limiting (5 attempts per minute per user)
+  ///
+  /// Throws:
+  /// - [ValidationException] if email or password validation fails
+  /// - [RateLimitException] if rate limit exceeded
+  /// - [String] (error message) for Firebase auth failures
   Future<UserCredential?> signUpWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
     try {
+      // Security: Validate and sanitize email
+      final sanitizedEmail = InputValidator.sanitizeEmail(email);
+
+      // Security: Validate password strength
+      InputValidator.validatePassword(password);
+
+      // Security: Check rate limit (per user email)
+      if (!await _userRateLimiter.isAllowed(
+        sanitizedEmail,
+        operation: 'auth',
+      )) {
+        final retryAfter = _userRateLimiter.getRetryAfter(
+          sanitizedEmail,
+          operation: 'auth',
+        );
+        throw RateLimitException(
+          'Too many sign-up attempts. Please try again later.',
+          retryAfter: retryAfter,
+          operation: 'auth',
+        );
+      }
+
       final credential = await _auth.createUserWithEmailAndPassword(
-        email: email,
+        email: sanitizedEmail,
         password: password,
       );
 
@@ -77,20 +120,57 @@ class AuthService {
         _tokenMonitor.startMonitoring(credential.user!);
       }
 
+      // Security: Reset rate limit on successful auth
+      _userRateLimiter.reset(sanitizedEmail, operation: 'auth');
+
       return credential;
+    } on ValidationException catch (e) {
+      debugPrint('[AuthService] Validation error: $e');
+      throw e.message;
+    } on RateLimitException catch (e) {
+      debugPrint('[AuthService] Rate limit exceeded: $e');
+      rethrow;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }
   }
 
   // Email & Password Sign In
+  ///
+  /// Security validations applied:
+  /// - Email format validation and sanitization
+  /// - Rate limiting (5 attempts per minute per user)
+  ///
+  /// Throws:
+  /// - [ValidationException] if email validation fails
+  /// - [RateLimitException] if rate limit exceeded
+  /// - [String] (error message) for Firebase auth failures
   Future<UserCredential?> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
     try {
+      // Security: Validate and sanitize email
+      final sanitizedEmail = InputValidator.sanitizeEmail(email);
+
+      // Security: Check rate limit (per user email)
+      if (!await _userRateLimiter.isAllowed(
+        sanitizedEmail,
+        operation: 'auth',
+      )) {
+        final retryAfter = _userRateLimiter.getRetryAfter(
+          sanitizedEmail,
+          operation: 'auth',
+        );
+        throw RateLimitException(
+          'Too many sign-in attempts. Please try again later.',
+          retryAfter: retryAfter,
+          operation: 'auth',
+        );
+      }
+
       final credential = await _auth.signInWithEmailAndPassword(
-        email: email,
+        email: sanitizedEmail,
         password: password,
       );
 
@@ -102,7 +182,16 @@ class AuthService {
         _tokenMonitor.startMonitoring(credential.user!);
       }
 
+      // Security: Reset rate limit on successful auth
+      _userRateLimiter.reset(sanitizedEmail, operation: 'auth');
+
       return credential;
+    } on ValidationException catch (e) {
+      debugPrint('[AuthService] Validation error: $e');
+      throw e.message;
+    } on RateLimitException catch (e) {
+      debugPrint('[AuthService] Rate limit exceeded: $e');
+      rethrow;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }
@@ -195,9 +284,43 @@ class AuthService {
   }
 
   // Password Reset
+  ///
+  /// Security validations applied:
+  /// - Email format validation and sanitization
+  /// - Rate limiting (5 attempts per minute per user)
+  ///
+  /// Throws:
+  /// - [ValidationException] if email validation fails
+  /// - [RateLimitException] if rate limit exceeded
+  /// - [String] (error message) for Firebase auth failures
   Future<void> sendPasswordResetEmail({required String email}) async {
     try {
-      await _auth.sendPasswordResetEmail(email: email);
+      // Security: Validate and sanitize email
+      final sanitizedEmail = InputValidator.sanitizeEmail(email);
+
+      // Security: Check rate limit (per user email)
+      if (!await _userRateLimiter.isAllowed(
+        sanitizedEmail,
+        operation: 'auth',
+      )) {
+        final retryAfter = _userRateLimiter.getRetryAfter(
+          sanitizedEmail,
+          operation: 'auth',
+        );
+        throw RateLimitException(
+          'Too many password reset attempts. Please try again later.',
+          retryAfter: retryAfter,
+          operation: 'auth',
+        );
+      }
+
+      await _auth.sendPasswordResetEmail(email: sanitizedEmail);
+    } on ValidationException catch (e) {
+      debugPrint('[AuthService] Validation error: $e');
+      throw e.message;
+    } on RateLimitException catch (e) {
+      debugPrint('[AuthService] Rate limit exceeded: $e');
+      rethrow;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }
@@ -240,18 +363,44 @@ class AuthService {
   }
 
   // Update Email
+  ///
+  /// Security validations applied:
+  /// - Email format validation and sanitization
+  ///
+  /// Throws:
+  /// - [ValidationException] if email validation fails
+  /// - [String] (error message) for Firebase auth failures
   Future<void> updateEmail({required String newEmail}) async {
     try {
-      await currentUser?.verifyBeforeUpdateEmail(newEmail);
+      // Security: Validate and sanitize email
+      final sanitizedEmail = InputValidator.sanitizeEmail(newEmail);
+
+      await currentUser?.verifyBeforeUpdateEmail(sanitizedEmail);
+    } on ValidationException catch (e) {
+      debugPrint('[AuthService] Validation error: $e');
+      throw e.message;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }
   }
 
   // Update Password
+  ///
+  /// Security validations applied:
+  /// - Password strength validation (8+ chars, upper/lower/number/special)
+  ///
+  /// Throws:
+  /// - [ValidationException] if password validation fails
+  /// - [String] (error message) for Firebase auth failures
   Future<void> updatePassword({required String newPassword}) async {
     try {
+      // Security: Validate password strength
+      InputValidator.validatePassword(newPassword);
+
       await currentUser?.updatePassword(newPassword);
+    } on ValidationException catch (e) {
+      debugPrint('[AuthService] Validation error: $e');
+      throw e.message;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     }

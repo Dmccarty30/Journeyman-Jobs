@@ -115,7 +115,7 @@ class _SessionTimeoutListenerState
   Widget build(BuildContext context) {
     // Listen to session state changes
     ref.listen<SessionState>(
-      sessionTimeoutNotifierProvider,
+      sessionTimeoutProvider,
       (previous, next) {
         // Show dialog when warning flag is set
         if (next.warningShown && !_dialogShown && next.isInGracePeriod) {
@@ -178,7 +178,7 @@ class _SessionTimeoutDialogWrapperState
 
   @override
   Widget build(BuildContext context) {
-    final sessionState = ref.watch(sessionTimeoutNotifierProvider);
+    final sessionState = ref.watch(sessionTimeoutProvider);
 
     // Calculate remaining time in grace period
     final timeUntilTimeout = sessionState.timeUntilTimeout ?? Duration.zero;
@@ -197,7 +197,7 @@ class _SessionTimeoutDialogWrapperState
       remainingTime: timeUntilTimeout,
       onStayLoggedIn: () {
         // Record activity to reset timeout and exit grace period
-        ref.read(sessionTimeoutNotifierProvider.notifier).recordActivity();
+        ref.read(sessionTimeoutProvider.notifier).recordActivity();
 
         // Dismiss dialog
         widget.onDismissed();

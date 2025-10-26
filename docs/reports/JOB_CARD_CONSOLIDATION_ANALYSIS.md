@@ -132,14 +132,12 @@ EnhancedJobCard
 **Strengths**:
 
 - ✅ **Advanced electrical theme**:
-  - Voltage level indicators (HIGH V, MED V, LOW V)
   - Storm work detection and badges
   - Enhanced backgrounds with gradients
   - Classification-specific icons (lineman, electrician, wireman)
 - ✅ **Priority detection**: High priority and urgent job logic
 - ✅ **Rich visual design**:
   - Enhanced headers with circular icons
-  - Voltage status gradients
   - Electrical detail containers
 - ✅ **Smart icons**: Dynamic classification icons based on job type
 - ✅ **Favorite button**: Heart icon with styling
@@ -148,7 +146,7 @@ EnhancedJobCard
 
 - ❌ **Not actively used**: No imports in active screens
 - ⚠️ **Largest file**: 654 lines (33% of total duplication)
-- ⚠️ **Complex dependencies**: EnhancedBackgrounds, VoltageLevel enums
+- ⚠️ **Complex dependencies**: EnhancedBackgrounds
 - ⚠️ **No per diem, start date, qualifications support**
 
 **Use Case**: **FEATURE-RICH BUT UNUSED** - Best electrical theming, needs integration
@@ -227,7 +225,7 @@ EnhancedJobCard
 | **JobFormatting** | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **TextFormatting** | ❌ | ❌ | ✅ toTitleCase | ✅ JobDataFormatter | ✅ toTitleCase | ✅ toTitleCase |
 | **ReusableComponents** | ✅ JJCard, JJButton | ✅ JJButton | ❌ | ❌ | ❌ | ❌ |
-| **EnhancedBackgrounds** | ❌ | ❌ | ✅ VoltageLevel | ❌ | ❌ | ❌ |
+| **EnhancedBackgrounds** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | **JobDetailsDialog** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
 
 ### 3.2 Animation Dependencies
@@ -405,7 +403,6 @@ enum JobCardStyle {
   standard,
 
   /// Enhanced electrical theme (from EnhancedJobCard)
-  /// - Voltage indicators
   /// - Storm work badges
   /// - Enhanced backgrounds
   /// - Classification icons
@@ -437,9 +434,6 @@ class JobCardFeatures {
   /// Show storm work badge
   final bool showStormBadge;
 
-  /// Show voltage indicators (enhanced style only)
-  final bool showVoltageIndicator;
-
   /// Show priority indicators
   final bool showPriorityIndicator;
 
@@ -464,7 +458,6 @@ class JobCardFeatures {
   const JobCardFeatures({
     this.showFavorite = true,
     this.showStormBadge = true,
-    this.showVoltageIndicator = false,
     this.showPriorityIndicator = true,
     this.enableAnimation = false,
     this.showSwipeActions = false,
@@ -576,7 +569,6 @@ UnifiedJobCard(
   variant: JobCardVariant.full,
   style: JobCardStyle.enhanced, // 🎨 Enable advanced electrical theme
   features: const JobCardFeatures(
-    showVoltageIndicator: true,
     showStormBadge: true,
     showPriorityIndicator: true,
     showClassificationIcon: true,
@@ -782,7 +774,6 @@ UnifiedJobCard(
 **Unused Features** (654 lines):
 
 - EnhancedJobCard has best electrical theming but unused
-- Voltage indicators, storm detection, priority logic wasted
 - **Impact**: Lost opportunity for better UX
 
 **Naming Collision** (2 files):
@@ -932,7 +923,7 @@ testWidgets('UnifiedJobCard navigates to job details', (tester) async {
 ///   job: job,
 ///   variant: JobCardVariant.detailed,
 ///   style: JobCardStyle.enhanced,
-///   features: const JobCardFeatures(showVoltageIndicator: true),
+///   features: const JobCardFeatures(),
 ///   onViewDetails: () => showDialog(...),
 ///   onBidNow: () => handleBid(job),
 /// )

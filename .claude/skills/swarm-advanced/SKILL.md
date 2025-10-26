@@ -14,6 +14,7 @@ Master advanced swarm patterns for distributed research, development, and testin
 ## Quick Start
 
 ### Prerequisites
+
 ```bash
 # Ensure Claude Flow is installed
 npm install -g claude-flow@alpha
@@ -23,6 +24,7 @@ claude mcp add claude-flow npx claude-flow@alpha mcp start
 ```
 
 ### Basic Pattern
+
 ```javascript
 // 1. Initialize swarm topology
 mcp__claude-flow__swarm_init({ topology: "mesh", maxAgents: 6 })
@@ -39,21 +41,25 @@ mcp__claude-flow__task_orchestrate({ task: "...", strategy: "parallel" })
 ### Swarm Topologies
 
 **Mesh Topology** - Peer-to-peer communication, best for research and analysis
+
 - All agents communicate directly
 - High flexibility and resilience
 - Use for: Research, analysis, brainstorming
 
 **Hierarchical Topology** - Coordinator with subordinates, best for development
+
 - Clear command structure
 - Sequential workflow support
 - Use for: Development, structured workflows
 
 **Star Topology** - Central coordinator, best for testing
+
 - Centralized control and monitoring
 - Parallel execution with coordination
 - Use for: Testing, validation, quality assurance
 
 **Ring Topology** - Sequential processing chain
+
 - Step-by-step processing
 - Pipeline workflows
 - Use for: Multi-stage processing, data pipelines
@@ -68,9 +74,11 @@ mcp__claude-flow__task_orchestrate({ task: "...", strategy: "parallel" })
 ## Pattern 1: Research Swarm
 
 ### Purpose
+
 Deep research through parallel information gathering, analysis, and synthesis.
 
 ### Architecture
+
 ```javascript
 // Initialize research swarm
 mcp__claude-flow__swarm_init({
@@ -121,6 +129,7 @@ researchAgents.forEach(agent => {
 ### Research Workflow
 
 #### Phase 1: Information Gathering
+
 ```javascript
 // Parallel information collection
 mcp__claude-flow__parallel_execute({
@@ -155,6 +164,7 @@ mcp__claude-flow__memory_usage({
 ```
 
 #### Phase 2: Analysis and Validation
+
 ```javascript
 // Pattern recognition in findings
 mcp__claude-flow__pattern_recognize({
@@ -182,6 +192,7 @@ mcp__claude-flow__neural_patterns({
 ```
 
 #### Phase 3: Knowledge Management
+
 ```javascript
 // Search existing knowledge base
 mcp__claude-flow__memory_search({
@@ -212,6 +223,7 @@ mcp__claude-flow__memory_usage({
 ```
 
 #### Phase 4: Report Generation
+
 ```javascript
 // Orchestrate report generation
 mcp__claude-flow__task_orchestrate({
@@ -238,6 +250,7 @@ mcp__claude-flow__workflow_execute({
 ```
 
 ### CLI Fallback
+
 ```bash
 # Quick research swarm
 npx claude-flow swarm "research AI trends in 2025" \
@@ -251,9 +264,11 @@ npx claude-flow swarm "research AI trends in 2025" \
 ## Pattern 2: Development Swarm
 
 ### Purpose
+
 Full-stack development through coordinated specialist agents.
 
 ### Architecture
+
 ```javascript
 // Initialize development swarm with hierarchy
 mcp__claude-flow__swarm_init({
@@ -288,6 +303,7 @@ devTeam.forEach(member => {
 ### Development Workflow
 
 #### Phase 1: Architecture and Design
+
 ```javascript
 // System architecture design
 mcp__claude-flow__task_orchestrate({
@@ -307,6 +323,7 @@ mcp__claude-flow__memory_usage({
 ```
 
 #### Phase 2: Parallel Implementation
+
 ```javascript
 // Parallel development tasks
 mcp__claude-flow__parallel_execute({
@@ -342,6 +359,7 @@ mcp__claude-flow__swarm_monitor({
 ```
 
 #### Phase 3: Testing and Validation
+
 ```javascript
 // Comprehensive testing
 mcp__claude-flow__batch_process({
@@ -362,6 +380,7 @@ mcp__claude-flow__quality_assess({
 ```
 
 #### Phase 4: Review and Deployment
+
 ```javascript
 // Code review workflow
 mcp__claude-flow__workflow_execute({
@@ -382,6 +401,7 @@ mcp__claude-flow__pipeline_create({
 ```
 
 ### CLI Fallback
+
 ```bash
 # Quick development swarm
 npx claude-flow swarm "build REST API with authentication" \
@@ -394,9 +414,11 @@ npx claude-flow swarm "build REST API with authentication" \
 ## Pattern 3: Testing Swarm
 
 ### Purpose
+
 Comprehensive quality assurance through distributed testing.
 
 ### Architecture
+
 ```javascript
 // Initialize testing swarm with star topology
 mcp__claude-flow__swarm_init({
@@ -458,6 +480,7 @@ testingTeam.forEach(tester => {
 ### Testing Workflow
 
 #### Phase 1: Test Planning
+
 ```javascript
 // Analyze test coverage requirements
 mcp__claude-flow__quality_assess({
@@ -491,6 +514,7 @@ mcp__claude-flow__memory_usage({
 ```
 
 #### Phase 2: Parallel Test Execution
+
 ```javascript
 // Execute all test suites in parallel
 mcp__claude-flow__parallel_execute({
@@ -531,6 +555,7 @@ mcp__claude-flow__batch_process({
 ```
 
 #### Phase 3: Performance and Security
+
 ```javascript
 // Run performance benchmarks
 mcp__claude-flow__benchmark_run({
@@ -556,6 +581,7 @@ mcp__claude-flow__error_analysis({
 ```
 
 #### Phase 4: Monitoring and Reporting
+
 ```javascript
 // Real-time test monitoring
 mcp__claude-flow__swarm_monitor({
@@ -582,6 +608,7 @@ mcp__claude-flow__trend_analysis({
 ```
 
 ### CLI Fallback
+
 ```bash
 # Quick testing swarm
 npx claude-flow swarm "test application comprehensively" \
@@ -594,9 +621,11 @@ npx claude-flow swarm "test application comprehensively" \
 ## Pattern 4: Analysis Swarm
 
 ### Purpose
+
 Deep code and system analysis through specialized analyzers.
 
 ### Architecture
+
 ```javascript
 // Initialize analysis swarm
 mcp__claude-flow__swarm_init({
@@ -645,6 +674,7 @@ analysisTeam.forEach(analyst => {
 ```
 
 ### Analysis Workflow
+
 ```javascript
 // Parallel analysis execution
 mcp__claude-flow__parallel_execute({
@@ -904,6 +934,7 @@ mcp__claude-flow__trend_analysis({
 ## Real-World Examples
 
 ### Example 1: AI Research Project
+
 ```javascript
 // Research AI trends, analyze findings, generate report
 mcp__claude-flow__swarm_init({ topology: "mesh", maxAgents: 6 })
@@ -912,6 +943,7 @@ mcp__claude-flow__swarm_init({ topology: "mesh", maxAgents: 6 })
 ```
 
 ### Example 2: Full-Stack Application
+
 ```javascript
 // Build complete web application with testing
 mcp__claude-flow__swarm_init({ topology: "hierarchical", maxAgents: 8 })
@@ -920,6 +952,7 @@ mcp__claude-flow__swarm_init({ topology: "hierarchical", maxAgents: 8 })
 ```
 
 ### Example 3: Security Audit
+
 ```javascript
 // Comprehensive security analysis
 mcp__claude-flow__swarm_init({ topology: "star", maxAgents: 5 })
@@ -928,6 +961,7 @@ mcp__claude-flow__swarm_init({ topology: "star", maxAgents: 5 })
 ```
 
 ### Example 4: Performance Optimization
+
 ```javascript
 // Identify and fix performance bottlenecks
 mcp__claude-flow__swarm_init({ topology: "mesh", maxAgents: 4 })

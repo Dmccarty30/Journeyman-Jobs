@@ -27,7 +27,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final user = ref.read(currentUserProvider);
       if (user != null) {
-        ref.read(appSettingsNotifierProvider.notifier).loadSettings(user.uid);
+        ref.read(appSettingsProvider.notifier).loadSettings(user.uid);
       }
     });
   }
@@ -133,7 +133,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
               Consumer(
                 builder: (context, ref, _) {
                   final mode = ref.watch(themeModeNotifierProvider);
-                  final settings = ref.watch(currentAppSettingsProvider);
+                  final _ = ref.watch(currentAppSettingsProvider);
                   final userId = _getUserId();
 
                   return Column(
@@ -155,7 +155,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                             // Update both theme provider and app settings
                             await ref.read(themeModeNotifierProvider.notifier).setThemeMode(m);
                             if (userId.isNotEmpty) {
-                              ref.read(appSettingsNotifierProvider.notifier).updateThemeMode(userId, 'light');
+                              ref.read(appSettingsProvider.notifier).updateThemeMode(userId, 'light');
                             }
                           }
                         },
@@ -168,7 +168,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                           if (m != null) {
                             await ref.read(themeModeNotifierProvider.notifier).setThemeMode(m);
                             if (userId.isNotEmpty) {
-                              ref.read(appSettingsNotifierProvider.notifier).updateThemeMode(userId, 'dark');
+                              ref.read(appSettingsProvider.notifier).updateThemeMode(userId, 'dark');
                             }
                           }
                         },
@@ -181,7 +181,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                           if (m != null) {
                             await ref.read(themeModeNotifierProvider.notifier).setThemeMode(m);
                             if (userId.isNotEmpty) {
-                              ref.read(appSettingsNotifierProvider.notifier).updateThemeMode(userId, 'system');
+                              ref.read(appSettingsProvider.notifier).updateThemeMode(userId, 'system');
                             }
                           }
                         },
@@ -205,7 +205,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                     onChanged: (value) async {
                       if (userId.isNotEmpty) {
                         try {
-                          await ref.read(appSettingsNotifierProvider.notifier).updateHighContrastMode(userId, value);
+                          await ref.read(appSettingsProvider.notifier).updateHighContrastMode(userId, value);
                           if (context.mounted) {
                             JJSnackBar.showSuccess(
                               context: context,
@@ -239,7 +239,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                     onChanged: (value) async {
                       if (userId.isNotEmpty) {
                         try {
-                          await ref.read(appSettingsNotifierProvider.notifier).updateElectricalEffects(userId, value);
+                          await ref.read(appSettingsProvider.notifier).updateElectricalEffects(userId, value);
                           if (context.mounted) {
                             JJSnackBar.showSuccess(
                               context: context,
@@ -273,7 +273,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                     onChanged: (value) async {
                       if (value != null && userId.isNotEmpty) {
                         try {
-                          await ref.read(appSettingsNotifierProvider.notifier).updateFontSize(userId, value);
+                          await ref.read(appSettingsProvider.notifier).updateFontSize(userId, value);
                           if (context.mounted) {
                             JJSnackBar.showSuccess(
                               context: context,
@@ -299,226 +299,517 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
             
             // Job Search Preferences
             _buildSectionHeader('Job Search Preferences'),
-            _buildSettingsCard([
-              _buildSliderTile(
-                icon: Icons.location_on,
-                title: 'Default Search Radius',
-                subtitle: '${_defaultSearchRadius.toInt()} $_units',
-                value: _defaultSearchRadius,
-                min: 10,
-                max: 500,
-                divisions: 49,
-                onChanged: (value) {
-                  setState(() => _defaultSearchRadius = value);
-                  _saveSetting('default_search_radius', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildDropdownTile(
-                icon: Icons.straighten,
-                title: 'Distance Units',
-                value: _units,
-                options: ['Miles', 'Kilometers'],
-                onChanged: (value) {
-                  setState(() => _units = value!);
-                  _saveSetting('units', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSliderTile(
-                icon: Icons.attach_money,
-                title: 'Minimum Hourly Rate',
-                subtitle: '\$${_minimumHourlyRate.toStringAsFixed(2)}/hr',
-                value: _minimumHourlyRate,
-                min: 20,
-                max: 100,
-                divisions: 80,
-                onChanged: (value) {
-                  setState(() => _minimumHourlyRate = value);
-                  _saveSetting('minimum_hourly_rate', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.flash_auto,
-                title: 'Auto-Apply',
-                subtitle: 'Automatically apply to matching jobs',
-                value: _autoApplyEnabled,
-                onChanged: (value) {
-                  setState(() => _autoApplyEnabled = value);
-                  _saveSetting('auto_apply', value);
-                },
-              ),
-            ]),
+            Consumer(
+              builder: (context, ref, _) {
+                final settings = ref.watch(currentAppSettingsProvider);
+                final userId = _getUserId();
+
+                return _buildSettingsCard([
+                  _buildSliderTile(
+                    icon: Icons.location_on,
+                    title: 'Default Search Radius',
+                    subtitle: '${settings.defaultSearchRadius.toInt()} ${settings.distanceUnits}',
+                    value: settings.defaultSearchRadius,
+                    min: 10,
+                    max: 500,
+                    divisions: 49,
+                    onChanged: (value) async {
+                      if (userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateSearchRadius(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Search radius updated to ${value.toInt()} ${settings.distanceUnits}',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildDropdownTile(
+                    icon: Icons.straighten,
+                    title: 'Distance Units',
+                    value: settings.distanceUnits,
+                    options: ['Miles', 'Kilometers'],
+                    onChanged: (value) async {
+                      if (value != null && userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateDistanceUnits(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Distance units updated to $value',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildSliderTile(
+                    icon: Icons.attach_money,
+                    title: 'Minimum Hourly Rate',
+                    subtitle: '\$${settings.minimumHourlyRate.toStringAsFixed(2)}/hr',
+                    value: settings.minimumHourlyRate,
+                    min: 20,
+                    max: 100,
+                    divisions: 80,
+                    onChanged: (value) async {
+                      if (userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateMinimumHourlyRate(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Minimum hourly rate updated to \$${value.toStringAsFixed(2)}',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildSwitchTile(
+                    icon: Icons.flash_auto,
+                    title: 'Auto-Apply',
+                    subtitle: 'Automatically apply to matching jobs',
+                    value: settings.autoApplyEnabled,
+                    onChanged: (value) async {
+                      if (userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateAutoApply(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Auto-apply ${value ? 'enabled' : 'disabled'}',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                ]);
+              },
+            ),
             
             const SizedBox(height: AppTheme.spacingLg),
             
             // Data & Storage
             _buildSectionHeader('Data & Storage'),
-            _buildSettingsCard([
-              _buildSwitchTile(
-                icon: Icons.offline_pin,
-                title: 'Offline Mode',
-                subtitle: 'Download union data for offline access',
-                value: _offlineModeEnabled,
-                onChanged: (value) {
-                  setState(() => _offlineModeEnabled = value);
-                  _saveSetting('offline_mode', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.download,
-                title: 'Auto-Download',
-                subtitle: 'Weather maps and union updates',
-                value: _autoDownloadEnabled,
-                onChanged: (value) {
-                  setState(() => _autoDownloadEnabled = value);
-                  _saveSetting('auto_download', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.wifi,
-                title: 'Wi-Fi Only Downloads',
-                subtitle: 'Limit downloads to Wi-Fi connections',
-                value: _wifiOnlyDownloads,
-                onChanged: (value) {
-                  setState(() => _wifiOnlyDownloads = value);
-                  _saveSetting('wifi_only_downloads', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildActionTile(
-                icon: Icons.cleaning_services,
-                title: 'Clear Cache',
-                subtitle: 'Current size: $_cacheSize',
-                onTap: _clearCache,
-              ),
-            ]),
+            Consumer(
+              builder: (context, ref, _) {
+                final settings = ref.watch(currentAppSettingsProvider);
+                final userId = _getUserId();
+
+                return _buildSettingsCard([
+                  _buildSwitchTile(
+                    icon: Icons.offline_pin,
+                    title: 'Offline Mode',
+                    subtitle: 'Download union data for offline access',
+                    value: settings.offlineModeEnabled,
+                    onChanged: (value) async {
+                      if (userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateOfflineMode(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Offline mode ${value ? 'enabled' : 'disabled'}',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildSwitchTile(
+                    icon: Icons.download,
+                    title: 'Auto-Download',
+                    subtitle: 'Weather maps and union updates',
+                    value: settings.autoDownloadEnabled,
+                    onChanged: (value) async {
+                      if (userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateAutoDownload(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Auto-download ${value ? 'enabled' : 'disabled'}',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildSwitchTile(
+                    icon: Icons.wifi,
+                    title: 'Wi-Fi Only Downloads',
+                    subtitle: 'Limit downloads to Wi-Fi connections',
+                    value: settings.wifiOnlyDownloads,
+                    onChanged: (value) async {
+                      if (userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateWifiOnlyDownloads(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Wi-Fi only downloads ${value ? 'enabled' : 'disabled'}',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildActionTile(
+                    icon: Icons.cleaning_services,
+                    title: 'Clear Cache',
+                    subtitle: 'Current size: $_cacheSize',
+                    onTap: _clearCache,
+                  ),
+                ]);
+              },
+            ),
             
             const SizedBox(height: AppTheme.spacingLg),
             
             // Privacy & Security
             _buildSectionHeader('Privacy & Security'),
-            _buildSettingsCard([
-              _buildDropdownTile(
-                icon: Icons.visibility,
-                title: 'Profile Visibility',
-                value: _profileVisibility,
-                options: ['Public', 'Union Members Only', 'Private'],
-                onChanged: (value) {
-                  setState(() => _profileVisibility = value!);
-                  _saveSetting('profile_visibility', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.location_on,
-                title: 'Location Services',
-                subtitle: 'Used for job and weather alerts',
-                value: _locationServicesEnabled,
-                onChanged: (value) {
-                  setState(() => _locationServicesEnabled = value);
-                  _saveSetting('location_services', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.fingerprint,
-                title: 'Biometric Login',
-                subtitle: 'Use Face ID or Touch ID',
-                value: _biometricLoginEnabled,
-                onChanged: (value) {
-                  setState(() => _biometricLoginEnabled = value);
-                  _saveSetting('biometric_login', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.security,
-                title: 'Two-Factor Authentication',
-                subtitle: 'Extra security for your account',
-                value: _twoFactorEnabled,
-                onChanged: (value) {
-                  setState(() => _twoFactorEnabled = value);
-                  _saveSetting('two_factor', value);
-                },
-              ),
-            ]),
+            Consumer(
+              builder: (context, ref, _) {
+                final settings = ref.watch(currentAppSettingsProvider);
+                final userId = _getUserId();
+
+                return _buildSettingsCard([
+                  _buildDropdownTile(
+                    icon: Icons.visibility,
+                    title: 'Profile Visibility',
+                    value: settings.profileVisibility,
+                    options: ['Public', 'Union Members Only', 'Private'],
+                    onChanged: (value) async {
+                      if (value != null && userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateProfileVisibility(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Profile visibility updated to $value',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildSwitchTile(
+                    icon: Icons.location_on,
+                    title: 'Location Services',
+                    subtitle: 'Used for job and weather alerts',
+                    value: settings.locationServicesEnabled,
+                    onChanged: (value) async {
+                      if (userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateLocationServices(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Location services ${value ? 'enabled' : 'disabled'}',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildSwitchTile(
+                    icon: Icons.fingerprint,
+                    title: 'Biometric Login',
+                    subtitle: 'Use Face ID or Touch ID',
+                    value: settings.biometricLoginEnabled,
+                    onChanged: (value) async {
+                      if (userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateBiometricLogin(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Biometric login ${value ? 'enabled' : 'disabled'}',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildSwitchTile(
+                    icon: Icons.security,
+                    title: 'Two-Factor Authentication',
+                    subtitle: 'Extra security for your account',
+                    value: settings.twoFactorEnabled,
+                    onChanged: (value) async {
+                      if (userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateTwoFactor(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Two-factor authentication ${value ? 'enabled' : 'disabled'}',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                ]);
+              },
+            ),
             
             const SizedBox(height: AppTheme.spacingLg),
             
             // Language & Region
             _buildSectionHeader('Language & Region'),
-            _buildSettingsCard([
-              _buildDropdownTile(
-                icon: Icons.language,
-                title: 'Language',
-                value: _selectedLanguage,
-                options: ['English', 'Spanish', 'French'],
-                onChanged: (value) {
-                  setState(() => _selectedLanguage = value!);
-                  _saveSetting('language', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildDropdownTile(
-                icon: Icons.calendar_today,
-                title: 'Date Format',
-                value: _dateFormat,
-                options: ['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY-MM-DD'],
-                onChanged: (value) {
-                  setState(() => _dateFormat = value!);
-                  _saveSetting('date_format', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildDropdownTile(
-                icon: Icons.access_time,
-                title: 'Time Format',
-                value: _timeFormat,
-                options: ['12-hour', '24-hour'],
-                onChanged: (value) {
-                  setState(() => _timeFormat = value!);
-                  _saveSetting('time_format', value);
-                },
-              ),
-            ]),
+            Consumer(
+              builder: (context, ref, _) {
+                final settings = ref.watch(currentAppSettingsProvider);
+                final userId = _getUserId();
+
+                return _buildSettingsCard([
+                  _buildDropdownTile(
+                    icon: Icons.language,
+                    title: 'Language',
+                    value: settings.language,
+                    options: ['English', 'Spanish', 'French'],
+                    onChanged: (value) async {
+                      if (value != null && userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateLanguage(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Language updated to $value',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildDropdownTile(
+                    icon: Icons.calendar_today,
+                    title: 'Date Format',
+                    value: settings.dateFormat,
+                    options: ['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY-MM-DD'],
+                    onChanged: (value) async {
+                      if (value != null && userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateDateFormat(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Date format updated to $value',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildDropdownTile(
+                    icon: Icons.access_time,
+                    title: 'Time Format',
+                    value: settings.timeFormat,
+                    options: ['12-hour', '24-hour'],
+                    onChanged: (value) async {
+                      if (value != null && userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateTimeFormat(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Time format updated to $value',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                ]);
+              },
+            ),
             
             const SizedBox(height: AppTheme.spacingLg),
             
             // Storm Work Settings
             _buildSectionHeader('Storm Work Settings'),
-            _buildSettingsCard([
-              _buildSliderTile(
-                icon: Icons.warning_amber,
-                title: 'Storm Alert Radius',
-                subtitle: '${_stormAlertRadius.toInt()} $_units',
-                value: _stormAlertRadius,
-                min: 50,
-                max: 500,
-                divisions: 45,
-                onChanged: (value) {
-                  setState(() => _stormAlertRadius = value);
-                  _saveSetting('storm_alert_radius', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSliderTile(
-                icon: Icons.trending_up,
-                title: 'Minimum Rate Multiplier',
-                subtitle: '${_stormRateMultiplier}x regular rate',
-                value: _stormRateMultiplier,
-                min: 1.0,
-                max: 3.0,
-                divisions: 20,
-                onChanged: (value) {
-                  setState(() => _stormRateMultiplier = value);
-                  _saveSetting('storm_rate_multiplier', value);
-                },
-              ),
-            ]),
+            Consumer(
+              builder: (context, ref, _) {
+                final settings = ref.watch(currentAppSettingsProvider);
+                final userId = _getUserId();
+
+                return _buildSettingsCard([
+                  _buildSliderTile(
+                    icon: Icons.warning_amber,
+                    title: 'Storm Alert Radius',
+                    subtitle: '${settings.stormAlertRadius.toInt()} ${settings.distanceUnits}',
+                    value: settings.stormAlertRadius,
+                    min: 50,
+                    max: 500,
+                    divisions: 45,
+                    onChanged: (value) async {
+                      if (userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateStormAlertRadius(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Storm alert radius updated to ${value.toInt()} ${settings.distanceUnits}',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildSliderTile(
+                    icon: Icons.trending_up,
+                    title: 'Minimum Rate Multiplier',
+                    subtitle: '${settings.stormRateMultiplier.toStringAsFixed(1)}x regular rate',
+                    value: settings.stormRateMultiplier,
+                    min: 1.0,
+                    max: 3.0,
+                    divisions: 20,
+                    onChanged: (value) async {
+                      if (userId.isNotEmpty) {
+                        try {
+                          await ref.read(appSettingsProvider.notifier).updateStormRateMultiplier(userId, value);
+                          if (context.mounted) {
+                            JJSnackBar.showSuccess(
+                              context: context,
+                              message: 'Storm rate multiplier updated to ${value.toStringAsFixed(1)}x',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            JJSnackBar.showError(
+                              context: context,
+                              message: 'Failed to save setting',
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                ]);
+              },
+            ),
             
             const SizedBox(height: AppTheme.spacingLg),
             

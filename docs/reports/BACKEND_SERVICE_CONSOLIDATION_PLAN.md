@@ -19,6 +19,7 @@ The Journeyman Jobs backend has **10 overlapping service implementations** total
 **Recommendation**: Consolidate into **3 unified services** using composition patterns (Strategy, Provider, Event Router) instead of inheritance.
 
 **Expected Results**:
+
 - **Code Reduction**: 4,796 → 1,900 lines (60% reduction)
 - **Risk**: MEDIUM (with proper testing and phased rollout)
 - **Timeline**: 3-4 weeks (phased migration)
@@ -30,6 +31,7 @@ The Journeyman Jobs backend has **10 overlapping service implementations** total
 ### 1.1 Current State
 
 **Files & Line Counts**:
+
 ```
 firestore_service.dart                    305 lines (Base CRUD)
 resilient_firestore_service.dart          574 lines (+ Retry logic)
@@ -40,6 +42,7 @@ TOTAL                                   1,812 lines
 ```
 
 **Inheritance Pattern** (PROBLEM):
+
 ```
 FirestoreService (base)
   ↓
@@ -67,6 +70,7 @@ OptimizedFirestoreService (448 lines) is **completely unused**! Can be deleted i
 ### 1.3 Duplication Analysis
 
 **Common Code Across All Services**:
+
 - Collection getters (users, jobs, locals, crews, etc.) - Duplicated 4x
 - Error handling wrappers - Duplicated 4x
 - Logging logic - Duplicated 4x
@@ -77,6 +81,7 @@ OptimizedFirestoreService (448 lines) is **completely unused**! Can be deleted i
 ### 1.4 Proposed Solution: Strategy Pattern
 
 **Create UnifiedFirestoreService**:
+
 ```dart
 /// Unified Firestore service with composable strategies
 class UnifiedFirestoreService {
@@ -229,6 +234,7 @@ final advancedService = UnifiedFirestoreService(
 ### 1.5 Migration Plan
 
 **Phase 1: Create UnifiedFirestoreService** (Week 1)
+
 - [ ] Implement base service (~200 lines)
 - [ ] Implement ResilienceStrategy (~100 lines)
 - [ ] Implement ShardingStrategy (~80 lines)
@@ -237,29 +243,34 @@ final advancedService = UnifiedFirestoreService(
 - **Total**: ~460 lines (vs current 1,812 lines)
 
 **Phase 2: Delete Dead Code** (Week 1)
+
 - [ ] Delete SearchOptimizedFirestoreService (448 lines)
 - [ ] Remove imports and references
 - [ ] **Immediate Win**: -448 lines, zero risk
 
 **Phase 3: Migrate auth_screen & onboarding** (Week 2)
+
 - [ ] Replace FirestoreService() with UnifiedFirestoreService()
 - [ ] Test authentication flow
 - [ ] Test onboarding flow
 - **Files**: 2 screens, 8 instantiations
 
 **Phase 4: Migrate jobs_provider** (Week 2)
+
 - [ ] Replace ResilientFirestoreService with UnifiedFirestoreService
 - [ ] Test job fetching
 - [ ] Test offline functionality
 - **Files**: 1 provider
 
 **Phase 5: Migrate location_service** (Week 3)
+
 - [ ] Replace GeographicFirestoreService with sharding strategy
 - [ ] Test geographic queries
 - [ ] Verify shard distribution
 - **Files**: 1 service
 
 **Phase 6: Delete Legacy Services** (Week 3)
+
 - [ ] Delete firestore_service.dart (305 lines)
 - [ ] Delete resilient_firestore_service.dart (574 lines)
 - [ ] Delete geographic_firestore_service.dart (485 lines)
@@ -267,6 +278,7 @@ final advancedService = UnifiedFirestoreService(
 - [ ] **Total Deletion**: 1,364 lines
 
 **Phase 7: Update core_providers** (Week 4)
+
 - [ ] Update firestoreServiceProvider to use UnifiedFirestoreService
 - [ ] Test provider injection
 - [ ] Verify all dependent code works
@@ -285,6 +297,7 @@ final advancedService = UnifiedFirestoreService(
 ### 1.7 Expected Results
 
 **Code Reduction**:
+
 ```
 Before: 1,812 lines (4 files)
 After:  460 lines (1 file + 3 strategies)
@@ -292,6 +305,7 @@ Reduction: 74% (-1,352 lines)
 ```
 
 **Benefits**:
+
 - ✅ Single source of truth
 - ✅ Mix-and-match capabilities
 - ✅ Easier testing (strategies isolated)
@@ -305,6 +319,7 @@ Reduction: 74% (-1,352 lines)
 ### 2.1 Current State
 
 **Need to verify file existence and analyze**:
+
 ```
 notification_service.dart              524 lines (General)
 enhanced_notification_service.dart     418 lines (IBEW-specific)
@@ -324,6 +339,7 @@ TOTAL                                1,344 lines
 ### 3.1 Current State
 
 **Need to verify file existence and analyze**:
+
 ```
 analytics_service.dart                 318 lines
 user_analytics_service.dart            703 lines
@@ -352,6 +368,7 @@ TOTAL                                1,638 lines
 ### 4.2 Recommended Approach
 
 **Priority Order**:
+
 1. **Phase 1**: Firestore consolidation (highest duplication, critical path)
 2. **Phase 2**: Notification consolidation (moderate complexity)
 3. **Phase 3**: Analytics consolidation (lowest risk)
@@ -409,6 +426,7 @@ TOTAL                                1,638 lines
 ## Appendix A: Firestore Service Usage Map
 
 **FirestoreService (base)** - 10+ instantiations:
+
 - `lib/screens/onboarding/auth_screen.dart` (4 times)
 - `lib/screens/onboarding/onboarding_steps_screen.dart` (4 times)
 - `lib/providers/core_providers.dart` (1 provider)
@@ -416,15 +434,18 @@ TOTAL                                1,638 lines
 - `test/performance/backend_performance_test.dart` (1 time)
 
 **ResilientFirestoreService** - 5 instantiations:
+
 - `lib/providers/riverpod/jobs_riverpod_provider.dart` (1 provider)
 - `lib/widgets/offline_indicator.dart` (1 time)
 - `test/helpers/widget_test_helpers.dart` (1 time)
 - `test/helpers/test_helpers.dart` (2 times)
 
 **GeographicFirestoreService** - 1 instantiation:
+
 - `lib/services/location_service.dart` (1 time)
 
 **SearchOptimizedFirestoreService** - 0 instantiations:
+
 - ❌ **DEAD CODE** - Can be deleted immediately
 
 ---
@@ -432,6 +453,7 @@ TOTAL                                1,638 lines
 ## Appendix B: Estimated Implementation Size
 
 **UnifiedFirestoreService**:
+
 ```
 Core service                    ~200 lines
 ResilienceStrategy             ~100 lines
@@ -448,4 +470,3 @@ TOTAL                          ~460 lines
 **Report Status**: Phase 1 Complete (Firestore Analysis)
 **Next Phase**: Notification & Analytics Services Analysis
 **Confidence Level**: High (based on codebase inspection and usage analysis)
-

@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:state_notifier/state_notifier.dart';
 
 import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
+import '../../../domain/enums/crew_visibility.dart';
 import '../models/models.dart';
 import '../services/crew_service.dart';
 
@@ -63,7 +64,7 @@ List<Crew> userCrews(Ref ref) {
   return crewsAsync.when(
     data: (crews) => crews,
     loading: () => [],
-    error: (_, __) => [],
+    error: (_, _) => [],
   );
 }
 
@@ -101,8 +102,10 @@ MemberRole? userRoleInCrew(Ref ref, String crewId) {
       roles: {},
       stats: CrewStats.empty(),
       lastActivityAt: DateTime.now(),
-      // Added missing required parameter
       isActive: true,
+      visibility: CrewVisibility.private,
+      maxMembers: 50,
+      inviteCodeCounter: 0,
     ),
   );
   
@@ -153,7 +156,7 @@ List<CrewMember> crewMembers(Ref ref, String crewId) {
   return membersAsync.when(
     data: (members) => members,
     loading: () => [],
-    error: (_, __) => [],
+    error: (_, _) => [],
   );
 }
 
@@ -306,7 +309,7 @@ class CrewCreationNotifier extends StateNotifier<AsyncValue<void>> {
           );
         } else {
           // Token refresh failed or retry exhausted - redirect to auth
-          final userError = _mapFirebaseError(e);
+          final _ = _mapFirebaseError(e);
           if (kDebugMode) {
             print('[CrewsProvider] Error creating crew: $e');
           }
@@ -382,7 +385,7 @@ class CrewCreationNotifier extends StateNotifier<AsyncValue<void>> {
           );
         } else {
           // Token refresh failed or retry exhausted - redirect to auth
-          final userError = _mapFirebaseError(e);
+          final _ = _mapFirebaseError(e);
           if (kDebugMode) {
             print('[CrewsProvider] Error updating crew: $e');
           }

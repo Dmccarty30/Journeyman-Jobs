@@ -25,6 +25,7 @@ capabilities:
 ## 🎯 Quick Start
 
 ### Simple Review
+
 ```bash
 # Initialize review swarm for PR
 gh pr view 123 --json files,diff | npx ruv-swarm github review-init --pr 123
@@ -34,6 +35,7 @@ gh pr comment 123 --body "🔍 Multi-agent code review initiated"
 ```
 
 ### Complete Review Workflow
+
 ```bash
 # Get PR context with gh CLI
 PR_DATA=$(gh pr view 123 --json files,additions,deletions,title,body)
@@ -120,6 +122,7 @@ gh pr comment 123 --body "🔍 Multi-agent code review initiated"
 ```
 
 **Benefits:**
+
 - ✅ Parallel review by specialized agents
 - ✅ Comprehensive coverage across multiple domains
 - ✅ Faster review cycles with coordinated analysis
@@ -201,8 +204,10 @@ fi
 ```
 
 **References**:
+
 - [OWASP Guide](link)
 - [Security Best Practices](link)
+
 ```
 
 </details>
@@ -954,18 +959,21 @@ npx ruv-swarm github export-metrics \
 ## 📚 Best Practices
 
 ### 1. Review Configuration
+
 - ✅ Define clear review criteria upfront
 - ✅ Set appropriate severity thresholds
 - ✅ Configure agent specializations for your stack
 - ✅ Establish override procedures for emergencies
 
 ### 2. Comment Quality
+
 - ✅ Provide actionable, specific feedback
 - ✅ Include code examples with suggestions
 - ✅ Reference documentation and best practices
 - ✅ Maintain respectful, constructive tone
 
 ### 3. Performance Optimization
+
 - ✅ Cache analysis results to avoid redundant work
 - ✅ Use incremental reviews for large PRs
 - ✅ Enable parallel agent execution
@@ -1061,6 +1069,7 @@ fi
 <summary><strong>Issue: Review agents not spawning</strong></summary>
 
 **Solution:**
+
 ```bash
 # Check swarm status
 npx ruv-swarm swarm-status
@@ -1078,6 +1087,7 @@ npx ruv-swarm github review-init --pr 123 --force
 <summary><strong>Issue: Comments not posting to PR</strong></summary>
 
 **Solution:**
+
 ```bash
 # Verify GitHub token permissions
 gh auth status
@@ -1095,6 +1105,7 @@ npx ruv-swarm github review-comments --pr 123 --batch
 <summary><strong>Issue: Review taking too long</strong></summary>
 
 **Solution:**
+
 ```bash
 # Use incremental review for large PRs
 npx ruv-swarm github review-init --pr 123 --incremental
@@ -1113,16 +1124,19 @@ npx ruv-swarm github review-init --pr 123 --parallel --cache-results
 ## 📖 Additional Resources
 
 ### Related Skills
+
 - `github-pr-manager` - Comprehensive PR lifecycle management
 - `github-workflow-automation` - Automate GitHub workflows
 - `swarm-coordination` - Advanced swarm orchestration
 
 ### Documentation
+
 - [GitHub CLI Documentation](https://cli.github.com/manual/)
 - [RUV Swarm Guide](https://github.com/ruvnet/ruv-swarm)
 - [Claude Flow Integration](https://github.com/ruvnet/claude-flow)
 
 ### Support
+
 - GitHub Issues: Report bugs and request features
 - Community: Join discussions and share experiences
 - Examples: Browse example configurations and workflows

@@ -27,6 +27,7 @@ Covers advanced AgentDB capabilities for distributed systems, multi-database coo
 QUIC (Quick UDP Internet Connections) enables sub-millisecond latency synchronization between AgentDB instances across network boundaries with automatic retry, multiplexing, and encryption.
 
 **Benefits**:
+
 - <1ms latency between nodes
 - Multiplexed streams (multiple operations simultaneously)
 - Built-in encryption (TLS 1.3)
@@ -114,6 +115,7 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 ```
 
 **Use Cases**:
+
 - Text embeddings (BERT, GPT, etc.)
 - Semantic search
 - Document similarity
@@ -138,6 +140,7 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 ```
 
 **Use Cases**:
+
 - Image embeddings
 - Spatial data
 - Computer vision
@@ -162,6 +165,7 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 ```
 
 **Use Cases**:
+
 - Pre-normalized embeddings
 - Fast similarity computation
 - When vectors are already unit-length
@@ -334,11 +338,13 @@ const diverseResults = await adapter.retrieveWithReasoning(queryEmbedding, {
 ```
 
 **MMR Parameters**:
+
 - `mmrLambda = 0`: Maximum relevance (may be redundant)
 - `mmrLambda = 0.5`: Balanced (default)
 - `mmrLambda = 1`: Maximum diversity (may be less relevant)
 
 **Use Cases**:
+
 - Search result diversification
 - Recommendation systems
 - Avoiding echo chambers
@@ -540,8 +546,8 @@ const result = await adapter.retrieveWithReasoning(queryEmbedding, {
 
 - **QUIC Protocol**: docs/quic-synchronization.pdf
 - **Hybrid Search**: docs/hybrid-search-guide.md
-- **GitHub**: https://github.com/ruvnet/agentic-flow/tree/main/packages/agentdb
-- **Website**: https://agentdb.ruv.io
+- **GitHub**: <https://github.com/ruvnet/agentic-flow/tree/main/packages/agentdb>
+- **Website**: <https://agentdb.ruv.io>
 
 ---
 

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
+import '../../electrical_components/circuit_pattern_painter.dart';
 import '../../navigation/app_router.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -374,56 +375,5 @@ class _SplashScreenState extends State<SplashScreen>
   }
 }
 
-// Circuit pattern painter for electrical theme
-class CircuitPatternPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = AppTheme.white.withValues(alpha: 0.05)
-      ..strokeWidth = 1.5
-      ..style = PaintingStyle.stroke;
-
-    final path = Path();
-    
-    // Draw circuit lines
-    for (int i = 0; i < 8; i++) {
-      final y = size.height * (i / 8);
-      
-      // Horizontal lines
-      path.moveTo(0, y);
-      path.lineTo(size.width * 0.3, y);
-      path.moveTo(size.width * 0.7, y);
-      path.lineTo(size.width, y);
-      
-      // Circuit nodes
-      canvas.drawCircle(
-        Offset(size.width * 0.3, y),
-        2,
-        paint..style = PaintingStyle.fill,
-      );
-      canvas.drawCircle(
-        Offset(size.width * 0.7, y),
-        2,
-        paint..style = PaintingStyle.fill,
-      );
-      
-      paint.style = PaintingStyle.stroke;
-    }
-    
-    // Vertical connections
-    for (int i = 0; i < 6; i++) {
-      final x = size.width * (i / 6);
-      
-      path.moveTo(x, 0);
-      path.lineTo(x, size.height * 0.2);
-      path.moveTo(x, size.height * 0.8);
-      path.lineTo(x, size.height);
-    }
-    
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
+// CircuitPatternPainter removed - using canonical version from circuit_pattern_painter.dart
 

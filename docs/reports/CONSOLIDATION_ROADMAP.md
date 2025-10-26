@@ -72,6 +72,7 @@ Phase 5: Polish & Compliance (P2-P3)
 **Rollback Strategy**: Gradual rollout with monitoring
 
 **Subtasks**:
+
 - [ ] 1.1.1: Implement Firebase Security Rules (8-12h)
   - Write granular collection-level rules
   - Test with Firebase Emulator
@@ -102,6 +103,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Test edge cases
 
 **Success Criteria**:
+
 - ✅ All 7 critical vulnerabilities resolved
 - ✅ Security audit passes with 0 critical findings
 - ✅ Firebase rules tested with emulator
@@ -114,6 +116,7 @@ Phase 5: Polish & Compliance (P2-P3)
 **Rollback Strategy**: Feature flag with fallback to old models
 
 **Subtasks**:
+
 - [ ] 1.2.1: Analysis & Decision (2-3h)
   - Review all 3 Job models
   - Document field mapping
@@ -143,6 +146,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Test with production-like data
 
 **Success Criteria**:
+
 - ✅ Single canonical Job model established
 - ✅ All files using correct import
 - ✅ SharedJob bug resolved
@@ -156,6 +160,7 @@ Phase 5: Polish & Compliance (P2-P3)
 **Rollback Strategy**: Git revert (low risk)
 
 **Subtasks**:
+
 - [ ] 1.3.1: Remove Safe Dependencies (2-3h)
   - Remove `provider: ^6.1.2`
   - Remove `connectivity_plus: ^6.1.1`
@@ -175,6 +180,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Monitor for missing dependency errors
 
 **Success Criteria**:
+
 - ✅ -3 dependencies removed
 - ✅ ~50KB app size reduction
 - ✅ All tests passing
@@ -244,7 +250,9 @@ Phase 5: Polish & Compliance (P2-P3)
 **Reduction**: 61%
 
 **Implementation Steps**:
+
 - [ ] 2.1.1.1: Design Strategy Pattern (4-5h)
+
   ```dart
   abstract class FirestoreStrategy {
     Future<T> execute<T>(Query query, FirestoreContext context);
@@ -285,6 +293,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Test edge cases
 
 **Success Criteria**:
+
 - ✅ Single unified service
 - ✅ -1,116 lines of duplicate code
 - ✅ All functionality preserved
@@ -297,7 +306,9 @@ Phase 5: Polish & Compliance (P2-P3)
 **Reduction**: 63%
 
 **Implementation Steps**:
+
 - [ ] 2.1.2.1: Design Provider Pattern (3-4h)
+
   ```dart
   abstract class NotificationProvider {
     Future<void> send(NotificationData data);
@@ -332,6 +343,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Test all notification scenarios
 
 **Success Criteria**:
+
 - ✅ Single notification manager
 - ✅ -844 lines of duplicate code
 - ✅ IBEW logic preserved
@@ -344,7 +356,9 @@ Phase 5: Polish & Compliance (P2-P3)
 **Reduction**: 57%
 
 **Implementation Steps**:
+
 - [ ] 2.1.3.1: Design Event Router (3-4h)
+
   ```dart
   class AnalyticsHub {
     final Map<EventType, List<AnalyticsHandler>> handlers;
@@ -369,6 +383,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Test event tracking
 
 **Success Criteria**:
+
 - ✅ Single analytics hub
 - ✅ -938 lines of duplicate code
 - ✅ All events tracked correctly
@@ -386,7 +401,9 @@ Phase 5: Polish & Compliance (P2-P3)
 **Reduction**: 82%
 
 **Implementation Steps**:
+
 - [ ] 2.2.1.1: Design Unified JobCard (3-4h)
+
   ```dart
   enum JobCardVariant {
     compact,    // For lists
@@ -433,6 +450,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Remove old files
 
 **Success Criteria**:
+
 - ✅ Single JobCard component
 - ✅ -1,628 lines removed
 - ✅ All variants working
@@ -445,6 +463,7 @@ Phase 5: Polish & Compliance (P2-P3)
 **Reduction**: 80%
 
 **Implementation Steps**:
+
 - [ ] 2.2.2.1: Choose Canonical Implementation (1h)
   - Review `circuit_pattern_painter.dart` (58 lines)
   - Extract best features from duplicates
@@ -461,6 +480,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Test performance
 
 **Success Criteria**:
+
 - ✅ Single circuit painter
 - ✅ -320 lines removed
 - ✅ Performance maintained
@@ -472,6 +492,7 @@ Phase 5: Polish & Compliance (P2-P3)
 **Reduction**: 60%
 
 **Implementation Steps**:
+
 - [ ] 2.2.3.1: Keep Primary Loaders (2-3h)
   - `JJPowerLineLoader` (general use)
   - `ThreePhaseSineWaveLoader` (electrical-specific)
@@ -489,6 +510,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Update documentation
 
 **Success Criteria**:
+
 - ✅ 3 specialized loaders
 - ✅ -300 lines removed
 - ✅ All loading states working
@@ -500,7 +522,9 @@ Phase 5: Polish & Compliance (P2-P3)
 **Reduction**: 80%
 
 **Implementation Steps**:
+
 - [ ] 2.2.4.1: Design Base Component (3-4h)
+
   ```dart
   class JJCard extends StatelessWidget {
     final Widget? header;
@@ -534,6 +558,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Verify visual consistency
 
 **Success Criteria**:
+
 - ✅ Base JJCard component
 - ✅ 5 specialized variants
 - ✅ -2,400 lines removed
@@ -546,6 +571,7 @@ Phase 5: Polish & Compliance (P2-P3)
 **Rollback Strategy**: Git revert (low risk)
 
 **Implementation Steps**:
+
 - [ ] 2.3.1: Add Const Constructors (4-6h)
   - Audit 500+ widget instances
   - Add `const` where possible
@@ -564,6 +590,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Expected: -60% CPU usage
 
 **Success Criteria**:
+
 - ✅ +30% render performance
 - ✅ 60 FPS scroll achieved
 - ✅ -60% CPU usage on backgrounds
@@ -630,12 +657,14 @@ Phase 5: Polish & Compliance (P2-P3)
 **Target**: Server-side filtering for exact 20 results
 
 **Implementation Steps**:
+
 - [ ] 3.1.1.1: Analyze Query Patterns (1-2h)
   - Document all Firestore queries
   - Identify filtering combinations
   - Plan composite indexes
 
 - [ ] 3.1.1.2: Create Indexes (2-3h)
+
   ```yaml
   # firestore.indexes.json
   {
@@ -659,6 +688,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Monitor query performance
 
 **Expected Impact**:
+
 - Query time: 800-1500ms → 300ms (-75%)
 - Data transfer: 120-200KB → 50KB (-60%)
 - Firebase reads: 2.5x → 1x (-60%)
@@ -666,7 +696,9 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 3.1.2: Optimize Query Limits (6-8h)
 
 **Implementation Steps**:
+
 - [ ] 3.1.2.1: Reduce Over-fetching (3-4h)
+
   ```dart
   // Before: Fetch 50, filter to 20
   final result = await _firestore
@@ -696,6 +728,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Set up alerts for regressions
 
 **Expected Impact**:
+
 - -60% Firebase costs
 - -75% query latency
 - -60% data transfer
@@ -703,7 +736,9 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 3.1.3: Implement Query Caching (6-8h)
 
 **Implementation Steps**:
+
 - [ ] 3.1.3.1: Design Cache Strategy (2-3h)
+
   ```dart
   class FirestoreCache {
     final Map<String, CacheEntry> _cache = {};
@@ -734,6 +769,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Handle sync conflicts
 
 **Expected Impact**:
+
 - -50% redundant queries
 - Instant repeat queries
 - Offline functionality
@@ -744,6 +780,7 @@ Phase 5: Polish & Compliance (P2-P3)
 **Target**: Minimize active listeners
 
 **Implementation Steps**:
+
 - [ ] 3.1.4.1: Audit Listeners (1-2h)
   - Document all snapshots
   - Identify unnecessary listeners
@@ -760,6 +797,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Monitor connection count
 
 **Expected Impact**:
+
 - -40% active connections
 - -30% data transfer
 - Better battery life
@@ -776,6 +814,7 @@ Phase 5: Polish & Compliance (P2-P3)
 **Target**: All controllers properly disposed
 
 **Implementation Steps**:
+
 - [ ] 3.2.1.1: Audit All Controllers (3-4h)
   - Search codebase for AnimationController
   - Verify dispose() in every case
@@ -793,6 +832,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Document patterns
 
 **Expected Impact**:
+
 - 0 memory leaks
 - -5-10 MB memory usage
 - Better app stability
@@ -800,12 +840,14 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 3.2.2: RepaintBoundary Optimization (4-5h)
 
 **Implementation Steps**:
+
 - [ ] 3.2.2.1: Identify Repaint Areas (1-2h)
   - Use Flutter DevTools
   - Find heavy repaint areas
   - Plan boundary placement
 
 - [ ] 3.2.2.2: Add Boundaries (2-3h)
+
   ```dart
   // Isolate heavy widgets
   RepaintBoundary(
@@ -819,6 +861,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Profile render times
 
 **Expected Impact**:
+
 - +15-20% FPS
 - -30% CPU usage
 - Better battery life
@@ -829,7 +872,9 @@ Phase 5: Polish & Compliance (P2-P3)
 **Target**: <10% CPU usage
 
 **Implementation Steps**:
+
 - [ ] 3.2.3.1: Reduce Complexity (2-3h)
+
   ```dart
   // Static screens: low density
   ElectricalCircuitBackground(
@@ -857,6 +902,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Test battery impact
 
 **Expected Impact**:
+
 - -60% CPU usage
 - -60% battery drain
 - Maintained visual quality
@@ -870,7 +916,9 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 3.3.1: Network Image Optimization (4-6h)
 
 **Implementation Steps**:
+
 - [ ] 3.3.1.1: Replace NetworkImage (2-3h)
+
   ```dart
   // Before: No caching
   Image.network(url)  // ❌
@@ -894,6 +942,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Verify offline behavior
 
 **Expected Impact**:
+
 - -80% image load times (cached)
 - -50% data transfer
 - Better offline UX
@@ -901,6 +950,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 3.3.2: Asset Compression (3-5h)
 
 **Implementation Steps**:
+
 - [ ] 3.3.2.1: Audit Assets (1-2h)
   - List all images
   - Check formats and sizes
@@ -917,6 +967,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Update references
 
 **Expected Impact**:
+
 - -30-50% asset size
 - Faster app load time
 - Smaller APK/IPA
@@ -924,6 +975,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 3.3.3: Lazy Asset Loading (3-4h)
 
 **Implementation Steps**:
+
 - [ ] 3.3.3.1: Implement Lazy Loading (2-3h)
   - Load assets on demand
   - Implement precaching for critical assets
@@ -935,6 +987,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Test app startup time
 
 **Expected Impact**:
+
 - -30% initial load time
 - -20 MB memory usage
 - Faster app startup
@@ -999,6 +1052,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 4.1.1: Firebase Emulator Suite (8-10h)
 
 **Implementation Steps**:
+
 - [ ] 4.1.1.1: Install Emulator Suite (2-3h)
   - Install Firebase CLI
   - Configure emulators
@@ -1017,6 +1071,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Document usage
 
 **Success Criteria**:
+
 - ✅ Emulator running locally
 - ✅ Test data seeded
 - ✅ Tests can connect
@@ -1024,7 +1079,9 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 4.1.2: Mock System (6-8h)
 
 **Implementation Steps**:
+
 - [ ] 4.1.2.1: Create Mock Framework (3-4h)
+
   ```dart
   class MockFirestoreService extends Mock implements FirestoreService {}
   class MockAuthService extends Mock implements AuthService {}
@@ -1047,6 +1104,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Best practices
 
 **Success Criteria**:
+
 - ✅ Centralized mock system
 - ✅ Reusable test fixtures
 - ✅ Documentation complete
@@ -1054,6 +1112,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 4.1.3: CI/CD Pipeline (6-10h)
 
 **Implementation Steps**:
+
 - [ ] 4.1.3.1: Configure CI (3-5h)
   - Set up GitHub Actions / Codemagic
   - Configure test runner
@@ -1072,6 +1131,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Alert on regressions
 
 **Success Criteria**:
+
 - ✅ Automated test runs
 - ✅ Coverage gating active
 - ✅ Performance tracked
@@ -1087,6 +1147,7 @@ Phase 5: Polish & Compliance (P2-P3)
 **Coverage Target**: 90%+ for all Firebase services
 
 **Implementation Steps**:
+
 - [ ] 4.2.1.1: Auth Service Tests (4-5h)
   - Sign up flow
   - Login flow
@@ -1108,6 +1169,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Error scenarios
 
 **Success Criteria**:
+
 - ✅ 90%+ coverage
 - ✅ All critical paths tested
 - ✅ Edge cases covered
@@ -1117,6 +1179,7 @@ Phase 5: Polish & Compliance (P2-P3)
 **Coverage Target**: 85%+ for job-related features
 
 **Implementation Steps**:
+
 - [ ] 4.2.2.1: Job Browsing Tests (4-5h)
   - List display
   - Search functionality
@@ -1136,6 +1199,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Notification handling
 
 **Success Criteria**:
+
 - ✅ 85%+ coverage
 - ✅ User flows tested
 - ✅ Error scenarios covered
@@ -1145,6 +1209,7 @@ Phase 5: Polish & Compliance (P2-P3)
 **Coverage Target**: 80%+ for weather features
 
 **Implementation Steps**:
+
 - [ ] 4.2.3.1: NOAA Integration Tests (4-5h)
   - Radar data fetching
   - Weather alerts
@@ -1162,6 +1227,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Alert notifications
 
 **Success Criteria**:
+
 - ✅ 80%+ coverage
 - ✅ NOAA API mocked
 - ✅ All features tested
@@ -1171,6 +1237,7 @@ Phase 5: Polish & Compliance (P2-P3)
 **Coverage Target**: 85%+ for crew features
 
 **Implementation Steps**:
+
 - [ ] 4.2.4.1: Crew Creation Tests (3-4h)
   - Create crew
   - Add members
@@ -1189,6 +1256,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Remove shared jobs
 
 **Success Criteria**:
+
 - ✅ 85%+ coverage
 - ✅ Real-time features tested
 - ✅ Offline behavior verified
@@ -1202,6 +1270,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 4.3.1: Critical User Journeys (8-10h)
 
 **Implementation Steps**:
+
 - [ ] 4.3.1.1: Onboarding Journey (2-3h)
   - Sign up flow
   - Profile completion
@@ -1221,6 +1290,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Track storm
 
 **Success Criteria**:
+
 - ✅ 3 critical journeys tested
 - ✅ End-to-end coverage
 - ✅ Real-world scenarios
@@ -1228,6 +1298,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 4.3.2: Authentication Flow Tests (6-8h)
 
 **Implementation Steps**:
+
 - [ ] 4.3.2.1: Sign Up Flow (2-3h)
   - Email verification
   - Profile creation
@@ -1245,6 +1316,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - New password
 
 **Success Criteria**:
+
 - ✅ All auth flows tested
 - ✅ Security verified
 - ✅ Error handling checked
@@ -1252,6 +1324,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 4.3.3: Offline Functionality Tests (6-10h)
 
 **Implementation Steps**:
+
 - [ ] 4.3.3.1: Offline Job Browsing (2-3h)
   - Cache verification
   - Read-only access
@@ -1268,6 +1341,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Update on reconnect
 
 **Success Criteria**:
+
 - ✅ Offline features working
 - ✅ Data sync verified
 - ✅ Conflict handling tested
@@ -1331,7 +1405,9 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 5.1.1: Color Standardization (4-6h)
 
 **Implementation Steps**:
+
 - [ ] 5.1.1.1: Find Hardcoded Colors (2-3h)
+
   ```dart
   // Search patterns:
   Colors.orange  // ❌
@@ -1349,6 +1425,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Run regression tests
 
 **Success Criteria**:
+
 - ✅ 0 hardcoded colors
 - ✅ All using AppTheme
 - ✅ Visual parity maintained
@@ -1356,11 +1433,13 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 5.1.2: Naming Convention Compliance (3-5h)
 
 **Implementation Steps**:
+
 - [ ] 5.1.2.1: Find Non-Compliant Widgets (1-2h)
   - Search for custom widgets without JJ prefix
   - Document 15+ widgets needing rename
 
 - [ ] 5.1.2.2: Rename Components (2-3h)
+
   ```dart
   // Before
   ChatInput → JJChatInput
@@ -1374,6 +1453,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Run tests
 
 **Success Criteria**:
+
 - ✅ All widgets have JJ prefix
 - ✅ Consistent naming
 - ✅ No breaking changes
@@ -1381,6 +1461,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 5.1.3: Electrical Theme Consistency (3-4h)
 
 **Implementation Steps**:
+
 - [ ] 5.1.3.1: Audit Theme Usage (1-2h)
   - Find screens missing electrical elements
   - Document inconsistencies
@@ -1396,6 +1477,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Document rules
 
 **Success Criteria**:
+
 - ✅ Consistent theme across app
 - ✅ Lint rules enforcing standards
 - ✅ Visual coherence achieved
@@ -1409,6 +1491,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 5.2.1: Architecture Documentation (2-4h)
 
 **Implementation Steps**:
+
 - [ ] 5.2.1.1: Update README (1-2h)
   - Document new architecture
   - Update setup instructions
@@ -1420,6 +1503,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Link to implementation
 
 **Success Criteria**:
+
 - ✅ README updated
 - ✅ ADRs created
 - ✅ Clear documentation
@@ -1427,6 +1511,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 5.2.2: Firebase Schema Documentation (2-3h)
 
 **Implementation Steps**:
+
 - [ ] 5.2.2.1: Document Collections (1-2h)
   - List all collections
   - Document field schemas
@@ -1438,6 +1523,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Add examples
 
 **Success Criteria**:
+
 - ✅ All schemas documented
 - ✅ Security rules explained
 - ✅ Examples provided
@@ -1445,6 +1531,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 5.2.3: API Documentation (1-3h)
 
 **Implementation Steps**:
+
 - [ ] 5.2.3.1: Generate DartDoc (1-2h)
   - Run dartdoc
   - Host documentation
@@ -1456,6 +1543,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Third-party services
 
 **Success Criteria**:
+
 - ✅ API documentation generated
 - ✅ External APIs documented
 - ✅ Examples provided
@@ -1469,6 +1557,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 5.3.1: Investigate Conditional Removals (3-5h)
 
 **Implementation Steps**:
+
 - [ ] 5.3.1.1: Check image_picker (1h)
   - Search for usage
   - Test image upload
@@ -1486,6 +1575,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - equatable
 
 **Success Criteria**:
+
 - ✅ All dependencies verified
 - ✅ Unused removed
 - ✅ Tests passing
@@ -1493,6 +1583,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 5.3.2: Dependency Updates (1-2h)
 
 **Implementation Steps**:
+
 - [ ] 5.3.2.1: Update Dependencies (1h)
   - Run flutter pub upgrade
   - Test for breaking changes
@@ -1504,6 +1595,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Document findings
 
 **Success Criteria**:
+
 - ✅ Dependencies updated
 - ✅ No security vulnerabilities
 - ✅ Tests passing
@@ -1511,6 +1603,7 @@ Phase 5: Polish & Compliance (P2-P3)
 ##### Subtask 5.3.3: Final Cleanup (1h)
 
 **Implementation Steps**:
+
 - [ ] 5.3.3.1: Remove Dead Code (30min)
   - Search for unused files
   - Delete unused code
@@ -1522,6 +1615,7 @@ Phase 5: Polish & Compliance (P2-P3)
   - Verify app size
 
 **Success Criteria**:
+
 - ✅ No dead code
 - ✅ Clean builds
 - ✅ Optimized app size
@@ -1601,25 +1695,30 @@ Phase 5 (Polish)
 ### Rollback Strategies
 
 #### Phase 1: Security & Architecture
+
 - **Job Model Migration**: Feature flag + data backup
 - **Security Rules**: Staged deployment with monitoring
 - **Dependency Removal**: Git revert (low risk)
 
 #### Phase 2: Backend Consolidation
+
 - **Service Migration**: A/B testing with gradual rollout
 - **UI Components**: Keep old components until validated
 - **Performance Changes**: Feature flags for quick rollback
 
 #### Phase 3: Performance Optimization
+
 - **Query Changes**: Keep old queries as fallback
 - **Animation Changes**: Feature flags for instant rollback
 - **Asset Changes**: Keep originals in source control
 
 #### Phase 4: Testing
+
 - **No rollback needed** (additive only)
 - Infrastructure changes isolated to test environment
 
 #### Phase 5: Polish
+
 - **Visual Changes**: Regression tests + git revert
 - **Documentation**: No rollback needed
 - **Dependencies**: Git revert if issues found
@@ -1785,24 +1884,29 @@ Week 9-10:  Phase 5 prep can begin
 ### Resource Requirements
 
 #### Phase 1 (Weeks 1-2)
+
 - **1 Senior Flutter Developer** (full-time)
 - **1 Security Consultant** (8 hours consulting)
 - **Total**: 80 developer hours + 8 consulting hours
 
 #### Phase 2 (Weeks 3-4)
+
 - **1 Senior Flutter Developer** (full-time)
 - **Total**: 80 developer hours
 
 #### Phase 3 (Weeks 5-6)
+
 - **1 Senior Flutter Developer** (full-time)
 - **Total**: 80 developer hours
 
 #### Phase 4 (Weeks 7-10)
+
 - **1 Senior Flutter Developer** (full-time)
 - **1 QA Engineer** (half-time, weeks 8-10)
 - **Total**: 160 developer hours + 60 QA hours
 
 #### Phase 5 (Weeks 11-12)
+
 - **1 Senior Flutter Developer** (full-time)
 - **Total**: 40 developer hours
 
@@ -1829,6 +1933,7 @@ Week 9-10:  Phase 5 prep can begin
 ### Cost-Benefit Analysis
 
 #### Investment Costs
+
 - **Development**: $49,700
 - **Infrastructure**: $0 (existing tools)
 - **Training**: $0 (internal knowledge)
@@ -1876,6 +1981,7 @@ Week 9-10:  Phase 5 prep can begin
 ### High-Risk Mitigation
 
 #### Risk: Job Model Migration Data Loss
+
 - **Probability**: Low
 - **Impact**: Critical
 - **Mitigation**:
@@ -1886,6 +1992,7 @@ Week 9-10:  Phase 5 prep can begin
   5. Feature flag for instant revert
 
 #### Risk: Security Implementation Breaks Auth
+
 - **Probability**: Medium
 - **Impact**: Critical
 - **Mitigation**:
@@ -1896,6 +2003,7 @@ Week 9-10:  Phase 5 prep can begin
   5. 24/7 monitoring during rollout
 
 #### Risk: Backend Service Migration Breaks Features
+
 - **Probability**: Low-Medium
 - **Impact**: High
 - **Mitigation**:
@@ -1908,6 +2016,7 @@ Week 9-10:  Phase 5 prep can begin
 ### Medium-Risk Mitigation
 
 #### Risk: UI Changes Break Layouts
+
 - **Probability**: Low
 - **Impact**: Medium
 - **Mitigation**:
@@ -1918,6 +2027,7 @@ Week 9-10:  Phase 5 prep can begin
   5. User feedback monitoring
 
 #### Risk: Performance Optimizations Cause Bugs
+
 - **Probability**: Low
 - **Impact**: Medium
 - **Mitigation**:
@@ -1930,6 +2040,7 @@ Week 9-10:  Phase 5 prep can begin
 ### Low-Risk Mitigation
 
 #### Risk: Dependency Updates Break Code
+
 - **Probability**: Low
 - **Impact**: Low
 - **Mitigation**:
@@ -1946,12 +2057,14 @@ Week 9-10:  Phase 5 prep can begin
 ### Key Performance Indicators (KPIs)
 
 #### Code Quality Metrics
+
 - **Lines of Code**: Track reduction over time
 - **Code Duplication**: Monitor duplicate percentage
 - **Cyclomatic Complexity**: Measure code complexity
 - **Technical Debt Ratio**: Track debt accumulation
 
 #### Performance Metrics
+
 - **Query Performance**: Track Firebase query times
 - **Render Performance**: Monitor FPS and frame drops
 - **Memory Usage**: Track memory consumption
@@ -1959,12 +2072,14 @@ Week 9-10:  Phase 5 prep can begin
 - **App Size**: Track APK/IPA size
 
 #### Quality Metrics
+
 - **Test Coverage**: Track coverage percentage
 - **Bug Rate**: Monitor production bugs
 - **Crash Rate**: Track app crashes
 - **User Ratings**: Monitor app store ratings
 
 #### Cost Metrics
+
 - **Firebase Costs**: Track monthly Firebase expenses
 - **Development Velocity**: Measure feature delivery speed
 - **Support Costs**: Track support ticket volume
@@ -1973,24 +2088,28 @@ Week 9-10:  Phase 5 prep can begin
 ### Monitoring Strategy
 
 #### Real-time Monitoring
+
 - Firebase Performance Monitoring
 - Crashlytics for crash reporting
 - Analytics for user behavior
 - Custom metrics for critical paths
 
 #### Daily Monitoring
+
 - Test coverage reports
 - Code quality metrics
 - Performance benchmarks
 - Security scan results
 
 #### Weekly Monitoring
+
 - Development velocity
 - Bug rate trends
 - User feedback analysis
 - Cost analysis
 
 #### Monthly Monitoring
+
 - ROI calculation
 - Technical debt assessment
 - Architecture review
@@ -2251,31 +2370,36 @@ Week 9-10:  Phase 5 prep can begin
 ### Appendix B: Tool & Resource Links
 
 #### Development Tools
-- **Flutter**: https://flutter.dev
-- **Firebase**: https://firebase.google.com
-- **Riverpod**: https://riverpod.dev
-- **go_router**: https://pub.dev/packages/go_router
+
+- **Flutter**: <https://flutter.dev>
+- **Firebase**: <https://firebase.google.com>
+- **Riverpod**: <https://riverpod.dev>
+- **go_router**: <https://pub.dev/packages/go_router>
 
 #### Testing Tools
-- **Firebase Emulator Suite**: https://firebase.google.com/docs/emulator-suite
-- **Flutter Test**: https://flutter.dev/docs/testing
-- **Integration Testing**: https://flutter.dev/docs/testing/integration-tests
-- **Mockito**: https://pub.dev/packages/mockito
+
+- **Firebase Emulator Suite**: <https://firebase.google.com/docs/emulator-suite>
+- **Flutter Test**: <https://flutter.dev/docs/testing>
+- **Integration Testing**: <https://flutter.dev/docs/testing/integration-tests>
+- **Mockito**: <https://pub.dev/packages/mockito>
 
 #### Quality Tools
-- **Dart Code Metrics**: https://pub.dev/packages/dart_code_metrics
-- **SonarQube**: https://www.sonarqube.org
-- **Flutter DevTools**: https://flutter.dev/docs/development/tools/devtools
+
+- **Dart Code Metrics**: <https://pub.dev/packages/dart_code_metrics>
+- **SonarQube**: <https://www.sonarqube.org>
+- **Flutter DevTools**: <https://flutter.dev/docs/development/tools/devtools>
 
 #### CI/CD Tools
-- **GitHub Actions**: https://github.com/features/actions
-- **Codemagic**: https://codemagic.io
-- **Fastlane**: https://fastlane.tools
+
+- **GitHub Actions**: <https://github.com/features/actions>
+- **Codemagic**: <https://codemagic.io>
+- **Fastlane**: <https://fastlane.tools>
 
 #### Documentation Tools
-- **DartDoc**: https://dart.dev/tools/dartdoc
-- **Markdown**: https://www.markdownguide.org
-- **Mermaid**: https://mermaid-js.github.io (for diagrams)
+
+- **DartDoc**: <https://dart.dev/tools/dartdoc>
+- **Markdown**: <https://www.markdownguide.org>
+- **Mermaid**: <https://mermaid-js.github.io> (for diagrams)
 
 ### Appendix C: Communication Templates
 

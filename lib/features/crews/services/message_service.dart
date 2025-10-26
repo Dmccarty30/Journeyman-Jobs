@@ -1,15 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:journeyman_jobs/features/crews/models/message.dart';
-import 'chat_service.dart';
 
 class MessageService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late final ChatService _chatService;
 
   // Initialization
-  MessageService() {
-    _chatService = ChatService();
-  }
+  MessageService();
 
   // Get Firestore collections
   CollectionReference get crewsCollection => _firestore.collection('crews');

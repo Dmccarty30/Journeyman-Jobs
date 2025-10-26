@@ -153,7 +153,7 @@ class AppLifecycleService extends WidgetsBindingObserver {
       // End session - this marks session as inactive
       // On next app launch, initialize() will detect the inactive session
       // and trigger auto-logout
-      await _sessionTimeoutService!.endSession();
+      await _sessionTimeoutService.endSession();
 
       debugPrint('[Lifecycle] Session ended due to app closure');
     }

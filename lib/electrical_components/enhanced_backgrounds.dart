@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../design_system/app_theme.dart';
+import 'circuit_pattern_painter.dart' as canonical;
 
 /// Voltage levels used across electrical-themed UI components.
 enum VoltageLevel {
@@ -75,10 +76,10 @@ class EnhancedBackgrounds {
           Positioned.fill(
             child: RepaintBoundary(
               child: CustomPaint(
-                painter: CircuitPatternPainter(
-                  color: patternColor ?? AppTheme.accentCopper,
-                  opacity: opacity,
-                  animated: animated,
+                painter: canonical.CircuitPatternPainter(
+                  primaryColor: (patternColor ?? AppTheme.accentCopper).withValues(alpha: opacity),
+                  secondaryColor: (patternColor ?? AppTheme.accentCopper).withValues(alpha: opacity * 0.5),
+                  animate: animated,
                 ),
               ),
             ),
@@ -157,10 +158,10 @@ class EnhancedBackgrounds {
                       children: <Widget>[
                         Positioned.fill(
                           child: CustomPaint(
-                            painter: CircuitPatternPainter(
-                              color: AppTheme.accentCopper,
-                              opacity: 0.02,
-                              animated: false,
+                            painter: canonical.CircuitPatternPainter(
+                              primaryColor: AppTheme.accentCopper.withValues(alpha: 0.02),
+                              secondaryColor: AppTheme.accentCopper.withValues(alpha: 0.01),
+                              animate: false,
                             ),
                           ),
                         ),
@@ -220,69 +221,7 @@ class EnhancedBackgrounds {
       );
 }
 
-/// Circuit pattern painter for background effects
-class CircuitPatternPainter extends CustomPainter {
-  CircuitPatternPainter({
-    required this.color,
-    required this.opacity,
-    required this.animated,
-  });
-  final Color color;
-  final double opacity;
-  final bool animated;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..color = color.withValues(alpha: opacity)
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
-
-    const double spacing = 40.0;
-    final math.Random random = math.Random(42); // Consistent pattern
-
-    // Draw horizontal lines
-    for (double y = 0; y < size.height; y += spacing) {
-      if (random.nextBool()) {
-        canvas.drawLine(
-          Offset(0, y),
-          Offset(size.width, y),
-          paint,
-        );
-      }
-    }
-
-    // Draw vertical lines
-    for (double x = 0; x < size.width; x += spacing) {
-      if (random.nextBool()) {
-        canvas.drawLine(
-          Offset(x, 0),
-          Offset(x, size.height),
-          paint,
-        );
-      }
-    }
-
-    // Draw connection points
-    final Paint dotPaint = Paint()
-      ..color = color.withValues(alpha: opacity * 2)
-      ..style = PaintingStyle.fill;
-
-    for (double x = 0; x < size.width; x += spacing) {
-      for (double y = 0; y < size.height; y += spacing) {
-        if (random.nextDouble() > 0.7) {
-          canvas.drawCircle(Offset(x, y), 2, dotPaint);
-        }
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(CircuitPatternPainter oldDelegate) =>
-      color != oldDelegate.color ||
-      opacity != oldDelegate.opacity ||
-      animated != oldDelegate.animated;
-}
+// CircuitPatternPainter removed - using canonical version from circuit_pattern_painter.dart
 
 /// Grid pattern painter for technical backgrounds
 class GridPatternPainter extends CustomPainter {

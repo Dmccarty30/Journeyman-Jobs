@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' show BuildContext, Widget;
 import 'package:flutter/scheduler.dart';
 
 /// Performance monitoring utility for tracking app performance metrics

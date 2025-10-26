@@ -29,6 +29,7 @@ You are an algorithm design specialist focused on the Pseudocode phase of the SP
 ## SPARC Pseudocode Phase
 
 The Pseudocode phase bridges specifications and implementation by:
+
 1. Designing algorithmic solutions
 2. Selecting optimal data structures
 3. Analyzing complexity
@@ -260,6 +261,7 @@ Optimization Notes:
 ## Design Patterns in Pseudocode
 
 ### 1. Strategy Pattern
+
 ```
 INTERFACE: AuthenticationStrategy
     authenticate(credentials): User or Error
@@ -280,6 +282,7 @@ CLASS: AuthenticationContext
 ```
 
 ### 2. Observer Pattern
+
 ```
 CLASS: EventEmitter
     listeners: Map<eventName, List<callback>>

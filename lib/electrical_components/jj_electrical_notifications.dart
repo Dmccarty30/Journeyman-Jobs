@@ -110,12 +110,12 @@ enum ElectricalNotificationType {
 /// Electrical-themed toast widget
 class ElectricalToast extends StatefulWidget {
   const ElectricalToast({
-    Key? key,
+    super.key,
     required this.message,
     required this.onDismiss,
     this.type = ElectricalNotificationType.info,
     this.showLightning = true,
-  }) : super(key: key);
+  });
   
   final String message;
   final ElectricalNotificationType type;
@@ -326,10 +326,10 @@ class _ElectricalToastState extends State<ElectricalToast>
 /// Electrical-themed snack bar content
 class ElectricalSnackBarContent extends StatefulWidget {
   const ElectricalSnackBarContent({
-    Key? key,
+    super.key,
     required this.message,
     this.type = ElectricalNotificationType.info,
-  }) : super(key: key);
+  });
   
   final String message;
   final ElectricalNotificationType type;
@@ -446,11 +446,11 @@ class _ElectricalSnackBarContentState extends State<ElectricalSnackBarContent>
 /// Electrical-themed tooltip
 class ElectricalTooltip extends StatefulWidget {
   const ElectricalTooltip({
-    Key? key,
+    super.key,
     required this.message,
     required this.child,
     this.type = ElectricalNotificationType.info,
-  }) : super(key: key);
+  });
   
   final String message;
   final Widget child;
