@@ -8,7 +8,7 @@ Execute independent subtasks in parallel for maximum efficiency.
 
 ### 1. Task Decomposition
 
-```
+```bash
 Tool: mcp__claude-flow__task_orchestrate
 Parameters: {
   "task": "Build complete REST API with auth, CRUD operations, and tests",
@@ -51,7 +51,7 @@ npx claude-flow parallel "Build REST API" --max-agents 8
 
 ## Monitoring
 
-```
+```bash
 Tool: mcp__claude-flow__swarm_monitor
 Parameters: {"interval": 1000, "swarmId": "current"}
 ```

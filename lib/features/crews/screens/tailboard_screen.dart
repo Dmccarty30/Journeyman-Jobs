@@ -20,6 +20,7 @@ import '../providers/feed_provider.dart';
 import '../widgets/crew_selection_dropdown.dart';
 import '../widgets/crew_preferences_dialog.dart';
 import '../widgets/tab_widgets.dart';
+import '../widgets/enhanced_feed_tab.dart';
 
 // Extension method to add divide functionality to List
 extension ListExtensions<T> on List<T> {
@@ -376,7 +377,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  FeedTab(),
+                  EnhancedFeedTab(), // Use the enhanced feed tab with real-time functionality
                   JobsTab(),
                   ChatTab(),
                   MembersTab(),
@@ -734,6 +735,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
         return;
       }
 
+      // Create post with immediate real-time updates
       await ref.read(postCreationProvider).createPost(
         crewId: selectedCrew.id,
         content: content,
@@ -742,9 +744,13 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
       if (!mounted) return;
       JJElectricalNotifications.showElectricalToast(
         context: context,
-        message: 'Post created successfully!',
+        message: 'Post published to public feed!',
         type: ElectricalNotificationType.success,
       );
+
+      // Force immediate refresh of the global feed to show the new post instantly
+      ref.invalidate(globalFeedProvider);
+
       if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {

@@ -12,17 +12,20 @@ Execute plan by dispatching fresh subagent per task, with code review after each
 ## Overview
 
 **vs. Executing Plans (parallel session):**
+
 - Same session (no context switch)
 - Fresh subagent per task (no context pollution)
 - Code review after each task (catch issues early)
 - Faster iteration (no human-in-loop between tasks)
 
 **When to use:**
+
 - Staying in this session
 - Tasks are mostly independent
 - Want continuous progress with quality gates
 
 **When NOT to use:**
+
 - Need to review plan first (use executing-plans)
 - Tasks are tightly coupled (manual execution better)
 - Plan needs revision (brainstorm first)
@@ -38,7 +41,8 @@ Read plan file, create TodoWrite with all tasks.
 For each task:
 
 **Dispatch fresh subagent:**
-```
+
+```dart
 Task tool (general-purpose):
   description: "Implement Task N: [task name]"
   prompt: |
@@ -61,7 +65,8 @@ Task tool (general-purpose):
 ### 3. Review Subagent's Work
 
 **Dispatch code-reviewer subagent:**
-```
+
+```dart
 Task tool (code-reviewer):
   Use template at requesting-code-review/code-reviewer.md
 
@@ -77,12 +82,14 @@ Task tool (code-reviewer):
 ### 4. Apply Review Feedback
 
 **If issues found:**
+
 - Fix Critical issues immediately
 - Fix Important issues before next task
 - Note Minor issues
 
 **Dispatch follow-up subagent if needed:**
-```
+
+```dart
 "Fix issues from code review: [list issues]"
 ```
 
@@ -95,6 +102,7 @@ Task tool (code-reviewer):
 ### 6. Final Review
 
 After all tasks complete, dispatch final code-reviewer:
+
 - Reviews entire implementation
 - Checks all plan requirements met
 - Validates overall architecture
@@ -102,13 +110,14 @@ After all tasks complete, dispatch final code-reviewer:
 ### 7. Complete Development
 
 After final review passes:
+
 - Announce: "I'm using the finishing-a-development-branch skill to complete this work."
 - **REQUIRED SUB-SKILL:** Use superpowers:finishing-a-development-branch
 - Follow that skill to verify tests, present options, execute choice
 
 ## Example Workflow
 
-```
+```dart
 You: I'm using Subagent-Driven Development to execute this plan.
 
 [Load plan, create TodoWrite]
@@ -148,42 +157,50 @@ Done!
 ## Advantages
 
 **vs. Manual execution:**
+
 - Subagents follow TDD naturally
 - Fresh context per task (no confusion)
 - Parallel-safe (subagents don't interfere)
 
 **vs. Executing Plans:**
+
 - Same session (no handoff)
 - Continuous progress (no waiting)
 - Review checkpoints automatic
 
 **Cost:**
+
 - More subagent invocations
 - But catches issues early (cheaper than debugging later)
 
 ## Red Flags
 
 **Never:**
+
 - Skip code review between tasks
 - Proceed with unfixed Critical issues
 - Dispatch multiple implementation subagents in parallel (conflicts)
 - Implement without reading plan task
 
 **If subagent fails task:**
+
 - Dispatch fix subagent with specific instructions
 - Don't try to fix manually (context pollution)
 
 ## Integration
 
 **Required workflow skills:**
+
 - **writing-plans** - REQUIRED: Creates the plan that this skill executes
 - **requesting-code-review** - REQUIRED: Review after each task (see Step 3)
 - **finishing-a-development-branch** - REQUIRED: Complete development after all tasks (see Step 7)
 
 **Subagents must use:**
+
 - **test-driven-development** - Subagents follow TDD for each task
 
 **Alternative workflow:**
+
 - **executing-plans** - Use for parallel session instead of same-session execution
 
 See code-reviewer template: requesting-code-review/code-reviewer.md

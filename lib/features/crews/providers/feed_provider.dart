@@ -21,8 +21,9 @@ FeedService feedService(Ref ref) => FeedService();
 Stream<List<PostModel>> crewPostsStream(Ref ref, String crewId) {
   final feedService = ref.watch(feedServiceProvider);
   return feedService.getCrewPosts(crewId: crewId).map((snapshot) {
-    // Limit to 50 most recent posts
+    // Convert and filter posts
     final posts = snapshot.docs.map((doc) => PostModel.fromFirestore(doc)).toList();
+    // Sort by timestamp descending
     posts.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     return posts.take(50).toList();
   });
@@ -33,7 +34,8 @@ Stream<List<PostModel>> crewPostsStream(Ref ref, String crewId) {
 Stream<List<PostModel>> globalFeedStream(Ref ref) {
   return FirebaseFirestore.instance
       .collection('posts')
-      .orderBy('timestamp', descending: true)
+      .where('isDeleted', isEqualTo: false)
+      .orderBy('createdAt', descending: true)
       .limit(50) // Limit to 50 most recent posts
       .snapshots()
       .map((snapshot) {

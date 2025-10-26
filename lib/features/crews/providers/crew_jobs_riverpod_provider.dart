@@ -1,4 +1,5 @@
 // lib/features/crews/providers/crew_jobs_riverpod_provider.dart
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../models/job_model.dart'; // Canonical Job model
@@ -12,15 +13,17 @@ part 'crew_jobs_riverpod_provider.g.dart';
 Stream<List<Job>> crewFilteredJobsStream(Ref ref, String crewId) {
   final currentUser = ref.watch(auth_providers.currentUserProvider);
   final jobMatchingService = ref.watch(jobMatchingServiceProvider);
-  final crew = ref.watch(crewByIdProvider(crewId));
 
-  if (currentUser == null || crew == null) {
+  if (currentUser == null) {
     return Stream.value([]);
   }
 
-  return jobMatchingService.getCrewFilteredJobsStream(crew).handleError((error, stackTrace) {
+  return jobMatchingService.getCrewFilteredJobsStream(crewId).handleError((error, stackTrace) {
     // Log error or handle as needed
-    return [];
+    if (kDebugMode) {
+      print('Error in crew filtered jobs stream: $error');
+    }
+    return Stream.value([]);
   });
 }
 

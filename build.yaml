@@ -1,0 +1,16 @@
+# Limit build_runner scope to avoid broken files during initial codegen bootstrap
+targets:
+  $default:
+    sources:
+      include:
+        - lib/**
+        - pubspec.yaml
+        - build.yaml
+      exclude:
+        - test/**
+        - example/**
+        - tool/**
+        - benchmark/**
+        - lib/features/crews/screens/crew_invitations_screen.dart
+        - lib/utils/crew_validation.dart
+        - lib/providers/riverpod/hierarchical_riverpod_provider.dart

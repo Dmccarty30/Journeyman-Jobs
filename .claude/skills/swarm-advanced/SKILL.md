@@ -1,6 +1,8 @@
 ---
 name: swarm-advanced
 description: Advanced swarm orchestration patterns for research, development, testing, and complex distributed workflows
+color: pink
+model: sonnet
 version: 2.0.0
 category: orchestration
 tags: [swarm, distributed, parallel, research, testing, development, coordination]

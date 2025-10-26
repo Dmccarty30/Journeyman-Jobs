@@ -10,6 +10,7 @@ import 'package:journeyman_jobs/services/notification_service.dart';
 import 'package:journeyman_jobs/services/auth_service.dart';
 import 'package:journeyman_jobs/services/app_lifecycle_service.dart';
 import 'package:journeyman_jobs/services/session_timeout_service.dart';
+import 'package:journeyman_jobs/services/hierarchical/hierarchical_initialization_service.dart';
 import 'package:journeyman_jobs/widgets/activity_detector.dart';
 import 'package:journeyman_jobs/widgets/session_activity_detector.dart';
 import 'package:journeyman_jobs/widgets/grace_period_warning_banner.dart';
@@ -17,6 +18,7 @@ import 'firebase_options.dart';
 import 'design_system/app_theme.dart';
 import 'navigation/app_router.dart'; // For route constants
 import 'navigation/app_router.dart' show routerProvider; // For the router provider
+import 'providers/riverpod/hierarchical_riverpod_provider.dart';
 // import 'providers/riverpod/theme_riverpod_provider.dart'; // DISABLED: Not needed while forcing light mode
 
 // Global app lifecycle service for token validation on app resume
@@ -24,6 +26,9 @@ late AppLifecycleService _appLifecycleService;
 
 // Global session timeout service for inactivity tracking
 late SessionTimeoutService _sessionTimeoutService;
+
+// Global hierarchical initialization service
+late HierarchicalInitializationService _hierarchicalInitializationService;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -73,6 +78,10 @@ void main() async {
   final authService = AuthService();
   _appLifecycleService = AppLifecycleService(authService, _sessionTimeoutService);
   _appLifecycleService.initialize();
+
+  // Initialize hierarchical data service for IBEW Union → Local → Member → Job hierarchy
+  // This provides efficient loading and caching of hierarchical data
+  _hierarchicalInitializationService = HierarchicalInitializationService();
 
   runApp(const ProviderScope(child: MyApp()));
 }

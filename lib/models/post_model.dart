@@ -35,10 +35,10 @@ class PostModel {
       id: doc.id,
       authorId: data['authorId'] ?? '',
       content: data['content'] ?? '',
-      timestamp: data['timestamp'] ?? Timestamp.now(),
+      timestamp: data['timestamp'] ?? data['createdAt'] ?? Timestamp.now(),
       likes: List<String>.from(data['likes'] ?? []),
       mediaUrls: List<String>.from(data['mediaUrls'] ?? []),
-      deleted: data['deleted'] ?? false,
+      deleted: data['deleted'] ?? data['isDeleted'] ?? false,
       authorName: data['authorName'], // Added to fromFirestore
       commentCount: data['commentCount'], // Added to fromFirestore
       comments: List<String>.from(data['comments'] ?? []), // Added to fromFirestore

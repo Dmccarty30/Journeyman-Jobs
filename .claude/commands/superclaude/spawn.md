@@ -18,7 +18,7 @@ personas: []
 
 ## Usage
 
-```
+```dart
 /sc:spawn [complex-task] [--strategy sequential|parallel|adaptive] [--depth normal|deep]
 ```
 
@@ -61,7 +61,7 @@ Key behaviors:
 
 ### Complex Feature Implementation
 
-```
+```dart
 /sc:spawn "implement user authentication system"
 # Breakdown: Database design → Backend API → Frontend UI → Testing
 # Coordinates across multiple domains with dependency management
@@ -69,7 +69,7 @@ Key behaviors:
 
 ### Large-Scale System Operation
 
-```
+```dart
 /sc:spawn "migrate legacy monolith to microservices" --strategy adaptive --depth deep
 # Enterprise-scale operation with sophisticated orchestration
 # Adaptive coordination based on operation characteristics
@@ -77,7 +77,7 @@ Key behaviors:
 
 ### Cross-Domain Infrastructure
 
-```
+```dart
 /sc:spawn "establish CI/CD pipeline with security scanning"
 # System-wide infrastructure operation spanning DevOps, Security, Quality domains
 # Parallel execution of independent components with validation gates

@@ -39,17 +39,20 @@ class FeedService {
         'mediaUrls': mediaUrls,
         'likes': <String>[],
         'reactions': <String, String>{}, // memberId -> reactionType
+        'userReactions': <String, String>{}, // Track user reactions
         'commentCount': 0,
         'isPinned': false,
         'isDeleted': false,
+        'deleted': false, // Add both for compatibility
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
+        'timestamp': FieldValue.serverTimestamp(), // Add for PostModel compatibility
       };
 
       final docRef = await _postsCollection.add(postData);
 
       if (kDebugMode) {
-        print('📝 Created post ${docRef.id} for crew $crewId');
+        print('📝 Created post ${docRef.id} for crew $crewId - GLOBAL FEED UPDATED');
       }
 
       return docRef.id;

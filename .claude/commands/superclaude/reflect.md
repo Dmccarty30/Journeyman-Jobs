@@ -18,7 +18,7 @@ personas: []
 
 ## Usage
 
-```
+```bash
 /sc:reflect [--type task|session|completion] [--analyze] [--validate]
 ```
 
@@ -63,7 +63,7 @@ Key behaviors:
 
 ### Task Adherence Reflection
 
-```
+```bash
 /sc:reflect --type task --analyze
 # Validates current approach against project goals
 # Identifies deviations and provides course correction recommendations
@@ -71,7 +71,7 @@ Key behaviors:
 
 ### Session Progress Analysis
 
-```
+```bash
 /sc:reflect --type session --validate
 # Comprehensive analysis of session work and information gathering
 # Quality assessment and gap identification for project improvement
@@ -79,7 +79,7 @@ Key behaviors:
 
 ### Completion Validation
 
-```
+```bash
 /sc:reflect --type completion
 # Evaluates task completion criteria against actual progress
 # Determines readiness for task completion and identifies remaining blockers

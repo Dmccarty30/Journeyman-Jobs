@@ -18,6 +18,8 @@ import '../features/crews/screens/tailboard_screen.dart'; // New import for Tail
 import '../features/crews/screens/create_crew_screen.dart'; // Import for CreateCrewScreen
 import '../features/crews/screens/join_crew_screen.dart'; // Import for JoinCrewScreen
 import '../features/crews/screens/crew_onboarding_screen.dart'; // Import for CrewOnboardingScreen
+import '../features/crews/screens/crew_chat_screen.dart'; // Import for CrewChatScreen
+import '../features/crews/screens/crew_invitations_screen.dart'; // Import for CrewInvitationsScreen
 
 // Placeholder screens for Phase 2
 import '../screens/home/home_screen.dart';
@@ -101,6 +103,8 @@ class AppRouter {
   static const String createCrew = '/crews/create'; // Kept for onboarding
   static const String joinCrew = '/crews/join'; // Kept for onboarding
   static const String crewOnboarding = '/crews/onboarding'; // New route for Crew Onboarding
+  static const String crewInvitations = '/crews/invitations'; // Route for CrewInvitationsScreen
+  static const String crewChat = '/crews/chat'; // Route for CrewChatScreen
   static const String settings = '/settings';
   static const String profile = '/profile';
   static const String help = '/help';
@@ -225,6 +229,29 @@ class AppRouter {
             path: crewOnboarding,
             name: 'crew-onboarding',
             builder: (context, state) => const CrewOnboardingScreen(),
+          ),
+          GoRoute(
+            path: crewInvitations,
+            name: 'crew-invitations',
+            builder: (context, state) => const CrewInvitationsScreen(),
+          ),
+          GoRoute(
+            path: '$crewChat/:crewId',
+            name: 'crew-chat',
+            builder: (context, state) {
+              final crewId = state.pathParameters['crewId']!;
+              final args = state.extra as Map<String, String>? ?? {};
+              final crewName = args['crewName'] ?? 'Crew Chat';
+              final directMessageTo = args['directMessageTo'];
+              final memberName = args['memberName'];
+
+              return CrewChatScreen(
+                crewId: crewId,
+                crewName: crewName,
+                directMessageTo: directMessageTo,
+                memberName: memberName,
+              );
+            },
           ),
           GoRoute(
             path: settings,

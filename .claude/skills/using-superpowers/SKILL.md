@@ -52,7 +52,7 @@ Before using a skill, announce that you are using it.
 
 **Why:** Transparency helps your human partner understand your process and catch errors early. It also confirms you actually read the skill.
 
-# About these skills
+## About these skills
 
 **Many skills contain rigid rules (TDD, debugging, verification).** Follow them exactly. Don't adapt away the discipline.
 

@@ -7,6 +7,12 @@ import '../../../providers/core_providers.dart' hide legacyCurrentUserProvider;
 import '../providers/crews_riverpod_provider.dart';
 import '../providers/feed_provider.dart';
 import '../widgets/post_card.dart';
+import '../../../models/job_model.dart';
+import '../../../widgets/rich_text_job_card.dart';
+import '../../../widgets/dialogs/job_details_dialog.dart';
+import '../../../electrical_components/jj_electrical_toast.dart';
+import '../providers/crew_jobs_riverpod_provider.dart';
+import '../../../screens/crew/crew_chat_screen.dart';
 
 class FeedTab extends ConsumerWidget {
   const FeedTab({super.key});
@@ -194,34 +200,347 @@ class FeedTab extends ConsumerWidget {
   }
 }
 
-class JobsTab extends ConsumerWidget {
+class JobsTab extends ConsumerStatefulWidget {
   const JobsTab({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<JobsTab> createState() => _JobsTabState();
+}
+
+class _JobsTabState extends ConsumerState<JobsTab> {
+  final ScrollController _scrollController = ScrollController();
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    // Handle infinite scrolling if needed in the future
+  }
+
+  void _showJobDetails(Job job) {
+    showDialog(
+      context: context,
+      builder: (context) => JobDetailsDialog(job: job),
+    );
+  }
+
+  void _handleBidAction(Job job) {
+    // TODO: Handle bid action for crew jobs
+    JJElectricalToast.showInfo(context: context, message: 'Bidding on job at ${job.company}');
+  }
+
+  List<Job> _getFilteredJobs(List<Job> jobs) {
+    if (_searchQuery.isEmpty) return jobs;
+
+    final query = _searchQuery.trim().toLowerCase();
+    return jobs.where((job) {
+      final company = job.company.toLowerCase();
+      final location = job.location.toLowerCase();
+      final jobTitle = job.jobTitle?.toLowerCase() ?? '';
+      final typeOfWork = job.typeOfWork?.toLowerCase() ?? '';
+
+      return company.contains(query) ||
+             location.contains(query) ||
+             jobTitle.contains(query) ||
+             typeOfWork.contains(query);
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final selectedCrew = ref.watch(selectedCrewProvider);
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.work_outline, size: 48, color: AppTheme.mediumGray),
-          const SizedBox(height: 16),
-          Text(
-            selectedCrew != null ? 'Jobs for ${selectedCrew.name}' : 'Jobs Tab Content',
-            style: Theme.of(context).textTheme.titleLarge,
+    // If no crew is selected, show a prompt to select a crew
+    if (selectedCrew == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.work_outline, size: 48, color: AppTheme.mediumGray),
+            const SizedBox(height: 16),
+            Text(
+              'No crew selected',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Select a crew to view job opportunities matching your crew preferences',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.mediumGray),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Watch crew data and crew filtered jobs using the real-time job matching service
+    final crewAsync = ref.watch(crewByIdProvider(selectedCrew.id));
+    final crewJobsAsync = ref.watch(crewFilteredJobsStreamProvider(selectedCrew.id));
+    final isLoading = ref.watch(isCrewJobsLoadingProvider(selectedCrew.id));
+    final error = ref.watch(crewJobsErrorProvider(selectedCrew.id));
+
+    final crew = crewAsync;
+    if (crew == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 16),
+            Text(
+              'Crew not found',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Unable to load crew data',
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+          children: [
+            // Crew info header
+            Container(
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.work, color: AppTheme.accentCopper, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Jobs for ${crew.name}',
+                        style: AppTheme.headlineSmall.copyWith(
+                          color: AppTheme.primaryNavy,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (crew.preferences.jobTypes.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppTheme.accentCopper.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '${crew.preferences.jobTypes.length} preferences',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.accentCopper,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  if (crew.preferences.jobTypes.isNotEmpty) ...[
+                    Text(
+                      'Job Types: ${crew.preferences.jobTypes.join(', ')}',
+                      style: AppTheme.bodySmall.copyWith(
+                        color: AppTheme.textSecondary,
+                      ),
+                    ),
+                  ],
+                  if (crew.preferences.constructionTypes.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      'Construction Types: ${crew.preferences.constructionTypes.join(', ')}',
+                      style: AppTheme.bodySmall.copyWith(
+                        color: AppTheme.textSecondary,
+                      ),
+                    ),
+                  ],
+                  if (crew.preferences.minHourlyRate != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      'Min Rate: \$${crew.preferences.minHourlyRate!.toStringAsFixed(2)}/hr',
+                      style: AppTheme.bodySmall.copyWith(
+                        color: AppTheme.textSecondary,
+                      ),
+                    ),
+                  ],
+                  if (crew.preferences.maxDistanceMiles != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      'Max Distance: ${crew.preferences.maxDistanceMiles} miles',
+                      style: AppTheme.bodySmall.copyWith(
+                        color: AppTheme.textSecondary,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+
+        // Search bar
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: TextField(
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Search jobs...',
+              prefixIcon: Icon(Icons.search, color: AppTheme.accentCopper),
+              filled: true,
+              fillColor: AppTheme.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                borderSide: BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthCopper),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                borderSide: BorderSide(
+                  color: AppTheme.accentCopper.withValues(alpha: 0.5),
+                  width: AppTheme.borderWidthCopperThin,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                borderSide: BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthCopper),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingMd,
+                vertical: AppTheme.spacingMd,
+              ),
+            ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            selectedCrew != null
-                ? 'Shared job opportunities for ${selectedCrew.name} appear here'
-                : 'Select a crew to view shared job opportunities',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.mediumGray),
-            textAlign: TextAlign.center,
+        ),
+
+        const SizedBox(height: 8),
+
+        // Jobs list
+        Expanded(
+          child: crewJobsAsync.when(
+            loading: () => isLoading && _searchQuery.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : const SizedBox.shrink(),
+            error: (error, stack) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error loading crew jobs',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    error.toString(),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => ref.invalidate(crewFilteredJobsStreamProvider(selectedCrew.id)),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
+            data: (jobs) {
+              final filteredJobs = _getFilteredJobs(jobs);
+
+              if (filteredJobs.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.work_outline, size: 48, color: AppTheme.mediumGray),
+                      const SizedBox(height: 16),
+                      Text(
+                        _searchQuery.isNotEmpty ? 'No matching jobs found' : 'No jobs available',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _searchQuery.isNotEmpty
+                            ? 'Try adjusting your search terms'
+                            : 'Jobs matching your crew preferences will appear here',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.mediumGray),
+                        textAlign: TextAlign.center,
+                      ),
+                      if (_searchQuery.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _searchQuery = '';
+                            });
+                          },
+                          child: const Text('Clear Search'),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              }
+
+              return RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(crewFilteredJobsStreamProvider(selectedCrew.id));
+                },
+                color: AppTheme.accentCopper,
+                backgroundColor: AppTheme.white,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(16),
+                  itemCount: filteredJobs.length,
+                  itemBuilder: (context, index) {
+                    final job = filteredJobs[index];
+                    return RichTextJobCard(
+                      job: job,
+                      onDetails: () => _showJobDetails(job),
+                      onBid: () => _handleBidAction(job),
+                    ).animate().fadeIn(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    ).slideY(
+                      begin: 0.1,
+                      end: 0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                ),
+              );
+            },
           ),
+        ),
         ],
-      ),
-    );
+      );
   }
 }
 
@@ -232,26 +551,33 @@ class ChatTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedCrew = ref.watch(selectedCrewProvider);
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.chat_bubble_outline, size: 48, color: AppTheme.mediumGray),
-          const SizedBox(height: 16),
-          Text(
-            selectedCrew != null ? 'Chat for ${selectedCrew.name}' : 'Chat Tab Content',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            selectedCrew != null
-                ? 'Direct messaging and group chat for ${selectedCrew.name} appear here'
-                : 'Select a crew to view direct messaging and group chat',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.mediumGray),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+    // If no crew is selected, show a prompt to select a crew
+    if (selectedCrew == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.chat_bubble_outline, size: 48, color: AppTheme.mediumGray),
+            const SizedBox(height: 16),
+            Text(
+              'Select a Crew',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Select a crew to view direct messaging and group chat',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.mediumGray),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Navigate to the actual CrewChatScreen
+    return CrewChatScreen(
+      crewId: selectedCrew.id,
+      crewName: selectedCrew.name,
     );
   }
 }
@@ -364,12 +690,16 @@ class MembersTab extends ConsumerWidget {
                             subtitle: Text('Send a private message to ${member.customTitle ?? member.role.toString().split('.').last}'),
                             onTap: () {
                               Navigator.pop(context);
-                              // TODO: Navigate to direct message screen
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Direct messaging coming soon!'),
-                                  backgroundColor: AppTheme.infoBlue,
-                                ),
+                              // Navigate to crew chat with member context
+                              Navigator.pushNamed(
+                                context,
+                                '/crews/chat/${selectedCrew.id}',
+                                arguments: {
+                                  'crewId': selectedCrew.id,
+                                  'crewName': selectedCrew.name,
+                                  'directMessageTo': member.userId,
+                                  'memberName': (member.customTitle ?? member.role.toString().split('.').last),
+                                },
                               );
                             },
                           ),

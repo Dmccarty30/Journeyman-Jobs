@@ -32,7 +32,7 @@ The Journeyman Jobs backend has **10 overlapping service implementations** total
 
 **Files & Line Counts**:
 
-```
+```dart
 firestore_service.dart                    305 lines (Base CRUD)
 resilient_firestore_service.dart          574 lines (+ Retry logic)
 search_optimized_firestore_service.dart   448 lines (+ Search)
@@ -43,7 +43,7 @@ TOTAL                                   1,812 lines
 
 **Inheritance Pattern** (PROBLEM):
 
-```
+```mermaid
 FirestoreService (base)
   ↓
 ResilientFirestoreService
@@ -320,7 +320,7 @@ Reduction: 74% (-1,352 lines)
 
 **Need to verify file existence and analyze**:
 
-```
+```mermaid
 notification_service.dart              524 lines (General)
 enhanced_notification_service.dart     418 lines (IBEW-specific)
 local_notification_service.dart        402 lines (Scheduled)

@@ -8,10 +8,10 @@ Update the user authentication and session handling logic in the application to 
 Specific Requirements:
 
 **Target Behaviors to Modify:**
-
-Idle/inactivity detection (e.g., no user input or page interactions for a defined period).
-App closure or backgrounding (e.g., user switches away from the app or explicitly closes it).
-Any other automatic sign-out triggers (e.g., network disconnection, timeout on suspended sessions).
+***THIS FUNCTION SHOULD BE DISABLED DURING DEVELOPMENT AND TESTING.DURING WHICH NO TIMEOUT/IDLE TIME LIMITATION SHALL BE APPLIED***
+||| `Idle/inactivity detection (e.g., no user input or page interactions for a defined period).
+||| App closure or backgrounding (e.g., user switches away from the app or explicitly closes it).
+||| Any other automatic sign-out triggers (e.g., network disconnection, timeout on suspended sessions).`
 
 **Current vs. Desired Behavior:**
 
@@ -41,11 +41,7 @@ Expected Output: Provide updated code snippets, configuration changes, or pseudo
 
 ## APP THEME
 
-- **Dark Mode**
-
 ## ONBOARDING SCREENS
-
-- ***REMOVE THE DARK MODE THEME FROM EVERY SCREEN FROM THE WELCOME SCREEN TO THE HOME SCREEN AND APPLY THE APP WIDE ESTABLISHED LIGHT MODE THEME.***
 
 ### WELCOME SCREEN
 
@@ -69,137 +65,34 @@ Expected Output: Provide updated code snippets, configuration changes, or pseudo
 
 - **lib\screens\storm\home_screen.dart**
 
-- When I navigate to the home screen after onboarding it still says welcome back and the users email, that needs to change to the user's first and last name
-- I don't understand why in the terminal, it is providing job descriptions, but the app is unable to display those suggested jobs. Here is a portion of the terminal output..
-
-```terminal
-I/flutter (23394): [RouterRefresh] Onboarding status changed - triggering router refresh
-D/ConnectivityManager(23394): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4671)] [android.net.ConnectivityManager.registerDefaultNetworkCallbackForUid(ConnectivityManager.java:5360)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5327)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5301)] [com.google.firebase.firestore.remote.AndroidConnectivityMonitor.configureNetworkMonitoring(AndroidConnectivityMonitor.java:87)] [com.google.firebase.firestore.remote.AndroidConnectivityMonitor.<init>(AndroidConnectivityMonitor.java:64)] [com.google.firebase.firestore.remote.RemoteComponenetProvider.createConnectivityMonitor(RemoteComponenetProvider.java:94)] [com.google.firebase.firestore.remote.RemoteComponenetProvider.initialize(RemoteComponenetProvider.java:41)] [com.google.firebase.firestore.core.ComponentProvider.initialize(ComponentProvider.java:158)] [com.google.firebase.firestore.core.FirestoreClient.initialize(FirestoreClient.java:284)] [com.google.firebase.firestore.core.FirestoreClient.lambda$new$0$com-google-firebase-firestore-core-FirestoreClient(FirestoreClient.java:109)] [com.google.firebase.firestore.core.FirestoreClient$$ExternalSyntheticLambda10.run(D8$$SyntheticClass:0)] [com.google.firebase.firestore.util.AsyncQueue.lambda$enqueue$2(AsyncQueue.java:445)] [com.google.firebase.firestore.util.AsyncQueue$$ExternalSyntheticLambda4.call(D8$$SyntheticClass:0)] [com.google.firebase.firestore.util.AsyncQueue$SynchronizedShutdownAwareExecutor.lambda$executeAndReportResult$1(AsyncQueue.java:330)] [com.google.firebase.firestore.util.AsyncQueue$SynchronizedShutdownAwareExecutor$$ExternalSyntheticLambda2.run(D8$$SyntheticClass:0)] [java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:487)] [java.util.concurrent.FutureTask.run(FutureTask.java:264)] [java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)] [com.google.firebase.firestore.util.AsyncQueue$SynchronizedShutdownAwareExecutor$DelayedStartFactory.run(AsyncQueue.java:235)] [java.lang.Thread.run(Thread.java:1012)]
-D/ConnectivityManager(23394): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4671)] [android.net.ConnectivityManager.registerDefaultNetworkCallbackForUid(ConnectivityManager.java:5360)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5327)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5301)] [io.grpc.android.AndroidChannelBuilder$AndroidChannel.configureNetworkMonitoring(AndroidChannelBuilder.java:217)] [io.grpc.android.AndroidChannelBuilder$AndroidChannel.<init>(AndroidChannelBuilder.java:198)] [io.grpc.android.AndroidChannelBuilder.build(AndroidChannelBuilder.java:169)] [com.google.firebase.firestore.remote.GrpcCallProvider.initChannel(GrpcCallProvider.java:116)] [com.google.firebase.firestore.remote.GrpcCallProvider.lambda$initChannelTask$6$com-google-firebase-firestore-remote-GrpcCallProvider(GrpcCallProvider.java:242)] [com.google.firebase.firestore.remote.GrpcCallProvider$$ExternalSyntheticLambda4.call(D8$$SyntheticClass:0)] [com.google.android.gms.tasks.zzz.run(com.google.android.gms:play-services-tasks@@18.1.0:1)] [com.google.firebase.firestore.util.ThrottledForwardingExecutor.lambda$execute$0$com-google-firebase-firestore-util-ThrottledForwardingExecutor(ThrottledForwardingExecutor.java:54)] [com.google.firebase.firestore.util.ThrottledForwardingExecutor$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)] [java.lang.Thread.run(Thread.java:1012)]
-I/flutter (23394): [RouterRefresh] Auth state changed - triggering router refresh
-I/flutter (23394): [RouterRefresh] Onboarding status changed - triggering router refresh
-W/WindowOnBackDispatcher(23394): OnBackInvokedCallback is not enabled for the application.
-W/WindowOnBackDispatcher(23394): Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
-I/flutter (23394): ConcurrentOperationManager: Queued operation loadJobs_1761329119209_0 (loadJobs)
-I/flutter (23394): ConcurrentOperationManager: Starting operation loadJobs_1761329119209_0 (loadJobs)
-I/flutter (23394): ConnectivityService initialized - Initial state: Online
-I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
-I/flutter (23394): 📋 User preferences:
-I/flutter (23394):   - Preferred locals: [84, 111, 222]
-I/flutter (23394):   - Construction types: [distribution, transmission, dataCenter, industrial]
-I/flutter (23394):   - Hours per week: >70
-I/flutter (23394):   - Per diem: 200+
-I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
-D/ConnectivityManager(23394): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4671)] [android.net.ConnectivityManager.registerDefaultNetworkCallbackForUid(ConnectivityManager.java:5360)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5327)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5301)] [dev.fluttercommunity.plus.connectivity.ConnectivityBroadcastReceiver.onListen(ConnectivityBroadcastReceiver.java:77)] [io.flutter.plugin.common.EventChannel$IncomingStreamRequestHandler.onListen(EventChannel.java:218)] [io.flutter.plugin.common.EventChannel$IncomingStreamRequestHandler.onMessage(EventChannel.java:197)] [io.flutter.embedding.engine.dart.DartMessenger.invokeHandler(DartMessenger.java:292)] [io.flutter.embedding.engine.dart.DartMessenger.lambda$dispatchMessageToQueue$0$io-flutter-embedding-engine-dart-DartMessenger(DartMessenger.java:319)] [io.flutter.embedding.engine.dart.DartMessenger$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)]
-W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
-I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
-I/flutter (23394): 📋 User preferences:
-I/flutter (23394):   - Preferred locals: [84, 111, 222]
-I/flutter (23394):   - Construction types: [distribution, transmission, dataCenter, industrial]
-I/flutter (23394):   - Hours per week: >70
-I/flutter (23394):   - Per diem: 200+
-I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
-I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
-I/flutter (23394): 📋 User preferences:
-I/flutter (23394):   - Preferred locals: [84, 111, 222]
-I/flutter (23394):   - Construction types: [distribution, transmission, dataCenter, industrial]
-I/flutter (23394):   - Hours per week: >70
-I/flutter (23394):   - Per diem: 200+
-I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
-I/VRI[MainActivity]@e4e64a(23394): call setFrameRateCategory for touch hint category=no preference, reason=boost timeout, vri=VRI[MainActivity]@e4e64a
-I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
-I/flutter (23394): 📋 User preferences:
-I/flutter (23394):   - Preferred locals: [84, 111, 222]
-I/flutter (23394):   - Construction types: [distribution, transmission, dataCenter, industrial]
-I/flutter (23394):   - Hours per week: >70
-I/flutter (23394):   - Per diem: 200+
-I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
-I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
-I/flutter (23394): 📋 User preferences:
-I/flutter (23394):   - Preferred locals: [84, 111, 222]
-I/flutter (23394):   - Construction types: [distribution, transmission, dataCenter, industrial]
-I/flutter (23394):   - Hours per week: >70
-I/flutter (23394):   - Per diem: 200+
-I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
-I/flutter (23394): 🔍 DEBUG: Loading suggested jobs for user YWmNWnSM3FWMDKSfO0mmuFTjurS2
-I/flutter (23394): 📋 User preferences:
-I/flutter (23394):   - Preferred locals: [84, 111, 222]
-I/flutter (23394):   - Construction types: [distribution, transmission, dataCenter, industrial]
-I/flutter (23394):   - Hours per week: >70
-I/flutter (23394):   - Per diem: 200+
-I/flutter (23394): 🔄 Querying jobs where local in: [84, 111, 222]
-W/Firestore(23394): (26.0.2) [Firestore]: Listen for Query(target=Query(jobs where localin[84,111,222] and deleted==false order by -timestamp, -__name__);limitType=LIMIT_TO_FIRST) failed: Status{code=FAILED_PRECONDITION, description=The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/journeyman-jobs/firestore/indexes?create_composite=Ckxwcm9qZWN0cy9qb3VybmV5bWFuLWpvYnMvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2pvYnMvaW5kZXhlcy9fEAEaCwoHZGVsZXRlZBABGgkKBWxvY2FsEAEaDQoJdGltZXN0YW1wEAIaDAoIX19uYW1lX18QAg, cause=null}
-```
+- On the home screen underneath welcome back text it should display the user's first name and last name as if the app were welcoming them so it would say welcome back David Mccarty instead of Journeyman or their email Peter had I have addressed this issue multiple times I don't understand why it still doesn't say the user's first name and last name.
 
 - *Quick Actions*
 
 - *Suggested Jobs*
 
-- Use @docs\plans\MISSING_METHODS_IMPLEMENTATION.dart as a guide to implementing suggested jobs based off of user defined job preferences
-
 ## JOB SCREEN
 
 - **lib\screens\storm\jobs_screen.dart**
-
-- I noticed that the text formatting on the jobs card on the job screen is correct with title Case however when you put details and the dialog pop up appears none of the text values are formatted as Title Case so I need to apply the Title Case formatting on the dialog box for jobs on the job screen
 
 ## STORM SCREEN
 
 - **lib\screens\storm\storm_screen.dart**
 
-- **Contractor Section**
+- There is a newly created section for the Youtube video player widget this is so that we can stream Fox News Weather now from Youtube for free in real time while they report on the current severe weather conditions. However there's a tag or title in this section that says `admin only` that needs to be removed.
+- The Youtube video player widget needs to be completed It has simply been added to the screen there isn't any specific channel navigation or URL to identify which channel or video to play There is no logic behind it.
 
-- The contractor section sill doesn't display the `contractor cards`. I need to figure out why.
+- **Storm Contractor Section**
+  
+- In the Storm Contractor section The `contractor cards` still do not populate There's an error saying "Error loading contractors cloud fire store permission denied the caller does not have permissions to execute the specific operation" This needs to be changed The permissions need to be relaxed so that any user has the permission to query the database to read the documents in the `stormcontractors` collection
 
 ## TAILBOARD SCREEN
 
 - **lib\features\crews\screens\tailboard_screen.dart**
 
-- ***FIX OVERFLOW ERROR***
-- MODIFY the `succes snack bar/toast` that appears when  the `Foreman` adjusts the crew settings on the tailboard screen.to implement the app theme `electrical toast`
-
-```terminal
-══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
-The following assertion was thrown during layout:
-A RenderFlex overflowed by 25 pixels on the right.
-
-The relevant error-causing widget was:
-  Row
-  Row:file:///C:/Users/david/Desktop/Journeyman-Jobs/lib/features/crews/screens/tailboard_screen.dart:357:14
-
-To inspect this widget in Flutter DevTools, visit:
-http://127.0.0.1:9103/#/inspector?uri=http%3A%2F%2F127.0.0.1%3A55030%2F2cfMmq1q1bk%3D%2F&inspectorRef=inspector-0
-
-The overflowing RenderFlex has an orientation of Axis.horizontal.
-The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
-black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
-Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
-RenderFlex to fit within the available space instead of being sized to their natural size.
-This is considered an error condition because it indicates that there is content that cannot be
-seen. If the content is legitimately bigger than the available space, consider clipping it with a
-ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
-like a ListView.
-The specific RenderFlex in question is: RenderFlex#3948c relayoutBoundary=up9 OVERFLOWING:
-  creator: Row ← Padding ← DecoratedBox ← Container ← Flexible ← Row ← LayoutBuilder ← Column ←
-    Padding ← ColoredBox ← Container ← Column ← ⋯
-  parentData: offset=Offset(12.0, 8.0) (can use size)
-  constraints: BoxConstraints(0.0<=w<=93.3, 0.0<=h<=Infinity)
-  size: Size(93.3, 18.0)
-  direction: horizontal
-  mainAxisAlignment: start
-  mainAxisSize: min
-  crossAxisAlignment: center
-  textDirection: ltr
-  verticalDirection: down
-  spacing: 0.0
-◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
-════════════════════════════════════════════════════════════════════════════════════════════════════
-
-```
+- The UR needs to be modified I like a lot of dynamic and reactive features and animations however the theme the color theme is too dark It was as if the user activated dark mode but didn't the user has light mode activated so the screen needs to have primarily white or light colors according to the Light Mode app theme.
+- I'm not quite sure what the active pending and applaud containers of four I'm guessing it's related to the member count of that crew. They can be removed and replaced with something else maybe maybe keep the act of container which at most conserved team members because each crew has a limit of 10 members so that that logic needs to be applied you can remove the pending and applied containers and replace it with something else
+- At the top of the screen you have the name of the crew needs to be displayed I see that now but we can make that a better layout and easier to read The widgets and layout needs to be needs to flow and mesh a little better than what it does or it is
 
 ### CREATE CREWS SCREEN
 
@@ -209,22 +102,25 @@ The specific RenderFlex in question is: RenderFlex#3948c relayoutBoundary=up9 OV
 
 - **lib\widgets\dialogs\user_job_preferences_dialog.dart**
 
-- When i press `save preferences button` on the dialog popup, i get an " error saving preferences, try again" notification. I need to investigate this
-
 ### JOBS
 
 - **docs\tailboard\jobs-tab.png**
+
+- For the `Jobs tab` this suggested jobs uses the exact same suggested jobs sort and filter algorithm and and function as the sorting filter function for suggested jobs for the individual user at which the user sets the job preferences during onboarding so that exact same sort and filter function needs to be applied for the suggested jobs immediately after the `foreman` sets the job preferences Sir as soon as the `foreman` sets the job preferences there should be jobs displayed on the `Jobs tab` immediately. For some reason no messages are displayed no jobs are displayed however the `foreman` is displayed under the `Members tab` so that is semi functional there needs to be some improvements but at least that tab works.
 
 ### FEED
 
 - **docs\tailboard\feed-tab.png**
 
-- When a user posts a massage using the `feed tab` that message should post and be displayed immediately after sending
+- When a user posts a massage using the `feed tab` that message should post and be displayed immediately after sending it. Regardless of the amount of users the app has or the number of members that are in a crew, or whatever. That is the sole purpose for the `feed tab` is that it allows the individual user the ability to post a message so all the other users can see it and any given user can interact with any other user whether they're a member of a crew or not.
 
 ### CHAT
 
 - **docs\tailboard\chat-tab.png**
-- When a user sends a massage to the crew using the `chat tab` that message should post and be displayed immediately after sending
+
+- The same logic goes for the CH  Sending messages to the other members of a crew and only for members of that crew.
+- As soon as a member post or sends a message it needs to be displayed in the real time window.
+- This is like AA live feed type system so if user one post a message then everyone including user one can see the message and any other member can respond so let's say user 2 reads the message and then replies to that message whenever user two posts that message then it is also displayed in real time so that all members can see the message regardless of the amount of members in a crew or if or whom the message was directed towards There should be no reason why user one can't post 30 consecutive messages back to back and not every single one of those messages be displayed in real time in the order of which it was posted.
 
 ### MEMBERS
 
@@ -234,19 +130,13 @@ The specific RenderFlex in question is: RenderFlex#3948c relayoutBoundary=up9 OV
 
 - **lib\screens\storm\locals_screen.dart**
 
+- So with implementation of a `unified job card` given that there were six separate Cards but serve all serve the same purpose yet only one or two of the cards were actually used in the app while the other ones were dead code and false references the `locals card` needs to be redesigned Specifically for the type of data query from the `locals collection`.
+
 ## SETTINGS SCREEN
 
 - `ACCOUNT SECTION`
 
 - **lib\screens\storm\settings_screen.dart**
-
-- On the setting screen at the top it says Welcome back brother I don't understand why this is here on the settings screen this is not a landing page That makes no sense
-
-- When you click on the job preference container in the profile section of the settings screen dialog box appears in that dialog box need to correct the overflow error on the save preference button
-- Need to add journeyman lineman as a classification on the job preference remove apprentice electrician Remove Master electrician remove solar systems technician Remove Instrumentation technician
-- In the construction type section remove renewable energy education health care transportation and manufacturing
-- Remove min minimum hourly wage from dialog box And maximum travel distance apply the AT theme toast the electrical circuit toast or snack bar that appears when you save your preferences
-- ** Need to implement or add so update user document or preferences related to the user when the user presses the save preferences button because I just checked Firebase and there's nothing in the fire base collection
 
 ### PROFILE SCREEN
 
@@ -298,9 +188,4 @@ The specific RenderFlex in question is: RenderFlex#3948c relayoutBoundary=up9 OV
 
 - **HELPFUL**
 
-- ADD a container for "Union Pay Scales". and have the link icon connected to <https://unionpayscales.com/trades/ibew-linemen/>
-- ADD another container for "Union Pay Scales". and have the link icon and have it set to dispay @lib\widgets\pay_scale_card.dart instead of navidating to the devices browser
-
 - **SAFETY**
-
-- connect NFPA to <https://www.nfpa.org/en/for-professionals/codes-and-standards/list-of-codes-and-standards#sortCriteria=%40computedproductid%20ascending%2C%40productid%20ascending&aq=%40culture%3D%22en%22&cq=%40tagtype%3D%3D(%22Standards%20Development%20Process%22)%20%20>

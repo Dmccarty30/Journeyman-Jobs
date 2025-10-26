@@ -3,6 +3,7 @@ name: spec-panel
 description: "Multi-expert specification review and improvement using renowned specification and software engineering experts"
 category: analysis
 complexity: enhanced
+model: sonnet
 mcp-servers: [sequential, context7]
 personas: [technical-writer, system-architect, quality-engineer]
 ---
@@ -18,7 +19,7 @@ personas: [technical-writer, system-architect, quality-engineer]
 
 ## Usage
 
-```
+```dart
 /sc:spec-panel [specification_content|@file] [--mode discussion|critique|socratic] [--experts "name1,name2"] [--focus requirements|architecture|testing|compliance] [--iterations N] [--format standard|structured|detailed]
 ```
 
@@ -131,7 +132,7 @@ Key behaviors:
 
 **Example Output**:
 
-```
+```dart
 KARL WIEGERS: "The requirement 'SHALL handle failures gracefully' lacks specificity. 
 What constitutes graceful handling? What types of failures are we addressing?"
 
@@ -160,7 +161,7 @@ How do upstream services know what type of failure occurred?"
 
 **Example Output**:
 
-```
+```dart
 === REQUIREMENTS ANALYSIS ===
 
 KARL WIEGERS - Requirements Quality Assessment:
@@ -197,7 +198,7 @@ MARTIN FOWLER - Interface Design:
 
 **Example Output**:
 
-```
+```dart
 ALISTAIR COCKBURN: "What is the fundamental problem this specification is trying to solve?"
 
 KARL WIEGERS: "Who are the primary stakeholders affected by these requirements?"

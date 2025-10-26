@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:journeyman_jobs/features/crews/models/crew.dart';
 import 'package:journeyman_jobs/features/crews/models/crew_preferences.dart';
@@ -155,132 +156,160 @@ class JobMatchingService {
   /// Get filtered jobs stream for a crew based on preferences with cascading fallback
   ///
   /// **IMPLEMENTATION:**
+  /// - Listens to BOTH job changes AND crew preference changes in real-time
   /// - Uses simple orderBy query (NO composite index required)
   /// - Client-side filtering for all criteria
   /// - 4-level cascade with accumulation (max 20 jobs)
   /// - GUARANTEES jobs display when they exist in Firestore
   ///
   /// Architecture:
-  /// 1. Fetches 100 recent jobs with simple orderBy query
-  /// 2. Implements 4-level cascade with accumulation:
+  /// 1. Listens to crew document for preference changes
+  /// 2. Fetches 100 recent jobs with simple orderBy query
+  /// 3. Implements 4-level cascade with accumulation:
   ///    - Level 1: Exact match (job types + construction types + wage + distance)
   ///    - Level 2: Relaxed match (job types + construction types only)
   ///    - Level 3: Minimal match (job types only)
   ///    - Level 4: Fallback to recent jobs (no filtering)
-  /// 3. Each level adds unique jobs to results (Set-based deduplication)
-  /// 4. Preserves timestamp descending order
+  /// 4. Each level adds unique jobs to results (Set-based deduplication)
+  /// 5. Preserves timestamp descending order
   ///
   /// UX guarantee: Crews ALWAYS see jobs when jobs exist in Firestore
-  Stream<List<Job>> getCrewFilteredJobsStream(Crew crew) {
+  /// UX guarantee: Jobs update IMMEDIATELY when foreman changes preferences
+  Stream<List<Job>> getCrewFilteredJobsStream(String crewId) {
     const int kMaxSuggested = 20;
-    final prefs = crew.preferences;
 
     if (kDebugMode) {
-      print('\n🔍 DEBUG: Loading crew filtered jobs for ${crew.name}');
-      print('📋 Crew preferences:');
-      print('  - Job types: ${prefs.jobTypes}');
-      print('  - Construction types: ${prefs.constructionTypes}');
-      print('  - Min hourly rate: \$${prefs.minHourlyRate}');
-      print('  - Max distance: ${prefs.maxDistanceMiles} miles');
+      print('\n🔍 DEBUG: Starting real-time crew filtered jobs stream for crew: $crewId');
     }
 
-    // Stream of 100 recent jobs with simple query (no index required)
-    return _firestore
+    // Listen to crew document for preference changes
+    final crewStream = _firestore.collection('crews').doc(crewId).snapshots();
+
+    // Listen to jobs collection for job changes
+    final jobsStream = _firestore
         .collection('jobs')
         .orderBy('timestamp', descending: true)
         .limit(100)
-        .snapshots()
-        .map((snapshot) {
-      // Convert to Job objects with client-side deleted filter
-      final allJobs = snapshot.docs
-          .map((doc) {
-            final data = doc.data();
-            data['id'] = doc.id;
-            return Job.fromJson(data);
-          })
-          .where((job) => job.deleted != true) // Client-side deleted filter
-          .toList();
+        .snapshots();
 
-      if (kDebugMode) {
-        print('📊 Fetched ${allJobs.length} jobs from Firestore for crew ${crew.name}');
-      }
+    // Combine both streams to react to changes in either crew preferences or jobs
+    return CombineLatestStream.combine2(
+      crewStream,
+      jobsStream,
+      (crewDoc, jobsSnapshot) {
+        // Parse updated crew data
+        final crewData = crewDoc.data() as Map<String, dynamic>?;
+        if (crewData == null || !crewDoc.exists) {
+          if (kDebugMode) {
+            print('⚠️ Crew document not found: $crewId');
+          }
+          return <Job>[];
+        }
 
-      // 4-LEVEL CASCADE WITH ACCUMULATION
+        crewData['id'] = crewDoc.id;
+        final crew = Crew.fromFirestore(crewDoc);
+        final prefs = crew.preferences;
 
-      final List<Job> results = [];
-      final Set<String> seenIds = {}; // Deduplication
+        if (kDebugMode) {
+          print('\n🔍 DEBUG: Processing real-time update for ${crew.name}');
+          print('📋 Crew preferences:');
+          print('  - Job types: ${prefs.jobTypes}');
+          print('  - Construction types: ${prefs.constructionTypes}');
+          print('  - Min hourly rate: \$${prefs.minHourlyRate}');
+          print('  - Max distance: ${prefs.maxDistanceMiles} miles');
+        }
 
-      /// Helper to add jobs from a tier without duplicates
-      void addTier(List<Job> tier) {
-        for (final job in tier) {
-          if (seenIds.add(job.id)) {
-            // Only add if new
-            results.add(job);
-            if (results.length >= kMaxSuggested) break;
+        // Convert jobs to Job objects with client-side deleted filter
+        final allJobs = jobsSnapshot.docs
+            .map((doc) {
+              final data = doc.data();
+              data['id'] = doc.id;
+              return Job.fromJson(data);
+            })
+            .where((job) => job.deleted != true) // Client-side deleted filter
+            .toList();
+
+        if (kDebugMode) {
+          print('📊 Fetched ${allJobs.length} jobs from Firestore for crew ${crew.name}');
+        }
+
+        // 4-LEVEL CASCADE WITH ACCUMULATION
+
+        final List<Job> results = [];
+        final Set<String> seenIds = {}; // Deduplication
+
+        /// Helper to add jobs from a tier without duplicates
+        void addTier(List<Job> tier) {
+          for (final job in tier) {
+            if (seenIds.add(job.id)) {
+              // Only add if new
+              results.add(job);
+              if (results.length >= kMaxSuggested) break;
+            }
           }
         }
-      }
 
-      // LEVEL 1: Exact match (all criteria)
-      final l1 = _filterJobsExact(allJobs, prefs, crew);
-      if (l1.isNotEmpty) {
-        _logCascade(
-          level: 'L1',
-          matchedCount: l1.length,
-          totalCount: allJobs.length,
-          extraInfo: 'Exact match - ${crew.name}',
-        );
-        addTier(l1);
-      }
-
-      // LEVEL 2: Relaxed match (job types + construction types)
-      if (results.length < kMaxSuggested) {
-        final l2 = _filterJobsRelaxed(allJobs, prefs, crew);
-        if (l2.isNotEmpty) {
+        // LEVEL 1: Exact match (all criteria)
+        final l1 = _filterJobsExact(allJobs, prefs, crew);
+        if (l1.isNotEmpty) {
           _logCascade(
-            level: 'L2',
-            matchedCount: l2.length,
+            level: 'L1',
+            matchedCount: l1.length,
             totalCount: allJobs.length,
-            extraInfo: 'Relaxed match - ${crew.name}',
+            extraInfo: 'Exact match - ${crew.name}',
           );
-          addTier(l2);
+          addTier(l1);
         }
-      }
 
-      // LEVEL 3: Job types only match
-      if (results.length < kMaxSuggested) {
-        final l3 = _filterJobsByTypes(allJobs, prefs);
-        if (l3.isNotEmpty) {
+        // LEVEL 2: Relaxed match (job types + construction types)
+        if (results.length < kMaxSuggested) {
+          final l2 = _filterJobsRelaxed(allJobs, prefs, crew);
+          if (l2.isNotEmpty) {
+            _logCascade(
+              level: 'L2',
+              matchedCount: l2.length,
+              totalCount: allJobs.length,
+              extraInfo: 'Relaxed match - ${crew.name}',
+            );
+            addTier(l2);
+          }
+        }
+
+        // LEVEL 3: Job types only match
+        if (results.length < kMaxSuggested) {
+          final l3 = _filterJobsByTypes(allJobs, prefs);
+          if (l3.isNotEmpty) {
+            _logCascade(
+              level: 'L3',
+              matchedCount: l3.length,
+              totalCount: allJobs.length,
+              extraInfo: 'Job types only - ${crew.name}',
+            );
+            addTier(l3);
+          }
+        }
+
+        // LEVEL 4: Fallback to recent (all remaining jobs)
+        if (results.length < kMaxSuggested) {
           _logCascade(
-            level: 'L3',
-            matchedCount: l3.length,
+            level: 'L4',
+            matchedCount: allJobs.length,
             totalCount: allJobs.length,
-            extraInfo: 'Job types only - ${crew.name}',
+            extraInfo: 'Fallback (recent jobs) - ${crew.name}',
           );
-          addTier(l3);
+          addTier(allJobs);
         }
-      }
 
-      // LEVEL 4: Fallback to recent (all remaining jobs)
-      if (results.length < kMaxSuggested) {
         _logCascade(
-          level: 'L4',
-          matchedCount: allJobs.length,
+          level: 'FINAL',
+          matchedCount: results.length,
           totalCount: allJobs.length,
-          extraInfo: 'Fallback (recent jobs) - ${crew.name}',
+          extraInfo: 'Total crew jobs - ${crew.name}',
         );
-        addTier(allJobs);
-      }
 
-      _logCascade(
-        level: 'FINAL',
-        matchedCount: results.length,
-        totalCount: allJobs.length,
-        extraInfo: 'Total crew jobs - ${crew.name}',
-      );
-
-      return results;
-    });
+        return results;
+      },
+    );
   }
 
   /// Helper: Log cascade results for debugging

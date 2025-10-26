@@ -40,7 +40,8 @@
       "Bash(python3:*)",
       "Bash(find:*)",
       "Bash(dir:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(flutter pub deps:*)"
     ],
     "deny": [
       "Bash(rm -rf /)"
@@ -48,10 +49,8 @@
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
-    "claude-flow",
-    "ruv-swarm",
-    "serena",
     "claude-flow@alpha",
+    "ruv-swarm",
     "flow-nexus",
     "agentic-payments"
   ],
