@@ -3,11 +3,13 @@
 Optimize development workflows, reduce friction, and improve team velocity.
 
 ## Usage
+
 ```
 @dx-optimize [area]
 ```
 
 ## Areas
+
 - **environment** - Setup and configuration optimization
 - **workflow** - Build, test, and deployment automation  
 - **tooling** - IDE settings, scripts, and utilities
@@ -16,6 +18,7 @@ Optimize development workflows, reduce friction, and improve team velocity.
 - **analyze** - Current pain points and bottleneck analysis
 
 ## Examples
+
 ```bash
 @dx-optimize analyze          # Analyze current friction points
 @dx-optimize environment      # Optimize development setup
@@ -24,6 +27,7 @@ Optimize development workflows, reduce friction, and improve team velocity.
 ```
 
 ## Focus Areas
+
 - Reduce onboarding time to < 5 minutes
 - Optimize hot reload and feedback loops
 - Automate repetitive tasks

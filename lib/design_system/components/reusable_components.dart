@@ -254,12 +254,34 @@ class JJTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // FIXED: Get theme-aware colors instead of hardcoded white
+    // This allows TextField to adapt to both light and dark themes
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Determine colors based on current theme
+    // In light mode: use dark text colors for visibility
+    // In dark mode: use white text colors for visibility
+    final labelColor = theme.inputDecorationTheme.labelStyle?.color ??
+                      (isDark ? AppTheme.white : AppTheme.textPrimary);
+
+    final textColor = theme.textTheme.bodyMedium?.color ??
+                     (isDark ? AppTheme.white : AppTheme.textPrimary);
+
+    final hintColor = theme.inputDecorationTheme.hintStyle?.color ??
+                     (isDark ? AppTheme.white.withValues(alpha: 0.6) : AppTheme.textLight);
+
+    final fillColor = theme.inputDecorationTheme.fillColor ??
+                     (isDark ? AppTheme.white.withValues(alpha: 0.05) : AppTheme.white);
+
+    final borderColor = isDark ? AppTheme.accentCopper : AppTheme.lightGray;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: AppTheme.labelMedium.copyWith(color: AppTheme.white),
+          style: AppTheme.labelMedium.copyWith(color: labelColor), // FIXED: Theme-aware
         ),
         const SizedBox(height: AppTheme.spacingSm),
         TextFormField(
@@ -274,13 +296,13 @@ class JJTextField extends StatelessWidget {
           focusNode: focusNode,
           textInputAction: textInputAction,
           onFieldSubmitted: onFieldSubmitted,
-          style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
-          cursorColor: AppTheme.accentCopper, // Copper cursor for visibility against dark background
+          style: AppTheme.bodyMedium.copyWith(color: textColor), // FIXED: Theme-aware
+          cursorColor: AppTheme.accentCopper, // Copper cursor visible in both themes
           decoration: InputDecoration(
             filled: true,
-            fillColor: AppTheme.white.withValues(alpha: 0.05),
+            fillColor: fillColor, // FIXED: White in light mode, transparent in dark mode
             hintText: hintText,
-            hintStyle: AppTheme.bodyMedium.copyWith(color: AppTheme.white.withValues(alpha: 0.6)),
+            hintStyle: AppTheme.bodyMedium.copyWith(color: hintColor), // FIXED: Theme-aware
             prefixIcon: prefixIcon != null
                 ? Icon(prefixIcon, color: AppTheme.accentCopper)
                 : null,
@@ -292,8 +314,8 @@ class JJTextField extends StatelessWidget {
                 : null,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              borderSide: const BorderSide(
-                color: AppTheme.accentCopper,
+              borderSide: BorderSide(
+                color: borderColor, // FIXED: Light gray in light mode, copper in dark mode
                 width: AppTheme.borderWidthMedium,
               ),
             ),

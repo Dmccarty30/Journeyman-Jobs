@@ -43,22 +43,22 @@ class SessionTimeoutService {
   // Configuration Constants
   // ============================================================================
 
-  /// Idle detection threshold (30 minutes of inactivity)
+  /// Idle detection threshold (20 minutes of inactivity)
   /// After this duration without activity, the grace period begins.
-  static const Duration idleThreshold = Duration(minutes: 30);
+  static const Duration idleThreshold = Duration(minutes: 20);
 
   /// Grace period duration after idle detection (15 minutes)
   /// User has this much time to resume activity before automatic logout.
   static const Duration gracePeriodDuration = Duration(minutes: 15);
 
-  /// Total timeout duration (idle + grace period = 45 minutes)
+  /// Total timeout duration (idle + grace period = 35 minutes)
   /// Maximum time from last activity to automatic logout.
-  static const Duration timeoutDuration = Duration(minutes: 45);
+  static const Duration timeoutDuration = Duration(minutes: 35);
 
   /// Warning notification timing (10 minutes into grace period, 5 minutes before timeout)
-  /// This means 40 minutes after inactivity (30 min idle + 10 min grace).
+  /// This means 30 minutes after inactivity (20 min idle + 10 min grace).
   /// User gets 5-minute warning before automatic logout.
-  static const Duration warningThreshold = Duration(minutes: 40);
+  static const Duration warningThreshold = Duration(minutes: 30);
 
   /// How often to check for timeout (15 seconds for better precision)
   static const Duration _checkInterval = Duration(seconds: 15);

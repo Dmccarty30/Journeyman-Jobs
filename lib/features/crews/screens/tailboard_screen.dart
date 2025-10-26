@@ -6,12 +6,15 @@ import '../providers/crews_riverpod_provider.dart';
 import '../models/models.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
 import '../../../design_system/app_theme.dart';
+import '../../../design_system/tailboard_components.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import '../../../navigation/app_router.dart';
+import '../../../design_system/tailboard_theme.dart';
 import '../../../providers/core_providers.dart' hide legacyCurrentUserProvider;
 import 'package:journeyman_jobs/electrical_components/jj_electrical_notifications.dart';
 import 'package:journeyman_jobs/providers/riverpod/jobs_riverpod_provider.dart';
 import 'package:journeyman_jobs/widgets/electrical_circuit_background.dart';
+import 'package:journeyman_jobs/design_system/components/reusable_components.dart';
 import 'package:journeyman_jobs/models/job_model.dart';
 import '../providers/feed_provider.dart';
 import '../widgets/crew_selection_dropdown.dart';
@@ -30,6 +33,148 @@ extension ListExtensions<T> on List<T> {
       }
     }
     return result;
+  }
+}
+
+// Reusable dialog background component for consistent styling
+class _ElectricalDialogBackground extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+
+  const _ElectricalDialogBackground({
+    required this.child,
+    this.padding,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TailboardComponents.circuitBackground(context, 
+      child: Padding(
+        padding: padding ?? EdgeInsets.only(
+          top: 24,
+          left: 24,
+          right: 24,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+        ),
+        child: child,
+      ),
+    );
+  }
+}
+
+// Reusable text field component for consistent styling
+class _ElectricalTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String? labelText;
+  final String? hintText;
+  final String? Function(String?)? validator;
+  final int? maxLines;
+  final VoidCallback? onTap;
+  final bool readOnly;
+  final TextInputType? keyboardType;
+
+  const _ElectricalTextField({
+    required this.controller,
+    this.labelText,
+    this.hintText,
+    this.validator,
+    this.maxLines = 1,
+    this.onTap,
+    this.readOnly = false,
+    this.keyboardType,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: TailboardTheme.surfaceLow,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: TailboardTheme.navy600),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x33000000),
+            offset: Offset(0, 4),
+            blurRadius: 6,
+          ),
+          BoxShadow(
+            color: Color(0x1A000000),
+            offset: Offset(0, 1),
+            blurRadius: 2,
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: controller,
+        maxLines: maxLines,
+        onTap: onTap,
+        readOnly: readOnly,
+        keyboardType: keyboardType,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+          color: Colors.white,
+          height: 1.5,
+        ),
+        decoration: InputDecoration(
+          labelText: labelText,
+          hintText: hintText,
+          labelStyle: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
+            color: Color(0xFFFCD34D),
+            height: 1.4,
+          ),
+          hintStyle: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
+            color: Color(0xFF4A5568),
+            height: 1.4,
+          ),
+          filled: false,
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.all(16),
+        ),
+      ),
+    );
+  }
+}
+
+// Reusable action buttons for dialogs
+class _DialogActions extends StatelessWidget {
+  final VoidCallback? onCancel;
+  final VoidCallback? onConfirm;
+  final String cancelText;
+  final String confirmText;
+  final bool isConfirmLoading;
+
+  const _DialogActions({
+    this.onCancel,
+    this.onConfirm,
+    this.cancelText = 'Cancel',
+    this.confirmText = 'Submit',
+    this.isConfirmLoading = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        TailboardComponents.actionButton(context, 
+          text: cancelText,
+          onPressed: onCancel ?? () => Navigator.pop(context),
+          isPrimary: false,
+        ),
+        const SizedBox(width: 16),
+        TailboardComponents.actionButton(context, 
+          text: confirmText,
+          onPressed: isConfirmLoading ? () {} : onConfirm,
+          isPrimary: true,
+          isLoading: isConfirmLoading,
+        ),
+      ],
+    );
   }
 }
 
@@ -95,71 +240,189 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
   Widget build(BuildContext context) {
     final authInit = ref.watch(auth_providers.authInitializationProvider);
     final user = ref.watch(auth_providers.currentUserProvider);
- 
+
     if (authInit.isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
- 
-    if (user == null) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.lock_outline, size: 48),
-              const SizedBox(height: 16),
-              Text('Please sign in to access Tailboard', style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => context.go(AppRouter.auth),
-                child: const Text('Go to Sign In'),
-              ),
-            ],
+      return TailboardComponents.circuitBackground(context, 
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Center(
+            child: JJElectricalLoader(
+              width: 200,
+              height: 60,
+              message: 'Initializing...',
+            ),
           ),
         ),
       );
     }
- 
-    final selectedCrew = ref.watch(selectedCrewProvider);
 
-    return Scaffold(
-      backgroundColor: AppTheme.offWhite,
-      body: Column(
-        children: [
-          // Header - conditional based on crew
-          selectedCrew != null
-            ? _buildHeader(context, selectedCrew)
-            : _buildNoCrewHeader(context),
-          _buildTabBar(context),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                FeedTab(),
-                JobsTab(),
-                ChatTab(),
-                MembersTab(),
-              ],
+    if (user == null) {
+      return TailboardComponents.circuitBackground(context, 
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Center(
+            child: Container(
+              padding: const EdgeInsets.all(32),
+              margin: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: TailboardTheme.navy800,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: TailboardTheme.navy800.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFF92400E), Color(0xFFD97706), Color(0xFFB45309)],
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.lock_outline,
+                      size: 48,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Authentication Required',
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      height: 1.3,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Please sign in to access the Tailboard crew hub',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: Color(0xFF718096),
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Color(0xFF92400E), Color(0xFFD97706), Color(0xFFB45309)],
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x33000000),
+                            offset: Offset(0, 4),
+                            blurRadius: 6,
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton.icon(
+                        onPressed: () => context.go(AppRouter.auth),
+                        icon: const Icon(Icons.login),
+                        label: const Text('Go to Sign In'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ],
+        ),
+      ).animate().scale(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+
+    final selectedCrew = ref.watch(selectedCrewProvider);
+
+    return TailboardComponents.circuitBackground(context, 
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            // Header - conditional based on crew
+            selectedCrew != null
+              ? _buildHeader(context, selectedCrew)
+              : _buildNoCrewHeader(context),
+            _buildTabBar(context),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  FeedTab(),
+                  JobsTab(),
+                  ChatTab(),
+                  MembersTab(),
+                ],
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: _buildFloatingActionButton(),
       ),
-      floatingActionButton: _buildFloatingActionButton(),
+    ).animate().fadeIn(
+      duration: const Duration(milliseconds: 500),
     );
   }
 
   Widget _buildNoCrewHeader(BuildContext context) {
     return Container(
-      color: AppTheme.white,
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppTheme.white,
+            AppTheme.offWhite.withValues(alpha: 0.3),
+          ],
+        ),
+      ),
       padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
       child: Column(
         children: [
-          Icon(
-            Icons.group_outlined,
-            size: 64,
-            color: AppTheme.mediumGray,
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppTheme.accentCopper.withValues(alpha: 0.1),
+              border: Border.all(
+                color: AppTheme.accentCopper.withValues(alpha: 0.2),
+                width: 2,
+              ),
+            ),
+            child: Icon(
+              Icons.group_outlined,
+              size: 48,
+              color: AppTheme.accentCopper,
+            ),
           ),
           const SizedBox(height: 16),
           Text(
@@ -176,11 +439,27 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: AppTheme.mediumGray,
+              height: 1.4,
             ),
           ),
           const SizedBox(height: 24),
-          SizedBox(
+          Container(
             width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              gradient: LinearGradient(
+                colors: [AppTheme.primaryNavy, AppTheme.primaryNavy.withValues(alpha: 0.8)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryNavy.withValues(alpha: 0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
             child: ElevatedButton.icon(
               onPressed: () {
                 context.go(AppRouter.crewOnboarding);
@@ -188,12 +467,13 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
               icon: const Icon(Icons.add, color: AppTheme.white),
               label: const Text('Create or Join a Crew', style: TextStyle(color: AppTheme.white)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryNavy,
+                backgroundColor: Colors.transparent,
                 foregroundColor: AppTheme.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                elevation: 0,
               ),
             ),
           ),
@@ -209,285 +489,89 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
   }
 
   Widget _buildHeader(BuildContext context, Crew crew) {
-    return Container(
-      color: AppTheme.white,
-      padding: const EdgeInsets.fromLTRB(16, 40, 16, 12),
-      child: Column(
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Container(
-                width: 32,
-                height: 32,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                child: CircleAvatar(
-                  backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.1),
-                  child: Icon(
-                    Icons.group,
-                    color: AppTheme.accentCopper,
-                    size: 24, // Reduced icon size
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        crew.name,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textPrimary,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        '${crew.memberIds.length} members',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: AppTheme.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              // Dropdown needs Flexible constraint in Row to prevent layout issues
-              // This prevents overflow when crew names are long and ensures proper
-              // constraint negotiation with sibling widgets (avatar and menu button)
-              Flexible(
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(4, 0, 0, 0),
-                  child: CrewSelectionDropdown(isExpanded: true),
-                ),
-              ),
-              IconButton(
-                onPressed: () => _showQuickActions(context),
-                icon: Icon(
-                  Icons.more_vert,
-                  color: AppTheme.mediumGray,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
-          // Quick Stats Row
-          LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth < 600) { // Adjust breakpoint as needed for landscape
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Flexible(
-                      child: _buildStatItem(
-                        context,
-                        'Jobs',
-                        crew.stats.totalJobsShared.toString(),
-                        Icons.work_outline,
-                      ),
-                    ),
-                    Flexible(
-                      child: _buildStatItem(
-                        context,
-                        'Applications',
-                        crew.stats.totalApplications.toString(),
-                        Icons.assignment_turned_in_outlined,
-                      ),
-                    ),
-                    Flexible(
-                      child: _buildStatItem(
-                        context,
-                        'Score',
-                        '${crew.stats.averageMatchScore.toStringAsFixed(0)}%',
-                        Icons.analytics_outlined,
-                      ),
-                    ),
-                  ],
-                );
-              } else {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(
-                      child: _buildStatItem(
-                        context,
-                        'Jobs',
-                        crew.stats.totalJobsShared.toString(),
-                        Icons.work_outline,
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildStatItem(
-                        context,
-                        'Applications',
-                        crew.stats.totalApplications.toString(),
-                        Icons.assignment_turned_in_outlined,
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildStatItem(
-                        context,
-                        'Score',
-                        '${crew.stats.averageMatchScore.toStringAsFixed(0)}%',
-                        Icons.analytics_outlined,
-                      ),
-                    ),
-                  ],
-                );
-              }
-            },
-          ),
-        ],
-      ),
+    return TailboardComponents.simplifiedHeader(context, 
+      crewName: crew.name,
+      memberCount: crew.memberIds.length,
+      userRole: 'Journeyman', // You can get this from user data
+      onCrewTap: () => _showQuickActions(context),
+      onSettingsTap: () => _showQuickActions(context),
     );
   }
 
-  Widget _buildStatItem(BuildContext context, String label, String value, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppTheme.offWhite,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Icon(
-            icon,
-            size: 16,
-            color: AppTheme.accentCopper,
-          ),
-          SizedBox(width: 4),
-          Text(
-            '$label: ',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.mediumGray,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppTheme.darkGray,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
+  
   Widget _buildTabBar(BuildContext context) {
-    return Container(
-      color: AppTheme.white,
-      child: TabBar(
-        controller: _tabController,
-        labelColor: AppTheme.accentCopper,
-        unselectedLabelColor: AppTheme.mediumGray,
-        labelStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontFamily: 'Plus Jakarta Sans',
-          fontWeight: FontWeight.w500,
-        ),
-        unselectedLabelStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontFamily: 'Plus Jakarta Sans',
-          fontWeight: FontWeight.w400,
-          color: AppTheme.mediumGray,
-        ),
-        indicatorColor: AppTheme.primaryNavy,
-        indicatorWeight: 3,
-        tabs: const [
-          Tab(
-            icon: Icon(Icons.feed),
-            text: 'Feed',
-          ),
-          Tab(
-            icon: Icon(Icons.forest),
-            text: 'Jobs',
-          ),
-          Tab(
-            icon: Icon(Icons.chat_bubble_outline_outlined),
-            text: 'Chat',
-          ),
-          Tab(
-            icon: Icon(Icons.people_alt_outlined),
-            text: 'Members',
-          ),
-        ],
-      ),
+    return TailboardComponents.optimizedTabBar(context, 
+      controller: _tabController,
+      tabs: const ['Feed', 'Jobs', 'Chat', 'Members'],
+      icons: const [
+        Icons.feed_outlined,
+        Icons.work_outline,
+        Icons.chat_bubble_outline,
+        Icons.group_outlined,
+      ],
     );
   }
 
   Widget? _buildFloatingActionButton() {
+    IconData icon;
+    VoidCallback onPressed;
+
     switch (_selectedTab) {
       case 0: // Feed
-        return FloatingActionButton(
-          onPressed: () => _showCreatePostDialog(),
-          backgroundColor: AppTheme.accentCopper,
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: const Icon(Icons.add, color: AppTheme.white),
-        ).animate().scale(
-          duration: 300.ms,
-          curve: Curves.easeInOut,
-        );
+        icon = Icons.add;
+        onPressed = () => _showCreatePostDialog();
+        break;
       case 1: // Jobs
-        return FloatingActionButton(
-          onPressed: () => _showShareJobDialog(),
-          backgroundColor: AppTheme.accentCopper,
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: const Icon(Icons.share, color: AppTheme.white),
-        ).animate().scale(
-          duration: 300.ms,
-          curve: Curves.easeInOut,
-        );
+        icon = Icons.share;
+        onPressed = () => _showShareJobDialog();
+        break;
       case 2: // Chat
-        return FloatingActionButton(
-          onPressed: () => _showNewMessageDialog(),
-          backgroundColor: AppTheme.accentCopper,
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: const Icon(Icons.message, color: AppTheme.white),
-        ).animate().scale(
-          duration: 300.ms,
-          curve: Curves.easeInOut,
-        );
+        icon = Icons.message;
+        onPressed = () => _showNewMessageDialog();
+        break;
       case 3: // Members
-        return FloatingActionButton(
-          onPressed: () {
-            // Placeholder for member management actions
-            JJElectricalNotifications.showElectricalToast(
-              context: context,
-              message: 'Member management coming soon!',
-              type: ElectricalNotificationType.info,
-            );
-          },
-          backgroundColor: AppTheme.accentCopper,
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: const Icon(Icons.group_add, color: AppTheme.white),
-        ).animate().scale(
-          duration: 300.ms,
-          curve: Curves.easeInOut,
-        );
+        icon = Icons.group_add;
+        onPressed = () {
+          JJElectricalNotifications.showElectricalToast(
+            context: context,
+            message: 'Member management coming soon!',
+            type: ElectricalNotificationType.info,
+          );
+        };
+        break;
       default:
         return null;
     }
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF92400E), Color(0xFFD97706), Color(0xFFB45309)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x33B45309),
+            offset: Offset(0, 4),
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: FloatingActionButton(
+        onPressed: onPressed,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Icon(icon, color: Colors.white),
+      ),
+    ).animate().scale(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   void _showQuickActions(BuildContext context) {
@@ -539,174 +623,139 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
       builder: (context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
-            return ElectricalCircuitBackground(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: 16,
-                  left: 16,
-                  right: 16,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Create Post',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: AppTheme.textOnDark,
-                        fontWeight: FontWeight.bold,
+            return _ElectricalDialogBackground(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Create Post',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: AppTheme.textOnDark,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: postContentController,
+                    maxLines: 5,
+                    maxLength: maxCharacters,
+                    onChanged: (value) {
+                      setModalState(() {
+                        charactersRemaining = maxCharacters - value.length;
+                      });
+                    },
+                    style: TextStyle(color: AppTheme.textOnDark),
+                    decoration: InputDecoration(
+                      hintText: 'What\'s on your mind?',
+                      hintStyle: TextStyle(color: AppTheme.mediumGray),
+                      filled: true,
+                      fillColor: AppTheme.secondaryNavy,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        borderSide: BorderSide(color: AppTheme.borderCopper, width: AppTheme.borderWidthCopperThin),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        borderSide: BorderSide(color: AppTheme.borderCopper, width: AppTheme.borderWidthCopperThin),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                        borderSide: BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthCopper),
+                      ),
+                      counterText: '', // Hide default counter
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '$charactersRemaining characters remaining',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppTheme.mediumGray,
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: postContentController,
-                      maxLines: 5,
-                      maxLength: maxCharacters,
-                      onChanged: (value) {
-                        setModalState(() {
-                          charactersRemaining = maxCharacters - value.length;
-                        });
-                      },
-                      style: TextStyle(color: AppTheme.textOnDark),
-                      decoration: InputDecoration(
-                        hintText: 'What\'s on your mind?',
-                        hintStyle: TextStyle(color: AppTheme.mediumGray),
-                        filled: true,
-                        fillColor: AppTheme.secondaryNavy,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                          borderSide: BorderSide(color: AppTheme.borderCopper, width: AppTheme.borderWidthCopperThin),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                          borderSide: BorderSide(color: AppTheme.borderCopper, width: AppTheme.borderWidthCopperThin),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                          borderSide: BorderSide(color: AppTheme.accentCopper, width: AppTheme.borderWidthCopper),
-                        ),
-                        counterText: '', // Hide default counter
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.attach_file, color: AppTheme.accentCopper),
+                        onPressed: () {
+                          JJElectricalNotifications.showElectricalToast(
+                            context: context,
+                            message: 'Media upload coming soon!',
+                            type: ElectricalNotificationType.info,
+                          );
+                        },
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        '$charactersRemaining characters remaining',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: AppTheme.mediumGray,
-                        ),
+                      _DialogActions(
+                        onConfirm: () async => _handleCreatePost(postContentController),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.attach_file, color: AppTheme.accentCopper),
-                          onPressed: () {
-                            JJElectricalNotifications.showElectricalToast(
-                              context: context,
-                              message: 'Media upload coming soon!',
-                              type: ElectricalNotificationType.info,
-                            );
-                          },
-                        ),
-                        Row(
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            child: Text(
-                              'Cancel',
-                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                color: AppTheme.mediumGray,
-                              ),
-                            ),
-                            ),
-                            const SizedBox(width: 8),
-                            ElevatedButton(
-                              onPressed: () async {
-                                try {
-                                  final content = postContentController.text.trim();
-                                  if (content.isEmpty) {
-                                    JJElectricalNotifications.showElectricalToast(
-                                      context: context,
-                                      message: 'Post content cannot be empty.',
-                                      type: ElectricalNotificationType.error,
-                                    );
-                                    return;
-                                  }
-
-                                  final selectedCrew = ref.read(selectedCrewProvider);
-                                  final currentUser = ref.read(auth_providers.currentUserProvider);
-
-                                  if (selectedCrew == null) {
-                                    JJElectricalNotifications.showElectricalToast(
-                                      context: context,
-                                      message: 'No crew selected. Please select a crew to post.',
-                                      type: ElectricalNotificationType.error,
-                                    );
-                                    return;
-                                  }
-                                  if (currentUser == null) {
-                                    JJElectricalNotifications.showElectricalToast(
-                                      context: context,
-                                      message: 'User not authenticated. Please log in.',
-                                      type: ElectricalNotificationType.error,
-                                    );
-                                    return;
-                                  }
-
-                                  await ref.read(postCreationProvider).createPost(
-                                    crewId: selectedCrew.id,
-                                    content: content,
-                                  );
-
-                                  if (!mounted) return;
-                                  JJElectricalNotifications.showElectricalToast(
-                                    context: context,
-                                    message: 'Post created successfully!',
-                                    type: ElectricalNotificationType.success,
-                                  );
-                                  if (!mounted) return;
-                                  Navigator.pop(context);
-                            } catch (e) {
-                              if (mounted) {
-                                JJElectricalNotifications.showElectricalToast(
-                                  context: context,
-                                  message: 'Failed to create post: ${e.toString()}',
-                                  type: ElectricalNotificationType.error,
-                                );
-                              }
-                            }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppTheme.accentCopper,
-                                foregroundColor: AppTheme.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                ),
-                              ),
-                              child: Text(
-                                'Submit',
-                                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                  color: AppTheme.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
             );
           },
         );
       },
     );
+  }
+
+  Future<void> _handleCreatePost(TextEditingController controller) async {
+    try {
+      final content = controller.text.trim();
+      if (content.isEmpty) {
+        JJElectricalNotifications.showElectricalToast(
+          context: context,
+          message: 'Post content cannot be empty.',
+          type: ElectricalNotificationType.error,
+        );
+        return;
+      }
+
+      final selectedCrew = ref.read(selectedCrewProvider);
+      final currentUser = ref.read(auth_providers.currentUserProvider);
+
+      if (selectedCrew == null) {
+        JJElectricalNotifications.showElectricalToast(
+          context: context,
+          message: 'No crew selected. Please select a crew to post.',
+          type: ElectricalNotificationType.error,
+        );
+        return;
+      }
+      if (currentUser == null) {
+        JJElectricalNotifications.showElectricalToast(
+          context: context,
+          message: 'User not authenticated. Please log in.',
+          type: ElectricalNotificationType.error,
+        );
+        return;
+      }
+
+      await ref.read(postCreationProvider).createPost(
+        crewId: selectedCrew.id,
+        content: content,
+      );
+
+      if (!mounted) return;
+      JJElectricalNotifications.showElectricalToast(
+        context: context,
+        message: 'Post created successfully!',
+        type: ElectricalNotificationType.success,
+      );
+      if (!mounted) return;
+      Navigator.pop(context);
+    } catch (e) {
+      if (mounted) {
+        JJElectricalNotifications.showElectricalToast(
+          context: context,
+          message: 'Failed to create post: ${e.toString()}',
+          type: ElectricalNotificationType.error,
+        );
+      }
+    }
   }
 
   void _showShareJobDialog() {
@@ -1028,7 +1077,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
                               value: member,
                               child: Text(member.customTitle ?? member.role.toString().split('.').last.toUpperCase(), style: TextStyle(color: AppTheme.textOnDark)),
                             );
-                          }).toList(),
+                          }),
                         ],
                         onChanged: (member) {
                           setModalState(() {

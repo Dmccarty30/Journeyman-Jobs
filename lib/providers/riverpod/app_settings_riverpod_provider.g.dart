@@ -164,7 +164,7 @@ final class AppSettingsNotifierProvider
 }
 
 String _$appSettingsNotifierHash() =>
-    r'28e24ec21f0e5f6a68bf4f704d9b2867d59ba9d9';
+    r'5e2d66a88fabffdb1f1ec72a8dd31163b2f4cbf7';
 
 /// Riverpod notifier for managing app settings state
 ///
@@ -257,7 +257,7 @@ final class CurrentAppSettingsProvider
 }
 
 String _$currentAppSettingsHash() =>
-    r'489a661cd398481bee6a2e5920d779c35078350b';
+    r'484fcd9a4e5bebe281c9cb59901f68143deb8848';
 
 /// Provider for checking if settings are loading
 
@@ -304,7 +304,7 @@ final class AppSettingsLoadingProvider
 }
 
 String _$appSettingsLoadingHash() =>
-    r'5e60df3d343e9e8ac0f567bd83a86fd0c89ec73c';
+    r'264ea4320732b39770c953a1168f84593a49502c';
 
 /// Provider for settings error message
 
@@ -350,7 +350,7 @@ final class AppSettingsErrorProvider
   }
 }
 
-String _$appSettingsErrorHash() => r'eedc034eb467ad3297be00cf51ba37685038a058';
+String _$appSettingsErrorHash() => r'4b7620d0090c671064990f680b8be011216383d0';
 
 /// Provider for last updated timestamp
 
@@ -397,7 +397,7 @@ final class AppSettingsLastUpdatedProvider
 }
 
 String _$appSettingsLastUpdatedHash() =>
-    r'b12eac6a34fc07c9b8b0f2776a9a16b4493e42c3';
+    r'682325a3ab68a8378ba5b28d72d37379155b6e0d';
 
 /// Provider for theme mode from settings
 

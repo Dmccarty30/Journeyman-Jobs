@@ -464,10 +464,13 @@ class _AuthScreenState extends State<AuthScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryNavy,
+      backgroundColor: Colors.white, // Changed from: AppTheme.primaryNavy
       body: Stack(
         children: [
           // Enhanced electrical circuit background
+          // TODO: Update ElectricalCircuitBackground to support light mode
+          // - Use navy traces instead of white (opacity: 0.12)
+          // - Add copper component highlights (opacity: 0.08)
           const Positioned.fill(
             child: ElectricalCircuitBackground(
               opacity: 0.08,
@@ -510,7 +513,7 @@ class _AuthScreenState extends State<AuthScreen>
                         child: Icon(
                           Icons.electrical_services,
                           size: 50,
-                          color: AppTheme.white,
+                          color: AppTheme.primaryNavy, // Changed from: AppTheme.white
                           shadows: [
                             Shadow(
                               color: AppTheme.accentCopper.withValues(
@@ -528,7 +531,7 @@ class _AuthScreenState extends State<AuthScreen>
                       Text(
                         'Join Journeyman Jobs',
                         style: AppTheme.displaySmall.copyWith(
-                          color: AppTheme.white,
+                          color: AppTheme.textPrimary, // Changed from: AppTheme.white
                           fontWeight: FontWeight.bold,
                           shadows: [
                             Shadow(
@@ -547,7 +550,7 @@ class _AuthScreenState extends State<AuthScreen>
                       Text(
                         'Connect with electrical opportunities',
                         style: AppTheme.bodyLarge.copyWith(
-                          color: AppTheme.white.withValues(alpha: 0.9),
+                          color: AppTheme.textPrimary, // Changed from: AppTheme.white.withValues(alpha: 0.9)
                           fontWeight: FontWeight.w500,
                         ),
                         textAlign: TextAlign.center,
@@ -601,11 +604,11 @@ class _AuthScreenState extends State<AuthScreen>
         // Removed horizontal margin for consistent width with tab bar
         padding: const EdgeInsets.all(AppTheme.spacingLg),
         decoration: BoxDecoration(
-          color: AppTheme.white.withValues(alpha: 0.05),
+          color: Colors.white, // Changed from: AppTheme.white.withValues(alpha: 0.05)
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
           border: Border.all(
-            color: AppTheme.accentCopper,
-            width: AppTheme.borderWidthCopperThin,
+            color: AppTheme.accentCopper.withValues(alpha: 0.5), // Subtle copper border
+            width: 1.5, // Slightly thicker
           ),
           boxShadow: [
             AppTheme.shadowElectricalInfo,
@@ -718,7 +721,7 @@ class _AuthScreenState extends State<AuthScreen>
         // Removed horizontal margin for consistent width with tab bar
         padding: const EdgeInsets.all(AppTheme.spacingLg),
         decoration: BoxDecoration(
-          color: AppTheme.white.withValues(alpha: 0.05),
+          color: Colors.white, // Changed from: AppTheme.white.withValues(alpha: 0.05)
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
           border: Border.all(
             color: AppTheme.accentCopper,
@@ -782,14 +785,9 @@ class _AuthScreenState extends State<AuthScreen>
                 child: Container(
                   decoration: BoxDecoration(
                     // Subtle copper gradient background for visibility
-                    gradient: LinearGradient(
-                      colors: [
-                        AppTheme.accentCopper.withValues(alpha: 0.15),
-                        AppTheme.secondaryCopper.withValues(alpha: 0.1),
-                      ],
-                    ),
+                    color: Colors.white, // Simple white background for light mode
                     border: Border.all(
-                      color: AppTheme.accentCopper.withValues(alpha: 0.6),
+                      color: AppTheme.accentCopper.withValues(alpha: 0.5), // Lighter border for light mode
                       width: 1.5,
                     ),
                     borderRadius: BorderRadius.circular(AppTheme.radiusSm),

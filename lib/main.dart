@@ -17,7 +17,7 @@ import 'firebase_options.dart';
 import 'design_system/app_theme.dart';
 import 'navigation/app_router.dart'; // For route constants
 import 'navigation/app_router.dart' show routerProvider; // For the router provider
-import 'providers/riverpod/theme_riverpod_provider.dart';
+// import 'providers/riverpod/theme_riverpod_provider.dart'; // DISABLED: Not needed while forcing light mode
 
 // Global app lifecycle service for token validation on app resume
 late AppLifecycleService _appLifecycleService;
@@ -89,13 +89,16 @@ class MyApp extends ConsumerWidget {
 
     // Watch the router provider to get reactive auth state integration
     final router = ref.watch(routerProvider);
-    final themeMode = ref.watch(themeModeNotifierProvider);
+    // TEMPORARY FIX: Disabled theme mode provider to force light mode globally
+    // This prevents the app from switching to dark mode based on device settings
+    // TODO: Re-enable after fixing JJTextField component to respect theme colors
+    // final themeMode = ref.watch(themeModeNotifierProvider);
 
     return MaterialApp.router(
       title: 'Journeyman Jobs',
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
-      themeMode: themeMode,
+      themeMode: ThemeMode.light, // FIXED: Force light mode to ensure text visibility in TextFields
       debugShowCheckedModeBanner: false,
       routerConfig: router,
       // Wrap the entire app with activity detectors and grace period warning

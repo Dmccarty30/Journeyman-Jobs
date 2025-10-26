@@ -5,6 +5,32 @@ import '../../utils/concurrent_operations.dart';
 
 part 'user_preferences_riverpod_provider.g.dart';
 
+/// Extension methods for UserJobPreferences to check if preferences have been set
+extension UserJobPreferencesX on UserJobPreferences {
+  /// Content-based check to determine if user has set any preferences
+  ///
+  /// Returns true if ANY of the following conditions are met:
+  /// - At least one classification is selected
+  /// - At least one construction type is selected
+  /// - At least one preferred local is selected
+  /// - Hours per week is specified
+  /// - Per diem requirement is specified
+  /// - Minimum wage is specified
+  /// - Maximum distance is specified
+  ///
+  /// This replaces the broken referential equality check that would always
+  /// return true since each UserJobPreferences.empty() call creates a new instance.
+  bool get hasPreferences {
+    return classifications.isNotEmpty
+        || constructionTypes.isNotEmpty
+        || preferredLocals.isNotEmpty
+        || hoursPerWeek != null
+        || perDiemRequirement != null
+        || minWage != null
+        || maxDistance != null;
+  }
+}
+
 /// User preferences state model for Riverpod
 class UserPreferencesState {
   UserPreferencesState({
@@ -19,7 +45,12 @@ class UserPreferencesState {
   final String? error;
   final DateTime? lastUpdated;
 
-  bool get hasPreferences => preferences != UserJobPreferences.empty();
+  /// Checks if user has set any job preferences
+  ///
+  /// Uses content-based checking via extension method to determine if
+  /// any preference fields have been populated. This ensures accurate
+  /// detection of whether a user has configured their job preferences.
+  bool get hasPreferences => preferences.hasPreferences;
 
   UserPreferencesState copyWith({
     UserJobPreferences? preferences,

@@ -35,7 +35,7 @@ This roadmap addresses **2,400+ lines of duplicated code** across UI components,
 
 ### Critical Path
 
-```
+```mermaid
 Phase 1: Security & Architecture (P0)
    ↓
 Phase 2: High-Impact Consolidation (P1)
@@ -1668,7 +1668,7 @@ Phase 5: Polish & Compliance (P2-P3)
 
 ### Critical Dependencies
 
-```
+```dart
 Phase 1 (Security & Architecture)
    ├─→ Required for ALL subsequent phases
    ├─→ Production deployment blocker

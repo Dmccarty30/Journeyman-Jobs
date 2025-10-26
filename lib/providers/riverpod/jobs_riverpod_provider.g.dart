@@ -451,44 +451,46 @@ String _$stormJobsHash() => r'd996a8a060f5630019fcddb8edd0c1fa279dcfad';
 
 /// Suggested jobs provider - matches jobs against user's jobPreferences with cascading fallback
 ///
+/// **UPDATED IMPLEMENTATION:**
+/// - Uses simple orderBy query (NO composite index required)
+/// - Client-side filtering for all criteria
+/// - 4-level cascade with accumulation (no duplicates)
+/// - GUARANTEES jobs display when they exist in Firestore
+///
 /// Architecture:
-/// 1. Fetches user's embedded jobPreferences from users/{uid}.jobPreferences
-/// 2. Implements cascading fallback strategy to ALWAYS show jobs:
-///    - Level 1: Exact match on all preferences (locals + construction types + hours + per diem)
-///    - Level 2: Relaxed match (locals + construction types only)
+/// 1. Fetches 100 recent jobs with simple orderBy query
+/// 2. Implements 4-level cascade with accumulation (max 20 jobs):
+///    - Level 1: Exact match (locals + types + hours + per diem)
+///    - Level 2: Relaxed match (locals + types only)
 ///    - Level 3: Minimal match (preferred locals only)
-///    - Level 4: Fallback to recent jobs (if no preferences or no matches at all)
-/// 3. Queries jobs collection using most selective server-side filter (preferredLocals)
-/// 4. Applies client-side filtering for remaining criteria
+///    - Level 4: Fallback to recent jobs (no filtering)
+/// 3. Each level adds unique jobs to results (Set-based deduplication)
+/// 4. Preserves timestamp descending order
 ///
-/// Performance optimization:
-/// - Uses Firestore whereIn for preferredLocals (most selective filter)
-/// - Client-side filtering avoids Firestore query limitations (max 1 whereIn per query)
-/// - Limits to 20 results for home screen display
-///
-/// UX guarantee: Users ALWAYS see jobs on home screen, even without exact matches
+/// UX guarantee: Users ALWAYS see jobs on home screen when jobs exist
 
 @ProviderFor(suggestedJobs)
 const suggestedJobsProvider = SuggestedJobsProvider._();
 
 /// Suggested jobs provider - matches jobs against user's jobPreferences with cascading fallback
 ///
+/// **UPDATED IMPLEMENTATION:**
+/// - Uses simple orderBy query (NO composite index required)
+/// - Client-side filtering for all criteria
+/// - 4-level cascade with accumulation (no duplicates)
+/// - GUARANTEES jobs display when they exist in Firestore
+///
 /// Architecture:
-/// 1. Fetches user's embedded jobPreferences from users/{uid}.jobPreferences
-/// 2. Implements cascading fallback strategy to ALWAYS show jobs:
-///    - Level 1: Exact match on all preferences (locals + construction types + hours + per diem)
-///    - Level 2: Relaxed match (locals + construction types only)
+/// 1. Fetches 100 recent jobs with simple orderBy query
+/// 2. Implements 4-level cascade with accumulation (max 20 jobs):
+///    - Level 1: Exact match (locals + types + hours + per diem)
+///    - Level 2: Relaxed match (locals + types only)
 ///    - Level 3: Minimal match (preferred locals only)
-///    - Level 4: Fallback to recent jobs (if no preferences or no matches at all)
-/// 3. Queries jobs collection using most selective server-side filter (preferredLocals)
-/// 4. Applies client-side filtering for remaining criteria
+///    - Level 4: Fallback to recent jobs (no filtering)
+/// 3. Each level adds unique jobs to results (Set-based deduplication)
+/// 4. Preserves timestamp descending order
 ///
-/// Performance optimization:
-/// - Uses Firestore whereIn for preferredLocals (most selective filter)
-/// - Client-side filtering avoids Firestore query limitations (max 1 whereIn per query)
-/// - Limits to 20 results for home screen display
-///
-/// UX guarantee: Users ALWAYS see jobs on home screen, even without exact matches
+/// UX guarantee: Users ALWAYS see jobs on home screen when jobs exist
 
 final class SuggestedJobsProvider
     extends
@@ -500,22 +502,23 @@ final class SuggestedJobsProvider
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
   /// Suggested jobs provider - matches jobs against user's jobPreferences with cascading fallback
   ///
+  /// **UPDATED IMPLEMENTATION:**
+  /// - Uses simple orderBy query (NO composite index required)
+  /// - Client-side filtering for all criteria
+  /// - 4-level cascade with accumulation (no duplicates)
+  /// - GUARANTEES jobs display when they exist in Firestore
+  ///
   /// Architecture:
-  /// 1. Fetches user's embedded jobPreferences from users/{uid}.jobPreferences
-  /// 2. Implements cascading fallback strategy to ALWAYS show jobs:
-  ///    - Level 1: Exact match on all preferences (locals + construction types + hours + per diem)
-  ///    - Level 2: Relaxed match (locals + construction types only)
+  /// 1. Fetches 100 recent jobs with simple orderBy query
+  /// 2. Implements 4-level cascade with accumulation (max 20 jobs):
+  ///    - Level 1: Exact match (locals + types + hours + per diem)
+  ///    - Level 2: Relaxed match (locals + types only)
   ///    - Level 3: Minimal match (preferred locals only)
-  ///    - Level 4: Fallback to recent jobs (if no preferences or no matches at all)
-  /// 3. Queries jobs collection using most selective server-side filter (preferredLocals)
-  /// 4. Applies client-side filtering for remaining criteria
+  ///    - Level 4: Fallback to recent jobs (no filtering)
+  /// 3. Each level adds unique jobs to results (Set-based deduplication)
+  /// 4. Preserves timestamp descending order
   ///
-  /// Performance optimization:
-  /// - Uses Firestore whereIn for preferredLocals (most selective filter)
-  /// - Client-side filtering avoids Firestore query limitations (max 1 whereIn per query)
-  /// - Limits to 20 results for home screen display
-  ///
-  /// UX guarantee: Users ALWAYS see jobs on home screen, even without exact matches
+  /// UX guarantee: Users ALWAYS see jobs on home screen when jobs exist
   const SuggestedJobsProvider._()
     : super(
         from: null,
@@ -541,4 +544,4 @@ final class SuggestedJobsProvider
   }
 }
 
-String _$suggestedJobsHash() => r'97f80f9e409b6c9a49182fc1da54053f0c668a95';
+String _$suggestedJobsHash() => r'0911545c84f4d33bfce5cf2b7cfef10c7ee26fc8';

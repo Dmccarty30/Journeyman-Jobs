@@ -489,8 +489,8 @@ class AppThemeDark {
             width: 2,
           ),
         ),
-        labelStyle: labelMedium,
-        hintStyle: bodyMedium.copyWith(color: textTertiary),
+        labelStyle: labelMedium.copyWith(color: textPrimary), // Updated: Primary text color for labels
+        hintStyle: bodyMedium.copyWith(color: textPrimary), // Updated: Primary text color for hints
       ),
       cardTheme: CardThemeData(
         color: primarySurface,

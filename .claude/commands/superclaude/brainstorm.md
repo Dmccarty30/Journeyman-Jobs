@@ -22,6 +22,7 @@ personas: [architect, analyzer, frontend, backend, security, devops, project-man
 
 ```bash
 /sc:brainstorm [topic/idea] [--strategy systematic|agile|enterprise] [--depth shallow|normal|deep] [--parallel]
+
 ```
 
 **Usage**: Type this pattern in your Claude Code conversation to activate brainstorming behavioral mode with systematic exploration and multi-persona coordination.

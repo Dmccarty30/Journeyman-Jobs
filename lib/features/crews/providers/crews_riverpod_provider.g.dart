@@ -246,7 +246,7 @@ final class UserCrewsProvider
   }
 }
 
-String _$userCrewsHash() => r'298a533caa58a465d0e6ec46cdf1ad03ccc12df8';
+String _$userCrewsHash() => r'2387818e4c268a14f4a35949d9f5495c6b66469e';
 
 /// Provider to check if current user is in a specific crew
 
@@ -395,7 +395,7 @@ final class UserRoleInCrewProvider
   }
 }
 
-String _$userRoleInCrewHash() => r'dc1656595a1163bd892cb53f3f095fceebc1a6fd';
+String _$userRoleInCrewHash() => r'e309785da997ff21a3e91fbe28b0541ecfd56767';
 
 /// Provider to get user's role in a specific crew
 
@@ -656,7 +656,7 @@ final class CrewMembersProvider
   }
 }
 
-String _$crewMembersHash() => r'd9e381c26118c59f15f2aac0e69305358bf47118';
+String _$crewMembersHash() => r'558371870ec8bd6834bc461b0eb59814e4e68287';
 
 /// Provider to get crew members
 

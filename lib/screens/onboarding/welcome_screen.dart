@@ -87,7 +87,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         boxShadow: [
           AppTheme.shadowElectricalSuccess,
           BoxShadow(
-            color: AppTheme.accentCopper.withValues(alpha: 0.2),
+            color: AppTheme.accentCopper.withValues(alpha: 0.4), // Enhanced for light mode
             blurRadius: 15,
             spreadRadius: 2,
           ),
@@ -131,13 +131,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryNavy,
+      backgroundColor: Colors.white, // Changed from: AppTheme.primaryNavy
       body: Stack(
         children: [
+          // TODO: Update ElectricalCircuitBackground to support light mode
+          // - Use navy traces instead of white (opacity: 0.12)
+          // - Add copper component highlights (opacity: 0.08)
           // Electrical circuit background
           const Positioned.fill(
             child: ElectricalCircuitBackground(
-              opacity: 0.08,
+              opacity: 0.12, // Increased for visibility on white background
               componentDensity: ComponentDensity.high,
               enableCurrentFlow: true,
               enableInteractiveComponents: true,
@@ -313,7 +316,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         decoration: BoxDecoration(
                           color: _currentPage == index
                               ? AppTheme.accentCopper
-                              : AppTheme.lightGray.withValues(alpha: 0.5),
+                              : AppTheme.accentCopper.withValues(alpha: 0.2), // Changed from: AppTheme.lightGray.withValues(alpha: 0.5)
                           borderRadius: BorderRadius.circular(4),
                           border: _currentPage == index
                               ? Border.all(
@@ -350,11 +353,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           child: Container(
                             height: 56,
                             decoration: BoxDecoration(
-                              color: AppTheme.primaryNavy.withValues(alpha:0.8),
+                              color: Colors.white, // Changed from: AppTheme.primaryNavy.withValues(alpha:0.8)
                               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                               border: Border.all(
-                                color: AppTheme.accentCopper,
-                                width: AppTheme.borderWidthCopperThin,
+                                color: AppTheme.primaryNavy.withValues(alpha: 0.2), // Changed border to navy
+                                width: 1.5, // Slightly thicker
                               ),
                               boxShadow: [
                                 BoxShadow(
@@ -384,7 +387,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                     children: [
                                       Icon(
                                         Icons.arrow_back_ios,
-                                        color: AppTheme.accentCopper,
+                                        color: AppTheme.primaryNavy, // Changed from: AppTheme.accentCopper
                                         size: AppTheme.iconSm,
                                       ),
                                       const SizedBox(width: AppTheme.spacingSm),
@@ -428,7 +431,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                   boxShadow: [
                                     AppTheme.shadowElectricalInfo,
                                     BoxShadow(
-                                      color: AppTheme.accentCopper.withValues(alpha: 0.2),
+                                      color: AppTheme.accentCopper.withValues(alpha: 0.4), // Enhanced for light mode
                                       blurRadius: 15,
                                       spreadRadius: 2,
                                     ),

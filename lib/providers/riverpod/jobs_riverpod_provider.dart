@@ -684,26 +684,50 @@ Future<List<Job>> stormJobs(Ref ref) async {
   }).toList();
 }
 
+/// Helper method: Log cascade results for debugging
+/// Only logs in debug mode using assert() to ensure zero overhead in production
+void _logCascade({
+  required String level,
+  required int matchedCount,
+  required int totalCount,
+  String? extraInfo,
+}) {
+  assert(() {
+    if (kDebugMode) {
+      final emoji = level == 'L1' ? '✅' :
+                   level == 'L2' ? '⚠️' :
+                   level == 'L3' ? '🔵' :
+                   level == 'L4' ? '🔴' : '📊';
+
+      print('$emoji CASCADE $level: $matchedCount/$totalCount jobs${extraInfo != null ? ' - $extraInfo' : ''}');
+    }
+    return true;
+  }());
+}
+
 /// Suggested jobs provider - matches jobs against user's jobPreferences with cascading fallback
 ///
+/// **UPDATED IMPLEMENTATION:**
+/// - Uses simple orderBy query (NO composite index required)
+/// - Client-side filtering for all criteria
+/// - 4-level cascade with accumulation (no duplicates)
+/// - GUARANTEES jobs display when they exist in Firestore
+///
 /// Architecture:
-/// 1. Fetches user's embedded jobPreferences from users/{uid}.jobPreferences
-/// 2. Implements cascading fallback strategy to ALWAYS show jobs:
-///    - Level 1: Exact match on all preferences (locals + construction types + hours + per diem)
-///    - Level 2: Relaxed match (locals + construction types only)
+/// 1. Fetches 100 recent jobs with simple orderBy query
+/// 2. Implements 4-level cascade with accumulation (max 20 jobs):
+///    - Level 1: Exact match (locals + types + hours + per diem)
+///    - Level 2: Relaxed match (locals + types only)
 ///    - Level 3: Minimal match (preferred locals only)
-///    - Level 4: Fallback to recent jobs (if no preferences or no matches at all)
-/// 3. Queries jobs collection using most selective server-side filter (preferredLocals)
-/// 4. Applies client-side filtering for remaining criteria
+///    - Level 4: Fallback to recent jobs (no filtering)
+/// 3. Each level adds unique jobs to results (Set-based deduplication)
+/// 4. Preserves timestamp descending order
 ///
-/// Performance optimization:
-/// - Uses Firestore whereIn for preferredLocals (most selective filter)
-/// - Client-side filtering avoids Firestore query limitations (max 1 whereIn per query)
-/// - Limits to 20 results for home screen display
-///
-/// UX guarantee: Users ALWAYS see jobs on home screen, even without exact matches
+/// UX guarantee: Users ALWAYS see jobs on home screen when jobs exist
 @riverpod
 Future<List<Job>> suggestedJobs(Ref ref) async {
+  const int kMaxSuggested = 20;
+
   // Get authenticated user
   final currentUser = ref.watch(auth_providers.currentUserProvider);
   if (currentUser == null) {
@@ -721,33 +745,44 @@ Future<List<Job>> suggestedJobs(Ref ref) async {
   // Check if provider is still mounted after async operation
   if (!ref.mounted) return <Job>[];
 
-  // FALLBACK LEVEL 4: No user data -> show recent jobs
+  // FALLBACK: No user data -> show recent jobs
   if (!userDoc.exists) {
-    if (kDebugMode) {
-      print('\n⚠️ No user data found - showing recent jobs');
-    }
-    return _getRecentJobs();
+    final fallbackJobs = await _getRecentJobs();
+    _logCascade(
+      level: 'L4',
+      matchedCount: fallbackJobs.length,
+      totalCount: fallbackJobs.length,
+      extraInfo: 'No user document found',
+    );
+    return fallbackJobs;
   }
 
   final userData = userDoc.data();
 
-  // FALLBACK LEVEL 4: No preferences set -> show recent jobs
+  // FALLBACK: No preferences set -> show recent jobs
   if (userData == null || !userData.containsKey('jobPreferences')) {
-    if (kDebugMode) {
-      print('\n⚠️ No preferences set - showing recent jobs');
-    }
-    return _getRecentJobs();
+    final fallbackJobs = await _getRecentJobs();
+    _logCascade(
+      level: 'L4',
+      matchedCount: fallbackJobs.length,
+      totalCount: fallbackJobs.length,
+      extraInfo: 'No jobPreferences in user data',
+    );
+    return fallbackJobs;
   }
 
-  // Parse jobPreferences from embedded subdocument
+  // Parse jobPreferences
   final prefsData = userData['jobPreferences'] as Map<String, dynamic>?;
 
-  // FALLBACK LEVEL 4: No preferences data -> show recent jobs
   if (prefsData == null) {
-    if (kDebugMode) {
-      print('\n⚠️ No preferences data - showing recent jobs');
-    }
-    return _getRecentJobs();
+    final fallbackJobs = await _getRecentJobs();
+    _logCascade(
+      level: 'L4',
+      matchedCount: fallbackJobs.length,
+      totalCount: fallbackJobs.length,
+      extraInfo: 'jobPreferences data is null',
+    );
+    return fallbackJobs;
   }
 
   final prefs = UserJobPreferences.fromJson(prefsData);
@@ -761,171 +796,251 @@ Future<List<Job>> suggestedJobs(Ref ref) async {
     print('  - Per diem: ${prefs.perDiemRequirement}');
   }
 
-  // Strategy: Use most selective filter for Firestore query (preferredLocals)
-  // Then apply cascading client-side filtering
-  QuerySnapshot<Map<String, dynamic>> result;
+  // Fetch 100 recent jobs with simple query (no index required)
+  final allJobs = await _fetchRecentJobsSlice();
 
-  if (prefs.preferredLocals.isNotEmpty) {
-    // Use preferredLocals as server-side filter (most selective)
-    // Firestore allows max 10 values in whereIn, so take first 10 locals
-    final localsToQuery = prefs.preferredLocals.take(10).toList();
+  // Check if provider is still mounted
+  if (!ref.mounted) return <Job>[];
 
-    if (kDebugMode) {
-      print('🔄 Querying jobs where local in: $localsToQuery');
+  if (kDebugMode) {
+    print('📊 Fetched ${allJobs.length} jobs from Firestore');
+  }
+
+  // 4-LEVEL CASCADE WITH ACCUMULATION
+
+  final List<Job> results = [];
+  final Set<String> seenIds = {}; // Deduplication
+
+  /// Helper to add jobs from a tier without duplicates
+  void addTier(List<Job> tier) {
+    for (final job in tier) {
+      if (seenIds.add(job.id)) {  // Only add if new
+        results.add(job);
+        if (results.length >= kMaxSuggested) break;
+      }
     }
+  }
 
-    result = await FirebaseFirestore.instance
-        .collection('jobs')
-        .where('local', whereIn: localsToQuery)
-        .where('deleted', isEqualTo: false)
-        .orderBy('timestamp', descending: true)
-        .limit(50) // Fetch 50 to have buffer for client-side filtering
-        .get();
+  // LEVEL 1: Exact match (all criteria)
+  final l1 = _filterJobsExact(allJobs, prefs);
+  if (l1.isNotEmpty) {
+    _logCascade(
+      level: 'L1',
+      matchedCount: l1.length,
+      totalCount: allJobs.length,
+      extraInfo: 'Exact match',
+    );
+    addTier(l1);
+  }
 
-    // Check if provider is still mounted after async operation
-    if (!ref.mounted) return <Job>[];
+  // LEVEL 2: Relaxed match (locals + types)
+  if (results.length < kMaxSuggested) {
+    final l2 = _filterJobsRelaxed(allJobs, prefs);
+    if (l2.isNotEmpty) {
+      _logCascade(
+        level: 'L2',
+        matchedCount: l2.length,
+        totalCount: allJobs.length,
+        extraInfo: 'Relaxed match',
+      );
+      addTier(l2);
+    }
+  }
+
+  // LEVEL 3: Locals-only match
+  if (results.length < kMaxSuggested) {
+    final l3 = _filterJobsByLocals(allJobs, prefs);
+    if (l3.isNotEmpty) {
+      _logCascade(
+        level: 'L3',
+        matchedCount: l3.length,
+        totalCount: allJobs.length,
+        extraInfo: 'Locals-only match',
+      );
+      addTier(l3);
+    }
+  }
+
+  // LEVEL 4: Fallback to recent (all remaining jobs)
+  if (results.length < kMaxSuggested) {
+    _logCascade(
+      level: 'L4',
+      matchedCount: allJobs.length,
+      totalCount: allJobs.length,
+      extraInfo: 'Fallback (recent jobs)',
+    );
+    addTier(allJobs);
+  }
+
+  _logCascade(
+    level: 'FINAL',
+    matchedCount: results.length,
+    totalCount: allJobs.length,
+    extraInfo: 'Total suggested jobs',
+  );
+
+  return results;
+}
+
+/// Helper method: Check if job matches preferred locals
+/// Handles both 'local' and 'localNumber' fields with type flexibility
+bool _matchesPreferredLocals(Job job, List<int> preferredLocals) {
+  if (preferredLocals.isEmpty) return true;
+
+  // Collect all local values from job (handles both fields)
+  final localVals = <int>{
+    if (job.local != null) job.local!,
+    if (job.localNumber != null) job.localNumber!,
+  };
+
+  // Match if ANY preferred local is in job's local values
+  return preferredLocals.any(localVals.contains);
+}
+
+/// Helper method: Check if job matches construction types
+/// Case-insensitive matching with `List<String>` support
+bool _matchesConstructionTypes(Job job, List<String> typesPref) {
+  if (typesPref.isEmpty) return true;
+
+  // Handle typeOfWork as String (nullable)
+  if (job.typeOfWork == null || job.typeOfWork!.isEmpty) return false;
+
+  final jobType = job.typeOfWork!.toLowerCase();
+
+  // Check if any preference type is contained in the job type
+  return typesPref.any((type) => jobType.contains(type.toLowerCase()));
+}
+
+/// Helper method: Check if job matches hours preference
+/// Allows 20% tolerance range for flexibility
+bool _matchesHours(Job job, UserJobPreferences prefs) {
+  if (prefs.hoursPerWeek == null) return true;
+
+  final jobHours = job.hours; // hours is int? in Job model
+  if (jobHours == null) return false;
+
+  final prefHours = prefs.hoursPerWeek!;
+
+  // Parse preference (e.g., "70+", "40-50", "40")
+  if (prefHours.endsWith('+')) {
+    // Minimum hours requirement
+    final minHours = int.tryParse(prefHours.replaceAll('+', ''));
+    return minHours != null && jobHours >= minHours;
+  } else if (prefHours.contains('-')) {
+    // Range requirement
+    final parts = prefHours.split('-');
+    final minHours = int.tryParse(parts[0]);
+    final maxHours = int.tryParse(parts[1]);
+    return minHours != null && maxHours != null &&
+           jobHours >= minHours && jobHours <= maxHours;
   } else {
-    // No preferred locals - query all recent jobs
-    if (kDebugMode) {
-      print('🔄 No preferred locals - querying recent jobs');
-    }
+    // Exact hours with 20% tolerance
+    final exactHours = int.tryParse(prefHours);
+    if (exactHours == null) return false;
+    final tolerance = exactHours * 0.2;
+    return jobHours >= (exactHours - tolerance) &&
+           jobHours <= (exactHours + tolerance);
+  }
+}
 
-    result = await FirebaseFirestore.instance
-        .collection('jobs')
-        .where('deleted', isEqualTo: false)
-        .orderBy('timestamp', descending: true)
-        .limit(50)
-        .get();
+/// Helper method: Check if job matches per diem requirement
+bool _matchesPerDiem(Job job, UserJobPreferences prefs) {
+  if (prefs.perDiemRequirement == null) return true;
 
-    // Check if provider is still mounted after async operation
-    if (!ref.mounted) return <Job>[];
+  final prefPerDiem = prefs.perDiemRequirement!.toLowerCase();
+  final jobPerDiem = (job.perDiem ?? '').toLowerCase();
+
+  // If user requires per diem, job must offer it
+  if (prefPerDiem.contains('yes') || prefPerDiem.contains('required')) {
+    return jobPerDiem.isNotEmpty;
   }
 
-  if (kDebugMode) {
-    print('📊 Server query returned ${result.docs.length} jobs');
+  // If user specifies amount (e.g., "200+")
+  if (prefPerDiem.contains('200')) {
+    return jobPerDiem.contains('200') || jobPerDiem.contains('250');
   }
 
-  // Convert to Job objects
-  final allJobs = result.docs.map((doc) {
-    final data = doc.data();
-    data['id'] = doc.id;
-    return Job.fromJson(data);
-  }).toList();
-
-  // CASCADING FILTER STRATEGY
-
-  // LEVEL 1: Try exact match on ALL preferences
-  List<Job> matchedJobs = _filterJobsExact(allJobs, prefs);
-
-  if (matchedJobs.isNotEmpty) {
-    if (kDebugMode) {
-      print('✅ Level 1: Found ${matchedJobs.length} exact matches');
-    }
-    return matchedJobs.take(20).toList();
+  if (prefPerDiem.contains('100')) {
+    final jobHasDiem = jobPerDiem.contains('100') ||
+                       jobPerDiem.contains('125') ||
+                       jobPerDiem.contains('150');
+    return jobHasDiem;
   }
 
-  // LEVEL 2: Relax to locals + construction types only
-  matchedJobs = _filterJobsRelaxed(allJobs, prefs);
-
-  if (matchedJobs.isNotEmpty) {
-    if (kDebugMode) {
-      print('⚠️ Level 2: No exact matches, showing ${matchedJobs.length} relaxed matches (locals + construction types)');
-    }
-    return matchedJobs.take(20).toList();
-  }
-
-  // LEVEL 3: Further relax to preferred locals only
-  if (prefs.preferredLocals.isNotEmpty && allJobs.isNotEmpty) {
-    if (kDebugMode) {
-      print('⚠️ Level 3: No relaxed matches, showing ${allJobs.length} jobs from preferred locals');
-    }
-    return allJobs.take(20).toList();
-  }
-
-  // LEVEL 4: Final fallback - show any recent jobs
-  if (kDebugMode) {
-    print('⚠️ Level 4: No matches found, falling back to recent jobs');
-  }
-  return _getRecentJobs();
+  // No strict requirement
+  return true;
 }
 
 /// Helper method: Filter jobs with exact match on ALL preferences
 /// Returns jobs matching: locals + construction types + hours + per diem
 List<Job> _filterJobsExact(List<Job> jobs, UserJobPreferences prefs) {
+  final prefLocals = prefs.preferredLocals.cast<int>();
+
   return jobs.where((job) {
-    // Filter by construction types (typeOfWork)
-    if (prefs.constructionTypes.isNotEmpty) {
-      final jobType = job.typeOfWork?.toLowerCase();
-      if (jobType == null) return false;
+    final localsOk = _matchesPreferredLocals(job, prefLocals);
+    final typesOk = _matchesConstructionTypes(job, prefs.constructionTypes);
+    final hoursOk = _matchesHours(job, prefs);
+    final perDiemOk = _matchesPerDiem(job, prefs);
 
-      final matchesType = prefs.constructionTypes.any(
-        (type) => jobType.contains(type.toLowerCase()),
-      );
-      if (!matchesType) return false;
-    }
-
-    // Filter by hours per week
-    if (prefs.hoursPerWeek != null && job.hours != null) {
-      // Parse user preference (e.g., "70+" means >= 70)
-      final prefHours = prefs.hoursPerWeek!;
-      if (prefHours.endsWith('+')) {
-        final minHours = int.tryParse(prefHours.replaceAll('+', ''));
-        if (minHours != null && job.hours! < minHours) return false;
-      } else {
-        // Exact match or range
-        final exactHours = int.tryParse(prefHours);
-        if (exactHours != null && job.hours != exactHours) return false;
-      }
-    }
-
-    // Filter by per diem requirement
-    if (prefs.perDiemRequirement != null) {
-      final prefPerDiem = prefs.perDiemRequirement!.toLowerCase();
-      final jobPerDiem = job.perDiem?.toLowerCase() ?? '';
-
-      // Match per diem requirements
-      if (prefPerDiem.contains('200') && !jobPerDiem.contains('200')) {
-        return false; // User wants $200+ per diem, job doesn't offer it
-      }
-    }
-
-    return true; // Job matches all criteria
+    return localsOk && typesOk && hoursOk && perDiemOk;
   }).toList();
 }
 
 /// Helper method: Filter jobs with relaxed match (locals + construction types only)
 /// Ignores: hours per week and per diem requirements
 List<Job> _filterJobsRelaxed(List<Job> jobs, UserJobPreferences prefs) {
+  final prefLocals = prefs.preferredLocals.cast<int>();
+
   return jobs.where((job) {
-    // Only filter by construction types - ignore hours and per diem
-    if (prefs.constructionTypes.isNotEmpty) {
-      final jobType = job.typeOfWork?.toLowerCase();
-      if (jobType == null) return false;
+    final localsOk = _matchesPreferredLocals(job, prefLocals);
+    final typesOk = _matchesConstructionTypes(job, prefs.constructionTypes);
 
-      final matchesType = prefs.constructionTypes.any(
-        (type) => jobType.contains(type.toLowerCase()),
-      );
-      return matchesType;
-    }
-
-    // If no construction type preferences, include all jobs from preferred locals
-    return true;
+    return localsOk && typesOk;
   }).toList();
+}
+
+/// Helper method: Filter jobs by preferred locals only
+/// Most minimal matching - just location preference
+List<Job> _filterJobsByLocals(List<Job> jobs, UserJobPreferences prefs) {
+  if (prefs.preferredLocals.isEmpty) return const [];
+
+  final prefLocals = prefs.preferredLocals.cast<int>();
+  return jobs.where((job) => _matchesPreferredLocals(job, prefLocals)).toList();
+}
+
+/// Helper method: Fetch recent job slice without server-side filters
+///
+/// Fetches 100 most recent jobs ordered by timestamp descending.
+/// All filtering (deleted, local matching, etc.) is done client-side for:
+/// - Schema tolerance (handles missing 'deleted' field)
+/// - No composite index requirements
+/// - Guaranteed results when jobs exist in Firestore
+///
+/// Returns: List of jobs with client-side deleted filter applied
+Future<List<Job>> _fetchRecentJobsSlice() async {
+  // Simple query: orderBy timestamp, limit 100
+  // No server-side filters = no composite index required
+  final result = await FirebaseFirestore.instance
+      .collection('jobs')
+      .orderBy('timestamp', descending: true)
+      .limit(100)
+      .get();
+
+  // Client-side filtering for deleted jobs
+  // Handles jobs without 'deleted' field gracefully
+  return result.docs
+      .map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return Job.fromJson(data);
+      })
+      .where((job) => job.deleted != true) // Client-side deleted filter
+      .toList();
 }
 
 /// Helper method: Get recent jobs as final fallback
 /// Returns most recent 20 jobs regardless of user preferences
 Future<List<Job>> _getRecentJobs() async {
-  final result = await FirebaseFirestore.instance
-      .collection('jobs')
-      .where('deleted', isEqualTo: false)
-      .orderBy('timestamp', descending: true)
-      .limit(20)
-      .get();
-
-  return result.docs.map((doc) {
-    final data = doc.data();
-    data['id'] = doc.id;
-    return Job.fromJson(data);
-  }).toList();
+  final jobs = await _fetchRecentJobsSlice();
+  return jobs.take(20).toList();
 }

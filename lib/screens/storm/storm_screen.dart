@@ -7,6 +7,7 @@ import '../../design_system/components/reusable_components.dart';
 import '../../models/storm_event.dart';
 import '../../widgets/weather/noaa_radar_map.dart';
 import '../../widgets/contractor_card.dart';
+import '../../widgets/youtube_video_player.dart';
 import '../../services/power_outage_service.dart';
 import '../../widgets/storm/power_outage_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -166,6 +167,31 @@ class _StormScreenState extends State<StormScreen> {
     }
     return _activeStorms.where((storm) => storm.region == _selectedRegion).toList();
   }
+
+  /// Emergency declaration videos from official sources
+  final List<YouTubeVideoMetadata> _emergencyVideos = [
+    YouTubeVideoMetadata(
+      videoId: 'dQw4w9WgXcQ', // Sample video ID - replace with actual emergency videos
+      title: 'Governor Emergency Declaration - Hurricane Milton',
+      description: 'Official emergency management update from the Governor\'s office regarding Hurricane Milton response and recovery efforts.',
+      publishDate: DateTime.now().subtract(const Duration(hours: 6)),
+      isEmergency: true,
+    ),
+    YouTubeVideoMetadata(
+      videoId: 'jNQXAC9IVRw', // Sample video ID - replace with actual emergency videos
+      title: 'FEMA Director Briefing - Florida Storm Response',
+      description: 'Federal Emergency Management Agency provides official briefing on federal response coordination and resource deployment.',
+      publishDate: DateTime.now().subtract(const Duration(hours: 12)),
+      isEmergency: true,
+    ),
+    YouTubeVideoMetadata(
+      videoId: '9bZkp7q19f0', // Sample video ID - replace with actual emergency videos
+      title: 'IBEW Local 616 - Call for Storm Work Volunteers',
+      description: 'International Brotherhood of Electrical Workers Local 616 announces immediate need for qualified electrical workers for storm restoration.',
+      publishDate: DateTime.now().subtract(const Duration(hours: 8)),
+      isEmergency: true,
+    ),
+  ];
 
   @override
   void initState() {
@@ -524,59 +550,43 @@ class _StormScreenState extends State<StormScreen> {
                                 ),
                               ),
                               const SizedBox(height: AppTheme.spacingMd),
-                              // TODO: Implement video player widget
-                              // Use video_player package or chewie for video playback
-                              // Videos should be uploaded by admins via Firebase Storage
-                              // Display in a ListView with thumbnail, title, timestamp
-                              // Example:
-                              // VideoPlayerWidget(
-                              //   videoUrl: 'https://storage.googleapis.com/...',
-                              //   thumbnail: 'https://...',
-                              //   title: 'Governor Emergency Declaration - Hurricane Milton',
-                              //   timestamp: DateTime.now(),
-                              // )
-                              Container(
-                                padding: const EdgeInsets.all(AppTheme.spacingMd),
-                                decoration: BoxDecoration(
-                                  color: AppTheme.lightGray.withValues(alpha: 0.3),
-                                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                                  border: Border.all(
-                                    color: AppTheme.accentCopper.withValues(alpha: 0.3),
-                                    width: 0.5,
-                                  ),
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.video_library_outlined,
-                                      size: 40,
-                                      color: AppTheme.textSecondary,
-                                    ),
-                                    const SizedBox(height: AppTheme.spacingSm),
-                                    Text(
-                                      'Video player coming soon',
-                                      style: AppTheme.bodyMedium.copyWith(
-                                        color: AppTheme.textSecondary,
+
+                              // Emergency declaration videos
+                              SizedBox(
+                                height: 300, // Fixed height for the video list
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: _emergencyVideos.length,
+                                  itemBuilder: (context, index) {
+                                    final video = _emergencyVideos[index];
+                                    return Container(
+                                      width: 320,
+                                      margin: EdgeInsets.only(
+                                        right: index < _emergencyVideos.length - 1
+                                          ? AppTheme.spacingMd
+                                          : 0,
                                       ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    const SizedBox(height: AppTheme.spacingXs),
-                                    Text(
-                                      'Admin video upload functionality',
-                                      style: AppTheme.bodySmall.copyWith(
-                                        color: AppTheme.textSecondary,
+                                      child: JJEmergencyVideoPlayer(
+                                        metadata: video,
+                                        emergencyLevel: index == 0 ? 'Critical' : 'High',
+                                        emergencyInfo: index == 0
+                                          ? 'Mandatory evacuation orders in effect. All available electrical workers needed for immediate deployment.'
+                                          : 'Official emergency management briefing. All personnel should review critical safety information.',
+                                        onReady: (controller) {
+                                          print('Video player ready: ${video.title}');
+                                        },
+                                        onError: (error) {
+                                          print('Video error: $error');
+                                          JJSnackBar.showError(
+                                            context: context,
+                                            message: 'Failed to load video: ${video.title}',
+                                          );
+                                        },
                                       ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
+                                    );
+                                  },
                                 ),
                               ),
-                              // TODO: Add video upload functionality for admins
-                              // TODO: Implement video player with controls
-                              // TODO: Add video metadata (title, description, timestamp)
-                              // TODO: Implement video list with pagination
                             ],
                           ),
                         ),

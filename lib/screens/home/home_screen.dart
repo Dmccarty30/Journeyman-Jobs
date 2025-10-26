@@ -226,12 +226,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         },
                         data: (userModel) {
                           // User is authenticated and UserModel loaded successfully
-                          // Display name is ONLY the combination of firstName and lastName
-                          final String displayName = (userModel != null && 
-                                  userModel.firstName.isNotEmpty && 
-                                  userModel.lastName.isNotEmpty)
-                              ? '${userModel.firstName} ${userModel.lastName}'
-                              : '';
+                          // Use the displayNameStr getter which properly handles display name logic
+                          final String displayName = userModel?.displayNameStr ?? '';
 
                           final photoUrl = userModel?.avatarUrl ?? authState.user?.photoURL;
                           final userInitial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
@@ -267,7 +263,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     ),
                                     const SizedBox(height: AppTheme.spacingSm),
                                     Text(
-                                      userModel?.classification ?? 'Journeyman',
+                                      displayName.isNotEmpty ? displayName : (userModel?.classification ?? 'Journeyman'),
                                       style: AppTheme.bodyLarge.copyWith(
                                         color: AppTheme.textSecondary,
                                       ),

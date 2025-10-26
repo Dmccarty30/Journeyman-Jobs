@@ -590,8 +590,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radiusMd),
           borderSide: const BorderSide(color: errorRed, width: borderWidthThick),
         ),
-        labelStyle: bodyMedium.copyWith(color: textPrimary), // Fixed: Now black/readable
-        hintStyle: bodyMedium.copyWith(color: textSecondary), // Fixed: Dark gray for better readability
+        labelStyle: bodyMedium.copyWith(color: textPrimary), // Dark navy for labels (14.8:1)
+        hintStyle: bodyMedium.copyWith(color: textLight), // ENHANCED: Medium gray for hints (5.1:1) - better visual hierarchy
+        floatingLabelStyle: bodyMedium.copyWith(color: textPrimary), // Ensure floating labels stay dark
+        prefixStyle: bodyMedium.copyWith(color: textSecondary), // Prefix text color (7.5:1)
         errorStyle: bodySmall.copyWith(color: errorRed),
       ),
       
@@ -703,7 +705,7 @@ class AppTheme {
         foregroundColor: darkTextPrimary, // Updated to use new dark mode constants
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: headlineMedium.copyWith(color: darkTextPrimary),
+        titleTextStyle: headlineMedium.copyWith(color: textPrimary),
         iconTheme: IconThemeData(color: darkTextPrimary),
       ),
 
@@ -806,7 +808,7 @@ class AppTheme {
         headlineSmall: headlineSmall.copyWith(color: darkTextPrimary),
         titleLarge: titleLarge.copyWith(color: darkTextPrimary),
         titleMedium: titleMedium.copyWith(color: darkTextPrimary),
-        titleSmall: titleSmall.copyWith(color: darkTextPrimary),
+        titleSmall: titleSmall.copyWith(color: const Color(0xFF1A202C)),
         bodyLarge: bodyLarge.copyWith(color: darkTextPrimary),
         bodyMedium: bodyMedium.copyWith(color: darkTextPrimary),
         bodySmall: bodySmall.copyWith(color: darkTextPrimary),

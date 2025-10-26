@@ -10,6 +10,7 @@
 ## Overview
 
 The Storm Screen serves as a **reference implementation** for the Journeyman Jobs electrical design system, demonstrating best practices for:
+
 - Circuit background integration with `ComponentDensity.medium`
 - Standardized card component patterns
 - Consistent border widths, shadows, and border radius
@@ -23,6 +24,7 @@ The Storm Screen serves as a **reference implementation** for the Journeyman Job
 ### Component Inventory
 
 #### 1. Circuit Background
+
 **Component**: `ElectricalCircuitBackground`
 **Location**: `lib/electrical_components/circuit_board_background.dart`
 **Usage in Storm Screen**: `lib/screens/storm/storm_screen.dart:259`
@@ -37,11 +39,13 @@ ElectricalCircuitBackground(
 ```
 
 **Design System Standards**:
+
 - ✅ `ComponentDensity.medium` - App-wide standard (Jobs, Locals, Contacts, Storm)
 - ✅ `opacity: 0.08` - Ensures background doesn't overpower content
 - ✅ `enableCurrentFlow: true` - Maintains electrical theme consistency
 
 **Performance Baseline** (STORM-009):
+
 - Frame rate: 953-1347 FPS ✅
 - Initial build: 676-784ms ✅
 - UI responsiveness: 119-140ms ✅
@@ -49,6 +53,7 @@ ElectricalCircuitBackground(
 ---
 
 #### 2. Main Container Pattern
+
 **Component**: Standard card container
 **Location**: `lib/screens/storm/storm_screen.dart:265-276`
 
@@ -70,6 +75,7 @@ Container(
 ```
 
 **Design System Standards**:
+
 - ✅ `borderWidthMedium: 1.5px` - Eliminates magic numbers (`borderWidthCopper * 0.5`)
 - ✅ `shadowCard` - Replaces custom `shadowElectricalInfo`
 - ✅ `accentCopper` - Maintains electrical theme color palette
@@ -80,6 +86,7 @@ Container(
 ---
 
 #### 3. Filter Dropdown Pattern
+
 **Component**: Styled dropdown container
 **Location**: `lib/screens/storm/storm_screen.dart:425-436`
 
@@ -103,6 +110,7 @@ Container(
 ```
 
 **Design System Standards**:
+
 - ✅ Same `borderWidthMedium` and `shadowCard` as main container
 - ✅ `radiusMd: 12px` - Appropriate for smaller UI elements
 - ✅ Visual cohesion with parent container
@@ -110,6 +118,7 @@ Container(
 ---
 
 #### 4. Contractor Card Pattern
+
 **Component**: `ContractorCard`
 **Location**: `lib/widgets/contractor_card.dart:24-29`
 
@@ -130,6 +139,7 @@ Container(
 ```
 
 **Design System Standards**:
+
 - ✅ `radiusMd: 12px` - Replaces hardcoded `12`
 - ✅ `shadowCard` - Replaces custom `BoxShadow(color: Colors.black.withValues(alpha: 0.08), ...)`
 - ✅ `borderWidthThin: 1px` - Thinner border for nested elements
@@ -149,6 +159,7 @@ Container(
 ### WCAG 2.1 AA Standards
 
 **Color Contrast Ratios**:
+
 - ✅ Copper border on white: **5.02:1** (target: ≥3:1)
 - ✅ Primary navy text: **16.32:1** (target: ≥4.5:1)
 - ✅ Secondary text: **7.53:1** (target: ≥4.5:1)
@@ -156,11 +167,13 @@ Container(
 - ✅ Error red badge: **4.13:1** (target: ≥3:1)
 
 **Touch Target Sizes**:
+
 - ✅ Notification IconButton: **48×48px** (target: ≥44×44px)
 - ✅ Contractor card buttons: **48px height** (target: ≥44px)
 - ✅ Weather radar button: **56px height** (JJPrimaryButton default)
 
 **Semantic Labels**:
+
 - ✅ AppBar title for screen readers
 - ✅ Interactive elements have tap feedback
 - ✅ Region filter dropdown accessible
@@ -168,6 +181,7 @@ Container(
 - ✅ Text scaling to 200% without overflow
 
 **Implementation Details**:
+
 ```dart
 // Notification IconButton with WCAG-compliant touch target
 IconButton(
@@ -259,6 +273,7 @@ Container(
 ### 1. Always Use Theme Constants
 
 ❌ **BAD**:
+
 ```dart
 borderRadius: BorderRadius.circular(12),
 border: Border.all(width: 1.5, color: Color(0xFFB45309)),
@@ -272,6 +287,7 @@ boxShadow: [
 ```
 
 ✅ **GOOD**:
+
 ```dart
 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
 border: Border.all(
@@ -282,6 +298,7 @@ boxShadow: AppTheme.shadowCard,
 ```
 
 **Benefits**:
+
 - Centralized theme management
 - Easy global updates
 - Eliminates magic numbers
@@ -292,6 +309,7 @@ boxShadow: AppTheme.shadowCard,
 ### 2. Circuit Background Consistency
 
 ✅ **Always use `ComponentDensity.medium`** across all screens:
+
 - `lib/screens/home/home_screen.dart`
 - `lib/screens/jobs/jobs_screen.dart`
 - `lib/screens/locals/locals_screen.dart`
@@ -305,16 +323,19 @@ boxShadow: AppTheme.shadowCard,
 ### 3. Shadow Hierarchy
 
 **Main Containers**: `AppTheme.shadowCard`
+
 ```dart
 boxShadow: AppTheme.shadowCard,
 ```
 
 **Elevated Elements** (modals, floating buttons): `AppTheme.shadowLg`
+
 ```dart
 boxShadow: AppTheme.shadowLg,
 ```
 
 **Subtle Elements** (dividers, inactive states): `AppTheme.shadowSm`
+
 ```dart
 boxShadow: AppTheme.shadowSm,
 ```
@@ -335,15 +356,18 @@ boxShadow: AppTheme.shadowSm,
 ### 5. Accessibility Guidelines
 
 **Color Contrast**:
+
 - Normal text: ≥4.5:1 contrast ratio
 - Large text (18pt+ or 14pt+ bold): ≥3:1 contrast ratio
 - UI components/graphics: ≥3:1 contrast ratio
 
 **Touch Targets**:
+
 - Minimum size: **48×48 logical pixels** (exceeds WCAG 2.1 AA 44×44 requirement)
 - Use `IconButton` constraints or button `minimumSize` properties
 
 **Text Scaling**:
+
 - Support up to 200% text scaling without overflow
 - Use `Expanded` widgets to prevent text overflow in rows
 - Wrap text in `TextAlign.center` when appropriate
@@ -355,6 +379,7 @@ boxShadow: AppTheme.shadowSm,
 ### Optimization Techniques
 
 **1. RepaintBoundary for Animations** (recommended for circuit background):
+
 ```dart
 RepaintBoundary(
   child: ElectricalCircuitBackground(
@@ -371,6 +396,7 @@ RepaintBoundary(
 ---
 
 **2. Lazy Loading for Long Lists**:
+
 ```dart
 ListView.builder(
   itemCount: contractors.length,
@@ -385,6 +411,7 @@ ListView.builder(
 ---
 
 **3. Widget Tree Optimization**:
+
 - Target: <700 widgets per screen
 - Storm screen actual: 623 widgets ✅
 - Use `const` constructors wherever possible
@@ -462,6 +489,7 @@ class StormScreen extends StatelessWidget {
 ## Testing Requirements
 
 ### Visual Regression Testing (STORM-007)
+
 - Test across phone/tablet, portrait/landscape orientations
 - Validate circuit background rendering at `ComponentDensity.medium`
 - Verify border widths, shadows, and border radius consistency
@@ -472,6 +500,7 @@ class StormScreen extends StatelessWidget {
 ---
 
 ### Accessibility Testing (STORM-008)
+
 - Color contrast validation using W3C luminance formula
 - Touch target size verification (IconButton constraints, button minimumSize)
 - Semantic labels and screen reader support
@@ -482,6 +511,7 @@ class StormScreen extends StatelessWidget {
 ---
 
 ### Performance Testing (STORM-009)
+
 - Frame rate: ≥55-58 FPS during scrolling and animations
 - Initial build: <1000ms
 - UI responsiveness: <150ms for complex animations
@@ -497,6 +527,7 @@ class StormScreen extends StatelessWidget {
 ### Updating Existing Screens to Design System
 
 **Step 1**: Replace hardcoded border widths
+
 ```dart
 // Before
 border: Border.all(width: 1.5, color: Color(0xFFB45309))
@@ -511,6 +542,7 @@ border: Border.all(
 ---
 
 **Step 2**: Replace custom shadows
+
 ```dart
 // Before
 boxShadow: [
@@ -528,6 +560,7 @@ boxShadow: AppTheme.shadowCard,
 ---
 
 **Step 3**: Replace hardcoded border radius
+
 ```dart
 // Before
 borderRadius: BorderRadius.circular(12)
@@ -539,6 +572,7 @@ borderRadius: BorderRadius.circular(AppTheme.radiusMd)
 ---
 
 **Step 4**: Update circuit background density
+
 ```dart
 // Before
 ElectricalCircuitBackground(
@@ -556,6 +590,7 @@ ElectricalCircuitBackground(
 ---
 
 **Step 5**: Verify accessibility compliance
+
 - Run color contrast tests
 - Check touch target sizes (≥48×48px)
 - Validate text scaling support

@@ -714,10 +714,10 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryNavy,
+      backgroundColor: Colors.white, // Changed from: AppTheme.primaryNavy
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryNavy.withValues(alpha: 0.9),
+        backgroundColor: Colors.white.withValues(alpha: 0.95), // Changed from: AppTheme.primaryNavy.withValues(alpha: 0.9)
         elevation: 0,
         leading: _currentStep > 0
             ? Container(
@@ -733,7 +733,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                   ],
                 ),
                 child: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: AppTheme.white),
+                  icon: const Icon(Icons.arrow_back, color: AppTheme.primaryNavy), // Changed from: AppTheme.white),
                   onPressed: _previousStep,
                 ),
               )
@@ -741,7 +741,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
         title: Text(
           'Setup Profile',
           style: AppTheme.headlineMedium.copyWith(
-            color: AppTheme.white,
+            color: AppTheme.textPrimary, // Changed from: AppTheme.white
             shadows: [
               Shadow(
                 color: AppTheme.accentCopper.withValues(alpha: 0.3),
@@ -771,6 +771,12 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
       body: Stack(
         children: [
           // Enhanced electrical circuit background
+          // TODO: Update ElectricalCircuitBackground to support light mode
+          // - Use navy traces instead of white (opacity: 0.12)
+          // - Add copper component highlights (opacity: 0.08)
+          // TODO: Update ElectricalCircuitBackground to support light mode
+          // - Use navy traces instead of white (opacity: 0.12)
+          // - Add copper component highlights (opacity: 0.08)
           const Positioned.fill(
             child: ElectricalCircuitBackground(
               opacity: 0.08,
@@ -786,7 +792,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                 margin: const EdgeInsets.all(AppTheme.spacingMd),
                 padding: const EdgeInsets.all(AppTheme.spacingMd),
                 decoration: BoxDecoration(
-                  color: AppTheme.white.withValues(alpha: 0.05),
+                  color: Colors.white, // Changed from: AppTheme.white.withValues(alpha: 0.05)
                   borderRadius: BorderRadius.circular(AppTheme.radiusLg),
                   border: Border.all(
                     color: AppTheme.accentCopper,
@@ -811,7 +817,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                     Text(
                       'Step ${_currentStep + 1} of $_totalSteps',
                       style: AppTheme.bodySmall.copyWith(
-                        color: AppTheme.white,
+                        color: AppTheme.textPrimary, // Changed from: AppTheme.white
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -841,7 +847,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: AppTheme.primaryNavy.withValues(alpha: 0.9),
+          color: Colors.white.withValues(alpha: 0.95), // Changed from: AppTheme.primaryNavy.withValues(alpha: 0.9)
           border: Border(
             top: BorderSide(
               color: AppTheme.accentCopper,
@@ -1033,7 +1039,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                       height: 56,
                       padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingSm),
                       decoration: BoxDecoration(
-                        color: AppTheme.white.withValues(alpha: 0.05),
+                        color: Colors.white, // Changed from: AppTheme.white.withValues(alpha: 0.05)
                         border: Border.all(
                           color: AppTheme.accentCopper,
                           width: AppTheme.borderWidthCopperThin,
@@ -1047,11 +1053,11 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                           hint: Text(
                             'State',
                             style: AppTheme.bodyMedium.copyWith(
-                              color: AppTheme.white.withValues(alpha: 0.7),
+                              color: AppTheme.textSecondary, // Changed from: AppTheme.white.withValues(alpha: 0.7)
                             ),
                           ),
                           dropdownColor: AppTheme.primaryNavy,
-                          style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
+                          style: AppTheme.bodyMedium.copyWith(color: AppTheme.textPrimary), // Changed from: AppTheme.white),
                           icon: Icon(Icons.arrow_drop_down, color: AppTheme.accentCopper),
                           isExpanded: true,
                           items: _usStates.map((state) {
@@ -1059,7 +1065,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
                               value: state,
                               child: Text(
                                 state,
-                                style: AppTheme.bodyMedium.copyWith(color: AppTheme.white),
+                                style: AppTheme.bodyMedium.copyWith(color: AppTheme.textPrimary), // Changed from: AppTheme.white),
                               ),
                             );
                           }).toList(),
@@ -1368,7 +1374,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             decoration: BoxDecoration(
               border: Border.all(color: AppTheme.lightGray),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              color: AppTheme.white,
+              color: AppTheme.textPrimary, // Changed from: AppTheme.white
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
@@ -1411,7 +1417,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
             decoration: BoxDecoration(
               border: Border.all(color: AppTheme.lightGray),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              color: AppTheme.white,
+              color: AppTheme.textPrimary, // Changed from: AppTheme.white
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
@@ -1466,7 +1472,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
           Container(
             padding: const EdgeInsets.all(AppTheme.spacingSm),
             decoration: BoxDecoration(
-              color: AppTheme.white.withValues(alpha: 0.05),
+              color: Colors.white, // Changed from: AppTheme.white.withValues(alpha: 0.05)
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
               border: Border.all(
                 color: AppTheme.accentCopper,
@@ -1620,7 +1626,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
           child: Icon(
             icon,
             size: 36,
-            color: AppTheme.white,
+            color: AppTheme.textPrimary, // Changed from: AppTheme.white
             shadows: [
               Shadow(
                 color: AppTheme.accentCopper.withValues(alpha: 0.5),
@@ -1636,7 +1642,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
         Text(
           title,
           style: AppTheme.headlineMedium.copyWith(
-            color: AppTheme.white,
+            color: AppTheme.textPrimary, // Changed from: AppTheme.white
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
@@ -1654,7 +1660,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
         Text(
           subtitle,
           style: AppTheme.bodyLarge.copyWith(
-            color: AppTheme.white.withValues(alpha: 0.9),
+            color: AppTheme.textPrimary, // Changed from: AppTheme.white.withValues(alpha: 0.9)
             fontWeight: FontWeight.w500,
           ),
           textAlign: TextAlign.center,

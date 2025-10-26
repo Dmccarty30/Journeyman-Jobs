@@ -1,0 +1,483 @@
+import "package:flutter/material.dart";
+import "package:flutter_animate/flutter_animate.dart";
+import "tailboard_theme.dart";
+
+/// Enhanced TailboardScreen components using the adaptive color scheme
+/// Automatically adjusts to system light/dark mode while maintaining electrical aesthetic
+class TailboardComponents {
+  TailboardComponents._(); // Private constructor
+
+  /// Modern Job Card with adaptive depth and visual hierarchy
+  static Widget jobCard(BuildContext context, {
+    required String company,
+    required String location,
+    required String wage,
+    required String status,
+    required VoidCallback onTap,
+    bool isPressed = false,
+    bool isHovered = false,
+  }) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: TailboardTheme.shortAnimation,
+          decoration: isPressed
+            ? BoxDecoration(
+                color: TailboardTheme.getSurfaceColor(context, level: 3),
+                borderRadius: TailboardTheme.radiusLarge,
+                boxShadow: TailboardTheme.getElevation1(context),
+              )
+            : isHovered
+              ? TailboardTheme.getCardHoverDecoration(context)
+              : TailboardTheme.getCardDecoration(context),
+          child: Padding(
+            padding: const EdgeInsets.all(TailboardTheme.spacingMd),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header row with company and status
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        company,
+                        style: TailboardTheme.getHeadingSmall(context),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: TailboardTheme.spacingSm),
+                    _statusBadge(context, status),
+                  ],
+                ),
+
+                const SizedBox(height: TailboardTheme.spacingSm),
+
+                // Location row
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      color: TailboardTheme.getAccentCopper(context).color,
+                      size: 16,
+                    ),
+                    const SizedBox(width: TailboardTheme.spacingXs),
+                    Expanded(
+                      child: Text(
+                        location,
+                        style: TailboardTheme.getBodyLarge(context),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: TailboardTheme.spacingSm),
+
+                // Wage row with copper accent
+                Row(
+                  children: [
+                    Icon(
+                      Icons.attach_money,
+                      color: TailboardTheme.getAccentCopper(context).color,
+                      size: 16,
+                    ),
+                    const SizedBox(width: TailboardTheme.spacingXs),
+                    Text(
+                      wage,
+                      style: TailboardTheme.getAccentText(context),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ).animate(target: isHovered ? 1 : 0)
+            .scaleXY(begin: 1.0, end: 1.02, duration: TailboardTheme.shortAnimation)
+            .shimmer(duration: TailboardTheme.longAnimation),
+        ),
+      ),
+    );
+  }
+
+  /// Status Badge with adaptive gradient background
+  static Widget _statusBadge(BuildContext context, String status) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: TailboardTheme.spacingSm,
+        vertical: TailboardTheme.spacingXs,
+      ),
+      decoration: BoxDecoration(
+        gradient: TailboardTheme.getStatusGradient(context, status),
+        borderRadius: TailboardTheme.radiusSmall,
+        boxShadow: TailboardTheme.getElevation1(context),
+      ),
+      child: Text(
+        status.toUpperCase(),
+        style: TailboardTheme.getBodySmall(context).copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  /// Circuit pattern background with adaptive visibility
+  static Widget circuitBackground(BuildContext context, {
+    required Widget child,
+    bool showCircuit = true,
+  }) {
+    return Container(
+      decoration: showCircuit
+        ? BoxDecoration(
+            gradient: TailboardTheme.getPrimaryBackground(context),
+          )
+        : BoxDecoration(
+            color: TailboardTheme.getBackgroundColor(context),
+          ),
+      child: Stack(
+        children: [
+          if (showCircuit)
+            Positioned.fill(
+              child: CustomPaint(
+                painter: AdaptiveCircuitPatternPainter(context),
+              ),
+            ),
+          child,
+        ],
+      ),
+    );
+  }
+
+  /// Simplified Header Component with adaptive styling
+  static Widget simplifiedHeader(BuildContext context, {
+    required String crewName,
+    required int memberCount,
+    required String userRole,
+    VoidCallback? onCrewTap,
+    VoidCallback? onSettingsTap,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(TailboardTheme.spacingLg),
+      decoration: BoxDecoration(
+        gradient: TailboardTheme.getPrimaryBackground(context),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(24),
+          bottomRight: Radius.circular(24),
+        ),
+        boxShadow: TailboardTheme.getElevation3(context),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Primary Tier - Crew Information
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  gradient: TailboardTheme.getCopperAccent(context),
+                  borderRadius: TailboardTheme.radiusLarge,
+                  boxShadow: TailboardTheme.getElevation2(context),
+                ),
+                child: Icon(
+                  Icons.group,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: TailboardTheme.spacingMd),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      crewName,
+                      style: TailboardTheme.getHeadingLarge(context),
+                    ),
+                    Text(
+                      "$memberCount members • $userRole",
+                      style: TailboardTheme.getBodyMedium(context).copyWith(
+                        color: TailboardTheme.getAccentCopper(context).color,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              glowContainer(
+                context,
+                isActive: true,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.settings,
+                    color: TailboardTheme.getAccentCopper(context).color,
+                  ),
+                  onPressed: onSettingsTap,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: TailboardTheme.spacingMd),
+
+          // Secondary Tier - Status Summary
+          Row(
+            children: [
+              _buildStatusCard(context, "Active", "12", TailboardTheme.getSuccessGradient(context)),
+              const SizedBox(width: TailboardTheme.spacingSm),
+              _buildStatusCard(context, "Pending", "5", TailboardTheme.getWarningGradient(context)),
+              const SizedBox(width: TailboardTheme.spacingSm),
+              _buildStatusCard(context, "Applied", "3", TailboardTheme.getInfoGradient(context)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget _buildStatusCard(BuildContext context, String label, String value, Gradient gradient) {
+    return Expanded(
+      child: glassCard(
+        context,
+        child: Padding(
+          padding: const EdgeInsets.all(TailboardTheme.spacingSm),
+          child: Column(
+            children: [
+              Text(
+                value,
+                style: TailboardTheme.getHeadingSmall(context).copyWith(
+                  foreground: Paint()..shader = gradient.createShader(
+                    const Rect.fromLTWH(0, 0, 100, 20)
+                  ),
+                ),
+              ),
+              Text(
+                label,
+                style: TailboardTheme.getBodySmall(context),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Optimized Tab Bar with adaptive styling
+  static Widget optimizedTabBar(BuildContext context, {
+    required TabController controller,
+    required List<String> tabs,
+    required List<IconData> icons,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: TailboardTheme.getSurfaceColor(context, level: 3),
+        boxShadow: TailboardTheme.getElevation2(context),
+      ),
+      child: TabBar(
+        controller: controller,
+        labelColor: TailboardTheme.getAccentCopper(context).color,
+        unselectedLabelColor: TailboardTheme.getTextColor(context, isPrimary: false),
+        labelStyle: TailboardTheme.getBodyMedium(context).copyWith(fontWeight: FontWeight.w600),
+        unselectedLabelStyle: TailboardTheme.getBodyMedium(context),
+        indicator: BoxDecoration(
+          gradient: TailboardTheme.getCopperAccent(context),
+          borderRadius: TailboardTheme.radiusMedium,
+          boxShadow: TailboardTheme.getElevation1(context),
+        ),
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicatorPadding: const EdgeInsets.symmetric(
+          horizontal: TailboardTheme.spacingXs,
+          vertical: TailboardTheme.spacingXs,
+        ),
+        tabs: List.generate(tabs.length, (index) {
+          return Tab(
+            icon: Icon(icons[index], size: 20),
+            text: tabs[index],
+            height: 60,
+          );
+        }),
+      ),
+    );
+  }
+
+  /// Enhanced Action Button with adaptive styling
+  static Widget actionButton(BuildContext context, {
+    required String text,
+    required VoidCallback? onPressed,
+    bool isPrimary = true,
+    bool isLoading = false,
+    IconData? icon,
+  }) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        bool isPressed = false;
+        bool isHovered = false;
+
+        return MouseRegion(
+          cursor: SystemMouseCursors.click,
+          onEnter: (_) => setState(() => isHovered = true),
+          onExit: (_) => setState(() => isHovered = false),
+          child: GestureDetector(
+            onTapDown: (_) => setState(() => isPressed = true),
+            onTapUp: (_) => setState(() => isPressed = false),
+            onTapCancel: () => setState(() => isPressed = false),
+            onTap: onPressed,
+            child: AnimatedContainer(
+              duration: TailboardTheme.shortAnimation,
+              height: 48,
+              decoration: TailboardTheme.getButtonDecoration(
+                context,
+                isPrimary,
+                isPressed,
+                isHovered,
+              ),
+              child: Center(
+                child: isLoading
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          TailboardTheme.getButtonTextStyle(context, isPrimary, true).color!,
+                        ),
+                      ),
+                    )
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (icon != null) ...[
+                          Icon(
+                            icon,
+                            size: 18,
+                            color: TailboardTheme.getButtonTextStyle(context, isPrimary, true).color,
+                          ),
+                          const SizedBox(width: TailboardTheme.spacingXs),
+                        ],
+                        Text(
+                          text,
+                          style: TailboardTheme.getButtonTextStyle(context, isPrimary, true),
+                        ),
+                      ],
+                    ),
+              ),
+            ).animate(target: isHovered ? 1 : 0)
+              .scaleXY(begin: 1.0, end: 1.05, duration: TailboardTheme.shortAnimation),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Glass morphism surface card with adaptive transparency
+  static Widget glassCard(BuildContext context, {
+    required Widget child,
+    double width = double.infinity,
+    double? height,
+  }) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: TailboardTheme.getGlassDecoration(context),
+      child: child,
+    );
+  }
+
+  /// Electrical glow container with adaptive intensity
+  static Widget glowContainer(BuildContext context, {
+    required Widget child,
+    bool isActive = false,
+  }) {
+    return AnimatedContainer(
+      duration: TailboardTheme.mediumAnimation,
+      decoration: BoxDecoration(
+        borderRadius: TailboardTheme.radiusMedium,
+        boxShadow: isActive
+          ? TailboardTheme.getElectricalGlowShadow(context)
+          : TailboardTheme.getElevation1(context),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: TailboardTheme.radiusMedium,
+          gradient: isActive
+            ? TailboardTheme.getElectricalGlow(context)
+            : null,
+        ),
+        child: child,
+      ),
+    );
+  }
+}
+
+/// Custom painter for adaptive circuit pattern background
+class AdaptiveCircuitPatternPainter extends CustomPainter {
+  final BuildContext context;
+  
+  AdaptiveCircuitPatternPainter(this.context);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    final paint = Paint()
+      ..color = isDark ? TailboardTheme.getCircuitAccent(context) : TailboardTheme.getCircuitAccent(context)
+      ..strokeWidth = 0.5
+      ..style = PaintingStyle.stroke;
+
+    final path = Path();
+
+    // Draw circuit pattern lines with adaptive visibility
+    const double spacing = 40;
+    const double nodeSize = 3;
+
+    // Horizontal lines
+    for (double y = 0; y < size.height; y += spacing) {
+      for (double x = 0; x < size.width; x += spacing) {
+        // Draw node
+        canvas.drawCircle(
+          Offset(x, y),
+          nodeSize,
+          paint,
+        );
+
+        // Draw connecting lines
+        if (x + spacing < size.width) {
+          path.moveTo(x + nodeSize, y);
+          path.lineTo(x + spacing - nodeSize, y);
+        }
+
+        if (y + spacing < size.height) {
+          path.moveTo(x, y + nodeSize);
+          path.lineTo(x, y + spacing - nodeSize);
+        }
+      }
+    }
+
+    canvas.drawPath(path, paint);
+
+    // Draw accent lines with adaptive intensity
+    paint.color = TailboardTheme.getCircuitGlow(context);
+    paint.strokeWidth = 1;
+
+    final accentPath = Path();
+
+    // Random diagonal connections
+    for (double i = 0; i < size.width + size.height; i += spacing * 2) {
+      final x = i.clamp(0, size.width.toDouble());
+      final y = (i - x).clamp(0, size.height.toDouble());
+
+      if (x > 0 && y > 0) {
+        accentPath.moveTo(x - spacing, y - spacing);
+        accentPath.lineTo(x.toDouble(), y.toDouble());
+      }
+    }
+
+    canvas.drawPath(accentPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
