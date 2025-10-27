@@ -14,10 +14,12 @@
 ### 1.1 Existing Initialization Flow
 
 **Main App Entry Points**:
+
 - `main.dart`: Primary production entry point with comprehensive Firebase setup
 - `main_riverpod.dart`: Alternative entry point with simplified setup and anonymous auth
 
 **Current Initialization Order**:
+
 ```dart
 main() {
   // 1. Firebase Core Initialization
@@ -47,6 +49,7 @@ main() {
 ### 1.2 Current Provider Dependencies
 
 **Flat Provider Structure**:
+
 ```dart
 // Core Providers (no dependencies)
 - ConnectivityService
@@ -67,18 +70,21 @@ main() {
 ### 1.3 Identified Issues
 
 **Dependency Management**:
+
 - ❌ No explicit dependency resolution
 - ❌ Race conditions possible between provider initializations
 - ❌ No graceful degradation for failed dependencies
 - ❌ Auth checks scattered across providers (defensive but redundant)
 
 **Data Hierarchy Ignored**:
+
 - ❌ Jobs load without ensuring user preferences are set
 - ❌ Locals load without user home local context
 - ❌ Crew features initialize before user profile completion
 - ❌ No initialization priority based on user journey
 
 **Error Handling**:
+
 - ❌ Cascading failures not contained
 - ❌ No retry mechanisms for failed initializations
 - ❌ Limited offline-first initialization support
@@ -89,7 +95,8 @@ main() {
 
 ### 2.1 Natural Data Dependencies
 
-```
+```mermaid
+graph TD
 Firebase Core
     ↓
 Firebase Auth (User Authentication)
@@ -110,6 +117,7 @@ Advanced Features (Analytics, notifications)
 ### 2.2 Business Logic Dependencies
 
 **Critical Path**:
+
 1. **Authentication Required**: All data access needs authenticated user
 2. **Profile Completion**: User classification and home local affect data filtering
 3. **Preferences Set**: Job recommendations depend on user preferences
@@ -117,6 +125,7 @@ Advanced Features (Analytics, notifications)
 5. **Jobs Loaded**: Crew formation depends on available job opportunities
 
 **Optional/Parallel Paths**:
+
 - Weather data (independent of user state)
 - Analytics (can initialize in background)
 - Notifications (can initialize after basic auth)
@@ -128,25 +137,29 @@ Advanced Features (Analytics, notifications)
 
 ### 3.1 Core Requirements
 
-**R1: Dependency Resolution**
+- **R1: Dependency Resolution**
+
 - Define explicit dependency graph for all providers
 - Initialize providers in topological order
 - Handle circular dependencies gracefully
 - Support parallel initialization of independent branches
 
-**R2: Error Containment**
+- **R2: Error Containment**
+
 - Failed initialization should not cascade
 - Provide graceful degradation for non-critical features
 - Implement retry mechanisms with exponential backoff
 - Maintain app functionality with partial initialization
 
-**R3: Progress Feedback**
+- **R3: Progress Feedback**
+
 - Show initialization progress to users
 - Communicate which features are ready vs. loading
 - Provide estimated time remaining
 - Allow users to proceed with available features
 
-**R4: Performance Optimization**
+- **R4: Performance Optimization**
+
 - Initialize critical path first
 - Background initialization for non-critical features
 - Cache initialization state across app restarts
@@ -154,7 +167,8 @@ Advanced Features (Analytics, notifications)
 
 ### 3.2 Technical Requirements
 
-**T1: Initialization Manager**
+- **T1: Initialization Manager**
+
 ```dart
 abstract class InitializationManager {
   Future<void> initializeHierarchy();
@@ -164,7 +178,8 @@ abstract class InitializationManager {
 }
 ```
 
-**T2: Initialization Stages**
+- **T2: Initialization Stages**
+
 ```dart
 enum InitializationStage {
   // Core infrastructure
@@ -192,7 +207,8 @@ enum InitializationStage {
 }
 ```
 
-**T3: Provider Dependencies**
+- **T3: Provider Dependencies**
+
 ```dart
 abstract class HierarchicalProvider {
   List<InitializationStage> get dependencies;
@@ -204,17 +220,20 @@ abstract class HierarchicalProvider {
 
 ### 3.3 User Experience Requirements
 
-**UX1: Progressive Loading**
+- **UX1: Progressive Loading**
+
 - Login screen → Basic app functionality
 - Profile completion → Personalized features
 - Full data sync → Complete feature set
 
-**UX2: Offline Support**
+- **UX2: Offline Support**
+
 - Critical data cached locally
 - Progressive sync when online
 - Graceful degradation for missing data
 
-**UX3: Error Recovery**
+- **UX3: Error Recovery**
+
 - Clear error messages for initialization failures
 - One-tap retry for failed stages
 - Alternative access paths for critical features
@@ -268,24 +287,28 @@ class HierarchicalInitializationState {
 ## 5. Implementation Strategy
 
 ### 5.1 Phase 1: Infrastructure (Week 1)
+
 - Create InitializationStage enum
 - Implement DependencyGraph utility
 - Create HierarchicalInitializer coordinator
 - Add progress reporting infrastructure
 
 ### 5.2 Phase 2: Provider Migration (Week 2-3)
+
 - Migrate AuthProvider to hierarchical pattern
 - Migrate LocalsProvider with dependency on auth
 - Migrate JobsProvider with dependency on preferences
 - Add error handling and retry logic
 
 ### 5.3 Phase 3: Feature Integration (Week 4)
+
 - Integrate crew features with proper dependencies
 - Add weather services as parallel initialization
 - Implement notifications with conditional initialization
 - Add analytics as background initialization
 
 ### 5.4 Phase 4: UX & Polish (Week 5)
+
 - Implement progressive loading UI
 - Add initialization progress screens
 - Implement error recovery flows
@@ -327,18 +350,21 @@ class HierarchicalInitializationState {
 ## 7. Success Metrics
 
 ### 7.1 Performance Metrics
+
 - **Initialization Time**: <3 seconds for critical path
 - **Time to First Action**: <1 second after auth
 - **Error Rate**: <1% initialization failures
 - **Recovery Time**: <5 seconds for retry operations
 
 ### 7.2 User Experience Metrics
+
 - **Progress Visibility**: Users see initialization progress
 - **Feature Availability**: Core features available within 2 seconds
 - **Error Clarity**: Users understand what failed and why
 - **Recovery Success**: >90% successful retry rate
 
 ### 7.3 Development Metrics
+
 - **Provider Dependencies**: Explicitly defined for all providers
 - **Test Coverage**: >95% for initialization flows
 - **Error Handling**: All failure modes covered

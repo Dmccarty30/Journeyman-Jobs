@@ -3,11 +3,13 @@
 Hive Mind collective intelligence system for advanced swarm coordination.
 
 ## Usage
+
 ```bash
 npx claude-flow hive-mind [subcommand] [options]
 ```
 
 ## Subcommands
+
 - `init` - Initialize hive mind system
 - `spawn` - Spawn hive mind swarm
 - `status` - Show hive mind status
@@ -15,6 +17,7 @@ npx claude-flow hive-mind [subcommand] [options]
 - `stop` - Stop running session
 
 ## Examples
+
 ```bash
 # Initialize hive mind
 npx claude-flow hive-mind init

@@ -12,6 +12,7 @@ Matrix of agent capabilities and their specializations.
 | architect | Design, planning | System architecture |
 
 ## Querying Capabilities
+
 ```bash
 # List all capabilities
 npx claude-flow agents capabilities
