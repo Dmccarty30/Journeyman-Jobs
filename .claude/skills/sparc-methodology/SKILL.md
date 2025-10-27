@@ -1,6 +1,8 @@
 ---
 name: sparc-methodology
 description: SPARC (Specification, Pseudocode, Architecture, Refinement, Completion) comprehensive development methodology with multi-agent orchestration
+color: orange
+model: sonnet
 version: 2.7.0
 category: development
 tags:

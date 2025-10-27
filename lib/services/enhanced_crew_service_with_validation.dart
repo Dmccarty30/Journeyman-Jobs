@@ -5,8 +5,10 @@ import 'package:journeyman_jobs/models/user_model.dart';
 import 'package:journeyman_jobs/models/crew_invitation_model.dart';
 import 'package:journeyman_jobs/services/crew_invitation_service.dart';
 import 'package:journeyman_jobs/services/firestore_service.dart';
-import 'package:journeyman_jobs/utils/crew_error_handling.dart';
+import 'package:journeyman_jobs/utils/crew_error_handling.dart' hide CrewValidation;
 import 'package:journeyman_jobs/utils/crew_validation.dart';
+
+import '../utils/crew_validation.dart' as CrewValidation;
 
 /// Enhanced crew service with comprehensive error handling and validation
 ///
@@ -435,7 +437,6 @@ class EnhancedCrewServiceWithValidation {
             await _invitationService.cancelInvitation(invitation.id, foremanId);
           } catch (e) {
             // Log but continue
-            print('Failed to cancel invitation ${invitation.id}: $e');
           }
         }
       }
@@ -567,7 +568,7 @@ class EnhancedCrewServiceWithValidation {
 
       final QuerySnapshot snapshot = await _crewsCollection
           .where('name', isGreaterThanOrEqualTo: query.trim())
-          .where('name', isLessThanOrEqualTo: query.trim() + '\uf8ff')
+          .where('name', isLessThanOrEqualTo: '${query.trim()}\uf8ff')
           .orderBy('name')
           .limit(limit)
           .get();
@@ -599,7 +600,6 @@ class EnhancedCrewServiceWithValidation {
       });
     } catch (e) {
       // Log error but don't fail the main operation
-      print('Failed to update user crew list: $e');
     }
   }
 
@@ -618,7 +618,6 @@ class EnhancedCrewServiceWithValidation {
       }
     } catch (e) {
       // Log error but don't fail the main operation
-      print('Failed to update invitations for crew name change: $e');
     }
   }
 
@@ -635,7 +634,6 @@ class EnhancedCrewServiceWithValidation {
       }
     } catch (e) {
       // Log error but don't fail the main operation
-      print('Failed to cancel pending invitations: $e');
     }
   }
 }

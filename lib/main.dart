@@ -28,7 +28,7 @@ late AppLifecycleService _appLifecycleService;
 late SessionTimeoutService _sessionTimeoutService;
 
 // Global hierarchical initialization service
-late HierarchicalInitializationService _hierarchicalInitializationService;
+late HierarchicalInitializationService hierarchicalInitializationService;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,7 +81,7 @@ void main() async {
 
   // Initialize hierarchical data service for IBEW Union → Local → Member → Job hierarchy
   // This provides efficient loading and caching of hierarchical data
-  _hierarchicalInitializationService = HierarchicalInitializationService();
+  hierarchicalInitializationService = HierarchicalInitializationService();
 
   runApp(const ProviderScope(child: MyApp()));
 }

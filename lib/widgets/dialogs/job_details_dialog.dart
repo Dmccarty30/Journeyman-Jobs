@@ -8,7 +8,6 @@ import '../../design_system/app_theme.dart';
 import '../../models/job_model.dart';
 import '../../models/locals_record.dart';
 import '../../providers/riverpod/locals_riverpod_provider.dart';
-import '../../screens/locals/locals_screen.dart';
 import '../rich_text_local_card.dart';
 
 /// A dialog widget displaying detailed job information

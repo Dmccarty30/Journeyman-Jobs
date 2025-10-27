@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings
+
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:journeyman_jobs/models/crew_model.dart';
@@ -337,7 +339,6 @@ class EnhancedCrewService {
             await _invitationService.cancelInvitation(invitation.id, foremanId);
           } catch (e) {
             // Log but continue
-            print('Failed to cancel invitation ${invitation.id}: $e');
           }
         }
       }
@@ -410,7 +411,6 @@ class EnhancedCrewService {
           }
         } catch (e) {
           // Log but continue with other members
-          print('Failed to get user $memberId: $e');
         }
       }
 
@@ -477,7 +477,6 @@ class EnhancedCrewService {
           }
         } catch (e) {
           // Log but continue with other members
-          print('Failed to get user $memberId: $e');
         }
       }
 
@@ -497,7 +496,6 @@ class EnhancedCrewService {
       });
     } catch (e) {
       // Log error but don't fail the main operation
-      print('Failed to update user crew list: $e');
     }
   }
 
@@ -508,15 +506,16 @@ class EnhancedCrewService {
 
       for (final invitation in invitations) {
         if (invitation.status == CrewInvitationStatus.pending) {
-          await _crewsCollection
-              .collection('crewInvitations')
+          await _firestore
+              .collection('crews')
+              .doc(crewId)
+              .collection('invitations')
               .doc(invitation.id)
               .update({'crewName': newName});
         }
       }
     } catch (e) {
       // Log error but don't fail the main operation
-      print('Failed to update invitations for crew name change: $e');
     }
   }
 
@@ -533,7 +532,6 @@ class EnhancedCrewService {
       }
     } catch (e) {
       // Log error but don't fail the main operation
-      print('Failed to cancel pending invitations: $e');
     }
   }
 }

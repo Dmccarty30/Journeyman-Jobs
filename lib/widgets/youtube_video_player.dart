@@ -36,6 +36,10 @@ class YouTubeVideoMetadata {
   final DateTime? publishDate;
   /// Whether this is an emergency/admin video
   final bool isEmergency;
+  /// YouTube channel ID (optional)
+  final String? channelId;
+  /// Channel name (optional)
+  final String? channelName;
 
   const YouTubeVideoMetadata({
     required this.videoId,
@@ -45,6 +49,8 @@ class YouTubeVideoMetadata {
     this.duration,
     this.publishDate,
     this.isEmergency = false,
+    this.channelId,
+    this.channelName,
   });
 
   /// Creates a copy of this metadata with the specified fields replaced
@@ -56,6 +62,8 @@ class YouTubeVideoMetadata {
     Duration? duration,
     DateTime? publishDate,
     bool? isEmergency,
+    String? channelId,
+    String? channelName,
   }) {
     return YouTubeVideoMetadata(
       videoId: videoId ?? this.videoId,
@@ -65,6 +73,8 @@ class YouTubeVideoMetadata {
       duration: duration ?? this.duration,
       publishDate: publishDate ?? this.publishDate,
       isEmergency: isEmergency ?? this.isEmergency,
+      channelId: channelId ?? this.channelId,
+      channelName: channelName ?? this.channelName,
     );
   }
 }

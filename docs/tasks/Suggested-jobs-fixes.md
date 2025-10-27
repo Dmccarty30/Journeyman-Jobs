@@ -453,7 +453,7 @@ extension UserJobPreferencesX on UserJobPreferences {
 
    ```dart
    // ❌ DEPRECATED
-   color.withOpacity(0.5)
+   color.withValues(alpha:0.5)
 
    // ✅ NEW
    color.withValues(alpha: 0.5)

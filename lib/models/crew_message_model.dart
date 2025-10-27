@@ -308,7 +308,7 @@ class CrewMessage {
 
   @override
   String toString() {
-    return 'CrewMessage(id: $id, crewId: $crewId, senderId: $senderId, type: $type, content: "${content.length > 50 ? content.substring(0, 50) + "..." : content}")';
+    return 'CrewMessage(id: $id, crewId: $crewId, senderId: $senderId, type: $type, content: "${content.length > 50 ? "${content.substring(0, 50)}..." : content}")';
   }
 
   @override
@@ -439,5 +439,28 @@ class CrewConversation {
     } else {
       return '${activity.day}/${activity.month}/${activity.year}';
     }
+  }
+
+  /// Create a copy of this CrewConversation with updated fields
+  CrewConversation copyWith({
+    String? crewId,
+    String? crewName,
+    CrewMessage? lastMessage,
+    int? unreadCount,
+    List<String>? memberIds,
+    Timestamp? lastActivity,
+    bool? isMuted,
+    bool? isPinned,
+  }) {
+    return CrewConversation(
+      crewId: crewId ?? this.crewId,
+      crewName: crewName ?? this.crewName,
+      lastMessage: lastMessage ?? this.lastMessage,
+      unreadCount: unreadCount ?? this.unreadCount,
+      memberIds: memberIds ?? this.memberIds,
+      lastActivity: lastActivity ?? this.lastActivity,
+      isMuted: isMuted ?? this.isMuted,
+      isPinned: isPinned ?? this.isPinned,
+    );
   }
 }

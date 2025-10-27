@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
 import 'package:journeyman_jobs/models/crew_invitation_model.dart';
 import 'package:journeyman_jobs/widgets/electrical_components.dart';
@@ -20,14 +21,14 @@ class CrewInvitationCard extends StatefulWidget {
   final bool isLoading;
 
   const CrewInvitationCard({
-    Key? key,
+    super.key,
     required this.invitation,
     this.onAccept,
     this.onDecline,
     this.onCancel,
     this.showActions = true,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   State<CrewInvitationCard> createState() => _CrewInvitationCardState();

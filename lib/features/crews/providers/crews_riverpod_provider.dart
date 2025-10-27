@@ -13,6 +13,7 @@ import 'package:state_notifier/state_notifier.dart';
 
 import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
 import '../../../domain/enums/crew_visibility.dart';
+import '../../../models/crew_invitation_model.dart';
 import '../models/models.dart';
 import '../services/crew_service.dart';
 
@@ -89,7 +90,7 @@ MemberRole? userRoleInCrew(Ref ref, String crewId) {
   final crews = ref.watch(userCrewsProvider);
   
   if (currentUser == null) return null;
-  
+
   final crew = crews.firstWhere(
     (crew) => crew.id == crewId,
     orElse: () => Crew(
@@ -496,4 +497,36 @@ CrewCreationNotifier crewCreationNotifier(Ref ref) {
 @riverpod
 AsyncValue<void> crewCreationState(Ref ref) {
   return ref.watch(crewCreationStateProvider);
+}
+/// Provider for pending crew invitations (invitations received by current user)
+@riverpod
+List<CrewInvitation> pendingInvitations(Ref ref) {
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
+  if (currentUser == null) return [];
+
+  // TODO: Implement actual invitation fetching from Firestore
+  // For now, return empty list to prevent compilation errors
+  return [];
+}
+
+/// Provider for sent crew invitations (invitations sent by current user)
+@riverpod
+List<CrewInvitation> sentInvitations(Ref ref) {
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
+  if (currentUser == null) return [];
+
+  // TODO: Implement actual sent invitations fetching from Firestore
+  // For now, return empty list to prevent compilation errors
+  return [];
+}
+
+/// Provider for invitation history (all past invitations)
+@riverpod
+List<CrewInvitation> invitationHistory(Ref ref) {
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
+  if (currentUser == null) return [];
+
+  // TODO: Implement actual invitation history fetching from Firestore
+  // For now, return empty list to prevent compilation errors
+  return [];
 }

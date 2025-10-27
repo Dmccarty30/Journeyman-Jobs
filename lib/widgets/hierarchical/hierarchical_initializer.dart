@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../models/hierarchical/hierarchical_data_model.dart';
+import 'package:flutter/foundation.dart';
+import '../../models/hierarchical/hierarchical_types.dart';
 import '../../providers/riverpod/hierarchical_riverpod_provider.dart';
 import '../../providers/riverpod/auth_riverpod_provider.dart';
 import '../../design_system/app_theme.dart';
@@ -64,6 +65,8 @@ class HierarchicalInitializer extends ConsumerWidget {
                   width: 200,
                   height: 60,
                   child: JJSkeletonLoader(
+                    width: 200,
+                    height: 60,
                     showCircuitPattern: true,
                   ),
                 ),
@@ -74,7 +77,7 @@ class HierarchicalInitializer extends ConsumerWidget {
             // Loading message
             Text(
               'Initializing IBEW Network...',
-              style: AppTheme.headingMedium.copyWith(
+              style: AppTheme.headlineMedium.copyWith(
                 color: AppTheme.accentCopper,
               ),
               textAlign: TextAlign.center,
@@ -127,7 +130,7 @@ class HierarchicalInitializer extends ConsumerWidget {
               // Error title
               Text(
                 'Connection Error',
-                style: AppTheme.headingLarge.copyWith(
+                style: AppTheme.headlineLarge.copyWith(
                   color: AppTheme.accentCopper,
                 ),
                 textAlign: TextAlign.center,
@@ -153,7 +156,7 @@ class HierarchicalInitializer extends ConsumerWidget {
                   child: Container(
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha:0.3),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -230,7 +233,7 @@ class HierarchicalInitializer extends ConsumerWidget {
               // Error title
               Text(
                 'Authentication Error',
-                style: AppTheme.headingLarge.copyWith(
+                style: AppTheme.headlineLarge.copyWith(
                   color: AppTheme.accentCopper,
                 ),
                 textAlign: TextAlign.center,
@@ -348,15 +351,15 @@ class HierarchicalInitializer extends ConsumerWidget {
               color: step.isCompleted
                   ? AppTheme.accentCopper
                   : step.isActive
-                      ? AppTheme.accentCopper.withOpacity(0.7)
-                      : AppTheme.textLight.withOpacity(0.3),
+                      ? AppTheme.accentCopper.withValues(alpha:0.7)
+                      : AppTheme.textLight.withValues(alpha:0.3),
             ),
             child: Icon(
               step.isCompleted ? Icons.check : step.icon,
               size: 18,
               color: step.isCompleted || step.isActive
                   ? Colors.white
-                  : AppTheme.textLight.withOpacity(0.7),
+                  : AppTheme.textLight.withValues(alpha:0.7),
             ),
           ),
 
@@ -369,7 +372,7 @@ class HierarchicalInitializer extends ConsumerWidget {
               style: AppTheme.bodyMedium.copyWith(
                 color: step.isCompleted || step.isActive
                     ? AppTheme.accentCopper
-                    : AppTheme.textLight.withOpacity(0.7),
+                    : AppTheme.textLight.withValues(alpha:0.7),
                 fontWeight: step.isActive ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -455,7 +458,7 @@ class HierarchicalStatsWidget extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text(
                   'IBEW Network Statistics',
-                  style: AppTheme.headingSmall.copyWith(
+                  style: AppTheme.headlineSmall.copyWith(
                     color: AppTheme.primaryNavy,
                   ),
                 ),
@@ -535,7 +538,7 @@ class HierarchicalStatsWidget extends ConsumerWidget {
         const SizedBox(height: 4),
         Text(
           value,
-          style: AppTheme.headingSmall.copyWith(
+          style: AppTheme.headlineSmall.copyWith(
             color: AppTheme.primaryNavy,
             fontWeight: FontWeight.bold,
           ),

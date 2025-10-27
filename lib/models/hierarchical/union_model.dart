@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
-import 'job_model.dart';
-import 'user_model.dart';
-import 'locals_record.dart';
+import '../user_model.dart';
 
 /// Represents a complete IBEW Union in the hierarchical data structure
 ///
@@ -40,7 +38,7 @@ class Union {
   /// Union contact information
   final String contactEmail;
   final String contactPhone;
-  final String website;
+  final String? website;
 
   /// Union establishment date
   final DateTime foundedDate;

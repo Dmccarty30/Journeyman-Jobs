@@ -144,7 +144,7 @@ static const LinearGradient interactiveHover = LinearGradient(
 static const RadialGradient electricalGlow = RadialGradient(
   center: Alignment.center,
   radius: 1.0,
-  colors: [copper400, copper600, copper900.withOpacity(0.0)],
+  colors: [copper400, copper600, copper900.withValues(alpha:0.0)],
   stops: [0.0, 0.4, 1.0],
 );
 ```

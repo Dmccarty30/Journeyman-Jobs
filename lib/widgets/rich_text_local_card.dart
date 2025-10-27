@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
 import '../models/locals_record.dart';
 import '../utils/text_formatting_wrapper.dart';
-import 'dart:io' show Platform;
-import 'package:url_launcher/url_launcher.dart';
+
 
 /// A card widget displaying local union information using RichText with icons
 /// Shows local information in a two-span format: bold labels and bracketed values

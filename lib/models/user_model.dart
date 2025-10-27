@@ -90,7 +90,7 @@ class UserModel {
   final bool onlineStatus;
 
   /// Timestamp of last user activity for presence tracking
-  final Timestamp lastActive;
+  final DateTime lastActive;
 
   /// Personal information - Required for job dispatch
   final String firstName;
@@ -237,7 +237,7 @@ class UserModel {
       email: data['email'] ?? '',
       avatarUrl: data['avatarUrl'],
       onlineStatus: data['onlineStatus'] ?? false,
-      lastActive: data['lastActive'] ?? Timestamp.now(),
+      lastActive: (data['lastActive'] as Timestamp?)?.toDate() ?? DateTime.now(),
       firstName: data['firstName'] ?? '',
       lastName: data['lastName'] ?? '',
       phoneNumber: data['phoneNumber'] ?? '',
@@ -256,7 +256,7 @@ class UserModel {
       fcmToken: data['fcmToken'],
       displayName: data['displayName'] ?? '',
       isActive: data['isActive'] ?? true,
-      createdTime: data['createdTime'],
+      createdTime: (data['createdTime'] as Timestamp?)?.toDate(),
       certifications: List<String>.from(data['certifications'] ?? []),
       yearsExperience: data['yearsExperience'] ?? 0,
       preferredDistance: data['preferredDistance'] ?? 0,
@@ -287,7 +287,7 @@ class UserModel {
       email: json['email'] ?? '',
       avatarUrl: json['avatarUrl'],
       onlineStatus: json['onlineStatus'] ?? false,
-      lastActive: Timestamp.fromDate(DateTime.parse(json['lastActive'] ?? DateTime.now().toIso8601String())),
+      lastActive: DateTime.parse(json['lastActive'] ?? DateTime.now().toIso8601String()),
       firstName: json['firstName'] ?? '',
       lastName: json['lastName'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
@@ -337,7 +337,7 @@ class UserModel {
       'email': email,
       'avatarUrl': avatarUrl,
       'onlineStatus': onlineStatus,
-      'lastActive': lastActive.toDate().toIso8601String(),
+      'lastActive': lastActive.toIso8601String(),
       'firstName': firstName,
       'lastName': lastName,
       'phoneNumber': phoneNumber,
@@ -386,7 +386,7 @@ class UserModel {
       'email': email,
       'avatarUrl': avatarUrl,
       'onlineStatus': onlineStatus,
-      'lastActive': lastActive,
+      'lastActive': Timestamp.fromDate(lastActive),
       'firstName': firstName,
       'lastName': lastName,
       'phoneNumber': phoneNumber,
@@ -405,7 +405,7 @@ class UserModel {
       'fcmToken': fcmToken,
       'displayName': displayName,
       'isActive': isActive,
-      'createdTime': createdTime,
+      'createdTime': createdTime != null ? Timestamp.fromDate(createdTime!) : null,
       'certifications': certifications,
       'yearsExperience': yearsExperience,
       'preferredDistance': preferredDistance,

@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/contractor_model.dart';
 
 class ContractorService {
-  static const String _collection = 'contractors';
+  static const String _collection = 'stormcontractors';
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   /// Fetches all contractors from Firestore, ordered by company name.

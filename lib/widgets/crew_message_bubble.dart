@@ -22,7 +22,7 @@ class CrewMessageBubble extends StatefulWidget {
   final bool showReadStatus;
 
   const CrewMessageBubble({
-    Key? key,
+    super.key,
     required this.message,
     required this.isFromCurrentUser,
     this.onTap,
@@ -30,7 +30,7 @@ class CrewMessageBubble extends StatefulWidget {
     this.onReactionTap,
     this.showTimestamp = true,
     this.showReadStatus = true,
-  }) : super(key: key);
+  });
 
   @override
   State<CrewMessageBubble> createState() => _CrewMessageBubbleState();
@@ -322,9 +322,7 @@ class _CrewMessageBubbleState extends State<CrewMessageBubble>
         return _buildAlertMessage();
       case CrewMessageType.system:
         return _buildSystemMessage();
-      default:
-        return _buildTextMessage();
-    }
+      }
   }
 
   Widget _buildTextMessage() {

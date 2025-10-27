@@ -1,36 +1,19 @@
 # SCRATCHPAD
 
-- **Light Theme** - Quite Light
-- **Dark Theme** -Blueberry Bannana
+## ERROR EMPIRE
 
-## DATABSE COLLECTIONS
+- **.claude\agents\root-cause-analyst.md**
+- **.claude\agents\error-team.md**
+- **.claude\agents\error-detective.md**
+- **.claude\agents\error-coordinator.md**
+- **.claude\agents\debugger.md**
+- **.claude\commands\superclaude\troubleshoot.md**
+- **.claude\commands\sparc\debugger.md**
+- ****
+- ****
+- ****
+- 
 
-- **User Collection**
-
-- firstName
-- lastName
-- phoneNumber
-- address
-- city
-- state
-- zipcode
-- email
-- password
-- ticketNumber
-- homeLocal
-- classification
-- curentlyWorking
-- booksOn
-- careerGoals
-- howHeardAboutUs
-- lookingToAccomplish
-
-- **User Preferences Collection**
-
-- constructionTypes
-- HoursPerWeek
-- PerDiem
-- preferredLocals ==> This is a trick field so the user is going to put down their preferred locals Where they want to work and it's going to become a separated So we need to somehow figure out how to separate or you know in the in the recommended jobs or suggested jobs We're gonna have to separate these locals or understand that this isn't just one preference it's several preferences depending on how many locals they put in the text field
 
 ---
 
@@ -281,3 +264,15 @@ npx claude-flow workflow create --name "test-suite" --interactive
 - **[error-analysis](tools/error-analysis.md)** - Deep error pattern analysis and resolution strategies
 - **[error-trace](tools/error-trace.md)** - Trace and diagnose production errors
 - **[issue](tools/issue.md)** - Create well-structured GitHub/GitLab issues
+
+---
+
+www.youtube.com/@Foxweather
+United States
+Joined Aug 25, 2021
+945K subscribers
+11,723 videos
+554,885,272 views
+
+https://www.youtube.com/channel/UC1FbPiXx59_ltnFVx7IxWow/about
+

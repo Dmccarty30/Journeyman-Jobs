@@ -274,9 +274,8 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
       controller: _scrollController,
       padding: const EdgeInsets.all(AppTheme.spacingMd),
       itemCount: filteredLocals.length + (localsState.isLoading && filteredLocals.isNotEmpty ? 1 : 0),
-      // PERFORMANCE: Add itemExtent hint for better recycling
-      // Estimated height of LocalCard (adjust based on actual measurements)
-      itemExtent: 200, // ~180px content + 20px margin
+      // PERFORMANCE: itemExtent removed to allow dynamic card heights
+      // Cards will size based on content (address, phone, email availability)
       physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         // Show loading indicator at the end while loading more

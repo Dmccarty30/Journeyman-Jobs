@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/hierarchical/hierarchical_data_model.dart';
 import '../../models/user_model.dart';
 import '../auth_service.dart';
@@ -19,11 +20,11 @@ import 'hierarchical_service.dart';
 /// - Integration with existing authentication system
 class HierarchicalInitializationService {
   final HierarchicalService _hierarchicalService;
-  final AuthService _authService;
+  final AuthService authService;
   final FirebaseAuth _auth;
 
   // Initialization state
-  HierarchicalInitializationState _state = HierarchicalInitializationState.idle;
+  HierarchicalInitializationState _state = HierarchicalInitializationState.idle();
   HierarchicalData? _lastKnownGoodData;
 
   // Stream controller for initialization state updates
@@ -31,7 +32,7 @@ class HierarchicalInitializationService {
       StreamController<HierarchicalInitializationState>.broadcast();
 
   // Configuration
-  final Duration _initializationTimeout = const Duration(seconds: 30);
+  final Duration initializationTimeout = const Duration(seconds: 30);
   final Duration _progressiveLoadingDelay = const Duration(milliseconds: 100);
 
   HierarchicalInitializationService({
@@ -39,7 +40,7 @@ class HierarchicalInitializationService {
     AuthService? authService,
     FirebaseAuth? auth,
   }) : _hierarchicalService = hierarchicalService ?? HierarchicalService(),
-       _authService = authService ?? AuthService(),
+       authService = authService ?? AuthService(),
        _auth = auth ?? FirebaseAuth.instance;
 
   /// Stream of initialization state updates
@@ -62,7 +63,7 @@ class HierarchicalInitializationService {
     debugPrint('[HierarchicalInitializationService] Starting initialization for current user...');
 
     try {
-      _updateState(HierarchicalInitializationState.initializing);
+      _updateState(HierarchicalInitializationState.initializing());
 
       // Get current user
       final currentUser = _auth.currentUser;
@@ -72,7 +73,10 @@ class HierarchicalInitializationService {
       }
 
       // Get user profile to determine preferences
-      final userDoc = await _authService.getUserProfile(currentUser.uid);
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
       if (!userDoc.exists) {
         debugPrint('[HierarchicalInitializationService] User profile not found, initializing basic data');
         return await _initializeForGuest(forceRefresh: forceRefresh);
@@ -125,13 +129,13 @@ class HierarchicalInitializationService {
   Future<HierarchicalData> _initializeForGuest({bool forceRefresh = false}) async {
     debugPrint('[HierarchicalInitializationService] Initializing for guest user...');
 
-    _updateState(HierarchicalInitializationState.loadingGuestData);
+    _updateState(HierarchicalInitializationState.loadingGuestData());
 
     final hierarchicalData = await _hierarchicalService.initializeHierarchicalData(
       forceRefresh: forceRefresh,
     );
 
-    _updateState(HierarchicalInitializationState.completed);
+    _updateState(HierarchicalInitializationState.completed());
     _lastKnownGoodData = hierarchicalData;
 
     return hierarchicalData;
@@ -141,7 +145,7 @@ class HierarchicalInitializationService {
   Future<HierarchicalData> _initializeMinimal(UserModel user, {bool forceRefresh = false}) async {
     debugPrint('[HierarchicalInitializationService] Initializing minimal data...');
 
-    _updateState(HierarchicalInitializationState.loadingMinimal);
+    _updateState(HierarchicalInitializationState.loadingMinimal());
 
     // Load only essential data: union and basic locals
     final hierarchicalData = await _hierarchicalService.initializeHierarchicalData(
@@ -151,7 +155,7 @@ class HierarchicalInitializationService {
     // Add progressive loading delay for better UX
     await Future.delayed(_progressiveLoadingDelay);
 
-    _updateState(HierarchicalInitializationState.completed);
+    _updateState(HierarchicalInitializationState.completed());
     _lastKnownGoodData = hierarchicalData;
 
     return hierarchicalData;
@@ -161,7 +165,7 @@ class HierarchicalInitializationService {
   Future<HierarchicalData> _initializeHomeLocalFirst(UserModel user, {bool forceRefresh = false}) async {
     debugPrint('[HierarchicalInitializationService] Initializing home local first...');
 
-    _updateState(HierarchicalInitializationState.loadingHomeLocal);
+    _updateState(HierarchicalInitializationState.loadingHomeLocal());
 
     final hierarchicalData = await _hierarchicalService.initializeHierarchicalData(
       preferredLocals: [user.homeLocal],
@@ -174,7 +178,7 @@ class HierarchicalInitializationService {
     // Then load additional data in background if needed
     _loadAdditionalDataInBackground(hierarchicalData);
 
-    _updateState(HierarchicalInitializationState.completed);
+    _updateState(HierarchicalInitializationState.completed());
     _lastKnownGoodData = hierarchicalData;
 
     return hierarchicalData;
@@ -184,7 +188,7 @@ class HierarchicalInitializationService {
   Future<HierarchicalData> _initializePreferredLocalsFirst(UserModel user, {bool forceRefresh = false}) async {
     debugPrint('[HierarchicalInitializationService] Initializing preferred locals first...');
 
-    _updateState(HierarchicalInitializationState.loadingPreferredLocals);
+    _updateState(HierarchicalInitializationState.loadingPreferredLocals());
 
     // Parse preferred locals from user preferences
     final preferredLocals = _parsePreferredLocals(user.preferredLocals);
@@ -205,7 +209,7 @@ class HierarchicalInitializationService {
     // Then load additional data in background
     _loadAdditionalDataInBackground(hierarchicalData);
 
-    _updateState(HierarchicalInitializationState.completed);
+    _updateState(HierarchicalInitializationState.completed());
     _lastKnownGoodData = hierarchicalData;
 
     return hierarchicalData;
@@ -215,13 +219,13 @@ class HierarchicalInitializationService {
   Future<HierarchicalData> _initializeComprehensive(UserModel user, {bool forceRefresh = false}) async {
     debugPrint('[HierarchicalInitializationService] Initializing comprehensive data...');
 
-    _updateState(HierarchicalInitializationState.loadingComprehensive);
+    _updateState(HierarchicalInitializationState.loadingComprehensive());
 
     final hierarchicalData = await _hierarchicalService.initializeHierarchicalData(
       forceRefresh: forceRefresh,
     );
 
-    _updateState(HierarchicalInitializationState.completed);
+    _updateState(HierarchicalInitializationState.completed());
     _lastKnownGoodData = hierarchicalData;
 
     return hierarchicalData;
@@ -246,6 +250,10 @@ class HierarchicalInitializationService {
 
       case HierarchicalInitializationStrategy.comprehensive:
         return await _initializeComprehensive(user, forceRefresh: forceRefresh);
+
+      case HierarchicalInitializationStrategy.adaptive:
+        // This shouldn't happen, but use homeLocalFirst as fallback
+        return await _initializeHomeLocalFirst(user, forceRefresh: forceRefresh);
     }
   }
 
@@ -374,13 +382,13 @@ class HierarchicalInitializationService {
         isHealthy: false,
         isFresh: false,
         lastUpdated: DateTime.now(),
-        stats: const HierarchicalStats(
+        stats: HierarchicalStats(
           totalLocals: 0,
           totalMembers: 0,
           totalJobs: 0,
           availableJobs: 0,
           availableMembers: 0,
-          lastUpdated: null,
+          lastUpdated: DateTime.now(),
         ),
         issues: ['Health check failed: $e'],
       );
@@ -428,7 +436,7 @@ class HierarchicalInitializationService {
   /// Resets the initialization service
   void reset() {
     debugPrint('[HierarchicalInitializationService] Resetting initialization service...');
-    _updateState(HierarchicalInitializationState.idle);
+    _updateState(HierarchicalInitializationState.idle());
     _lastKnownGoodData = null;
   }
 

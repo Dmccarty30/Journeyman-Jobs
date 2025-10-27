@@ -293,7 +293,7 @@ D:\Journeyman-Jobs\lib\widgets\enhanced_job_card.dart:139:
   color: AppTheme.warningYellow.withValues(alpha: 0.1),
 ```
 
-**Finding:** No `.withOpacity()` usage found - guideline is followed correctly.
+**Finding:** No `.withValues(alpha:)` usage found - guideline is followed correctly.
 
 **Note:** The CLAUDE.md guideline appears to have a typo (says "DO NOT USE .withValues(alpha:) INSTEAD USE .withValues(alpha:)"). This should be clarified.
 

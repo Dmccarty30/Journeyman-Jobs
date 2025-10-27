@@ -1,3 +1,8 @@
+import 'package:flutter/material.dart' show Container, EdgeInsets, SizedBox, LinearProgressIndicator, AlwaysStoppedAnimation, VoidCallback, Widget, Color, StatefulWidget, Key, State, BuildContext, StatelessWidget, Text, TextStyle, MainAxisSize, Column, Colors, BorderRadius, Border, BoxDecoration, FontWeight, CrossAxisAlignment, Expanded, Row, Semantics, ConnectionState, Center, FutureBuilder, Scaffold, ListView, ListTile, ElevatedButton;
+import 'package:journeyman_jobs/design_system/components/three_phase_rotation_meter.dart';
+
+import '../app_theme.dart' show AppTheme;
+
 /// Three-Phase Rotation Meter Integration Guide
 ///
 /// This guide provides comprehensive documentation for integrating the
@@ -82,10 +87,10 @@ class StormTrackingLoadingPattern {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isEmergency ? Colors.red.withOpacity(0.1) : AppTheme.surfaceLight,
+        color: isEmergency ? Colors.red.withValues(alpha:0.1) : AppTheme.surfaceLight,
         borderRadius: BorderRadius.circular(12),
         border: isEmergency
-          ? Border.all(color: Colors.red.withOpacity(0.3))
+          ? Border.all(color: Colors.red.withValues(alpha:0.3))
           : null,
       ),
       child: Column(
@@ -124,9 +129,9 @@ class DataSyncLoadingPattern {
     double progress = 0.0,
   }) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const all(12),
       decoration: BoxDecoration(
-        color: AppTheme.accentCopper.withOpacity(0.1),
+        color: AppTheme.accentCopper.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -190,10 +195,10 @@ class PerformanceOptimizedMeter extends StatefulWidget {
   final bool visible;
 
   const PerformanceOptimizedMeter({
-    Key? key,
+    super.key,
     required this.child,
     this.visible = true,
-  }) : super(key: key);
+  });
 
   @override
   State<PerformanceOptimizedMeter> createState() => _PerformanceOptimizedMeterState();
@@ -224,12 +229,12 @@ class AccessibleRotationMeter extends StatelessWidget {
   final bool isImportant;
 
   const AccessibleRotationMeter({
-    Key? key,
+    super.key,
     this.size = 80,
     this.customLabel,
     this.customHint,
     this.isImportant = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -255,7 +260,7 @@ class AccessibleRotationMeter extends StatelessWidget {
 
 /// Example 1: Job Search Screen Integration
 class JobSearchScreenIntegration extends StatelessWidget {
-  const JobSearchScreenIntegration({Key? key}) : super(key: key);
+  const JobSearchScreenIntegration({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -304,7 +309,7 @@ class JobSearchScreenIntegration extends StatelessWidget {
 
 /// Example 2: Storm Tracking Integration
 class StormTrackingIntegration extends StatefulWidget {
-  const StormTrackingIntegration({Key? key}) : super(key: key);
+  const StormTrackingIntegration({super.key});
 
   @override
   State<StormTrackingIntegration> createState() => _StormTrackingIntegrationState();
@@ -358,7 +363,7 @@ class _StormTrackingIntegrationState extends State<StormTrackingIntegration> {
 
 /// Example 3: Union Data Sync Integration
 class UnionDataSyncIntegration extends StatefulWidget {
-  const UnionDataSyncIntegration({Key? key}) : super(key: key);
+  const UnionDataSyncIntegration({super.key});
 
   @override
   State<UnionDataSyncIntegration> createState() => _UnionDataSyncIntegrationState();
@@ -429,10 +434,10 @@ class DebugRotationMeter extends StatelessWidget {
   final String debugInfo;
 
   const DebugRotationMeter({
-    Key? key,
+    super.key,
     required this.meter,
     this.debugInfo = '',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -445,7 +450,7 @@ class DebugRotationMeter extends StatelessWidget {
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha:0.8),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(

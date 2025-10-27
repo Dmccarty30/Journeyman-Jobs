@@ -275,7 +275,7 @@ class CrewValidation {
         break;
       default:
         // Other message types should have content or media
-        if (content.trim().isEmpty && (mediaUrls == null || mediaUrls!.isEmpty)) {
+        if (content.trim().isEmpty && (mediaUrls == null || mediaUrls.isEmpty)) {
           errors['content'] = 'Message content or media is required';
         }
     }
@@ -619,7 +619,7 @@ class CrewValidation {
   }
 
   /// Validate email
-  static String? validateEmail(String? email) {
+  String? validateEmail(String? email) {
     if (email == null || email.trim().isEmpty) {
       return null; // Optional field
     }
@@ -634,7 +634,7 @@ class CrewValidation {
   }
 
   /// Validate phone number
-  static String? validatePhoneNumber(String? phone) {
+  String? validatePhoneNumber(String? phone) {
     if (phone == null || phone.trim().isEmpty) {
       return null; // Optional field
     }
@@ -653,7 +653,7 @@ class CrewValidation {
   }
 
   /// Validate URL
-  static String? validateUrl(String? url, {String fieldName = 'URL'}) {
+  String? validateUrl(String? url, {String fieldName = 'URL'}) {
     if (url == null || url.trim().isEmpty) {
       return null; // Optional field
     }
@@ -668,13 +668,13 @@ class CrewValidation {
   }
 
   /// Validate list of IDs
-  static String? validateCrewIds(List<String> crewIds) {
+  String? validateCrewIds(List<String> crewIds, {required String fieldName}) {
     if (crewIds.isEmpty) {
       return null; // Empty list is valid
     }
 
     for (int i = 0; i < crewIds.length; i++) {
-      final error = validateCrewId(crewIds[i], fieldName: 'Crew ID $i');
+      final error = validateCrewIds(crewIds[i] as List<String>, fieldName: 'Crew ID $i');
       if (error != null) {
         return error;
       }
@@ -684,7 +684,7 @@ class CrewValidation {
   }
 
   /// Validate message content
-  static String? validateMessageContent(String? content) {
+  String? validateMessageContent(String? content) {
     if (content == null || content.trim().isEmpty) {
       return 'Message content is required';
     }
@@ -704,7 +704,7 @@ class CrewValidation {
   }
 
   /// Validate invitation message
-  static String? validateInvitationMessage(String? message) {
+  String? validateInvitationMessage(String? message) {
     if (message == null || message.trim().isEmpty) {
       return null; // Optional field
     }
@@ -724,12 +724,12 @@ class CrewValidation {
   }
 
   /// Check if all validation results are valid (no errors)
-  static bool isValid(Map<String, String?> validationResults) {
+  bool isValid(Map<String, String?> validationResults) {
     return validationResults.values.every((error) => error == null);
   }
 
   /// Get all error messages from validation results
-  static List<String> getErrorMessages(Map<String, String?> validationResults) {
+  List<String> getErrorMessages(Map<String, String?> validationResults) {
     return validationResults.entries
         .where((entry) => entry.value != null)
         .map((entry) => entry.value!)

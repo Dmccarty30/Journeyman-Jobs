@@ -1,6 +1,10 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../design_system/app_theme.dart';
+
+// Export circuit pattern background
+export 'circuit_pattern_background.dart';
 
 /// Electrical themed loader component with circuit animation
 class JJElectricalLoader extends StatelessWidget {
@@ -250,7 +254,7 @@ class _JJElectricalButtonState extends State<JJElectricalButton>
                           )
                         : Text(
                             widget.text,
-                            style: AppTheme.button.copyWith(
+                            style: AppTheme.bodyLarge.copyWith(
                               color: widget.textColor ?? AppTheme.white,
                               fontWeight: FontWeight.w600,
                             ),
@@ -351,7 +355,7 @@ class JJElectricalTextField extends StatefulWidget {
 
 class _JJElectricalTextFieldState extends State<JJElectricalTextField> {
   bool _isFocused = false;
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -393,8 +397,11 @@ class _JJElectricalTextFieldState extends State<JJElectricalTextField> {
           color: AppTheme.textPrimary,
         ),
         onChanged: widget.onChanged,
-        onSubmitted: widget.onSubmitted,
-        validator: widget.validator,
+        onSubmitted: (value) {
+          if (widget.onSubmitted != null) {
+            widget.onSubmitted!();
+          }
+        },
       ),
     );
   }

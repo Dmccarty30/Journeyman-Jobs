@@ -174,12 +174,13 @@ class _CrewInvitationsScreenState extends ConsumerState<CrewInvitationsScreen> {
                     AppTheme.primaryNavy.withValues(alpha: 0.05),
                   ],
                 ),
-                child: Icon(
-                  Icons.mail_outline,
-                  size: 48,
-                  color: AppTheme.textLight,
-                ),
               ),
+              child: Icon(
+                Icons.mail_outline,
+                size: 48,
+                color: AppTheme.textLight,
+              ),
+            ),
 
             const SizedBox(height: AppTheme.spacingLg),
 
@@ -219,7 +220,7 @@ class _CrewInvitationsScreenState extends ConsumerState<CrewInvitationsScreen> {
 
   Widget _buildPendingInvitations() {
     return Consumer(
-      builder: (context, ref) {
+      builder: (context, ref, child) {
         final pendingInvitations = ref.watch(pendingInvitationsProvider);
 
         if (pendingInvitations.isEmpty) {
@@ -256,7 +257,7 @@ class _CrewInvitationsScreenState extends ConsumerState<CrewInvitationsScreen> {
 
   Widget _buildSentInvitations() {
     return Consumer(
-      builder: (context, ref) {
+      builder: (context, ref, child) {
         final sentInvitations = ref.watch(sentInvitationsProvider);
 
         if (sentInvitations.isEmpty) {
@@ -292,7 +293,7 @@ class _CrewInvitationsScreenState extends ConsumerState<CrewInvitationsScreen> {
 
   Widget _buildInvitationHistory() {
     return Consumer(
-      builder: (context, ref) {
+      builder: (context, ref, child) {
         final invitationHistory = ref.watch(invitationHistoryProvider);
 
         if (invitationHistory.isEmpty) {
@@ -350,12 +351,13 @@ class _CrewInvitationsScreenState extends ConsumerState<CrewInvitationsScreen> {
                     AppTheme.primaryNavy.withValues(alpha: 0.05),
                   ],
                 ),
-                child: Icon(
-                  icon,
-                  size: 48,
-                  color: AppTheme.textLight,
-                ),
               ),
+              child: Icon(
+                icon,
+                size: 48,
+                color: AppTheme.textLight,
+              ),
+            ),
 
             const SizedBox(height: AppTheme.spacingLg),
 

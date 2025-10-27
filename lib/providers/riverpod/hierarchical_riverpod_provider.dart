@@ -1,53 +1,106 @@
+// Hierarchical Riverpod providers (manual, non-codegen version)
+// Replaces prior @riverpod annotations and part file with explicit providers to
+// avoid missing generated types like HierarchicalServiceRef, UnionRef, etc.
+
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../models/hierarchical/hierarchical_data_model.dart';
-import '../../models/hierarchical/union_model.dart';
+import '../../models/hierarchical/hierarchical_types.dart';
 import '../../models/user_model.dart';
 import '../../services/hierarchical/hierarchical_service.dart';
 import '../../services/hierarchical/hierarchical_initialization_service.dart';
 import 'auth_riverpod_provider.dart';
 
-part 'hierarchical_riverpod_provider.g.dart';
-
-/// Provider for the hierarchical service
-@riverpod
-HierarchicalService hierarchicalService(HierarchicalServiceRef ref) {
+// Service provider for hierarchical data operations
+final hierarchicalServiceProvider = Provider<HierarchicalService>((ref) {
   final service = HierarchicalService();
-
-  // Dispose the service when the provider is disposed
+  // Dispose the service when provider is disposed
   ref.onDispose(() {
     service.dispose();
   });
-
   return service;
-}
+});
 
-/// Provider for the hierarchical initialization service
-@riverpod
-HierarchicalInitializationService hierarchicalInitializationService(
-  HierarchicalInitializationServiceRef ref,
-) {
+// Service provider for hierarchical initialization orchestration
+final hierarchicalInitializationServiceProvider =
+    Provider<HierarchicalInitializationService>((ref) {
   final service = HierarchicalInitializationService(
     hierarchicalService: ref.watch(hierarchicalServiceProvider),
   );
-
-  // Dispose the service when the provider is disposed
+  // Dispose the service when provider is disposed
   ref.onDispose(() {
     service.dispose();
   });
-
   return service;
+});
+
+/// State for hierarchical data
+@immutable
+class HierarchicalDataState {
+  final HierarchicalData data;
+  final bool isLoading;
+  final String? error;
+  final DateTime lastUpdated;
+
+  const HierarchicalDataState({
+    required this.data,
+    required this.isLoading,
+    this.error,
+    required this.lastUpdated,
+  });
+
+  HierarchicalDataState copyWith({
+    HierarchicalData? data,
+    bool? isLoading,
+    String? error,
+    DateTime? lastUpdated,
+  }) {
+    return HierarchicalDataState(
+      data: data ?? this.data,
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+    );
+  }
+
+  bool get hasError => error != null;
+  bool get isLoaded => !isLoading && !hasError;
+  bool get isEmpty => data.locals.isEmpty && data.members.isEmpty && data.jobs.isEmpty;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is HierarchicalDataState &&
+        other.data == data &&
+        other.isLoading == isLoading &&
+        other.error == error &&
+        other.lastUpdated == lastUpdated;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(data, isLoading, error, lastUpdated);
+  }
+
+  @override
+  String toString() {
+    return 'HierarchicalDataState('
+        'isLoading: $isLoading, '
+        'hasError: $hasError, '
+        'isEmpty: $isEmpty, '
+        'lastUpdated: $lastUpdated'
+        ')';
+  }
 }
 
-/// Provider for hierarchical data state
-@riverpod
-class HierarchicalDataNotifier extends _$HierarchicalDataNotifier {
+/// Notifier managing HierarchicalDataState (no code-gen types)
+class HierarchicalDataNotifier extends Notifier<HierarchicalDataState> {
   late final HierarchicalService _hierarchicalService;
   late final HierarchicalInitializationService _initializationService;
+
   Timer? _refreshTimer;
   StreamSubscription<HierarchicalData>? _dataSubscription;
 
@@ -56,35 +109,30 @@ class HierarchicalDataNotifier extends _$HierarchicalDataNotifier {
     _hierarchicalService = ref.watch(hierarchicalServiceProvider);
     _initializationService = ref.watch(hierarchicalInitializationServiceProvider);
 
-    // Start with empty state
-    final initialState = HierarchicalDataState(
-      data: HierarchicalData.empty(),
-      isLoading: false,
-      error: null,
-      lastUpdated: DateTime.now(),
-    );
-
     // Listen to user authentication changes
-    ref.listen(authStateStreamProvider, (previous, next) {
-      next.when(
-        data: (user) {
-          if (user != null) {
-            // User authenticated, initialize hierarchical data
-            _initializeForUser();
-          } else {
-            // User signed out, clear hierarchical data
-            _clearData();
-          }
-        },
-        loading: () {
-          // Auth loading, keep current state
-        },
-        error: (error, stackTrace) {
-          // Auth error, try to initialize as guest
-          _initializeAsGuest();
-        },
-      );
-    });
+    ref.listen<AsyncValue<User?>>(
+      authStateStreamProvider,
+      (previous, next) {
+        next.when(
+          data: (user) {
+            if (user != null) {
+              // User authenticated, initialize hierarchical data
+              _initializeForUser();
+            } else {
+              // User signed out, clear hierarchical data
+              _clearData();
+            }
+          },
+          loading: () {
+            // Auth loading, keep current state
+          },
+          error: (error, stackTrace) {
+            // Auth error, try to initialize as guest
+            _initializeAsGuest();
+          },
+        );
+      },
+    );
 
     // Listen to hierarchical service data stream
     _dataSubscription = _hierarchicalService.hierarchicalDataStream.listen(
@@ -97,6 +145,7 @@ class HierarchicalDataNotifier extends _$HierarchicalDataNotifier {
       },
       onError: (error) {
         state = state.copyWith(
+          isLoading: false,
           error: error.toString(),
           lastUpdated: DateTime.now(),
         );
@@ -106,13 +155,19 @@ class HierarchicalDataNotifier extends _$HierarchicalDataNotifier {
     // Set up periodic refresh timer (every 5 minutes)
     _setupRefreshTimer();
 
-    // Clean up on dispose
+    // Clean up on provider disposal
     ref.onDispose(() {
       _refreshTimer?.cancel();
       _dataSubscription?.cancel();
     });
 
-    return initialState;
+    // Initial state
+    return HierarchicalDataState(
+      data: HierarchicalData.empty(),
+      isLoading: false,
+      error: null,
+      lastUpdated: DateTime.now(),
+    );
   }
 
   /// Initializes hierarchical data for the current authenticated user
@@ -197,7 +252,7 @@ class HierarchicalDataNotifier extends _$HierarchicalDataNotifier {
     });
   }
 
-  /// Refreshes hierarchical data
+  /// Public refresh method
   Future<void> refreshData({bool force = false}) async {
     if (state.isLoading && !force) {
       debugPrint('[HierarchicalDataNotifier] Refresh already in progress, skipping...');
@@ -314,156 +369,39 @@ class HierarchicalDataNotifier extends _$HierarchicalDataNotifier {
   }
 }
 
-/// Provider for initialization state stream
-@riverpod
-Stream<HierarchicalInitializationState> hierarchicalInitializationState(
-  HierarchicalInitializationStateRef ref,
-) {
+// Primary hierarchical data provider (Notifier API, no code-gen)
+final hierarchicalDataProvider =
+    NotifierProvider<HierarchicalDataNotifier, HierarchicalDataState>(
+  HierarchicalDataNotifier.new,
+);
+
+// Initialization state stream provider
+final hierarchicalInitializationStateProvider =
+    StreamProvider<HierarchicalInitializationState>((ref) {
   final service = ref.watch(hierarchicalInitializationServiceProvider);
   return service.initializationStateStream;
-}
+});
 
-/// Provider for union data
-@riverpod
-Union? union(UnionRef ref) {
+// Read-only slices of the hierarchical data
+final unionProvider = Provider<Union?>((ref) {
   return ref.watch(hierarchicalDataProvider).data.union;
-}
+});
 
-/// Provider for locals data
-@riverpod
-Map<int, LocalsRecord> locals(LocalsRef ref) {
+final localsProvider = Provider<Map<int, LocalsRecord>>((ref) {
   return ref.watch(hierarchicalDataProvider).data.locals;
-}
+});
 
-/// Provider for members data
-@riverpod
-Map<String, UnionMember> members(MembersRef ref) {
+final membersProvider = Provider<Map<String, UnionMember>>((ref) {
   return ref.watch(hierarchicalDataProvider).data.members;
-}
+});
 
-/// Provider for jobs data
-@riverpod
-Map<String, Job> jobs(JobsRef ref) {
+final jobsProvider = Provider<Map<String, Job>>((ref) {
   return ref.watch(hierarchicalDataProvider).data.jobs;
-}
+});
 
-/// Provider for hierarchical statistics
-@riverpod
-HierarchicalStats hierarchicalStats(HierarchicalStatsRef ref) {
+final hierarchicalStatsProvider = Provider<HierarchicalStats>((ref) {
   return ref.watch(hierarchicalDataProvider).data.stats;
-}
-
-/// Provider for search results
-@riverpod
-class HierarchicalSearchNotifier extends _$HierarchicalSearchNotifier {
-  @override
-  HierarchicalSearchState build() {
-    return const HierarchicalSearchState(
-      query: '',
-      results: null,
-      isSearching: false,
-      error: null,
-    );
-  }
-
-  /// Searches hierarchical data
-  Future<void> search(String query) async {
-    if (state.query == query && state.results != null) {
-      return; // Same query, no need to search again
-    }
-
-    state = state.copyWith(
-      query: query,
-      isSearching: true,
-      error: null,
-    );
-
-    try {
-      final hierarchicalNotifier = ref.read(hierarchicalDataProvider.notifier);
-      final results = hierarchicalNotifier.search(query);
-
-      state = state.copyWith(
-        results: results,
-        isSearching: false,
-        error: null,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isSearching: false,
-        error: e.toString(),
-      );
-    }
-  }
-
-  /// Clears search results
-  void clearSearch() {
-    state = const HierarchicalSearchState(
-      query: '',
-      results: null,
-      isSearching: false,
-      error: null,
-    );
-  }
-}
-
-/// State for hierarchical data
-@immutable
-class HierarchicalDataState {
-  final HierarchicalData data;
-  final bool isLoading;
-  final String? error;
-  final DateTime lastUpdated;
-
-  const HierarchicalDataState({
-    required this.data,
-    required this.isLoading,
-    this.error,
-    required this.lastUpdated,
-  });
-
-  HierarchicalDataState copyWith({
-    HierarchicalData? data,
-    bool? isLoading,
-    String? error,
-    DateTime? lastUpdated,
-  }) {
-    return HierarchicalDataState(
-      data: data ?? this.data,
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
-      lastUpdated: lastUpdated ?? this.lastUpdated,
-    );
-  }
-
-  bool get hasError => error != null;
-  bool get isLoaded => !isLoading && !hasError;
-  bool get isEmpty => data.locals.isEmpty && data.members.isEmpty && data.jobs.isEmpty;
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is HierarchicalDataState &&
-        other.data == data &&
-        other.isLoading == isLoading &&
-        other.error == error &&
-        other.lastUpdated == lastUpdated;
-  }
-
-  @override
-  int get hashCode {
-    return Object.hash(data, isLoading, error, lastUpdated);
-  }
-
-  @override
-  String toString() {
-    return 'HierarchicalDataState('
-        'isLoading: $isLoading, '
-        'hasError: $hasError, '
-        'isEmpty: $isEmpty, '
-        'lastUpdated: $lastUpdated'
-        ')';
-  }
-}
+});
 
 /// State for hierarchical search
 @immutable
@@ -523,3 +461,61 @@ class HierarchicalSearchState {
         ')';
   }
 }
+
+/// Hierarchical search notifier (Notifier API)
+class HierarchicalSearchNotifier extends Notifier<HierarchicalSearchState> {
+  @override
+  HierarchicalSearchState build() {
+    return const HierarchicalSearchState(
+      query: '',
+      results: null,
+      isSearching: false,
+      error: null,
+    );
+  }
+
+  /// Searches hierarchical data
+  Future<void> search(String query) async {
+    if (state.query == query && state.results != null) {
+      return; // Same query, no need to search again
+    }
+
+    state = state.copyWith(
+      query: query,
+      isSearching: true,
+      error: null,
+    );
+
+    try {
+      final hierarchicalNotifier = ref.read(hierarchicalDataProvider.notifier);
+      final results = hierarchicalNotifier.search(query);
+
+      state = state.copyWith(
+        results: results,
+        isSearching: false,
+        error: null,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isSearching: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  /// Clears search results
+  void clearSearch() {
+    state = const HierarchicalSearchState(
+      query: '',
+      results: null,
+      isSearching: false,
+      error: null,
+    );
+  }
+}
+
+// Provider for search state (Notifier API)
+final hierarchicalSearchNotifierProvider =
+    NotifierProvider<HierarchicalSearchNotifier, HierarchicalSearchState>(
+  HierarchicalSearchNotifier.new,
+);

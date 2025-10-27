@@ -7,7 +7,7 @@ import 'three_phase_rotation_meter.dart';
 /// throughout the Journeyman Jobs app. Shows different configurations for
 /// different loading contexts and screen types.
 class ThreePhaseRotationMeterExamples extends StatelessWidget {
-  const ThreePhaseRotationMeterExamples({Key? key}) : super(key: key);
+  const ThreePhaseRotationMeterExamples({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -234,7 +234,7 @@ class ThreePhaseRotationMeterExamples extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.primaryNavy.withOpacity(0.1),
+        color: AppTheme.primaryNavy.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -271,9 +271,9 @@ class ThreePhaseRotationMeterExamples extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.red.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.red.withOpacity(0.3)),
+        border: Border.all(color: Colors.red.withValues(alpha:0.3)),
       ),
       child: Row(
         children: [
@@ -313,7 +313,7 @@ class ThreePhaseRotationMeterExamples extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.accentCopper.withOpacity(0.1),
+        color: AppTheme.accentCopper.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -377,7 +377,7 @@ class ThreePhaseRotationMeterExamples extends StatelessWidget {
 
 /// Interactive demo showing rotation meter controls
 class InteractiveRotationMeterDemo extends StatefulWidget {
-  const InteractiveRotationMeterDemo({Key? key}) : super(key: key);
+  const InteractiveRotationMeterDemo({super.key});
 
   @override
   State<InteractiveRotationMeterDemo> createState() => _InteractiveRotationMeterDemoState();
@@ -493,14 +493,14 @@ class _InteractiveRotationMeterDemoState extends State<InteractiveRotationMeterD
                 const SizedBox(width: 8),
                 DropdownButton<RotationMeterColors>(
                   value: _colors,
-                  items: const [
+                  items: [
                     DropdownMenuItem(
                       value: RotationMeterColors.ibewTheme(),
-                      child: Text('IBEW Navy'),
+                      child: const Text('IBEW Navy'),
                     ),
                     DropdownMenuItem(
                       value: RotationMeterColors.copperTheme(),
-                      child: Text('IBEW Copper'),
+                      child: const Text('IBEW Copper'),
                     ),
                   ],
                   onChanged: (colors) {

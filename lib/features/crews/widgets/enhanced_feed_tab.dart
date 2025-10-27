@@ -255,7 +255,7 @@ class EnhancedFeedTab extends ConsumerWidget {
   // Handle like/reaction functionality with immediate feedback
   Future<void> _handleLike(WidgetRef ref, PostModel post, String userId) async {
     try {
-      final reactionNotifier = ref.read(reactionNotifierProvider.notifier);
+      final reactionNotifier = ref.read(reactionProvider);
 
       if (post.likes.contains(userId)) {
         // Remove like
@@ -296,7 +296,7 @@ class EnhancedFeedTab extends ConsumerWidget {
     }
 
     try {
-      final updateNotifier = ref.read(postUpdateNotifierProvider.notifier);
+      final updateNotifier = ref.read(postUpdateProvider);
       await updateNotifier.deletePost(post.id);
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -318,7 +318,7 @@ class EnhancedFeedTab extends ConsumerWidget {
   // Handle reaction functionality
   Future<void> _handleReaction(WidgetRef ref, PostModel post, String emoji, String userId) async {
     try {
-      final reactionNotifier = ref.read(reactionNotifierProvider.notifier);
+      final reactionNotifier = ref.read(reactionProvider);
 
       // Convert emoji to ReactionType
       ReactionType reactionType;
@@ -348,7 +348,7 @@ class EnhancedFeedTab extends ConsumerWidget {
   // Handle comment addition with immediate feedback
   Future<void> _handleAddComment(WidgetRef ref, String postId, String content) async {
     try {
-      final commentNotifier = ref.read(commentNotifierProvider.notifier);
+      final commentNotifier = ref.read(commentProvider);
       await commentNotifier.addComment(
         postId: postId,
         content: content,

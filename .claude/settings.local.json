@@ -41,7 +41,17 @@
       "Bash(find:*)",
       "Bash(dir:*)",
       "Bash(findstr:*)",
-      "Bash(flutter pub deps:*)"
+      "Bash(flutter pub deps:*)",
+      "Bash(chmod:*)",
+      "mcp__claude-flow__agents_spawn_parallel",
+      "mcp__claude-flow__workflow_create",
+      "mcp__claude-flow__workflow_execute",
+      "mcp__claude-flow__task_status",
+      "mcp__claude-flow__task_results",
+      "mcp__claude-flow__swarm_status",
+      "Bash(./.claude/workflows/universal-code-correction-cli.sh:*)",
+      "Bash(./.claude/workflows/run-directory-analysis.sh:*)",
+      "Bash(./.claude/workflows/run-directory-analysis-v2.sh:*)"
     ],
     "deny": [
       "Bash(rm -rf /)"

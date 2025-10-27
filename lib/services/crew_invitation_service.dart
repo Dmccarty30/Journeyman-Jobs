@@ -1,10 +1,11 @@
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:journeyman_jobs/models/crew_invitation_model.dart';
 import 'package:journeyman_jobs/models/crew_model.dart';
 import 'package:journeyman_jobs/models/user_model.dart';
 import 'package:journeyman_jobs/services/firestore_service.dart';
-import 'package:journeyman_jobs/services/fcm_service.dart';
 import 'package:journeyman_jobs/services/notification_service.dart';
 
 /// Service for managing crew invitations
@@ -21,9 +22,12 @@ class CrewInvitationService {
   CrewInvitationService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirestoreService _firestoreService = FirestoreService();
-  final CollectionReference _invitationsCollection =
-      FirebaseFirestore.instance.collection('crewInvitations');
+  final FirestoreService firestoreService = FirestoreService();
+
+  /// Returns a reference to the 'invitations' subcollection for a specific crew.
+  CollectionReference _getInvitationsCollection(String crewId) {
+    return _firestore.collection('crews').doc(crewId).collection('invitations');
+  }
 
   /// Invite a user to join a crew
   ///
@@ -56,12 +60,16 @@ class CrewInvitationService {
         throw Exception('User is already a member of this crew');
       }
 
-      // Check if there's already a pending invitation
-      final existingInvitations = await getPendingInvitationsForUser(invitee.uid);
-      final hasPendingInvitation = existingInvitations.any(
-        (invitation) => invitation.crewId == crew.id,
-      );
-      if (hasPendingInvitation) {
+      // Check if there's already a pending invitation using a collection group query
+      final pendingInvitationsSnapshot = await _firestore
+          .collectionGroup('invitations')
+          .where('inviteeId', isEqualTo: invitee.uid)
+          .where('crewId', isEqualTo: crew.id)
+          .where('status', isEqualTo: 'pending')
+          .limit(1)
+          .get();
+
+      if (pendingInvitationsSnapshot.docs.isNotEmpty) {
         throw Exception('User already has a pending invitation to this crew');
       }
 
@@ -87,8 +95,8 @@ class CrewInvitationService {
         jobDetails: crew.jobPreferences,
       );
 
-      // Save to Firestore
-      final docRef = await _invitationsCollection.add(invitation.toFirestore());
+      // Save to Firestore subcollection
+      final docRef = await _getInvitationsCollection(crew.id).add(invitation.toFirestore());
       final savedInvitation = invitation.copyWith(id: docRef.id);
 
       // Send notification to invitee
@@ -100,10 +108,11 @@ class CrewInvitationService {
     }
   }
 
-  /// Get all invitations for a user (both sent and received)
+  /// Get all invitations for a user across all crews using a collection group query.
   Future<List<CrewInvitation>> getInvitationsForUser(String userId) async {
     try {
-      final QuerySnapshot snapshot = await _invitationsCollection
+      final QuerySnapshot snapshot = await _firestore
+          .collectionGroup('invitations')
           .where('inviteeId', isEqualTo: userId)
           .orderBy('createdAt', descending: true)
           .get();
@@ -116,10 +125,11 @@ class CrewInvitationService {
     }
   }
 
-  /// Get pending invitations for a user
+  /// Get pending invitations for a user across all crews using a collection group query.
   Future<List<CrewInvitation>> getPendingInvitationsForUser(String userId) async {
     try {
-      final QuerySnapshot snapshot = await _invitationsCollection
+      final QuerySnapshot snapshot = await _firestore
+          .collectionGroup('invitations')
           .where('inviteeId', isEqualTo: userId)
           .where('status', isEqualTo: 'pending')
           .orderBy('createdAt', descending: true)
@@ -134,10 +144,11 @@ class CrewInvitationService {
     }
   }
 
-  /// Get invitations sent by a user (foreman)
+  /// Get invitations sent by a user (foreman) using a collection group query.
   Future<List<CrewInvitation>> getSentInvitations(String inviterId) async {
     try {
-      final QuerySnapshot snapshot = await _invitationsCollection
+      final QuerySnapshot snapshot = await _firestore
+          .collectionGroup('invitations')
           .where('inviterId', isEqualTo: inviterId)
           .orderBy('createdAt', descending: true)
           .get();
@@ -150,11 +161,10 @@ class CrewInvitationService {
     }
   }
 
-  /// Get all invitations for a crew
+  /// Get all invitations for a specific crew from its subcollection.
   Future<List<CrewInvitation>> getInvitationsForCrew(String crewId) async {
     try {
-      final QuerySnapshot snapshot = await _invitationsCollection
-          .where('crewId', isEqualTo: crewId)
+      final QuerySnapshot snapshot = await _getInvitationsCollection(crewId)
           .orderBy('createdAt', descending: true)
           .get();
 
@@ -174,12 +184,17 @@ class CrewInvitationService {
   /// Returns true if successful
   Future<bool> acceptInvitation(String invitationId, String userId) async {
     try {
-      // Get the invitation
-      final DocumentSnapshot doc = await _invitationsCollection.doc(invitationId).get();
-      if (!doc.exists) {
+      // To find the invitation, we must first get it to know the crewId
+      final invitationSnapshot = await _firestore
+          .collectionGroup('invitations')
+          .where(FieldPath.documentId, isEqualTo: invitationId)
+          .limit(1)
+          .get();
+
+      if (invitationSnapshot.docs.isEmpty) {
         throw Exception('Invitation not found');
       }
-
+      final doc = invitationSnapshot.docs.first;
       final invitation = CrewInvitation.fromFirestore(doc);
 
       // Validate that the user can accept this invitation
@@ -191,9 +206,9 @@ class CrewInvitationService {
         throw Exception('Invitation cannot be accepted');
       }
 
-      // Update invitation status
+      // Update invitation status in its specific subcollection
       final now = Timestamp.now();
-      await _invitationsCollection.doc(invitationId).update({
+      await _getInvitationsCollection(invitation.crewId).doc(invitationId).update({
         'status': 'accepted',
         'updatedAt': now,
       });
@@ -222,12 +237,17 @@ class CrewInvitationService {
   /// Returns true if successful
   Future<bool> declineInvitation(String invitationId, String userId) async {
     try {
-      // Get the invitation
-      final DocumentSnapshot doc = await _invitationsCollection.doc(invitationId).get();
-      if (!doc.exists) {
+      // To find the invitation, we must first get it to know the crewId
+      final invitationSnapshot = await _firestore
+          .collectionGroup('invitations')
+          .where(FieldPath.documentId, isEqualTo: invitationId)
+          .limit(1)
+          .get();
+
+      if (invitationSnapshot.docs.isEmpty) {
         throw Exception('Invitation not found');
       }
-
+      final doc = invitationSnapshot.docs.first;
       final invitation = CrewInvitation.fromFirestore(doc);
 
       // Validate that the user can decline this invitation
@@ -239,9 +259,9 @@ class CrewInvitationService {
         throw Exception('Invitation cannot be declined');
       }
 
-      // Update invitation status
+      // Update invitation status in its specific subcollection
       final now = Timestamp.now();
-      await _invitationsCollection.doc(invitationId).update({
+      await _getInvitationsCollection(invitation.crewId).doc(invitationId).update({
         'status': 'declined',
         'updatedAt': now,
       });
@@ -267,12 +287,17 @@ class CrewInvitationService {
   /// Returns true if successful
   Future<bool> cancelInvitation(String invitationId, String inviterId) async {
     try {
-      // Get the invitation
-      final DocumentSnapshot doc = await _invitationsCollection.doc(invitationId).get();
-      if (!doc.exists) {
+      // To find the invitation, we must first get it to know the crewId
+      final invitationSnapshot = await _firestore
+          .collectionGroup('invitations')
+          .where(FieldPath.documentId, isEqualTo: invitationId)
+          .limit(1)
+          .get();
+
+      if (invitationSnapshot.docs.isEmpty) {
         throw Exception('Invitation not found');
       }
-
+      final doc = invitationSnapshot.docs.first;
       final invitation = CrewInvitation.fromFirestore(doc);
 
       // Validate that the user can cancel this invitation
@@ -284,9 +309,9 @@ class CrewInvitationService {
         throw Exception('Invitation cannot be cancelled');
       }
 
-      // Update invitation status
+      // Update invitation status in its specific subcollection
       final now = Timestamp.now();
-      await _invitationsCollection.doc(invitationId).update({
+      await _getInvitationsCollection(invitation.crewId).doc(invitationId).update({
         'status': 'cancelled',
         'updatedAt': now,
       });
@@ -312,7 +337,9 @@ class CrewInvitationService {
     try {
       final now = Timestamp.now();
 
-      final QuerySnapshot snapshot = await _invitationsCollection
+      // Use a collection group query to find all expired invitations across all crews
+      final QuerySnapshot snapshot = await _firestore
+          .collectionGroup('invitations')
           .where('status', isEqualTo: 'pending')
           .where('expiresAt', isLessThan: now)
           .get();
@@ -331,13 +358,13 @@ class CrewInvitationService {
       }
     } catch (e) {
       // Log error but don't throw - this is a background task
-      print('Failed to cleanup expired invitations: $e');
     }
   }
 
   /// Stream of invitations for a user (real-time updates)
   Stream<List<CrewInvitation>> streamInvitationsForUser(String userId) {
-    return _invitationsCollection
+    return _firestore
+        .collectionGroup('invitations')
         .where('inviteeId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
         .snapshots()
@@ -348,7 +375,8 @@ class CrewInvitationService {
 
   /// Stream of pending invitations for a user (real-time updates)
   Stream<List<CrewInvitation>> streamPendingInvitationsForUser(String userId) {
-    return _invitationsCollection
+    return _firestore
+        .collectionGroup('invitations')
         .where('inviteeId', isEqualTo: userId)
         .where('status', isEqualTo: 'pending')
         .orderBy('createdAt', descending: true)
@@ -361,7 +389,8 @@ class CrewInvitationService {
 
   /// Stream of invitations sent by a user (real-time updates)
   Stream<List<CrewInvitation>> streamSentInvitations(String inviterId) {
-    return _invitationsCollection
+    return _firestore
+        .collectionGroup('invitations')
         .where('inviterId', isEqualTo: inviterId)
         .orderBy('createdAt', descending: true)
         .snapshots()
@@ -414,7 +443,6 @@ class CrewInvitationService {
       );
     } catch (e) {
       // Log error but don't fail the invitation
-      print('Failed to send invitation notification: $e');
     }
   }
 
@@ -461,7 +489,6 @@ class CrewInvitationService {
       );
     } catch (e) {
       // Log error but don't fail the operation
-      print('Failed to send invitation response notification: $e');
     }
   }
 }

@@ -171,6 +171,15 @@ class _StormScreenState extends State<StormScreen> {
   /// Emergency declaration videos from official sources
   final List<YouTubeVideoMetadata> _emergencyVideos = [
     YouTubeVideoMetadata(
+      videoId: 'UCSrZ3-2Z1M', // Fox News Weather channel
+      title: 'Fox News Weather Live',
+      description: 'Real-time weather coverage and severe weather alerts from Fox News Weather team.',
+      channelName: 'Fox News Weather',
+      channelId: 'UCSrZ3-2Z1M',
+      publishDate: DateTime.now().subtract(const Duration(minutes: 30)),
+      isEmergency: true,
+    ),
+    YouTubeVideoMetadata(
       videoId: 'dQw4w9WgXcQ', // Sample video ID - replace with actual emergency videos
       title: 'Governor Emergency Declaration - Hurricane Milton',
       description: 'Official emergency management update from the Governor\'s office regarding Hurricane Milton response and recovery efforts.',
@@ -522,25 +531,7 @@ class _StormScreenState extends State<StormScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: AppTheme.spacingSm),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppTheme.spacingSm,
-                                vertical: AppTheme.spacingXs,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppTheme.errorRed.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                              ),
-                              child: Text(
-                                'ADMIN ONLY',
-                                style: AppTheme.labelSmall.copyWith(
-                                  color: AppTheme.errorRed,  // WCAG AA compliant: #E53E3E (4.52:1)
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
+                            ],
                         ),
                               const SizedBox(height: AppTheme.spacingMd),
                               Text(

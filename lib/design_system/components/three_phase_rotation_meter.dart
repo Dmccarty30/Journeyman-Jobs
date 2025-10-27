@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../app_theme.dart';
 
 /// Three-phase rotation meter loading indicator widget.
 ///
@@ -50,7 +49,7 @@ class ThreePhaseRotationMeter extends StatefulWidget {
   final bool showMountingHoles;
 
   const ThreePhaseRotationMeter({
-    Key? key,
+    super.key,
     this.size = 100.0,
     this.clockwise = true,
     this.duration = const Duration(seconds: 2),
@@ -60,7 +59,7 @@ class ThreePhaseRotationMeter extends StatefulWidget {
     this.semanticLabel,
     this.showSpeedIndicator = false,
     this.showMountingHoles = true,
-  }) : super(key: key);
+  });
 
   @override
   State<ThreePhaseRotationMeter> createState() => _ThreePhaseRotationMeterState();
@@ -240,7 +239,7 @@ class _RotationMeterPainter extends CustomPainter {
 
       // Add shadow effect
       final shadowPaint = Paint()
-        ..color = Colors.black.withOpacity(0.2)
+        ..color = Colors.black.withValues(alpha:0.2)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
 
       canvas.drawCircle(holeCenter, holeRadius, shadowPaint);
@@ -318,7 +317,7 @@ class _RotationMeterPainter extends CustomPainter {
 
     // Minor markings (every 10 degrees)
     final minorPaint = Paint()
-      ..color = colors.markingColor.withOpacity(0.5)
+      ..color = colors.markingColor.withValues(alpha:0.5)
       ..strokeWidth = radius * 0.004;
 
     for (int i = 0; i < 36; i++) {
@@ -395,7 +394,7 @@ class _RotationMeterPainter extends CustomPainter {
 
     // Red dot with shadow
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.3)
+      ..color = Colors.black.withValues(alpha:0.3)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
 
     canvas.drawCircle(
@@ -419,7 +418,7 @@ class _RotationMeterPainter extends CustomPainter {
 
     // Highlight
     final highlightPaint = Paint()
-      ..color = Colors.white.withOpacity(0.6)
+      ..color = Colors.white.withValues(alpha:0.6)
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(
@@ -434,8 +433,8 @@ class _RotationMeterPainter extends CustomPainter {
     final glassPaint = Paint()
       ..shader = RadialGradient(
         colors: [
-          Colors.white.withOpacity(0.4),
-          Colors.white.withOpacity(0.1),
+          Colors.white.withValues(alpha:0.4),
+          Colors.white.withValues(alpha:0.1),
           Colors.transparent,
         ],
         stops: const [0.0, 0.3, 1.0],

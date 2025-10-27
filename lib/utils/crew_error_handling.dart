@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:journeyman_jobs/design_system/app_theme.dart';
+import 'package:flutter/foundation.dart';
 
 /// Custom exception types for crew operations
 class CrewException implements Exception {
@@ -24,44 +23,29 @@ class CrewException implements Exception {
 /// Specific crew operation exceptions
 class CrewInvitationException extends CrewException {
   const CrewInvitationException(
-    String message, {
-    String? code,
-    dynamic originalError,
-    StackTrace? stackTrace,
-  }) : super(
-    message,
-    code: code,
-    originalError: originalError,
-    stackTrace: stackTrace,
-  );
+    super.message, {
+    super.code,
+    super.originalError,
+    super.stackTrace, required Map<String, dynamic> context,
+  });
 }
 
 class CrewMessagingException extends CrewException {
   const CrewMessagingException(
-    String message, {
-    String? code,
-    dynamic originalError,
-    StackTrace? stackTrace,
-  }) : super(
-    message,
-    code: code,
-    originalError: originalError,
-    stackTrace: stackTrace,
-  );
+    super.message, {
+    super.code,
+    super.originalError,
+    super.stackTrace,
+  });
 }
 
 class CrewValidationException extends CrewException {
   const CrewValidationException(
-    String message, {
-    String? code,
-    dynamic originalError,
-    StackTrace? stackTrace,
-  }) : super(
-    message,
-    code: code,
-    originalError: originalError,
-    stackTrace: stackTrace,
-  );
+    super.message, {
+    super.code,
+    super.originalError,
+    super.stackTrace,
+  });
 }
 
 /// Error codes for standardized error handling
@@ -90,14 +74,13 @@ class CrewErrorCodes {
   static const String crewNameTooLong = 'CREW_NAME_TOO_LONG';
 
   // Messaging errors
+  // Messaging errors
   static const String messageNotFound = 'MESSAGE_NOT_FOUND';
   static const String messageContentRequired = 'MESSAGE_CONTENT_REQUIRED';
   static const String cannotEditMessageType = 'CANNOT_EDIT_MESSAGE_TYPE';
   static const String cannotEditDeletedMessage = 'CANNOT_EDIT_DELETED_MESSAGE';
   static const String cannotEditOtherMessage = 'CANNOT_EDIT_OTHER_MESSAGE';
-  static const String messageNotFound = 'MESSAGE_NOT_FOUND';
   static const String cannotDeleteOtherMessage = 'CANNOT_DELETE_OTHER_MESSAGE';
-
   // Validation errors
   static const String invalidUserId = 'INVALID_USER_ID';
   static const String invalidCrewId = 'INVALID_CREW_ID';
@@ -236,7 +219,7 @@ class CrewValidation {
     }
 
     // Check for invalid characters
-    if (trimmedName.contains(RegExp(r'[<>{}[\]|\\]'))) {
+    if (trimmedName.contains(RegExp(r'[<>\{\}\[\]\|\\]'))) {
       return 'Crew name contains invalid characters';
     }
 
@@ -365,19 +348,11 @@ class CrewErrorReporter {
     String? crewId,
   }) {
     // Log the error
-    print('Crew Error Report:');
-    print('  Message: ${exception.message}');
-    print('  Code: ${exception.code}');
-    print('  User ID: $userId');
-    print('  Crew ID: $crewId');
     if (context != null) {
-      print('  Context: $context');
     }
     if (exception.originalError != null) {
-      print('  Original Error: ${exception.originalError}');
     }
     if (exception.stackTrace != null) {
-      print('  Stack Trace: ${exception.stackTrace}');
     }
 
     // In a real app, you would also send this to your error tracking service
@@ -394,7 +369,6 @@ class CrewErrorReporter {
 
     final exception = CrewValidationException(
       'Validation failed: ${errors.join(', ')}',
-      context: context,
     );
 
     reportError(
@@ -457,19 +431,19 @@ mixin CrewErrorHandlingMixin {
     String? Function(T?) validator, {
     String fieldName = 'Field',
   }) {
-    final error = validator?.call(value);
+    final error = validator.call(value);
     if (error != null) {
       throw CrewValidationException('$fieldName: $error');
     }
   }
 
   /// Validate multiple inputs
-  void validateMultiple(Map<String, dynamic> fields, Map<String, String?> validators) {
+  void validateMultiple(Map<String, dynamic> fields, Map<String, String? Function(dynamic)> validators) {
     final errors = <String>[];
 
     validators.forEach((field, validator) {
       final value = fields[field];
-      final error = validator?.call(value);
+      final error = validator(value);
       if (error != null) {
         errors.add('$field: $error');
       }

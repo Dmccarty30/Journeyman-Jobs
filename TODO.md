@@ -2,13 +2,15 @@
 
 ## APP WIDE CHANGES
 
-### **Task Overview:**
+### [DISABLE DURING DEVELOPMENT AND TESTING] **Task Overview:** [DISABLE DURING DEVELOPMENT AND TESTING]
 
 Update the user authentication and session handling logic in the application to implement a grace period for automatic logouts. This change aims to improve user experience by preventing abrupt session terminations, allowing users a brief window to resume activity without re-authenticating.
 Specific Requirements:
 
 **Target Behaviors to Modify:**
+
 ***THIS FUNCTION SHOULD BE DISABLED DURING DEVELOPMENT AND TESTING.DURING WHICH NO TIMEOUT/IDLE TIME LIMITATION SHALL BE APPLIED***
+
 ||| `Idle/inactivity detection (e.g., no user input or page interactions for a defined period).
 ||| App closure or backgrounding (e.g., user switches away from the app or explicitly closes it).
 ||| Any other automatic sign-out triggers (e.g., network disconnection, timeout on suspended sessions).`
@@ -65,8 +67,6 @@ Expected Output: Provide updated code snippets, configuration changes, or pseudo
 
 - **lib\screens\storm\home_screen.dart**
 
-- On the home screen underneath welcome back text it should display the user's first name and last name as if the app were welcoming them so it would say welcome back David Mccarty instead of Journeyman or their email Peter had I have addressed this issue multiple times I don't understand why it still doesn't say the user's first name and last name.
-
 - *Quick Actions*
 
 - *Suggested Jobs*
@@ -90,9 +90,80 @@ Expected Output: Provide updated code snippets, configuration changes, or pseudo
 
 - **lib\features\crews\screens\tailboard_screen.dart**
 
-- The UR needs to be modified I like a lot of dynamic and reactive features and animations however the theme the color theme is too dark It was as if the user activated dark mode but didn't the user has light mode activated so the screen needs to have primarily white or light colors according to the Light Mode app theme.
-- I'm not quite sure what the active pending and applaud containers of four I'm guessing it's related to the member count of that crew. They can be removed and replaced with something else maybe maybe keep the act of container which at most conserved team members because each crew has a limit of 10 members so that that logic needs to be applied you can remove the pending and applied containers and replace it with something else
+- ***PERFORM A COMPREHENSIVE ANALYSIS OF THE TAILBOARD SCREEN TO GET A COMPLETE AND FULL UNDERSTANDING OF ALL OF THE OPERATIONS, RELATIONSHIPS BETWEEN, TABS, THE BACKEND, USER INTERACTIONS , WIDGETS, ETC.***
+
+- *INVESTIGATE* THE IMPLEMENTATION OF <lib\utils\crew_validation.dart> it's logic, it's purpose, it's functionality, etc...
+- The UI needs to be modified I like a lot of dynamic and reactive features and animations however the theme the color theme is too dark It was as if the user activated dark mode but didn't the user has light mode activated so the screen needs to have primarily white or light colors according to the Light Mode app theme.
+- **MODIFY** The first or top row. It is too cluttered, and with unneccessary things.
+- **REMOVE** the `icon` on the far left of the `row`. I don't even know what tghat `icon` is for. The middle of the `row` needs to be redisgned. Customize or enhance it's features
+- **REMOVE** the member count.
+  
+```dart
+Row(
+children: [
+    Container(
+    width: 48,
+    height: 48,
+    decoration: BoxDecoration(
+        gradient: TailboardTheme.copperAccent,
+        borderRadius: TailboardTheme.radiusLarge,
+        boxShadow: TailboardTheme.elevation2,
+    ),
+    child: Icon(
+        Icons.group,
+        color: Colors.white,
+        size: 24,
+    ),
+    ),
+    const SizedBox(width: TailboardTheme.spacingMd),
+    Expanded(
+    child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+        Text(
+            crewName,
+            style: TailboardTheme.headingLarge,
+        ),
+        Text(
+            "$memberCount members • $userRole",
+            style: TailboardTheme.bodyMedium.copyWith(
+            color: TailboardTheme.copper600,
+            ),
+        ),
+        ],
+    ),
+    ),
+    glowContainer(
+    context,
+    isActive: true,
+    child: IconButton(
+        icon: Icon(
+        Icons.settings,
+        color: TailboardTheme.copper600,
+        ),
+        onPressed: onSettingsTap,
+    ),
+    ),
+],
+),
+```
+
+- **REMOVE** The row with the three container `active`, `pending`, and `applied`
+
+```dart
+Row(
+children: [
+    _buildStatusCard(context, "Active", "12", TailboardTheme.successGradient),
+    const SizedBox(width: TailboardTheme.spacingSm),
+    _buildStatusCard(context, "Pending", "5", TailboardTheme.warningGradient),
+    const SizedBox(width: TailboardTheme.spacingSm),
+    _buildStatusCard(context, "Applied", "3", TailboardTheme.infoGradient),
+],
+),
+```
+
 - At the top of the screen you have the name of the crew needs to be displayed I see that now but we can make that a better layout and easier to read The widgets and layout needs to be needs to flow and mesh a little better than what it does or it is
+- implement the custom rotation meter loading widget <lib\design_system\components\three_phase_rotation_meter.dart>
 
 ### CREATE CREWS SCREEN
 
@@ -106,7 +177,7 @@ Expected Output: Provide updated code snippets, configuration changes, or pseudo
 
 - **docs\tailboard\jobs-tab.png**
 
-- For the `Jobs tab` this suggested jobs uses the exact same suggested jobs sort and filter algorithm and and function as the sorting filter function for suggested jobs for the individual user at which the user sets the job preferences during onboarding so that exact same sort and filter function needs to be applied for the suggested jobs immediately after the `foreman` sets the job preferences Sir as soon as the `foreman` sets the job preferences there should be jobs displayed on the `Jobs tab` immediately. For some reason no messages are displayed no jobs are displayed however the `foreman` is displayed under the `Members tab` so that is semi functional there needs to be some improvements but at least that tab works.
+- This tab seems to be functioning properly. When the tab is activated, jobs are displayed in the interactive window. I have not confirmed that the jobs are sortde and filtered against the job preferences.
 
 ### FEED
 
@@ -118,13 +189,21 @@ Expected Output: Provide updated code snippets, configuration changes, or pseudo
 
 - **docs\tailboard\chat-tab.png**
 
-- The same logic goes for the CH  Sending messages to the other members of a crew and only for members of that crew.
+- ***WHEN I SELECT THE CHAT TAB I GET AN ERROR MESSAGE STATING **"Error loading crew members: Exception: Failed to get crew members: type 'Timestamp' is not a subtype of type 'DateTime?"** THIS ERROR MUST BE CORRECTED.***
+- Even though i get that error message, i am able to send a message  recieve a message sent `toast` but it never post in the interactive window. [TROUBLESHOOT]
+- The same logic goes for the `CHAT tab` when a user Sends a message to the CREW only current members of your crew is able to read it.
 - As soon as a member post or sends a message it needs to be displayed in the real time window.
-- This is like AA live feed type system so if user one post a message then everyone including user one can see the message and any other member can respond so let's say user 2 reads the message and then replies to that message whenever user two posts that message then it is also displayed in real time so that all members can see the message regardless of the amount of members in a crew or if or whom the message was directed towards There should be no reason why user one can't post 30 consecutive messages back to back and not every single one of those messages be displayed in real time in the order of which it was posted.
+- This is like A real-time messagingsystem so if user one post a message then everyone including the user that made the post can see the message and any other crew member can respond to it. So let's say user 1 posts a message, then user 2 reads the message and then replies to that message whenever user two posts that message then it is also displayed in real time so that all members can see the message regardless of the amount of members in a crew or if or whom the message was directed towards There should be no reason why user one can't post 30 consecutive messages back to back and not every single one of those messages be displayed in real time in the order of which it was posted.
+- *INVESTIGATE* the implementation of the `crew message bubble`<lib\widgets\crew_message_bubbl >
+- *IMPLEMENT* the `TODO` in <lib\services\crew_messaging_service.dart Implement push notification using NotificationService.sendNotificatione.dart>
 
 ### MEMBERS
 
-- **docs\tailboard\members-tab.png**
+- This tab seems to be functioning properly. When the tab is activated, members are displayed in the interactive window. However, you cannot interact with the membersb card. TODO: Eventually i want to be able to click on a members card and a popup appears with that users basic info.
+- *INVESTIGATE* the implementation of the <lib\services\crew_invitation_service.dart>. Where, How, What are the implementation specs?
+- What is the order of operations?
+- Where is the `crew invitation card` implemented? <lib\widgets\crew_invitation_card.dart>
+- When do you interact with the `invite crew member dialog` <lib\widgets\invite_crew_member_dialog.dart>
 
 ## LOCALS SCREEN
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
 import 'package:journeyman_jobs/models/user_model.dart';
-import 'package:journeyman_jobs/models/crew_invitation_model.dart';
 import 'package:journeyman_jobs/services/enhanced_crew_service.dart';
 import 'package:journeyman_jobs/widgets/electrical_components.dart';
 
@@ -18,10 +17,10 @@ class InviteCrewMemberDialog extends StatefulWidget {
   final String crewName;
 
   const InviteCrewMemberDialog({
-    Key? key,
+    super.key,
     required this.crewId,
     required this.crewName,
-  }) : super(key: key);
+  });
 
   @override
   State<InviteCrewMemberDialog> createState() => _InviteCrewMemberDialogState();
@@ -690,7 +689,7 @@ class _InviteCrewMemberDialogState extends State<InviteCrewMemberDialog>
         learnNewSkill: false,
         travelToNewLocation: true,
         findLongTermWork: false,
-        lastActive: Timestamp.now(),
+        lastActive: DateTime.now(),
       ),
       UserModel(
         uid: '2',
@@ -715,7 +714,7 @@ class _InviteCrewMemberDialogState extends State<InviteCrewMemberDialog>
         learnNewSkill: true,
         travelToNewLocation: false,
         findLongTermWork: true,
-        lastActive: Timestamp.now(),
+        lastActive: DateTime.now(),
       ),
     ];
   }

@@ -42,7 +42,7 @@ class TailboardTheme {
 
   // Surface Colors
   static const Color background = Color(0xFF0F1419);      // Deepest layer
-  static const Color surfaceLow = Color(0xFF1A202C);      // Low elevation
+  static const Color surfaceLow = Color(0xFFFFFFFF);      // Changed to white for light mode
   static const Color surfaceMid = Color(0xFF2D3748);      // Medium elevation
   static const Color surfaceHigh = Color(0xFF374151);     // High elevation
 
@@ -204,21 +204,21 @@ class TailboardTheme {
   static const TextStyle bodyLarge = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.normal,
-    color: navy500,
+    color: Colors.white, // Changed from navy500 to white for light mode
     height: 1.5,
   );
 
   static const TextStyle bodyMedium = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.normal,
-    color: navy600,
+    color: Colors.white, // Changed from navy600 to white for light mode
     height: 1.4,
   );
 
   static const TextStyle bodySmall = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.normal,
-    color: navy600,
+    color: Colors.white, // Changed from navy600 to white for light mode
     height: 1.4,
   );
 
@@ -240,7 +240,7 @@ class TailboardTheme {
   static BoxDecoration cardDecoration = BoxDecoration(
     gradient: surfaceElevation,
     borderRadius: BorderRadius.circular(12),
-    border: Border.all(color: navy600),
+    border: Border.all(color: Color(0xFFE5E7EB)), // Changed to light gray border
     boxShadow: elevation2,
   );
 
@@ -258,9 +258,9 @@ class TailboardTheme {
   );
 
   static BoxDecoration secondaryButtonDecoration = BoxDecoration(
-    color: navy700,
+    color: Color(0xFFE5E7EB), // Changed to light background for light mode
     borderRadius: BorderRadius.circular(8),
-    border: Border.all(color: copper600),
+    border: Border.all(color: Color(0xFFD97706)), // Changed to light border
     boxShadow: elevation1,
   );
 

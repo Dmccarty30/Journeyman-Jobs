@@ -1,8 +1,7 @@
+// ignore_for_file: unnecessary_string_interpolations
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/scheduler.dart';
 import 'dart:async';
-import 'dart:ui' as ui;
 import 'three_phase_rotation_meter.dart';
 
 /// Performance monitoring and testing utilities for ThreePhaseRotationMeter
@@ -16,7 +15,6 @@ import 'three_phase_rotation_meter.dart';
 
 class RotationMeterPerformanceMonitor {
   static const Duration _measurementInterval = Duration(milliseconds: 100);
-  static const int _targetFPS = 60;
   static const Duration _acceptableFrameTime = Duration(milliseconds: 16);
 
   Timer? _monitorTimer;
@@ -160,7 +158,7 @@ class PerformanceReport {
 
 /// Performance testing widget for development
 class RotationMeterPerformanceTester extends StatefulWidget {
-  const RotationMeterPerformanceTester({Key? key}) : super(key: key);
+  const RotationMeterPerformanceTester({super.key});
 
   @override
   State<RotationMeterPerformanceTester> createState() => _RotationMeterPerformanceTesterState();
@@ -366,7 +364,7 @@ class _RotationMeterPerformanceTesterState extends State<RotationMeterPerformanc
   }
 
   Widget _buildMeterGrid() {
-    final columns = ( MediaQuery.of(context).size.width / (_meterSize + 20) ).floor();
+    final _ = ( MediaQuery.of(context).size.width / (_meterSize + 20) ).floor();
 
     return Wrap(
       spacing: 20,
@@ -449,7 +447,7 @@ class PerformanceOptimizedRotationMeter extends StatefulWidget {
   final bool visible;
 
   const PerformanceOptimizedRotationMeter({
-    Key? key,
+    super.key,
     this.size = 80.0,
     this.clockwise = true,
     this.duration = const Duration(seconds: 2),
@@ -457,7 +455,7 @@ class PerformanceOptimizedRotationMeter extends StatefulWidget {
     this.showSpeedIndicator = false,
     this.colors,
     this.visible = true,
-  }) : super(key: key);
+  });
 
   @override
   State<PerformanceOptimizedRotationMeter> createState() => _PerformanceOptimizedRotationMeterState();

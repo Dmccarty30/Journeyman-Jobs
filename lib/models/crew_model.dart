@@ -69,5 +69,23 @@ class Crew {
     };
   }
 
+  Crew copyWith({
+    String? id,
+    String? name,
+    String? foremanId,
+    List<String>? memberIds,
+    Map<String, dynamic>? jobPreferences,
+    CrewStats? stats,
+  }) {
+    return Crew(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      foremanId: foremanId ?? this.foremanId,
+      memberIds: memberIds ?? List<String>.from(this.memberIds),
+      jobPreferences: jobPreferences ?? Map<String, dynamic>.from(this.jobPreferences),
+      stats: stats ?? this.stats,
+    );
+  }
+
   bool isValid() => name.isNotEmpty && foremanId.isNotEmpty;
 }

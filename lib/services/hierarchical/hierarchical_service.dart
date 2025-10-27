@@ -20,9 +20,9 @@ import '../firestore_service.dart';
 /// - Error handling and retry logic
 /// - Performance monitoring
 class HierarchicalService {
-  final FirestoreService _firestoreService;
+  final FirestoreService firestoreService;
   final FirebaseFirestore _firestore;
-  final FirebaseAuth _auth;
+  final FirebaseAuth auth;
 
   // Cache for hierarchical data
   HierarchicalData _cachedData = HierarchicalData.empty();
@@ -46,9 +46,9 @@ class HierarchicalService {
     FirestoreService? firestoreService,
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
-  }) : _firestoreService = firestoreService ?? FirestoreService(),
+  }) : firestoreService = firestoreService ?? FirestoreService(),
        _firestore = firestore ?? FirebaseFirestore.instance,
-       _auth = auth ?? FirebaseAuth.instance;
+       auth = auth ?? FirebaseAuth.instance;
 
   /// Stream of hierarchical data updates
   Stream<HierarchicalData> get hierarchicalDataStream => _dataController.stream;
@@ -87,7 +87,11 @@ class HierarchicalService {
 
       // Step 1: Load Union data
       final union = await _loadUnionData(unionId: unionId);
-      _updateData(_cachedData.withUnion(union).withLoadingStatus(HierarchicalLoadingStatus.loadingLocals));
+      if (union != null) {
+        _updateData(_cachedData.withUnion(union).withLoadingStatus(HierarchicalLoadingStatus.loadingLocals));
+      } else {
+        _updateData(_cachedData.withLoadingStatus(HierarchicalLoadingStatus.loadingLocals));
+      }
 
       // Step 2: Load Local unions
       final locals = await _loadLocalsData(unionId: unionId, preferredLocals: preferredLocals);
@@ -250,7 +254,7 @@ class HierarchicalService {
         for (final doc in query.docs) {
           try {
             // Create UnionMember from UserModel data
-            final userData = doc.data() as Map<String, dynamic>;
+            final userData = doc.data();
             userData['id'] = doc.id; // Ensure document ID is included
 
             // This would need to be adapted based on actual user model structure

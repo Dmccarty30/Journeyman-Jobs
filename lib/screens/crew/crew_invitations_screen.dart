@@ -16,7 +16,7 @@ import 'package:journeyman_jobs/widgets/jj_skeleton_loader.dart';
 /// - Real-time updates when invitations change
 /// - Electrical themed UI with circuit patterns
 class CrewInvitationsScreen extends StatefulWidget {
-  const CrewInvitationsScreen({Key? key}) : super(key: key);
+  const CrewInvitationsScreen({super.key});
 
   @override
   State<CrewInvitationsScreen> createState() => _CrewInvitationsScreenState();
@@ -31,10 +31,10 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
   final CrewInvitationService _invitationService = CrewInvitationService();
 
   bool _isLoading = true;
-  List<CrewInvitation> _allInvitations = [];
+  List<CrewInvitation> allInvitations = [];
   List<CrewInvitation> _pendingInvitations = [];
   List<CrewInvitation> _pastInvitations = [];
-  Map<String, bool> _loadingStates = {};
+  Map<String, bool> loadingStates = {};
 
   @override
   void initState() {
@@ -75,7 +75,7 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
       if (!mounted) return;
 
       setState(() {
-        _allInvitations = invitations;
+        allInvitations = invitations;
         _pendingInvitations = invitations
             .where((inv) => inv.status == CrewInvitationStatus.pending && !inv.isExpired)
             .toList();
@@ -203,7 +203,7 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
           itemCount: _pendingInvitations.length,
           itemBuilder: (context, index) {
             final invitation = _pendingInvitations[index];
-            final isLoading = _loadingStates[invitation.id] ?? false;
+            final isLoading = loadingStates[invitation.id] ?? false;
 
             return AnimatedContainer(
               duration: const Duration(milliseconds: 300),
@@ -332,7 +332,7 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
     final user = Provider.of<UserModel>(context, listen: false);
 
     setState(() {
-      _loadingStates[invitation.id] = true;
+      loadingStates[invitation.id] = true;
     });
 
     try {
@@ -348,7 +348,7 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
     } finally {
       if (mounted) {
         setState(() {
-          _loadingStates[invitation.id] = false;
+          loadingStates[invitation.id] = false;
         });
       }
     }
@@ -368,7 +368,7 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
     final user = Provider.of<UserModel>(context, listen: false);
 
     setState(() {
-      _loadingStates[invitation.id] = true;
+      loadingStates[invitation.id] = true;
     });
 
     try {
@@ -384,7 +384,7 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
     } finally {
       if (mounted) {
         setState(() {
-          _loadingStates[invitation.id] = false;
+          loadingStates[invitation.id] = false;
         });
       }
     }
@@ -393,7 +393,6 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
   void _navigateToCrew(String crewId) {
     // Navigate to crew details screen
     // This would typically use the app's navigation system
-    print('Navigate to crew: $crewId');
   }
 
   Future<bool> _showConfirmationDialog({

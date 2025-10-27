@@ -1,0 +1,211 @@
+name: multi-agent-directory-analysis
+description: "Comprehensive multi-agent workflow for analyzing, inspecting, and identifying problems in any directory"
+version: "1.0.0"
+author: "Claude Code SuperClaude"
+
+# Workflow Configuration
+config:
+  execution_mode: "parallel_agents"  # Run multiple specialized agents concurrently
+  timeout: 3600  # 1 hour total timeout
+  retry_on_failure: true
+  max_retries: 2
+
+# Input Parameters
+inputs:
+  - name: target_directory
+    type: string
+    description: "Directory path to analyze (default: current working directory)"
+    default: "."
+    required: false
+
+  - name: analysis_depth
+    type: string
+    description: "Depth of analysis"
+    enum: ["quick", "standard", "comprehensive"]
+    default: "comprehensive"
+    required: false
+
+  - name: focus_areas
+    type: array
+    description: "Specific areas to focus on"
+    items:
+      type: string
+      enum: ["security", "performance", "code_quality", "architecture", "documentation", "testing"]
+    default: ["security", "performance", "code_quality", "architecture"]
+    required: false
+
+  - name: output_format
+    type: string
+    description: "Output format for results"
+    enum: ["markdown", "json", "html"]
+    default: "markdown"
+    required: false
+
+# Agent Specializations
+agents:
+  - name: "security-analyst"
+    type: "security-specialist"
+    description: "Security vulnerability detection and analysis"
+    capabilities:
+      - "Static code security analysis"
+      - "Dependency vulnerability scanning"
+      - "Authentication/authorization review"
+      - "Data privacy assessment"
+      - "OWASP compliance checking"
+    focus_areas: ["security"]
+
+  - name: "performance-analyst"
+    type: "performance-specialist"
+    description: "Performance bottleneck identification and optimization"
+    capabilities:
+      - "Code performance analysis"
+      - "Memory usage optimization"
+      - "Database query optimization"
+      - "Network performance review"
+      - "Resource utilization assessment"
+    focus_areas: ["performance"]
+
+  - name: "code-quality-analyst"
+    type: "code-quality-specialist"
+    description: "Code quality, maintainability, and best practices analysis"
+    capabilities:
+      - "Code style and formatting analysis"
+      - "Code complexity assessment"
+      - "Maintainability index calculation"
+      - "Technical debt identification"
+      - "Best practices compliance"
+    focus_areas: ["code_quality"]
+
+  - name: "architecture-analyst"
+    type: "architecture-specialist"
+    description: "System architecture and design pattern analysis"
+    capabilities:
+      - "Design pattern recognition"
+      - "Architecture violation detection"
+      - "Module coupling analysis"
+      - "Scalability assessment"
+      - "System design review"
+    focus_areas: ["architecture"]
+
+  - name: "documentation-analyst"
+    type: "documentation-specialist"
+    description: "Documentation completeness and quality analysis"
+    capabilities:
+      - "API documentation review"
+      - "Code comment analysis"
+      - "README completeness check"
+      - "Inline documentation assessment"
+      - "User guide evaluation"
+    focus_areas: ["documentation"]
+
+  - name: "testing-analyst"
+    type: "testing-specialist"
+    description: "Test coverage and quality analysis"
+    capabilities:
+      - "Test coverage analysis"
+      - "Test quality assessment"
+      - "Test strategy review"
+      - "Missing test identification"
+      - "Test automation evaluation"
+    focus_areas: ["testing"]
+
+# Workflow Execution Steps
+steps:
+  - name: "initialize-analysis"
+    description: "Initialize analysis environment and validate inputs"
+    agent: "coordinator"
+    actions:
+      - validate_target_directory
+      - determine_project_type
+      - select_relevant_agents
+      - setup_analysis_environment
+
+  - name: "parallel-agent-analysis"
+    description: "Run specialized agents in parallel"
+    execution_type: "parallel"
+    agents:
+      - security-analyst
+      - performance-analyst
+      - code-quality-analyst
+      - architecture-analyst
+      - documentation-analyst
+      - testing-analyst
+    actions:
+      - scan_project_structure
+      - analyze_files
+      - identify_issues
+      - generate_findings
+
+  - name: "consolidate-findings"
+    description: "Consolidate findings from all agents"
+    agent: "coordinator"
+    actions:
+      - collect_agent_results
+      - deduplicate_findings
+      - prioritize_issues
+      - create_unified_report
+
+  - name: "generate-final-report"
+    description: "Generate comprehensive final report"
+    agent: "coordinator"
+    actions:
+      - format_findings
+      - create_executive_summary
+      - generate_recommendations
+      - export_report
+
+# Output Configuration
+outputs:
+  - name: "analysis_report"
+    type: file
+    description: "Comprehensive analysis report"
+    format: "{{inputs.output_format}}"
+
+  - name: "executive_summary"
+    type: file
+    description: "High-level summary of findings"
+    format: "markdown"
+
+  - name: "actionable_recommendations"
+    type: file
+    description: "Prioritized list of actionable recommendations"
+    format: "markdown"
+
+  - name: "detailed_findings"
+    type: file
+    description: "Detailed findings from each agent"
+    format: "json"
+
+# Quality Gates
+quality_gates:
+  - name: "minimum_coverage"
+    description: "Ensure comprehensive analysis coverage"
+    threshold: 90  # Minimum 90% of files should be analyzed
+
+  - name: "finding_consistency"
+    description: "Ensure consistent findings across agents"
+    threshold: 0.8  # 80% consistency rate
+
+  - name: "recommendation_actionability"
+    description: "Ensure recommendations are actionable"
+    threshold: 0.9  # 90% of recommendations should be actionable
+
+# Error Handling
+error_handling:
+  strategy: "continue_on_agent_failure"
+  fallback_agents:
+    - "general-analyst"
+  recovery_actions:
+    - retry_with_different_agent
+    - analyze_with_reduced_scope
+    - generate_partial_report
+
+# Performance Optimization
+optimization:
+  parallel_execution: true
+  caching_enabled: true
+  incremental_analysis: true
+  resource_limits:
+    max_memory_per_agent: "2GB"
+    max_cpu_per_agent: "50%"
+    max_execution_time_per_agent: 1800  # 30 minutes

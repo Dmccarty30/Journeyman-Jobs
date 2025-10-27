@@ -247,7 +247,7 @@ Widget _buildEmptyState() {
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.work_outline, size: 64, color: AppTheme.primaryNavy.withOpacity(0.3)),
+        Icon(Icons.work_outline, size: 64, color: AppTheme.primaryNavy.withValues(alpha:0.3)),
         const SizedBox(height: 16),
         Text(
           'No jobs found',
@@ -1504,7 +1504,7 @@ class GracePeriodWarning extends ConsumerWidget {
               colors: [Colors.orange[700]!, Colors.orange[900]!],
             ),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.3), width: 2),
+            border: Border.all(color: Colors.white.withValues(alpha:0.3), width: 2),
           ),
           child: Row(
             children: [
@@ -1529,7 +1529,7 @@ class GracePeriodWarning extends ConsumerWidget {
                     Text(
                       'You will be signed out in ${remaining.inSeconds} seconds due to inactivity',
                       style: AppTheme.bodyMedium.copyWith(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha:0.9),
                       ),
                     ),
                     const SizedBox(height: 8),

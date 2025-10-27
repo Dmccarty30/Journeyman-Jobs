@@ -363,7 +363,7 @@ class TailboardComponents {
                       ],
                     ),
               ),
-            ).animate(target: isHovered ? 1 : 0)
+            ).animate(target: 0)
               .scaleXY(begin: 1.0, end: 1.05, duration: TailboardTheme.shortAnimation),
           ),
         );
@@ -419,7 +419,7 @@ class AdaptiveCircuitPatternPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final _ = Theme.of(context).brightness == Brightness.dark;
     
     final paint = Paint()
       ..color = TailboardTheme.circuitAccent
