@@ -52,18 +52,21 @@ Each agent is both a client and server, contributing to collective intelligence 
 ## Core Principles
 
 ### 1. Decentralized Coordination
+
 - No single point of failure or control
 - Distributed decision making through consensus protocols
 - Peer-to-peer communication and resource sharing
 - Self-organizing network topology
 
 ### 2. Fault Tolerance & Resilience  
+
 - Automatic failure detection and recovery
 - Dynamic rerouting around failed nodes
 - Redundant data and computation paths
 - Graceful degradation under load
 
 ### 3. Collective Intelligence
+
 - Distributed problem solving and optimization
 - Shared learning and knowledge propagation
 - Emergent behaviors from local interactions
@@ -72,6 +75,7 @@ Each agent is both a client and server, contributing to collective intelligence 
 ## Network Communication Protocols
 
 ### Gossip Algorithm
+
 ```yaml
 Purpose: Information dissemination across the network
 Process:
@@ -87,6 +91,7 @@ Implementation:
 ```
 
 ### Consensus Building
+
 ```yaml
 Byzantine Fault Tolerance:
   - Tolerates up to 33% malicious or failed nodes
@@ -100,6 +105,7 @@ Practical Byzantine Fault Tolerance (pBFT):
 ```
 
 ### Peer Discovery
+
 ```yaml
 Bootstrap Process:
   1. Join network via known seed nodes
@@ -116,6 +122,7 @@ Dynamic Discovery:
 ## Task Distribution Strategies
 
 ### 1. Work Stealing
+
 ```python
 class WorkStealingProtocol:
     def __init__(self):
@@ -143,6 +150,7 @@ class WorkStealingProtocol:
 ```
 
 ### 2. Distributed Hash Table (DHT)
+
 ```python
 class TaskDistributionDHT:
     def route_task(self, task):
@@ -163,6 +171,7 @@ class TaskDistributionDHT:
 ```
 
 ### 3. Auction-Based Assignment
+
 ```python
 class TaskAuction:
     def conduct_auction(self, task):
@@ -188,6 +197,7 @@ class TaskAuction:
 ## MCP Tool Integration
 
 ### Network Management
+
 ```bash
 # Initialize mesh network
 mcp__claude-flow__swarm_init mesh --maxAgents=12 --strategy=distributed
@@ -200,6 +210,7 @@ mcp__claude-flow__swarm_monitor --interval=3000 --metrics="connectivity,latency,
 ```
 
 ### Consensus Operations
+
 ```bash
 # Propose network-wide decision
 mcp__claude-flow__daa_consensus --agents="all" --proposal="{\"task_assignment\":\"auth-service\",\"assigned_to\":\"node-3\"}"
@@ -212,6 +223,7 @@ mcp__claude-flow__neural_patterns analyze --operation="consensus_tracking" --out
 ```
 
 ### Fault Tolerance
+
 ```bash
 # Detect failed nodes
 mcp__claude-flow__daa_fault_tolerance --agentId="node-4" --strategy="heartbeat_monitor"
@@ -226,6 +238,7 @@ mcp__claude-flow__topology_optimize --swarmId="${SWARM_ID}"
 ## Consensus Algorithms
 
 ### 1. Practical Byzantine Fault Tolerance (pBFT)
+
 ```yaml
 Pre-Prepare Phase:
   - Primary broadcasts proposed operation
@@ -244,6 +257,7 @@ Commit Phase:
 ```
 
 ### 2. Raft Consensus
+
 ```yaml
 Leader Election:
   - Nodes start as followers with random timeout
@@ -258,6 +272,7 @@ Log Replication:
 ```
 
 ### 3. Gossip-Based Consensus
+
 ```yaml
 Epidemic Protocols:
   - Anti-entropy: Periodic state reconciliation
@@ -273,6 +288,7 @@ Convergence Properties:
 ## Failure Detection & Recovery
 
 ### Heartbeat Monitoring
+
 ```python
 class HeartbeatMonitor:
     def __init__(self, timeout=10, interval=3):
@@ -293,6 +309,7 @@ class HeartbeatMonitor:
 ```
 
 ### Network Partitioning
+
 ```python
 class PartitionHandler:
     def detect_partition(self):
@@ -313,6 +330,7 @@ class PartitionHandler:
 ## Load Balancing Strategies
 
 ### 1. Dynamic Work Distribution
+
 ```python
 class LoadBalancer:
     def balance_load(self):
@@ -331,6 +349,7 @@ class LoadBalancer:
 ```
 
 ### 2. Capability-Based Routing
+
 ```python
 class CapabilityRouter:
     def route_by_capability(self, task):
@@ -352,18 +371,21 @@ class CapabilityRouter:
 ## Performance Metrics
 
 ### Network Health
+
 - **Connectivity**: Percentage of nodes reachable
 - **Latency**: Average message delivery time
 - **Throughput**: Messages processed per second
 - **Partition Resilience**: Recovery time from splits
 
 ### Consensus Efficiency  
+
 - **Decision Latency**: Time to reach consensus
 - **Vote Participation**: Percentage of nodes voting
 - **Byzantine Tolerance**: Fault threshold maintained
 - **View Changes**: Leader election frequency
 
 ### Load Distribution
+
 - **Load Variance**: Standard deviation of node utilization
 - **Migration Frequency**: Task redistribution rate  
 - **Hotspot Detection**: Identification of overloaded nodes
@@ -372,18 +394,21 @@ class CapabilityRouter:
 ## Best Practices
 
 ### Network Design
+
 1. **Optimal Connectivity**: Maintain 3-5 connections per node
 2. **Redundant Paths**: Ensure multiple routes between nodes
 3. **Geographic Distribution**: Spread nodes across network zones
 4. **Capacity Planning**: Size network for peak load + 25% headroom
 
 ### Consensus Optimization
+
 1. **Quorum Sizing**: Use smallest viable quorum (>50%)
 2. **Timeout Tuning**: Balance responsiveness vs. stability
 3. **Batching**: Group operations for efficiency
 4. **Preprocessing**: Validate proposals before consensus
 
 ### Fault Tolerance
+
 1. **Proactive Monitoring**: Detect issues before failures
 2. **Graceful Degradation**: Maintain core functionality
 3. **Recovery Procedures**: Automated healing processes

@@ -28,6 +28,7 @@ You are a requirements analysis specialist focused on the Specification phase of
 ## SPARC Specification Phase
 
 The Specification phase is the foundation of SPARC methodology, where we:
+
 1. Define clear, measurable requirements
 2. Identify constraints and boundaries
 3. Create acceptance criteria
@@ -273,4 +274,4 @@ Before completing specification:
 5. **Version Control**: Track specification changes
 6. **Get Feedback**: Validate with stakeholders early
 
-Remember: A good specification prevents misunderstandings and rework. Time spent here saves time in implementation.
+Remember: A good specification prevents misunderstandings and rework. Time spent here saves time in implementation

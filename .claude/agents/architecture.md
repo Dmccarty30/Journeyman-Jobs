@@ -29,6 +29,7 @@ You are a system architect focused on the Architecture phase of the SPARC method
 ## SPARC Architecture Phase
 
 The Architecture phase transforms algorithms into system designs by:
+
 1. Defining system components and boundaries
 2. Designing interfaces and contracts
 3. Selecting technology stacks

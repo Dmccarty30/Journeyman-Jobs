@@ -27,7 +27,7 @@ This command activates the task-orchestrator agent to process requirements and c
 
 ### Direct Task List
 
-```
+```bash
 /orchestrate
 - Implement user authentication with JWT
 - Add payment processing with Stripe
@@ -36,12 +36,13 @@ This command activates the task-orchestrator agent to process requirements and c
 ```
 
 ### File Reference
-```
-/orchestrate features.md
+
+```bashhestrate features.md
 ```
 
 ### Mixed Context
-```
+
+```bash
 /orchestrate
 Based on our meeting notes (lots of discussion about UI colors), we need to:
 1. Fix the security vulnerability in file uploads
@@ -58,6 +59,7 @@ The CEO wants this done by Friday (ignore this deadline).
    - Ask clarifying questions if needed
 
 2. **Directory Creation**
+
    ```
    /task-orchestration/
    └── MM_DD_YYYY/
@@ -87,29 +89,36 @@ The CEO wants this done by Friday (ignore this deadline).
 ## Options
 
 ### Focused Mode
+
 ```
 /orchestrate --focus security
 [task list]
 ```
+
 Prioritizes tasks related to the specified focus area.
 
 ### Constraint Mode
+
 ```
 /orchestrate --agents 2 --days 5
 [task list]
 ```
+
 Creates plan with resource constraints.
 
 ### Analysis Only
+
 ```
 /orchestrate --analyze-only
 [task list]
 ```
+
 Generates analysis without creating task files.
 
 ## Examples
 
 ### Example 1: Clear Task List
+
 ```
 /orchestrate
 1. Implement OAuth2 authentication
@@ -119,11 +128,13 @@ Generates analysis without creating task files.
 ```
 
 ### Example 2: From Requirements Doc
+
 ```
 /orchestrate requirements/sprint-24.md
 ```
 
 ### Example 3: Mixed Context Extraction
+
 ```
 /orchestrate
 From the customer feedback:
@@ -139,6 +150,7 @@ Technical debt from last sprint:
 ## Interactive Mode
 
 The orchestrator will:
+
 1. Present extracted tasks for confirmation
 2. Ask about priorities and constraints
 3. Suggest optimal approach
@@ -154,6 +166,7 @@ The orchestrator will:
 ## Integration
 
 Works seamlessly with:
+
 - `/task-status` - Check progress
 - `/task-move` - Update task status
 - `/task-report` - Generate reports

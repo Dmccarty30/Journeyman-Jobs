@@ -186,7 +186,7 @@
 | Flag | Purpose | Values |
 |------|---------|--------|
 | `--concurrency [n]` | Control parallel ops | 1-15 |
-| `--iterations [n]` | Improvement cycles | 1-10 |
+| ` ` | Improvement cycles | 1-10 |
 | `--all-mcp` | Enable all MCP servers | Boolean |
 | `--no-mcp` | Native tools only | Boolean |
 | `--frontend-verify` | UI testing, frontend debugging, layout validation | Enable Playwright + Chrome DevTools + Serena |
@@ -205,7 +205,7 @@
 | `--version` | Show version | Boolean |
 | `--help` | Show help | Boolean |
 
-## Common Usage Patterns
+## Common Usage Patterns 
 
 ### Frontend Development
 

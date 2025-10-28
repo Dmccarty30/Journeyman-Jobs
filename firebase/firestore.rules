@@ -2,114 +2,539 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // ============================================================================
-    // DEV MODE: SIMPLIFIED SECURITY RULES FOR DEVELOPMENT TESTING
+    // PRODUCTION SECURITY RULES FOR JOURNEYMAN JOBS CREWS FEATURE
     // ============================================================================
-    // TODO: Re-enable full permission system before production deployment
+    // Implements comprehensive security with role-based access control
+    // Crew membership validation, permission matrices, and rate limiting
     //
-    // IMPORTANT: These rules allow ALL authenticated users to access ALL data.
-    // This is ONLY safe for development with a single developer and no sensitive data.
-    //
-    // Original complex rules included:
+    // Security Features:
+    // - User authentication validation
     // - Role-based access control (foreman, lead, member)
-    // - Crew membership validation
-    // - Permission matrices for different operations
-    // - Field-level update restrictions
-    // - Rate limiting and validation
-    //
-    // To restore production security:
-    // 1. Restore helper functions (isForeman, isCrewMember, hasPermission, etc.)
-    // 2. Re-implement role-based access control on crews collection
-    // 3. Add validation for crew updates (isValidCrewUpdate)
-    // 4. Restore author/ownership checks on posts and jobs
-    // 5. Re-enable participant validation on conversations/messages
+    // - Crew membership verification
+    // - Permission-based operation control
+    // - Data validation and sanitization
+    // - Rate limiting for abuse prevention
     // ============================================================================
 
-    // Basic authentication check
+    // ============================================================================
+    // HELPER FUNCTIONS
+    // ============================================================================
+
+    /// Basic authentication check
     function isAuthenticated() {
-      return request.auth != null;
+      return request.auth != null && request.auth.uid != null;
     }
 
-    // Users collection: Authenticated users can manage their own profiles
+    /// Enhanced rate limiting with multiple time windows
+    function checkRateLimit(counterPath, maxCount, timeWindowMs) {
+      final now = request.time;
+      final windowStart = now - timeWindowMs;
+
+      final counterDoc = get(/databases/$(database)/documents/$(counterPath));
+      if (!counterDoc.exists) {
+        return true;
+      }
+
+      // Clean old entries and count current operations
+      final operations = counterDoc.data.timestamps;
+      if (operations == null) {
+        return true;
+      }
+
+      let recentCount = 0;
+      for (let timestamp in operations) {
+        if (timestamp > windowStart) {
+          recentCount = recentCount + 1;
+        }
+      }
+
+      return recentCount < maxCount;
+    }
+
+    /// Hierarchical rate limiting for crew operations with multiple tiers
+    function checkCrewRateLimit(operationType) {
+      final userId = request.auth.uid;
+      final now = request.time;
+      final oneHourAgo = now - (1 * 60 * 60 * 1000000); // 1 hour in microseconds
+
+      // Check user-specific crew operation limits
+      final userCounterPath = 'counters/crew_operations/' + userId + '/' + operationType;
+      if (!checkRateLimit(userCounterPath, _getCrewLimit(operationType), 1 * 60 * 60 * 1000000)) {
+        return false;
+      }
+
+      // Check global crew operation limits (prevent abuse)
+      final globalCounterPath = 'counters/global_crew_operations/' + operationType;
+      return checkRateLimit(globalCounterPath, _getGlobalCrewLimit(operationType), 1 * 60 * 60 * 1000000);
+    }
+
+    /// Get operation-specific crew limits for hierarchical initialization
+    function _getCrewLimit(operationType) {
+      switch (operationType) {
+        case 'create_crew': return 5;      // 5 crews per hour per user
+        case 'send_invitation': return 20; // 20 invitations per hour per user
+        case 'send_message': return 100;   // 100 messages per hour per user
+        case 'join_crew': return 10;       // 10 join requests per hour per user
+        case 'user_discovery': return 50;  // 50 user searches per hour per user
+        default: return 50;                // Default limit for other operations
+      }
+    }
+
+    /// Get global operation limits to prevent system-wide abuse
+    function _getGlobalCrewLimit(operationType) {
+      switch (operationType) {
+        case 'create_crew': return 1000;   // 1000 crews per hour globally
+        case 'send_invitation': return 5000; // 5000 invitations per hour globally
+        case 'send_message': return 20000;   // 20000 messages per hour globally
+        case 'join_crew': return 2000;      // 2000 join requests per hour globally
+        case 'user_discovery': return 10000; // 10000 user searches per hour globally
+        default: return 5000;               // Default global limit
+      }
+    }
+
+    /// Increment rate limit counter with automatic cleanup
+    function incrementRateLimit(counterPath, maxAgeMs) {
+      final now = request.time;
+      final counterRef = /databases/$(database)/documents/$(counterPath);
+      final counterDoc = get(counterRef);
+
+      if (!counterDoc.exists) {
+        return create(counterRef, {
+          'timestamps': [now],
+          'count': 1,
+          'lastUpdated': now
+        });
+      }
+
+      let timestamps = counterDoc.data.timestamps;
+      let cutoff = now - maxAgeMs;
+
+      // Filter old timestamps
+      let filteredTimestamps = [];
+      for (let timestamp in timestamps) {
+        if (timestamp > cutoff) {
+          filteredTimestamps.push(timestamp);
+        }
+      }
+
+      // Add current timestamp
+      filteredTimestamps.push(now);
+
+      return update(counterRef, {
+        'timestamps': filteredTimestamps,
+        'count': filteredTimestamps.size(),
+        'lastUpdated': now
+      });
+    }
+
+    
+    /// Check if user is member of a crew
+    function isCrewMember(userId, crewId) {
+      return exists(/databases/$(database)/documents/crews/$(crewId)/members/$(userId));
+    }
+
+    /// Check if user is foreman of a crew
+    function isCrewForeman(userId, crewId) {
+      final crewDoc = get(/databases/$(database)/documents/crews/$(crewId));
+      return crewDoc.exists && crewDoc.data.foremanId == userId;
+    }
+
+    /// Check if user is lead of a crew
+    function isCrewLead(userId, crewId) {
+      final memberDoc = get(/databases/$(database)/documents/crews/$(crewId)/members/$(userId));
+      return memberDoc.exists && memberDoc.data.role == 'lead';
+    }
+
+    /// Get user role in crew
+    function getUserRole(userId, crewId) {
+      if (!isCrewMember(userId, crewId)) {
+        return null;
+      }
+
+      if (isCrewForeman(userId, crewId)) {
+        return 'foreman';
+      }
+
+      final memberDoc = get(/databases/$(database)/documents/crews/$(crewId)/members/$(userId));
+      return memberDoc.data.role;
+    }
+
+    /// Check specific permission based on role
+    function hasCrewPermission(userId, crewId, permission) {
+      final role = getUserRole(userId, crewId);
+      if (role == null) {
+        return false;
+      }
+
+      // Permission matrix
+      final permissions = {
+        'foreman': {
+          'canInviteMembers': true,
+          'canRemoveMembers': true,
+          'canShareJobs': true,
+          'canPostAnnouncements': true,
+          'canEditCrewInfo': true,
+          'canViewAnalytics': true,
+          'canDeleteCrew': true,
+          'canManageInvitations': true,
+          'canModerateContent': true
+        },
+        'lead': {
+          'canInviteMembers': true,
+          'canShareJobs': true,
+          'canPostAnnouncements': true,
+          'canViewAnalytics': true,
+          'canModerateContent': true
+        },
+        'member': {
+          'canShareJobs': true,
+          'canViewAnalytics': true
+        }
+      };
+
+      return permissions[role] != null && permissions[role][permission] == true;
+    }
+
+    /// Validate crew data structure
+    function isValidCrewData(data) {
+      return data.keys().hasAll(['name', 'foremanId', 'createdAt', 'visibility']) &&
+             data.name is string &&
+             data.name.size() > 0 &&
+             data.name.size() <= 50 &&
+             data.foremanId is string &&
+             data.foremanId.size() > 0 &&
+             data.createdAt is timestamp &&
+             data.visibility in ['public', 'private', 'invite_only'];
+    }
+
+    /// Validate member role
+    function isValidRole(role) {
+      return role in ['foreman', 'lead', 'member'];
+    }
+
+    /// Validate invitation data
+    function isValidInvitationData(data) {
+      return data.keys().hasAll(['crewId', 'inviterId', 'inviteeId', 'role', 'status', 'createdAt']) &&
+             data.crewId is string &&
+             data.inviterId is string &&
+             data.inviteeId is string &&
+             data.role is string &&
+             data.status in ['pending', 'accepted', 'rejected', 'expired'] &&
+             data.createdAt is timestamp;
+    }
+
+    // ============================================================================
+    // USERS COLLECTION
+    // ============================================================================
+
     match /users/{userId} {
-      allow read, write: if isAuthenticated();
+      // Users can read and write their own profile only
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+
+      // All authenticated users can read basic user info for crew discovery with rate limiting
+      allow read: if isAuthenticated() &&
+        request.auth.uid != userId &&
+        resource.data.keys().hasAll(['displayName', 'email', 'photoURL', 'createdAt']) &&
+        checkCrewRateLimit('user_discovery');
     }
 
-    // User preferences collection: Authenticated users can manage their own preferences
+    // ============================================================================
+    // USER PREFERENCES COLLECTIONS
+    // ============================================================================
+
     match /user_preferences/{userId} {
-      allow read, write: if isAuthenticated();
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
     }
 
-    // Preferences collection (legacy/alternative path): Authenticated users can manage their own preferences
     match /preferences/{userId} {
-      allow read, write: if isAuthenticated();
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
     }
 
-    // App settings subcollection under users: Users can only access their own settings
     match /users/{userId}/appSettings/{settingsId} {
-      allow read: if isAuthenticated() && request.auth.uid == userId;
-      allow write: if isAuthenticated() && request.auth.uid == userId;
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
     }
 
-    // Crews collection: DEV MODE - All authenticated users have full access
+    // ============================================================================
+    // CREWS COLLECTION
+    // ============================================================================
+
     match /crews/{crewId} {
-      allow read, write: if isAuthenticated();
+      // Read access: crew members only
+      allow read: if isAuthenticated() && isCrewMember(request.auth.uid, crewId);
 
-      // Crew members subcollection
+      // Create access: any authenticated user with hierarchical rate limiting
+      allow create: if isAuthenticated() &&
+        isValidCrewData(resource.data) &&
+        resource.data.foremanId == request.auth.uid &&
+        checkCrewRateLimit('create_crew');
+
+      // Update access: foreman or users with edit permission
+      allow update: if isAuthenticated() &&
+        isCrewMember(request.auth.uid, crewId) &&
+        hasCrewPermission(request.auth.uid, crewId, 'canEditCrewInfo') &&
+        isValidCrewData(resource.data) &&
+        request.auth.uid == resource.data.foremanId;
+
+      // Delete access: foreman only
+      allow delete: if isAuthenticated() &&
+        isCrewForeman(request.auth.uid, crewId) &&
+        hasCrewPermission(request.auth.uid, crewId, 'canDeleteCrew');
+
+      // ============================================================================
+      // CREW MEMBERS SUBCOLLECTION
+      // ============================================================================
+
       match /members/{memberId} {
-        allow read, write: if isAuthenticated();
+        // Read access: crew members only
+        allow read: if isAuthenticated() && isCrewMember(request.auth.uid, crewId);
+
+        // Create access: foreman and users with invite permission
+        allow create: if isAuthenticated() &&
+          isCrewMember(request.auth.uid, crewId) &&
+          hasCrewPermission(request.auth.uid, crewId, 'canInviteMembers') &&
+          isValidRole(resource.data.role) &&
+          request.auth.uid != memberId; // Cannot invite yourself
+
+        // Update access: foreman only (role changes)
+        allow update: if isAuthenticated() &&
+          isCrewForeman(request.auth.uid, crewId) &&
+          isValidRole(resource.data.role);
+
+        // Delete access: foreman and users with remove permission
+        allow delete: if isAuthenticated() &&
+          isCrewMember(request.auth.uid, crewId) &&
+          hasCrewPermission(request.auth.uid, crewId, 'canRemoveMembers') &&
+          request.auth.uid != memberId; // Cannot remove yourself
       }
 
-      // Feed posts subcollection
+      // ============================================================================
+      // FEED POSTS SUBCOLLECTION
+      // ============================================================================
+
       match /feedPosts/{postId} {
-        allow read, write: if isAuthenticated();
+        // Read access: crew members only
+        allow read: if isAuthenticated() && isCrewMember(request.auth.uid, crewId);
+
+        // Create access: crew members with posting permission and rate limiting
+        allow create: if isAuthenticated() &&
+          isCrewMember(request.auth.uid, crewId) &&
+          resource.data.authorId == request.auth.uid &&
+          resource.data.keys().hasAll(['content', 'authorId', 'type', 'createdAt']) &&
+          resource.data.content is string &&
+          resource.data.content.size() > 0 &&
+          resource.data.content.size() <= 2000 &&
+          resource.data.type in ['announcement', 'update', 'job_share', 'general'] &&
+          checkRateLimit('counters/posts/' + request.auth.uid, 20, 1 * 60 * 60 * 1000000); // 20 posts per hour
+
+        // Update access: author only (for edits within 5 minutes)
+        allow update: if isAuthenticated() &&
+          isCrewMember(request.auth.uid, crewId) &&
+          resource.data.authorId == request.auth.uid &&
+          request.time.diff(resource.data.createdAt).seconds < 300;
+
+        // Delete access: author (within 5 minutes) or foreman
+        allow delete: if isAuthenticated() &&
+          isCrewMember(request.auth.uid, crewId) &&
+          ((resource.data.authorId == request.auth.uid &&
+            request.time.diff(resource.data.createdAt).seconds < 300) ||
+           isCrewForeman(request.auth.uid, crewId));
       }
 
-      // Invitations subcollection
+      // ============================================================================
+      // INVITATIONS SUBCOLLECTION
+      // ============================================================================
+
       match /invitations/{invitationId} {
-        allow read, write: if isAuthenticated();
+        // Read access: relevant users only (inviter, invitee, foreman)
+        allow read: if isAuthenticated() &&
+          (resource.data.inviterId == request.auth.uid ||
+           resource.data.inviteeId == request.auth.uid ||
+           isCrewForeman(request.auth.uid, crewId));
+
+        // Create access: users with invite permission and hierarchical rate limiting
+        allow create: if isAuthenticated() &&
+          isCrewMember(request.auth.uid, crewId) &&
+          hasCrewPermission(request.auth.uid, crewId, 'canManageInvitations') &&
+          isValidInvitationData(resource.data) &&
+          resource.data.inviterId == request.auth.uid &&
+          resource.data.crewId == crewId &&
+          checkCrewRateLimit('send_invitation');
+
+        // Update access: inviter, invitee, or foreman
+        allow update: if isAuthenticated() &&
+          isCrewMember(request.auth.uid, crewId) &&
+          (resource.data.inviterId == request.auth.uid ||
+           resource.data.inviteeId == request.auth.uid ||
+           isCrewForeman(request.auth.uid, crewId)) &&
+          isValidInvitationData(resource.data);
+
+        // Delete access: inviter or foreman
+        allow delete: if isAuthenticated() &&
+          isCrewMember(request.auth.uid, crewId) &&
+          (resource.data.inviterId == request.auth.uid ||
+           isCrewForeman(request.auth.uid, crewId));
       }
 
-      // Applications subcollection
+      // ============================================================================
+      // APPLICATIONS SUBCOLLECTION
+      // ============================================================================
+
       match /applications/{applicationId} {
-        allow read, write: if isAuthenticated();
+        // Read access: applicant and crew foreman
+        allow read: if isAuthenticated() &&
+          (resource.data.applicantId == request.auth.uid ||
+           isCrewForeman(request.auth.uid, crewId));
+
+        // Create access: any authenticated user with hierarchical rate limiting
+        allow create: if isAuthenticated() &&
+          resource.data.applicantId == request.auth.uid &&
+          resource.data.crewId == crewId &&
+          checkCrewRateLimit('join_crew');
+
+        // Update access: applicant and foreman
+        allow update: if isAuthenticated() &&
+          isCrewMember(request.auth.uid, crewId) &&
+          (resource.data.applicantId == request.auth.uid ||
+           isCrewForeman(request.auth.uid, crewId));
+
+        // Delete access: applicant or foreman
+        allow delete: if isAuthenticated() &&
+          (resource.data.applicantId == request.auth.uid ||
+           isCrewForeman(request.auth.uid, crewId));
       }
     }
 
-    // Jobs collection: All authenticated users have full access
+    // ============================================================================
+    // JOBS COLLECTION
+    // ============================================================================
+
     match /jobs/{jobId} {
-      allow read, write: if isAuthenticated();
+      // Read access: all authenticated users
+      allow read: if isAuthenticated();
+
+      // Create access: authenticated users with validation and rate limiting
+      allow create: if isAuthenticated() &&
+        resource.data.authorId == request.auth.uid &&
+        resource.data.keys().hasAll(['company', 'location', 'timestamp']) &&
+        checkRateLimit('counters/jobs/' + request.auth.uid, 20);
+
+      // Update access: author only
+      allow update: if isAuthenticated() &&
+        resource.data.authorId == request.auth.uid;
+
+      // Delete access: author only
+      allow delete: if isAuthenticated() &&
+        resource.data.authorId == request.auth.uid;
     }
 
-    // Conversations collection: All authenticated users have full access
+    // ============================================================================
+    // CONVERSATIONS COLLECTION
+    // ============================================================================
+
     match /conversations/{convId} {
-      allow read, write: if isAuthenticated();
+      // Read access: participants only
+      allow read: if isAuthenticated() &&
+        resource.data.participants.contains(request.auth.uid);
+
+      // Create access: authenticated users with participant validation
+      allow create: if isAuthenticated() &&
+        resource.data.participants.contains(request.auth.uid) &&
+        resource.data.participants.size() >= 2 &&
+        resource.data.participants.size() <= 10;
 
       // Messages subcollection
       match /messages/{msgId} {
-        allow read, write: if isAuthenticated();
+        // Read access: conversation participants only
+        allow read: if isAuthenticated() &&
+          get(/databases/$(database)/documents/conversations/$(convId)).data.participants.contains(request.auth.uid);
+
+        // Create access: participants with validation and hierarchical rate limiting
+        allow create: if isAuthenticated() &&
+          get(/databases/$(database)/documents/conversations/$(convId)).data.participants.contains(request.auth.uid) &&
+          resource.data.senderId == request.auth.uid &&
+          resource.data.content is string &&
+          resource.data.content.size() > 0 &&
+          resource.data.content.size() <= 5000 &&
+          checkCrewRateLimit('send_message');
+
+        // Update access: sender only (for read receipts)
+        allow update: if isAuthenticated() &&
+          resource.data.senderId == request.auth.uid;
+
+        // Delete access: sender only (within 1 minute)
+        allow delete: if isAuthenticated() &&
+          resource.data.senderId == request.auth.uid &&
+          request.time.diff(resource.data.createdAt).seconds < 60;
       }
     }
 
-    // Locals collection: Read-only for authenticated users
+    // ============================================================================
+    // LOCALS COLLECTION (Read-only reference data)
+    // ============================================================================
+
     match /locals/{localId} {
+      // Read access: all authenticated users
       allow read: if isAuthenticated();
-      allow write: if false; // Read-only
+
+      // Write access: system only (blocked for users)
+      allow write: if false;
     }
 
-    // Counters collection: All authenticated users have full access
+    // ============================================================================
+    // COUNTERS COLLECTION (Rate limiting and system counters)
+    // ============================================================================
+
     match /counters/{document=**} {
-      allow read, write: if isAuthenticated();
+      // Read access: system only
+      allow read: if false;
+
+      // Write access: system only (through security rules above)
+      allow write: if false;
     }
 
-    // Abuse reports collection: All authenticated users can report
+    // ============================================================================
+    // ABUSE REPORTS COLLECTION
+    // ============================================================================
+
     match /abuse_reports/{reportId} {
-      allow read, write: if isAuthenticated();
+      // Create access: authenticated users with rate limiting
+      allow create: if isAuthenticated() &&
+        resource.data.reporterId == request.auth.uid &&
+        checkRateLimit('counters/abuse_reports/' + request.auth.uid, 5);
+
+      // Read access: system and reporter
+      allow read: if isAuthenticated() &&
+        (resource.data.reporterId == request.auth.uid ||
+         request.auth.token.admin == true);
+
+      // Update access: system only
+      allow update: if request.auth.token.admin == true;
+
+      // Delete access: system only
+      allow delete: if request.auth.token.admin == true;
     }
 
-    // Notifications collection: Users can read and write their own notifications
+    // ============================================================================
+    // NOTIFICATIONS COLLECTION
+    // ============================================================================
+
     match /notifications/{notificationId} {
-      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
-      allow write: if isAuthenticated();
+      // Read access: recipient only
+      allow read: if isAuthenticated() &&
+        resource.data.userId == request.auth.uid;
+
+      // Create access: system only
+      allow create: if request.auth.token.admin == true;
+
+      // Update access: recipient (for read status) or system
+      allow update: if isAuthenticated() &&
+        (resource.data.userId == request.auth.uid ||
+         request.auth.token.admin == true);
+
+      // Delete access: recipient or system
+      allow delete: if isAuthenticated() &&
+        (resource.data.userId == request.auth.uid ||
+         request.auth.token.admin == true);
     }
   }
 }

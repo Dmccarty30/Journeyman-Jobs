@@ -20,22 +20,33 @@ import 'package:journeyman_jobs/domain/enums/invitation_status.dart';
 import 'package:journeyman_jobs/domain/enums/crew_visibility.dart';
 
 // ============================================================================
-// DEV MODE: Permission matrix disabled for development testing
+// PRODUCTION PERMISSION SYSTEM - ROLE-BASED ACCESS CONTROL
 // ============================================================================
-// TODO: Re-enable RolePermissions class before production deployment
+// Role-based access control for crew management operations
 //
-// Original RolePermissions class provided role-based access control:
+// Permission Matrix:
 // - Foreman: Full permissions (create, update, delete, invite, remove, etc.)
 // - Lead: Limited permissions (invite, share, moderate, view stats)
 // - Member: Basic permissions (share jobs, view stats)
 //
-// Commented out to allow unrestricted crew operations during development.
+// All operations now require proper authentication and authorization
 // ============================================================================
 
-/*
 // Permission matrix
 class RolePermissions {
   static const Map<MemberRole, Set<Permission>> permissions = {
+    MemberRole.admin: {
+      Permission.createCrew,
+      Permission.updateCrew,
+      Permission.deleteCrew,
+      Permission.inviteMember,
+      Permission.removeMember,
+      Permission.updateRole,
+      Permission.shareJob,
+      Permission.moderateContent,
+      Permission.viewStats,
+      Permission.manageSettings,
+    },
     MemberRole.foreman: {
       Permission.createCrew,
       Permission.updateCrew,
@@ -64,7 +75,6 @@ class RolePermissions {
     return permissions[role]?.contains(permission) ?? false;
   }
 }
-*/
 
 class CrewService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -247,13 +257,10 @@ class CrewService {
       //   throw CrewException('Invalid foreman ID format', code: 'invalid-foreman-id');
       // }
 
-      // DEV MODE: Crew creation limit check bypassed for development testing
-      // TODO: Re-enable crew creation limit before production deployment
-      /* PRODUCTION CODE:
+      // PRODUCTION: Crew creation limit check enforced
       if (!await _checkCrewCreationLimit(foremanId)) {
         throw CrewException('Maximum crew limit reached (3 crews per user)', code: 'crew-limit-reached');
       }
-      */
 
       if (!_connectivityService.isOnline) {
         // Offline: Store crew locally and mark as dirty
@@ -621,13 +628,10 @@ class CrewService {
     String? message,
   }) async {
     try {
-      // DEV MODE: Permission check bypassed for development testing
-      // TODO: Re-enable permission check before production deployment
-      /* PRODUCTION CODE:
+      // PRODUCTION: Permission check enforced
       if (!await hasPermission(crewId: crewId, userId: inviterId, permission: Permission.inviteMember)) {
         throw CrewException('Insufficient permissions to invite members', code: 'permission-denied');
       }
-      */
 
       final crew = await getCrew(crewId);
       if (crew == null) {
@@ -642,9 +646,7 @@ class CrewService {
         if (msgError != null) throw MessagingException(msgError, code: 'invalid-message-content');
       }
 
-      // DEV MODE: Invitation limit checks bypassed for development testing
-      // TODO: Re-enable invitation limits before production deployment
-      /* PRODUCTION CODE:
+      // PRODUCTION: Invitation limit checks enforced
       if (!await _checkOverallInvitationLimit(inviterId)) {
         throw CrewException('Maximum lifetime invitation limit reached (100 invitations)', code: 'lifetime-invite-limit-reached');
       }
@@ -652,7 +654,6 @@ class CrewService {
       if (!await _checkInvitationLimit(inviterId)) {
         throw CrewException('Daily invitation limit reached (max 5 per day)', code: 'daily-invite-limit-reached');
       }
-      */
 
       final existingMember = await _firestore
           .collection('crews')
@@ -729,13 +730,10 @@ class CrewService {
     required String inviterId, // Add this parameter
   }) async {
     try {
-      // DEV MODE: Permission check bypassed for development testing
-      // TODO: Re-enable permission check before production deployment
-      /* PRODUCTION CODE:
+      // PRODUCTION: Permission check enforced
       if (!await hasPermission(crewId: crewId, userId: inviterId, permission: Permission.removeMember)) {
         throw CrewException('Insufficient permissions to remove members', code: 'permission-denied');
       }
-      */
 
       final crew = await getCrew(crewId);
       if (crew == null) {
@@ -803,13 +801,10 @@ class CrewService {
     required String updaterId, // Add updater
   }) async {
     try {
-      // DEV MODE: Permission check bypassed for development testing
-      // TODO: Re-enable permission check before production deployment
-      /* PRODUCTION CODE:
+      // PRODUCTION: Permission check enforced
       if (!await hasPermission(crewId: crewId, userId: updaterId, permission: Permission.updateRole)) {
         throw CrewException('Insufficient permissions to update roles', code: 'permission-denied');
       }
-      */
 
       final permissions = MemberPermissions.fromRole(role);
 
@@ -1129,6 +1124,36 @@ class CrewService {
     } catch (e) {
       throw MemberException('An unexpected error occurred while getting pending invitations: $e', code: 'unknown-error');
     }
+  }
+
+  // Stream of pending invitations for a user
+  Stream<QuerySnapshot> getPendingInvitationsStream(String userId) {
+    final now = Timestamp.now();
+    return _firestore
+        .collectionGroup('invitations')
+        .where('inviteeId', isEqualTo: userId)
+        .where('status', isEqualTo: 'pending')
+        .where('expiresAt', isGreaterThan: now)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+  }
+
+  // Stream of sent invitations for a user
+  Stream<QuerySnapshot> getSentInvitationsStream(String userId) {
+    return _firestore
+        .collectionGroup('invitations')
+        .where('inviterId', isEqualTo: userId)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+  }
+
+  // Stream of invitation history for a user (both sent and received)
+  Stream<QuerySnapshot> getInvitationHistoryStream(String userId) {
+    return _firestore
+        .collectionGroup('invitations')
+        .where('inviteeId', isEqualTo: userId)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
   }
 
   // Cleanup expired invitations
@@ -1528,61 +1553,68 @@ class CrewService {
     required Permission permission,
   }) async {
     // ========================================================================
-    // DEV MODE: All permission checks bypassed for development testing
+    // PRODUCTION: Full permission checking with role-based access control
     // ========================================================================
-    // TODO: Re-enable full permission logic before production deployment
-    //
-    // Original function performed:
-    // - Foreman role verification
-    // - Crew member lookup
+    // This function performs comprehensive permission validation:
+    // - User authentication verification
+    // - Crew member validation
     // - Role-based permission checking via RolePermissions class
-    // - Comprehensive logging
-    //
-    // Currently returns true for ALL authenticated users to allow
-    // unrestricted crew operations during development.
+    // - Foreman special privileges
+    // - Comprehensive security logging
     // ========================================================================
 
     try {
       StructuredLogger.info(
-        'DEV MODE: Permission check bypassed - granting access',
+        'Production permission check initiated',
         category: LogCategory.business,
         context: {
           'crewId': crewId,
           'userId': userId,
           'permission': permission.toString(),
-          'granted': true,
-          'mode': 'development',
+          'mode': 'production',
         },
       );
 
-      // DEV MODE: Always return true to bypass all permission checks
-      return true;
-
-      /* PRODUCTION CODE - RE-ENABLE BEFORE DEPLOYMENT:
-
-      // First check if user is the foreman (they should always have permissions)
+      // First check if user is the foreman or admin of the crew
       final crewDoc = await _firestore.collection('crews').doc(crewId).get();
       if (crewDoc.exists) {
         final crew = Crew.fromFirestore(crewDoc);
+
+        // Check if user is foreman
         if (crew.foremanId == userId) {
           StructuredLogger.info(
-            'User is foreman, granting permission',
+            'User is crew foreman, granting permission',
             category: LogCategory.business,
             context: {
               'crewId': crewId,
               'userId': userId,
               'permission': permission.toString(),
               'granted': true,
+              'reason': 'foreman_privileges',
             },
           );
           return RolePermissions.hasPermission(MemberRole.foreman, permission);
         }
-      }
 
-      final member = await getCrewMember(crewId, userId);
-      if (member == null) {
+        // Check if user has admin role in crew
+        final userRole = crew.roles[userId];
+        if (userRole == MemberRole.admin) {
+          StructuredLogger.info(
+            'User has admin role in crew, granting permission',
+            category: LogCategory.business,
+            context: {
+              'crewId': crewId,
+              'userId': userId,
+              'permission': permission.toString(),
+              'granted': true,
+              'reason': 'admin_privileges',
+            },
+          );
+          return RolePermissions.hasPermission(MemberRole.admin, permission);
+        }
+      } else {
         StructuredLogger.warning(
-          'User not found in crew members',
+          'Crew not found during permission check',
           category: LogCategory.business,
           context: {
             'crewId': crewId,
@@ -1593,11 +1625,28 @@ class CrewService {
         return false;
       }
 
+      // Check if user is a crew member
+      final member = await getCrewMember(crewId, userId);
+      if (member == null) {
+        StructuredLogger.warning(
+          'User not found in crew members - permission denied',
+          category: LogCategory.business,
+          context: {
+            'crewId': crewId,
+            'userId': userId,
+            'permission': permission.toString(),
+            'reason': 'not_a_member',
+          },
+        );
+        return false;
+      }
+
+      // Check role-based permissions
       final role = member.role;
       final hasPermission = RolePermissions.hasPermission(role, permission);
 
       StructuredLogger.info(
-        'Permission check result',
+        'Permission check completed',
         category: LogCategory.business,
         context: {
           'crewId': crewId,
@@ -1609,8 +1658,8 @@ class CrewService {
       );
 
       return hasPermission;
-      */
-    } on AppException {
+
+    } on AppException catch (e) {
       StructuredLogger.error(
         'AppException during permission check',
         category: LogCategory.business,
@@ -1618,10 +1667,13 @@ class CrewService {
           'crewId': crewId,
           'userId': userId,
           'permission': permission.toString(),
-          'error': 'AppException',
+          'error': e.toString(),
+          'errorType': 'AppException',
         },
       );
-      rethrow; // Rethrow custom exceptions
+
+      // In production, don't grant permissions on errors
+      return false;
     } on FirebaseException catch (e) {
       StructuredLogger.error(
         'FirebaseException during permission check',
@@ -1631,10 +1683,13 @@ class CrewService {
           'userId': userId,
           'permission': permission.toString(),
           'error': e.toString(),
+          'errorCode': e.code,
+          'errorType': 'FirebaseException',
         },
       );
-      // DEV MODE: Return true even on errors
-      return true;
+
+      // In production, don't grant permissions on database errors
+      return false;
     } catch (e) {
       StructuredLogger.error(
         'Unexpected error during permission check',
@@ -1644,10 +1699,12 @@ class CrewService {
           'userId': userId,
           'permission': permission.toString(),
           'error': e.toString(),
+          'errorType': 'Unexpected',
         },
       );
-      // DEV MODE: Return true even on errors
-      return true;
+
+      // In production, fail secure - don't grant permissions on unexpected errors
+      return false;
     }
   }
 

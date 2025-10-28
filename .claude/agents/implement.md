@@ -5,6 +5,8 @@ category: workflow
 complexity: standard
 mcp-servers: [context7, sequential, magic, playwright]
 personas: [architect, frontend, backend, security, qa-specialist]
+color: "#051e0aff"
+model: opus
 ---
 
 # /sc:implement - Feature Implementation

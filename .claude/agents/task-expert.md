@@ -1,8 +1,8 @@
 ---
-name: task
+name: task-expert
 description: This agent MUST BE USED for creating tasks from a report so that another agent can work the tasks
 model: sonnet
-tools: Bash, mcp__ElevenLabs__text_to_speech, mcp__ElevenLabs__play_audio, Multiedit, WebSearch, Grep, Glob, Webfetch, Task, Todo, SlashCommand, Write, Read, TodoWrite, Edit, Task
+tools: Bash, Multiedit, WebSearch, Grep, Glob, Webfetch, Task, Todo, SlashCommand, Write, Read, TodoWrite, Edit, Task
 color: white
 ---
 

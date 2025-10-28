@@ -8,6 +8,9 @@ import '../../models/filter_criteria.dart';
 import '../../models/job_model.dart';
 import '../../models/user_job_preferences.dart';
 import '../../services/resilient_firestore_service.dart';
+import '../../services/optimized_job_query_service.dart';
+import '../../services/enhanced_user_preferences_service.dart';
+import '../../services/database_performance_monitor.dart';
 import '../../utils/concurrent_operations.dart';
 import '../../utils/filter_performance.dart';
 import '../../utils/memory_management.dart';
@@ -67,6 +70,26 @@ class JobsState {
 /// Firestore service provider
 @riverpod
 ResilientFirestoreService firestoreService(Ref ref) => ResilientFirestoreService();
+
+/// Optimized job query service provider
+@riverpod
+OptimizedJobQueryService optimizedJobQueryService(Ref ref) {
+  final firestoreService = ref.watch(firestoreServiceProvider);
+  final resilientService = ref.watch(resilientFirestoreServiceProvider);
+  return OptimizedJobQueryService(resilientService);
+}
+
+/// Enhanced user preferences service provider
+@riverpod
+EnhancedUserPreferencesService enhancedUserPreferencesService(Ref ref) {
+  final performanceMonitor = ref.watch(databasePerformanceMonitorProvider);
+  final resilientService = ref.watch(resilientFirestoreServiceProvider);
+  return EnhancedUserPreferencesService(performanceMonitor, resilientService);
+}
+
+/// Database performance monitor provider
+@riverpod
+DatabasePerformanceMonitor databasePerformanceMonitor(Ref ref) => DatabasePerformanceMonitor();
 
 /// Jobs notifier provider
 @riverpod
@@ -287,17 +310,16 @@ class JobsNotifier extends _$JobsNotifier {
     await loadJobs(isRefresh: true);
   }
 
-  /// Load suggested jobs based on user preferences
+  /// Load suggested jobs based on user preferences using optimized query service
   ///
-  /// This method integrates with the suggestedJobs provider to load
-  /// jobs that match the user's preferences with cascading fallback.
-  ///
-  /// Architecture:
-  /// 1. Fetches user's jobPreferences from Firestore
-  /// 2. Uses cascading fallback to always show jobs
-  /// 3. Caches results for offline access
+  /// This method uses the new OptimizedJobQueryService for improved performance:
+  /// - Composite index utilization for Firestore queries
+  /// - Proper error handling and retry logic
+  /// - Performance monitoring and analytics
+  /// - Intelligent fallback strategies
   ///
   /// Throws [UnauthenticatedException] if user is not authenticated.
+  /// Throws [AppException] on query errors with detailed information.
   Future<void> loadSuggestedJobs() async {
     if (_operationManager.isOperationInProgress(OperationType.loadJobs)) {
       return;
@@ -317,8 +339,23 @@ class JobsNotifier extends _$JobsNotifier {
       final result = await _operationManager.executeOperation(
         type: OperationType.loadJobs,
         operation: () async {
-          // Use the suggestedJobs provider to get matched jobs
-          final jobs = await ref.read(suggestedJobsProvider.future);
+          // Get optimized query service and preferences service
+          final queryService = ref.read(optimizedJobQueryServiceProvider);
+          final preferencesService = ref.read(enhancedUserPreferencesServiceProvider);
+
+          // Load user preferences with caching
+          final preferences = await preferencesService.loadUserPreferences(
+            userId: currentUser.uid,
+            useCache: true,
+          );
+
+          // Get suggested jobs using optimized query
+          final jobs = await queryService.getSuggestedJobs(
+            userId: currentUser.uid,
+            preferences: preferences,
+            limit: 20, // Suggested jobs limit for performance
+          );
+
           return jobs;
         },
       );
@@ -333,7 +370,7 @@ class JobsNotifier extends _$JobsNotifier {
       );
 
       if (kDebugMode) {
-        print('✅ Loaded ${result.length} suggested jobs');
+        print('✅ Loaded ${result.length} suggested jobs using optimized query service');
       }
     } catch (e) {
       // Check if provider is still mounted

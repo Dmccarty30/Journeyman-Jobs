@@ -6,17 +6,31 @@ import '../../providers/riverpod/hierarchical_riverpod_provider.dart';
 import '../../providers/riverpod/auth_riverpod_provider.dart';
 import '../../design_system/app_theme.dart';
 import '../../widgets/jj_skeleton_loader.dart';
+import '../initialization/initialization_widgets.dart';
+import '../../services/hierarchical/hierarchical_initialization_service.dart';
 
 /// Widget that handles hierarchical data initialization
 ///
 /// This widget manages the loading and error states for the hierarchical
 /// data initialization system, providing appropriate UI feedback.
+///
+/// Enhanced with progressive loading UI components for better user experience.
 class HierarchicalInitializer extends ConsumerWidget {
   final Widget child;
   final Widget? loadingWidget;
   final Widget? errorWidget;
   final VoidCallback? onRetry;
   final bool showProgressIndicator;
+
+  // New enhanced properties for progressive loading
+  final bool useProgressiveLoading;
+  final HierarchicalInitializationService? initializationService;
+  final HierarchicalInitializationStrategy? strategy;
+  final bool showInitializationScreen;
+  final VoidCallback? onInitializationComplete;
+  final Duration? timeout;
+  final bool autoRetry;
+  final int maxRetryAttempts;
 
   const HierarchicalInitializer({
     super.key,
@@ -25,6 +39,15 @@ class HierarchicalInitializer extends ConsumerWidget {
     this.errorWidget,
     this.onRetry,
     this.showProgressIndicator = true,
+    // Enhanced progressive loading options
+    this.useProgressiveLoading = true,
+    this.initializationService,
+    this.strategy,
+    this.showInitializationScreen = true,
+    this.onInitializationComplete,
+    this.timeout,
+    this.autoRetry = false,
+    this.maxRetryAttempts = 3,
   });
 
   @override
@@ -36,6 +59,11 @@ class HierarchicalInitializer extends ConsumerWidget {
       loading: () => _buildLoading(context),
       error: (error, stackTrace) => _buildAuthError(context, error),
       data: (user) {
+        // Use progressive loading if enabled
+        if (useProgressiveLoading && showInitializationScreen) {
+          return _buildProgressiveLoading(context, ref, hierarchicalState);
+        }
+
         return hierarchicalState.isLoading
             ? _buildLoading(context)
             : hierarchicalState.hasError
@@ -43,6 +71,52 @@ class HierarchicalInitializer extends ConsumerWidget {
                 : child;
       },
     );
+  }
+
+  /// Builds progressive loading widget with enhanced UI
+  Widget _buildProgressiveLoading(BuildContext context, WidgetRef ref, dynamic hierarchicalState) {
+    // Create a mock initialization service for the progressive UI
+    final mockService = initializationService ?? _createMockInitializationService(ref);
+
+    return InitializationProgressScreen(
+      initializationService: mockService,
+      onInitializationComplete: () {
+        // Call the completion callback
+        onInitializationComplete?.call();
+        // The widget will automatically switch to showing the child
+      },
+      onSkipToAvailable: _canSkipToAvailable(hierarchicalState)
+          ? () {
+              onInitializationComplete?.call();
+            }
+          : null,
+      showSkipButton: _canSkipToAvailable(hierarchicalState),
+      customMessage: _getCustomLoadingMessage(hierarchicalState),
+    );
+  }
+
+  /// Creates a mock initialization service that bridges existing state to new UI
+  HierarchicalInitializationService _createMockInitializationService(WidgetRef ref) {
+    // This is a simplified bridge - in a real implementation,
+    // you would want to properly integrate the services
+    return MockHierarchicalInitializationService(ref);
+  }
+
+  /// Checks if user can skip to available features
+  bool _canSkipToAvailable(dynamic hierarchicalState) {
+    // Allow skipping if basic data is loaded
+    return !hierarchicalState.isLoading && !hierarchicalState.hasError;
+  }
+
+  /// Gets custom loading message based on current state
+  String? _getCustomLoadingMessage(dynamic hierarchicalState) {
+    if (hierarchicalState.hasError) {
+      return 'Encountered an issue during initialization';
+    } else if (hierarchicalState.isLoading) {
+      return 'Powering up your electrical career tools...';
+    } else {
+      return null;
+    }
   }
 
   /// Builds loading widget
@@ -568,5 +642,55 @@ class HierarchicalStatsWidget extends ConsumerWidget {
     } else {
       return '${difference.inDays}d ago';
     }
+  }
+}
+
+/// Mock initialization service for bridging existing state to new progressive UI
+///
+/// This service provides compatibility between the existing hierarchical data provider
+/// and the new progressive loading UI components. In a production implementation,
+/// this would be replaced with proper integration.
+class MockHierarchicalInitializationService extends HierarchicalInitializationService {
+  final WidgetRef ref;
+
+  MockHierarchicalInitializationService(this.ref);
+
+  @override
+  Stream<HierarchicalInitializationState> get initializationStateStream {
+    // Bridge the existing provider to the new UI
+    return ref.watch(hierarchicalDataProvider.stream).map((state) {
+      if (state.isLoading) {
+        return HierarchicalInitializationState.initializing();
+      } else if (state.hasError) {
+        return HierarchicalInitializationState.error(
+          state.error?.toString() ?? 'Unknown error',
+        );
+      } else {
+        return HierarchicalInitializationState.completed();
+      }
+    });
+  }
+
+  @override
+  HierarchicalInitializationState get currentState {
+    final state = ref.read(hierarchicalDataProvider);
+    if (state.isLoading) {
+      return HierarchicalInitializationState.initializing();
+    } else if (state.hasError) {
+      return HierarchicalInitializationState.error(
+        state.error?.toString() ?? 'Unknown error',
+      );
+    } else {
+      return HierarchicalInitializationState.completed();
+    }
+  }
+}
+
+/// Extension for accessing hierarchical data provider stream
+extension HierarchicalDataProviderExtension on dynamic {
+  Stream get stream {
+    // This is a mock implementation - in reality you'd need to properly
+    // expose the stream from your provider
+    return Stream.value(this);
   }
 }
