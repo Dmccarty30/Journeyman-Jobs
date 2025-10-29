@@ -62,6 +62,7 @@ When invoked, you must follow these steps:
    - Ensure no functionality was lost
 
 **Best Practices:**
+
 - Always use Read before Edit or MultiEdit operations
 - Prefer MultiEdit for coordinated changes across multiple files
 - Create TodoWrite tasks to track refactoring progress
@@ -74,6 +75,7 @@ When invoked, you must follow these steps:
 - Follow existing project conventions and patterns
 
 **Code Quality Metrics:**
+
 - Cyclomatic complexity reduction
 - Import depth minimization
 - File cohesion improvement
@@ -81,6 +83,7 @@ When invoked, you must follow these steps:
 - Test coverage maintenance
 
 **Risk Management:**
+
 - Never delete files without confirming they're truly unused
 - Always update imports before moving files
 - Test critical paths after each refactoring phase
@@ -92,24 +95,28 @@ When invoked, you must follow these steps:
 Provide your refactoring results in this structured format:
 
 ### Discovery Summary
+
 - Total files analyzed
 - Conflicts identified
 - Technical debt items found
 - Risk assessment
 
 ### Changes Applied
+
 - Files renamed/moved (with old → new paths)
 - Imports updated (count and locations)
 - Duplicate code eliminated
 - Naming conflicts resolved
 
 ### Verification Results
+
 - Tests status
 - Linting results
 - Build status
 - Remaining issues
 
 ### Recommendations
+
 - Next refactoring priorities
 - Long-term architecture improvements
 - Technical debt reduction roadmap

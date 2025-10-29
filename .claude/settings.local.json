@@ -67,7 +67,8 @@
       "mcp__claude-flow_alpha__task_orchestrate",
       "Bash(flutter pub get:*)",
       "Bash(flutter build:*)",
-      "Bash(flutter pub:*)"
+      "Bash(flutter pub:*)",
+      "Bash(flutter doctor:*)"
     ],
     "deny": [
       "Bash(rm -rf /)"
