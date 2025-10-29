@@ -214,6 +214,69 @@ enum InitializationStage {
     }
   }
 
+  /// Priority for stage execution (higher = more important)
+  int get priority {
+    switch (this) {
+      case InitializationStage.firebaseCore:
+        return 100;
+      case InitializationStage.authentication:
+        return 95;
+      case InitializationStage.sessionManagement:
+        return 90;
+      case InitializationStage.userProfile:
+        return 80;
+      case InitializationStage.userPreferences:
+        return 75;
+      case InitializationStage.localsDirectory:
+        return 70;
+      case InitializationStage.jobsData:
+        return 65;
+      case InitializationStage.crewFeatures:
+        return 50;
+      case InitializationStage.weatherServices:
+        return 45;
+      case InitializationStage.notifications:
+        return 40;
+      case InitializationStage.offlineSync:
+        return 30;
+      case InitializationStage.backgroundTasks:
+        return 25;
+      case InitializationStage.analytics:
+        return 20;
+    }
+  }
+
+  /// Checks if this stage depends on another stage
+  bool dependsOnStage(InitializationStage other) {
+    return dependsOn.contains(other);
+  }
+
+  /// Category getters for quick type checking
+  bool get isInfrastructure => level == 0;
+  bool get isDataStage => level == 1 || level == 2;
+  bool get isFeatureStage => level == 3;
+  bool get isAdvancedStage => level == 4;
+
+  /// Gets all stages that depend on this stage (transitively)
+  List<InitializationStage> get allDependents {
+    final directDependents = requiredFor.toList();
+    final allDependents = <InitializationStage>{};
+
+    void collectDependents(InitializationStage stage) {
+      for (final dependent in stage.requiredFor) {
+        if (allDependents.add(dependent)) {
+          collectDependents(dependent);
+        }
+      }
+    }
+
+    for (final dependent in directDependents) {
+      collectDependents(dependent);
+    }
+
+    return allDependents.toList();
+  }
+
   @override
   String toString() => displayName;
 }
@@ -235,6 +298,7 @@ class StageExecutionResult {
     required this.status,
     required this.startTime,
     required this.endTime,
+    this.data,
     this.metrics,
     this.error,
     this.stackTrace,
@@ -244,6 +308,7 @@ class StageExecutionResult {
   final StageStatus status;
   final DateTime startTime;
   final DateTime endTime;
+  final dynamic? data;
   final StageMetrics? metrics;
   final String? error;
   final StackTrace? stackTrace;
@@ -259,6 +324,7 @@ class StageExecutionResult {
         'stage: $stage, '
         'status: $status, '
         'duration: ${duration.inMilliseconds}ms'
+        '${data != null ? ', data: $data' : ''}'
         '${error != null ? ', error: $error' : ''}'
         ')';
   }

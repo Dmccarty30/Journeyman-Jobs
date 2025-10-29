@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/user_model.dart';
 import '../../models/hierarchical/hierarchical_types.dart';
 import '../auth_service.dart';
 import 'data_loading_service.dart';
-import 'performance_monitor.dart';
 
 /// Executes individual initialization stages with real Firebase operations
 ///
@@ -51,11 +51,8 @@ class StageExecutors {
         throw StateError('Firebase is not initialized');
       }
 
-      // Use data loading service to validate Firebase connectivity with performance tracking
-      final isValid = await PerformanceMonitor.recordFirebaseOperation(
-        'firebase_validation',
-        () => DataLoadingService.validateFirebaseServices(),
-      );
+      // Use data loading service to validate Firebase connectivity
+      final isValid = await DataLoadingService.validateFirebaseServices();
 
       if (!isValid) {
         throw StateError('Firebase services are not accessible');
@@ -141,11 +138,8 @@ class StageExecutors {
         return null;
       }
 
-      // Use data loading service to load user profile with caching and performance tracking
-      final userModel = await PerformanceMonitor.recordFirebaseOperation(
-        'user_profile_load',
-        () => DataLoadingService.loadUserProfile(currentUser.uid),
-      );
+      // Use data loading service to load user profile with caching
+      final userModel = await DataLoadingService.loadUserProfile(currentUser.uid);
 
       debugPrint('[StageExecutors] User profile loaded: ${userModel?.email}');
 
@@ -191,11 +185,8 @@ class StageExecutors {
     _recordStageStart(InitializationStage.localsDirectory);
 
     try {
-      // Use data loading service to load locals with caching and performance tracking
-      final locals = await PerformanceMonitor.recordFirebaseOperation(
-        'locals_directory_load',
-        () => DataLoadingService.loadLocalsDirectory(),
-      );
+      // Use data loading service to load locals with caching
+      final locals = await DataLoadingService.loadLocalsDirectory();
 
       debugPrint('[StageExecutors] Loaded ${locals.length} IBEW locals');
 
@@ -217,14 +208,11 @@ class StageExecutors {
     _recordStageStart(InitializationStage.jobsData);
 
     try {
-      // Use data loading service to load jobs with filtering, caching and performance tracking
-      final jobs = await PerformanceMonitor.recordFirebaseOperation(
-        'jobs_data_load',
-        () => DataLoadingService.loadJobsData(
-          homeLocal: homeLocal,
-          preferredLocals: preferredLocals,
-          limit: 50,
-        ),
+      // Use data loading service to load jobs with filtering and caching
+      final jobs = await DataLoadingService.loadJobsData(
+        homeLocal: homeLocal,
+        preferredLocals: preferredLocals,
+        limit: 50,
       );
 
       debugPrint('[StageExecutors] Loaded ${jobs.length} active jobs');

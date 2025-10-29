@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 
 import 'initialization_stage.dart';
 import 'initialization_dependency_graph.dart';
+import 'hierarchical_types.dart';
 
 /// Metadata and timing utilities for initialization stages
 ///
@@ -130,7 +131,7 @@ class InitializationMetadata {
       final parallelStages = stages.where((s) => s.canRunInParallel).length;
 
       if (parallelStages > 1) {
-        recommendations.recommendParallelExecution(stages);
+        recommendations.recommendParallelExecution(stages.toList());
       }
     }
 
@@ -390,8 +391,6 @@ class InitializationMetadata {
 
   /// Get timing estimates for initialization planning
   TimingEstimates getTimingEstimates({bool useHistoricalData = true}) {
-    final sequentialDuration = Duration.zero;
-    final parallelDuration = Duration.zero;
     final stageEstimates = <InitializationStage, Duration>{};
 
     for (final stage in InitializationStage.values) {
@@ -409,7 +408,7 @@ class InitializationMetadata {
     // Calculate parallel duration using execution plan
     final graph = InitializationDependencyGraph();
     final plan = graph.getParallelExecutionPlan();
-    final totalParallel = Duration.zero;
+    var totalParallel = Duration.zero;
 
     for (final level in plan.keys) {
       Duration maxLevelDuration = Duration.zero;
@@ -418,14 +417,18 @@ class InitializationMetadata {
           maxLevelDuration = stageEstimates[stage]!;
         }
       }
-      totalParallel + maxLevelDuration;
+      totalParallel = totalParallel + maxLevelDuration;
     }
+
+    final speedupRatio = totalParallel.inMilliseconds > 0
+        ? totalSequential.inMilliseconds / totalParallel.inMilliseconds
+        : 1.0;
 
     return TimingEstimates(
       sequential: totalSequential,
       parallel: totalParallel,
       stageEstimates: stageEstimates,
-      speedupRatio: totalSequential.inMilliseconds / totalParallel.inMilliseconds,
+      speedupRatio: speedupRatio,
     );
   }
 

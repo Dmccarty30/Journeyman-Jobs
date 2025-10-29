@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/user_model.dart';
@@ -37,7 +38,25 @@ class DataLoadingService {
         debugPrint('[DataLoadingService] User profile not found, creating default');
 
         // Create default user profile
-        final defaultProfile = UserModel.createDefault(userId);
+        final defaultProfile = UserModel(
+          uid: userId,
+          username: userId,
+          classification: 'Journeyman',
+          homeLocal: 0,
+          role: 'member',
+          email: '',
+          lastActive: DateTime.now(),
+          firstName: 'User',
+          lastName: 'Name',
+          createdTime: DateTime.now(),
+          networkWithOthers: false,
+          careerAdvancements: false,
+          betterBenefits: false,
+          higherPayRate: false,
+          learnNewSkill: false,
+          travelToNewLocation: false,
+          findLongTermWork: false,
+        );
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userId)
@@ -94,7 +113,8 @@ class DataLoadingService {
       for (final doc in snapshot.docs) {
         try {
           final local = LocalsRecord.fromFirestore(doc);
-          locals[local.localNumber] = local;
+          final localNumberInt = int.tryParse(local.localNumber) ?? 0;
+          locals[localNumberInt] = local;
         } catch (e) {
           debugPrint('[DataLoadingService] Error parsing local ${doc.id}: $e');
           // Continue with other locals
@@ -173,7 +193,7 @@ class DataLoadingService {
 
       for (final doc in snapshot.docs) {
         try {
-          final job = Job.fromFirestore(doc);
+          final job = Job.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>);
           jobs[doc.id] = job;
         } catch (e) {
           debugPrint('[DataLoadingService] Error parsing job ${doc.id}: $e');
@@ -210,7 +230,7 @@ class DataLoadingService {
       return {};
     }
 
-    const cacheKey = 'crew_data_$currentUser';
+    final cacheKey = 'crew_data_$currentUser';
 
     // Check cache first (crew data changes frequently, so shorter cache time)
     if (_isCacheValid(cacheKey, Duration(minutes: 1))) {

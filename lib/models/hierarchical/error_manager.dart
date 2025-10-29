@@ -166,7 +166,7 @@ class ErrorManager {
 
       case RecoveryAction.abort:
         debugPrint('[ErrorManager] Aborting initialization due to critical stage failure: $stage');
-        rethrow;
+        throw Exception('Critical stage $stage failed: $error');
     }
   }
 

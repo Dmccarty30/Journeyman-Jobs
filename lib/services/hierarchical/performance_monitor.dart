@@ -60,11 +60,15 @@ class PerformanceMonitor {
     if (timing == null) return null;
 
     return StageMetrics(
+      stage: stage,
       memoryUsageMB: timing.peakMemoryUsage,
       networkRequests: timing.networkRequests,
       cacheHits: timing.cacheHits,
-      cacheMisses: timing.cacheMisses,
-      errorCount: timing.errorCount,
+      customMetrics: {
+        'cacheMisses': timing.cacheMisses,
+        'errorCount': timing.errorCount,
+        'duration': timing.duration?.inMilliseconds,
+      },
     );
   }
 
@@ -204,6 +208,12 @@ class PerformanceMonitor {
     }
   }
 
+  /// Records stage error with exception details
+  void recordStageError(InitializationStage stage, dynamic error) {
+    recordError(stage); // Reuse the existing error recording logic
+    debugPrint('[PerformanceMonitor] Recorded error for stage ${stage.displayName}: $error');
+  }
+
   /// Updates current memory usage
   void updateMemoryUsage(double memoryUsageMB) {
     _currentMemoryUsage = memoryUsageMB;
@@ -231,7 +241,7 @@ class PerformanceMonitor {
     final totalStages = _stageTimings.length;
 
     Duration averageStageTime = Duration.zero;
-    Duration fastestStage = Duration.infinite;
+    Duration fastestStage = const Duration(hours: 24);
     Duration slowestStage = Duration.zero;
     InitializationStage? slowestStageName;
     InitializationStage? fastestStageName;
@@ -475,6 +485,16 @@ class PerformanceMonitor {
             estimatedImprovement: bottleneck.impact * 0.4, // Could improve by 40%
           ));
           break;
+
+        case BottleneckType.lowCacheHitRate:
+          suggestions.add(OptimizationSuggestion(
+            type: SuggestionType.improveCaching,
+            title: 'Improve cache hit rate in ${bottleneck.stage.displayName}',
+            description: 'This stage has a low cache hit rate. Consider implementing better caching strategies or cache warming.',
+            impact: SuggestionImpact.medium,
+            estimatedImprovement: bottleneck.impact * 0.25, // Could improve by 25%
+          ));
+          break;
       }
     }
 
@@ -548,10 +568,11 @@ class PerformanceMonitor {
 
     if (completedTimings.isEmpty) return Duration.zero;
 
-    final averageDuration = completedTimings.fold<Duration>(
-      Duration.zero,
-      (sum, duration) => sum + duration,
-    ) / completedTimings.length;
+    final totalMs = completedTimings.fold<int>(
+      0,
+      (sum, duration) => sum + duration.inMilliseconds,
+    );
+    final averageDuration = Duration(milliseconds: totalMs ~/ completedTimings.length);
 
     final remaining = total - completed;
     return Duration(milliseconds: (averageDuration.inMilliseconds * remaining).round());

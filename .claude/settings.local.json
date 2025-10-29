@@ -65,7 +65,9 @@
       "mcp__claude-flow_alpha__agents_spawn_parallel",
       "mcp__claude-flow_alpha__swarm_status",
       "mcp__claude-flow_alpha__task_orchestrate",
-      "Bash(flutter pub get:*)"
+      "Bash(flutter pub get:*)",
+      "Bash(flutter build:*)",
+      "Bash(flutter pub:*)"
     ],
     "deny": [
       "Bash(rm -rf /)"

@@ -107,7 +107,9 @@ class PerformanceMonitor {
 
     final metrics = StageMetrics(
       stage: stage,
-      startTime: DateTime.now(),
+      customMetrics: {
+        'startTime': DateTime.now().toIso8601String(),
+      },
     );
 
     _stageMetrics[stage] = metrics;
@@ -120,14 +122,22 @@ class PerformanceMonitor {
     final metrics = _stageMetrics[stage];
     if (metrics == null) return;
 
-    final completedMetrics = metrics.copyWith(
-      endTime: DateTime.now(),
-      duration: DateTime.now().difference(metrics.startTime),
+    final startTime = DateTime.parse(metrics.customMetrics?['startTime'] ?? DateTime.now().toIso8601String());
+    final endTime = DateTime.now();
+    final duration = endTime.difference(startTime);
+
+    final completedMetrics = StageMetrics(
+      stage: stage,
+      customMetrics: {
+        ...?metrics.customMetrics,
+        'endTime': endTime.toIso8601String(),
+        'duration': duration.inMilliseconds,
+      },
     );
 
     _stageMetrics[stage] = completedMetrics;
 
-    debugPrint('[PerformanceMonitor] Stage $stage completed in ${completedMetrics.duration?.inMilliseconds ?? 0}ms');
+    debugPrint('[PerformanceMonitor] Stage $stage completed in ${duration.inMilliseconds}ms');
   }
 
   /// Records memory usage at a specific point
@@ -171,9 +181,10 @@ class PerformanceMonitor {
       final stage = entry.key;
       final metrics = entry.value;
 
-      if (metrics.duration != null) {
+      final durationMs = metrics.customMetrics?['duration'] as int?;
+      if (durationMs != null) {
         final estimatedMs = stage.estimatedMs;
-        final actualMs = metrics.duration!.inMilliseconds;
+        final actualMs = durationMs;
 
         if (actualMs > estimatedMs * 1.5) {
           recommendations.add(PerformanceRecommendation(
@@ -211,8 +222,9 @@ class PerformanceMonitor {
       buffer.writeln('${stage.name}:');
       buffer.writeln('  Estimated: ${stage.estimatedMs}ms');
 
-      if (metrics.duration != null) {
-        final actualMs = metrics.duration!.inMilliseconds;
+      final durationMs = metrics.customMetrics?['duration'] as int?;
+      if (durationMs != null) {
+        final actualMs = durationMs;
         final ratio = actualMs / stage.estimatedMs;
         buffer.writeln('  Actual: ${actualMs}ms (${ratio.toStringAsFixed(1)}x estimate)');
       } else {
@@ -290,49 +302,6 @@ class PerformanceMonitor {
   }
 }
 
-/// Performance metrics for a stage
-@immutable
-class StageMetrics {
-  const StageMetrics({
-    required this.stage,
-    required this.startTime,
-    this.endTime,
-    this.duration,
-    this.startMemoryUsage,
-    this.endMemoryUsage,
-  });
-
-  final InitializationStage stage;
-  final DateTime startTime;
-  final DateTime? endTime;
-  final Duration? duration;
-  final double? startMemoryUsage;
-  final double? endMemoryUsage;
-
-  double? get memoryDelta {
-    if (startMemoryUsage != null && endMemoryUsage != null) {
-      return endMemoryUsage! - startMemoryUsage!;
-    }
-    return null;
-  }
-
-  StageMetrics copyWith({
-    DateTime? endTime,
-    Duration? duration,
-    double? startMemoryUsage,
-    double? endMemoryUsage,
-  }) {
-    return StageMetrics(
-      stage: stage,
-      startTime: startTime,
-      endTime: endTime ?? this.endTime,
-      duration: duration ?? this.duration,
-      startMemoryUsage: startMemoryUsage ?? this.startMemoryUsage,
-      endMemoryUsage: endMemoryUsage ?? this.endMemoryUsage,
-    );
-  }
-}
-
 /// Performance sample collected at regular intervals
 @immutable
 class PerformanceSample {
@@ -365,7 +334,7 @@ class PerformanceStats {
   final Map<InitializationStage, StageMetrics> stageMetrics;
 
   int get completedStages => stageMetrics.values
-      .where((metrics) => metrics.duration != null)
+      .where((metrics) => metrics.customMetrics?['duration'] != null)
       .length;
 }
 

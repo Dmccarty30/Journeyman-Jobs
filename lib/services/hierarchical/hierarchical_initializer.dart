@@ -11,10 +11,11 @@ import '../../models/hierarchical/hierarchical_types.dart';
 import '../../models/hierarchical/initialization_stage.dart';
 import '../../models/hierarchical/initialization_dependency_graph.dart';
 import '../../models/hierarchical/initialization_metadata.dart';
+import '../../models/hierarchical/initialization_strategy.dart';
 import '../../models/hierarchical/initialization_progress_tracker.dart';
 import '../../models/hierarchical/error_manager.dart';
 import 'error_recovery_manager.dart';
-import '../../models/hierarchical/performance_monitor.dart';
+import 'performance_monitor.dart' as perf_service;
 import '../../models/user_model.dart';
 import '../auth_service.dart';
 import 'hierarchical_service.dart';
@@ -37,6 +38,11 @@ import 'stage_executors.dart';
 /// - Level 2: Core Data (Locals, Jobs)
 /// - Level 3: Features (Crew, Weather, Notifications)
 /// - Level 4: Advanced (Sync, Background, Analytics)
+ // InitializationStrategy is defined in:
+ //   lib/models/hierarchical/initialization_strategy.dart
+ // Use the centralized definition from the hierarchical barrel export.
+
+/// Main hierarchical initialization coordinator that orchestrates all stages
 class HierarchicalInitializer {
   HierarchicalInitializer({
     HierarchicalService? hierarchicalService,
@@ -54,7 +60,7 @@ class HierarchicalInitializer {
        _firestore = firestore ?? FirebaseFirestore.instance,
        _progressTracker = progressTracker ?? InitializationProgressTracker(),
        _errorManager = errorManager ?? ErrorManager(),
-       _performanceMonitor = performanceMonitor ?? PerformanceMonitor(),
+       _performanceMonitor = performanceMonitor ?? perf_service.PerformanceMonitor(),
        _dependencyGraph = InitializationDependencyGraph();
 
   final HierarchicalService _hierarchicalService;
@@ -64,7 +70,7 @@ class HierarchicalInitializer {
   final FirebaseFirestore _firestore;
   final InitializationProgressTracker _progressTracker;
   final ErrorManager _errorManager;
-  final PerformanceMonitor _performanceMonitor;
+  final perf_service.PerformanceMonitor _performanceMonitor;
   final InitializationDependencyGraph _dependencyGraph;
 
   // Initialization state
@@ -164,6 +170,15 @@ class HierarchicalInitializer {
 
       // Execute initialization based on strategy
       switch (effectiveStrategy) {
+        case InitializationStrategy.sequential:
+          await _executeSequentialInitialization(user, forceRefresh, initContext);
+          break;
+        case InitializationStrategy.parallel:
+          await _executeParallelInitialization(user, forceRefresh, initContext);
+          break;
+        case InitializationStrategy.criticalOnly:
+          await _executeCriticalOnlyInitialization(user, forceRefresh, initContext);
+          break;
         case InitializationStrategy.minimal:
           await _executeMinimalInitialization(user, forceRefresh, initContext);
           break;
@@ -250,6 +265,51 @@ class HierarchicalInitializer {
     ];
 
     await _executeStagesSequentially(minimalStages, forceRefresh, context);
+  }
+
+  /// Executes sequential initialization strategy
+  Future<void> _executeSequentialInitialization(
+    UserModel? user,
+    bool forceRefresh,
+    Map<String, dynamic> context,
+  ) async {
+    debugPrint('[HierarchicalInitializer] Executing sequential initialization');
+
+    // Execute all stages in sequence, respecting dependencies
+    final allStages = InitializationStage.values;
+    await _executeStagesSequentially(allStages, forceRefresh, context);
+  }
+
+  /// Executes parallel initialization strategy
+  Future<void> _executeParallelInitialization(
+    UserModel? user,
+    bool forceRefresh,
+    Map<String, dynamic> context,
+  ) async {
+    debugPrint('[HierarchicalInitializer] Executing parallel initialization');
+
+    // Execute stages in parallel where possible, respecting dependencies
+    final executionPlan = _dependencyGraph.getParallelExecutionPlan();
+    final sortedLevels = executionPlan.keys.toList()..sort();
+    for (final level in sortedLevels) {
+      final stageBatch = executionPlan[level] ?? [];
+      if (stageBatch.isNotEmpty) {
+        await _executeStagesInParallel(stageBatch, forceRefresh, context);
+      }
+    }
+  }
+
+  /// Executes critical only initialization strategy
+  Future<void> _executeCriticalOnlyInitialization(
+    UserModel? user,
+    bool forceRefresh,
+    Map<String, dynamic> context,
+  ) async {
+    debugPrint('[HierarchicalInitializer] Executing critical only initialization');
+
+    // Define critical stages only
+    final criticalStages = InitializationStage.values.where((stage) => stage.isCritical).toList();
+    await _executeStagesSequentially(criticalStages, forceRefresh, context);
   }
 
   /// Executes home local first initialization strategy
@@ -495,7 +555,7 @@ class HierarchicalInitializer {
         startTime: startTime,
         endTime: endTime,
         data: stageData,
-        metrics: await _performanceMonitor.getStageMetrics(stage),
+        metrics: _performanceMonitor.getStageMetrics(stage),
       );
 
       // Record success for circuit breaker and reset error recovery
@@ -533,7 +593,7 @@ class HierarchicalInitializer {
           startTime: startTime,
           endTime: endTime,
           data: fallbackData,
-          metrics: await _performanceMonitor.getStageMetrics(stage),
+          metrics: _performanceMonitor.getStageMetrics(stage),
         );
 
         _errorManager.recordStageSuccess(stage);
@@ -547,6 +607,41 @@ class HierarchicalInitializer {
         _errorManager.recordStageFailure(stage, e);
         rethrow;
       }
+    }
+  }
+
+  /// Gets stage data based on the stage type and context
+  dynamic _getStageData(InitializationStage stage, Map<String, dynamic> context) {
+    // Return appropriate data based on stage
+    switch (stage) {
+      case InitializationStage.firebaseCore:
+        return {'initialized': true, 'timestamp': DateTime.now().toIso8601String()};
+      case InitializationStage.authentication:
+        return {'authenticated': true, 'userId': _auth.currentUser?.uid};
+      case InitializationStage.sessionManagement:
+        return {'session': 'managed', 'active': true};
+      case InitializationStage.userProfile:
+        return {'profile': 'loaded', 'source': 'firestore'};
+      case InitializationStage.userPreferences:
+        return {'preferences': 'loaded', 'cacheHits': context['cacheHits'] ?? 0};
+      case InitializationStage.localsDirectory:
+        return {'locals': 'loaded', 'count': context['localsCount'] ?? 797};
+      case InitializationStage.jobsData:
+        return {'jobs': 'loaded', 'count': context['jobsCount'] ?? 0};
+      case InitializationStage.crewFeatures:
+        return {'crew': 'initialized', 'feature': 'enabled'};
+      case InitializationStage.weatherServices:
+        return {'weather': 'enabled', 'location': context['location'] ?? 'unknown'};
+      case InitializationStage.notifications:
+        return {'notifications': 'enabled', 'permissions': context['notificationPermissions'] ?? false};
+      case InitializationStage.offlineSync:
+        return {'sync': 'enabled', 'interval': context['syncInterval'] ?? 300};
+      case InitializationStage.backgroundTasks:
+        return {'backgroundTasks': 'enabled', 'interval': context['taskInterval'] ?? 600};
+      case InitializationStage.analytics:
+        return {'analytics': 'enabled', 'collection': context['analyticsEnabled'] ?? true};
+      default:
+        return {'stage': stage.displayName, 'completed': true};
     }
   }
 
@@ -809,20 +904,6 @@ class HierarchicalInitializer {
   }
 }
 
-/// Initialization strategy enumeration
-enum InitializationStrategy {
-  /// Load only critical infrastructure and essential user data
-  minimal,
-
-  /// Prioritize user's home local, then expand to other data
-  homeLocalFirst,
-
-  /// Load all available data with full parallelization
-  comprehensive,
-
-  /// Automatically determine best strategy based on conditions
-  adaptive,
-}
 
 /// Initialization result containing final state and metadata
 @immutable

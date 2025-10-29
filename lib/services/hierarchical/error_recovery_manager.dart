@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -305,7 +306,7 @@ class ErrorRecoveryManager {
 
   /// Caches a successful result for fallback use
   static void cacheResult(InitializationStage stage, dynamic result) {
-    _cachedResults[stage.toString()] = result;
+    _cachedResults[stage] = result;
     debugPrint('[ErrorRecoveryManager] Cached result for stage ${stage.displayName}');
   }
 

@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import '../../models/hierarchical/initialization_stage.dart';
 import '../../models/hierarchical/initialization_dependency_graph.dart';
 import '../../models/hierarchical/initialization_metadata.dart';
+import '../../models/hierarchical/hierarchical_types.dart';
 import 'initialization_integration_hooks.dart';
 import '../auth_service.dart';
 import 'hierarchical_initialization_service.dart';
@@ -77,7 +78,8 @@ class StageInitializationManager {
     Duration totalRemaining = Duration.zero;
     for (final stage in remainingStages) {
       final metadata = _metadata.getMetadata(stage);
-      totalRemaining += metadata.averageDuration;
+      // averageDuration may be null — fall back to stage.estimatedDuration
+      totalRemaining += metadata.averageDuration ?? stage.estimatedDuration;
     }
 
     return totalRemaining;
@@ -790,13 +792,10 @@ enum InitializationState {
   failed,
 }
 
-/// Initialization strategy
-enum InitializationStrategy {
-  sequential,
-  parallel,
-  adaptive,
-  criticalOnly,
-}
+/// InitializationStrategy is defined centrally in:
+///   lib/models/hierarchical/initialization_strategy.dart
+/// Import the shared definition via the hierarchical barrel to avoid
+/// duplicate symbol conflicts.
 
 /// Adaptive execution strategy
 enum AdaptiveExecutionStrategy {

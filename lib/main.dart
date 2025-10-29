@@ -12,6 +12,7 @@ import 'package:journeyman_jobs/services/app_lifecycle_service.dart';
 import 'package:journeyman_jobs/services/session_timeout_service.dart';
 import 'package:journeyman_jobs/services/hierarchical/hierarchical_initialization_service.dart';
 import 'package:journeyman_jobs/services/hierarchical/hierarchical_initializer.dart';
+import 'package:journeyman_jobs/models/hierarchical/initialization_strategy.dart';
 import 'package:journeyman_jobs/widgets/activity_detector.dart';
 import 'package:journeyman_jobs/widgets/session_activity_detector.dart';
 import 'package:journeyman_jobs/widgets/grace_period_warning_banner.dart';

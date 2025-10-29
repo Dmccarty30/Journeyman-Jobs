@@ -3,9 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import 'initialization_stage.dart';
-import '../hierarchical/initialization_stage.dart' as stage_types;
-import '../hierarchical/initialization_dependency_graph.dart';
-import '../../services/hierarchical/hierarchical_initializer.dart';
+import 'hierarchical_types.dart';
+import 'initialization_dependency_graph.dart';
 
 /// Progress tracking for initialization stages
 ///
@@ -18,8 +17,8 @@ class InitializationProgressTracker {
   }) : _strategy = strategy,
        _dependencyGraph = dependencyGraph ?? InitializationDependencyGraph();
 
-  final InitializationStrategy _strategy;
-  final InitializationDependencyGraph _dependencyGraph;
+  InitializationStrategy _strategy;
+  InitializationDependencyGraph _dependencyGraph;
 
   // Progress state
   final Map<InitializationStage, StageProgress> _stageProgress = {};
@@ -179,6 +178,12 @@ class InitializationProgressTracker {
 
   Duration _calculateTotalEstimatedDuration() {
     switch (_strategy) {
+      case InitializationStrategy.sequential:
+        return _dependencyGraph.getSequentialDuration();
+      case InitializationStrategy.parallel:
+        return _dependencyGraph.getParallelDuration();
+      case InitializationStrategy.criticalOnly:
+        return Duration(milliseconds: 500); // Critical stages only
       case InitializationStrategy.minimal:
         return Duration(milliseconds: 500); // Minimal stages only
       case InitializationStrategy.homeLocalFirst:
@@ -193,8 +198,8 @@ class InitializationProgressTracker {
   Duration _calculateEstimatedRemaining() {
     if (_completedStages.isEmpty) return _totalEstimatedDuration;
 
-    totalEstimate = 0;
-    totalCompleted = 0;
+    int totalEstimate = 0;
+    int totalCompleted = 0;
 
     for (final stage in InitializationStage.values) {
       if (_completedStages.contains(stage)) {

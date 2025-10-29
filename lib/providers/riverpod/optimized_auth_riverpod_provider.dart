@@ -9,7 +9,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../services/optimized_auth_service.dart';
 import '../../utils/concurrent_operations.dart';
 
-part 'optimized_auth_riverpod_provider.g.dart';
+import 'optimized_auth_riverpod_provider.g.dart';
 
 /// Enhanced authentication state model with performance tracking
 @immutable

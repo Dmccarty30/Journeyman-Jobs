@@ -92,36 +92,6 @@ class DatabasePerformanceMonitor {
     _cleanupOldMetrics();
   }
 
-  /// Record query error
-  void _recordQueryComplete(String queryId, List<QueryDocumentSnapshot> results) {
-    final metrics = _queryMetrics[queryId];
-    if (metrics == null) return;
-
-    final duration = DateTime.now().difference(metrics.startTime);
-    final endTime = DateTime.now();
-
-    // Update metrics
-    metrics
-      ..duration = duration
-      ..endTime = endTime
-      ..resultCount = results.length
-      ..success = true
-      ..error = null;
-
-    // Check for performance issues
-    _checkPerformanceThresholds(queryId, metrics);
-
-    // Log completion
-    if (kDebugMode) {
-      print('✅ Database Monitor: Query $queryId completed');
-      print('   Duration: ${duration.inMilliseconds}ms');
-      print('   Results: ${results.length} documents');
-      print('   Collection: ${metrics.collection}');
-    }
-
-    // Clean up old metrics periodically
-    _cleanupOldMetrics();
-  }
 
   /// Record query error
   void _recordQueryError(String queryId, dynamic error) {
