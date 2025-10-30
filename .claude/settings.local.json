@@ -51,7 +51,14 @@
       "mcp__claude-flow__swarm_status",
       "Bash(./.claude/workflows/universal-code-correction-cli.sh:*)",
       "Bash(./.claude/workflows/run-directory-analysis.sh:*)",
-      "Bash(./.claude/workflows/run-directory-analysis-v2.sh:*)"
+      "Bash(./.claude/workflows/run-directory-analysis-v2.sh:*)",
+      "Bash(reports/test-permission)",
+      "Bash(logs/test-permission)",
+      "Bash(workflows/test-permission)",
+      "Read(//d/**)",
+      "mcp__ruv-swarm__swarm_init",
+      "mcp__ruv-swarm__agent_spawn",
+      "mcp__flow-nexus__swarm_init"
     ],
     "deny": [
       "Bash(rm -rf /)"
