@@ -3,7 +3,11 @@ name: task-expert
 description: This agent MUST BE USED for creating tasks from a report so that another agent can work the tasks
 model: sonnet
 tools: Bash, Multiedit, WebSearch, Grep, Glob, Webfetch, Task, Todo, SlashCommand, Write, Read, TodoWrite, Edit, Task
+<<<<<<< HEAD
 color: white
+=======
+color: blue
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 ---
 
 # Task Expert Agent

@@ -498,35 +498,441 @@ CrewCreationNotifier crewCreationNotifier(Ref ref) {
 AsyncValue<void> crewCreationState(Ref ref) {
   return ref.watch(crewCreationStateProvider);
 }
+/// Stream of pending crew invitations for the current user
+@riverpod
+Stream<List<CrewInvitation>> pendingInvitationsStream(Ref ref) {
+  final crewService = ref.watch(crewServiceProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
+
+  if (currentUser == null) return Stream.value([]);
+
+  return crewService.getPendingInvitationsStream(currentUser.uid).map((snapshot) {
+    return snapshot.docs.map((doc) => CrewInvitation.fromFirestore(doc)).toList();
+  });
+}
+
 /// Provider for pending crew invitations (invitations received by current user)
 @riverpod
-List<CrewInvitation> pendingInvitations(Ref ref) {
-  final currentUser = ref.watch(auth_providers.currentUserProvider);
-  if (currentUser == null) return [];
+AsyncValue<List<CrewInvitation>> pendingInvitations(Ref ref) {
+  final invitationsAsync = ref.watch(pendingInvitationsStreamProvider);
 
-  // TODO: Implement actual invitation fetching from Firestore
-  // For now, return empty list to prevent compilation errors
-  return [];
+  return invitationsAsync.when(
+    data: (invitations) {
+      // Filter out expired and already processed invitations
+      final activeInvitations = invitations.where((invitation) {
+        return invitation.isActive && invitation.canRespond;
+      }).toList();
+
+      // Sort by creation date (newest first)
+      activeInvitations.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      return AsyncValue.data(activeInvitations);
+    },
+    loading: () => const AsyncValue.loading(),
+    error: (error, stackTrace) {
+      return AsyncValue.error(
+        CrewException('Failed to load pending invitations: $error', code: 'invitations-load-failed'),
+        stackTrace,
+      );
+    },
+  );
+}
+
+/// Stream of sent crew invitations from the current user
+@riverpod
+Stream<List<CrewInvitation>> sentInvitationsStream(Ref ref) {
+  final crewService = ref.watch(crewServiceProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
+
+  if (currentUser == null) return Stream.value([]);
+
+  return crewService.getSentInvitationsStream(currentUser.uid).map((snapshot) {
+    return snapshot.docs.map((doc) => CrewInvitation.fromFirestore(doc)).toList();
+  });
 }
 
 /// Provider for sent crew invitations (invitations sent by current user)
 @riverpod
-List<CrewInvitation> sentInvitations(Ref ref) {
-  final currentUser = ref.watch(auth_providers.currentUserProvider);
-  if (currentUser == null) return [];
+AsyncValue<List<CrewInvitation>> sentInvitations(Ref ref) {
+  final invitationsAsync = ref.watch(sentInvitationsStreamProvider);
 
-  // TODO: Implement actual sent invitations fetching from Firestore
-  // For now, return empty list to prevent compilation errors
-  return [];
+  return invitationsAsync.when(
+    data: (invitations) {
+      // Filter out expired invitations older than 30 days
+      final now = DateTime.now();
+      final thirtyDaysAgo = now.subtract(const Duration(days: 30));
+
+      final activeInvitations = invitations.where((invitation) {
+        return !invitation.expiresAt.toDate().isBefore(thirtyDaysAgo);
+      }).toList();
+
+      // Sort by creation date (newest first)
+      activeInvitations.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      return AsyncValue.data(activeInvitations);
+    },
+    loading: () => const AsyncValue.loading(),
+    error: (error, stackTrace) {
+      return AsyncValue.error(
+        CrewException('Failed to load sent invitations: $error', code: 'sent-invitations-load-failed'),
+        stackTrace,
+      );
+    },
+  );
+}
+
+/// Stream of invitation history for the current user
+@riverpod
+Stream<List<CrewInvitation>> invitationHistoryStream(Ref ref) {
+  final crewService = ref.watch(crewServiceProvider);
+  final currentUser = ref.watch(auth_providers.currentUserProvider);
+
+  if (currentUser == null) return Stream.value([]);
+
+  return crewService.getInvitationHistoryStream(currentUser.uid).map((snapshot) {
+    return snapshot.docs.map((doc) => CrewInvitation.fromFirestore(doc)).toList();
+  });
 }
 
 /// Provider for invitation history (all past invitations)
 @riverpod
-List<CrewInvitation> invitationHistory(Ref ref) {
-  final currentUser = ref.watch(auth_providers.currentUserProvider);
-  if (currentUser == null) return [];
+AsyncValue<List<CrewInvitation>> invitationHistory(Ref ref) {
+  final invitationsAsync = ref.watch(invitationHistoryStreamProvider);
 
-  // TODO: Implement actual invitation history fetching from Firestore
-  // For now, return empty list to prevent compilation errors
-  return [];
+  return invitationsAsync.when(
+    data: (invitations) {
+      // Sort by creation date (newest first)
+      final sortedInvitations = List<CrewInvitation>.from(invitations)
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      return AsyncValue.data(sortedInvitations);
+    },
+    loading: () => const AsyncValue.loading(),
+    error: (error, stackTrace) {
+      return AsyncValue.error(
+        CrewException('Failed to load invitation history: $error', code: 'invitation-history-load-failed'),
+        stackTrace,
+      );
+    },
+  );
+}
+
+/// Provider for invitation statistics
+@riverpod
+AsyncValue<CrewInvitationStats> invitationStats(Ref ref) {
+  final historyAsync = ref.watch(invitationHistoryProvider);
+
+  return historyAsync.when(
+    data: (invitations) {
+      final stats = CrewInvitationStats.fromInvitations(invitations);
+      return AsyncValue.data(stats);
+    },
+    loading: () => const AsyncValue.loading(),
+    error: (error, stackTrace) {
+      return AsyncValue.error(
+        CrewException('Failed to load invitation statistics: $error', code: 'invitation-stats-load-failed'),
+        stackTrace,
+      );
+    },
+  );
+}
+
+/// Notifier for managing crew invitations with proper async state handling
+class CrewInvitationNotifier extends StateNotifier<AsyncValue<void>> {
+  CrewInvitationNotifier(this._ref) : super(const AsyncValue.data(null));
+
+  final Ref _ref;
+
+  /// Accepts a crew invitation with proper error handling and token refresh
+  ///
+  /// Requires user authentication before accepting invitation.
+  /// Implements defense-in-depth security by checking auth at the provider level.
+  ///
+  /// Throws [UnauthenticatedException] if user is not authenticated.
+  /// Throws [InsufficientPermissionsException] if user lacks permission.
+  Future<void> acceptInvitation({
+    required String invitationId,
+    required String crewId,
+    int retryCount = 0,
+  }) async {
+    // WAVE 4: Auth check before data access (defense-in-depth)
+    final currentUser = _ref.read(auth_providers.currentUserProvider);
+    if (currentUser == null) {
+      throw UnauthenticatedException(
+        'User must be authenticated to accept invitations',
+      );
+    }
+
+    state = const AsyncValue.loading();
+    try {
+      final crewService = _ref.read(crewServiceProvider);
+      await crewService.acceptInvitation(
+        invitationId: invitationId,
+        crewId: crewId,
+        userId: currentUser.uid,
+      );
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      // WAVE 4: Enhanced error handling with token refresh and retry logic
+      if (e is FirebaseException &&
+          (e.code == 'permission-denied' || e.code == 'unauthenticated')) {
+
+        // Attempt token refresh once
+        final tokenRefreshed = await _attemptTokenRefresh();
+
+        if (tokenRefreshed && retryCount < 1) {
+          // Retry operation once after token refresh
+          return acceptInvitation(
+            invitationId: invitationId,
+            crewId: crewId,
+            retryCount: retryCount + 1,
+          );
+        } else {
+          // Token refresh failed or retry exhausted - redirect to auth
+          final _ = _mapFirebaseError(e);
+          if (kDebugMode) {
+            print('[CrewInvitationNotifier] Error accepting invitation: $e');
+          }
+          state = AsyncValue.error(
+            UnauthenticatedException('Session expired. Please sign in again.'),
+            stack,
+          );
+          return;
+        }
+      }
+
+      // Map error to user-friendly message
+      final userError = _mapFirebaseError(e);
+      if (kDebugMode) {
+        print('[CrewInvitationNotifier] Error accepting invitation: $userError');
+      }
+
+      state = AsyncValue.error(e, stack);
+    }
+  }
+
+  /// Declines a crew invitation with proper error handling
+  ///
+  /// Requires user authentication before declining invitation.
+  /// Implements defense-in-depth security by checking auth at the provider level.
+  ///
+  /// Throws [UnauthenticatedException] if user is not authenticated.
+  Future<void> declineInvitation({
+    required String invitationId,
+    required String crewId,
+    int retryCount = 0,
+  }) async {
+    // WAVE 4: Auth check before data access (defense-in-depth)
+    final currentUser = _ref.read(auth_providers.currentUserProvider);
+    if (currentUser == null) {
+      throw UnauthenticatedException(
+        'User must be authenticated to decline invitations',
+      );
+    }
+
+    state = const AsyncValue.loading();
+    try {
+      final crewService = _ref.read(crewServiceProvider);
+      await crewService.rejectInvitation(
+        invitationId: invitationId,
+        crewId: crewId,
+        userId: currentUser.uid,
+      );
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      // WAVE 4: Enhanced error handling with token refresh and retry logic
+      if (e is FirebaseException &&
+          (e.code == 'permission-denied' || e.code == 'unauthenticated')) {
+
+        // Attempt token refresh once
+        final tokenRefreshed = await _attemptTokenRefresh();
+
+        if (tokenRefreshed && retryCount < 1) {
+          // Retry operation once after token refresh
+          return declineInvitation(
+            invitationId: invitationId,
+            crewId: crewId,
+            retryCount: retryCount + 1,
+          );
+        } else {
+          // Token refresh failed or retry exhausted - redirect to auth
+          final _ = _mapFirebaseError(e);
+          if (kDebugMode) {
+            print('[CrewInvitationNotifier] Error declining invitation: $e');
+          }
+          state = AsyncValue.error(
+            UnauthenticatedException('Session expired. Please sign in again.'),
+            stack,
+          );
+          return;
+        }
+      }
+
+      // Map error to user-friendly message
+      final userError = _mapFirebaseError(e);
+      if (kDebugMode) {
+        print('[CrewInvitationNotifier] Error declining invitation: $userError');
+      }
+
+      state = AsyncValue.error(e, stack);
+    }
+  }
+
+  /// Cancels a crew invitation with proper error handling
+  ///
+  /// Requires user authentication and proper permissions before canceling.
+  /// Implements defense-in-depth security by checking auth at the provider level.
+  ///
+  /// Throws [UnauthenticatedException] if user is not authenticated.
+  /// Throws [InsufficientPermissionsException] if user lacks permission.
+  Future<void> cancelInvitation({
+    required String invitationId,
+    required String crewId,
+    int retryCount = 0,
+  }) async {
+    // WAVE 4: Auth check before data access (defense-in-depth)
+    final currentUser = _ref.read(auth_providers.currentUserProvider);
+    if (currentUser == null) {
+      throw UnauthenticatedException(
+        'User must be authenticated to cancel invitations',
+      );
+    }
+
+    state = const AsyncValue.loading();
+    try {
+      final crewService = _ref.read(crewServiceProvider);
+      await crewService.cancelInvitation(
+        invitationId: invitationId,
+        crewId: crewId,
+        inviterId: currentUser.uid,
+      );
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      // WAVE 4: Enhanced error handling with token refresh and retry logic
+      if (e is FirebaseException &&
+          (e.code == 'permission-denied' || e.code == 'unauthenticated')) {
+
+        // Attempt token refresh once
+        final tokenRefreshed = await _attemptTokenRefresh();
+
+        if (tokenRefreshed && retryCount < 1) {
+          // Retry operation once after token refresh
+          return cancelInvitation(
+            invitationId: invitationId,
+            crewId: crewId,
+            retryCount: retryCount + 1,
+          );
+        } else {
+          // Token refresh failed or retry exhausted - redirect to auth
+          final _ = _mapFirebaseError(e);
+          if (kDebugMode) {
+            print('[CrewInvitationNotifier] Error canceling invitation: $e');
+          }
+          state = AsyncValue.error(
+            UnauthenticatedException('Session expired. Please sign in again.'),
+            stack,
+          );
+          return;
+        }
+      }
+
+      // Map error to user-friendly message
+      final userError = _mapFirebaseError(e);
+      if (kDebugMode) {
+        print('[CrewInvitationNotifier] Error canceling invitation: $userError');
+      }
+
+      state = AsyncValue.error(e, stack);
+    }
+  }
+
+  /// Attempts to refresh the user's authentication token.
+  ///
+  /// Returns true if token refresh succeeded, false otherwise.
+  /// Used for automatic recovery from expired token errors.
+  Future<bool> _attemptTokenRefresh() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return false;
+
+      // Force token refresh
+      await user.getIdToken(true);
+
+      if (kDebugMode) {
+        print('[CrewInvitationNotifier] Token refresh successful');
+      }
+
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('[CrewInvitationNotifier] Token refresh failed: $e');
+      }
+      return false;
+    }
+  }
+
+  /// Maps Firebase errors to user-friendly error messages.
+  ///
+  /// Provides clear, actionable guidance for common error scenarios.
+  String _mapFirebaseError(Object error) {
+    if (error is UnauthenticatedException) {
+      return 'Please sign in to manage invitations';
+    }
+
+    if (error is InsufficientPermissionsException) {
+      return error.message;
+    }
+
+    if (error is FirebaseException) {
+      switch (error.code) {
+        case 'permission-denied':
+          return 'You do not have permission to perform this action. Please sign in.';
+        case 'unauthenticated':
+          return 'Authentication required. Please sign in to continue.';
+        case 'unavailable':
+          return 'Service temporarily unavailable. Please try again.';
+        case 'network-request-failed':
+          return 'Network error. Please check your connection.';
+        case 'deadline-exceeded':
+          return 'Request timed out. Please try again.';
+        case 'not-found':
+          return 'The requested invitation was not found.';
+        case 'already-exists':
+          return 'This invitation has already been processed.';
+        default:
+          return 'An error occurred: ${error.message ?? 'Unknown error'}';
+      }
+    }
+
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'user-token-expired':
+          return 'Your session has expired. Please sign in again.';
+        case 'user-not-found':
+          return 'User account not found. Please sign in.';
+        case 'invalid-user-token':
+          return 'Invalid session. Please sign in again.';
+        default:
+          return 'Authentication error: ${error.message ?? 'Unknown error'}';
+      }
+    }
+
+    return 'An unexpected error occurred. Please try again.';
+  }
+
+  void reset() {
+    state = const AsyncValue.data(null);
+  }
+}
+
+/// Provider for crew invitation notifier
+@riverpod
+CrewInvitationNotifier crewInvitationNotifier(Ref ref) {
+  return CrewInvitationNotifier(ref);
+}
+
+/// Stream of crew invitation state
+@riverpod
+AsyncValue<void> crewInvitationState(Ref ref) {
+  return ref.watch(crewInvitationNotifierProvider);
 }

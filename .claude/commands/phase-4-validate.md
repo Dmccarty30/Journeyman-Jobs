@@ -56,12 +56,21 @@ Save to: reports/final_karen_approval.md
 
 ---
 
+<<<<<<< HEAD
 STEP 2: Jenny ASSESSMENT
 Agent: Jenny-spec-auditor
 Model: opus
 
 Instruction:
 "Jenny-spec-auditor: Final specification compliance verification.
+=======
+STEP 2: JENNY ASSESSMENT
+Agent: jenny-spec-auditor
+Model: opus
+
+Instruction:
+"jenny-spec-auditor: Final specification compliance verification.
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 
 COMPLETE WORKFLOW RESULTS:
 [Insert all reports]
@@ -96,12 +105,20 @@ Response: [Verification]
 
 FINAL DECISION: APPROVE / APPROVE WITH CONDITIONS / REJECT
 
+<<<<<<< HEAD
 === Jenny'S FINAL VERIFICATION ===
+=======
+=== JENNY'S FINAL VERIFICATION ===
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 [Complete verification]
 FINAL DECISION: [APPROVE/CONDITIONS/REJECT]
 === END ==="
 
+<<<<<<< HEAD
 Save to: reports/final_Jenny_approval.md
+=======
+Save to: reports/final_jenny_approval.md
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 
 ---
 

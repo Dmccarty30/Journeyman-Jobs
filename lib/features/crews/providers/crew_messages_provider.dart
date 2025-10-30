@@ -1,223 +1,110 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
-import '../services/crew_message_service.dart';
-import '../models/message.dart';
-import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/chat_message.dart';
 
-/// Crew Message Service Provider
-final crewMessageServiceProvider = Provider<CrewMessageService>((ref) {
-  return CrewMessageService();
+/// Provider for managing crew chat messages.
+final crewMessagesProvider = StreamProvider.family<List<ChatMessage>, String>((ref, crewId) {
+  return FirebaseFirestore.instance
+      .collection('crews')
+      .doc(crewId)
+      .collection('messages')
+      .orderBy('timestamp', descending: true)
+      .snapshots()
+      .map((snapshot) => snapshot.docs
+          .map((doc) => ChatMessage.fromFirestore(doc))
+          .toList());
 });
 
-/// Stream of crew feed messages with pagination support
-///
-/// **Performance Features:**
-/// - Real-time Firestore listener
-/// - Automatic pagination (50 messages)
-/// - Offline caching enabled
-/// - Optimistic UI updates
-final crewFeedMessagesStreamProvider = StreamProvider.autoDispose
-    .family<List<Message>, String>((ref, crewId) {
-  final messageService = ref.watch(crewMessageServiceProvider);
-  return messageService.getCrewFeedMessages(crewId: crewId);
-});
+/// Notifier for crew messages operations.
+class CrewMessagesNotifier extends AsyncNotifier<List<ChatMessage>> {
+  String _crewId = '';
 
-/// Stream of crew chat messages with pagination support
-///
-/// **Performance Features:**
-/// - Real-time Firestore listener
-/// - Automatic pagination (50 messages)
-/// - Auto-scroll to latest message
-/// - Read receipt tracking
-final crewChatMessagesStreamProvider = StreamProvider.autoDispose
-    .family<List<Message>, String>((ref, crewId) {
-  final messageService = ref.watch(crewMessageServiceProvider);
-  return messageService.getCrewChatMessages(crewId: crewId);
-});
+  @override
+  Future<List<ChatMessage>> build() async {
+    return [];
+  }
 
-/// Notifier for sending feed messages with optimistic UI
-class FeedMessageNotifier extends StateNotifier<AsyncValue<String?>> {
-  FeedMessageNotifier(this._ref) : super(const AsyncValue.data(null));
+  void setCrewId(String crewId) {
+    _crewId = crewId;
+    _loadMessages();
+  }
 
-  final Ref _ref;
-
-  /// Send message to crew feed with optimistic UI
-  Future<void> sendMessage({
-    required String crewId,
-    required String content,
-    MessageType type = MessageType.text,
-    List<Attachment>? attachments,
-  }) async {
-    final currentUser = _ref.read(auth_providers.currentUserProvider);
-    if (currentUser == null) {
-      state = const AsyncValue.error(
-        'User not authenticated',
-        StackTrace.empty,
-      );
-      return;
-    }
-
+  Future<void> _loadMessages() async {
     state = const AsyncValue.loading();
+    
     try {
-      final messageService = _ref.read(crewMessageServiceProvider);
-      final messageId = await messageService.sendMessageToFeed(
-        crewId: crewId,
-        senderId: currentUser.uid,
-        content: content,
-        type: type,
-        attachments: attachments,
-      );
-      state = AsyncValue.data(messageId);
+      final snapshot = await FirebaseFirestore.instance
+          .collection('crews')
+          .doc(_crewId)
+          .collection('messages')
+          .orderBy('timestamp', descending: true)
+          .get();
+      
+      final messages = snapshot.docs
+          .map((doc) => ChatMessage.fromFirestore(doc))
+          .toList();
+      
+      state = AsyncValue.data(messages);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
   }
 
-  void reset() {
-    state = const AsyncValue.data(null);
-  }
-}
-
-/// Provider for feed message notifier
-final feedMessageNotifierProvider =
-    StateNotifierProvider.autoDispose<FeedMessageNotifier, AsyncValue<String?>>(
-  (ref) => FeedMessageNotifier(ref),
-);
-
-/// Notifier for sending chat messages with optimistic UI
-class ChatMessageNotifier extends StateNotifier<AsyncValue<String?>> {
-  ChatMessageNotifier(this._ref) : super(const AsyncValue.data(null));
-
-  final Ref _ref;
-
-  /// Send message to crew chat with optimistic UI
-  Future<void> sendMessage({
-    required String crewId,
-    required String content,
-    MessageType type = MessageType.text,
-    List<Attachment>? attachments,
-  }) async {
-    final currentUser = _ref.read(auth_providers.currentUserProvider);
-    if (currentUser == null) {
-      state = const AsyncValue.error(
-        'User not authenticated',
-        StackTrace.empty,
-      );
-      return;
-    }
-
-    state = const AsyncValue.loading();
+  Future<void> sendMessage(String text) async {
+    if (_crewId.isEmpty) return;
+    
     try {
-      final messageService = _ref.read(crewMessageServiceProvider);
-      final messageId = await messageService.sendMessageToChat(
-        crewId: crewId,
-        senderId: currentUser.uid,
-        content: content,
-        type: type,
-        attachments: attachments,
+      final user = ref.read(authRiverpodProvider);
+      if (user == null) return;
+      
+      final message = ChatMessage(
+        id: '', // Will be set by Firestore
+        crewId: _crewId,
+        senderId: user.uid,
+        senderName: user.displayName ?? 'Unknown',
+        text: text,
+        timestamp: DateTime.now(),
+        isRead: false,
       );
-      state = AsyncValue.data(messageId);
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      
+      await FirebaseFirestore.instance
+          .collection('crews')
+          .doc(_crewId)
+          .collection('messages')
+          .add(message.toFirestore());
+      
+      // Refresh messages
+      _loadMessages();
+    } catch (e) {
+      // Handle error
     }
   }
 
-  void reset() {
-    state = const AsyncValue.data(null);
-  }
-}
-
-/// Provider for chat message notifier
-final chatMessageNotifierProvider =
-    StateNotifierProvider.autoDispose<ChatMessageNotifier, AsyncValue<String?>>(
-  (ref) => ChatMessageNotifier(ref),
-);
-
-/// Notifier for marking messages as read
-class MessageReadNotifier extends StateNotifier<AsyncValue<void>> {
-  MessageReadNotifier(this._ref) : super(const AsyncValue.data(null));
-
-  final Ref _ref;
-
-  /// Mark single message as read
-  Future<void> markAsRead({
-    required String crewId,
-    required String messageId,
-    bool isChatMessage = false,
-  }) async {
-    final currentUser = _ref.read(auth_providers.currentUserProvider);
-    if (currentUser == null) return;
-
-    state = const AsyncValue.loading();
+  Future<void> markMessagesAsRead() async {
+    if (_crewId.isEmpty) return;
+    
     try {
-      final messageService = _ref.read(crewMessageServiceProvider);
-      await messageService.markMessageAsRead(
-        crewId: crewId,
-        messageId: messageId,
-        userId: currentUser.uid,
-        isChatMessage: isChatMessage,
-      );
-      state = const AsyncValue.data(null);
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
-    }
-  }
-
-  /// Batch mark multiple messages as read (performance optimization)
-  Future<void> batchMarkAsRead({
-    required String crewId,
-    required List<String> messageIds,
-    bool isChatMessage = false,
-  }) async {
-    final currentUser = _ref.read(auth_providers.currentUserProvider);
-    if (currentUser == null) return;
-
-    state = const AsyncValue.loading();
-    try {
-      final messageService = _ref.read(crewMessageServiceProvider);
-      await messageService.batchMarkMessagesAsRead(
-        crewId: crewId,
-        messageIds: messageIds,
-        userId: currentUser.uid,
-        isChatMessage: isChatMessage,
-      );
-      state = const AsyncValue.data(null);
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      final user = ref.read(authRiverpodProvider);
+      if (user == null) return;
+      
+      final unreadMessages = await FirebaseFirestore.instance
+          .collection('crews')
+          .doc(_crewId)
+          .collection('messages')
+          .where('senderId', isNotEqualTo: user.uid)
+          .where('isRead', isEqualTo: false)
+          .get();
+      
+      for (final doc in unreadMessages.docs) {
+        await doc.reference.update({'isRead': true});
+      }
+    } catch (e) {
+      // Handle error
     }
   }
 }
 
-/// Provider for message read notifier
-final messageReadNotifierProvider =
-    StateNotifierProvider.autoDispose<MessageReadNotifier, AsyncValue<void>>(
-  (ref) => MessageReadNotifier(ref),
+/// Provider for crew messages notifier.
+final crewMessagesNotifierProvider = AsyncNotifierProvider<CrewMessagesNotifier, List<ChatMessage>>(
+  CrewMessagesNotifier.new,
 );
-
-/// Get unread message count for crew feed
-final crewFeedUnreadCountProvider =
-    FutureProvider.autoDispose.family<int, String>((ref, crewId) async {
-  final currentUser = ref.watch(auth_providers.currentUserProvider);
-  if (currentUser == null) return 0;
-
-  final messageService = ref.watch(crewMessageServiceProvider);
-  return await messageService.getUnreadMessageCount(
-    crewId: crewId,
-    userId: currentUser.uid,
-    isChatMessage: false,
-  );
-});
-
-/// Get unread message count for crew chat
-final crewChatUnreadCountProvider =
-    FutureProvider.autoDispose.family<int, String>((ref, crewId) async {
-  final currentUser = ref.watch(auth_providers.currentUserProvider);
-  if (currentUser == null) return 0;
-
-  final messageService = ref.watch(crewMessageServiceProvider);
-  return await messageService.getUnreadMessageCount(
-    crewId: crewId,
-    userId: currentUser.uid,
-    isChatMessage: true,
-  );
-});

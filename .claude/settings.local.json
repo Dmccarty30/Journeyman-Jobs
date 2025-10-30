@@ -52,6 +52,7 @@
       "Bash(./.claude/workflows/universal-code-correction-cli.sh:*)",
       "Bash(./.claude/workflows/run-directory-analysis.sh:*)",
       "Bash(./.claude/workflows/run-directory-analysis-v2.sh:*)",
+<<<<<<< HEAD
       "Bash(reports/test-permission)",
       "Bash(logs/test-permission)",
       "Bash(workflows/test-permission)",
@@ -59,6 +60,25 @@
       "mcp__ruv-swarm__swarm_init",
       "mcp__ruv-swarm__agent_spawn",
       "mcp__flow-nexus__swarm_init"
+=======
+      "Bash(mkdir:*)",
+      "Bash(flutter build web:*)",
+      "Bash(flutter test:*)",
+      "Bash(npx claude-flow@alpha hive-mind spawn:*)",
+      "mcp__flow-nexus__swarm_init",
+      "mcp__flow-nexus__auth_init",
+      "mcp__ruv-swarm__swarm_init",
+      "mcp__ruv-swarm__agent_spawn",
+      "mcp__ruv-swarm__swarm_status",
+      "mcp__claude-flow_alpha__swarm_init",
+      "mcp__claude-flow_alpha__agents_spawn_parallel",
+      "mcp__claude-flow_alpha__swarm_status",
+      "mcp__claude-flow_alpha__task_orchestrate",
+      "Bash(flutter pub get:*)",
+      "Bash(flutter build:*)",
+      "Bash(flutter pub:*)",
+      "Bash(flutter doctor:*)"
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
     ],
     "deny": [
       "Bash(rm -rf /)"

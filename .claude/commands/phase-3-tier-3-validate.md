@@ -55,12 +55,21 @@ Save to: reports/gate_3c_karen_verification.md
 
 ---
 
+<<<<<<< HEAD
 STEP 2: Jenny ASSESSMENT
 Agent: Jenny-spec-auditor
 Model: opus
 
 Instruction:
 "Jenny-spec-auditor: Verify Tier 3 specification compliance.
+=======
+STEP 2: JENNY ASSESSMENT
+Agent: jenny-spec-auditor
+Model: opus
+
+Instruction:
+"jenny-spec-auditor: Verify Tier 3 specification compliance.
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 
 TIER 3 IMPLEMENTATION:
 [Insert Tier 3 Implementation Report]
@@ -97,12 +106,20 @@ Response: [Audit]
 
 DECISION: PASS / CONCERN / FAIL
 
+<<<<<<< HEAD
 === Jenny'S AUDIT (Gate 3C) ===
+=======
+=== JENNY'S AUDIT (Gate 3C) ===
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 [Complete audit]
 DECISION: [PASS / CONCERN / FAIL]
 === END ==="
 
+<<<<<<< HEAD
 Save to: reports/gate_3c_Jenny_audit.md
+=======
+Save to: reports/gate_3c_jenny_audit.md
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 
 ---
 

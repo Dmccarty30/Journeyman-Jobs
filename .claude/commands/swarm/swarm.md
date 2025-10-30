@@ -16,7 +16,7 @@ npx claude-flow swarm <objective> [options]
 - `--claude` - Open Claude Code CLI with swarm prompt
 - `--parallel` - Enable parallel execution
 
-## E    xamples
+## Examples
 
 ```bash
 # Basic swarm

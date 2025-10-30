@@ -58,6 +58,7 @@ Missing Resource Context:
 **Structure the decision systematically:**
 
 #### Decision Hierarchy
+
 - Primary decision point and core question
 - Secondary decisions that follow from primary choice
 - Tertiary decisions and implementation details
@@ -65,6 +66,7 @@ Missing Resource Context:
 - Option combinations and interaction effects
 
 #### Stakeholder Impact Analysis
+
 - Decision makers and approval authorities
 - Implementation teams and resource owners
 - Customers and end users affected
@@ -72,6 +74,7 @@ Missing Resource Context:
 - Competitive landscape implications
 
 #### Constraint Identification
+
 - Hard constraints (cannot be violated)
 - Soft constraints (preferences and trade-offs)
 - Temporal constraints (timing and sequencing)
@@ -83,6 +86,7 @@ Missing Resource Context:
 **Systematically identify and organize decision alternatives:**
 
 #### Comprehensive Option Development
+
 - Direct approaches to achieving the goal
 - Hybrid solutions combining multiple approaches
 - Phased approaches with incremental implementation
@@ -90,6 +94,7 @@ Missing Resource Context:
 - "Do nothing" baseline for comparison
 
 #### Option Categorization
+
 - Quick wins vs. long-term strategic moves
 - High-risk/high-reward vs. safe/incremental options
 - Resource-intensive vs. lean approaches
@@ -97,6 +102,7 @@ Missing Resource Context:
 - Proven approaches vs. innovative experiments
 
 #### Option Feasibility Assessment
+
 ```
 For each option, evaluate:
 - Technical Feasibility: Can this actually be implemented?
@@ -120,6 +126,7 @@ Overall Feasibility: [average score]
 **Apply systematic probability estimation:**
 
 #### Base Rate Analysis
+
 - Historical success rates for similar decisions
 - Industry benchmarks and comparative data
 - Expert judgment and domain knowledge
@@ -127,6 +134,7 @@ Overall Feasibility: [average score]
 - Internal capability assessment and track record
 
 #### Scenario Probability Weighting
+
 - Best case scenario probabilities (optimistic outcomes)
 - Most likely scenario probabilities (base case expectations)
 - Worst case scenario probabilities (pessimistic outcomes)
@@ -134,6 +142,7 @@ Overall Feasibility: [average score]
 - Competitive response probabilities
 
 #### Probability Calibration Methods
+
 ```
 Use multiple estimation approaches:
 
@@ -163,6 +172,7 @@ Use multiple estimation approaches:
 **Quantify decision outcomes systematically:**
 
 #### Outcome Quantification
+
 - Financial returns and cost implications
 - Strategic value and competitive advantages
 - Risk reduction and option value creation
@@ -170,6 +180,7 @@ Use multiple estimation approaches:
 - Learning value and capability building
 
 #### Multi-Dimensional Value Assessment
+
 ```
 Value Calculation Framework:
 
@@ -193,6 +204,7 @@ Risk Value:
 ```
 
 #### Expected Value Integration
+
 ```
 Expected Value Formula Application:
 EV = Σ(Probability × Outcome Value) for all scenarios
@@ -215,6 +227,7 @@ Net Expected Value: $1.8M
 **Comprehensively assess decision risks:**
 
 #### Risk Identification Matrix
+
 - Implementation risks (execution challenges)
 - Market risks (demand, competition, economic changes)
 - Technology risks (technical feasibility, obsolescence)
@@ -222,6 +235,7 @@ Net Expected Value: $1.8M
 - Resource risks (availability, capability, cost overruns)
 
 #### Sensitivity Analysis
+
 - Key assumption stress testing
 - Break-even analysis for critical variables
 - Scenario analysis with parameter variations
@@ -229,6 +243,7 @@ Net Expected Value: $1.8M
 - Robustness testing across different conditions
 
 #### Risk Mitigation Strategy Development
+
 ```
 Risk Mitigation Framework:
 
@@ -248,6 +263,7 @@ For each significant risk:
 **Create clear decision tree representations:**
 
 #### Tree Structure Design
+
 ```
 Decision Tree Format:
 
@@ -269,6 +285,7 @@ Expected Values:
 ```
 
 #### Decision Path Analysis
+
 - Optimal path identification based on expected value
 - Alternative paths with acceptable risk/return profiles
 - Contingency routing based on early decision outcomes
@@ -280,6 +297,7 @@ Expected Values:
 **Generate data-driven decision recommendations:**
 
 #### Multi-Criteria Decision Analysis
+
 - Weighted scoring across multiple decision criteria
 - Trade-off analysis between competing objectives
 - Pareto frontier identification for efficient solutions
@@ -287,6 +305,7 @@ Expected Values:
 - Scenario robustness across different weighting schemes
 
 #### Recommendation Generation
+
 ```
 Decision Recommendation Format:
 
@@ -325,6 +344,7 @@ Decision Recommendation Format:
 **Ensure robust decision-making process:**
 
 #### Process Quality Checklist
+
 - [ ] All relevant stakeholders consulted
 - [ ] Comprehensive option generation completed
 - [ ] Probability assessments calibrated with data
@@ -335,6 +355,7 @@ Decision Recommendation Format:
 - [ ] Implementation feasibility validated
 
 #### Bias Detection and Mitigation
+
 - Confirmation bias: Seeking information that supports preferences
 - Anchoring bias: Over-relying on first information received
 - Availability bias: Overweighting easily recalled examples
@@ -343,6 +364,7 @@ Decision Recommendation Format:
 - Analysis paralysis: Over-analyzing instead of deciding
 
 #### Decision Documentation
+
 - Decision rationale and supporting analysis
 - Key assumptions and probability assessments
 - Alternative options considered and rejected
@@ -355,6 +377,7 @@ Decision Recommendation Format:
 **Establish decision quality improvement:**
 
 #### Decision Outcome Tracking
+
 - Actual vs. predicted outcomes measurement
 - Assumption validation against real results
 - Decision timing and implementation effectiveness
@@ -362,6 +385,7 @@ Decision Recommendation Format:
 - Unintended consequences and side effects
 
 #### Continuous Improvement
+
 - Decision-making process refinement
 - Probability calibration improvement over time
 - Risk assessment accuracy enhancement

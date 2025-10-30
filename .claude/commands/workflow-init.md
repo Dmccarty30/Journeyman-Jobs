@@ -18,7 +18,11 @@ INITIALIZATION STEPS:
 
 STEP 1: VERIFY AGENTS INSTALLED
 Agents required:
+<<<<<<< HEAD
 ✓ error-eliminator.md
+=======
+✓ error-eliminator-commander.md
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 ✓ security-vulnerability-hunter.md
 ✓ root-cause-analysis-expert.md
 ✓ dead-code-eliminator.md
@@ -30,7 +34,11 @@ Agents required:
 ✓ codebase-composer.md
 ✓ testing-and-validation-specialist.md
 ✓ karen-reality-manager.md
+<<<<<<< HEAD
 ✓ Jenny-spec-auditor.md
+=======
+✓ jenny-spec-auditor.md
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 
 Check: Display list of installed agents in .claude/agents/
 If any missing: Install from Part 1 documentation before proceeding.

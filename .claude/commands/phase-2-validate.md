@@ -80,14 +80,23 @@ Wait for completion and save to: reports/gate_2_karen_assessment.md
 
 ---
 
+<<<<<<< HEAD
 STEP 2: INVOKE Jenny - SENIOR SOFTWARE ENGINEERING AUDITOR
 Agent Name: Jenny-spec-auditor
+=======
+STEP 2: INVOKE JENNY - SENIOR SOFTWARE ENGINEERING AUDITOR
+Agent Name: jenny-spec-auditor
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 Model: Opus
 Priority: CRITICAL
 
 Instruction (exact):
 
+<<<<<<< HEAD
 "Jenny-spec-auditor: Audit Phase 2 task completeness and specification alignment.
+=======
+"jenny-spec-auditor: Audit Phase 2 task completeness and specification alignment.
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 
 PHASE 2 REPORTS:
 [Insert complete Phase 2 Report]
@@ -151,7 +160,11 @@ PROVIDE:
 
 Your audit ensures completeness."
 
+<<<<<<< HEAD
 Wait for completion and save to: reports/gate_2_Jenny_audit.md
+=======
+Wait for completion and save to: reports/gate_2_jenny_audit.md
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 
 ---
 

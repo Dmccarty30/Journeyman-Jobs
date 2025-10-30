@@ -55,12 +55,21 @@ Save to: reports/gate_3d_karen_verification.md
 
 ---
 
+<<<<<<< HEAD
 STEP 2: Jenny ASSESSMENT
 Agent: Jenny-spec-auditor
 Model: opus
 
 Instruction:
 "Jenny-spec-auditor: Verify Tier 4 specification compliance.
+=======
+STEP 2: JENNY ASSESSMENT
+Agent: jenny-spec-auditor
+Model: opus
+
+Instruction:
+"jenny-spec-auditor: Verify Tier 4 specification compliance.
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 
 TIER 4 IMPLEMENTATION:
 [Insert Tier 4 Implementation Report]
@@ -99,12 +108,20 @@ Response: [Audit]
 
 DECISION: PASS / CONCERN / FAIL
 
+<<<<<<< HEAD
 === Jenny'S AUDIT (Gate 3D) ===
+=======
+=== JENNY'S AUDIT (Gate 3D) ===
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 [Complete audit]
 DECISION: [PASS / CONCERN / FAIL]
 === END ==="
 
+<<<<<<< HEAD
 Save to: reports/gate_3d_Jenny_audit.md
+=======
+Save to: reports/gate_3d_jenny_audit.md
+>>>>>>> acef1cd0f89023c0148524cac5f4f08fa32e2337
 
 ---
 

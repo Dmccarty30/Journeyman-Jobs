@@ -11,6 +11,8 @@ import 'package:journeyman_jobs/services/auth_service.dart';
 import 'package:journeyman_jobs/services/app_lifecycle_service.dart';
 import 'package:journeyman_jobs/services/session_timeout_service.dart';
 import 'package:journeyman_jobs/services/hierarchical/hierarchical_initialization_service.dart';
+import 'package:journeyman_jobs/services/hierarchical/hierarchical_initializer.dart';
+import 'package:journeyman_jobs/models/hierarchical/initialization_strategy.dart';
 import 'package:journeyman_jobs/widgets/activity_detector.dart';
 import 'package:journeyman_jobs/widgets/session_activity_detector.dart';
 import 'package:journeyman_jobs/widgets/grace_period_warning_banner.dart';
@@ -18,7 +20,7 @@ import 'firebase_options.dart';
 import 'design_system/app_theme.dart';
 import 'navigation/app_router.dart'; // For route constants
 import 'navigation/app_router.dart' show routerProvider; // For the router provider
-import 'providers/riverpod/hierarchical_riverpod_provider.dart';
+// import 'providers/riverpod/hierarchical_riverpod_provider.dart'; // DISABLED: Not needed while forcing light mode
 // import 'providers/riverpod/theme_riverpod_provider.dart'; // DISABLED: Not needed while forcing light mode
 
 // Global app lifecycle service for token validation on app resume
@@ -29,6 +31,42 @@ late SessionTimeoutService _sessionTimeoutService;
 
 // Global hierarchical initialization service
 late HierarchicalInitializationService hierarchicalInitializationService;
+
+// Global hierarchical initializer coordinator
+late HierarchicalInitializer hierarchicalInitializer;
+
+/// Initializes the hierarchical initialization system
+///
+/// This function sets up the new hierarchical initialization coordinator
+/// that manages dependency-aware initialization of all app services
+/// with proper error handling and progressive loading.
+Future<void> _initializeHierarchicalSystem() async {
+  debugPrint('[Main] Initializing hierarchical initialization system...');
+
+  try {
+    // Create the hierarchical initializer
+    hierarchicalInitializer = HierarchicalInitializer();
+
+    // Initialize the system with adaptive strategy
+    // This will automatically determine the best initialization approach
+    // based on user context and system conditions
+    await hierarchicalInitializer.initialize(
+      strategy: InitializationStrategy.adaptive,
+      timeout: Duration(seconds: 30),
+    );
+
+    debugPrint('[Main] Hierarchical initialization system completed successfully');
+
+  } catch (e, stackTrace) {
+    debugPrint('[Main] Hierarchical initialization failed: $e');
+    debugPrint('[Main] Stack trace: $stackTrace');
+
+    // Fall back to basic initialization if hierarchical system fails
+    debugPrint('[Main] Falling back to basic initialization...');
+    // The existing HierarchicalInitializationService will still work
+    // as a fallback, so the app remains functional
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -82,6 +120,11 @@ void main() async {
   // Initialize hierarchical data service for IBEW Union → Local → Member → Job hierarchy
   // This provides efficient loading and caching of hierarchical data
   hierarchicalInitializationService = HierarchicalInitializationService();
+
+  // Initialize the new hierarchical initialization coordinator
+  // This replaces the old flat initialization with proper dependency management
+  // and progressive loading capabilities
+  await _initializeHierarchicalSystem();
 
   runApp(const ProviderScope(child: MyApp()));
 }

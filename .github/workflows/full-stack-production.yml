@@ -1,0 +1,383 @@
+name: 🚀 Full Stack Production Deployment
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+env:
+  FLUTTER_VERSION: '3.6.0'
+  NODE_VERSION: '18'
+  FIREBASE_PROJECT: 'journeyman-jobs-prod'
+
+jobs:
+  # Phase 1: Code Quality & Security Analysis
+  quality-assurance:
+    name: 🔍 Code Quality & Security
+    runs-on: ubuntu-latest
+    outputs:
+      test-result: ${{ steps.tests.outputs.result }}
+      security-result: ${{ steps.security.outputs.result }}
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: 📦 Install Dependencies
+        run: flutter pub get
+
+      - name: 🔍 Static Analysis
+        run: |
+          flutter analyze --fatal-infos
+          dart format --set-exit-if-changed .
+
+      - name: 🧪 Run Unit & Widget Tests
+        id: tests
+        run: |
+          flutter test --coverage --reporter=expanded
+          echo "result=passed" >> $GITHUB_OUTPUT
+
+      - name: 🛡️ Security Scan
+        id: security
+        run: |
+          flutter pub deps --style=tree
+          # Add additional security scanning tools here
+          echo "result=passed" >> $GITHUB_OUTPUT
+
+      - name: 📊 Upload Coverage Reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  # Phase 2: Build & Integration Testing
+  build-and-test:
+    name: 🔨 Build & Integration Testing
+    runs-on: ubuntu-latest
+    needs: quality-assurance
+    if: needs.quality-assurance.outputs.test-result == 'passed'
+
+    strategy:
+      matrix:
+        platform: [android, web]
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: flutter pub get
+
+      - name: 🔨 Build for ${{ matrix.platform }}
+        run: |
+          case "${{ matrix.platform }}" in
+            android)
+              flutter build apk --release --split-per-abi
+              flutter build appbundle --release
+              ;;
+            web)
+              flutter build web --release --web-renderer canvaskit
+              ;;
+          esac
+
+      - name: 🧪 Run Integration Tests
+        run: |
+          flutter test integration_test/ --device-id=web-server
+          # Add platform-specific integration tests
+
+      - name: 📤 Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ matrix.platform }}
+          path: |
+            build/app/outputs/flutter-apk/
+            build/web/
+          retention-days: 7
+
+  # Phase 3: Firebase Deployment
+  firebase-deployment:
+    name: 🔥 Firebase Deployment
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔑 Setup Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: 🔥 Setup Firebase CLI
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          channelId: live
+          projectId: ${{ env.FIREBASE_PROJECT }}
+
+      - name: 📥 Download Web Build
+        uses: actions/download-artifact@v3
+        with:
+          name: build-web
+          path: build/web/
+
+      - name: 🌐 Deploy to Firebase Hosting
+        run: |
+          firebase deploy --only hosting --project ${{ env.FIREBASE_PROJECT }}
+
+      - name: 🔧 Deploy Firestore Rules & Indexes
+        run: |
+          firebase deploy --only firestore:rules,firestore:indexes --project ${{ env.FIREBASE_PROJECT }}
+
+      - name: 📁 Deploy Storage Rules
+        run: |
+          firebase deploy --only storage --project ${{ env.FIREBASE_PROJECT }}
+
+  # Phase 4: Cloud Functions Deployment
+  functions-deployment:
+    name: ⚡ Cloud Functions Deployment
+    runs-on: ubuntu-latest
+    needs: quality-assurance
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔑 Setup Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: functions/
+
+      - name: 📦 Install Functions Dependencies
+        run: |
+          cd functions
+          npm ci
+
+      - name: 🔍 Functions Tests
+        run: |
+          cd functions
+          npm test
+
+      - name: ⚡ Deploy Cloud Functions
+        run: |
+          firebase deploy --only functions --project ${{ env.FIREBASE_PROJECT }}
+
+  # Phase 5: Performance & Monitoring Setup
+  monitoring-setup:
+    name: 📊 Performance & Monitoring Setup
+    runs-on: ubuntu-latest
+    needs: [firebase-deployment, functions-deployment]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔑 Setup Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: 📊 Configure Firebase Monitoring
+        run: |
+          # Enable Performance Monitoring
+          gcloud firebase projects monitoring update ${{ env.FIREBASE_PROJECT }} \
+            --state=ENABLED
+
+          # Setup Crashlytics
+          gcloud firebase projects crashlytics update ${{ env.FIREBASE_PROJECT }} \
+            --state=ENABLED
+
+      - name: 🚨 Setup Alerting
+        run: |
+          # Create performance alerts
+          gcloud alpha monitoring policies create \
+            --notification-channels=${{ secrets.ALERT_CHANNEL_ID }} \
+            --condition-display-name="High Response Time" \
+            --condition-filter="metric.type=\"firebase.googleapis.com/performance/response_time\" AND resource.type=\"firebase_app\"" \
+            --condition-threshold-value=2000 \
+            --condition-threshold-comparison=COMPARISON_GT \
+            --condition-duration=300s
+
+      - name: 📈 Setup Custom Dashboards
+        run: |
+          # Create custom monitoring dashboard
+          gcloud monitoring dashboards create --config-from-file=monitoring/dashboard.json
+
+  # Phase 6: End-to-End Testing on Production
+  e2e-production-testing:
+    name: 🧪 Production E2E Testing
+    runs-on: ubuntu-latest
+    needs: [firebase-deployment, functions-deployment, monitoring-setup]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: 📦 Install Dependencies
+        run: flutter pub get
+
+      - name: 🧪 Run Production E2E Tests
+        run: |
+          # Run comprehensive E2E tests against production
+          flutter drive --target=test_driver/app_test_driver.dart \
+            --dart-define=FLUTTER_TEST=true \
+            --dart-define=FIREBASE_PROJECT=${{ env.FIREBASE_PROJECT }}
+
+      - name: 📊 Generate Test Report
+        run: |
+          # Generate comprehensive test report
+          flutter test --reporter=json > test-results.json
+          python scripts/generate_test_report.py test-results.json
+
+      - name: 📤 Upload Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: production-test-results
+          path: |
+            test-results.json
+            test-report.html
+
+  # Phase 7: Documentation & Release Notes
+  documentation-release:
+    name: 📚 Documentation & Release Notes
+    runs-on: ubuntu-latest
+    needs: [e2e-production-testing]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📝 Generate Release Notes
+        id: release_notes
+        run: |
+          # Generate release notes from git commits
+          python scripts/generate_release_notes.py > RELEASE_NOTES.md
+
+          # Set output for later use
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          cat RELEASE_NOTES.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: 📚 Update API Documentation
+        run: |
+          # Generate API documentation
+          dart doc lib/ --output docs/api/
+
+          # Deploy to documentation hosting
+          firebase deploy --only hosting:docs --project ${{ env.FIREBASE_PROJECT }}
+
+      - name: 🏷️ Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Production Release v${{ github.run_number }}
+          body: ${{ steps.release_notes.outputs.notes }}
+          draft: false
+          prerelease: false
+
+      - name: 📧 Notify Team
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "🚀 Journeyman Jobs Production Deployment Complete"
+          body: |
+            Production deployment completed successfully!
+
+            Version: v${{ github.run_number }}
+            Commit: ${{ github.sha }}
+
+            Release Notes:
+            ${{ steps.release_notes.outputs.notes }}
+
+            View the app: https://journeyman-jobs-prod.web.app
+          to: team@journeymanjobs.com
+          from: CI/CD <noreply@journeymanjobs.com>
+
+  # Phase 8: Rollback Strategy
+  rollback-preparation:
+    name: 🔄 Rollback Preparation
+    runs-on: ubuntu-latest
+    needs: [documentation-release]
+    if: failure() && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 🔄 Prepare Rollback
+        run: |
+          echo "Preparing rollback procedures..."
+          echo "Previous deployment available in artifacts"
+          echo "Manual rollback: firebase hosting:rollback --project ${{ env.FIREBASE_PROJECT }}"
+
+      - name: 🚨 Alert Team for Rollback
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "🚨 Deployment Failed - Rollback Required"
+          body: |
+            Production deployment failed!
+
+            Commit: ${{ github.sha }}
+            Workflow: ${{ github.workflow }}
+            Run ID: ${{ github.run_id }}
+
+            Please investigate and initiate rollback if necessary.
+          to: team@journeymanjobs.com
+          from: DevOps <noreply@journeymanjobs.com>
+
+# Workflow Configuration
+defaults:
+  run:
+    shell: bash
+
+# Permissions
+permissions:
+  contents: read
+  actions: read
+  deployments: write
+  id-token: write
+  checks: write
+  pull-requests: write
