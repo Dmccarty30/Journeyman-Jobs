@@ -369,4 +369,109 @@ class TailboardTheme {
   static const BorderRadius radiusMedium = BorderRadius.all(Radius.circular(8));
   static const BorderRadius radiusLarge = BorderRadius.all(Radius.circular(12));
   static const BorderRadius radiusXLarge = BorderRadius.all(Radius.circular(16));
+
+  // =================== HELPER METHODS ===================
+
+  /// Gets surface color based on elevation level
+  ///
+  /// Levels:
+  /// 1: Deepest background (navy900)
+  /// 2: Medium surface (navy800)
+  /// 3: Elevated surface (navy700)
+  /// 4: High surface (surfaceHigh)
+  static Color getSurfaceColor(BuildContext context, {required int level}) {
+    switch (level) {
+      case 1:
+        return navy900;
+      case 2:
+        return navy800;
+      case 3:
+        return navy700;
+      case 4:
+        return surfaceHigh;
+      default:
+        return navy800; // Default to primary background
+    }
+  }
+
+  /// Gets border color based on context theme
+  static Color getBorderColor(BuildContext context) {
+    final theme = Theme.of(context);
+    return theme.brightness == Brightness.dark
+        ? navy600  // Lighter gray for dark theme
+        : Color(0xFFE5E7EB); // Light gray for light theme
+  }
+
+  /// Gets elevation 2 shadow system
+  static List<BoxShadow> getElevation2(BuildContext context) {
+    final theme = Theme.of(context);
+    if (theme.brightness == Brightness.dark) {
+      return [
+        BoxShadow(
+          color: Color(0x33000000),
+          offset: Offset(0, 4),
+          blurRadius: 6,
+        ),
+        BoxShadow(
+          color: Color(0x1A000000),
+          offset: Offset(0, 1),
+          blurRadius: 2,
+        ),
+      ];
+    } else {
+      return elevation2; // Use existing elevation2 for light theme
+    }
+  }
+
+  /// Gets body large text style based on context
+  static TextStyle getBodyLarge(BuildContext context) {
+    final theme = Theme.of(context);
+    return bodyLarge.copyWith(
+      color: theme.brightness == Brightness.dark
+          ? Colors.white
+          : Colors.white, // Already set to white for light mode
+    );
+  }
+
+  /// Gets body medium text style based on context
+  static TextStyle getBodyMedium(BuildContext context) {
+    final theme = Theme.of(context);
+    return bodyMedium.copyWith(
+      color: theme.brightness == Brightness.dark
+          ? Colors.white
+          : Colors.white, // Already set to white for light mode
+    );
+  }
+
+  /// Gets body small text style based on context
+  static TextStyle getBodySmall(BuildContext context) {
+    final theme = Theme.of(context);
+    return bodySmall.copyWith(
+      color: theme.brightness == Brightness.dark
+          ? Colors.white
+          : Colors.white, // Already set to white for light mode
+    );
+  }
+
+  /// Gets accent copper color based on context
+  static Color getAccentCopper(BuildContext context) {
+    final theme = Theme.of(context);
+    return theme.brightness == Brightness.dark
+        ? copper600  // Lighter copper for dark theme
+        : copper700; // Standard copper for light theme
+  }
+
+  /// Gets text color based on context and priority
+  static Color getTextColor(BuildContext context, {bool isPrimary = true}) {
+    final theme = Theme.of(context);
+    if (isPrimary) {
+      return theme.brightness == Brightness.dark
+          ? Colors.white
+          : Colors.black; // Black text for light mode
+    } else {
+      return theme.brightness == Brightness.dark
+          ? navy500  // Muted text for dark theme
+          : Color(0xFF6B7280); // Gray text for light theme
+    }
+  }
 }

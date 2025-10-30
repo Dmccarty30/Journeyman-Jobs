@@ -5,13 +5,13 @@
 **Version**: 2.5.0
 **License**: MIT
 **Author**: rUv
-**Repository**: https://github.com/ruvnet/claude-flow
+**Repository**: <https://github.com/ruvnet/claude-flow>
 
 ---
 
 ## 📦 Plugin Structure
 
-```
+```r
 claude-flow/
 ├── .claude-plugin/
 │   ├── plugin.json           ✓ Official plugin metadata
@@ -41,9 +41,9 @@ claude-flow/
 
 ## 🚀 Installation (Official Method)
 
-### From GitHub (Recommended):
+### From GitHub (Recommended)
 
-```
+```bash
 # Install plugin
 /plugin add ruvnet/claude-flow
 
@@ -57,9 +57,9 @@ claude-flow/
 /coordination-swarm-init
 ```
 
-### From Local Directory:
+### From Local Directory
 
-```
+```bash
 cd claude-flow
 /plugin add .
 /restart
@@ -130,6 +130,7 @@ cd claude-flow
 ## ✨ Key Features
 
 ### Multi-Agent Swarm Coordination
+
 - 4 topology types: Hierarchical, Mesh, Ring, Star
 - Auto-spawning based on task complexity
 - Auto-optimization for performance
@@ -137,6 +138,7 @@ cd claude-flow
 - Cross-session memory persistence
 
 ### SPARC Methodology Integration
+
 - 18 specialized development modes
 - Systematic development workflow
 - Test-driven development support
@@ -144,6 +146,7 @@ cd claude-flow
 - Code review automation
 
 ### GitHub Automation
+
 - Pull request management
 - Multi-agent code reviews
 - Issue tracking and triage
@@ -152,6 +155,7 @@ cd claude-flow
 - Multi-repository synchronization
 
 ### Neural Training
+
 - 27+ pre-trained models
 - WASM acceleration
 - SIMD optimization
@@ -159,6 +163,7 @@ cd claude-flow
 - Context persistence
 
 ### Performance
+
 - 84.8% SWE-Bench solve rate
 - 32.3% token reduction
 - 2.8-4.4x speed improvement with WASM
@@ -184,6 +189,7 @@ All documentation follows official Claude Code plugin guidelines.
 ## 🔧 Technical Specifications
 
 ### Plugin Manifest
+
 - **Format**: `.claude-plugin/plugin.json` (plugin configuration)
 - **Marketplace**: `.claude-plugin/marketplace.json` (distribution metadata)
 - **Schema**: Official Claude Code plugin specification
@@ -191,6 +197,7 @@ All documentation follows official Claude Code plugin guidelines.
 - **Node.js**: >= 20.0.0
 
 ### Commands
+
 - **Format**: Markdown files (.md)
 - **Location**: `commands/` directory (root level)
 - **Naming**: Kebab-case with category prefixes
@@ -198,6 +205,7 @@ All documentation follows official Claude Code plugin guidelines.
 - **Count**: 150+ commands across 19 categories
 
 ### Agents
+
 - **Format**: Markdown files with YAML frontmatter
 - **Location**: `agents/` directory (root level)
 - **Delegation**: Available for main agent to use
@@ -205,12 +213,14 @@ All documentation follows official Claude Code plugin guidelines.
 - **Count**: 74+ specialized agents across 20 categories
 
 ### Hooks
+
 - **Format**: JSON configuration
 - **Location**: `hooks/hooks.json`
 - **Events**: pre-task, post-task, post-edit, session-start, session-end
 - **Integration**: Claude Flow coordination
 
 ### MCP Servers
+
 - **Protocol**: Model Context Protocol
 - **Installation**: NPM packages
 - **Configuration**: Defined in plugin.json
@@ -221,28 +231,32 @@ All documentation follows official Claude Code plugin guidelines.
 ## 🎯 Plugin Management
 
 ### Install
-```
+
+```bash
 /plugin add ruvnet/claude-flow
 ```
 
 ### Update
-```
+
+```bash
 /plugin update claude-flow
 ```
 
 Or pull latest from GitHub:
-```
-cd /path/to/claude-flow
+
+```bash/to/claude-flow
 git pull
 ```
 
 ### Remove
-```
+
+```bash
 /plugin remove claude-flow
 ```
 
 ### List Installed
-```
+
+```bash
 /plugin list
 ```
 
@@ -251,6 +265,7 @@ git pull
 ## ✅ Quality Assurance
 
 ### Compliance Checklist
+
 - ✓ Official Claude Code plugin specification
 - ✓ Marketplace.json format validation
 - ✓ Command and agent format standards
@@ -259,8 +274,10 @@ git pull
 - ✓ Installation via `/plugin` commands
 
 ### Verification
+
 After installation, verify with:
-```
+
+```bash
 /plugin list
 ```
 
@@ -292,17 +309,17 @@ Should show `claude-flow` as active.
 
 ## 🤝 Support & Community
 
-- **Repository**: https://github.com/ruvnet/claude-flow
-- **Issues**: https://github.com/ruvnet/claude-flow/issues
-- **Discussions**: https://github.com/ruvnet/claude-flow/discussions
-- **Website**: https://flow-nexus.ruv.io
+- **Repository**: <https://github.com/ruvnet/claude-flow>
+- **Issues**: <https://github.com/ruvnet/claude-flow/issues>
+- **Discussions**: <https://github.com/ruvnet/claude-flow/discussions>
+- **Website**: <https://flow-nexus.ruv.io>
 
 ---
 
 ## 📝 License & Attribution
 
 - **License**: MIT
-- **Author**: rUv (ruv@ruv.net)
+- **Author**: rUv (<ruv@ruv.net>)
 - **Copyright**: 2025
 - **Open Source**: Free for personal and commercial use
 
@@ -311,6 +328,7 @@ Should show `claude-flow` as active.
 ## 🎉 Distribution Status
 
 ✅ **Ready For:**
+
 - GitHub repository hosting
 - Claude Code plugin marketplace distribution
 - Production deployment
@@ -349,7 +367,8 @@ The plugin is configured via `.claude-plugin/plugin.json`:
 Commands and agents are automatically discovered from `commands/` and `agents/` directories.
 
 Users install with:
-```
+
+```bash
 /plugin add ruvnet/claude-flow
 ```
 

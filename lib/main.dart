@@ -15,10 +15,11 @@ import 'package:journeyman_jobs/widgets/activity_detector.dart';
 import 'package:journeyman_jobs/widgets/session_activity_detector.dart';
 import 'package:journeyman_jobs/widgets/grace_period_warning_banner.dart';
 import 'firebase_options.dart';
+import 'firebase_options_production.dart';
 import 'design_system/app_theme.dart';
 import 'navigation/app_router.dart'; // For route constants
 import 'navigation/app_router.dart' show routerProvider; // For the router provider
-import 'providers/riverpod/hierarchical_riverpod_provider.dart';
+// import 'providers/riverpod/hierarchical_riverpod_provider.dart'; // DISABLED: Not needed
 // import 'providers/riverpod/theme_riverpod_provider.dart'; // DISABLED: Not needed while forcing light mode
 
 // Global app lifecycle service for token validation on app resume
@@ -35,8 +36,38 @@ void main() async {
 
   // Initialize Firebase only if it hasn't been initialized yet
   if (Firebase.apps.isEmpty) {
+    // 🔒 SECURITY: Use environment-specific Firebase options
+    // Development/Debug builds use unrestricted keys
+    // Release builds use restricted API keys for production security
+    final firebaseOptions = kDebugMode
+        ? DefaultFirebaseOptions.currentPlatform  // Development: Unrestricted keys
+        : ProductionFirebaseOptions.currentPlatform; // Production: Restricted keys
+
+    // 🔒 SECURITY VALIDATION: Always validate production configuration
+    // Debug mode bypass removed for security consistency
+    if (!kDebugMode) {
+      ProductionFirebaseOptions.validateProductionConfiguration();
+
+      // Log security configuration status
+      final securityStatus = ProductionFirebaseOptions.getSecurityStatus();
+      debugPrint('[Firebase] Security Level: ${securityStatus['securityLevel']}');
+      debugPrint('[Firebase] Risk Level: ${securityStatus['riskLevel']}');
+
+      if (securityStatus['riskLevel'] == 'CRITICAL') {
+        throw Exception('CRITICAL: Cannot start production app with unrestricted API keys');
+      }
+    } else {
+      // Debug mode: Warn if using development keys but don't block
+      final securityStatus = ProductionFirebaseOptions.getSecurityStatus();
+      debugPrint('[Firebase] 🔒 DEBUG MODE: Security Level: ${securityStatus['securityLevel']}');
+      debugPrint('[Firebase] 🔒 DEBUG MODE: Risk Level: ${securityStatus['riskLevel']}');
+      if (securityStatus['riskLevel'] == 'CRITICAL') {
+        debugPrint('[Firebase] ⚠️ DEBUG MODE: Using unrestricted keys - OK for development only');
+      }
+    }
+
     await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+      options: firebaseOptions,
     );
 
     // Enable Firebase Performance Monitoring

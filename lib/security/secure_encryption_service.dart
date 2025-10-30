@@ -3,7 +3,7 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:pointycastle/export.dart';
-import 'package:cryptography/cryptography.dart';
+import 'package:cryptography/cryptography.dart' as crypt;
 
 /// Secure cryptographic service implementing industry-standard encryption
 ///
@@ -72,9 +72,9 @@ class SecureEncryptionService {
 
     final iv = generateIV();
     final keyParam = KeyParameter(key);
-    final params = AEADParameters(keyParam, 128, iv); // 128-bit auth tag
+    final params = AEADParameters(keyParam, 128, 16, iv); // 128-bit auth tag, 16 byte nonce
 
-    final cipher = GCMBlockCipher(AESEngine();
+    final cipher = GCMBlockCipher(AESEngine());
     cipher.init(true, params);
 
     final ciphertext = cipher.process(plaintext);
@@ -96,7 +96,7 @@ class SecureEncryptionService {
     final keyParam = KeyParameter(key);
     final params = AEADParameters(keyParam, 128, encryptedData.iv);
 
-    final cipher = GCMBlockCipher(AESEngine();
+    final cipher = GCMBlockCipher(AESEngine());
     cipher.init(false, params);
 
     // Set the MAC tag before processing
@@ -174,7 +174,7 @@ class SecureEncryptionService {
       64, // Certainty
     );
     final secureRandom = _getSecureRandom();
-    keyGenerator.init(ParametersWithRandom(params, secureRandom);
+    keyGenerator.init(ParametersWithRandom(params, secureRandom));
 
     return keyGenerator.generateKeyPair();
   }
@@ -182,14 +182,14 @@ class SecureEncryptionService {
   /// Encrypts data using RSA-OAEP
   static Uint8List encryptRSA(Uint8List data, RSAPublicKey publicKey) {
     final encryptor = OAEPEncoding(RSAEngine())
-      ..init(true, PublicKeyParameter<RSAPublicKey>(publicKey);
+      ..init(true, PublicKeyParameter<RSAPublicKey>(publicKey));
     return _processInBlocks(encryptor, data);
   }
 
   /// Decrypts data using RSA-OAEP
   static Uint8List decryptRSA(Uint8List encryptedData, RSAPrivateKey privateKey) {
     final decryptor = OAEPEncoding(RSAEngine())
-      ..init(false, PrivateKeyParameter<RSAPrivateKey>(privateKey);
+      ..init(false, PrivateKeyParameter<RSAPrivateKey>(privateKey));
     return _processInBlocks(decryptor, encryptedData);
   }
 
@@ -212,7 +212,7 @@ class SecureEncryptionService {
     for (int i = 0; i < data.length; i += blockSize) {
       final end = (i + blockSize > data.length) ? data.length : i + blockSize;
       final block = data.sublist(i, end);
-      output.addAll(cipher.process(block);
+      output.addAll(cipher.process(block));
     }
 
     return Uint8List.fromList(output);
@@ -224,9 +224,9 @@ class SecureEncryptionService {
     final random = Random.secure();
     final seeds = <int>[];
     for (int i = 0; i < 32; i++) {
-      seeds.add(random.nextInt(256);
+      seeds.add(random.nextInt(256));
     }
-    secureRandom.seed(KeyParameter(Uint8List.fromList(seeds));
+    secureRandom.seed(KeyParameter(Uint8List.fromList(seeds)));
     return secureRandom;
   }
 }

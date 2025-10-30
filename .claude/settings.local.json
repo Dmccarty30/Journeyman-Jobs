@@ -5,12 +5,7 @@
     "CLAUDE_FLOW_HOOKS_ENABLED": "true",
     "CLAUDE_FLOW_TELEMETRY_ENABLED": "true",
     "CLAUDE_FLOW_REMOTE_EXECUTION": "true",
-    "CLAUDE_FLOW_CHECKPOINTS_ENABLED": "true",
-    "ANTHROPIC_AUTH_TOKEN": "5f0dcf113531405b9f379038f4bd0677.kj5qyVcN3ruPw8Wt",
-    "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.6",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-4.6"
+    "CLAUDE_FLOW_CHECKPOINTS_ENABLED": "true"
   },
   "includeCoAuthoredBy": true,
   "permissions": {
@@ -56,9 +51,13 @@
       "Bash(logs/test-permission)",
       "Bash(workflows/test-permission)",
       "Read(//d/**)",
-      "mcp__ruv-swarm__swarm_init",
-      "mcp__ruv-swarm__agent_spawn",
-      "mcp__flow-nexus__swarm_init"
+      "Bash(flutter pub:*)",
+      "Bash(flutter:*)",
+      "Bash(dart pub cache add:*)",
+      "WebSearch",
+      "WebFetch(domain:pki.goog)",
+      "Bash(npx:*)",
+      "Bash(awk:*)"
     ],
     "deny": [
       "Bash(rm -rf /)"
@@ -66,10 +65,7 @@
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
-    "claude-flow@alpha",
-    "ruv-swarm",
-    "flow-nexus",
-    "agentic-payments"
+    "claude-flow@alpha"
   ],
   "hooks": {
     "PreToolUse": [

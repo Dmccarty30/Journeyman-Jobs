@@ -583,4 +583,284 @@ class InputValidator {
       fieldName: 'wage',
     );
   }
+
+  // ============================================================================
+  // ADDITIONAL VALIDATION METHODS
+  // ============================================================================
+
+  /// Validates and sanitizes a comma-separated list of local numbers.
+  ///
+  /// Requirements:
+  /// - Accepts comma-separated local numbers (e.g., "123, 456, 789")
+  /// - Each local must be a valid IBEW local number (1-9999)
+  /// - Removes whitespace and validates each number
+  ///
+  /// Returns the list of validated local numbers.
+  ///
+  /// Throws [ValidationException] if any local is invalid.
+  ///
+  /// Example:
+  /// ```dart
+  /// final locals = InputValidator.validateLocalList("123, 456, 789");
+  /// // Returns: [123, 456, 789]
+  /// ```
+  static List<int> validateLocalList(String localList) {
+    if (localList.trim().isEmpty) {
+      return [];
+    }
+
+    final parts = localList.split(',');
+    final List<int> locals = [];
+
+    for (final part in parts) {
+      final trimmed = part.trim();
+      if (trimmed.isEmpty) continue;
+
+      final local = int.tryParse(trimmed);
+      if (local == null) {
+        throw ValidationException(
+          'Invalid local number: "$trimmed"',
+          fieldName: 'localList',
+        );
+      }
+
+      validateLocalNumber(local);
+      locals.add(local);
+    }
+
+    return locals;
+  }
+
+  /// Validates and sanitizes a list of IBEW classifications.
+  ///
+  /// Requirements:
+  /// - Accepts comma-separated classifications
+  /// - Each classification must be a valid IBEW classification
+  /// - Removes duplicates and validates each entry
+  ///
+  /// Returns the list of validated classifications.
+  ///
+  /// Throws [ValidationException] if any classification is invalid.
+  static List<String> validateClassificationList(String classificationList) {
+    if (classificationList.trim().isEmpty) {
+      return [];
+    }
+
+    final parts = classificationList.split(',');
+    final List<String> classifications = [];
+    final Set<String> seen = {};
+
+    for (final part in parts) {
+      final trimmed = part.trim();
+      if (trimmed.isEmpty) continue;
+
+      if (seen.contains(trimmed)) {
+        continue; // Skip duplicates
+      }
+
+      final validated = validateClassification(trimmed);
+      classifications.add(validated);
+      seen.add(trimmed);
+    }
+
+    return classifications;
+  }
+
+  /// Validates per diem amount.
+  ///
+  /// Requirements:
+  /// - Must be positive or zero (if not provided)
+  /// - Reasonable range: $0.00 to $200.00 per day
+  ///
+  /// Throws [ValidationException] if invalid.
+  static void validatePerDiem(double perDiem) {
+    validateDoubleRange(
+      perDiem,
+      min: 0.0,
+      max: 200.0,
+      fieldName: 'perDiem',
+    );
+  }
+
+  /// Validates hours per week preference.
+  ///
+  /// Requirements:
+  /// - Must be a valid working hour range
+  /// - Valid values: "20-30", "30-40", "40-50", "50-60"
+  ///
+  /// Returns the validated hours string.
+  ///
+  /// Throws [ValidationException] if invalid.
+  static String validateHoursPerWeek(String hours) {
+    const validRanges = [
+      '20-30',
+      '30-40',
+      '40-50',
+      '50-60',
+    ];
+
+    final trimmed = hours.trim();
+
+    if (!validRanges.contains(trimmed)) {
+      throw ValidationException(
+        'Invalid hours range. Must be one of: ${validRanges.join(", ")}',
+        fieldName: 'hoursPerWeek',
+      );
+    }
+
+    return trimmed;
+  }
+
+  /// Validates company name.
+  ///
+  /// Requirements:
+  /// - Must be non-empty
+  /// - Maximum length: 100 characters
+  /// - Only allows letters, numbers, spaces, and basic punctuation
+  ///
+  /// Returns the sanitized company name.
+  ///
+  /// Throws [ValidationException] if invalid.
+  static String validateCompanyName(String company) {
+    final trimmed = company.trim();
+
+    if (trimmed.isEmpty) {
+      throw const ValidationException(
+        'Company name cannot be empty',
+        fieldName: 'company',
+      );
+    }
+
+    if (trimmed.length > 100) {
+      throw const ValidationException(
+        'Company name too long (max 100 characters)',
+        fieldName: 'company',
+      );
+    }
+
+    // Allow letters, numbers, spaces, hyphens, apostrophes, commas, and periods
+    // Use simpler validation to avoid regex syntax issues
+    for (int i = 0; i < trimmed.length; i++) {
+      final char = trimmed[i];
+      if (!(RegExp(r'[a-zA-Z0-9]').hasMatch(char) ||
+            char == ' ' || char == '-' || char == ',' ||
+            char == '.' || char == '\'')) {
+        throw const ValidationException(
+          'Company name contains invalid characters',
+          fieldName: 'company',
+        );
+      }
+    }
+
+    return trimmed;
+  }
+
+  /// Validates job location.
+  ///
+  /// Requirements:
+  /// - Must be non-empty
+  /// - Maximum length: 100 characters
+  /// - Basic validation to prevent injection
+  ///
+  /// Returns the sanitized location.
+  ///
+  /// Throws [ValidationException] if invalid.
+  static String validateLocation(String location) {
+    final trimmed = location.trim();
+
+    if (trimmed.isEmpty) {
+      throw const ValidationException(
+        'Location cannot be empty',
+        fieldName: 'location',
+      );
+    }
+
+    if (trimmed.length > 100) {
+      throw const ValidationException(
+        'Location too long (max 100 characters)',
+        fieldName: 'location',
+      );
+    }
+
+    // Basic sanitization - remove potential script injection
+    final sanitized = trimmed
+        .replaceAll(RegExp(r'<[^>]*>'), '') // Remove HTML tags
+        .replaceAll(RegExp(r'javascript:', caseSensitive: false), '') // Remove javascript: protocol
+        .trim();
+
+    if (sanitized.isEmpty) {
+      throw const ValidationException(
+        'Location contains invalid content',
+        fieldName: 'location',
+      );
+    }
+
+    return sanitized;
+  }
+
+  /// Validates phone number.
+  ///
+  /// Requirements:
+  /// - Optional (can be null or empty)
+  /// - Basic format validation for North American numbers
+  ///
+  /// Returns the sanitized phone number or null if empty.
+  ///
+  /// Throws [ValidationException] if format is invalid.
+  static String? validatePhoneNumber(String? phone) {
+    if (phone == null || phone.trim().isEmpty) {
+      return null; // Phone is optional
+    }
+
+    final trimmed = phone.trim();
+
+    // Remove common formatting characters
+    final digits = trimmed.replaceAll(RegExp(r'[^\d+]'), '');
+
+    // Basic validation - should start with + and have reasonable length
+    if (!digits.startsWith('+') || digits.length < 10 || digits.length > 15) {
+      throw const ValidationException(
+        'Invalid phone number format',
+        fieldName: 'phoneNumber',
+      );
+    }
+
+    return digits;
+  }
+
+  /// Creates a validator function for use in TextFormField.
+  ///
+  /// This helper method wraps InputValidator methods for use with Flutter forms.
+  ///
+  /// Example:
+  /// ```dart
+  /// TextFormField(
+  ///   validator: InputValidator.createValidator(InputValidator.validateLocalNumber),
+  /// )
+  /// ```
+  static String? Function(String?) createValidator(
+    void Function(dynamic) validator, {
+    String? fieldName,
+  }) {
+    return (String? value) {
+      try {
+        if (value != null && value.isNotEmpty) {
+          // Try to parse as int first, if that fails try as double, then use as string
+          dynamic parsedValue;
+          if (int.tryParse(value) != null) {
+            parsedValue = int.parse(value);
+          } else if (double.tryParse(value) != null) {
+            parsedValue = double.parse(value);
+          } else {
+            parsedValue = value;
+          }
+
+          validator(parsedValue);
+        }
+        return null;
+      } on ValidationException catch (e) {
+        return e.message;
+      }
+    };
+  }
 }

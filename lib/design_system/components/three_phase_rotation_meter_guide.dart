@@ -59,7 +59,7 @@ class JobSearchLoadingPattern {
       children: [
         ThreePhaseRotationMeter(
           size: size,
-          duration: const Duration(seconds: 1.5),
+          duration: const Duration(milliseconds: 1500),
           colors: RotationMeterColors.ibewTheme(),
           semanticLabel: 'Searching for jobs',
         ),
@@ -129,7 +129,7 @@ class DataSyncLoadingPattern {
     double progress = 0.0,
   }) {
     return Container(
-      padding: const all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppTheme.accentCopper.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(8),

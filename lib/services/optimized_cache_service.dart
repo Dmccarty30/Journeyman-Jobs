@@ -177,7 +177,7 @@ class OptimizedCacheService {
   Future<void> _saveToPersistentCache(String key, CacheEntry entry) async {
     try {
       final persistentKey = 'cache_$key';
-      final jsonString = json.encode(entry.toJson();
+      final jsonString = json.encode(entry.toJson());
 
       // Check if we need to compress the data
       final compressed = _shouldCompress(jsonString);

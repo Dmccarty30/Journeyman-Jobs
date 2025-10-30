@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'app_theme.dart';
 
 /// Dark Mode Theme Preview and Configuration
 ///
@@ -12,9 +11,7 @@ class DarkModePreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData.dark().copyWith(
-        extensions: [DarkModeTheme()],
-      ),
+      data: ThemeData.dark(),
       child: Scaffold(
         backgroundColor: DarkModeTheme.background,
         body: SafeArea(

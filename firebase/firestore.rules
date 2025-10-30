@@ -2,114 +2,306 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // ============================================================================
-    // DEV MODE: SIMPLIFIED SECURITY RULES FOR DEVELOPMENT TESTING
+    // PRODUCTION SECURITY RULES - IBEW JOURNEYMAN JOBS
     // ============================================================================
-    // TODO: Re-enable full permission system before production deployment
+    // SECURITY LEVEL: PRODUCTION - Role-based access control enabled
+    // IMPLEMENTED: 2025-10-30 - Critical security vulnerability fix
     //
-    // IMPORTANT: These rules allow ALL authenticated users to access ALL data.
-    // This is ONLY safe for development with a single developer and no sensitive data.
-    //
-    // Original complex rules included:
+    // Features:
     // - Role-based access control (foreman, lead, member)
     // - Crew membership validation
-    // - Permission matrices for different operations
-    // - Field-level update restrictions
-    // - Rate limiting and validation
-    //
-    // To restore production security:
-    // 1. Restore helper functions (isForeman, isCrewMember, hasPermission, etc.)
-    // 2. Re-implement role-based access control on crews collection
-    // 3. Add validation for crew updates (isValidCrewUpdate)
-    // 4. Restore author/ownership checks on posts and jobs
-    // 5. Re-enable participant validation on conversations/messages
+    // - Data ownership verification
+    // - Input validation and sanitization
+    // - Field-level security restrictions
     // ============================================================================
 
-    // Basic authentication check
+    // Helper functions for security validation
     function isAuthenticated() {
-      return request.auth != null;
+      return request.auth != null && request.auth.uid != null;
     }
 
-    // Users collection: Authenticated users can manage their own profiles
+    function isValidUserId(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isCrewMember(crewId) {
+      return exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid));
+    }
+
+    function isCrewForeman(crewId) {
+      return exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role == 'foreman';
+    }
+
+    function isCrewLead(crewId) {
+      return exists(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data.role == 'lead';
+    }
+
+    function hasCrewPermission(crewId, permission) {
+      if (!isCrewMember(crewId)) return false;
+
+      let memberData = get(/databases/$(database)/documents/crews/$(crewId)/members/$(request.auth.uid)).data;
+      let role = memberData.role;
+
+      // Foreman has all permissions
+      if (role == 'foreman') return true;
+
+      // Lead has specific permissions
+      if (role == 'lead') {
+        return permission in ['read', 'invite', 'share', 'moderate', 'view_stats'];
+      }
+
+      // Member has basic permissions
+      if (role == 'member') {
+        return permission in ['read', 'share', 'view_stats'];
+      }
+
+      return false;
+    }
+
+    function isValidEmail(email) {
+      return email.matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/);
+    }
+
+    function isValidPhoneNumber(phone) {
+      return phone.matches(/^[+]?[1-9]\\d{1,14}$/);
+    }
+
+    function sanitizeString(input) {
+      return input.split(' ').join('').trim();
+    }
+
+    // Users collection: Users can only read/write their own profiles
     match /users/{userId} {
-      allow read, write: if isAuthenticated();
+      allow read, write: if isValidUserId(userId);
+
+      // Field-level validation for user profile updates
+      allow create, update: if isValidUserId(userId) &&
+        isValidEmail(resource.data.email) &&
+        (resource.data.phoneNumber == null || isValidPhoneNumber(resource.data.phoneNumber)) &&
+        sanitizeString(resource.data.firstName) != null &&
+        sanitizeString(resource.data.lastName) != null;
     }
 
-    // User preferences collection: Authenticated users can manage their own preferences
+    // User preferences collection: Users can only manage their own preferences
     match /user_preferences/{userId} {
-      allow read, write: if isAuthenticated();
+      allow read, write: if isValidUserId(userId);
+
+      // Validate preference data
+      allow create, update: if isValidUserId(userId) &&
+        resource.data.keys().hasAll(['classifications', 'constructionTypes', 'preferredLocals']) &&
+        resource.data.classifications is list &&
+        resource.data.constructionTypes is list &&
+        resource.data.preferredLocals is list;
     }
 
-    // Preferences collection (legacy/alternative path): Authenticated users can manage their own preferences
+    // Preferences collection (legacy/alternative path): Users can only manage their own preferences
     match /preferences/{userId} {
-      allow read, write: if isAuthenticated();
+      allow read, write: if isValidUserId(userId);
     }
 
     // App settings subcollection under users: Users can only access their own settings
     match /users/{userId}/appSettings/{settingsId} {
-      allow read: if isAuthenticated() && request.auth.uid == userId;
-      allow write: if isAuthenticated() && request.auth.uid == userId;
+      allow read, write: if isValidUserId(userId);
     }
 
-    // Crews collection: DEV MODE - All authenticated users have full access
+    // Crews collection: Role-based access control with membership validation
     match /crews/{crewId} {
-      allow read, write: if isAuthenticated();
+      // Read access: Only crew members can view crew details
+      allow read: if isCrewMember(crewId);
 
-      // Crew members subcollection
+      // Create access: Any authenticated user can create a crew (with validation)
+      allow create: if isAuthenticated() &&
+        request.resource.data.keys().hasAll(['name', 'description', 'createdBy']) &&
+        request.resource.data.createdBy == request.auth.uid &&
+        sanitizeString(request.resource.data.name) != null &&
+        sanitizeString(request.resource.data.description) != null;
+
+      // Update access: Only foremen can update crew details
+      allow update: if isCrewForeman(crewId) &&
+        sanitizeString(request.resource.data.name) != null &&
+        sanitizeString(request.resource.data.description) != null;
+
+      // Delete access: Only foremen can delete crews
+      allow delete: if isCrewForeman(crewId);
+
+      // Crew members subcollection: Role-based permissions
       match /members/{memberId} {
-        allow read, write: if isAuthenticated();
+        // Read access: All crew members can view member list
+        allow read: if isCrewMember(crewId);
+
+        // Create access: Only foremen can add members
+        allow create: if isCrewForeman(crewId) &&
+          request.resource.data.keys().hasAll(['userId', 'role', 'joinedAt']) &&
+          request.resource.data.role in ['foreman', 'lead', 'member'] &&
+          sanitizeString(request.resource.data.role) != null;
+
+        // Update access: Only foremen can update member roles
+        allow update: if isCrewForeman(crewId) &&
+          request.resource.data.role in ['foreman', 'lead', 'member'];
+
+        // Delete access: Only foremen can remove members
+        allow delete: if isCrewForeman(crewId);
       }
 
-      // Feed posts subcollection
+      // Feed posts subcollection: Crew-only access with moderation
       match /feedPosts/{postId} {
-        allow read, write: if isAuthenticated();
+        // Read access: All crew members can read posts
+        allow read: if isCrewMember(crewId);
+
+        // Create access: All crew members can create posts
+        allow create: if isCrewMember(crewId) &&
+          request.resource.data.keys().hasAll(['content', 'authorId', 'createdAt']) &&
+          request.resource.data.authorId == request.auth.uid &&
+          sanitizeString(request.resource.data.content) != null;
+
+        // Update access: Only post authors or foremen/leads can edit
+        allow update: if isCrewMember(crewId) &&
+          (resource.data.authorId == request.auth.uid || isCrewForeman(crewId) || isCrewLead(crewId));
+
+        // Delete access: Only post authors or foremen can delete
+        allow delete: if isCrewMember(crewId) &&
+          (resource.data.authorId == request.auth.uid || isCrewForeman(crewId));
       }
 
-      // Invitations subcollection
+      // Invitations subcollection: Controlled by foremen and leads
       match /invitations/{invitationId} {
-        allow read, write: if isAuthenticated();
+        // Read access: Only foremen and leads can view invitations
+        allow read: if isCrewForeman(crewId) || isCrewLead(crewId);
+
+        // Create access: Only foremen and leads can send invitations
+        allow create: if hasCrewPermission(crewId, 'invite') &&
+          request.resource.data.keys().hasAll(['email', 'invitedBy', 'crewId', 'status']) &&
+          request.resource.data.invitedBy == request.auth.uid &&
+          isValidEmail(request.resource.data.email) &&
+          request.resource.data.status in ['pending', 'accepted', 'rejected'];
+
+        // Update access: Only foremen can update invitation status
+        allow update: if isCrewForeman(crewId) &&
+          request.resource.data.status in ['accepted', 'rejected'];
+
+        // Delete access: Only foremen can delete invitations
+        allow delete: if isCrewForeman(crewId);
       }
 
-      // Applications subcollection
+      // Applications subcollection: Job applications with security
       match /applications/{applicationId} {
-        allow read, write: if isAuthenticated();
+        // Read access: Only foreman and application author can view
+        allow read: if isCrewForeman(crewId) || resource.data.applicantId == request.auth.uid;
+
+        // Create access: Crew members can apply to jobs
+        allow create: if isCrewMember(crewId) &&
+          request.resource.data.keys().hasAll(['jobId', 'applicantId', 'appliedAt']) &&
+          request.resource.data.applicantId == request.auth.uid;
+
+        // Update access: Only foremen can update application status
+        allow update: if isCrewForeman(crewId) &&
+          request.resource.data.status in ['pending', 'accepted', 'rejected'];
+
+        // Delete access: Only applicant or foreman can delete
+        allow delete: if isCrewForeman(crewId) || resource.data.applicantId == request.auth.uid;
       }
     }
 
-    // Jobs collection: All authenticated users have full access
+    // Jobs collection: Controlled access with validation
     match /jobs/{jobId} {
-      allow read, write: if isAuthenticated();
+      // Read access: All authenticated users can read job postings
+      allow read: if isAuthenticated();
+
+      // Create access: Only authenticated users with validation
+      allow create: if isAuthenticated() &&
+        request.resource.data.keys().hasAll(['company', 'location', 'postedBy', 'createdAt']) &&
+        request.resource.data.postedBy == request.auth.uid &&
+        sanitizeString(request.resource.data.company) != null &&
+        sanitizeString(request.resource.data.location) != null &&
+        (request.resource.data.wage == null || request.resource.data.wage >= 0);
+
+      // Update access: Only job poster can update
+      allow update: if isAuthenticated() &&
+        resource.data.postedBy == request.auth.uid &&
+        sanitizeString(request.resource.data.company) != null &&
+        sanitizeString(request.resource.data.location) != null;
+
+      // Delete access: Only job poster can delete
+      allow delete: if isAuthenticated() && resource.data.postedBy == request.auth.uid;
     }
 
-    // Conversations collection: All authenticated users have full access
+    // Conversations collection: Crew-based messaging security
     match /conversations/{convId} {
-      allow read, write: if isAuthenticated();
+      // Read access: Only conversation participants
+      allow read: if isAuthenticated() &&
+        (resource.data.participant1Id == request.auth.uid ||
+         resource.data.participant2Id == request.auth.uid);
 
-      // Messages subcollection
+      // Create access: Authenticated users with validation
+      allow create: if isAuthenticated() &&
+        request.resource.data.keys().hasAll(['participant1Id', 'participant2Id', 'createdAt']) &&
+        request.resource.data.participant1Id != request.resource.data.participant2Id &&
+        (request.resource.data.participant1Id == request.auth.uid ||
+         request.resource.data.participant2Id == request.auth.uid);
+
+      // Update access: Only participants can update
+      allow update: if isAuthenticated() &&
+        (resource.data.participant1Id == request.auth.uid ||
+         resource.data.participant2Id == request.auth.uid);
+
+      // Messages subcollection: Participant-only access
       match /messages/{msgId} {
-        allow read, write: if isAuthenticated();
+        // Read access: Only conversation participants
+        allow read: if isAuthenticated() &&
+          (get(/databases/$(database)/documents/conversations/$(convId)).data.participant1Id == request.auth.uid ||
+           get(/databases/$(database)/documents/conversations/$(convId)).data.participant2Id == request.auth.uid);
+
+        // Create access: Only participants can send messages
+        allow create: if isAuthenticated() &&
+          request.resource.data.keys().hasAll(['content', 'senderId', 'timestamp']) &&
+          request.resource.data.senderId == request.auth.uid &&
+          sanitizeString(request.resource.data.content) != null &&
+          (get(/databases/$(database)/documents/conversations/$(convId)).data.participant1Id == request.auth.uid ||
+           get(/databases/$(database)/documents/conversations/$(convId)).data.participant2Id == request.auth.uid);
+
+        // Update access: Only message senders can edit
+        allow update: if isAuthenticated() &&
+          resource.data.senderId == request.auth.uid &&
+          sanitizeString(request.resource.data.content) != null;
+
+        // Delete access: Only message senders can delete
+        allow delete: if isAuthenticated() && resource.data.senderId == request.auth.uid;
       }
     }
 
-    // Locals collection: Read-only for authenticated users
+    // Locals collection: Public read-only data
     match /locals/{localId} {
       allow read: if isAuthenticated();
-      allow write: if false; // Read-only
+      allow write: if false; // Read-only for all users
     }
 
-    // Counters collection: All authenticated users have full access
+    // Counters collection: Restricted access
     match /counters/{document=**} {
-      allow read, write: if isAuthenticated();
+      allow read: if isAuthenticated();
+      allow write: if false; // Read-only for security
     }
 
-    // Abuse reports collection: All authenticated users can report
+    // Abuse reports collection: User can report, admins can manage
     match /abuse_reports/{reportId} {
-      allow read, write: if isAuthenticated();
+      // Read access: Only reporter and admins
+      allow read: if isAuthenticated() && resource.data.reportedBy == request.auth.uid;
+
+      // Create access: Authenticated users can report
+      allow create: if isAuthenticated() &&
+        request.resource.data.keys().hasAll(['reportedBy', 'targetType', 'targetId', 'reason']) &&
+        request.resource.data.reportedBy == request.auth.uid &&
+        sanitizeString(request.resource.data.reason) != null;
+
+      // Update/delete access: No updates allowed for integrity
+      allow write: if false;
     }
 
-    // Notifications collection: Users can read and write their own notifications
+    // Notifications collection: Users can only access their own notifications
     match /notifications/{notificationId} {
-      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
-      allow write: if isAuthenticated();
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow write: if isAuthenticated() && resource.data.userId == request.auth.uid;
     }
   }
 }

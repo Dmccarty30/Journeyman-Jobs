@@ -110,9 +110,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       body: Stack(
         children: [
-          ElectricalCircuitBackground(
+          // PERFORMANCE OPTIMIZATION: Circuit background with optimized settings
+          // ComponentDensity.high used for home screen (interactive/dynamic)
+          // Opacity kept low to reduce visual complexity and CPU usage
+          const ElectricalCircuitBackground(
             opacity: 0.08,
-            componentDensity: ComponentDensity.high,
+            componentDensity: ComponentDensity.medium, // Reduced from high to medium for better performance
+            animationSpeed: 6.0, // Slower animation = less CPU
+            enableCurrentFlow: true, // Enabled for visual appeal on main screen
+            enableInteractiveComponents: true,
           ),
           RefreshIndicator(
             onRefresh: () => ref.read(jobsProvider.notifier).refreshJobs(),
