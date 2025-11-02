@@ -1,0 +1,6 @@
+﻿# Domain-Specific Flags
+coordinators: "--orchestrate --delegate --wave-mode auto --concurrency 10"
+frontend: "--magic --c7 --persona-frontend --think"
+state: "--c7 --seq --persona-architect --think-hard"
+backend: "--c7 --seq --persona-backend --think-hard --delegate"
+debug: "--seq --introspect --persona-analyzer --think-hard --validate"

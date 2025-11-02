@@ -1,0 +1,19 @@
+﻿# Skill Assignments
+total_skills: 42
+completed: 0
+domains:
+  coordinators:
+    agents: 3
+    skills: 6
+  frontend:
+    agents: 5
+    skills: 10
+  state:
+    agents: 4
+    skills: 8
+  backend:
+    agents: 5
+    skills: 10
+  debug:
+    agents: 4
+    skills: 8

@@ -1,0 +1,15 @@
+﻿# Journeyman Jobs Framework Configuration
+version: 1.0.0
+frameworks:
+  superclaude:
+    enabled: true
+    mcp_servers: [context7, sequential, magic]
+  claude_flow:
+    enabled: true
+  sparc:
+    enabled: true
+  swarm:
+    enabled: true
+    max_concurrent: 10
+  hive_mind:
+    enabled: true
