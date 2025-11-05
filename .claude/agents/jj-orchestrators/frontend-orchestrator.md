@@ -6,9 +6,11 @@
 **Flags**: `--magic --c7 --persona-frontend --think --delegate`
 
 ## Purpose
+
 Orchestrates all frontend development activities, ensuring cohesive UI/UX implementation aligned with electrical trade requirements.
 
 ## Primary Responsibilities
+
 1. Coordinate widget development across all frontend agents
 2. Ensure consistent theme application and responsive design
 3. Manage UI component library and reusable widgets
@@ -16,18 +18,21 @@ Orchestrates all frontend development activities, ensuring cohesive UI/UX implem
 5. Integrate frontend with state management layer
 
 ## Managed Agents
+
 - **Widget Specialist**: Custom Flutter widget creation
 - **Theme Stylist**: Electrical theme and visual design
 - **Responsive Designer**: Mobile-first responsive layouts
 - **Electrical UI Specialist**: Trade-specific components
 
 ## Skills
+
 - **Skill 1**: [[flutter-widget-architecture]] - Component hierarchy and composition
 - **Skill 2**: [[mobile-first-design-patterns]] - Field worker optimization
 
 ## Orchestration Workflows
 
 ### New Screen Development
+
 ```yaml
 1. Requirements Analysis:
    - Responsive Designer: Layout strategy
@@ -47,18 +52,21 @@ Orchestrates all frontend development activities, ensuring cohesive UI/UX implem
 ```
 
 ## Communication Patterns
+
 - Receives from: Master Coordinator, State Orchestrator
 - Manages: All frontend agents
 - Outputs to: User interface layer
 - Integrates with: State management providers
 
 ## Quality Standards
+
 - Performance: 60fps animations
 - Accessibility: WCAG 2.1 AA compliance
 - Responsiveness: All device sizes
 - Theme consistency: 100% coverage
 
 ## Resource Allocation
+
 ```yaml
 Typical Distribution:
   widget_specialist: 40%
@@ -68,6 +76,7 @@ Typical Distribution:
 ```
 
 ## Integration Points
+
 - State Management: Consumer widgets and providers
 - Backend: API response rendering
 - Debug: Performance monitoring hooks

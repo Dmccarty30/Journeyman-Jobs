@@ -18,7 +18,7 @@ personas: [architect, scribe, quality]
 
 ## Usage
 
-```
+```bash
 /sc:index [target] [--type docs|api|structure|readme] [--format md|json|yaml]
 ```
 
@@ -61,7 +61,7 @@ Key behaviors:
 
 ### Project Structure Documentation
 
-```
+```bash
 /sc:index project-root --type structure --format md
 # Comprehensive project structure documentation with intelligent organization
 # Creates navigable structure with cross-references and component relationships
@@ -69,7 +69,7 @@ Key behaviors:
 
 ### API Documentation Generation
 
-```
+```bash
 /sc:index src/api --type api --format json
 # API documentation with systematic analysis and validation
 # Scribe and quality personas ensure completeness and accuracy
@@ -77,7 +77,7 @@ Key behaviors:
 
 ### Knowledge Base Creation
 
-```
+```bash
 /sc:index . --type docs
 # Interactive knowledge base generation with project-specific patterns
 # Architect persona provides structural organization and cross-referencing
