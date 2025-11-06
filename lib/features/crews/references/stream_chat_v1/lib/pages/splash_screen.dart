@@ -110,7 +110,7 @@ mixin SplashScreenStateMixin<T extends StatefulWidget> on State<T>
                   height: 1.0,
                   decoration: BoxDecoration(
                     color: Colors.white
-                        .withOpacity(1 - _animationController.value),
+                        .withValues(alpha:1 - _animationController.value),
                     shape: BoxShape.circle,
                   ),
                 ),

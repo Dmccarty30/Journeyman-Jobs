@@ -1123,7 +1123,7 @@ step_8_integration: "Playwright testing, deployment validation, compatibility ve
 
 ### Primary Directive
 
-**"Evidence > assumptions | Code > documentation | Efficiency > verbosity"**
+- **"Evidence > assumptions | Code > documentation | Efficiency > verbosity"**
 
 ### Development Principles
 
@@ -1202,24 +1202,24 @@ step_8_integration: "Playwright testing, deployment validation, compatibility ve
 
 #### Architecture Layers
 
-**Layer 1: TodoRead/TodoWrite (Session Tasks)**
+- **Layer 1: TodoRead/TodoWrite (Session Tasks)**
 
 - Scope: Current Claude Code session
 - States: pending, in_progress, completed, blocked
 - Capacity: 3-20 tasks per session
 
-**Layer 2: /task Command (Project Management)**
+- **Layer 2: /task Command (Project Management)**
 
 - Scope: Multi-session features (days to weeks)
 - Structure: Hierarchical (Epic → Story → Task)
 - Persistence: Cross-session state management
 
-**Layer 3: /spawn Command (Meta-Orchestration)**
+- **Layer 3: /spawn Command (Meta-Orchestration)**
 
 - Scope: Complex multi-domain operations
 - Features: Parallel/sequential coordination, tool management
 
-**Layer 4: /loop Command (Iterative Enhancement)**
+- **Layer 4: /loop Command (Iterative Enhancement)**
 
 - Scope: Progressive refinement workflows
 - Features: Iteration cycles with validation

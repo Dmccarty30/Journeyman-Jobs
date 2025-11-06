@@ -3,8 +3,10 @@ name: document
 description: "Generate focused documentation for components, functions, APIs, and features"
 category: utility
 complexity: basic
-mcp-servers: []
-personas: []
+mcp-servers: [sequential, context7, magic, serena]
+personas: [architect, analyzer, frontend, backend, security, devops, project-manager]
+model: sonnet
+color: #a0eb14ff
 ---
 
 # /sc:document - Focused Documentation Generation

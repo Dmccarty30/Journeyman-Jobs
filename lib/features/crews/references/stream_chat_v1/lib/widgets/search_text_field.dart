@@ -58,7 +58,7 @@ class SearchTextField extends StatelessWidget {
                     color: StreamChatTheme.of(context)
                         .colorTheme
                         .textHighEmphasis
-                        .withOpacity(.5)),
+                        .withValues(alpha:.5)),
                 contentPadding: const EdgeInsets.all(0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide.none,

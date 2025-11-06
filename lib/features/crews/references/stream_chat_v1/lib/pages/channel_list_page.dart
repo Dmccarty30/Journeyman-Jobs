@@ -203,7 +203,7 @@ class LeftDrawer extends StatelessWidget {
                     color: StreamChatTheme.of(context)
                         .colorTheme
                         .textHighEmphasis
-                        .withOpacity(.5),
+                        .withValues(alpha:.5),
                   ),
                   onTap: () {
                     Navigator.of(context).pop();
@@ -221,7 +221,7 @@ class LeftDrawer extends StatelessWidget {
                     color: StreamChatTheme.of(context)
                         .colorTheme
                         .textHighEmphasis
-                        .withOpacity(.5),
+                        .withValues(alpha:.5),
                   ),
                   onTap: () {
                     Navigator.of(context).pop();
@@ -260,7 +260,7 @@ class LeftDrawer extends StatelessWidget {
                         color: StreamChatTheme.of(context)
                             .colorTheme
                             .textHighEmphasis
-                            .withOpacity(.5),
+                            .withValues(alpha:.5),
                       ),
                       title: Text(
                         AppLocalizations.of(context).signOut,

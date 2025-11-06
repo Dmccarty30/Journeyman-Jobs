@@ -301,7 +301,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
                                     color: StreamChatTheme.of(context)
                                         .colorTheme
                                         .textHighEmphasis
-                                        .withOpacity(.5))),
+                                        .withValues(alpha:.5))),
                       ),
                     ),
                   Expanded(
@@ -366,7 +366,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
                                                                 .of(context)
                                                             .colorTheme
                                                             .textHighEmphasis
-                                                            .withOpacity(.5)),
+                                                            .withValues(alpha:.5)),
                                               ),
                                             ],
                                           ),
@@ -393,7 +393,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
                                     color: StreamChatTheme.of(context)
                                         .colorTheme
                                         .textHighEmphasis
-                                        .withOpacity(.5),
+                                        .withValues(alpha:.5),
                                   ),
                                 ),
                               );

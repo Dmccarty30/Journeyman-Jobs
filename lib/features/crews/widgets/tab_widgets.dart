@@ -12,6 +12,7 @@ import '../../../widgets/rich_text_job_card.dart';
 import '../../../widgets/dialogs/job_details_dialog.dart';
 import '../../../electrical_components/jj_electrical_toast.dart';
 import '../providers/crew_jobs_riverpod_provider.dart';
+import '../providers/jobs_filter_provider.dart';
 import '../../../screens/crew/crew_chat_screen.dart';
 
 class FeedTab extends ConsumerWidget {
@@ -40,12 +41,21 @@ class FeedTab extends ConsumerWidget {
     }
 
     // Watch for real-time posts - use global feed if no crew selected
-    final postsAsync = selectedCrew != null
-        ? ref.watch(crewPostsProvider(selectedCrew.id))
-        : ref.watch(globalFeedProvider);
+    // The filteredPostsProvider applies user filters and sort options
+    final crewId = selectedCrew?.id;
+    final filteredPosts = ref.watch(filteredPostsProvider(crewId));
+    final filterState = ref.watch(feedFilterProvider);
+    final hasActiveFilters = ref.watch(hasActiveFeedFiltersProvider);
+    final filterSummary = ref.watch(feedFilterSummaryProvider);
+
     final currentUserName = currentUser.displayName ?? currentUser.email ?? 'Unknown User';
 
-    return postsAsync.when(
+    // Check if we're in loading or error state by watching the base provider
+    final basePostsAsync = selectedCrew != null
+        ? ref.watch(crewPostsStreamProvider(selectedCrew.id))
+        : ref.watch(globalFeedStreamProvider);
+
+    return basePostsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(
         child: Column(
@@ -57,8 +67,9 @@ class FeedTab extends ConsumerWidget {
           ],
         ),
       ),
-      data: (posts) {
-        if (posts.isEmpty) {
+      data: (_) {
+        // Use filtered posts instead of raw posts
+        if (filteredPosts.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -82,22 +93,71 @@ class FeedTab extends ConsumerWidget {
           );
         }
 
-        return RefreshIndicator(
-          onRefresh: () async {
-            // Force refresh the posts provider
-            if (selectedCrew != null) {
-              ref.invalidate(crewPostsStreamProvider(selectedCrew.id));
-            } else {
-              ref.invalidate(globalFeedProvider);
-            }
-          },
-          color: AppTheme.accentCopper,
-          backgroundColor: AppTheme.white,
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            itemCount: posts.length,
-            itemBuilder: (context, index) {
-              final post = posts[index];
+        return Column(
+          children: [
+            // Active filters display
+            if (hasActiveFilters)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentCopper.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    border: Border.all(
+                      color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.filter_list, color: AppTheme.accentCopper, size: 16),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          filterSummary,
+                          style: AppTheme.bodySmall.copyWith(
+                            color: AppTheme.primaryNavy,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          ref.read(feedFilterProvider.notifier).clearFilters();
+                          JJElectricalToast.showInfo(
+                            context: context,
+                            message: 'Filters cleared',
+                          );
+                        },
+                        child: Text(
+                          'Clear',
+                          style: TextStyle(color: AppTheme.accentCopper, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+            // Posts list
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  // Force refresh the posts provider
+                  if (selectedCrew != null) {
+                    ref.invalidate(crewPostsStreamProvider(selectedCrew.id));
+                  } else {
+                    ref.invalidate(globalFeedStreamProvider);
+                  }
+                },
+                color: AppTheme.accentCopper,
+                backgroundColor: AppTheme.white,
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  itemCount: filteredPosts.length,
+                  itemBuilder: (context, index) {
+                    final post = filteredPosts[index];
 
               // Get real-time comments for this post
               final commentsAsync = ref.watch(postCommentsProvider(post.id));
@@ -194,6 +254,9 @@ class FeedTab extends ConsumerWidget {
               );
             },
           ),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -209,7 +272,6 @@ class JobsTab extends ConsumerStatefulWidget {
 
 class _JobsTabState extends ConsumerState<JobsTab> {
   final ScrollController _scrollController = ScrollController();
-  String _searchQuery = '';
 
   @override
   void initState() {
@@ -239,23 +301,6 @@ class _JobsTabState extends ConsumerState<JobsTab> {
     JJElectricalToast.showInfo(context: context, message: 'Bidding on job at ${job.company}');
   }
 
-  List<Job> _getFilteredJobs(List<Job> jobs) {
-    if (_searchQuery.isEmpty) return jobs;
-
-    final query = _searchQuery.trim().toLowerCase();
-    return jobs.where((job) {
-      final company = job.company.toLowerCase();
-      final location = job.location.toLowerCase();
-      final jobTitle = job.jobTitle?.toLowerCase() ?? '';
-      final typeOfWork = job.typeOfWork?.toLowerCase() ?? '';
-
-      return company.contains(query) ||
-             location.contains(query) ||
-             jobTitle.contains(query) ||
-             typeOfWork.contains(query);
-    }).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     final selectedCrew = ref.watch(selectedCrewProvider);
@@ -283,11 +328,15 @@ class _JobsTabState extends ConsumerState<JobsTab> {
       );
     }
 
-    // Watch crew data and crew filtered jobs using the real-time job matching service
+    // Watch crew data and filtered jobs (with additional user filters applied)
     final crewAsync = ref.watch(crewByIdProvider(selectedCrew.id));
+    final filteredJobs = ref.watch(filteredCrewJobsProvider(selectedCrew.id));
     final crewJobsAsync = ref.watch(crewFilteredJobsStreamProvider(selectedCrew.id));
     final isLoading = ref.watch(isCrewJobsLoadingProvider(selectedCrew.id));
     final error = ref.watch(crewJobsErrorProvider(selectedCrew.id));
+    final filterState = ref.watch(jobsFilterProvider);
+    final hasActiveFilters = ref.watch(hasActiveJobFiltersProvider);
+    final filterSummary = ref.watch(jobFilterSummaryProvider);
 
     final crew = crewAsync;
     if (crew == null) {
@@ -406,13 +455,20 @@ class _JobsTabState extends ConsumerState<JobsTab> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: TextField(
             onChanged: (value) {
-              setState(() {
-                _searchQuery = value;
-              });
+              // Update search query in filter provider
+              ref.read(jobsFilterProvider.notifier).setSearchQuery(value);
             },
             decoration: InputDecoration(
               hintText: 'Search jobs...',
               prefixIcon: Icon(Icons.search, color: AppTheme.accentCopper),
+              suffixIcon: filterState.searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(Icons.clear, color: AppTheme.mediumGray),
+                      onPressed: () {
+                        ref.read(jobsFilterProvider.notifier).setSearchQuery('');
+                      },
+                    )
+                  : null,
               filled: true,
               fillColor: AppTheme.white,
               border: OutlineInputBorder(
@@ -440,10 +496,55 @@ class _JobsTabState extends ConsumerState<JobsTab> {
 
         const SizedBox(height: 8),
 
+        // Active filters display
+        if (hasActiveFilters)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppTheme.accentCopper.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                border: Border.all(
+                  color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.filter_list, color: AppTheme.accentCopper, size: 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      filterSummary,
+                      style: AppTheme.bodySmall.copyWith(
+                        color: AppTheme.primaryNavy,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      ref.read(jobsFilterProvider.notifier).clearAllFilters();
+                      JJElectricalToast.showInfo(
+                        context: context,
+                        message: 'All filters cleared',
+                      );
+                    },
+                    child: Text(
+                      'Clear All',
+                      style: TextStyle(color: AppTheme.accentCopper, fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
         // Jobs list
         Expanded(
           child: crewJobsAsync.when(
-            loading: () => isLoading && _searchQuery.isEmpty
+            loading: () => isLoading && !hasActiveFilters
                 ? const Center(child: CircularProgressIndicator())
                 : const SizedBox.shrink(),
             error: (error, stack) => Center(
@@ -471,7 +572,7 @@ class _JobsTabState extends ConsumerState<JobsTab> {
               ),
             ),
             data: (jobs) {
-              final filteredJobs = _getFilteredJobs(jobs);
+              // Use the filtered jobs from the provider (already includes all filters)
 
               if (filteredJobs.isEmpty) {
                 return Center(

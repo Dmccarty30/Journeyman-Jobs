@@ -1,7 +1,9 @@
 ---
 name: documentation-manager
 description: "Expert documentation specialist. Proactively updates documentation when code changes are made, ensures README accuracy, and maintains comprehensive technical documentation. Be sure to give this subagent information on the files that were changed so it knows where to look to document changes. Always call this agent after there are code changes."
-tools: Read, Write, Edit, MultiEdit, Grep, Glob, ls
+tools: Read, Write, Edit, MultiEdit, Grep, Glob, ls, mcp_archon_crawl_single_page, mcp_archon_smart_crawl_url, mcp_archon_upload_document, mcp_archon_get_available_sources, mcp_archon_delete_source, mcp_archon_manage_project, mcp_archon_manage_task, mcp_archon_manage_document, mcp_archon_manage_versions, mcp_archon_get_project_features
+model: sonnet
+color: brown
 ---
 
 # Purpose

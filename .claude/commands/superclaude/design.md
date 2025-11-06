@@ -3,8 +3,8 @@ name: design
 description: "Design system architecture, APIs, and component interfaces with comprehensive specifications"
 category: utility
 complexity: basic
-mcp-servers: []
-personas: []
+mcp-servers: [sequential, context7, magic, playwright, morphllm, serena]
+personas: [architect, analyzer, frontend, backend, security, devops, project-manager]
 ---
 
 # /sc:design - System and Component Design
@@ -18,7 +18,7 @@ personas: []
 
 ## Usage
 
-```
+```bash
 /sc:design [target] [--type architecture|api|component|database] [--format diagram|spec|code]
 ```
 
@@ -55,7 +55,7 @@ Key behaviors:
 
 ### System Architecture Design
 
-```
+```bash
 /sc:design user-management-system --type architecture --format diagram
 # Creates comprehensive system architecture with component relationships
 # Includes scalability considerations and best practices
@@ -63,7 +63,7 @@ Key behaviors:
 
 ### API Specification Design
 
-```
+```bash
 /sc:design payment-api --type api --format spec
 # Generates detailed API specification with endpoints and data models
 # Follows RESTful design principles and industry standards
@@ -71,7 +71,7 @@ Key behaviors:
 
 ### Component Interface Design
 
-```
+```bash
 /sc:design notification-service --type component --format code
 # Designs component interfaces with clear contracts and dependencies
 # Provides implementation guidance and integration patterns
@@ -79,7 +79,7 @@ Key behaviors:
 
 ### Database Schema Design
 
-```
+```bash
 /sc:design e-commerce-db --type database --format diagram
 # Creates database schema with entity relationships and constraints
 # Includes normalization and performance considerations

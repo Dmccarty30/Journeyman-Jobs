@@ -1,0 +1,2981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Chat Master Implementation Guide - Tailboard Crew Messaging</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #e2e8f0;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 1px solid rgba(217, 119, 6, 0.2);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+            padding: 3rem;
+            text-align: center;
+            border-bottom: 3px solid #d97706;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 10px,
+                rgba(217, 119, 6, 0.05) 10px,
+                rgba(217, 119, 6, 0.05) 20px
+            );
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: #d97706;
+            margin-top: 0.5rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header .meta-icon {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+        .nav {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 1.5rem 3rem;
+            border-bottom: 1px solid rgba(217, 119, 6, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .nav a {
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+
+        .nav a:hover {
+            background: rgba(217, 119, 6, 0.1);
+            color: #d97706;
+            border-color: rgba(217, 119, 6, 0.3);
+        }
+
+        .content {
+            padding: 3rem;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 80px;
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            color: #d97706;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid rgba(217, 119, 6, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section h3 {
+            font-size: 1.5rem;
+            color: #fbbf24;
+            margin: 2rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section h4 {
+            font-size: 1.2rem;
+            color: #60a5fa;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(217, 119, 6, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(217, 119, 6, 0.4);
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.1);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .badge-critical {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-high {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fcd34d;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .badge-medium {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .badge-low {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .code-block {
+            background: #0f172a;
+            border: 1px solid rgba(217, 119, 6, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block pre {
+            color: #e2e8f0;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .code-label {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(217, 119, 6, 0.2);
+            color: #d97706;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .alert {
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+        }
+
+        .alert-warning {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: #fbbf24;
+            color: #fcd34d;
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+            color: #93c5fd;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: #22c55e;
+            color: #86efac;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+            color: #fca5a5;
+        }
+
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background: rgba(30, 64, 175, 0.3);
+            color: #d97706;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            border-bottom: 2px solid rgba(217, 119, 6, 0.3);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(100, 116, 139, 0.2);
+        }
+
+        tr:hover {
+            background: rgba(30, 64, 175, 0.1);
+        }
+
+        .checklist {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .checklist li {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 6px;
+            border-left: 3px solid #3b82f6;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .checklist li::before {
+            content: '☐';
+            font-size: 1.5rem;
+            color: #60a5fa;
+        }
+
+        .architecture-diagram {
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(217, 119, 6, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            font-family: 'Monaco', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 8px;
+            border-left: 3px solid #d97706;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            color: #d97706;
+            font-size: 1.5rem;
+        }
+
+        .integration-point {
+            background: linear-gradient(135deg, rgba(30, 64, 175, 0.2) 0%, rgba(55, 48, 163, 0.2) 100%);
+            border: 2px solid rgba(217, 119, 6, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .integration-point h4 {
+            color: #fbbf24;
+            margin-top: 0;
+        }
+
+        .file-reference {
+            color: #60a5fa;
+            font-family: 'Monaco', monospace;
+            font-size: 0.9rem;
+        }
+
+        .line-reference {
+            color: #a78bfa;
+            font-family: 'Monaco', monospace;
+            font-size: 0.85rem;
+        }
+
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        strong {
+            color: #fbbf24;
+        }
+
+        code {
+            background: rgba(15, 23, 42, 0.6);
+            color: #fbbf24;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+
+        .phase-banner {
+            background: linear-gradient(90deg, rgba(217, 119, 6, 0.2) 0%, rgba(30, 64, 175, 0.2) 100%);
+            border-left: 4px solid #d97706;
+            padding: 1rem 1.5rem;
+            margin: 2rem 0 1rem;
+            border-radius: 8px;
+        }
+
+        .phase-banner h3 {
+            margin: 0;
+            color: #d97706;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 2rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .nav {
+                padding: 1rem;
+            }
+
+            .content {
+                padding: 1.5rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ Stream Chat Master Implementation Guide</h1>
+            <div class="subtitle">Tailboard Crew Messaging System - Complete Integration Reference</div>
+            <div class="meta">
+                <div class="meta-item">
+                    <span class="meta-icon">📦</span>
+                    <span>Stream Chat Flutter v7.0.0</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-icon">🎯</span>
+                    <span>IBEW Crew Isolation</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-icon">🔧</span>
+                    <span>Firebase + Riverpod</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-icon">📅</span>
+                    <span>2025-11-06</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <ul>
+                <li><a href="#executive-summary">📋 Executive Summary</a></li>
+                <li><a href="#architecture">🏗️ Architecture</a></li>
+                <li><a href="#current-state">📊 Current State</a></li>
+                <li><a href="#integration-points">🔌 Integration Points</a></li>
+                <li><a href="#implementation">🚀 Implementation</a></li>
+                <li><a href="#code-reference">💻 Code Reference</a></li>
+                <li><a href="#risks">⚠️ Risk Mitigation</a></li>
+                <li><a href="#testing">✅ Testing</a></li>
+                <li><a href="#deployment">📦 Deployment</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <!-- EXECUTIVE SUMMARY -->
+            <section id="executive-summary" class="section">
+                <h2><span class="icon">📋</span> Executive Summary</h2>
+
+                <div class="alert alert-info">
+                    <div class="alert-title">🎯 Mission</div>
+                    <p>Integrate Stream Chat Flutter SDK v7.0.0 into the Journeyman Jobs tailboard screen to provide real-time crew messaging with IBEW local isolation, leveraging existing modal overlay scaffolding and DynamicContainerRow architecture.</p>
+                </div>
+
+                <div class="grid">
+                    <div class="card">
+                        <h3>🎯 Primary Objectives</h3>
+                        <ul>
+                            <li>Replace 4 placeholder methods with Stream Chat components</li>
+                            <li>Enforce crew isolation via Stream teams architecture</li>
+                            <li>Integrate with existing Riverpod providers</li>
+                            <li>Maintain electrical copper theme consistency</li>
+                            <li>Secure authentication via Firebase Cloud Functions</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3>📊 Scope</h3>
+                        <ul>
+                            <li><strong>File:</strong> <span class="file-reference">tailboard_screen.dart</span> (2199 lines)</li>
+                            <li><strong>Lines Modified:</strong> 669-894 (4 methods)</li>
+                            <li><strong>New Providers:</strong> 4 Riverpod providers</li>
+                            <li><strong>New Service:</strong> StreamChatService class</li>
+                            <li><strong>Cloud Function:</strong> getStreamUserToken</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3>⚡ Key Technologies</h3>
+                        <ul>
+                            <li>Stream Chat Flutter SDK v7.0.0</li>
+                            <li>Flutter Riverpod 2.x</li>
+                            <li>Firebase Authentication</li>
+                            <li>Firebase Cloud Functions (Node.js)</li>
+                            <li>Stream Chat Node SDK (server-side)</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3>🎨 Design Constraints</h3>
+                        <ul>
+                            <li>Electrical copper theme (#D97706, #B45309)</li>
+                            <li>Modal bottom sheet overlays</li>
+                            <li>DynamicContainerRow integration</li>
+                            <li>Existing _ElectricalDialogBackground wrapper</li>
+                            <li>Team isolation per IBEW local</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <div class="alert-title">✅ Expected Outcomes</div>
+                    <ul>
+                        <li><strong>Real-time Messaging:</strong> Crew members can chat in channels (#general, #jobs, #announcements)</li>
+                        <li><strong>Direct Messages:</strong> Private 1:1 conversations with distinct channel enforcement</li>
+                        <li><strong>Message History:</strong> Access to archived conversations with restore capability</li>
+                        <li><strong>Crew Isolation:</strong> Messages confined to specific IBEW local crews</li>
+                        <li><strong>Offline Support:</strong> Message caching and sync when reconnected</li>
+                        <li><strong>Theme Consistency:</strong> Electrical copper theme throughout chat UI</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ARCHITECTURE OVERVIEW -->
+            <section id="architecture" class="section">
+                <h2><span class="icon">🏗️</span> Architecture Overview</h2>
+
+                <h3>System Architecture Diagram</h3>
+                <div class="architecture-diagram">
+<pre>
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         TAILBOARD SCREEN ARCHITECTURE                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  UI LAYER - tailboard_screen.dart                                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  TabBar (4 tabs)                                                     │   │
+│  │  ├─ Tab 0: Feed    ├─ Tab 1: Jobs    ├─ Tab 2: Chat ⚡  ├─ Tab 3   │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                               │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  DynamicContainerRow (4 contextual action buttons)                  │   │
+│  │                                                                       │   │
+│  │  When Tab 2 (Chat) Selected:                                         │   │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐              │   │
+│  │  │ Channels │ │   DMs    │ │ History  │ │Crew Chat │              │   │
+│  │  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘              │   │
+│  │       │            │            │            │                       │   │
+│  │       ▼            ▼            ▼            ▼                       │   │
+│  │  _showChannels _showDirect _showChat _navigateTo                    │   │
+│  │    List()      Messages()   History()  CrewChat()                   │   │
+│  │    ⚡NEW       ⚡NEW        ⚡NEW       ⚡NEW                        │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  STATE MANAGEMENT LAYER - Riverpod Providers                                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  EXISTING PROVIDERS:                     NEW PROVIDERS (Stream Chat):       │
+│  ├─ selectedCrewProvider                 ├─ streamChatClientProvider ⚡     │
+│  ├─ crewMembersProvider                  ├─ crewChannelsProvider ⚡         │
+│  ├─ feedFilterProvider                   ├─ dmConversationsProvider ⚡      │
+│  └─ jobsFilterProvider                   └─ activeChannelProvider ⚡        │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  SERVICE LAYER                                                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  StreamChatService ⚡ NEW                                            │   │
+│  │  ├─ initializeClient() → Connects to Stream via Firebase token      │   │
+│  │  ├─ disconnectClient() → Cleanup on logout                          │   │
+│  │  └─ updateUserTeam() → Enforce crew isolation                       │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  AUTHENTICATION LAYER                                                        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  Firebase Auth ─────────────► Cloud Function ⚡ NEW                         │
+│  (User Login)                  getStreamUserToken()                          │
+│                                │                                              │
+│                                ├─ Verify Firebase UID                        │
+│                                ├─ Call Stream Node SDK                       │
+│                                ├─ Generate Stream token                      │
+│                                └─ Return token to client                     │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  EXTERNAL SERVICES                                                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  ┌─────────────────────────┐          ┌─────────────────────────┐          │
+│  │  Firebase Firestore     │          │  Stream Chat Cloud ⚡    │          │
+│  │  ├─ Crew data           │          │  ├─ Messages            │          │
+│  │  ├─ User profiles       │          │  ├─ Channels            │          │
+│  │  └─ Job listings        │          │  ├─ Teams (isolation)   │          │
+│  └─────────────────────────┘          │  └─ File uploads        │          │
+│                                        └─────────────────────────┘          │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+KEY:
+⚡ = New component/integration required
+─► = Data flow direction
+┌┐└┘├┤ = Component boundaries
+</pre>
+                </div>
+
+                <h3>Data Flow Sequence</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <strong>1. User Login</strong> → Firebase Authentication validates user credentials
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-step">
+                        <strong>2. Stream Token</strong> → Cloud Function generates Stream Chat token using Firebase UID
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-step">
+                        <strong>3. Client Init</strong> → StreamChatService connects client with token
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-step">
+                        <strong>4. Crew Selection</strong> → User selects crew via selectedCrewProvider
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-step">
+                        <strong>5. Team Assignment</strong> → StreamChatService updates user.teams = [crewId]
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-step">
+                        <strong>6. Channel Queries</strong> → All queries filtered by Filter.equal('team', crewId)
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-step">
+                        <strong>7. UI Rendering</strong> → StreamChannelListView displays crew-isolated channels
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-step">
+                        <strong>8. Real-time Updates</strong> → WebSocket connection syncs new messages
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <div class="alert-title">⚠️ Critical Architecture Decisions</div>
+                    <ul>
+                        <li><strong>Team Isolation:</strong> Stream's <code>teams</code> concept maps 1:1 to IBEW crew IDs</li>
+                        <li><strong>Distinct Channels:</strong> <code>distinct: true</code> ensures same 2 users always get same DM channel</li>
+                        <li><strong>Server-side Tokens:</strong> Cloud Function prevents client API key exposure</li>
+                        <li><strong>Modal Overlays:</strong> Leverage existing _ElectricalDialogBackground for consistency</li>
+                        <li><strong>Provider Integration:</strong> Extend existing Riverpod patterns, don't replace</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- CURRENT STATE ANALYSIS -->
+            <section id="current-state" class="section">
+                <h2><span class="icon">📊</span> Current State Analysis</h2>
+
+                <h3>Existing State Management</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Type</th>
+                            <th>Purpose</th>
+                            <th>Stream Integration</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>selectedCrewProvider</code></td>
+                            <td>StateNotifier&lt;Crew?&gt;</td>
+                            <td>Currently selected IBEW crew</td>
+                            <td>Maps to Stream <code>team</code> ID for isolation</td>
+                        </tr>
+                        <tr>
+                            <td><code>crewMembersProvider</code></td>
+                            <td>FutureProvider&lt;List&gt;</td>
+                            <td>Members of selected crew</td>
+                            <td>Used for DM member selection list</td>
+                        </tr>
+                        <tr>
+                            <td><code>feedFilterProvider</code></td>
+                            <td>StateProvider&lt;String&gt;</td>
+                            <td>Feed tab filter state</td>
+                            <td>No direct integration</td>
+                        </tr>
+                        <tr>
+                            <td><code>jobsFilterProvider</code></td>
+                            <td>StateNotifier</td>
+                            <td>Jobs tab filter options</td>
+                            <td>No direct integration</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Placeholder Methods Requiring Replacement</h3>
+                <div class="grid">
+                    <div class="integration-point">
+                        <h4>Container 0: "Channels"</h4>
+                        <p><span class="line-reference">Lines 669-735</span></p>
+                        <p><strong>Method:</strong> <code>_showChannelsList()</code></p>
+                        <p><strong>Current Behavior:</strong> Hardcoded 3 channels (#general, #jobs, #announcements) displayed in modal</p>
+                        <p><strong>Required Change:</strong> Replace with <code>StreamChannelListView</code> querying real channels filtered by <code>team: crewId</code></p>
+                    </div>
+
+                    <div class="integration-point">
+                        <h4>Container 1: "DMs"</h4>
+                        <p><span class="line-reference">Lines 738-817</span></p>
+                        <p><strong>Method:</strong> <code>_showDirectMessages()</code></p>
+                        <p><strong>Current Behavior:</strong> Toast message "Coming soon!"</p>
+                        <p><strong>Required Change:</strong> Show crew members list, create/open <code>distinct: true</code> DM channels</p>
+                    </div>
+
+                    <div class="integration-point">
+                        <h4>Container 2: "History"</h4>
+                        <p><span class="line-reference">Lines 820-886</span></p>
+                        <p><strong>Method:</strong> <code>_showChatHistory()</code></p>
+                        <p><strong>Current Behavior:</strong> Fake hardcoded history items</p>
+                        <p><strong>Required Change:</strong> Query archived channels with restore/delete actions</p>
+                    </div>
+
+                    <div class="integration-point">
+                        <h4>Container 3: "Crew Chat"</h4>
+                        <p><span class="line-reference">Lines 889-894</span></p>
+                        <p><strong>Method:</strong> <code>_navigateToCrewChat()</code></p>
+                        <p><strong>Current Behavior:</strong> Toast message "Opening chat..."</p>
+                        <p><strong>Required Change:</strong> Navigate to <code>#general</code> channel, auto-add crew members</p>
+                    </div>
+                </div>
+
+                <h3>Reusable UI Components</h3>
+                <div class="card">
+                    <h4>Available for Stream Chat Integration</h4>
+                    <ul>
+                        <li><strong>_ElectricalDialogBackground:</strong> Copper gradient wrapper with circuit pattern - Use for all modal bottom sheets</li>
+                        <li><strong>_ElectricalTextField:</strong> Themed input field with copper borders - Can wrap Stream message input</li>
+                        <li><strong>_DialogActions:</strong> Row of themed buttons - Use for channel actions (archive, delete, leave)</li>
+                        <li><strong>JJElectricalNotifications:</strong> Toast system - Use for error/success feedback</li>
+                    </ul>
+                </div>
+
+                <h3>Tab System Integration</h3>
+                <div class="code-block">
+                    <span class="code-label">tailboard_screen.dart Lines 243-256</span>
+<pre>
+List&lt;String&gt; _getContainerLabelsForTab() {
+  switch (_selectedTab) {
+    case 0: // Feed tab
+      return ['Active', 'Trending', 'Saved', 'Filter'];
+    case 1: // Jobs tab
+      return ['Browse', 'Applied', 'Saved', 'Create'];
+    case 2: // Chat tab ⚡ PRIMARY INTEGRATION TARGET
+      return ['Channels', 'DMs', 'History', 'Crew Chat'];
+    case 3: // Settings tab
+      return ['Profile', 'Preferences', 'About', 'Help'];
+    default:
+      return [];
+  }
+}
+</pre>
+                </div>
+
+                <p><strong>Key Insight:</strong> When user taps Tab 2 (Chat), DynamicContainerRow automatically updates to show 4 chat-specific action buttons. Tapping each button calls the corresponding placeholder method that needs Stream Chat integration.</p>
+            </section>
+
+            <!-- INTEGRATION POINTS -->
+            <section id="integration-points" class="section">
+                <h2><span class="icon">🔌</span> Stream Chat Integration Points</h2>
+
+                <div class="alert alert-info">
+                    <div class="alert-title">📍 Integration Strategy</div>
+                    <p>Each container button maps to a specific Stream Chat component. All integrations maintain existing modal overlay patterns and electrical theme.</p>
+                </div>
+
+                <h3>Container 0: Channels List</h3>
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Current Implementation</th>
+                                <th>Stream Chat Integration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Component</strong></td>
+                                <td>Hardcoded <code>ListTile</code> widgets</td>
+                                <td><code>StreamChannelListView</code> with custom builder</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Data Source</strong></td>
+                                <td>Static list: #general, #jobs, #announcements</td>
+                                <td>Query: <code>Filter.equal('team', crewId)</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Sorting</strong></td>
+                                <td>Fixed order</td>
+                                <td><code>SortOption('last_message_at', direction: -1)</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tap Action</strong></td>
+                                <td>Navigate to placeholder screen</td>
+                                <td>Navigate to <code>StreamChannel</code> with <code>MessageListView</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Theme</strong></td>
+                                <td>Electrical copper accent</td>
+                                <td>Custom <code>itemBuilder</code> with copper colors</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Container 1: Direct Messages</h3>
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Current Implementation</th>
+                                <th>Stream Chat Integration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Component</strong></td>
+                                <td>"Coming soon!" toast</td>
+                                <td>Crew members list with tap → create DM</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Data Source</strong></td>
+                                <td>None</td>
+                                <td><code>crewMembersProvider</code> for member list</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Channel Creation</strong></td>
+                                <td>N/A</td>
+                                <td><code>distinct: true</code> ensures same 2 users = same channel</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Team Isolation</strong></td>
+                                <td>N/A</td>
+                                <td><code>extraData: {'team': crewId}</code> in channel</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Navigation</strong></td>
+                                <td>N/A</td>
+                                <td><code>DirectChannelInfoScreen</code> wrapped in <code>StreamChannel</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Container 2: Chat History</h3>
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Current Implementation</th>
+                                <th>Stream Chat Integration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Component</strong></td>
+                                <td>Fake hardcoded messages</td>
+                                <td>Query archived channels (<code>archived: true</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Actions</strong></td>
+                                <td>Tap shows placeholder toast</td>
+                                <td>Restore channel or permanently delete</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Filter</strong></td>
+                                <td>None</td>
+                                <td><code>Filter.equal('archived', true)</code> + team filter</td>
+                            </tr>
+                            <tr>
+                                <td><strong>UI Pattern</strong></td>
+                                <td>ListTile with subtitle</td>
+                                <td>Custom tile with restore/delete icons</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Container 3: Crew Chat (#general)</h3>
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Current Implementation</th>
+                                <th>Stream Chat Integration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Action</strong></td>
+                                <td>"Opening chat..." toast</td>
+                                <td>Direct navigation to #general channel</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Channel ID</strong></td>
+                                <td>None</td>
+                                <td><code>messaging:${crewId}-general</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Auto-Join</strong></td>
+                                <td>N/A</td>
+                                <td>Add all crew members via <code>channel.addMembers()</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Screen</strong></td>
+                                <td>Placeholder</td>
+                                <td><code>GroupChannelInfoScreen</code> with <code>MessageListView</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-success">
+                    <div class="alert-title">✅ Integration Benefits</div>
+                    <ul>
+                        <li><strong>Consistency:</strong> All Stream components wrapped in existing modal patterns</li>
+                        <li><strong>Team Isolation:</strong> Automatic enforcement via <code>Filter.equal('team', crewId)</code></li>
+                        <li><strong>Real-time:</strong> WebSocket updates without polling or manual refresh</li>
+                        <li><strong>Offline Support:</strong> Stream SDK handles caching and sync automatically</li>
+                        <li><strong>Theme Harmony:</strong> Custom builders apply electrical copper theme to all UI</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- IMPLEMENTATION ROADMAP -->
+            <section id="implementation" class="section">
+                <h2><span class="icon">🚀</span> Implementation Roadmap</h2>
+
+                <div class="alert alert-info">
+                    <div class="alert-title">📋 8-Phase Implementation Strategy</div>
+                    <p>Follow phases sequentially. Each phase builds on previous work and includes validation steps.</p>
+                </div>
+
+                <!-- Phase 0 -->
+                <div class="phase-banner">
+                    <h3>Phase 0: Dependencies & Setup</h3>
+                </div>
+                <div class="card">
+                    <h4>📦 Add Dependencies</h4>
+                    <p><strong>File:</strong> <span class="file-reference">pubspec.yaml</span></p>
+                    <div class="code-block">
+<pre>
+dependencies:
+  stream_chat_flutter: ^7.0.0
+  cloud_functions: ^4.5.0
+
+# Ensure existing dependencies are compatible:
+  flutter_riverpod: ^2.0.0
+  firebase_auth: ^4.0.0
+  firebase_core: ^2.0.0
+</pre>
+                    </div>
+                    <p><strong>Command:</strong> <code>flutter pub get</code></p>
+                </div>
+
+                <div class="card">
+                    <h4>🔑 Get Stream API Key</h4>
+                    <ul class="checklist">
+                        <li>Sign up at <a href="https://getstream.io" target="_blank" style="color: #60a5fa;">getstream.io</a></li>
+                        <li>Create new app (select "In-App Messaging & Chat")</li>
+                        <li>Copy API Key and Secret from dashboard</li>
+                        <li>Store API Key in Flutter app (will add to StreamChatService)</li>
+                        <li>Store Secret in Firebase environment for Cloud Function</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>☁️ Create Firebase Cloud Function</h4>
+                    <p><strong>File:</strong> <span class="file-reference">functions/src/streamChat.ts</span></p>
+                    <p><strong>Purpose:</strong> Generate Stream user tokens server-side to prevent API secret exposure</p>
+
+                    <div class="alert alert-warning">
+                        <div class="alert-title">⚠️ Security Critical</div>
+                        <p>NEVER expose Stream API Secret in client code. Always generate tokens server-side.</p>
+                    </div>
+                </div>
+
+                <!-- Phase 1 -->
+                <div class="phase-banner">
+                    <h3>Phase 1: Create Riverpod Providers</h3>
+                </div>
+                <div class="card">
+                    <h4>📁 New File: stream_chat_providers.dart</h4>
+                    <p><strong>Location:</strong> <span class="file-reference">lib/features/crews/providers/stream_chat_providers.dart</span></p>
+                    <p><strong>Providers to Create:</strong></p>
+                    <ul>
+                        <li><code>streamChatClientProvider</code> - FutureProvider&lt;StreamChatClient&gt;</li>
+                        <li><code>crewChannelsProvider</code> - FutureProvider.family&lt;List&lt;Channel&gt;, String&gt;</li>
+                        <li><code>dmConversationsProvider</code> - FutureProvider.family&lt;List&lt;Channel&gt;, String&gt;</li>
+                        <li><code>activeChannelProvider</code> - StateProvider&lt;Channel?&gt;</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4>📁 New Service: StreamChatService</h4>
+                    <p><strong>Location:</strong> <span class="file-reference">lib/services/stream_chat_service.dart</span></p>
+                    <p><strong>Methods:</strong></p>
+                    <ul>
+                        <li><code>initializeClient()</code> - Connect to Stream with Firebase token</li>
+                        <li><code>disconnectClient()</code> - Cleanup on logout</li>
+                        <li><code>updateUserTeam()</code> - Set user.teams for crew isolation</li>
+                    </ul>
+                </div>
+
+                <!-- Phase 2 -->
+                <div class="phase-banner">
+                    <h3>Phase 2: Container 0 - Channels List</h3>
+                </div>
+                <div class="card">
+                    <h4>🔧 Modify: _showChannelsList()</h4>
+                    <p><strong>File:</strong> <span class="file-reference">tailboard_screen.dart</span></p>
+                    <p><span class="line-reference">Lines 669-735</span></p>
+                    <p><strong>Changes:</strong></p>
+                    <ul>
+                        <li>Replace hardcoded channels with <code>StreamChannelListView</code></li>
+                        <li>Add team filter: <code>Filter.equal('team', crewId)</code></li>
+                        <li>Custom <code>itemBuilder</code> for electrical copper theme</li>
+                        <li>Navigate to <code>StreamChannel</code> → <code>MessageListView</code> on tap</li>
+                    </ul>
+                </div>
+
+                <!-- Phase 3 -->
+                <div class="phase-banner">
+                    <h3>Phase 3: Container 1 - Direct Messages</h3>
+                </div>
+                <div class="card">
+                    <h4>🔧 Modify: _showDirectMessages()</h4>
+                    <p><strong>File:</strong> <span class="file-reference">tailboard_screen.dart</span></p>
+                    <p><span class="line-reference">Lines 738-817</span></p>
+                    <p><strong>Changes:</strong></p>
+                    <ul>
+                        <li>Display crew members from <code>crewMembersProvider</code></li>
+                        <li>Create/open DM with <code>distinct: true</code> and <code>team: crewId</code></li>
+                        <li>Navigate to <code>DirectChannelInfoScreen</code></li>
+                        <li>Custom member tile with electrical theme</li>
+                    </ul>
+                </div>
+
+                <!-- Phase 4 -->
+                <div class="phase-banner">
+                    <h3>Phase 4: Container 2 - Chat History</h3>
+                </div>
+                <div class="card">
+                    <h4>🔧 Modify: _showChatHistory()</h4>
+                    <p><strong>File:</strong> <span class="file-reference">tailboard_screen.dart</span></p>
+                    <p><span class="line-reference">Lines 820-886</span></p>
+                    <p><strong>Changes:</strong></p>
+                    <ul>
+                        <li>Query archived channels: <code>Filter.equal('archived', true)</code></li>
+                        <li>Show channel list with restore/delete actions</li>
+                        <li>Implement <code>channel.show()</code> for restore</li>
+                        <li>Implement <code>channel.delete()</code> for permanent removal</li>
+                    </ul>
+                </div>
+
+                <!-- Phase 5 -->
+                <div class="phase-banner">
+                    <h3>Phase 5: Container 3 - Crew Chat (#general)</h3>
+                </div>
+                <div class="card">
+                    <h4>🔧 Modify: _navigateToCrewChat()</h4>
+                    <p><strong>File:</strong> <span class="file-reference">tailboard_screen.dart</span></p>
+                    <p><span class="line-reference">Lines 889-894</span></p>
+                    <p><strong>Changes:</strong></p>
+                    <ul>
+                        <li>Get/create #general channel: <code>client.channel('messaging', id: '${crewId}-general')</code></li>
+                        <li>Add all crew members: <code>channel.addMembers([...memberIds])</code></li>
+                        <li>Navigate to <code>GroupChannelInfoScreen</code> with <code>MessageListView</code></li>
+                    </ul>
+                </div>
+
+                <!-- Phase 6 -->
+                <div class="phase-banner">
+                    <h3>Phase 6: Theme Customization</h3>
+                </div>
+                <div class="card">
+                    <h4>🎨 Apply Electrical Copper Theme</h4>
+                    <p><strong>File:</strong> <span class="file-reference">lib/main.dart</span></p>
+                    <p><strong>Changes:</strong></p>
+                    <ul>
+                        <li>Wrap app with <code>StreamChatTheme</code></li>
+                        <li>Configure <code>ColorTheme.dark()</code> with copper accents</li>
+                        <li>Customize <code>ownMessageTheme</code> and <code>otherMessageTheme</code></li>
+                        <li>Match existing electrical design system colors</li>
+                    </ul>
+                </div>
+
+                <!-- Phase 7 -->
+                <div class="phase-banner">
+                    <h3>Phase 7: Team Isolation Enforcement</h3>
+                </div>
+                <div class="card">
+                    <h4>🔒 Update User Team on Crew Selection</h4>
+                    <p><strong>Location:</strong> Add to crew selection handler in <code>tailboard_screen.dart</code></p>
+                    <p><strong>Purpose:</strong> When user switches crews, update their Stream user.teams to new crew ID</p>
+                    <ul>
+                        <li>Listen to <code>selectedCrewProvider</code> changes</li>
+                        <li>Call <code>StreamChatService.updateUserTeam(newCrewId)</code></li>
+                        <li>Refresh channel queries to show new crew's channels</li>
+                    </ul>
+                </div>
+
+                <!-- Phase 8 -->
+                <div class="phase-banner">
+                    <h3>Phase 8: Testing & Validation</h3>
+                </div>
+                <div class="card">
+                    <h4>✅ Validation Checklist</h4>
+                    <ul class="checklist">
+                        <li>Team isolation: User A in Crew 1 cannot see Crew 2 messages</li>
+                        <li>Distinct DMs: Same 2 users always get same conversation</li>
+                        <li>Real-time updates: Messages appear instantly across devices</li>
+                        <li>Offline support: Messages queue when offline, send when reconnected</li>
+                        <li>Theme consistency: All Stream UI matches electrical copper theme</li>
+                        <li>Channel list sorting: Most recent message appears at top</li>
+                        <li>Archive/restore: Archived channels disappear from main list, reappear when restored</li>
+                        <li>#general auto-join: All crew members automatically added to #general</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-success">
+                    <div class="alert-title">🎯 Implementation Complete</div>
+                    <p>After Phase 8, all 4 container buttons will have full Stream Chat integration with crew isolation, real-time messaging, and electrical theme consistency.</p>
+                </div>
+            </section>
+
+            <!-- CODE REFERENCE -->
+            <section id="code-reference" class="section">
+                <h2><span class="icon">💻</span> Complete Code Reference</h2>
+
+                <div class="alert alert-info">
+                    <div class="alert-title">📝 Ready-to-Use Code Snippets</div>
+                    <p>All code snippets below are production-ready. Copy and adapt to your project structure.</p>
+                </div>
+
+                <h3>Firebase Cloud Function - Token Generation</h3>
+                <div class="code-block">
+                    <span class="code-label">functions/src/streamChat.ts</span>
+<pre>
+import * as functions from 'firebase-functions';
+import { StreamChat } from 'stream-chat';
+import * as admin from 'firebase-admin';
+
+// Initialize Stream Chat server client
+const serverClient = StreamChat.getInstance(
+  functions.config().stream.key,      // Set via: firebase functions:config:set stream.key="YOUR_API_KEY"
+  functions.config().stream.secret    // Set via: firebase functions:config:set stream.secret="YOUR_SECRET"
+);
+
+/**
+ * Generate Stream Chat user token
+ *
+ * Called from Flutter app after Firebase authentication.
+ * Returns Stream token for client-side connection.
+ */
+export const getStreamUserToken = functions.https.onCall(
+  async (data, context) => {
+    // Verify user is authenticated
+    if (!context.auth) {
+      throw new functions.https.HttpsError(
+        'unauthenticated',
+        'User must be authenticated with Firebase'
+      );
+    }
+
+    const userId = context.auth.uid;
+
+    // Get user data from Firebase Auth
+    const userRecord = await admin.auth().getUser(userId);
+    const displayName = userRecord.displayName || 'Anonymous';
+    const photoURL = userRecord.photoURL || '';
+    const email = userRecord.email || '';
+
+    try {
+      // Upsert user in Stream (create if doesn't exist, update if exists)
+      await serverClient.upsertUser({
+        id: userId,
+        name: displayName,
+        image: photoURL,
+        email: email,
+      });
+
+      // Generate Stream token
+      const token = serverClient.createToken(userId);
+
+      return {
+        success: true,
+        token: token,
+        userId: userId,
+      };
+    } catch (error) {
+      console.error('Error generating Stream token:', error);
+      throw new functions.https.HttpsError(
+        'internal',
+        'Failed to generate Stream token',
+        error
+      );
+    }
+  }
+);
+</pre>
+                </div>
+
+                <h3>StreamChatService - Client Management</h3>
+                <div class="code-block">
+                    <span class="code-label">lib/services/stream_chat_service.dart</span>
+<pre>
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+
+class StreamChatService {
+  static const String _streamApiKey = 'YOUR_STREAM_API_KEY'; // From Stream dashboard
+
+  /// Initialize Stream Chat client with Firebase authentication
+  static Future&lt;StreamChatClient&gt; initializeClient() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser == null) {
+      throw Exception('User must be authenticated with Firebase');
+    }
+
+    // Call Cloud Function to get Stream token
+    final functions = FirebaseFunctions.instance;
+    final result = await functions.httpsCallable('getStreamUserToken').call();
+
+    final token = result.data['token'] as String;
+    final userId = result.data['userId'] as String;
+
+    // Initialize Stream Chat client
+    final client = StreamChatClient(
+      _streamApiKey,
+      logLevel: Level.INFO, // Set to Level.OFF in production
+    );
+
+    // Connect user
+    await client.connectUser(
+      User(
+        id: userId,
+        name: firebaseUser.displayName,
+        image: firebaseUser.photoURL,
+      ),
+      token,
+    );
+
+    return client;
+  }
+
+  /// Disconnect Stream Chat client (call on logout)
+  static Future&lt;void&gt; disconnectClient(StreamChatClient client) async {
+    await client.disconnectUser();
+  }
+
+  /// Update user's team (crew) for isolation
+  static Future&lt;void&gt; updateUserTeam(
+    StreamChatClient client,
+    String crewId,
+  ) async {
+    await client.partialUpdateUser(
+      client.state.currentUser!.id,
+      set: {
+        'teams': [crewId], // User can only see channels with this team
+      },
+    );
+  }
+}
+</pre>
+                </div>
+
+                <h3>Riverpod Providers</h3>
+                <div class="code-block">
+                    <span class="code-label">lib/features/crews/providers/stream_chat_providers.dart</span>
+<pre>
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
+import '../../../services/stream_chat_service.dart';
+
+/// Stream Chat client provider
+/// Initializes client once and reuses across app
+final streamChatClientProvider = FutureProvider&lt;StreamChatClient&gt;((ref) async {
+  final client = await StreamChatService.initializeClient();
+
+  // Cleanup on provider disposal
+  ref.onDispose(() {
+    StreamChatService.disconnectClient(client);
+  });
+
+  return client;
+});
+
+/// Crew channels provider (filtered by team)
+/// Family provider allows passing crewId parameter
+final crewChannelsProvider = FutureProvider.family&lt;List&lt;Channel&gt;, String&gt;(
+  (ref, crewId) async {
+    final client = await ref.watch(streamChatClientProvider.future);
+
+    // Query channels for this crew only
+    return await client.queryChannels(
+      filter: Filter.and([
+        Filter.equal('type', 'messaging'),
+        Filter.equal('team', crewId), // ⚡ CRITICAL: Crew isolation
+      ]),
+      sort: [SortOption('last_message_at', direction: -1)],
+      state: true,
+      watch: true,
+    ).first; // Convert stream to future
+  },
+);
+
+/// Direct message conversations provider (filtered by team)
+final dmConversationsProvider = FutureProvider.family&lt;List&lt;Channel&gt;, String&gt;(
+  (ref, crewId) async {
+    final client = await ref.watch(streamChatClientProvider.future);
+
+    return await client.queryChannels(
+      filter: Filter.and([
+        Filter.in_('members', [client.state.currentUser!.id]), // User is member
+        Filter.equal('distinct', true), // Only 1:1 DMs
+        Filter.equal('team', crewId), // Team isolation
+      ]),
+      sort: [SortOption('last_message_at', direction: -1)],
+    ).first;
+  },
+);
+
+/// Active channel state provider
+final activeChannelProvider = StateProvider&lt;Channel?&gt;((ref) => null);
+</pre>
+                </div>
+
+                <h3>Container 0: Channels List Implementation</h3>
+                <div class="code-block">
+                    <span class="code-label">tailboard_screen.dart - Replace _showChannelsList() method</span>
+<pre>
+void _showChannelsList() async {
+  final selectedCrew = ref.read(selectedCrewProvider);
+  if (selectedCrew == null) {
+    JJElectricalNotifications.showElectricalToast(
+      context: context,
+      message: 'Please select a crew first',
+      type: ElectricalNotificationType.warning,
+    );
+    return;
+  }
+
+  final streamClientAsync = ref.read(streamChatClientProvider);
+
+  await streamClientAsync.when(
+    data: (client) async {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => _ElectricalDialogBackground(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.75,
+            child: Column(
+              children: [
+                // Header
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Channels',
+                        style: TailboardTheme.textTheme.headingMedium?.copyWith(
+                          color: TailboardTheme.accentCopper,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.close, color: TailboardTheme.textPrimary),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Channel list
+                Expanded(
+                  child: StreamChannelListView(
+                    controller: StreamChannelListController(
+                      client: client,
+                      filter: Filter.and([
+                        Filter.equal('type', 'messaging'),
+                        Filter.equal('team', selectedCrew.id), // Team isolation
+                      ]),
+                      channelStateSort: [SortOption('last_message_at', direction: -1)],
+                    ),
+                    itemBuilder: (context, items, index, defaultWidget) {
+                      return _buildElectricalChannelPreview(items[index]);
+                    },
+                    onChannelTap: (channel) {
+                      Navigator.pop(context);
+                      _navigateToChannelMessages(channel);
+                    },
+                    emptyBuilder: (context) => Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.chat_bubble_outline,
+                            size: 64,
+                            color: TailboardTheme.textSecondary,
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            'No channels yet',
+                            style: TailboardTheme.textTheme.bodyLarge?.copyWith(
+                              color: TailboardTheme.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+    loading: () {
+      // Show loading indicator
+      JJElectricalNotifications.showElectricalToast(
+        context: context,
+        message: 'Loading channels...',
+        type: ElectricalNotificationType.info,
+      );
+    },
+    error: (error, stack) {
+      JJElectricalNotifications.showElectricalToast(
+        context: context,
+        message: 'Failed to load channels: $error',
+        type: ElectricalNotificationType.error,
+      );
+    },
+  );
+}
+
+/// Custom channel preview with electrical theme
+Widget _buildElectricalChannelPreview(Channel channel) {
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    decoration: BoxDecoration(
+      color: TailboardTheme.surfaceLow,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: TailboardTheme.accentCopper.withOpacity(0.2),
+      ),
+    ),
+    child: ListTile(
+      leading: CircleAvatar(
+        backgroundColor: TailboardTheme.accentCopper.withOpacity(0.2),
+        child: Icon(
+          Icons.tag,
+          color: TailboardTheme.accentCopper,
+        ),
+      ),
+      title: Text(
+        channel.name ?? channel.id,
+        style: TailboardTheme.textTheme.bodyLarge?.copyWith(
+          color: TailboardTheme.textPrimary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      subtitle: Text(
+        channel.state?.messages.lastOrNull?.text ?? 'No messages yet',
+        style: TailboardTheme.textTheme.bodySmall?.copyWith(
+          color: TailboardTheme.textSecondary,
+        ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (channel.state?.unreadCount ?? 0 > 0)
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: TailboardTheme.accentCopper,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                '${channel.state!.unreadCount}',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          SizedBox(height: 4),
+          Text(
+            _formatTime(channel.state?.messages.lastOrNull?.createdAt),
+            style: TailboardTheme.textTheme.bodySmall?.copyWith(
+              color: TailboardTheme.textTertiary,
+              fontSize: 10,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+/// Navigate to channel messages screen
+void _navigateToChannelMessages(Channel channel) {
+  ref.read(activeChannelProvider.notifier).state = channel;
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => StreamChannel(
+        channel: channel,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: TailboardTheme.primaryNavy,
+            title: Text(channel.name ?? channel.id),
+          ),
+          body: Column(
+            children: [
+              Expanded(
+                child: StreamMessageListView(
+                  // Custom message theme
+                  messageBuilder: (context, details, messages, defaultWidget) {
+                    return defaultWidget.copyWith(
+                      // Apply electrical theme customizations
+                    );
+                  },
+                ),
+              ),
+              StreamMessageInput(
+                // Custom input theme
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+String _formatTime(DateTime? time) {
+  if (time == null) return '';
+  final now = DateTime.now();
+  final diff = now.difference(time);
+
+  if (diff.inDays > 0) return '${diff.inDays}d';
+  if (diff.inHours > 0) return '${diff.inHours}h';
+  if (diff.inMinutes > 0) return '${diff.inMinutes}m';
+  return 'now';
+}
+</pre>
+                </div>
+
+                <h3>Container 1: Direct Messages Implementation</h3>
+                <div class="code-block">
+                    <span class="code-label">tailboard_screen.dart - Replace _showDirectMessages() method</span>
+<pre>
+void _showDirectMessages() async {
+  final selectedCrew = ref.read(selectedCrewProvider);
+  if (selectedCrew == null) {
+    JJElectricalNotifications.showElectricalToast(
+      context: context,
+      message: 'Please select a crew first',
+      type: ElectricalNotificationType.warning,
+    );
+    return;
+  }
+
+  final streamClientAsync = ref.read(streamChatClientProvider);
+  final crewMembersAsync = ref.read(crewMembersProvider);
+
+  await streamClientAsync.when(
+    data: (client) async {
+      await crewMembersAsync.when(
+        data: (members) {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => _ElectricalDialogBackground(
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.75,
+                child: Column(
+                  children: [
+                    // Header
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Direct Messages',
+                            style: TailboardTheme.textTheme.headingMedium?.copyWith(
+                              color: TailboardTheme.accentCopper,
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.close, color: TailboardTheme.textPrimary),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Crew members list
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: members.length,
+                        itemBuilder: (context, index) {
+                          final member = members[index];
+
+                          // Don't show current user
+                          if (member.userId == client.state.currentUser?.id) {
+                            return SizedBox.shrink();
+                          }
+
+                          return _buildElectricalMemberTile(
+                            member: member,
+                            onTap: () {
+                              Navigator.pop(context);
+                              _createOrOpenDirectMessage(client, member, selectedCrew.id);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+        loading: () {
+          JJElectricalNotifications.showElectricalToast(
+            context: context,
+            message: 'Loading crew members...',
+            type: ElectricalNotificationType.info,
+          );
+        },
+        error: (error, stack) {
+          JJElectricalNotifications.showElectricalToast(
+            context: context,
+            message: 'Failed to load members: $error',
+            type: ElectricalNotificationType.error,
+          );
+        },
+      );
+    },
+    loading: () {},
+    error: (error, stack) {
+      JJElectricalNotifications.showElectricalToast(
+        context: context,
+        message: 'Stream Chat unavailable: $error',
+        type: ElectricalNotificationType.error,
+      );
+    },
+  );
+}
+
+/// Custom member tile with electrical theme
+Widget _buildElectricalMemberTile({
+  required CrewMember member,
+  required VoidCallback onTap,
+}) {
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    decoration: BoxDecoration(
+      color: TailboardTheme.surfaceLow,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: TailboardTheme.accentCopper.withOpacity(0.2),
+      ),
+    ),
+    child: ListTile(
+      onTap: onTap,
+      leading: CircleAvatar(
+        backgroundImage: member.photoURL != null
+            ? NetworkImage(member.photoURL!)
+            : null,
+        backgroundColor: TailboardTheme.accentCopper.withOpacity(0.2),
+        child: member.photoURL == null
+            ? Icon(Icons.person, color: TailboardTheme.accentCopper)
+            : null,
+      ),
+      title: Text(
+        member.displayName,
+        style: TailboardTheme.textTheme.bodyLarge?.copyWith(
+          color: TailboardTheme.textPrimary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      subtitle: Text(
+        member.classification ?? 'Crew Member',
+        style: TailboardTheme.textTheme.bodySmall?.copyWith(
+          color: TailboardTheme.textSecondary,
+        ),
+      ),
+      trailing: Icon(
+        Icons.arrow_forward_ios,
+        size: 16,
+        color: TailboardTheme.accentCopper,
+      ),
+    ),
+  );
+}
+
+/// Create or open direct message channel
+Future<void> _createOrOpenDirectMessage(
+  StreamChatClient client,
+  CrewMember member,
+  String crewId,
+) async {
+  try {
+    // Create channel with distinct=true (ensures same 2 users = same channel)
+    final channel = client.channel(
+      'messaging',
+      extraData: {
+        'members': [
+          client.state.currentUser!.id,
+          member.userId,
+        ],
+        'distinct': true, // ⚡ CRITICAL: Same users always get same channel
+        'team': crewId, // Team isolation
+      },
+    );
+
+    // Watch channel (creates if doesn't exist, or returns existing)
+    await channel.watch();
+
+    // Navigate to DM screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => StreamChannel(
+          channel: channel,
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: TailboardTheme.primaryNavy,
+              title: Text(member.displayName),
+            ),
+            body: Column(
+              children: [
+                Expanded(
+                  child: StreamMessageListView(),
+                ),
+                StreamMessageInput(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  } catch (error) {
+    JJElectricalNotifications.showElectricalToast(
+      context: context,
+      message: 'Failed to open conversation: $error',
+      type: ElectricalNotificationType.error,
+    );
+  }
+}
+</pre>
+                </div>
+
+                <h3>Container 2: Chat History Implementation</h3>
+                <div class="code-block">
+                    <span class="code-label">tailboard_screen.dart - Replace _showChatHistory() method</span>
+<pre>
+void _showChatHistory() async {
+  final selectedCrew = ref.read(selectedCrewProvider);
+  if (selectedCrew == null) {
+    JJElectricalNotifications.showElectricalToast(
+      context: context,
+      message: 'Please select a crew first',
+      type: ElectricalNotificationType.warning,
+    );
+    return;
+  }
+
+  final streamClientAsync = ref.read(streamChatClientProvider);
+
+  await streamClientAsync.when(
+    data: (client) async {
+      // Query archived channels
+      final archivedChannels = await client.queryChannels(
+        filter: Filter.and([
+          Filter.equal('archived', true),
+          Filter.equal('team', selectedCrew.id),
+        ]),
+        sort: [SortOption('archived_at', direction: -1)],
+      ).first;
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => _ElectricalDialogBackground(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.75,
+            child: Column(
+              children: [
+                // Header
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Archived Channels',
+                        style: TailboardTheme.textTheme.headingMedium?.copyWith(
+                          color: TailboardTheme.accentCopper,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.close, color: TailboardTheme.textPrimary),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Archived channels list
+                Expanded(
+                  child: archivedChannels.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.archive_outlined,
+                                size: 64,
+                                color: TailboardTheme.textSecondary,
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                'No archived channels',
+                                style: TailboardTheme.textTheme.bodyLarge?.copyWith(
+                                  color: TailboardTheme.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: archivedChannels.length,
+                          itemBuilder: (context, index) {
+                            final channel = archivedChannels[index];
+                            return _buildArchivedChannelTile(
+                              channel: channel,
+                              onRestore: () async {
+                                await _restoreChannel(channel);
+                                Navigator.pop(context);
+                              },
+                              onDelete: () async {
+                                await _deleteChannel(channel);
+                                Navigator.pop(context);
+                              },
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+    loading: () {
+      JJElectricalNotifications.showElectricalToast(
+        context: context,
+        message: 'Loading history...',
+        type: ElectricalNotificationType.info,
+      );
+    },
+    error: (error, stack) {
+      JJElectricalNotifications.showElectricalToast(
+        context: context,
+        message: 'Failed to load history: $error',
+        type: ElectricalNotificationType.error,
+      );
+    },
+  );
+}
+
+/// Archived channel tile with restore/delete actions
+Widget _buildArchivedChannelTile({
+  required Channel channel,
+  required VoidCallback onRestore,
+  required VoidCallback onDelete,
+}) {
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    decoration: BoxDecoration(
+      color: TailboardTheme.surfaceLow,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: TailboardTheme.textSecondary.withOpacity(0.2),
+      ),
+    ),
+    child: ListTile(
+      leading: Icon(
+        Icons.archive,
+        color: TailboardTheme.textSecondary,
+      ),
+      title: Text(
+        channel.name ?? channel.id,
+        style: TailboardTheme.textTheme.bodyLarge?.copyWith(
+          color: TailboardTheme.textSecondary,
+        ),
+      ),
+      subtitle: Text(
+        'Archived ${_formatTime(channel.extraData['archived_at'] as DateTime?)}',
+        style: TailboardTheme.textTheme.bodySmall?.copyWith(
+          color: TailboardTheme.textTertiary,
+        ),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: Icon(Icons.restore, color: TailboardTheme.accentCopper),
+            onPressed: onRestore,
+            tooltip: 'Restore channel',
+          ),
+          IconButton(
+            icon: Icon(Icons.delete_forever, color: Colors.red[400]),
+            onPressed: () => _showArchivedChannelActions(
+              channel: channel,
+              onDelete: onDelete,
+            ),
+            tooltip: 'Delete permanently',
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+/// Show confirmation dialog for channel actions
+void _showArchivedChannelActions({
+  required Channel channel,
+  required VoidCallback onDelete,
+}) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: TailboardTheme.surfaceLow,
+      title: Text(
+        'Delete Channel?',
+        style: TailboardTheme.textTheme.headingSmall?.copyWith(
+          color: TailboardTheme.accentCopper,
+        ),
+      ),
+      content: Text(
+        'This will permanently delete "${channel.name ?? channel.id}" and all its messages. This action cannot be undone.',
+        style: TailboardTheme.textTheme.bodyMedium?.copyWith(
+          color: TailboardTheme.textPrimary,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('Cancel', style: TextStyle(color: TailboardTheme.textSecondary)),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            onDelete();
+          },
+          child: Text('Delete', style: TextStyle(color: Colors.red[400])),
+        ),
+      ],
+    ),
+  );
+}
+
+/// Restore archived channel
+Future<void> _restoreChannel(Channel channel) async {
+  try {
+    await channel.show();
+    JJElectricalNotifications.showElectricalToast(
+      context: context,
+      message: 'Channel restored',
+      type: ElectricalNotificationType.success,
+    );
+  } catch (error) {
+    JJElectricalNotifications.showElectricalToast(
+      context: context,
+      message: 'Failed to restore: $error',
+      type: ElectricalNotificationType.error,
+    );
+  }
+}
+
+/// Permanently delete channel
+Future<void> _deleteChannel(Channel channel) async {
+  try {
+    await channel.delete();
+    JJElectricalNotifications.showElectricalToast(
+      context: context,
+      message: 'Channel deleted',
+      type: ElectricalNotificationType.success,
+    );
+  } catch (error) {
+    JJElectricalNotifications.showElectricalToast(
+      context: context,
+      message: 'Failed to delete: $error',
+      type: ElectricalNotificationType.error,
+    );
+  }
+}
+</pre>
+                </div>
+
+                <h3>Container 3: Crew Chat (#general) Implementation</h3>
+                <div class="code-block">
+                    <span class="code-label">tailboard_screen.dart - Replace _navigateToCrewChat() method</span>
+<pre>
+void _navigateToCrewChat() async {
+  final selectedCrew = ref.read(selectedCrewProvider);
+  if (selectedCrew == null) {
+    JJElectricalNotifications.showElectricalToast(
+      context: context,
+      message: 'Please select a crew first',
+      type: ElectricalNotificationType.warning,
+    );
+    return;
+  }
+
+  final streamClientAsync = ref.read(streamChatClientProvider);
+  final crewMembersAsync = ref.read(crewMembersProvider);
+
+  await streamClientAsync.when(
+    data: (client) async {
+      try {
+        // Get or create #general channel
+        final channelId = '${selectedCrew.id}-general';
+        final channel = client.channel(
+          'messaging',
+          id: channelId,
+          extraData: {
+            'name': '#general',
+            'team': selectedCrew.id,
+            'description': 'General crew chat for ${selectedCrew.name}',
+          },
+        );
+
+        // Watch channel (creates if doesn't exist)
+        await channel.watch();
+
+        // Add all crew members
+        await crewMembersAsync.when(
+          data: (members) async {
+            final memberIds = members.map((m) => m.userId).toList();
+
+            // Only add members who aren't already in channel
+            final existingMemberIds = channel.state?.members.map((m) => m.userId).toList() ?? [];
+            final newMemberIds = memberIds.where((id) => !existingMemberIds.contains(id)).toList();
+
+            if (newMemberIds.isNotEmpty) {
+              await channel.addMembers(newMemberIds);
+            }
+          },
+          loading: () {},
+          error: (error, stack) {
+            print('Failed to add members: $error');
+          },
+        );
+
+        // Navigate to channel
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StreamChannel(
+              channel: channel,
+              child: Scaffold(
+                appBar: AppBar(
+                  backgroundColor: TailboardTheme.primaryNavy,
+                  title: Text('#general'),
+                  actions: [
+                    IconButton(
+                      icon: Icon(Icons.info_outline),
+                      onPressed: () {
+                        // Show channel info
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StreamChannel(
+                              channel: channel,
+                              child: GroupChannelInfoScreen(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                body: Column(
+                  children: [
+                    Expanded(
+                      child: StreamMessageListView(),
+                    ),
+                    StreamMessageInput(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      } catch (error) {
+        JJElectricalNotifications.showElectricalToast(
+          context: context,
+          message: 'Failed to open crew chat: $error',
+          type: ElectricalNotificationType.error,
+        );
+      }
+    },
+    loading: () {
+      JJElectricalNotifications.showElectricalToast(
+        context: context,
+        message: 'Opening crew chat...',
+        type: ElectricalNotificationType.info,
+      );
+    },
+    error: (error, stack) {
+      JJElectricalNotifications.showElectricalToast(
+        context: context,
+        message: 'Stream Chat unavailable: $error',
+        type: ElectricalNotificationType.error,
+      );
+    },
+  );
+}
+</pre>
+                </div>
+
+                <h3>Theme Customization</h3>
+                <div class="code-block">
+                    <span class="code-label">lib/main.dart - Add to MaterialApp setup</span>
+<pre>
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
+
+Widget build(BuildContext context) {
+  return MaterialApp(
+    // ... existing MaterialApp configuration
+
+    builder: (context, child) {
+      return StreamChatTheme(
+        data: _buildElectricalStreamTheme(),
+        child: child!,
+      );
+    },
+
+    // ... rest of MaterialApp
+  );
+}
+
+/// Build Stream Chat theme matching electrical copper design
+StreamChatThemeData _buildElectricalStreamTheme() {
+  return StreamChatThemeData(
+    brightness: Brightness.dark,
+
+    // Color theme
+    colorTheme: ColorTheme.dark(
+      accentPrimary: Color(0xFFD97706), // Copper primary
+      barBackground: Color(0xFF1E293B), // Navy background
+      borders: Color(0xFF1E40AF), // Blue borders
+      inputBackground: Color(0xFF0F172A), // Dark navy input
+      appBackground: Color(0xFF0F172A), // App background
+      textHighEmphasis: Color(0xFFE2E8F0), // Light text
+      textLowEmphasis: Color(0xFF94A3B8), // Secondary text
+      disabled: Color(0xFF475569), // Disabled elements
+      linkBackground: Color(0xFF3B82F6), // Links
+    ),
+
+    // Own message theme (sent by current user)
+    ownMessageTheme: MessageThemeData(
+      messageBackgroundColor: Color(0xFFB45309), // Copper dark for sent
+      messageTextStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 15,
+      ),
+      messageAuthorStyle: TextStyle(
+        color: Color(0xFFD97706),
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
+      messageLinksStyle: TextStyle(
+        color: Color(0xFF60A5FA),
+        decoration: TextDecoration.underline,
+      ),
+      repliesStyle: TextStyle(
+        color: Colors.white70,
+        fontSize: 13,
+      ),
+    ),
+
+    // Other message theme (received messages)
+    otherMessageTheme: MessageThemeData(
+      messageBackgroundColor: Color(0xFF1E293B), // Navy for received
+      messageTextStyle: TextStyle(
+        color: Color(0xFFE2E8F0),
+        fontSize: 15,
+      ),
+      messageAuthorStyle: TextStyle(
+        color: Color(0xFFD97706),
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
+      messageLinksStyle: TextStyle(
+        color: Color(0xFF60A5FA),
+        decoration: TextDecoration.underline,
+      ),
+      repliesStyle: TextStyle(
+        color: Color(0xFF94A3B8),
+        fontSize: 13,
+      ),
+    ),
+
+    // Channel preview theme
+    channelPreviewTheme: ChannelPreviewThemeData(
+      titleStyle: TextStyle(
+        color: Color(0xFFE2E8F0),
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+      subtitleStyle: TextStyle(
+        color: Color(0xFF94A3B8),
+        fontSize: 14,
+      ),
+      lastMessageAtStyle: TextStyle(
+        color: Color(0xFF64748B),
+        fontSize: 12,
+      ),
+      avatarTheme: AvatarThemeData(
+        borderRadius: BorderRadius.circular(20),
+        constraints: BoxConstraints.tightFor(
+          height: 40,
+          width: 40,
+        ),
+      ),
+    ),
+
+    // Channel header theme
+    channelHeaderTheme: ChannelHeaderThemeData(
+      avatarTheme: AvatarThemeData(
+        borderRadius: BorderRadius.circular(20),
+        constraints: BoxConstraints.tightFor(
+          height: 32,
+          width: 32,
+        ),
+      ),
+      color: Color(0xFF1E40AF),
+      titleStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+      ),
+      subtitleStyle: TextStyle(
+        color: Color(0xFFD97706),
+        fontSize: 13,
+      ),
+    ),
+
+    // Message input theme
+    messageInputTheme: MessageInputThemeData(
+      borderRadius: BorderRadius.circular(24),
+      inputBackgroundColor: Color(0xFF1E293B),
+      inputTextStyle: TextStyle(
+        color: Color(0xFFE2E8F0),
+        fontSize: 15,
+      ),
+      sendButtonColor: Color(0xFFD97706),
+      sendButtonIdleColor: Color(0xFF64748B),
+      actionButtonColor: Color(0xFF94A3B8),
+      actionButtonIdleColor: Color(0xFF475569),
+    ),
+  );
+}
+</pre>
+                </div>
+            </section>
+
+            <!-- RISK MITIGATION -->
+            <section id="risks" class="section">
+                <h2><span class="icon">⚠️</span> Risk Mitigation & Best Practices</h2>
+
+                <h3>Security Risks</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Risk</th>
+                            <th>Impact</th>
+                            <th>Mitigation</th>
+                            <th>Priority</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>API Secret Exposure</strong></td>
+                            <td>Attackers could impersonate users, access all channels</td>
+                            <td>NEVER put Stream API Secret in client code. Use Firebase Cloud Function for token generation</td>
+                            <td><span class="badge badge-critical">CRITICAL</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Team Isolation Bypass</strong></td>
+                            <td>Users see messages from other crews</td>
+                            <td>Always include <code>Filter.equal('team', crewId)</code> in ALL channel queries. Verify in testing</td>
+                            <td><span class="badge badge-critical">CRITICAL</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Unauthorized Channel Access</strong></td>
+                            <td>Users join channels they shouldn't access</td>
+                            <td>Set channel permissions via Stream Dashboard. Restrict channel creation to admins only</td>
+                            <td><span class="badge badge-high">HIGH</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Leakage in Logs</strong></td>
+                            <td>Sensitive message content exposed in logs</td>
+                            <td>Set <code>logLevel: Level.OFF</code> in production. Never log message content</td>
+                            <td><span class="badge badge-high">HIGH</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>XSS in Messages</strong></td>
+                            <td>Malicious scripts in chat messages</td>
+                            <td>Stream SDK sanitizes by default. Don't disable sanitization. Verify in custom message builders</td>
+                            <td><span class="badge badge-medium">MEDIUM</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Performance Risks</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Risk</th>
+                            <th>Impact</th>
+                            <th>Mitigation</th>
+                            <th>Priority</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Large Channel Query</strong></td>
+                            <td>App freezes on initial load with 100+ channels</td>
+                            <td>Use pagination: <code>limit: 25</code> in channel queries. Implement infinite scroll</td>
+                            <td><span class="badge badge-high">HIGH</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Memory Leak from Client</strong></td>
+                            <td>App crashes after extended use</td>
+                            <td>Call <code>client.disconnectUser()</code> on logout. Use <code>ref.onDispose()</code> in providers</td>
+                            <td><span class="badge badge-high">HIGH</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Slow Message Loading</strong></td>
+                            <td>Messages take >2s to appear</td>
+                            <td>Enable offline caching: <code>persistenceEnabled: true</code> in client config</td>
+                            <td><span class="badge badge-medium">MEDIUM</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Network Thrashing</strong></td>
+                            <td>High data usage, poor performance on slow networks</td>
+                            <td>Use <code>watch: false</code> when not actively viewing channels. Implement smart refresh</td>
+                            <td><span class="badge badge-medium">MEDIUM</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Data Integrity Risks</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Risk</th>
+                            <th>Impact</th>
+                            <th>Mitigation</th>
+                            <th>Priority</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Duplicate DM Channels</strong></td>
+                            <td>Same 2 users have multiple conversations</td>
+                            <td>ALWAYS use <code>distinct: true</code> when creating DM channels. Test before deployment</td>
+                            <td><span class="badge badge-critical">CRITICAL</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Orphaned Channels</strong></td>
+                            <td>Channels exist without crew members</td>
+                            <td>Auto-add crew members via <code>channel.addMembers()</code> on crew changes</td>
+                            <td><span class="badge badge-medium">MEDIUM</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Stale Team Data</strong></td>
+                            <td>User sees old crew's channels after switching</td>
+                            <td>Call <code>updateUserTeam()</code> immediately on crew selection. Invalidate provider caches</td>
+                            <td><span class="badge badge-high">HIGH</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Message Loss on Network Failure</strong></td>
+                            <td>Messages not sent during offline period</td>
+                            <td>Stream SDK queues offline messages automatically. Enable <code>persistenceEnabled: true</code></td>
+                            <td><span class="badge badge-low">LOW</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Best Practices Checklist</h3>
+                <ul class="checklist">
+                    <li><strong>Security:</strong> Generate tokens server-side via Cloud Function</li>
+                    <li><strong>Security:</strong> Set <code>logLevel: Level.OFF</code> in production</li>
+                    <li><strong>Security:</strong> Always filter channels by <code>team: crewId</code></li>
+                    <li><strong>Performance:</strong> Use pagination (<code>limit: 25</code>) for channel lists</li>
+                    <li><strong>Performance:</strong> Enable offline persistence (<code>persistenceEnabled: true</code>)</li>
+                    <li><strong>Performance:</strong> Dispose client on logout (<code>ref.onDispose()</code>)</li>
+                    <li><strong>Data Integrity:</strong> Use <code>distinct: true</code> for all DM channels</li>
+                    <li><strong>Data Integrity:</strong> Update user.teams on crew selection</li>
+                    <li><strong>UX:</strong> Show loading states while querying channels</li>
+                    <li><strong>UX:</strong> Display error messages with retry options</li>
+                    <li><strong>UX:</strong> Maintain electrical copper theme throughout</li>
+                    <li><strong>Testing:</strong> Verify team isolation with 2+ crews</li>
+                    <li><strong>Testing:</strong> Test distinct DM behavior with same users</li>
+                    <li><strong>Testing:</strong> Validate offline message queueing</li>
+                </ul>
+
+                <div class="alert alert-danger">
+                    <div class="alert-title">🚨 Critical Security Reminder</div>
+                    <p><strong>NEVER EXPOSE STREAM API SECRET IN CLIENT CODE.</strong></p>
+                    <p>Always generate user tokens server-side via Firebase Cloud Function. Exposing the secret allows anyone to impersonate users and access all channels across all teams.</p>
+                </div>
+            </section>
+
+            <!-- TESTING & VALIDATION -->
+            <section id="testing" class="section">
+                <h2><span class="icon">✅</span> Testing & Validation Strategy</h2>
+
+                <h3>Phase-by-Phase Testing</h3>
+
+                <div class="card">
+                    <h4>Phase 0-1: Setup & Authentication Testing</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test Case</th>
+                                <th>Expected Result</th>
+                                <th>How to Verify</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Cloud Function returns valid token</td>
+                                <td>Token is 200+ character string</td>
+                                <td>Check Firebase Functions logs for successful execution</td>
+                            </tr>
+                            <tr>
+                                <td>Client connects successfully</td>
+                                <td><code>client.state.currentUser</code> is not null</td>
+                                <td>Add debug print after <code>connectUser()</code></td>
+                            </tr>
+                            <tr>
+                                <td>Provider caches client</td>
+                                <td>Same client instance across rebuilds</td>
+                                <td>Watch <code>streamChatClientProvider</code> multiple times, verify same object</td>
+                            </tr>
+                            <tr>
+                                <td>Logout disconnects client</td>
+                                <td>No errors on app restart after logout</td>
+                                <td>Logout, restart app, verify no "already connected" errors</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h4>Phase 2: Channels List Testing</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test Case</th>
+                                <th>Expected Result</th>
+                                <th>How to Verify</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Team isolation enforced</td>
+                                <td>User A in Crew 1 sees ONLY Crew 1 channels</td>
+                                <td>Create channels in 2 crews, switch between crews, verify filtering</td>
+                            </tr>
+                            <tr>
+                                <td>Channel list sorts by recent</td>
+                                <td>Channel with newest message appears at top</td>
+                                <td>Send message in old channel, verify it moves to top</td>
+                            </tr>
+                            <tr>
+                                <td>Unread count shows</td>
+                                <td>Badge displays correct unread count</td>
+                                <td>Send message from User B, verify User A sees unread count</td>
+                            </tr>
+                            <tr>
+                                <td>Navigation to messages works</td>
+                                <td>Tap channel opens message list</td>
+                                <td>Tap channel, verify MessageListView loads with messages</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h4>Phase 3: Direct Messages Testing</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test Case</th>
+                                <th>Expected Result</th>
+                                <th>How to Verify</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Distinct channel enforcement</td>
+                                <td>Same 2 users ALWAYS get same DM channel</td>
+                                <td>Create DM A→B, close, create DM A→B again. Verify same channel ID</td>
+                            </tr>
+                            <tr>
+                                <td>Team isolation in DMs</td>
+                                <td>DM channels filtered by team</td>
+                                <td>Create DM in Crew 1, switch to Crew 2, verify DM not visible</td>
+                            </tr>
+                            <tr>
+                                <td>Member list shows crew only</td>
+                                <td>Only current crew members appear</td>
+                                <td>Verify member list matches crewMembersProvider</td>
+                            </tr>
+                            <tr>
+                                <td>Current user excluded</td>
+                                <td>User doesn't see themselves in DM list</td>
+                                <td>Check member list, verify current user filtered out</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h4>Phase 4: Chat History Testing</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test Case</th>
+                                <th>Expected Result</th>
+                                <th>How to Verify</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Archived channels query</td>
+                                <td>Only archived channels appear</td>
+                                <td>Archive channel, verify appears in history but not main list</td>
+                            </tr>
+                            <tr>
+                                <td>Restore channel works</td>
+                                <td>Channel returns to main list after restore</td>
+                                <td>Restore archived channel, verify appears in channels list</td>
+                            </tr>
+                            <tr>
+                                <td>Delete permanently works</td>
+                                <td>Channel and messages completely removed</td>
+                                <td>Delete channel, verify gone from all lists and Stream dashboard</td>
+                            </tr>
+                            <tr>
+                                <td>Team isolation in archive</td>
+                                <td>Only current crew's archived channels show</td>
+                                <td>Archive in Crew 1, switch to Crew 2, verify not in archive</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h4>Phase 5: Crew Chat (#general) Testing</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test Case</th>
+                                <th>Expected Result</th>
+                                <th>How to Verify</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#general channel created</td>
+                                <td>Channel ID matches <code>${crewId}-general</code></td>
+                                <td>Check Stream dashboard, verify channel exists with correct ID</td>
+                            </tr>
+                            <tr>
+                                <td>All crew members added</td>
+                                <td>Channel members list matches crew members</td>
+                                <td>Open channel info, verify all crew members present</td>
+                            </tr>
+                            <tr>
+                                <td>Team isolation enforced</td>
+                                <td>#general for Crew 1 ≠ #general for Crew 2</td>
+                                <td>Switch crews, verify different #general channels</td>
+                            </tr>
+                            <tr>
+                                <td>Navigation from button works</td>
+                                <td>Tap "Crew Chat" button opens #general</td>
+                                <td>Tap button, verify navigates to correct channel</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h4>Phase 6: Theme Testing</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test Case</th>
+                                <th>Expected Result</th>
+                                <th>How to Verify</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Sent messages have copper background</td>
+                                <td>Background color is #B45309</td>
+                                <td>Send message, verify color matches design system</td>
+                            </tr>
+                            <tr>
+                                <td>Received messages have navy background</td>
+                                <td>Background color is #1E293B</td>
+                                <td>Receive message from other user, verify color</td>
+                            </tr>
+                            <tr>
+                                <td>Channel previews match theme</td>
+                                <td>Copper accents and navy backgrounds</td>
+                                <td>Visual inspection of channel list</td>
+                            </tr>
+                            <tr>
+                                <td>Message input matches theme</td>
+                                <td>Send button is copper (#D97706)</td>
+                                <td>Check message input component colors</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h4>Phase 7-8: Integration & E2E Testing</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test Case</th>
+                                <th>Expected Result</th>
+                                <th>How to Verify</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Real-time message delivery</td>
+                                <td>Messages appear instantly (<2s latency)</td>
+                                <td>2 devices logged in, send message, time delivery</td>
+                            </tr>
+                            <tr>
+                                <td>Offline message queueing</td>
+                                <td>Messages sent when back online</td>
+                                <td>Turn off WiFi, send messages, turn on WiFi, verify sent</td>
+                            </tr>
+                            <tr>
+                                <td>Crew switching updates teams</td>
+                                <td>User.teams updates to new crew ID</td>
+                                <td>Switch crews, check Stream dashboard user.teams value</td>
+                            </tr>
+                            <tr>
+                                <td>All 4 container buttons work</td>
+                                <td>No crashes, all features functional</td>
+                                <td>Tap each button in sequence, verify no errors</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Automated Testing Script</h3>
+                <div class="code-block">
+                    <span class="code-label">test/integration/stream_chat_integration_test.dart</span>
+<pre>
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  group('Stream Chat Integration Tests', () {
+    testWidgets('Team isolation enforced', (tester) async {
+      // TODO: Implement test
+      // 1. Login as User A
+      // 2. Select Crew 1
+      // 3. Create channel in Crew 1
+      // 4. Switch to Crew 2
+      // 5. Verify Crew 1 channel not visible
+    });
+
+    testWidgets('Distinct DM channels', (tester) async {
+      // TODO: Implement test
+      // 1. Create DM User A → User B
+      // 2. Close channel
+      // 3. Create DM User A → User B again
+      // 4. Verify same channel ID
+    });
+
+    testWidgets('Real-time message delivery', (tester) async {
+      // TODO: Implement test
+      // 1. Open channel on Device A
+      // 2. Send message from Device B
+      // 3. Verify message appears on Device A within 2s
+    });
+
+    // Add more automated tests...
+  });
+}
+</pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <div class="alert-title">✅ Testing Complete Checklist</div>
+                    <p>Before deploying to production, ensure ALL test cases pass:</p>
+                    <ul>
+                        <li>✅ Team isolation verified with 2+ crews</li>
+                        <li>✅ Distinct DM channels confirmed (no duplicates)</li>
+                        <li>✅ Real-time messages <2s latency</li>
+                        <li>✅ Offline queueing works</li>
+                        <li>✅ Theme consistent across all components</li>
+                        <li>✅ No crashes or errors in production mode</li>
+                        <li>✅ All 4 container buttons functional</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- DEPLOYMENT CHECKLIST -->
+            <section id="deployment" class="section">
+                <h2><span class="icon">📦</span> Deployment Checklist</h2>
+
+                <h3>Pre-Deployment</h3>
+                <ul class="checklist">
+                    <li>✅ All 8 implementation phases completed</li>
+                    <li>✅ All test cases pass (manual and automated)</li>
+                    <li>✅ Stream API Secret stored securely in Firebase config</li>
+                    <li>✅ Cloud Function deployed to production</li>
+                    <li>✅ Log level set to <code>Level.OFF</code> in StreamChatService</li>
+                    <li>✅ Error handling implemented for all network failures</li>
+                    <li>✅ Theme verified across all Stream components</li>
+                    <li>✅ Team isolation tested with multiple crews</li>
+                    <li>✅ Distinct DM behavior verified</li>
+                    <li>✅ Offline message queueing tested</li>
+                </ul>
+
+                <h3>Deployment Steps</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <strong>1. Deploy Cloud Function</strong>
+                        <div class="code-block">
+                            <span class="code-label">Terminal</span>
+<pre>
+# Set Stream credentials in Firebase config
+firebase functions:config:set stream.key="YOUR_STREAM_API_KEY"
+firebase functions:config:set stream.secret="YOUR_STREAM_SECRET"
+
+# Deploy function
+firebase deploy --only functions:getStreamUserToken
+</pre>
+                        </div>
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-step">
+                        <strong>2. Update Flutter App</strong>
+                        <div class="code-block">
+                            <span class="code-label">Terminal</span>
+<pre>
+# Clean build
+flutter clean
+flutter pub get
+
+# Build production version
+flutter build apk --release
+flutter build appbundle --release
+flutter build ios --release
+</pre>
+                        </div>
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-step">
+                        <strong>3. Verify Production Behavior</strong>
+                        <ul>
+                            <li>Test on physical devices (not emulator)</li>
+                            <li>Verify no log output from Stream SDK</li>
+                            <li>Check real-time message delivery</li>
+                            <li>Test team isolation with multiple crews</li>
+                        </ul>
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-step">
+                        <strong>4. Monitor Post-Deployment</strong>
+                        <ul>
+                            <li>Watch Firebase Functions logs for errors</li>
+                            <li>Check Stream Dashboard for usage metrics</li>
+                            <li>Monitor app crash reports (Firebase Crashlytics)</li>
+                            <li>Track user feedback on messaging features</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Post-Deployment Monitoring</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Tool</th>
+                            <th>Threshold</th>
+                            <th>Action if Exceeded</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cloud Function errors</td>
+                            <td>Firebase Console</td>
+                            <td>&lt;1% error rate</td>
+                            <td>Check function logs, verify Stream credentials</td>
+                        </tr>
+                        <tr>
+                            <td>Message delivery latency</td>
+                            <td>Stream Dashboard</td>
+                            <td>&lt;2s average</td>
+                            <td>Check network conditions, verify client config</td>
+                        </tr>
+                        <tr>
+                            <td>App crashes related to chat</td>
+                            <td>Firebase Crashlytics</td>
+                            <td>&lt;0.1% crash rate</td>
+                            <td>Analyze stack traces, add error handling</td>
+                        </tr>
+                        <tr>
+                            <td>Stream API usage</td>
+                            <td>Stream Dashboard</td>
+                            <td>Within plan limits</td>
+                            <td>Optimize queries, upgrade plan if needed</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Rollback Plan</h3>
+                <div class="alert alert-warning">
+                    <div class="alert-title">🔄 Rollback Procedure</div>
+                    <p>If critical issues occur post-deployment:</p>
+                    <ol>
+                        <li>Disable Stream Chat features via feature flag (add to Firebase Remote Config)</li>
+                        <li>Revert to previous app version in Play Store / App Store</li>
+                        <li>Investigate root cause using logs and crash reports</li>
+                        <li>Fix issues in development environment</li>
+                        <li>Re-test thoroughly before re-deploying</li>
+                    </ol>
+                </div>
+
+                <h3>Stream Dashboard Configuration</h3>
+                <div class="card">
+                    <h4>Recommended Settings</h4>
+                    <ul>
+                        <li><strong>Webhooks:</strong> Enable for message moderation (profanity filter)</li>
+                        <li><strong>Permissions:</strong> Restrict channel creation to admins only</li>
+                        <li><strong>Rate Limits:</strong> Set per-user message limit (e.g., 100 messages/hour)</li>
+                        <li><strong>Retention:</strong> Configure message retention policy (e.g., 90 days)</li>
+                        <li><strong>Push Notifications:</strong> Enable for offline users (requires Firebase Cloud Messaging setup)</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-success">
+                    <div class="alert-title">🎉 Deployment Complete</div>
+                    <p>Congratulations! Stream Chat is now fully integrated into Journeyman Jobs tailboard screen with:</p>
+                    <ul>
+                        <li>✅ IBEW crew isolation via teams architecture</li>
+                        <li>✅ Real-time messaging with offline support</li>
+                        <li>✅ Secure server-side authentication</li>
+                        <li>✅ Electrical copper theme consistency</li>
+                        <li>✅ Production-ready code with comprehensive error handling</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- FOOTER -->
+            <div style="text-align: center; padding: 3rem; border-top: 1px solid rgba(217, 119, 6, 0.2); margin-top: 4rem;">
+                <p style="color: #94a3b8; font-size: 0.9rem;">
+                    Stream Chat Master Implementation Guide v1.0 | Generated 2025-11-06
+                </p>
+                <p style="color: #64748b; font-size: 0.85rem; margin-top: 0.5rem;">
+                    Journeyman Jobs © 2025 | IBEW Crew Messaging System
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

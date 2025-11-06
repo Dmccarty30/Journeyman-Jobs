@@ -83,7 +83,7 @@ class ChipInputTextFieldState<T> extends State<ChipsInputTextField<T>> {
                           color: StreamChatTheme.of(context)
                               .colorTheme
                               .textHighEmphasis
-                              .withOpacity(.5)),
+                              .withValues(alpha:.5)),
                 ),
               ),
               const SizedBox(width: 12),
@@ -120,7 +120,7 @@ class ChipInputTextFieldState<T> extends State<ChipsInputTextField<T>> {
                                   color: StreamChatTheme.of(context)
                                       .colorTheme
                                       .textHighEmphasis
-                                      .withOpacity(.5)),
+                                      .withValues(alpha:.5)),
                         ),
                       ),
                   ],
@@ -135,14 +135,14 @@ class ChipInputTextFieldState<T> extends State<ChipsInputTextField<T>> {
                           color: StreamChatTheme.of(context)
                               .colorTheme
                               .textHighEmphasis
-                              .withOpacity(0.5),
+                              .withValues(alpha:0.5),
                           size: 24,
                         )
                       : StreamSvgIcon.userAdd(
                           color: StreamChatTheme.of(context)
                               .colorTheme
                               .textHighEmphasis
-                              .withOpacity(0.5),
+                              .withValues(alpha:0.5),
                           size: 24,
                         ),
                   onPressed: resumeItemAddition,

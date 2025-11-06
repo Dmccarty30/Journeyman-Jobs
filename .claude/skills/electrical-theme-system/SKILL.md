@@ -74,7 +74,7 @@ ThemeData darkElectricalTheme = ThemeData(
   // High contrast for field visibility
   textTheme: TextTheme(
     bodyText1: TextStyle(
-      color: Colors.white.withOpacity(0.95),
+      color: Colors.white.withValues(alpha:0.95),
       fontSize: 16,
     ),
   ),

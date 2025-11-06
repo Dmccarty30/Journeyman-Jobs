@@ -260,7 +260,7 @@ class DocumentAttachmentWidget extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: _getFileColor().withOpacity(0.1),
+                    color: _getFileColor().withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -552,7 +552,7 @@ class _ReactionBarWidgetState extends State<ReactionBarWidget>
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: isReactedByMe
-            ? AppTheme.accentCopper.withOpacity(0.2)
+            ? AppTheme.accentCopper.withValues(alpha:0.2)
             : Colors.grey[200],
         borderRadius: BorderRadius.circular(16),
         border: isReactedByMe

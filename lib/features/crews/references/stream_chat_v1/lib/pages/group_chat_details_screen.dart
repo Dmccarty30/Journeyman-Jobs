@@ -306,7 +306,7 @@ class _GroupChatDetailsScreenState extends State<GroupChatDetailsScreen> {
               color: StreamChatTheme.of(context)
                   .colorTheme
                   .textHighEmphasis
-                  .withOpacity(.08),
+                  .withValues(alpha:.08),
               height: 1.0,
             ),
             Row(

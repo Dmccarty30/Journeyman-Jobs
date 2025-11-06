@@ -80,7 +80,7 @@ class _PinnedMessagesScreenState extends State<PinnedMessagesScreen> {
                         color: StreamChatTheme.of(context)
                             .colorTheme
                             .textHighEmphasis
-                            .withOpacity(0.5),
+                            .withValues(alpha:0.5),
                       ),
                     ),
                     TextSpan(
@@ -91,7 +91,7 @@ class _PinnedMessagesScreenState extends State<PinnedMessagesScreen> {
                         color: StreamChatTheme.of(context)
                             .colorTheme
                             .textHighEmphasis
-                            .withOpacity(0.5),
+                            .withValues(alpha:0.5),
                       ),
                     ),
                   ]),

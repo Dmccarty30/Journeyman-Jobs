@@ -104,7 +104,14 @@ dependencies:
 
   # Internationalization
   intl: ^0.20.1
+  timeago: ^3.6.1
+
+  # Stream Chat for real-time messaging
   stream_chat_flutter: ^9.19.0
+  stream_chat_flutter_core: ^9.19.0
+
+  # Firebase Cloud Functions for secure token generation
+  cloud_functions: ^5.0.3
 
 dev_dependencies:
   flutter_test:

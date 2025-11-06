@@ -182,7 +182,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                       color: StreamChatTheme.of(context)
                           .colorTheme
                           .textHighEmphasis
-                          .withOpacity(0.5),
+                          .withValues(alpha:0.5),
                       fontSize: 12.0,
                     ),
                   ),
@@ -296,7 +296,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                                       color: StreamChatTheme.of(context)
                                           .colorTheme
                                           .textHighEmphasis
-                                          .withOpacity(0.5)),
+                                          .withValues(alpha:0.5)),
                                 ),
                               ],
                             ),
@@ -311,7 +311,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                                   color: StreamChatTheme.of(context)
                                       .colorTheme
                                       .textHighEmphasis
-                                      .withOpacity(0.5)),
+                                      .withValues(alpha:0.5)),
                             ),
                           ),
                         ],
@@ -401,7 +401,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                     color: StreamChatTheme.of(context)
                         .colorTheme
                         .textHighEmphasis
-                        .withOpacity(0.5)),
+                        .withValues(alpha:0.5)),
               ),
             ),
             const SizedBox(
@@ -424,7 +424,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                             color: StreamChatTheme.of(context)
                                 .colorTheme
                                 .textHighEmphasis
-                                .withOpacity(0.5))),
+                                .withValues(alpha:0.5))),
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   height: 0.82,
@@ -502,7 +502,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                       color: StreamChatTheme.of(context)
                           .colorTheme
                           .textHighEmphasis
-                          .withOpacity(0.5),
+                          .withValues(alpha:0.5),
                     ),
                   ),
                   trailing: snapshot.data == null
@@ -537,7 +537,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
               color: StreamChatTheme.of(context)
                   .colorTheme
                   .textHighEmphasis
-                  .withOpacity(0.5),
+                  .withValues(alpha:0.5),
             ),
           ),
           trailing: StreamSvgIcon.right(
@@ -569,7 +569,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
               color: StreamChatTheme.of(context)
                   .colorTheme
                   .textHighEmphasis
-                  .withOpacity(0.5),
+                  .withValues(alpha:0.5),
             ),
           ),
           trailing: StreamSvgIcon.right(
@@ -603,7 +603,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
               color: StreamChatTheme.of(context)
                   .colorTheme
                   .textHighEmphasis
-                  .withOpacity(0.5),
+                  .withValues(alpha:0.5),
             ),
           ),
           trailing: StreamSvgIcon.right(
@@ -639,7 +639,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                 color: StreamChatTheme.of(context)
                     .colorTheme
                     .textHighEmphasis
-                    .withOpacity(0.5),
+                    .withValues(alpha:0.5),
               ),
             ),
             trailing: const SizedBox(
@@ -986,7 +986,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
               color: StreamChatTheme.of(context)
                   .colorTheme
                   .textHighEmphasis
-                  .withOpacity(0.5)),
+                  .withValues(alpha:0.5)),
         );
       } else {
         alternativeWidget = Text(
@@ -995,7 +995,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
               color: StreamChatTheme.of(context)
                   .colorTheme
                   .textHighEmphasis
-                  .withOpacity(0.5)),
+                  .withValues(alpha:0.5)),
         );
       }
     }

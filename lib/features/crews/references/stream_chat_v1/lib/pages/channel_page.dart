@@ -134,7 +134,7 @@ class _ChannelPageState extends State<ChannelPage> {
                     color: StreamChatTheme.of(context)
                         .colorTheme
                         .appBg
-                        .withOpacity(.9),
+                        .withValues(alpha:.9),
                     child: StreamTypingIndicator(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,

@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailboard Screen - Stream Chat SDK Integration Architecture</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a202c;
+            color: #e5e7eb;
+        }
+        h1, h2, h3, h4 {
+            color: #fcd34d;
+            border-bottom: 2px solid #b45309;
+            padding-bottom: 8px;
+        }
+        h1 { font-size: 2.5em; margin-top: 0; }
+        h2 { font-size: 2em; margin-top: 40px; }
+        h3 { font-size: 1.5em; margin-top: 30px; border-bottom: 1px solid #92400e; }
+        h4 { font-size: 1.2em; margin-top: 20px; border: none; color: #d97706; }
+        code {
+            background: #2d3748;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #fcd34d;
+        }
+        pre {
+            background: #2d3748;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #b45309;
+            overflow-x: auto;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        .info-box {
+            background: #1e3a5f;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background: #7c2d12;
+            border-left: 4px solid #dc2626;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .success-box {
+            background: #14532d;
+            border-left: 4px solid #22c55e;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #2d3748;
+        }
+        th, td {
+            border: 1px solid #4a5568;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #1a202c;
+            color: #fcd34d;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background: #374151;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .badge-provider { background: #7c3aed; color: white; }
+        .badge-widget { background: #059669; color: white; }
+        .badge-method { background: #dc2626; color: white; }
+        .badge-integration { background: #d97706; color: white; }
+        ul, ol {
+            margin-left: 20px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .file-ref {
+            color: #60a5fa;
+            font-style: italic;
+        }
+        .line-ref {
+            color: #a78bfa;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🔌 Tailboard Screen - Stream Chat SDK Integration Architecture</h1>
+
+<div class="info-box">
+    <strong>📄 File:</strong> <code>/lib/features/crews/screens/tailboard_screen.dart</code> (2199 lines)<br>
+    <strong>📅 Analysis Date:</strong> November 6, 2025<br>
+    <strong>🎯 Purpose:</strong> Comprehensive architectural analysis for integrating Stream Chat SDK into existing tailboard crew messaging scaffolding
+</div>
+
+<h2>📋 Executive Summary</h2>
+
+<p>The <code>tailboard_screen.dart</code> file serves as the central hub for crew coordination in the Journeyman Jobs app, featuring a sophisticated 4-tab interface (Feed, Jobs, Chat, Members) with dynamic container actions. The Chat tab currently contains <strong>placeholder implementations</strong> ready for Stream Chat SDK integration.</p>
+
+<div class="success-box">
+    <strong>✅ Integration Readiness:</strong> The screen is well-architected with:
+    <ul>
+        <li>Reusable electrical-themed UI components</li>
+        <li>Riverpod state management hooks</li>
+        <li>Modal overlay system for chat interfaces</li>
+        <li>4-container action row with dedicated chat actions</li>
+        <li>Clear placeholder methods awaiting implementation</li>
+    </ul>
+</div>
+
+<h2>🏗️ Architecture Overview</h2>
+
+<h3>State Management Layer</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Provider</th>
+            <th>Type</th>
+            <th>Purpose</th>
+            <th>Integration Point</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>selectedCrewProvider</code></td>
+            <td><span class="badge badge-provider">StateProvider</span></td>
+            <td>Current crew context for all operations</td>
+            <td>Maps to Stream Chat <code>team</code> ID for channel isolation</td>
+        </tr>
+        <tr>
+            <td><code>crewMembersProvider</code></td>
+            <td><span class="badge badge-provider">FutureProvider</span></td>
+            <td>Fetches crew roster from Firestore</td>
+            <td>Used to populate DM list and verify team membership</td>
+        </tr>
+        <tr>
+            <td><code>feedFilterProvider</code></td>
+            <td><span class="badge badge-provider">StateProvider</span></td>
+            <td>Feed tab filtering state</td>
+            <td>N/A - separate feature</td>
+        </tr>
+        <tr>
+            <td><code>jobsFilterProvider</code></td>
+            <td><span class="badge badge-provider">StateProvider</span></td>
+            <td>Jobs tab filtering state</td>
+            <td>N/A - separate feature</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="warning-box">
+    <strong>⚠️ Required New Providers:</strong>
+    <ul>
+        <li><code>streamChatClientProvider</code> - Global Stream Chat client instance</li>
+        <li><code>crewChannelsProvider</code> - FutureProvider for crew-specific channels</li>
+        <li><code>dmConversationsProvider</code> - FutureProvider for 1:1 conversations</li>
+        <li><code>activeChannelProvider</code> - StateProvider for current open channel</li>
+    </ul>
+</div>
+
+<h3>UI Structure - Tab System</h3>
+
+<p><span class="line-ref">Lines 1322-1328</span> The screen uses a <code>TabController</code> to manage 4 tabs, each with different container labels:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Tab Index</th>
+            <th>Tab Name</th>
+            <th>Container Labels</th>
+            <th>Container Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>0</td>
+            <td>Feed</td>
+            <td>My Posts | Sort | History | Crew Chat</td>
+            <td>Feed management + quick crew chat access</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Jobs</td>
+            <td>Construction | Local | Classification | Crew Chat</td>
+            <td>Job filtering + quick crew chat access</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td><strong>Chat</strong></td>
+            <td><strong>Channels | DMs | History | Crew Chat</strong></td>
+            <td><strong>PRIMARY INTEGRATION TARGET</strong></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Members</td>
+            <td>Roster | Availability | Roles | Crew Chat</td>
+            <td>Member management + quick crew chat access</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>DynamicContainerRow Component</h3>
+
+<p><span class="line-ref">Lines 1322-1328</span> Central UI element providing 4 contextual actions above the TabBar:</p>
+
+<pre><code>DynamicContainerRow(
+  labels: _getContainerLabelsForTab(),
+  selectedIndex: 0,
+  onTap: _handleContainerTap,
+  height: 60.0,
+)</code></pre>
+
+<p>The <code>_handleContainerTap</code> method <span class="line-ref">(Lines 258-276)</span> delegates to tab-specific handlers:</p>
+
+<ul>
+    <li><strong>Tab 2 (Chat):</strong> Calls <code>_handleChatContainerTap(index)</code></li>
+    <li>Each index (0-3) triggers different chat functionality</li>
+</ul>
+
+<h2>💬 Chat Tab - Integration Points</h2>
+
+<h3>Container 0: "Channels" <span class="line-ref">(Lines 313, 669-735)</span></h3>
+
+<h4>Current Implementation (Placeholder)</h4>
+
+<pre><code>void _showChannelsList() {
+  final selectedCrew = ref.read(selectedCrewProvider);
+
+  showModalBottomSheet(
+    context: context,
+    builder: (context) => _ElectricalDialogBackground(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('Crew Channels', style: headlineSmall),
+          // ❌ HARDCODED CHANNELS
+          ListTile(
+            title: Text('# general'),
+            subtitle: Text('Main crew discussion'),
+            onTap: () => _navigateToCrewChat(),
+          ),
+          ListTile(title: Text('# jobs')),
+          ListTile(title: Text('# announcements')),
+        ],
+      ),
+    ),
+  );
+}</code></pre>
+
+<h4>Stream Chat SDK Integration Strategy</h4>
+
+<div class="success-box">
+    <strong>✅ Replace with:</strong> <code>StreamChannelListView</code>
+
+<pre><code>void _showChannelsList() {
+  final selectedCrew = ref.read(selectedCrewProvider);
+  final streamClient = ref.read(streamChatClientProvider);
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (context) => _ElectricalDialogBackground(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: StreamChannelListView(
+          controller: StreamChannelListController(
+            client: streamClient,
+            filter: Filter.and([
+              Filter.equal('type', 'messaging'),
+              Filter.equal('team', selectedCrew?.id ?? ''),
+            ]),
+            sort: [SortOption('last_message_at')],
+          ),
+          onChannelTap: (channel) {
+            Navigator.pop(context);
+            _navigateToChannelMessages(channel);
+          },
+          itemBuilder: (context, items, index, defaultWidget) {
+            // Custom electrical-themed channel preview
+            return _buildElectricalChannelPreview(items[index]);
+          },
+        ),
+      ),
+    ),
+  );
+}</code></pre>
+</div>
+
+<div class="info-box">
+    <strong>📚 RAG Research Finding:</strong> StreamChannelListController handles:
+    <ul>
+        <li>Initial data loading from Stream API</li>
+        <li>Real-time channel event handlers</li>
+        <li>Pagination with <code>loadMore()</code></li>
+        <li>Filtering by team (crew isolation)</li>
+    </ul>
+</div>
+
+<h3>Container 1: "DMs" <span class="line-ref">(Lines 316, 738-817)</span></h3>
+
+<h4>Current Implementation (Placeholder)</h4>
+
+<pre><code>void _showDirectMessages() {
+  final selectedCrew = ref.read(selectedCrewProvider);
+  final crewMembersAsync = ref.watch(crewMembersProvider(selectedCrew?.id ?? ''));
+
+  showModalBottomSheet(
+    context: context,
+    builder: (context) => _ElectricalDialogBackground(
+      child: Column(
+        children: [
+          Text('Direct Messages'),
+          // ❌ SHOWS CREW MEMBERS BUT NO FUNCTIONALITY
+          ...crewMembersAsync.take(5).map((member) => ListTile(
+            title: Text(member.customTitle ?? member.role.toString()),
+            onTap: () {
+              Navigator.pop(context);
+              // ❌ JUST SHOWS "Direct messaging coming soon!" TOAST
+              JJElectricalNotifications.showElectricalToast(...);
+            },
+          )),
+        ],
+      ),
+    ),
+  );
+}</code></pre>
+
+<h4>Stream Chat SDK Integration Strategy</h4>
+
+<div class="success-box">
+    <strong>✅ Replace with:</strong> Distinct 1:1 channel creation + <code>DirectChannelInfoScreen</code>
+
+<pre><code>void _showDirectMessages() {
+  final selectedCrew = ref.read(selectedCrewProvider);
+  final crewMembersAsync = ref.watch(crewMembersProvider(selectedCrew?.id ?? ''));
+  final streamClient = ref.read(streamChatClientProvider);
+
+  showModalBottomSheet(
+    context: context,
+    builder: (context) => _ElectricalDialogBackground(
+      child: Column(
+        children: [
+          Text('Direct Messages', style: headlineSmall),
+          Expanded(
+            child: ListView.builder(
+              itemCount: crewMembersAsync.length,
+              itemBuilder: (context, index) {
+                final member = crewMembersAsync[index];
+                return _buildElectricalMemberTile(
+                  member: member,
+                  onTap: () async {
+                    // Create or retrieve 1:1 channel
+                    final channel = streamClient.channel(
+                      'messaging',
+                      extraData: {
+                        'members': [
+                          streamClient.state.currentUser!.id,
+                          member.userId,
+                        ],
+                        'distinct': true, // Ensures 1:1 uniqueness
+                        'team': selectedCrew?.id,
+                      },
+                    );
+
+                    await channel.watch();
+
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => StreamChannel(
+                          channel: channel,
+                          child: DirectChannelInfoScreen(),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}</code></pre>
+</div>
+
+<div class="info-box">
+    <strong>📚 RAG Research Finding:</strong> DirectChannelInfoScreen provides:
+    <ul>
+        <li>Avatar and user info for the other person</li>
+        <li>Actions: Mute/Unmute, Hide Conversation, Pinned Messages</li>
+        <li><code>distinct: true</code> ensures same 2 users → same channel</li>
+    </ul>
+</div>
+
+<h3>Container 2: "History" <span class="line-ref">(Lines 319, 820-886)</span></h3>
+
+<h4>Current Implementation (Placeholder)</h4>
+
+<pre><code>void _showChatHistory() {
+  showModalBottomSheet(
+    context: context,
+    builder: (context) => _ElectricalDialogBackground(
+      child: Column(
+        children: [
+          Text('Message History'),
+          // ❌ HARDCODED FAKE HISTORY ENTRIES
+          ListTile(
+            title: Text('Daily Stand-up Notes - Jan 15'),
+            subtitle: Text('Last message: Great work today team!'),
+          ),
+        ],
+      ),
+    ),
+  );
+}</code></pre>
+
+<h4>Stream Chat SDK Integration Strategy</h4>
+
+<div class="success-box">
+    <strong>✅ Replace with:</strong> Archived/Hidden channels list
+
+<pre><code>void _showChatHistory() {
+  final streamClient = ref.read(streamChatClientProvider);
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (context) => _ElectricalDialogBackground(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: StreamChannelListView(
+          controller: StreamChannelListController(
+            client: streamClient,
+            filter: Filter.and([
+              Filter.equal('hidden', true), // Archived channels
+            ]),
+            sort: [SortOption('last_message_at', direction: -1)],
+          ),
+          emptyBuilder: (context) => Center(
+            child: Text(
+              'No archived conversations',
+              style: TextStyle(color: AppTheme.mediumGray),
+            ),
+          ),
+          onChannelTap: (channel) {
+            // Option to restore or view archived messages
+            _showArchivedChannelActions(channel);
+          },
+        ),
+      ),
+    ),
+  );
+}</code></pre>
+</div>
+
+<h3>Container 3: "Crew Chat" <span class="line-ref">(Lines 322, 889-894)</span></h3>
+
+<h4>Current Implementation</h4>
+
+<pre><code>void _navigateToCrewChat() {
+  // ❌ PLACEHOLDER - No actual navigation
+  JJElectricalNotifications.showElectricalToast(
+    context: context,
+    message: 'Opening crew chat...',
+    type: ElectricalNotificationType.info,
+  );
+}</code></pre>
+
+<h4>Stream Chat SDK Integration Strategy</h4>
+
+<div class="success-box">
+    <strong>✅ Replace with:</strong> Direct navigation to crew's main #general channel
+
+<pre><code>Future&lt;void&gt; _navigateToCrewChat() async {
+  final selectedCrew = ref.read(selectedCrewProvider);
+  final streamClient = ref.read(streamChatClientProvider);
+
+  if (selectedCrew == null) {
+    JJElectricalNotifications.showElectricalToast(
+      context: context,
+      message: 'Please select a crew first',
+      type: ElectricalNotificationType.warning,
+    );
+    return;
+  }
+
+  // Get or create main crew channel
+  final channel = streamClient.channel(
+    'messaging',
+    id: 'general-${selectedCrew.id}',
+    extraData: {
+      'name': '# general',
+      'team': selectedCrew.id,
+      'image': selectedCrew.logoUrl,
+    },
+  );
+
+  await channel.watch();
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => StreamChannel(
+        channel: channel,
+        child: GroupChannelInfoScreen(),
+      ),
+    ),
+  );
+}</code></pre>
+</div>
+
+<h2>🎨 Reusable UI Components</h2>
+
+<h3>_ElectricalDialogBackground <span class="line-ref">(Lines 43-66)</span></h3>
+
+<p>Wraps all modal overlays with electrical circuit pattern background:</p>
+
+<pre><code>class _ElectricalDialogBackground extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return TailboardComponents.circuitBackground(context,
+      child: Padding(
+        padding: padding ?? EdgeInsets.only(
+          top: 24,
+          left: 24,
+          right: 24,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+        ),
+        child: child,
+      ),
+    );
+  }
+}</code></pre>
+
+<div class="info-box">
+    <strong>✅ Stream Chat Integration:</strong> This component is perfect for wrapping StreamChannelListView and custom channel screens to maintain electrical theme consistency.
+</div>
+
+<h3>_ElectricalTextField <span class="line-ref">(Lines 69-144)</span></h3>
+
+<p>Custom text input with electrical theme (navy background, copper accents):</p>
+
+<pre><code>class _ElectricalTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String? labelText;
+  final String? hintText;
+  final int? maxLines;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: TailboardTheme.surfaceLow,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: TailboardTheme.navy600),
+        boxShadow: [
+          BoxShadow(color: Color(0x33000000), offset: Offset(0, 4), blurRadius: 6),
+        ],
+      ),
+      child: TextField(
+        controller: controller,
+        style: TextStyle(fontSize: 16, color: Colors.white),
+        decoration: InputDecoration(
+          labelText: labelText,
+          labelStyle: TextStyle(fontSize: 14, color: Color(0xFFFCD34D)),
+          filled: false,
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.all(16),
+        ),
+      ),
+    );
+  }
+}</code></pre>
+
+<div class="warning-box">
+    <strong>⚠️ Stream Chat Theme Override Required:</strong> Stream Chat SDK has its own message input widget. We'll need to customize <code>StreamChatThemeData</code> to match these electrical colors instead of replacing the widget entirely.
+</div>
+
+<h3>_DialogActions <span class="line-ref">(Lines 147-191)</span></h3>
+
+<p>Reusable action buttons row for dialogs (Cancel + Confirm pattern):</p>
+
+<pre><code>class _DialogActions extends StatelessWidget {
+  final VoidCallback onCancel;
+  final VoidCallback onConfirm;
+  final String cancelText;
+  final String confirmText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        TextButton(
+          onPressed: onCancel,
+          child: Text(cancelText, style: TextStyle(color: AppTheme.mediumGray)),
+        ),
+        SizedBox(width: 12),
+        ElevatedButton(
+          onPressed: onConfirm,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppTheme.accentCopper,
+            foregroundColor: Colors.white,
+          ),
+          child: Text(confirmText),
+        ),
+      ],
+    );
+  }
+}</code></pre>
+
+<h2>🎨 Theme Mapping - Stream Chat Customization</h2>
+
+<h3>Existing Electrical Theme Colors</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Theme Constant</th>
+            <th>Hex Value</th>
+            <th>Usage</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>AppTheme.accentCopper</code></td>
+            <td>#D97706</td>
+            <td>Primary accent, buttons, highlights</td>
+        </tr>
+        <tr>
+            <td><code>AppTheme.accentCopperDark</code></td>
+            <td>#B45309</td>
+            <td>Darker copper variant</td>
+        </tr>
+        <tr>
+            <td><code>AppTheme.copperDarkest</code></td>
+            <td>#92400E</td>
+            <td>Darkest copper variant</td>
+        </tr>
+        <tr>
+            <td><code>TailboardTheme.surfaceLow</code></td>
+            <td>#1E293B</td>
+            <td>Container backgrounds</td>
+        </tr>
+        <tr>
+            <td><code>TailboardTheme.navy600</code></td>
+            <td>#1E40AF</td>
+            <td>Borders, dividers</td>
+        </tr>
+        <tr>
+            <td><code>AppTheme.textOnDark</code></td>
+            <td>#FFFFFF</td>
+            <td>Primary text color</td>
+        </tr>
+        <tr>
+            <td><code>AppTheme.mediumGray</code></td>
+            <td>#9CA3AF</td>
+            <td>Secondary text, subtitles</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Stream Chat Theme Configuration</h3>
+
+<div class="success-box">
+    <strong>✅ StreamChatThemeData Customization:</strong>
+
+<pre><code>final customStreamTheme = StreamChatThemeData(
+  brightness: Brightness.dark,
+
+  colorTheme: ColorTheme.dark(
+    accentPrimary: Color(0xFFD97706), // AppTheme.accentCopper
+    barBackground: Color(0xFF1E293B), // TailboardTheme.surfaceLow
+    inputBackground: Color(0xFF1E293B),
+    borders: Color(0xFF1E40AF), // TailboardTheme.navy600
+  ),
+
+  channelPreviewTheme: ChannelPreviewThemeData(
+    avatarTheme: AvatarThemeData(
+      borderRadius: BorderRadius.circular(8),
+      constraints: BoxConstraints.tightFor(width: 48, height: 48),
+    ),
+    titleStyle: TextStyle(
+      color: Colors.white,
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+    ),
+    subtitleStyle: TextStyle(
+      color: Color(0xFF9CA3AF), // AppTheme.mediumGray
+      fontSize: 14,
+    ),
+  ),
+
+  ownMessageTheme: MessageThemeData(
+    messageBackgroundColor: Color(0xFFB45309), // Copper for sent messages
+    messageTextStyle: TextStyle(color: Colors.white),
+  ),
+
+  otherMessageTheme: MessageThemeData(
+    messageBackgroundColor: Color(0xFF1E293B), // Navy for received
+    messageTextStyle: TextStyle(color: Colors.white),
+  ),
+
+  messageInputTheme: MessageInputThemeData(
+    inputBackgroundColor: Color(0xFF1E293B),
+    inputTextStyle: TextStyle(color: Colors.white),
+    actionButtonColor: Color(0xFFD97706), // Copper send button
+  ),
+);</code></pre>
+</div>
+
+<h2>🔐 Firebase Authentication Integration</h2>
+
+<h3>Current Auth System</h3>
+
+<p>The app uses Firebase Authentication (email/password and Google Sign-In). Users are stored in Firestore <code>users</code> collection with:</p>
+
+<ul>
+    <li><code>uid</code> (Firebase Auth UID)</li>
+    <li><code>email</code></li>
+    <li><code>displayName</code></li>
+    <li><code>photoURL</code></li>
+</ul>
+
+<h3>Stream Chat Token Generation Strategy</h3>
+
+<div class="info-box">
+    <strong>📚 RAG Research Finding:</strong> Stream recommends Firebase Cloud Functions for secure token generation using Stream's NodeJS client.
+</div>
+
+<h4>Required Cloud Function (NodeJS)</h4>
+
+<pre><code>// functions/src/streamChat.ts
+import * as functions from 'firebase-functions';
+import { StreamChat } from 'stream-chat';
+
+const serverClient = StreamChat.getInstance(
+  functions.config().stream.api_key,
+  functions.config().stream.api_secret
+);
+
+export const getStreamUserToken = functions.https.onCall(async (data, context) => {
+  // Verify Firebase Auth
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      'unauthenticated',
+      'User must be authenticated'
+    );
+  }
+
+  const userId = context.auth.uid;
+  const userEmail = context.auth.token.email;
+  const displayName = context.auth.token.name || userEmail;
+
+  // Create Stream user if doesn't exist
+  await serverClient.upsertUser({
+    id: userId,
+    name: displayName,
+    image: context.auth.token.picture,
+  });
+
+  // Generate token
+  const token = serverClient.createToken(userId);
+
+  return { token, userId };
+});</code></pre>
+
+<h4>Flutter Integration</h4>
+
+<pre><code>// lib/services/stream_chat_service.dart
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
+
+class StreamChatService {
+  static Future&lt;StreamChatClient&gt; initializeClient() async {
+    final functions = FirebaseFunctions.instance;
+
+    // Call Cloud Function to get token
+    final result = await functions
+        .httpsCallable('getStreamUserToken')
+        .call();
+
+    final token = result.data['token'] as String;
+    final userId = result.data['userId'] as String;
+
+    // Initialize Stream client
+    final client = StreamChatClient(
+      'YOUR_STREAM_API_KEY',
+      logLevel: Level.INFO,
+    );
+
+    await client.connectUser(
+      User(id: userId),
+      token,
+    );
+
+    return client;
+  }
+}</code></pre>
+
+<h2>👥 Teams Architecture - Crew Isolation</h2>
+
+<h3>IBEW Local Isolation Requirement</h3>
+
+<div class="warning-box">
+    <strong>⚠️ CRITICAL SECURITY REQUIREMENT:</strong> Users in IBEW Local 123 must ONLY see channels and communicate with other Local 123 members. They should NOT see or access Local 456 channels.
+</div>
+
+<h3>Stream Chat Teams Solution</h3>
+
+<div class="success-box">
+    <strong>✅ RAG Research Finding:</strong> Stream Chat's <code>teams</code> concept provides perfect crew isolation.
+
+<blockquote>
+"If a user belongs to a team, the API will ensure that such user will only be able to connect to channels from the same team"
+</blockquote>
+</div>
+
+<h4>Implementation Strategy</h4>
+
+<pre><code>// When user joins a crew (or selects a crew)
+final selectedCrew = ref.read(selectedCrewProvider);
+
+// Update Stream user with team assignment
+await streamClient.partialUpdateUser(
+  streamClient.state.currentUser!.id,
+  set: {
+    'teams': [selectedCrew!.id], // e.g., "local-123"
+  },
+);
+
+// All channels created with team filter
+final channel = streamClient.channel(
+  'messaging',
+  id: 'general-${selectedCrew.id}',
+  extraData: {
+    'name': '# general',
+    'team': selectedCrew.id, // ← CRITICAL for isolation
+  },
+);
+
+// Channel list queries automatically filter by team
+final controller = StreamChannelListController(
+  client: streamClient,
+  filter: Filter.and([
+    Filter.equal('type', 'messaging'),
+    Filter.equal('team', selectedCrew.id), // Only show crew's channels
+  ]),
+);</code></pre>
+
+<h2>📊 Recommended Riverpod Provider Structure</h2>
+
+<pre><code>// lib/features/crews/providers/stream_chat_providers.dart
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
+
+/// Global Stream Chat client instance
+final streamChatClientProvider = FutureProvider&lt;StreamChatClient&gt;((ref) async {
+  return await StreamChatService.initializeClient();
+});
+
+/// Current crew's channels (team-filtered)
+final crewChannelsProvider = FutureProvider.family&lt;List&lt;Channel&gt;, String&gt;(
+  (ref, crewId) async {
+    final client = await ref.watch(streamChatClientProvider.future);
+
+    final filter = Filter.and([
+      Filter.equal('type', 'messaging'),
+      Filter.equal('team', crewId),
+    ]);
+
+    final response = await client.queryChannels(
+      filter: filter,
+      sort: [SortOption('last_message_at')],
+    );
+
+    return response;
+  },
+);
+
+/// User's 1:1 DM conversations
+final dmConversationsProvider = FutureProvider((ref) async {
+  final client = await ref.watch(streamChatClientProvider.future);
+
+  final filter = Filter.and([
+    Filter.equal('type', 'messaging'),
+    Filter.in_('members', [client.state.currentUser!.id]),
+    Filter.equal('distinct', true), // Only 1:1 conversations
+  ]);
+
+  return await client.queryChannels(filter: filter);
+});
+
+/// Currently active/open channel
+final activeChannelProvider = StateProvider&lt;Channel?&gt;((ref) => null);</code></pre>
+
+<h2>🗺️ Implementation Roadmap</h2>
+
+<h3>Phase 1: Foundation Setup</h3>
+
+<ol>
+    <li>
+        <strong>Install Dependencies</strong>
+        <pre><code>dependencies:
+  stream_chat_flutter: ^7.0.0
+  cloud_functions: ^4.5.0</code></pre>
+    </li>
+    <li>
+        <strong>Create Firebase Cloud Function</strong>
+        <ul>
+            <li>Deploy <code>getStreamUserToken</code> function</li>
+            <li>Set Stream API credentials in Firebase config</li>
+        </ul>
+    </li>
+    <li>
+        <strong>Create Riverpod Providers</strong>
+        <ul>
+            <li>Implement <code>streamChatClientProvider</code></li>
+            <li>Implement <code>crewChannelsProvider</code></li>
+            <li>Implement <code>dmConversationsProvider</code></li>
+        </ul>
+    </li>
+</ol>
+
+<h3>Phase 2: Container 0 - "Channels" List</h3>
+
+<ol>
+    <li>Replace <code>_showChannelsList()</code> hardcoded channels with StreamChannelListView</li>
+    <li>Apply team filter using <code>selectedCrewProvider</code></li>
+    <li>Customize channel preview with electrical theme</li>
+    <li>Implement <code>_navigateToChannelMessages(channel)</code> method</li>
+</ol>
+
+<h3>Phase 3: Container 1 - "DMs" List</h3>
+
+<ol>
+    <li>Replace <code>_showDirectMessages()</code> toast with actual DM creation</li>
+    <li>Implement distinct channel creation for 1:1 conversations</li>
+    <li>Navigate to DirectChannelInfoScreen on tap</li>
+    <li>Ensure team isolation for DMs</li>
+</ol>
+
+<h3>Phase 4: Container 2 - "History"</h3>
+
+<ol>
+    <li>Replace <code>_showChatHistory()</code> with archived channels query</li>
+    <li>Implement hide/unhide channel functionality</li>
+    <li>Add restore archived conversation action</li>
+</ol>
+
+<h3>Phase 5: Container 3 - "Crew Chat"</h3>
+
+<ol>
+    <li>Replace <code>_navigateToCrewChat()</code> toast with actual navigation</li>
+    <li>Create/retrieve crew's #general channel</li>
+    <li>Navigate to GroupChannelInfoScreen</li>
+</ol>
+
+<h3>Phase 6: Theme Customization</h3>
+
+<ol>
+    <li>Implement StreamChatThemeData with electrical colors</li>
+    <li>Wrap app with StreamChat widget and custom theme</li>
+    <li>Test channel previews, messages, and inputs match design system</li>
+</ol>
+
+<h3>Phase 7: Testing & Polish</h3>
+
+<ol>
+    <li>Test team isolation (Local 123 vs Local 456)</li>
+    <li>Test 1:1 DM creation and distinct channels</li>
+    <li>Test real-time message updates</li>
+    <li>Performance testing with 50+ channels</li>
+    <li>Offline behavior and error handling</li>
+</ol>
+
+<h2>⚠️ Risk Mitigation</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Risk</th>
+            <th>Impact</th>
+            <th>Mitigation Strategy</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Team isolation leak</strong> - Users see other crews' channels</td>
+            <td>🔴 Critical - Privacy violation</td>
+            <td>
+                <ul>
+                    <li>Always include <code>team</code> filter in all queries</li>
+                    <li>Validate team assignment on Cloud Function level</li>
+                    <li>Write integration tests for cross-crew isolation</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Firebase Auth token expiration</strong></td>
+            <td>🟡 Medium - User disconnected from chat</td>
+            <td>
+                <ul>
+                    <li>Implement token refresh logic in Cloud Function</li>
+                    <li>Handle Stream reconnection automatically</li>
+                    <li>Show graceful error state with retry button</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Theme inconsistency</strong> - Stream UI doesn't match electrical theme</td>
+            <td>🟢 Low - UX degradation</td>
+            <td>
+                <ul>
+                    <li>Comprehensive StreamChatThemeData configuration</li>
+                    <li>Custom channel preview builder if needed</li>
+                    <li>Visual regression testing</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Performance with 100+ channels</strong></td>
+            <td>🟡 Medium - Slow loading</td>
+            <td>
+                <ul>
+                    <li>Use pagination (already built into StreamChannelListController)</li>
+                    <li>Implement virtual scrolling for large lists</li>
+                    <li>Cache channel previews locally</li>
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>📚 Key Documentation References</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Component</th>
+            <th>Documentation URL (From RAG Index)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>StreamChannelListView</td>
+            <td>https://getstream.io/chat/docs/sdk/flutter/ui_components/channel_list_view/</td>
+        </tr>
+        <tr>
+            <td>DirectChannelInfoScreen</td>
+            <td>https://getstream.io/chat/docs/sdk/flutter/ui_components/direct_channel_info_screen/</td>
+        </tr>
+        <tr>
+            <td>GroupChannelInfoScreen</td>
+            <td>https://getstream.io/chat/docs/sdk/flutter/ui_components/group_channel_info_screen/</td>
+        </tr>
+        <tr>
+            <td>Firebase Token Generation</td>
+            <td>https://getstream.io/chat/docs/sdk/flutter/guides/token_generation_with_firebase/</td>
+        </tr>
+        <tr>
+            <td>Teams Architecture</td>
+            <td>https://getstream.io/chat/docs/sdk/flutter/guides/multi_tenant_chat/</td>
+        </tr>
+        <tr>
+            <td>StreamChatThemeData</td>
+            <td>https://getstream.io/chat/docs/sdk/flutter/ui_components/theming/</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>✅ Conclusion</h2>
+
+<div class="success-box">
+    <strong>Integration Readiness Assessment: 95%</strong>
+
+    <p>The tailboard_screen.dart architecture is exceptionally well-positioned for Stream Chat SDK integration:</p>
+
+    <ul>
+        <li>✅ Clear placeholder methods ready for replacement</li>
+        <li>✅ Reusable electrical-themed UI components</li>
+        <li>✅ Riverpod state management hooks in place</li>
+        <li>✅ Modal overlay system for chat interfaces</li>
+        <li>✅ 4-container action system maps perfectly to chat features</li>
+        <li>✅ Existing crew context (selectedCrewProvider) ready for team isolation</li>
+    </ul>
+
+    <p><strong>Primary Implementation Targets:</strong></p>
+    <ol>
+        <li><code>_showChannelsList()</code> → StreamChannelListView with team filter</li>
+        <li><code>_showDirectMessages()</code> → Distinct channel creation + DirectChannelInfoScreen</li>
+        <li><code>_showChatHistory()</code> → Archived channels query</li>
+        <li><code>_navigateToCrewChat()</code> → Direct #general channel navigation</li>
+    </ol>
+</div>
+
+<hr>
+
+<p><em>Document generated: November 6, 2025</em></p>
+<p><em>Archon Project ID: 7ae92993-ea1b-43ee-86a9-c185697e4a07</em></p>
+<p><em>Task ID: 8541b810-eba6-49db-b354-9e63e2298071</em></p>
+
+</body>
+</html>

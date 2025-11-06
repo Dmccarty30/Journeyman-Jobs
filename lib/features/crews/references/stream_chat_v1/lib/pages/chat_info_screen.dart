@@ -96,7 +96,7 @@ class _ChatInfoScreenState extends State<ChatInfoScreen> {
                           color: StreamChatTheme.of(context)
                               .colorTheme
                               .textHighEmphasis
-                              .withOpacity(0.5),
+                              .withValues(alpha:0.5),
                           fontSize: 16.0),
                     ),
                   ),
@@ -137,7 +137,7 @@ class _ChatInfoScreenState extends State<ChatInfoScreen> {
                     color: StreamChatTheme.of(context)
                         .colorTheme
                         .textHighEmphasis
-                        .withOpacity(0.5),
+                        .withValues(alpha:0.5),
                   ),
                 ),
                 trailing: snapshot.data == null
@@ -172,7 +172,7 @@ class _ChatInfoScreenState extends State<ChatInfoScreen> {
               color: StreamChatTheme.of(context)
                   .colorTheme
                   .textHighEmphasis
-                  .withOpacity(0.5),
+                  .withValues(alpha:0.5),
             ),
           ),
           trailing: StreamSvgIcon.right(
@@ -203,7 +203,7 @@ class _ChatInfoScreenState extends State<ChatInfoScreen> {
               color: StreamChatTheme.of(context)
                   .colorTheme
                   .textHighEmphasis
-                  .withOpacity(0.5),
+                  .withValues(alpha:0.5),
             ),
           ),
           trailing: StreamSvgIcon.right(
@@ -236,7 +236,7 @@ class _ChatInfoScreenState extends State<ChatInfoScreen> {
               color: StreamChatTheme.of(context)
                   .colorTheme
                   .textHighEmphasis
-                  .withOpacity(0.5),
+                  .withValues(alpha:0.5),
             ),
           ),
           trailing: StreamSvgIcon.right(
@@ -269,7 +269,7 @@ class _ChatInfoScreenState extends State<ChatInfoScreen> {
               color: StreamChatTheme.of(context)
                   .colorTheme
                   .textHighEmphasis
-                  .withOpacity(0.5),
+                  .withValues(alpha:0.5),
             ),
           ),
           trailing: StreamSvgIcon.right(
@@ -342,7 +342,7 @@ class _ChatInfoScreenState extends State<ChatInfoScreen> {
               color: StreamChatTheme.of(context)
                   .colorTheme
                   .textHighEmphasis
-                  .withOpacity(0.5)),
+                  .withValues(alpha:0.5)),
         );
       } else {
         alternativeWidget = Text(
@@ -351,7 +351,7 @@ class _ChatInfoScreenState extends State<ChatInfoScreen> {
               color: StreamChatTheme.of(context)
                   .colorTheme
                   .textHighEmphasis
-                  .withOpacity(0.5)),
+                  .withValues(alpha:0.5)),
         );
       }
     }
@@ -456,7 +456,7 @@ class __SharedGroupsScreenState extends State<_SharedGroupsScreen> {
                       color: StreamChatTheme.of(context)
                           .colorTheme
                           .textHighEmphasis
-                          .withOpacity(0.5),
+                          .withValues(alpha:0.5),
                     ),
                   ),
                 ],
@@ -550,7 +550,7 @@ class __SharedGroupsScreenState extends State<_SharedGroupsScreen> {
                             color: StreamChatTheme.of(context)
                                 .colorTheme
                                 .textHighEmphasis
-                                .withOpacity(0.5)),
+                                .withValues(alpha:0.5)),
                       ),
                     )
                   ],
@@ -561,7 +561,7 @@ class __SharedGroupsScreenState extends State<_SharedGroupsScreen> {
                 color: StreamChatTheme.of(context)
                     .colorTheme
                     .textHighEmphasis
-                    .withOpacity(.08),
+                    .withValues(alpha:.08),
               ),
             ],
           );

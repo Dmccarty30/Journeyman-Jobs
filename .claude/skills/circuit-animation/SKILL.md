@@ -73,7 +73,7 @@ class SparkEffect extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(1 - value),
+                color: color.withValues(alpha:1 - value),
                 blurRadius: 20 * value,
                 spreadRadius: 10 * value,
               ),
@@ -81,7 +81,7 @@ class SparkEffect extends StatelessWidget {
           ),
           child: Icon(
             Icons.flash_on,
-            color: Colors.white.withOpacity(1 - value),
+            color: Colors.white.withValues(alpha:1 - value),
             size: 20,
           ),
         );
@@ -148,7 +148,7 @@ class ConnectionPulse extends StatefulWidget {
         boxShadow: isConnected
           ? [
               BoxShadow(
-                color: Colors.green.withOpacity(0.6),
+                color: Colors.green.withValues(alpha:0.6),
                 blurRadius: 12,
                 spreadRadius: 2,
               ),
@@ -162,7 +162,7 @@ class ConnectionPulse extends StatefulWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.green.withOpacity(1 - value),
+                  color: Colors.green.withValues(alpha:1 - value),
                   width: 2,
                 ),
               ),

@@ -92,7 +92,7 @@ class _ChannelFileDisplayScreenState extends State<ChannelFileDisplayScreen> {
                           color: StreamChatTheme.of(context)
                               .colorTheme
                               .textHighEmphasis
-                              .withOpacity(0.5),
+                              .withValues(alpha:0.5),
                         ),
                       ),
                     ],

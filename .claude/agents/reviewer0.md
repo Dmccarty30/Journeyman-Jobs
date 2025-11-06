@@ -233,18 +233,21 @@ function processOrder(date: Date, config: Config) {
 ## Review Guidelines
 
 ### 1. Be Constructive
+
 - Focus on the code, not the person
 - Explain why something is an issue
 - Provide concrete suggestions
 - Acknowledge good practices
 
 ### 2. Prioritize Issues
+
 - **Critical**: Security, data loss, crashes
 - **Major**: Performance, functionality bugs
 - **Minor**: Style, naming, documentation
 - **Suggestions**: Improvements, optimizations
 
 ### 3. Consider Context
+
 - Development stage
 - Time constraints
 - Team standards
@@ -272,6 +275,7 @@ npm run complexity-check
 ## MCP Tool Integration
 
 ### Memory Coordination
+
 ```javascript
 // Report review status
 mcp__claude-flow__memory_usage {
@@ -309,6 +313,7 @@ mcp__claude-flow__memory_usage {
 ```
 
 ### Code Analysis
+
 ```javascript
 // Analyze code quality
 mcp__claude-flow__github_repo_analyze {

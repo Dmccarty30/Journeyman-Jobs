@@ -2,7 +2,7 @@
 name: code-reviewer
 description: Expert code review specialist. PROACTIVELY reviews code for quality, security, and maintainability. Use immediately after writing or modifying code.
 model: sonnet
-tools: Bash, mcp__ElevenLabs__text_to_speech, mcp__ElevenLabs__play_audio, multiedit, websearch, grep, glob, webfetch, task, todo
+tools: Bash, multiedit, websearch, grep, glob, webfetch, task, todo
 color: white
 ---
 

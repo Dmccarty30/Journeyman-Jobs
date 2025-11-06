@@ -66,7 +66,7 @@ class JobAttachmentWidget extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: AppTheme.accentCopper.withOpacity(0.3),
+              color: AppTheme.accentCopper.withValues(alpha:0.3),
               width: 2,
             ),
           ),
@@ -87,7 +87,7 @@ class JobAttachmentWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.accentCopper.withOpacity(0.1),
+        color: AppTheme.accentCopper.withValues(alpha:0.1),
         borderRadius: const BorderRadius.vertical(
           top: Radius.circular(10),
         ),
@@ -131,7 +131,7 @@ class JobAttachmentWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: _getJobTypeColor().withOpacity(0.2),
+              color: _getJobTypeColor().withValues(alpha:0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -803,7 +803,7 @@ class _LocationShareWidgetState extends State<LocationShareWidget> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.1),
+        color: Colors.blue.withValues(alpha:0.1),
         borderRadius: const BorderRadius.vertical(
           top: Radius.circular(12),
         ),
@@ -849,7 +849,7 @@ class _LocationShareWidgetState extends State<LocationShareWidget> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.2),
+                color: Colors.orange.withValues(alpha:0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -901,7 +901,7 @@ class _LocationShareWidgetState extends State<LocationShareWidget> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha:0.3),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -921,7 +921,7 @@ class _LocationShareWidgetState extends State<LocationShareWidget> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withValues(alpha:0.6),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -1166,12 +1166,12 @@ class CircuitPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = primaryColor.withOpacity(0.1)
+      ..color = primaryColor.withValues(alpha:0.1)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
     final powerPaint = Paint()
-      ..color = secondaryColor.withOpacity(0.6)
+      ..color = secondaryColor.withValues(alpha:0.6)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
@@ -1240,7 +1240,7 @@ class CircuitPatternPainter extends CustomPainter {
 
     // Draw connection points
     final nodePaint = Paint()
-      ..color = primaryColor.withOpacity(0.3)
+      ..color = primaryColor.withValues(alpha:0.3)
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(Offset(x, y), 2, nodePaint);
@@ -1263,7 +1263,7 @@ class CircuitPatternPainter extends CustomPainter {
 
       // Draw glow effect
       final glowPaint = Paint()
-        ..color = secondaryColor.withOpacity(0.3)
+        ..color = secondaryColor.withValues(alpha:0.3)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
 
       canvas.drawCircle(offset, 8, glowPaint);

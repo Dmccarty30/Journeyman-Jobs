@@ -93,7 +93,7 @@ class _ChannelMediaDisplayScreenState extends State<ChannelMediaDisplayScreen> {
                           color: StreamChatTheme.of(context)
                               .colorTheme
                               .textHighEmphasis
-                              .withOpacity(0.5),
+                              .withValues(alpha:0.5),
                         ),
                       ),
                     ],

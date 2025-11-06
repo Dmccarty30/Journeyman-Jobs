@@ -384,7 +384,7 @@ class _CrewDirectoryScreenState extends State<CrewDirectoryScreen> {
           );
         },
         backgroundColor: Colors.grey[200],
-        selectedColor: AppTheme.accentCopper.withOpacity(0.3),
+        selectedColor: AppTheme.accentCopper.withValues(alpha:0.3),
         labelStyle: TextStyle(
           color: isSelected ? AppTheme.primaryNavy : AppTheme.textGrey,
         ),

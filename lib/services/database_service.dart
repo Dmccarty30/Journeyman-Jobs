@@ -7,7 +7,7 @@ import 'dart:io';
 import 'cache_service.dart';
 import '../models/user_model.dart';
 import '../models/crew_model.dart';
-import '../models/post_model.dart';
+import '../features/crews/models/post_model.dart';
 import '../models/job_model.dart';
 import '../models/conversation_model.dart' as conv;
 import '../models/contractor_model.dart';

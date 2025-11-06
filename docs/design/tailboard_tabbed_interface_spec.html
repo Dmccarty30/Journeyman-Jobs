@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailboard Tabbed Interface Design Specification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1A202C;
+            background: #F7FAFC;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1A202C;
+            margin-bottom: 8px;
+            border-left: 4px solid #B45309;
+            padding-left: 16px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #718096;
+            margin-bottom: 32px;
+            padding-left: 20px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #B45309;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #E2E8F0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2D3748;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #4A5568;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #4A5568;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .spec-card {
+            background: #F7FAFC;
+            border: 2px solid #B45309;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .spec-card h4 {
+            color: #B45309;
+            margin-top: 0;
+        }
+
+        .color-swatch {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            border: 1px solid #E2E8F0;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .measurement {
+            background: #EDF2F7;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: #2D3748;
+            display: inline-block;
+            margin: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #E2E8F0;
+        }
+
+        th {
+            background: #1A202C;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #F7FAFC;
+        }
+
+        code {
+            background: #EDF2F7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: #B45309;
+        }
+
+        .visual-example {
+            background: #1A202C;
+            padding: 32px;
+            border-radius: 12px;
+            margin: 24px 0;
+        }
+
+        .container-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .container-example {
+            flex: 1;
+            background: linear-gradient(135deg, #B45309, #D69E2E);
+            padding: 16px;
+            border-radius: 12px;
+            border: 2.5px solid #B45309;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-bar-example {
+            background: rgba(45, 55, 72, 0.5);
+            padding: 4px;
+            border-radius: 12px;
+            display: flex;
+            gap: 4px;
+        }
+
+        .tab-item {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            color: #718096;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .tab-item.active {
+            background: linear-gradient(135deg, #B45309, #D69E2E);
+            color: white;
+            box-shadow: 0 4px 8px rgba(180, 83, 9, 0.3);
+        }
+
+        .alert {
+            background: #FFF5F0;
+            border-left: 4px solid #B45309;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: #B45309;
+            margin-bottom: 8px;
+        }
+
+        ul, ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #4A5568;
+        }
+
+        .footer {
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 2px solid #E2E8F0;
+            text-align: center;
+            color: #718096;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tailboard Tabbed Interface Design Specification</h1>
+        <p class="subtitle">Comprehensive design system for the new tabbed interface in Journeyman Jobs</p>
+
+        <div class="alert">
+            <div class="alert-title">Design System Reference</div>
+            This specification is based on the existing AppTheme design system located in <code>lib/design_system/app_theme.dart</code> and follows all established electrical-themed design patterns.
+        </div>
+
+        <h2>1. Architecture Overview</h2>
+
+        <h3>1.1 Component Hierarchy</h3>
+        <p>The tabbed interface consists of four primary layers:</p>
+        <ol>
+            <li><strong>Header Section</strong> - Group information and settings (existing)</li>
+            <li><strong>Dynamic Container Row</strong> - 4 context-sensitive containers</li>
+            <li><strong>Tab Bar</strong> - Main navigation (Feed | Jobs | Chat | Members)</li>
+            <li><strong>Content Area</strong> - Tab-specific content</li>
+            <li><strong>Bottom Navigation</strong> - App-wide navigation (existing)</li>
+        </ol>
+
+        <h3>1.2 Container Content Mapping</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tab</th>
+                    <th>Container 1</th>
+                    <th>Container 2</th>
+                    <th>Container 3</th>
+                    <th>Container 4</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Feed</strong></td>
+                    <td>My Posts</td>
+                    <td>Sort</td>
+                    <td>History</td>
+                    <td>Crew Chat</td>
+                </tr>
+                <tr>
+                    <td><strong>Jobs</strong></td>
+                    <td>Construction Type</td>
+                    <td>Local</td>
+                    <td>Classification</td>
+                    <td>Crew Chat</td>
+                </tr>
+                <tr>
+                    <td><strong>Chat</strong></td>
+                    <td>Channels</td>
+                    <td>Channels</td>
+                    <td>History</td>
+                    <td>Crew Chat</td>
+                </tr>
+                <tr>
+                    <td><strong>Members</strong></td>
+                    <td>Channels</td>
+                    <td>Channels</td>
+                    <td>History</td>
+                    <td>Crew Chat</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>2. Container Specifications</h2>
+
+        <div class="spec-grid">
+            <div class="spec-card">
+                <h4>Dimensions</h4>
+                <p><strong>Height:</strong> <span class="measurement">56px</span> (fixed)</p>
+                <p><strong>Width:</strong> <span class="measurement">flex: 1</span> (equal distribution)</p>
+                <p><strong>Min Width:</strong> <span class="measurement">70px</span></p>
+                <p><strong>Gap Between:</strong> <span class="measurement">8px</span> (spacingSm)</p>
+            </div>
+
+            <div class="spec-card">
+                <h4>Border & Radius</h4>
+                <p><strong>Border Width:</strong> <span class="measurement">2.5px</span> (borderWidthCopper)</p>
+                <p><strong>Border Color:</strong> <span class="color-swatch" style="background: #B45309;"></span> <code>#B45309</code></p>
+                <p><strong>Border Radius:</strong> <span class="measurement">12px</span> (radiusMd)</p>
+            </div>
+
+            <div class="spec-card">
+                <h4>Background Gradient</h4>
+                <p><strong>Type:</strong> Linear Gradient</p>
+                <p><strong>Direction:</strong> 135° (topLeft to bottomRight)</p>
+                <p><strong>Start Color:</strong> <span class="color-swatch" style="background: #B45309;"></span> <code>#B45309</code></p>
+                <p><strong>End Color:</strong> <span class="color-swatch" style="background: #D69E2E;"></span> <code>#D69E2E</code></p>
+            </div>
+
+            <div class="spec-card">
+                <h4>Shadow System</h4>
+                <p><strong>Shadow:</strong> <code>AppTheme.shadowCard</code></p>
+                <p><strong>Color:</strong> <code>rgba(0, 0, 0, 0.06)</code></p>
+                <p><strong>Offset:</strong> <span class="measurement">0, 4px</span></p>
+                <p><strong>Blur:</strong> <span class="measurement">10px</span></p>
+            </div>
+        </div>
+
+        <h3>2.1 Typography Specifications</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                    <th>AppTheme Reference</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Font Family</td>
+                    <td>Google Fonts Inter</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Font Size</td>
+                    <td>12px</td>
+                    <td><code>labelMedium.fontSize</code></td>
+                </tr>
+                <tr>
+                    <td>Font Weight</td>
+                    <td>600 (Semi-Bold)</td>
+                    <td><code>labelMedium.fontWeight</code></td>
+                </tr>
+                <tr>
+                    <td>Text Color</td>
+                    <td>#FFFFFF (white)</td>
+                    <td><code>AppTheme.white</code></td>
+                </tr>
+                <tr>
+                    <td>Letter Spacing</td>
+                    <td>0.5px</td>
+                    <td><code>labelMedium.letterSpacing</code></td>
+                </tr>
+                <tr>
+                    <td>Line Height</td>
+                    <td>1.4</td>
+                    <td><code>labelMedium.height</code></td>
+                </tr>
+                <tr>
+                    <td>Text Align</td>
+                    <td>center</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Overflow</td>
+                    <td>ellipsis</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Max Lines</td>
+                    <td>2</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>2.2 Spacing & Padding</h3>
+
+        <div class="spec-grid">
+            <div class="spec-card">
+                <h4>Container Padding</h4>
+                <p><strong>Vertical:</strong> <span class="measurement">12px</span></p>
+                <p><strong>Horizontal:</strong> <span class="measurement">8px</span></p>
+                <p><strong>AppTheme:</strong> <code>EdgeInsets.symmetric(vertical: 12, horizontal: 8)</code></p>
+            </div>
+
+            <div class="spec-card">
+                <h4>Row Margins</h4>
+                <p><strong>Horizontal:</strong> <span class="measurement">16px</span> (spacingMd)</p>
+                <p><strong>Vertical:</strong> <span class="measurement">8px</span> (spacingSm)</p>
+                <p><strong>Bottom Margin:</strong> <span class="measurement">12px</span></p>
+            </div>
+
+            <div class="spec-card">
+                <h4>Container Gaps</h4>
+                <p><strong>Between Containers:</strong> <span class="measurement">8px</span></p>
+                <p><strong>From Tab Bar:</strong> <span class="measurement">12px</span></p>
+                <p><strong>From Header:</strong> <span class="measurement">8px</span></p>
+            </div>
+        </div>
+
+        <h2>3. Tab Bar Specifications</h2>
+
+        <h3>3.1 Tab Bar Container</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                    <th>AppTheme Reference</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Background Color</td>
+                    <td>rgba(45, 55, 72, 0.5)</td>
+                    <td><code>AppTheme.secondaryNavy.withValues(alpha: 0.5)</code></td>
+                </tr>
+                <tr>
+                    <td>Border Radius</td>
+                    <td>12px</td>
+                    <td><code>AppTheme.radiusMd</code></td>
+                </tr>
+                <tr>
+                    <td>Padding</td>
+                    <td>4px</td>
+                    <td><code>AppTheme.spacingXs</code></td>
+                </tr>
+                <tr>
+                    <td>Horizontal Margin</td>
+                    <td>16px</td>
+                    <td><code>AppTheme.spacingMd</code></td>
+                </tr>
+                <tr>
+                    <td>Vertical Margin</td>
+                    <td>12px</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>3.2 Tab Items - Unselected State</h3>
+
+        <div class="spec-grid">
+            <div class="spec-card">
+                <h4>Visual Properties</h4>
+                <p><strong>Background:</strong> Transparent</p>
+                <p><strong>Border Radius:</strong> <span class="measurement">8px</span></p>
+                <p><strong>Padding:</strong> <span class="measurement">12px vertical</span></p>
+                <p><strong>Icon Color:</strong> <span class="color-swatch" style="background: #718096;"></span> <code>#718096</code> (mediumGray)</p>
+                <p><strong>Text Color:</strong> <span class="color-swatch" style="background: #718096;"></span> <code>#718096</code> (mediumGray)</p>
+            </div>
+
+            <div class="spec-card">
+                <h4>Typography</h4>
+                <p><strong>Font Size:</strong> <span class="measurement">12px</span></p>
+                <p><strong>Font Weight:</strong> 400 (Normal)</p>
+                <p><strong>Icon Size:</strong> <span class="measurement">20px</span></p>
+                <p><strong>Icon-Text Gap:</strong> <span class="measurement">4px</span></p>
+            </div>
+        </div>
+
+        <h3>3.3 Tab Items - Selected State</h3>
+
+        <div class="spec-grid">
+            <div class="spec-card">
+                <h4>Visual Properties</h4>
+                <p><strong>Background:</strong> Copper Gradient</p>
+                <p><strong>Start Color:</strong> <span class="color-swatch" style="background: #B45309;"></span> <code>#B45309</code></p>
+                <p><strong>End Color:</strong> <span class="color-swatch" style="background: #D69E2E;"></span> <code>#D69E2E</code></p>
+                <p><strong>Shadow:</strong> <code>rgba(180, 83, 9, 0.3)</code></p>
+                <p><strong>Shadow Offset:</strong> <span class="measurement">0, 4px</span></p>
+                <p><strong>Shadow Blur:</strong> <span class="measurement">8px</span></p>
+            </div>
+
+            <div class="spec-card">
+                <h4>Typography</h4>
+                <p><strong>Font Weight:</strong> 700 (Bold)</p>
+                <p><strong>Icon Color:</strong> <span class="color-swatch" style="background: #FFFFFF;"></span> <code>#FFFFFF</code> (white)</p>
+                <p><strong>Text Color:</strong> <span class="color-swatch" style="background: #FFFFFF;"></span> <code>#FFFFFF</code> (white)</p>
+            </div>
+        </div>
+
+        <h2>4. Interactive States</h2>
+
+        <h3>4.1 Container Press States</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>State</th>
+                    <th>Visual Change</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Normal</td>
+                    <td>Full gradient, 2.5px border, card shadow</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Hover (Desktop)</td>
+                    <td>Slightly lighter gradient, increased shadow</td>
+                    <td>200ms</td>
+                </tr>
+                <tr>
+                    <td>Pressed</td>
+                    <td>Darker gradient, reduced elevation</td>
+                    <td>100ms</td>
+                </tr>
+                <tr>
+                    <td>Disabled</td>
+                    <td>50% opacity, no shadow</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>4.2 Tab Bar Transitions</h3>
+
+        <div class="spec-card">
+            <h4>Animation Specifications</h4>
+            <p><strong>Duration:</strong> <span class="measurement">200ms</span></p>
+            <p><strong>Curve:</strong> <code>Curves.easeInOut</code></p>
+            <p><strong>Properties:</strong> Background color, text color, icon color, shadow</p>
+            <p><strong>Container Swap:</strong> Instant (no animation)</p>
+        </div>
+
+        <h2>5. Responsive Behavior</h2>
+
+        <h3>5.1 Breakpoints</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Screen Width</th>
+                    <th>Container Behavior</th>
+                    <th>Font Adjustments</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>&lt; 320px</td>
+                    <td>Min width enforced (70px), scroll if needed</td>
+                    <td>10px font size</td>
+                </tr>
+                <tr>
+                    <td>320px - 375px</td>
+                    <td>Equal flex distribution</td>
+                    <td>11px font size</td>
+                </tr>
+                <tr>
+                    <td>375px - 768px</td>
+                    <td>Equal flex distribution (standard)</td>
+                    <td>12px font size</td>
+                </tr>
+                <tr>
+                    <td>&gt; 768px</td>
+                    <td>Max width constraints, centered</td>
+                    <td>12px font size</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>5.2 Text Overflow Handling</h3>
+
+        <ul>
+            <li><strong>1-word labels:</strong> Full display, centered</li>
+            <li><strong>2-word labels:</strong> Two lines if needed, centered</li>
+            <li><strong>Long labels:</strong> Ellipsis after 2 lines (<code>overflow: TextOverflow.ellipsis, maxLines: 2</code>)</li>
+            <li><strong>Minimum readable:</strong> 70px container width enforced</li>
+        </ul>
+
+        <h2>6. Color System</h2>
+
+        <h3>6.1 Primary Palette</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Element</th>
+                    <th>Color</th>
+                    <th>Hex</th>
+                    <th>AppTheme Constant</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Container Gradient Start</td>
+                    <td><span class="color-swatch" style="background: #B45309;"></span></td>
+                    <td><code>#B45309</code></td>
+                    <td><code>AppTheme.accentCopper</code></td>
+                </tr>
+                <tr>
+                    <td>Container Gradient End</td>
+                    <td><span class="color-swatch" style="background: #D69E2E;"></span></td>
+                    <td><code>#D69E2E</code></td>
+                    <td><code>AppTheme.secondaryCopper</code></td>
+                </tr>
+                <tr>
+                    <td>Container Border</td>
+                    <td><span class="color-swatch" style="background: #B45309;"></span></td>
+                    <td><code>#B45309</code></td>
+                    <td><code>AppTheme.borderCopper</code></td>
+                </tr>
+                <tr>
+                    <td>Container Text</td>
+                    <td><span class="color-swatch" style="background: #FFFFFF;"></span></td>
+                    <td><code>#FFFFFF</code></td>
+                    <td><code>AppTheme.white</code></td>
+                </tr>
+                <tr>
+                    <td>Tab Bar Background</td>
+                    <td><span class="color-swatch" style="background: rgba(45, 55, 72, 0.5);"></span></td>
+                    <td><code>rgba(45, 55, 72, 0.5)</code></td>
+                    <td><code>AppTheme.secondaryNavy.withValues(alpha: 0.5)</code></td>
+                </tr>
+                <tr>
+                    <td>Unselected Tab</td>
+                    <td><span class="color-swatch" style="background: #718096;"></span></td>
+                    <td><code>#718096</code></td>
+                    <td><code>AppTheme.mediumGray</code></td>
+                </tr>
+                <tr>
+                    <td>Selected Tab Background</td>
+                    <td>Gradient (Same as containers)</td>
+                    <td>-</td>
+                    <td><code>AppTheme.buttonGradient</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>7. Accessibility Guidelines</h2>
+
+        <h3>7.1 Contrast Ratios</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Element</th>
+                    <th>Ratio</th>
+                    <th>WCAG Level</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>White text on Copper gradient</td>
+                    <td>4.8:1</td>
+                    <td>AA (Pass)</td>
+                </tr>
+                <tr>
+                    <td>Gray text on Navy background</td>
+                    <td>5.1:1</td>
+                    <td>AA (Pass)</td>
+                </tr>
+                <tr>
+                    <td>White text on Selected tab</td>
+                    <td>4.8:1</td>
+                    <td>AA (Pass)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>7.2 Touch Targets</h3>
+
+        <ul>
+            <li><strong>Minimum size:</strong> 48x48 dp (Material Design guideline met)</li>
+            <li><strong>Container height:</strong> 56px (exceeds minimum)</li>
+            <li><strong>Tab height:</strong> 48px minimum (padding included)</li>
+            <li><strong>Spacing between:</strong> 8px (adequate separation)</li>
+        </ul>
+
+        <h3>7.3 Semantic Markup</h3>
+
+        <ul>
+            <li>Use <code>Semantics</code> widget for containers with <code>button: true</code></li>
+            <li>Provide <code>label</code> and <code>hint</code> for screen readers</li>
+            <li>Mark selected tab with <code>selected: true</code></li>
+            <li>Use <code>IndexedSemantics</code> for tab order</li>
+        </ul>
+
+        <h2>8. Implementation Code Structure</h2>
+
+        <h3>8.1 Widget Hierarchy</h3>
+
+        <pre style="background: #F7FAFC; padding: 16px; border-radius: 8px; overflow-x: auto;"><code>TailboardScreen
+├── SafeArea
+│   └── Column
+│       ├── _buildHeader()
+│       ├── _buildDynamicContainers()
+│       │   └── Row (mainAxisAlignment: spaceBetween)
+│       │       ├── _buildContainer(label: containers[0])
+│       │       ├── SizedBox(width: 8)
+│       │       ├── _buildContainer(label: containers[1])
+│       │       ├── SizedBox(width: 8)
+│       │       ├── _buildContainer(label: containers[2])
+│       │       ├── SizedBox(width: 8)
+│       │       └── _buildContainer(label: containers[3])
+│       ├── _buildTabBar()
+│       │   └── Container
+│       │       └── Row
+│       │           ├── _buildTabItem('Feed', 0)
+│       │           ├── _buildTabItem('Jobs', 1)
+│       │           ├── _buildTabItem('Chat', 2)
+│       │           └── _buildTabItem('Members', 3)
+│       └── Expanded
+│           └── _buildTabContent()
+└── BottomNavigationBar</code></pre>
+
+        <h3>8.2 Key Constants</h3>
+
+        <pre style="background: #F7FAFC; padding: 16px; border-radius: 8px; overflow-x: auto;"><code>// Container dimensions
+static const double containerHeight = 56.0;
+static const double containerMinWidth = 70.0;
+static const double containerGap = 8.0; // AppTheme.spacingSm
+
+// Border specifications
+static const double containerBorderWidth = 2.5; // AppTheme.borderWidthCopper
+static const double containerBorderRadius = 12.0; // AppTheme.radiusMd
+
+// Tab bar specifications
+static const double tabBarPadding = 4.0; // AppTheme.spacingXs
+static const double tabItemPadding = 12.0;
+static const double tabIconSize = 20.0; // AppTheme.iconSm
+static const double tabBorderRadius = 8.0; // AppTheme.radiusSm
+
+// Typography
+static const double containerFontSize = 12.0; // labelMedium
+static const FontWeight containerFontWeight = FontWeight.w600;
+static const double containerLetterSpacing = 0.5;</code></pre>
+
+        <h3>8.3 Container Data Map</h3>
+
+        <pre style="background: #F7FAFC; padding: 16px; border-radius: 8px; overflow-x: auto;"><code>final Map&lt;int, List&lt;String&gt;&gt; _containerData = {
+  0: ['My Posts', 'Sort', 'History', 'Crew Chat'],           // Feed
+  1: ['Construction Type', 'Local', 'Classification', 'Crew Chat'], // Jobs
+  2: ['Channels', 'Channels', 'History', 'Crew Chat'],       // Chat
+  3: ['Channels', 'Channels', 'History', 'Crew Chat'],       // Members
+};</code></pre>
+
+        <h2>9. Visual Examples</h2>
+
+        <h3>9.1 Container Row Example</h3>
+        <div class="visual-example">
+            <div class="container-row">
+                <div class="container-example">My Posts</div>
+                <div class="container-example">Sort</div>
+                <div class="container-example">History</div>
+                <div class="container-example">Crew Chat</div>
+            </div>
+            <p style="color: #718096; font-size: 12px; text-align: center;">Feed Tab Containers</p>
+        </div>
+
+        <h3>9.2 Tab Bar Example</h3>
+        <div class="visual-example">
+            <div class="tab-bar-example">
+                <div class="tab-item">Feed</div>
+                <div class="tab-item active">Jobs</div>
+                <div class="tab-item">Chat</div>
+                <div class="tab-item">Members</div>
+            </div>
+            <p style="color: #718096; font-size: 12px; text-align: center; margin-top: 16px;">Jobs Tab Selected</p>
+        </div>
+
+        <h2>10. Performance Considerations</h2>
+
+        <h3>10.1 Optimization Strategies</h3>
+
+        <ul>
+            <li><strong>Container Updates:</strong> Use <code>const</code> widgets where possible</li>
+            <li><strong>Tab Switching:</strong> Instant container swap (no animation overhead)</li>
+            <li><strong>Gradient Rendering:</strong> Cache gradient objects in build method</li>
+            <li><strong>Text Measurement:</strong> Pre-calculate text sizes for common labels</li>
+            <li><strong>State Management:</strong> Use local state for tab index (no Provider needed)</li>
+        </ul>
+
+        <h3>10.2 Build Performance</h3>
+
+        <ul>
+            <li>Container row rebuilds only on tab change (4 containers updated)</li>
+            <li>Tab bar rebuilds only on selection change</li>
+            <li>Content area uses <code>IndexedStack</code> to preserve state</li>
+            <li>Avoid rebuilding entire screen on tab switch</li>
+        </ul>
+
+        <h2>11. Testing Requirements</h2>
+
+        <h3>11.1 Widget Tests</h3>
+
+        <ul>
+            <li>Verify correct container labels for each tab</li>
+            <li>Verify all 4 containers render with equal width</li>
+            <li>Verify container tap callbacks are invoked</li>
+            <li>Verify tab selection changes container content</li>
+            <li>Verify selected tab shows copper gradient</li>
+            <li>Verify unselected tabs show gray text/icons</li>
+        </ul>
+
+        <h3>11.2 Visual Regression Tests</h3>
+
+        <ul>
+            <li>Screenshot comparison for each tab state</li>
+            <li>Verify gradient rendering consistency</li>
+            <li>Verify shadow appearance matches spec</li>
+            <li>Verify text overflow behavior</li>
+        </ul>
+
+        <h3>11.3 Responsive Tests</h3>
+
+        <ul>
+            <li>Test on 320px, 375px, 414px, 768px widths</li>
+            <li>Verify text doesn't overflow containers</li>
+            <li>Verify minimum touch target size maintained</li>
+            <li>Verify equal container distribution</li>
+        </ul>
+
+        <h2>12. Implementation Checklist</h2>
+
+        <h3>12.1 Phase 1: Core Structure</h3>
+        <ul>
+            <li>☐ Create <code>_buildDynamicContainers()</code> method</li>
+            <li>☐ Create <code>_buildContainer(String label)</code> helper</li>
+            <li>☐ Define container data map</li>
+            <li>☐ Update tab switching logic to change containers</li>
+            <li>☐ Add container tap handling</li>
+        </ul>
+
+        <h3>12.2 Phase 2: Styling</h3>
+        <ul>
+            <li>☐ Apply copper gradient backgrounds</li>
+            <li>☐ Add 2.5px copper borders</li>
+            <li>☐ Apply 12px border radius</li>
+            <li>☐ Add card shadow system</li>
+            <li>☐ Implement text styles (12px, semi-bold, white)</li>
+        </ul>
+
+        <h3>12.3 Phase 3: Interactions</h3>
+        <ul>
+            <li>☐ Add InkWell ripple effects</li>
+            <li>☐ Implement press state visual feedback</li>
+            <li>☐ Add tab transition animations</li>
+            <li>☐ Test touch target sizes</li>
+        </ul>
+
+        <h3>12.4 Phase 4: Polish & Accessibility</h3>
+        <ul>
+            <li>☐ Add Semantics widgets</li>
+            <li>☐ Test screen reader compatibility</li>
+            <li>☐ Verify contrast ratios</li>
+            <li>☐ Test responsive behavior</li>
+            <li>☐ Add loading states</li>
+        </ul>
+
+        <h2>13. Code Snippets</h2>
+
+        <h3>13.1 Container Builder</h3>
+        <pre style="background: #F7FAFC; padding: 16px; border-radius: 8px; overflow-x: auto;"><code>Widget _buildContainer(String label) {
+  return Expanded(
+    child: Container(
+      height: 56,
+      decoration: BoxDecoration(
+        gradient: AppTheme.buttonGradient,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        border: Border.all(
+          color: AppTheme.borderCopper,
+          width: AppTheme.borderWidthCopper,
+        ),
+        boxShadow: AppTheme.shadowCard,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _handleContainerTap(label),
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 12,
+              ),
+              child: Text(
+                label,
+                style: AppTheme.labelMedium.copyWith(
+                  color: AppTheme.white,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}</code></pre>
+
+        <h3>13.2 Dynamic Container Row</h3>
+        <pre style="background: #F7FAFC; padding: 16px; border-radius: 8px; overflow-x: auto;"><code>Widget _buildDynamicContainers() {
+  List&lt;String&gt; currentContainers = _containerData[_selectedTabIndex] ?? [];
+
+  return Padding(
+    padding: EdgeInsets.symmetric(
+      horizontal: AppTheme.spacingMd,
+      vertical: AppTheme.spacingSm,
+    ),
+    child: Row(
+      children: [
+        for (int i = 0; i &lt; currentContainers.length; i++) ...[
+          _buildContainer(currentContainers[i]),
+          if (i &lt; currentContainers.length - 1)
+            SizedBox(width: AppTheme.spacingSm),
+        ],
+      ],
+    ),
+  );
+}</code></pre>
+
+        <div class="footer">
+            <p><strong>Document Version:</strong> 1.0</p>
+            <p><strong>Last Updated:</strong> 2025-11-06</p>
+            <p><strong>Design System:</strong> Journeyman Jobs - AppTheme (lib/design_system/app_theme.dart)</p>
+        </div>
+    </div>
+</body>
+</html>

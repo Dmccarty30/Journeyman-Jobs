@@ -6,7 +6,7 @@ import 'dart:io';
 import '../../../../lib/services/database_service.dart';
 import '../../../../lib/models/user_model.dart';
 import '../../../../lib/models/crew_model.dart';
-import '../../../../lib/models/post_model.dart';
+import '../../../../lib/features/crews/models/post_model.dart';
 import '../../../../lib/models/job_model.dart';
 import '../../../../lib/models/message_model.dart';
 import '../../../../lib/services/storage_service.dart';

@@ -467,9 +467,12 @@ export const cleanupOldNotifications = functions.pubsub
       
       console.log(`Deleted ${deletedCount} old notifications`);
       return null;
-      
+
     } catch (error) {
       console.error('Error cleaning up old notifications:', error);
       return null;
     }
   });
+
+// Stream Chat integration functions
+export { getStreamUserToken, updateUserTeam } from './streamChat';

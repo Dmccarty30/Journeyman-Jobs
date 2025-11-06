@@ -5,5 +5,6 @@ export 'crew_preferences.dart';
 export 'crew_stats.dart';
 export 'crew_member.dart';
 export 'tailboard.dart';
+export 'post_model.dart';
 export 'message.dart';
 export 'shared_job.dart';

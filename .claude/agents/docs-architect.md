@@ -2,8 +2,9 @@
 name: docs-architect
 description: Creates comprehensive technical documentation from existing codebases. Analyzes architecture, design patterns, and implementation details to produce long-form technical manuals and ebooks. Use PROACTIVELY for system documentation, architecture guides, or technical deep-dives.
 model: haiku
-tools: Bash, mcp__ElevenLabs__text_to_speech, mcp__ElevenLabs__play_audio, multiedit, websearch, grep, glob, webfetch, task, todo
-color: yellow 
+tools: Bash, multiedit, websearch, grep, glob, webfetch, task, todo, mcp_archon_crawl_single_page, mcp_archon_smart_crawl_url, mcp_archon_upload_document, mcp_archon_get_available_sources, mcp_archon_delete_source, mcp_archon_manage_project, mcp_archon_manage_task, mcp_archon_manage_document, mcp_archon_manage_versions, mcp_archon_get_project_features
+color: yellow
+model: haiku
 ---
 
 # Documentation Architect
