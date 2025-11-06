@@ -11,35 +11,7 @@ Specific Requirements:
 
 ***THIS FUNCTION SHOULD BE DISABLED DURING DEVELOPMENT AND TESTING.DURING WHICH NO TIMEOUT/IDLE TIME LIMITATION SHALL BE APPLIED***
 
-||| `Idle/inactivity detection (e.g., no user input or page interactions for a defined period).
-||| App closure or backgrounding (e.g., user switches away from the app or explicitly closes it).
-||| Any other automatic sign-out triggers (e.g., network disconnection, timeout on suspended sessions).`
-
 **Current vs. Desired Behavior:**
-
-Current: Immediate sign-out upon detection of the above conditions.
-Desired: Delay sign-out by exactly 5 minutes after the condition is detected. During this delay, the session remains active and logged in, even if the app is closed or inactive.
-
-**Implementation Guidelines:**
-
-Start a 5-minute timer only after the triggering condition is confirmed (e.g., after 2 minutes of confirmed inactivity, begin the additional 5-minute grace period).
-If the user resumes activity (e.g., reopens the app, performs an action) within the 5 minutes, reset the timer and maintain the session without interruption.
-Ensure the delay applies universally across platforms (web, iOS, Android) and session types (e.g., browser tabs, mobile foreground/background).
-Log relevant events for debugging (e.g., "Grace period started due to inactivity at [timestamp]") without exposing user data.
-
-**Edge Cases to Handle:**
-
-Multiple triggers in quick succession: Use the latest trigger to reset the timer.
-Server-side vs. client-side enforcement: Synchronize timers where possible to avoid desyncs.
-Security considerations: Do not extend the grace period beyond 5 minutes; enforce strict sign-out after expiration to maintain compliance.
-
-**Testing Criteria:**
-
-Verify no sign-out occurs within 5 minutes of triggering conditions.
-Confirm sign-out happens precisely at the 5-minute mark if no resumption occurs.
-Test resumption scenarios to ensure seamless session continuity.
-
-Expected Output: Provide updated code snippets, configuration changes, or pseudocode for the affected modules (e.g., auth service, session manager). Include any necessary UI notifications (e.g., a subtle warning banner at the 4-minute mark: "Session expiring soon—stay active to continue").
 
 ## APP THEME
 

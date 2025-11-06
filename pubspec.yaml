@@ -104,6 +104,7 @@ dependencies:
 
   # Internationalization
   intl: ^0.20.1
+  stream_chat_flutter: ^9.19.0
 
 dev_dependencies:
   flutter_test:

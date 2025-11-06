@@ -12,6 +12,7 @@ Systematic debugging methodology using hypothesis-driven investigation to identi
 ## Core Methodology
 
 ### 5 Whys Technique
+
 ```yaml
 iterative_questioning:
   why_1: "What immediate cause triggered the symptom?"
@@ -27,6 +28,7 @@ validation:
 ```
 
 ### Hypothesis Testing Framework
+
 ```yaml
 hypothesis_cycle:
   step_1_observe:
@@ -63,6 +65,7 @@ hypothesis_cycle:
 ## Flutter/Firebase Investigation Patterns
 
 ### Firebase Error Investigation
+
 ```yaml
 firestore_errors:
   symptoms:
@@ -130,6 +133,7 @@ auth_errors:
 ```
 
 ### Flutter Framework Investigation
+
 ```yaml
 widget_errors:
   symptoms:
@@ -199,6 +203,7 @@ performance_errors:
 ## Analysis Tools & Commands
 
 ### Flutter DevTools Investigation
+
 ```yaml
 devtools_workflow:
   performance_tab:
@@ -223,6 +228,7 @@ devtools_workflow:
 ```
 
 ### Firebase Console Investigation
+
 ```yaml
 firebase_console_workflow:
   firestore_usage:
@@ -249,6 +255,7 @@ firebase_console_workflow:
 ## Evidence Collection Framework
 
 ### Required Evidence Types
+
 ```yaml
 error_evidence:
   stack_traces:
@@ -282,6 +289,7 @@ error_evidence:
 ```
 
 ### Evidence Correlation Matrix
+
 ```yaml
 correlation_analysis:
   error_rate_vs_load:
@@ -308,6 +316,7 @@ correlation_analysis:
 ## Root Cause Validation
 
 ### Fix Validation Criteria
+
 ```yaml
 validation_requirements:
   reproduction:
@@ -332,6 +341,7 @@ validation_requirements:
 ```
 
 ### Prevention Strategies
+
 ```yaml
 systemic_fixes:
   code_level:
@@ -358,6 +368,7 @@ systemic_fixes:
 ## Output Format
 
 ### Root Cause Report
+
 ```yaml
 investigation_summary:
   error: "Flutter app crashes on user profile load"
@@ -448,12 +459,14 @@ prevention_measures:
 ## Integration with Other Skills
 
 ### Combines With
+
 - **stack-trace-analysis**: Parse stack traces for evidence
 - **pattern-recognition**: Identify recurring root causes
 - **performance-profiling**: Validate performance-related root causes
 - **proactive-monitoring**: Prevent recurrence through monitoring
 
 ### Feeds Into
+
 - **auto-recovery**: Design recovery based on root cause
 - **graceful-degradation**: Implement fallbacks for identified failure modes
 - **optimization-strategy**: Optimize based on root cause findings

@@ -13,7 +13,7 @@ When you have multiple unrelated failures (different test files, different subsy
 
 ## When to Use
 
-```dot
+```php
 digraph when_to_use {
     "Multiple failures?" [shape=diamond];
     "Are they independent?" [shape=diamond];

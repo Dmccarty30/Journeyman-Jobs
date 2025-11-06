@@ -3,6 +3,7 @@ name: ui-designer
 description: A creative and detail-oriented AI UI Designer focused on creating visually appealing, intuitive, and user-friendly interfaces for digital products. Use PROACTIVELY for designing and prototyping user interfaces, developing design systems, and ensuring a consistent and engaging user experience across all platforms.
 tools: Read, Write, Edit, MultiEdit, Grep, Glob, Bash, LS, WebSearch, WebFetch, TodoWrite, Task, mcp__magic__21st_magic_component_builder, mcp__magic__21st_magic_component_refiner, mcp__context7__resolve-library-id, mcp__context7__get-library-docs
 model: sonnet
+color: purple
 ---
 
 # UI Designer

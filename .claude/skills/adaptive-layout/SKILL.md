@@ -5,11 +5,13 @@
 **Used By**: Responsive Designer, Widget Specialist
 
 ## Skill Description
+
 Dynamic layout system that adapts to screen sizes, orientations, and device capabilities, ensuring optimal user experience across all platforms.
 
 ## Screen Size Detection
 
 ### Breakpoint System
+
 ```dart
 enum ScreenSize {
   compact,  // < 600dp (phones)
@@ -33,6 +35,7 @@ class AdaptiveLayout extends StatelessWidget {
 ```
 
 ### Orientation Handling
+
 ```dart
 class OrientationAwareWidget extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -48,6 +51,7 @@ class OrientationAwareWidget extends StatelessWidget {
 ## Adaptive Components
 
 ### Navigation Patterns
+
 ```dart
 class AdaptiveNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -75,6 +79,7 @@ class AdaptiveNavigation extends StatelessWidget {
 ```
 
 ### Grid Systems
+
 ```dart
 class AdaptiveGrid extends StatelessWidget {
   final List<Widget> children;
@@ -103,6 +108,7 @@ class AdaptiveGrid extends StatelessWidget {
 ```
 
 ## Master-Detail Pattern
+
 ```dart
 class AdaptiveMasterDetail extends StatelessWidget {
   final Widget master;
@@ -134,6 +140,7 @@ class AdaptiveMasterDetail extends StatelessWidget {
 ```
 
 ## Foldable Device Support
+
 ```dart
 class FoldableAware extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -157,6 +164,7 @@ class FoldableAware extends StatelessWidget {
 ## Content Adaptation
 
 ### Text Scaling
+
 ```dart
 Text adaptiveText(String text, BuildContext context) {
   final screenWidth = MediaQuery.of(context).size.width;
@@ -174,6 +182,7 @@ Text adaptiveText(String text, BuildContext context) {
 ```
 
 ### Image Optimization
+
 ```dart
 Widget adaptiveImage(String url, BuildContext context) {
   final pixelRatio = MediaQuery.of(context).devicePixelRatio;
@@ -188,11 +197,13 @@ Widget adaptiveImage(String url, BuildContext context) {
 ```
 
 ## Integration Points
+
 - Works with: [[responsive-designer]]
 - Enhances: [[mobile-first-design-patterns]]
 - Supports: All screen sizes and orientations
 
 ## Performance Metrics
+
 - Layout shift: < 0.1 CLS
 - Adaptation time: < 100ms
 - Memory efficiency: Optimized for device
