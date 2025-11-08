@@ -39,7 +39,7 @@ grep -i "worktree.*director" CLAUDE.md 2>/dev/null
 
 If no directory exists and no CLAUDE.md preference:
 
-```
+```dart
 No worktree directory found. Where should I create worktrees?
 
 1. .worktrees/ (project-local, hidden)
@@ -62,6 +62,7 @@ grep -q "^\.worktrees/$" .gitignore || grep -q "^worktrees/$" .gitignore
 **If NOT in .gitignore:**
 
 Per Jesse's rule "Fix broken things immediately":
+
 1. Add appropriate line to .gitignore
 2. Commit the change
 3. Proceed with worktree creation
@@ -135,7 +136,7 @@ go test ./...
 
 ### 5. Report Location
 
-```
+```dart
 Worktree ready at <full-path>
 Tests passing (<N> tests, 0 failures)
 Ready to implement <feature-name>
@@ -155,25 +156,29 @@ Ready to implement <feature-name>
 
 ## Common Mistakes
 
-**Skipping .gitignore verification**
+- **Skipping .gitignore verification**
+
 - **Problem:** Worktree contents get tracked, pollute git status
 - **Fix:** Always grep .gitignore before creating project-local worktree
 
-**Assuming directory location**
+- **Assuming directory location**
+
 - **Problem:** Creates inconsistency, violates project conventions
 - **Fix:** Follow priority: existing > CLAUDE.md > ask
 
-**Proceeding with failing tests**
+- **Proceeding with failing tests**
+
 - **Problem:** Can't distinguish new bugs from pre-existing issues
 - **Fix:** Report failures, get explicit permission to proceed
 
-**Hardcoding setup commands**
+- **Hardcoding setup commands**
+
 - **Problem:** Breaks on projects using different tools
 - **Fix:** Auto-detect from project files (package.json, etc.)
 
 ## Example Workflow
 
-```
+```js
 You: I'm using the using-git-worktrees skill to set up an isolated workspace.
 
 [Check .worktrees/ - exists]
@@ -190,6 +195,7 @@ Ready to implement auth feature
 ## Red Flags
 
 **Never:**
+
 - Create worktree without .gitignore verification (project-local)
 - Skip baseline test verification
 - Proceed with failing tests without asking
@@ -197,6 +203,7 @@ Ready to implement auth feature
 - Skip CLAUDE.md check
 
 **Always:**
+
 - Follow directory priority: existing > CLAUDE.md > ask
 - Verify .gitignore for project-local
 - Auto-detect and run project setup
@@ -205,9 +212,11 @@ Ready to implement auth feature
 ## Integration
 
 **Called by:**
+
 - **brainstorming** (Phase 4) - REQUIRED when design is approved and implementation follows
 - Any skill needing isolated workspace
 
 **Pairs with:**
+
 - **finishing-a-development-branch** - REQUIRED for cleanup after work complete
 - **executing-plans** or **subagent-driven-development** - Work happens in this worktree

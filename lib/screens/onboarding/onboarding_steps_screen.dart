@@ -9,7 +9,7 @@ import 'package:journeyman_jobs/domain/enums/enums.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
-import '../../services/firestore_service.dart';
+import '../../services/unified_firestore_service.dart';
 import '../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
 import '../../electrical_components/circuit_board_background.dart';
@@ -134,7 +134,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
 
-      final firestoreService = FirestoreService();
+      final firestoreService = UnifiedFirestoreService();
       final userDoc = await firestoreService.getUser(user.uid);
 
       if (!userDoc.exists) return;
@@ -376,7 +376,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
         'lastActive': FieldValue.serverTimestamp(),
       };
 
-      final firestoreService = FirestoreService();
+      final firestoreService = UnifiedFirestoreService();
       await firestoreService.setUserWithMerge(uid: user.uid, data: step1Data);
       debugPrint('✅ Step 1 progress saved - User can resume at Step 2');
     } catch (e) {
@@ -442,7 +442,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
         'lastActive': FieldValue.serverTimestamp(),
       };
 
-      final firestoreService = FirestoreService();
+      final firestoreService = UnifiedFirestoreService();
       await firestoreService.setUserWithMerge(uid: user.uid, data: step2Data);
       debugPrint('✅ Step 2 progress saved - User can resume at Step 3');
     } catch (e) {
@@ -541,7 +541,7 @@ class _OnboardingStepsScreenState extends ConsumerState<OnboardingStepsScreen> {
       debugPrint('📧 User email: ${user.email}');
 
       // Initialize Firestore service
-      final firestoreService = FirestoreService();
+      final firestoreService = UnifiedFirestoreService();
 
       // Map onboarding data to UserJobPreferences for job matching
       final preferences = _mapOnboardingDataToPreferences();

@@ -7,6 +7,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../services/auth_service.dart';
 import '../../utils/concurrent_operations.dart';
+import '../../utils/error_handler.dart';
+import 'error_handling_provider.dart';
 
 part 'auth_riverpod_provider.g.dart';
 
@@ -207,32 +209,41 @@ class AuthNotifier extends _$AuthNotifier {
 
     final Stopwatch stopwatch = Stopwatch()..start();
 
-    try {
-      await operationManager.executeOperation(
-        type: OperationType.signIn,
-        operation: () => ref.read(authServiceProvider).signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        ),
-      );
+    final success = await ErrorHandler.handleAsyncOperation(
+      () async {
+        await operationManager.executeOperation(
+          type: OperationType.signIn,
+          operation: () => ref.read(authServiceProvider).signInWithEmailAndPassword(
+            email: email,
+            password: password,
+          ),
+        );
+        return true;
+      },
+      operationName: 'signInWithEmailAndPassword',
+      errorMessage: 'Failed to sign in',
+      context: {
+        'email': email,
+        'attemptNumber': _signInAttempts,
+      },
+    );
 
-      stopwatch.stop();
+    stopwatch.stop();
+
+    if (success != null) {
       _successfulSignIns++;
-      
       state = state.copyWith(
         isLoading: false,
         lastSignInDuration: stopwatch.elapsed,
         signInSuccessRate: _successfulSignIns / _signInAttempts,
       );
-    } catch (e) {
-      stopwatch.stop();
+    } else {
+      // Error already handled by ErrorHandler
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
         lastSignInDuration: stopwatch.elapsed,
         signInSuccessRate: _successfulSignIns / _signInAttempts,
       );
-      rethrow;
     }
   }
 
@@ -244,19 +255,23 @@ class AuthNotifier extends _$AuthNotifier {
 
     state = state.copyWith(isLoading: true);
 
-    try {
-      await operationManager.executeOperation(
-        type: OperationType.signOut,
-        operation: () => ref.read(authServiceProvider).signOut(),
-      );
-      
+    final success = await ErrorHandler.handleAsyncOperation(
+      () async {
+        await operationManager.executeOperation(
+          type: OperationType.signOut,
+          operation: () => ref.read(authServiceProvider).signOut(),
+        );
+        return true;
+      },
+      operationName: 'signOut',
+      errorMessage: 'Failed to sign out',
+    );
+
+    if (success != null) {
       state = state.copyWith(isLoading: false);
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
-      rethrow;
+    } else {
+      // Error already handled by ErrorHandler
+      state = state.copyWith(isLoading: false);
     }
   }
 
@@ -294,68 +309,16 @@ bool isRouteProtected(Ref ref, String routePath) {
   return protectedRoutes.any((String route) => routePath.startsWith(route));
 }
 
-/// Monitors session validity and triggers re-auth when session expires.
-///
-/// Checks session age every 5 minutes and invalidates sessions >24 hours old.
-/// This ensures compliance with the 24-hour session requirement.
-///
-/// The monitor:
-/// - Runs periodic checks every 5 minutes
-/// - Validates session timestamp against 24-hour limit
-/// - Automatically signs out expired sessions
-/// - Cleans up timer on provider disposal
-///
-/// Example usage:
-/// ```dart
-/// final sessionValid = ref.watch(sessionMonitorProvider);
-/// if (!sessionValid) {
-///   // Session expired - user will be redirected to login
-/// }
-/// ```
-@riverpod
-class SessionMonitor extends _$SessionMonitor {
-  Timer? _checkTimer;
-
-  /// Session validity check interval (5 minutes)
-  static const _checkInterval = Duration(minutes: 5);
-
-  @override
-  bool build() {
-    // Start monitoring when provider initializes
-    _startMonitoring();
-
-    // Clean up timer on dispose
-    ref.onDispose(() {
-      _checkTimer?.cancel();
-    });
-
-    return true; // Session valid initially
-  }
-
-  /// Starts periodic session validation checks.
-  ///
-  /// Runs every 5 minutes to check if session is still within 24-hour window.
-  void _startMonitoring() {
-    _checkTimer?.cancel();
-
-    _checkTimer = Timer.periodic(_checkInterval, (_) async {
-      final authService = ref.read(authServiceProvider);
-      final currentUser = ref.read(currentUserProvider);
-
-      if (currentUser != null) {
-        final isValid = await authService.isTokenValid();
-
-        if (!isValid) {
-          debugPrint('[SessionMonitor] Session expired (>24 hours), signing out');
-
-          // Session expired - force sign out
-          await authService.signOut();
-          state = false; // Update state to invalid
-        }
-      }
-    });
-  }
-}
+// DISABLED: SessionMonitor causing conflicts with UnifiedSessionService
+// The periodic checks were conflicting with Stream Chat initialization
+// and causing rapid logout issues. Now handled by UnifiedSessionService.
+//
+// /// Monitors session validity and triggers re-auth when session expires.
+// /// ...
+// @riverpod
+// class SessionMonitor extends _$SessionMonitor {
+//   ... DISABLED ...
+// }
 
 /// Provides the current user's onboarding completion status from Firestore.
 ///

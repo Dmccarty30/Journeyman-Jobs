@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:crypto/crypto.dart';
 import 'package:pointycastle/export.dart';
-import 'package:cryptography/cryptography.dart' as crypt;
 
 /// Secure cryptographic service implementing industry-standard encryption
 ///
@@ -72,7 +70,7 @@ class SecureEncryptionService {
 
     final iv = generateIV();
     final keyParam = KeyParameter(key);
-    final params = AEADParameters(keyParam, 128, 16, iv); // 128-bit auth tag, 16 byte nonce
+    final params = AEADParameters(keyParam, 128, 16 as Uint8List, iv); // 128-bit auth tag, 16 byte nonce
 
     final cipher = GCMBlockCipher(AESEngine());
     cipher.init(true, params);
@@ -94,7 +92,7 @@ class SecureEncryptionService {
     }
 
     final keyParam = KeyParameter(key);
-    final params = AEADParameters(keyParam, 128, encryptedData.iv);
+    final params = AEADParameters(keyParam, 128, 16 as Uint8List, encryptedData.iv);
 
     final cipher = GCMBlockCipher(AESEngine());
     cipher.init(false, params);

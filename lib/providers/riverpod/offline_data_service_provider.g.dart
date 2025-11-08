@@ -26,7 +26,7 @@ final class OfflineDataServiceProvider
         argument: null,
         retry: null,
         name: r'offlineDataServiceProvider',
-        isAutoDispose: false,
+        isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -55,4 +55,4 @@ final class OfflineDataServiceProvider
 }
 
 String _$offlineDataServiceHash() =>
-    r'7ff475bcff93f81de22c2da9e6db3608cdc8b47e';
+    r'67873414b930822b4cf25af35595cdfb522e4d54';

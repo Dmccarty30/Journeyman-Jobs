@@ -2,7 +2,7 @@
 
 ## 📁 Complete Folder Structure
 
-```
+```php
 lib/features/crews/
 ├── domain/                              # Business Logic Layer
 │   ├── models/                         # Core entities

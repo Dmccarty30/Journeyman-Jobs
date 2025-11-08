@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
-import '../../services/notification_permission_service.dart';
-import '../../services/fcm_service.dart';
+import '../../services/unified_notification_service.dart';
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
 
 class NotificationSettingsScreen extends StatefulWidget {
@@ -46,7 +45,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
   Future<void> _loadSettings() async {
     try {
       // Check permission status
-      _notificationsEnabled = await NotificationPermissionService.areNotificationsEnabled();
+      _notificationsEnabled = await UnifiedNotificationService.areNotificationsEnabled();
       
       // Load preferences
       final prefs = await SharedPreferences.getInstance();
@@ -103,7 +102,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
   Future<void> _handleMasterToggle(bool enabled) async {
     if (enabled && !_notificationsEnabled) {
       // Request permissions
-      final granted = await NotificationPermissionService.handleInitialPermissionFlow(context);
+      final granted = await UnifiedNotificationService.handleInitialPermissionFlow(context);
       if (!mounted) return;
 
       setState(() {
@@ -354,9 +353,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             setState(() => _jobAlertsEnabled = value);
             _savePreference('job_alerts_enabled', value);
             if (value) {
-              FCMService.subscribeToTopic('job_alerts');
+              UnifiedNotificationService.subscribeToTopics(jobAlerts: true);
             } else {
-              FCMService.unsubscribeFromTopic('job_alerts');
+              UnifiedNotificationService.unsubscribeFromTopics(jobAlerts: true);
             }
           },
         ),
@@ -369,9 +368,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             setState(() => _stormWorkEnabled = value);
             _savePreference('storm_work_enabled', value);
             if (value) {
-              FCMService.subscribeToTopic('storm_alerts');
+              UnifiedNotificationService.subscribeToTopics(stormAlerts: true);
             } else {
-              FCMService.unsubscribeFromTopic('storm_alerts');
+              UnifiedNotificationService.unsubscribeFromTopics(stormAlerts: true);
             }
           },
         ),

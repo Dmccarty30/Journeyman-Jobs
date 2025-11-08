@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../services/session_timeout_service.dart';
+import '../../services/consolidated_session_service.dart';
 import 'auth_riverpod_provider.dart';
 
 part 'session_timeout_provider.g.dart';
@@ -53,19 +53,41 @@ class SessionState {
 
 /// Provides the singleton session timeout service instance.
 ///
-/// This provider creates and manages the SessionTimeoutService lifecycle.
+/// This provider creates and manages the ConsolidatedSessionService lifecycle.
 /// The service is initialized when first accessed and disposed when the provider is disposed.
 ///
 /// Example usage:
 /// ```dart
 /// final sessionService = ref.watch(sessionTimeoutServiceProvider);
-/// await sessionService.startSession(); // After successful login
+/// await sessionService.initialize(); // After successful login
 /// sessionService.recordActivity(); // On user interaction
 /// await sessionService.endSession(); // On logout
 /// ```
 @riverpod
-SessionTimeoutService sessionTimeoutService(Ref ref) {
-  final service = SessionTimeoutService();
+ConsolidatedSessionService sessionTimeoutService(ref) {
+  final service = ConsolidatedSessionService();
+
+  // Dispose service when provider is disposed
+  ref.onDispose(() {
+    service.dispose();
+  });
+
+  return service;
+}
+
+/// Provider for the consolidated session service that handles all session management.
+///
+/// This is the preferred way to access session management functionality.
+/// It prevents conflicts between multiple session services.
+@riverpod
+ConsolidatedSessionService consolidatedSessionService(ConsolidatedSessionServiceRef ref) {
+  final service = ConsolidatedSessionService();
+
+  // Initialize if not already done
+  if (!service.isSessionActive) {
+    // Service should already be initialized in main.dart
+    // But we ensure it's available here as well
+  }
 
   // Dispose service when provider is disposed
   ref.onDispose(() {
@@ -98,7 +120,7 @@ SessionTimeoutService sessionTimeoutService(Ref ref) {
 /// ```
 @riverpod
 class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
-  SessionTimeoutService? _service;
+  ConsolidatedSessionService? _service;
   bool _initialized = false;
 
   @override
@@ -129,14 +151,14 @@ class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
   /// Initializes the session timeout service with callbacks.
   ///
   /// Sets up three callbacks:
-  /// 1. onTimeout: Handles final logout after grace period expires
-  /// 2. onWarning: Shows warning notification 1 minute before logout
-  /// 3. onSessionStateChanged: Updates session state for UI
+  /// 1. onSessionExpired: Handles final logout after grace period expires
+  /// 2. onSessionWarning: Shows warning notification
+  /// 3. onAuthStateChanged: Updates session state for UI
   Future<void> _initializeService() async {
     _service = ref.read(sessionTimeoutServiceProvider);
 
     // Configure timeout callback to handle session expiration
-    _service?.onTimeout = () async {
+    _service?.onSessionExpired = () async {
       // Session timed out - sign out user
       final authService = ref.read(authServiceProvider);
       await authService.signOut();
@@ -145,8 +167,8 @@ class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
       state = const SessionState(isActive: false);
     };
 
-    // Configure warning callback (4 minutes into grace period)
-    _service?.onWarning = () {
+    // Configure warning callback
+    _service?.onSessionWarning = () {
       // Update state to reflect warning
       state = SessionState(
         isActive: state.isActive,
@@ -162,14 +184,14 @@ class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
     };
 
     // Configure session state change callback
-    _service?.onSessionStateChanged = (isActive) {
+    _service?.onAuthStateChanged = () {
       state = SessionState(
-        isActive: isActive,
+        isActive: _service?.isSessionActive ?? false,
         lastActivity: _service?.lastActivity,
         timeUntilTimeout: _service?.timeUntilTimeout,
         isInGracePeriod: _service?.isInGracePeriod ?? false,
         gracePeriodStartTime: _service?.gracePeriodStartTime,
-        warningShown: _service?.warningShown ?? false,
+        warningShown: _service?.hasShownWarning ?? false,
       );
     };
 
@@ -181,7 +203,7 @@ class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
   ///
   /// Called automatically when user authenticates.
   Future<void> _startSession() async {
-    await _service?.startSession();
+    await _service?.recordActivity();
 
     state = SessionState(
       isActive: true,
@@ -217,7 +239,7 @@ class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
       timeUntilTimeout: _service?.timeUntilTimeout,
       isInGracePeriod: _service?.isInGracePeriod ?? false,
       gracePeriodStartTime: _service?.gracePeriodStartTime,
-      warningShown: _service?.warningShown ?? false,
+      warningShown: _service?.hasShownWarning ?? false,
     );
   }
 

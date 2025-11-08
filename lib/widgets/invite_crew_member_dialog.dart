@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
 import 'package:journeyman_jobs/models/user_model.dart';
-import 'package:journeyman_jobs/services/enhanced_crew_service.dart';
+import 'package:journeyman_jobs/services/unified_crew_service.dart';
 import 'package:journeyman_jobs/widgets/electrical_components.dart';
 
 /// Dialog for inviting a user to join a crew
@@ -37,7 +37,7 @@ class _InviteCrewMemberDialogState extends State<InviteCrewMemberDialog>
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  final EnhancedCrewService _crewService = EnhancedCrewService();
+  final UnifiedCrewService _crewService = UnifiedCrewService();
 
   bool _isSearching = false;
   bool _isInviting = false;
@@ -750,10 +750,10 @@ class _InviteCrewMemberDialogState extends State<InviteCrewMemberDialog>
     });
 
     try {
-      await _crewService.inviteMemberToCrew(
+      await _crewService.inviteUserToCrew(
         crewId: widget.crewId,
-        foreman: currentUser,
-        invitee: _selectedUser!,
+        inviterId: currentUser.uid,
+        inviteeId: _selectedUser!.uid,
         message: message.isNotEmpty ? message : null,
       );
 

@@ -6,7 +6,6 @@ import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_provide
 import '../providers/crews_riverpod_provider.dart';
 import '../../../widgets/electrical_components.dart';
 import '../../../widgets/crew_invitation_card.dart';
-import '../../../models/crew_model.dart';
 
 /// Screen for managing crew invitations
 ///

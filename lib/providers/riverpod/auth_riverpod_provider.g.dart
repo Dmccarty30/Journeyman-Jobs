@@ -435,7 +435,7 @@ final class AuthNotifierProvider
   }
 }
 
-String _$authNotifierHash() => r'e5373df5d0b99fb14216e487f206b7ea6f2ee9c7';
+String _$authNotifierHash() => r'2ef6652d4e926863f86998ae720992df26da1b6d';
 
 /// Auth state notifier for managing authentication operations
 
@@ -588,133 +588,6 @@ final class IsRouteProtectedFamily extends $Family
 
   @override
   String toString() => r'isRouteProtectedProvider';
-}
-
-/// Monitors session validity and triggers re-auth when session expires.
-///
-/// Checks session age every 5 minutes and invalidates sessions >24 hours old.
-/// This ensures compliance with the 24-hour session requirement.
-///
-/// The monitor:
-/// - Runs periodic checks every 5 minutes
-/// - Validates session timestamp against 24-hour limit
-/// - Automatically signs out expired sessions
-/// - Cleans up timer on provider disposal
-///
-/// Example usage:
-/// ```dart
-/// final sessionValid = ref.watch(sessionMonitorProvider);
-/// if (!sessionValid) {
-///   // Session expired - user will be redirected to login
-/// }
-/// ```
-
-@ProviderFor(SessionMonitor)
-const sessionMonitorProvider = SessionMonitorProvider._();
-
-/// Monitors session validity and triggers re-auth when session expires.
-///
-/// Checks session age every 5 minutes and invalidates sessions >24 hours old.
-/// This ensures compliance with the 24-hour session requirement.
-///
-/// The monitor:
-/// - Runs periodic checks every 5 minutes
-/// - Validates session timestamp against 24-hour limit
-/// - Automatically signs out expired sessions
-/// - Cleans up timer on provider disposal
-///
-/// Example usage:
-/// ```dart
-/// final sessionValid = ref.watch(sessionMonitorProvider);
-/// if (!sessionValid) {
-///   // Session expired - user will be redirected to login
-/// }
-/// ```
-final class SessionMonitorProvider
-    extends $NotifierProvider<SessionMonitor, bool> {
-  /// Monitors session validity and triggers re-auth when session expires.
-  ///
-  /// Checks session age every 5 minutes and invalidates sessions >24 hours old.
-  /// This ensures compliance with the 24-hour session requirement.
-  ///
-  /// The monitor:
-  /// - Runs periodic checks every 5 minutes
-  /// - Validates session timestamp against 24-hour limit
-  /// - Automatically signs out expired sessions
-  /// - Cleans up timer on provider disposal
-  ///
-  /// Example usage:
-  /// ```dart
-  /// final sessionValid = ref.watch(sessionMonitorProvider);
-  /// if (!sessionValid) {
-  ///   // Session expired - user will be redirected to login
-  /// }
-  /// ```
-  const SessionMonitorProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'sessionMonitorProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$sessionMonitorHash();
-
-  @$internal
-  @override
-  SessionMonitor create() => SessionMonitor();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
-}
-
-String _$sessionMonitorHash() => r'afaec5e1e00cdabce5ddddebd2ab9b948591d6cf';
-
-/// Monitors session validity and triggers re-auth when session expires.
-///
-/// Checks session age every 5 minutes and invalidates sessions >24 hours old.
-/// This ensures compliance with the 24-hour session requirement.
-///
-/// The monitor:
-/// - Runs periodic checks every 5 minutes
-/// - Validates session timestamp against 24-hour limit
-/// - Automatically signs out expired sessions
-/// - Cleans up timer on provider disposal
-///
-/// Example usage:
-/// ```dart
-/// final sessionValid = ref.watch(sessionMonitorProvider);
-/// if (!sessionValid) {
-///   // Session expired - user will be redirected to login
-/// }
-/// ```
-
-abstract class _$SessionMonitor extends $Notifier<bool> {
-  bool build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final created = build();
-    final ref = this.ref as $Ref<bool, bool>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<bool, bool>,
-              bool,
-              Object?,
-              Object?
-            >;
-    element.handleValue(ref, created);
-  }
 }
 
 /// Provides the current user's onboarding completion status from Firestore.

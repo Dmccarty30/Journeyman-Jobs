@@ -4,7 +4,7 @@ import 'package:journeyman_jobs/features/crews/providers/connectivity_service_pr
 
 part 'offline_data_service_provider.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 OfflineDataService offlineDataService(Ref ref) {
   final connectivityService = ref.watch(connectivityServiceForOfflineProvider);
   // connectivityService is already the correct type from the provider

@@ -6,8 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/exceptions/app_exception.dart';
 import '../../models/locals_record.dart';
 import '../../utils/concurrent_operations.dart';
+import '../../utils/error_handler.dart';
 import 'auth_riverpod_provider.dart' as auth_providers;
 import 'jobs_riverpod_provider.dart' show firestoreServiceProvider;
+import 'error_handling_provider.dart';
 
 part 'locals_riverpod_provider.g.dart';
 /// Represents the state of locals data used by Riverpod.
@@ -119,18 +121,32 @@ class LocalsNotifier extends _$LocalsNotifier {
     }
 
     state = state.copyWith(isLoading: true);
-    try {
-      final QuerySnapshot<Object?> snapshot = await _operationManager.queueOperation<QuerySnapshot<Object?>>(
-        type: OperationType.loadLocals,
-        operation: () async {
-          return ref.read(firestoreServiceProvider).getLocals(
-            startAfter: loadMore ? state.lastDocument : null,
-            limit: _pageSize,
-          ).first;
-        },
-      );
 
-      final List<LocalsRecord> newLocals = snapshot.docs
+    final result = await ErrorHandler.handleAsyncOperation<QuerySnapshot<Object?>>(
+      () async {
+        return await _operationManager.executeOperation(
+          type: OperationType.loadLocals,
+          operation: () async {
+            return ref.read(firestoreServiceProvider).getLocals(
+              startAfter: loadMore ? state.lastDocument : null,
+              limit: _pageSize,
+            ).first;
+          },
+        );
+      },
+      operationName: 'loadLocals',
+      errorMessage: 'Failed to load locals',
+      showToast: false,
+      context: {
+        'forceRefresh': forceRefresh,
+        'loadMore': loadMore,
+        'retryCount': retryCount,
+        'userId': currentUser.uid,
+      },
+    );
+
+    if (result != null) {
+      final List<LocalsRecord> newLocals = result.docs
           .map(LocalsRecord.fromFirestore)
           .toList();
 
@@ -148,122 +164,18 @@ class LocalsNotifier extends _$LocalsNotifier {
         filteredLocals: updatedLocals,
         isLoading: false,
         cachedLocals: cached,
-        lastDocument: newLocals.isNotEmpty ? snapshot.docs.last : null,
+        lastDocument: newLocals.isNotEmpty ? result.docs.last : null,
       );
-    } catch (e) {
-      // WAVE 4: Enhanced error handling with token refresh and retry logic
-      if (e is FirebaseException &&
-          (e.code == 'permission-denied' || e.code == 'unauthenticated')) {
-
-        // Attempt token refresh once
-        final tokenRefreshed = await _attemptTokenRefresh();
-
-        if (tokenRefreshed && retryCount < 1) {
-          // Retry operation once after token refresh
-          return loadLocals(
-            forceRefresh: forceRefresh,
-            loadMore: loadMore,
-            retryCount: retryCount + 1,
-          );
-        } else {
-          // Token refresh failed or retry exhausted - redirect to auth
-          final userError = _mapFirebaseError(e);
-          state = state.copyWith(isLoading: false, error: userError);
-          throw UnauthenticatedException(
-            'Session expired. Please sign in again.',
-          );
-        }
-      }
-
-      // Map error to user-friendly message
-      final userError = _mapFirebaseError(e);
-      state = state.copyWith(isLoading: false, error: userError);
-
-      // Log for debugging
-      if (kDebugMode) {
-        print('[LocalsProvider] Error loading locals: $e');
-      }
-
-      // Rethrow specific exceptions for router handling
-      if (e is UnauthenticatedException || e is InsufficientPermissionsException) {
-        rethrow;
-      }
-
-      rethrow;
+    } else {
+      // Error already handled by ErrorHandler
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to load locals',
+      );
     }
   }
 
-  /// Attempts to refresh the user's authentication token.
-  ///
-  /// Returns true if token refresh succeeded, false otherwise.
-  /// Used for automatic recovery from expired token errors.
-  Future<bool> _attemptTokenRefresh() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) return false;
 
-      // Force token refresh
-      await user.getIdToken(true);
-
-      if (kDebugMode) {
-        print('[LocalsProvider] Token refresh successful');
-      }
-
-      return true;
-    } catch (e) {
-      if (kDebugMode) {
-        print('[LocalsProvider] Token refresh failed: $e');
-      }
-      return false;
-    }
-  }
-
-  /// Maps Firebase errors to user-friendly error messages.
-  ///
-  /// Provides clear, actionable guidance for common error scenarios.
-  String _mapFirebaseError(Object error) {
-    if (error is UnauthenticatedException) {
-      return 'Please sign in to access IBEW locals directory';
-    }
-
-    if (error is InsufficientPermissionsException) {
-      return error.message;
-    }
-
-    if (error is FirebaseException) {
-      switch (error.code) {
-        case 'permission-denied':
-          return 'You do not have permission to access this resource. Please sign in.';
-        case 'unauthenticated':
-          return 'Authentication required. Please sign in to continue.';
-        case 'unavailable':
-          return 'Service temporarily unavailable. Please try again.';
-        case 'network-request-failed':
-          return 'Network error. Please check your connection.';
-        case 'deadline-exceeded':
-          return 'Request timed out. Please try again.';
-        case 'not-found':
-          return 'The requested data was not found.';
-        default:
-          return 'An error occurred: ${error.message ?? 'Unknown error'}';
-      }
-    }
-
-    if (error is FirebaseAuthException) {
-      switch (error.code) {
-        case 'user-token-expired':
-          return 'Your session has expired. Please sign in again.';
-        case 'user-not-found':
-          return 'User account not found. Please sign in.';
-        case 'invalid-user-token':
-          return 'Invalid session. Please sign in again.';
-        default:
-          return 'Authentication error: ${error.message ?? 'Unknown error'}';
-      }
-    }
-
-    return 'An unexpected error occurred. Please try again.';
-  }
 
   /// Searches locals by the given term, updating filteredLocals.
   void searchLocals(String term) {

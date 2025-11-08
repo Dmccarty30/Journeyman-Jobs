@@ -10,7 +10,7 @@ Complete unified service with three pluggable strategies:
 
 #### Strategy Pattern Architecture
 
-```
+```dart
 UnifiedFirestoreService (main coordinator)
 ├── ResilienceStrategy (optional)
 │   ├── Automatic retry with exponential backoff

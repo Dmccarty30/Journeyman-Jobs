@@ -18,7 +18,6 @@ import '../features/crews/screens/tailboard_screen.dart'; // New import for Tail
 import '../features/crews/screens/create_crew_screen.dart'; // Import for CreateCrewScreen
 import '../features/crews/screens/join_crew_screen.dart'; // Import for JoinCrewScreen
 import '../features/crews/screens/crew_onboarding_screen.dart'; // Import for CrewOnboardingScreen
-import '../features/crews/screens/crew_chat_screen.dart'; // Import for CrewChatScreen
 import '../features/crews/screens/crew_invitations_screen.dart'; // Import for CrewInvitationsScreen
 
 // Placeholder screens for Phase 2

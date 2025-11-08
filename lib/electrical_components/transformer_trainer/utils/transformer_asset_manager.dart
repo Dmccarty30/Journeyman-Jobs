@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../services/cache_service.dart';
+import '../../../services/unified_cache_service.dart';
 import '../services/structured_logger.dart';
 import 'transformer_performance_monitor.dart';
 
@@ -59,7 +59,7 @@ class TransformerAssetManager {
       }
       
       // Check persistent cache
-      final Map<String, dynamic>? cachedData = await CacheService().get<Map<String, dynamic>>(
+      final Map<String, dynamic>? cachedData = await UnifiedCacheService.instance.get<Map<String, dynamic>>(
         'transformer_image_$assetName',
       );
       
@@ -110,7 +110,7 @@ class TransformerAssetManager {
       
       // Cache persistently if significant size
       if (bytes.length > 10000 && !preload) { // > 10KB
-        await CacheService().set(
+        await UnifiedCacheService.instance.set(
           'transformer_image_$assetName',
           <String, List<int>>{'bytes': bytes.toList()},
           ttl: const Duration(days: 30),

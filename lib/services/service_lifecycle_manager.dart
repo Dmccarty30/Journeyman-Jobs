@@ -185,16 +185,16 @@ class ServiceLifecycleManager {
   /// Initialize a single service
   Future<void> _initializeService(ServiceState service) async {
     service.status = ServiceStatus.initializing;
-    _notifyListeners(ServiceLifecycleEvent.serviceInitializing(service.name);
+    _notifyListeners(ServiceLifecycleEvent.serviceInitializing(service.name));
 
     try {
       service.instance = await service.factory.create();
       service.status = ServiceStatus.initialized;
-      _notifyListeners(ServiceLifecycleEvent.serviceInitialized(service.name);
+      _notifyListeners(ServiceLifecycleEvent.serviceInitialized(service.name));
     } catch (e) {
       service.status = ServiceStatus.failed;
       service.error = e.toString();
-      _notifyListeners(ServiceLifecycleEvent.serviceFailed(service.name, e.toString());
+      _notifyListeners(ServiceLifecycleEvent.serviceFailed(service.name, e.toString()));
       rethrow;
     }
   }

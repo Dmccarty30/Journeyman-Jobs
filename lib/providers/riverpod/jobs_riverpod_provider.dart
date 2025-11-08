@@ -7,11 +7,13 @@ import '../../domain/exceptions/app_exception.dart';
 import '../../models/filter_criteria.dart';
 import '../../models/job_model.dart';
 import '../../models/user_job_preferences.dart';
-import '../../services/resilient_firestore_service.dart';
+import '../../services/unified_firestore_service.dart';
 import '../../utils/concurrent_operations.dart';
 import '../../utils/filter_performance.dart';
 import '../../utils/memory_management.dart';
+import '../../utils/error_handler.dart';
 import 'auth_riverpod_provider.dart' as auth_providers;
+import 'error_handling_provider.dart';
 
 part 'jobs_riverpod_provider.g.dart';
 
@@ -66,7 +68,7 @@ class JobsState {
 
 /// Firestore service provider
 @riverpod
-ResilientFirestoreService firestoreService(Ref ref) => ResilientFirestoreService();
+UnifiedFirestoreService firestoreService(Ref ref) => UnifiedFirestoreService();
 
 /// Jobs notifier provider
 @riverpod
@@ -126,108 +128,77 @@ class JobsNotifier extends _$JobsNotifier {
 
     final Stopwatch stopwatch = Stopwatch()..start();
 
-    try {
-      final result = await _operationManager.executeOperation(
-        type: OperationType.loadJobs,
-        operation: () async {
-          final firestoreService = ref.read(firestoreServiceProvider);
-          if (filter != null) {
-            // Use the advanced filter method if filter is provided
-            return await firestoreService.getJobsWithFilter(
-              filter: filter,
-              startAfter: isRefresh ? null : state.lastDocument,
-              limit: limit,
-            );
-          } else {
-            // Use the basic method with Map filters
-            final stream = firestoreService.getJobs(
-              startAfter: isRefresh ? null : state.lastDocument,
-              limit: limit,
-            );
-            return await stream.first;
-          }
-        },
-      );
+    final result = await ErrorHandler.handleAsyncOperation(
+      () async {
+        return await _operationManager.executeOperation(
+          type: OperationType.loadJobs,
+          operation: () async {
+            final firestoreService = ref.read(firestoreServiceProvider);
+            if (filter != null) {
+              // Use the advanced filter method if filter is provided
+              return await firestoreService.getJobsWithFilter(
+                filter: filter,
+                startAfter: isRefresh ? null : state.lastDocument,
+                limit: limit,
+              );
+            } else {
+              // Use the basic method with Map filters
+              final stream = firestoreService.getJobs(
+                startAfter: isRefresh ? null : state.lastDocument,
+                limit: limit,
+              );
+              return await stream.first;
+            }
+          },
+        );
+      },
+      operationName: 'loadJobs',
+      errorMessage: 'Failed to load jobs',
+      showToast: false,
+      context: {
+        'filter': filter?.toString(),
+        'isRefresh': isRefresh,
+        'limit': limit,
+        'retryCount': retryCount,
+      },
+    );
 
-      stopwatch.stop();
-
-      // Convert QuerySnapshot to Job objects
-      final jobs = result.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        data['id'] = doc.id;
-        return Job.fromJson(data);
-      }).toList();
-
-      // Update state with the new jobs
-      final List<Job> updatedJobs = isRefresh ? jobs : [...state.jobs, ...jobs];
-
-      // Update load times for performance tracking
-      final List<Duration> newLoadTimes = List<Duration>.from(state.loadTimes)
-        ..add(stopwatch.elapsed);
-      if (newLoadTimes.length > 50) {
-        newLoadTimes.removeAt(0); // Keep only last 50 measurements
-      }
-
-      state = state.copyWith(
-        jobs: updatedJobs,
-        visibleJobs: updatedJobs, // For now, all jobs are visible
-        activeFilter: filter ?? state.activeFilter,
-        isLoading: false,
-        hasMoreJobs: jobs.length >= limit, // Assume more if we got a full page
-        lastDocument: result.docs.isNotEmpty ? result.docs.last : null,
-        loadTimes: newLoadTimes,
-        totalJobsLoaded: updatedJobs.length,
-      );
-    } catch (e) {
-      stopwatch.stop();
-
-      // WAVE 4: Enhanced error handling with token refresh and retry logic
-      if (e is FirebaseException &&
-          (e.code == 'permission-denied' || e.code == 'unauthenticated')) {
-
-        // Attempt token refresh once
-        final tokenRefreshed = await _attemptTokenRefresh();
-
-        if (tokenRefreshed && retryCount < 1) {
-          // Retry operation once after token refresh
-          return loadJobs(
-            filter: filter,
-            isRefresh: isRefresh,
-            limit: limit,
-            retryCount: retryCount + 1,
-          );
-        } else {
-          // Check if provider is still mounted before updating state
-          if (!ref.mounted) return;
-
-          // Token refresh failed or retry exhausted - redirect to auth
-          final userError = _mapFirebaseError(e);
-          state = state.copyWith(isLoading: false, error: userError);
-          throw UnauthenticatedException(
-            'Session expired. Please sign in again.',
-          );
-        }
-      }
-
-      // Check if provider is still mounted before updating state
+    if (result == null) {
+      // Error already handled by ErrorHandler
       if (!ref.mounted) return;
-
-      // Map error to user-friendly message
-      final userError = _mapFirebaseError(e);
-      state = state.copyWith(isLoading: false, error: userError);
-
-      // Log for debugging
-      if (kDebugMode) {
-        print('[JobsProvider] Error loading jobs: $e');
-      }
-
-      // Rethrow specific exceptions for router handling
-      if (e is UnauthenticatedException || e is InsufficientPermissionsException) {
-        rethrow;
-      }
-
-      rethrow;
+      state = state.copyWith(isLoading: false);
+      return;
     }
+
+    stopwatch.stop();
+
+    // Convert QuerySnapshot to Job objects
+    final jobs = result.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      return Job.fromJson(data);
+    }).toList();
+
+    // Update state with the new jobs
+    final List<Job> updatedJobs = isRefresh ? jobs : [...state.jobs, ...jobs];
+
+    // Update load times for performance tracking
+    final List<Duration> newLoadTimes = List<Duration>.from(state.loadTimes)
+      ..add(stopwatch.elapsed);
+    if (newLoadTimes.length > 50) {
+      newLoadTimes.removeAt(0); // Keep only last 50 measurements
+    }
+
+    state = state.copyWith(
+      jobs: updatedJobs,
+      visibleJobs: updatedJobs, // For now, all jobs are visible
+      activeFilter: filter ?? state.activeFilter,
+      isLoading: false,
+      hasMoreJobs: jobs.length >= limit, // Assume more if we got a full page
+      lastDocument: result.docs.isNotEmpty ? result.docs.last : null,
+      loadTimes: newLoadTimes,
+      totalJobsLoaded: updatedJobs.length,
+    );
   }
 
   /// Apply filter to jobs
@@ -251,26 +222,31 @@ class JobsNotifier extends _$JobsNotifier {
 
     final Stopwatch stopwatch = Stopwatch()..start();
 
-    try {
-      // Store the filter and reload jobs
-      state = state.copyWith(activeFilter: filter);
+    // Store the filter and reload jobs
+  state = state.copyWith(activeFilter: filter);
 
+  final success = await ErrorHandler.handleAsyncOperation(
+    () async {
       await _operationManager.executeOperation(
         type: OperationType.loadJobs,
         operation: () => loadJobs(filter: filter, isRefresh: true),
       );
+    },
+    operationName: 'applyFilter',
+    errorMessage: 'Failed to apply filter',
+    showToast: false,
+    context: {
+      'filter': filter.toString(),
+    },
+  );
 
-      stopwatch.stop();
-    } catch (e) {
-      final userError = _mapFirebaseError(e);
-      state = state.copyWith(error: userError);
+  stopwatch.stop();
 
-      if (kDebugMode) {
-        print('[JobsProvider] Error applying filter: $e');
-      }
-
-      rethrow;
-    }
+  if (success == null) {
+    // Error already handled by ErrorHandler
+    state = state.copyWith(error: 'Failed to apply filter. Please try again.');
+    return;
+  }
   }
 
   /// Load more jobs (pagination)
@@ -313,43 +289,40 @@ class JobsNotifier extends _$JobsNotifier {
 
     state = state.copyWith(isLoading: true);
 
-    try {
-      final result = await _operationManager.executeOperation(
-        type: OperationType.loadJobs,
-        operation: () async {
-          // Use the suggestedJobs provider to get matched jobs
-          final jobs = await ref.read(suggestedJobsProvider.future);
-          return jobs;
-        },
-      );
+    final result = await ErrorHandler.handleAsyncOperation(
+      () async {
+        return await _operationManager.executeOperation(
+          type: OperationType.loadJobs,
+          operation: () async {
+            // Use the suggestedJobs provider to get matched jobs
+            final jobs = await ref.read(suggestedJobsProvider.future);
+            return jobs;
+          },
+        );
+      },
+      operationName: 'loadSuggestedJobs',
+      errorMessage: 'Failed to load suggested jobs',
+      showToast: false,
+    );
 
-      // Update state with suggested jobs
-      state = state.copyWith(
-        jobs: result,
-        visibleJobs: result,
-        isLoading: false,
-        hasMoreJobs: false, // Suggested jobs are limited to 20
-        totalJobsLoaded: result.length,
-      );
-
-      if (kDebugMode) {
-        print('✅ Loaded ${result.length} suggested jobs');
-      }
-    } catch (e) {
-      // Check if provider is still mounted
+    if (result == null) {
+      // Error already handled by ErrorHandler
       if (!ref.mounted) return;
+      state = state.copyWith(isLoading: false, error: 'Failed to load suggested jobs');
+      return;
+    }
 
-      final userError = _mapFirebaseError(e);
-      state = state.copyWith(isLoading: false, error: userError);
+    // Update state with suggested jobs
+    state = state.copyWith(
+      jobs: result,
+      visibleJobs: result,
+      isLoading: false,
+      hasMoreJobs: false, // Suggested jobs are limited to 20
+      totalJobsLoaded: result.length,
+    );
 
-      if (kDebugMode) {
-        print('[JobsProvider] Error loading suggested jobs: $e');
-      }
-
-      // Rethrow auth exceptions for router handling
-      if (e is UnauthenticatedException) {
-        rethrow;
-      }
+    if (kDebugMode) {
+      print('✅ Loaded ${result.length} suggested jobs');
     }
   }
 
@@ -388,56 +361,57 @@ class JobsNotifier extends _$JobsNotifier {
       state = state.copyWith(isLoading: true);
     }
 
-    try {
-      final result = await _operationManager.executeOperation(
-        type: OperationType.loadJobs,
-        operation: () async {
-          final firestoreService = ref.read(firestoreServiceProvider);
-          final stream = firestoreService.getJobs(
-            startAfter: isRefresh ? null : state.lastDocument,
-            limit: limit,
-          );
-          return await stream.first;
-        },
-      );
+    final result = await ErrorHandler.handleAsyncOperation(
+      () async {
+        return await _operationManager.executeOperation(
+          type: OperationType.loadJobs,
+          operation: () async {
+            final firestoreService = ref.read(firestoreServiceProvider);
+            final stream = firestoreService.getJobs(
+              startAfter: isRefresh ? null : state.lastDocument,
+              limit: limit,
+            );
+            return await stream.first;
+          },
+        );
+      },
+      operationName: 'loadAllJobs',
+      errorMessage: 'Failed to load jobs',
+      showToast: false,
+      context: {
+        'isRefresh': isRefresh,
+        'limit': limit,
+      },
+    );
 
-      // Convert QuerySnapshot to Job objects
-      final jobs = result.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        data['id'] = doc.id;
-        return Job.fromJson(data);
-      }).toList();
-
-      // Update state
-      final List<Job> updatedJobs = isRefresh ? jobs : [...state.jobs, ...jobs];
-
-      state = state.copyWith(
-        jobs: updatedJobs,
-        visibleJobs: updatedJobs,
-        isLoading: false,
-        hasMoreJobs: jobs.length >= limit,
-        lastDocument: result.docs.isNotEmpty ? result.docs.last : null,
-        totalJobsLoaded: updatedJobs.length,
-      );
-
-      if (kDebugMode) {
-        print('✅ Loaded ${jobs.length} jobs (total: ${updatedJobs.length})');
-      }
-    } catch (e) {
-      // Check if provider is still mounted
+    if (result == null) {
+      // Error already handled by ErrorHandler
       if (!ref.mounted) return;
+      state = state.copyWith(isLoading: false, error: 'Failed to load jobs');
+      return;
+    }
 
-      final userError = _mapFirebaseError(e);
-      state = state.copyWith(isLoading: false, error: userError);
+    // Convert QuerySnapshot to Job objects
+    final jobs = result.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      return Job.fromJson(data);
+    }).toList();
 
-      if (kDebugMode) {
-        print('[JobsProvider] Error loading all jobs: $e');
-      }
+    // Update state
+    final List<Job> updatedJobs = isRefresh ? jobs : [...state.jobs, ...jobs];
 
-      // Rethrow auth exceptions
-      if (e is UnauthenticatedException) {
-        rethrow;
-      }
+    state = state.copyWith(
+      jobs: updatedJobs,
+      visibleJobs: updatedJobs,
+      isLoading: false,
+      hasMoreJobs: jobs.length >= limit,
+      lastDocument: result.docs.isNotEmpty ? result.docs.last : null,
+      totalJobsLoaded: updatedJobs.length,
+    );
+
+    if (kDebugMode) {
+      print('✅ Loaded ${jobs.length} jobs (total: ${updatedJobs.length})');
     }
   }
 

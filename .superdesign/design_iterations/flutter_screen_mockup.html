@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flutter Main Screen Mockup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+            position: relative;
+        }
+        .status-bar {
+            height: 44px;
+            background: #6366f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .app-bar {
+            height: 56px;
+            background: #e0e7ff;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .container-section {
+            padding: 16px;
+            background: white;
+        }
+        .info-container {
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid;
+            display: flex;
+            flex-direction: column;
+        }
+        .info-container.blue {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        .info-container.green {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+        .info-container.orange {
+            background: rgba(249, 115, 22, 0.1);
+            border-color: rgba(249, 115, 22, 0.3);
+        }
+        .info-container.red {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        .tab-bar {
+            height: 56px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+        }
+        .tab {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab.active {
+            color: #6366f1;
+            border-bottom: 2px solid #6366f1;
+        }
+        .tab:not(.active) {
+            color: #64748b;
+        }
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        .job-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .online-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #22c55e;
+        }
+        .offline-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-8">
+    <div class="phone-frame">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span>9:41</span>
+            <span>📶 📶 📶 🔋</span>
+        </div>
+
+        <!-- App Bar -->
+        <div class="app-bar">
+            <h1 class="text-lg font-semibold text-gray-800">Journeyman Jobs</h1>
+        </div>
+
+        <!-- Four Containers Section -->
+        <div class="container-section">
+            <!-- First Row -->
+            <div class="flex gap-3 mb-3">
+                <div class="flex-1 info-container blue">
+                    <div class="flex justify-between items-start mb-2">
+                        <i data-lucide="briefcase" class="w-6 h-6 text-blue-600"></i>
+                        <span class="text-2xl font-bold text-blue-600">12</span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700">Active Jobs</span>
+                </div>
+                <div class="flex-1 info-container green">
+                    <div class="flex justify-between items-start mb-2">
+                        <i data-lucide="users" class="w-6 h-6 text-green-600"></i>
+                        <span class="text-2xl font-bold text-green-600">8</span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700">Crew Members</span>
+                </div>
+            </div>
+            <!-- Second Row -->
+            <div class="flex gap-3">
+                <div class="flex-1 info-container orange">
+                    <div class="flex justify-between items-start mb-2">
+                        <i data-lucide="message-circle" class="w-6 h-6 text-orange-600"></i>
+                        <span class="text-2xl font-bold text-orange-600">5</span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700">Messages</span>
+                </div>
+                <div class="flex-1 info-container red">
+                    <div class="flex justify-between items-start mb-2">
+                        <i data-lucide="bell" class="w-6 h-6 text-red-600"></i>
+                        <span class="text-2xl font-bold text-red-600">3</span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700">Notifications</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Bar -->
+        <div class="tab-bar">
+            <div class="tab">
+                <i data-lucide="rss" class="w-5 h-5"></i>
+                <span class="text-xs font-medium">Feed</span>
+            </div>
+            <div class="tab active">
+                <i data-lucide="briefcase" class="w-5 h-5"></i>
+                <span class="text-xs font-medium">Jobs</span>
+            </div>
+            <div class="tab">
+                <i data-lucide="message-circle" class="w-5 h-5"></i>
+                <span class="text-xs font-medium">Chat</span>
+            </div>
+            <div class="tab">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                <span class="text-xs font-medium">Members</span>
+            </div>
+        </div>
+
+        <!-- Tab Content (Jobs Tab Active) -->
+        <div class="tab-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-gray-800">Active Jobs</h2>
+                <button class="bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    New Tailboard
+                </button>
+            </div>
+            
+            <!-- Job Cards -->
+            <div class="job-card">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">
+                        1
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-gray-800">Job #JOB-2024001</h3>
+                        <p class="text-sm text-gray-600">Location: Site 1</p>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                </div>
+            </div>
+
+            <div class="job-card">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">
+                        2
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-gray-800">Job #JOB-2024002</h3>
+                        <p class="text-sm text-gray-600">Location: Site 2</p>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                </div>
+            </div>
+
+            <div class="job-card">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">
+                        3
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-gray-800">Job #JOB-2024003</h3>
+                        <p class="text-sm text-gray-600">Location: Site 3</p>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                </div>
+            </div>
+
+            <div class="job-card">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">
+                        4
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-gray-800">Job #JOB-2024004</h3>
+                        <p class="text-sm text-gray-600">Location: Site 4</p>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                </div>
+            </div>
+
+            <div class="job-card">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">
+                        5
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-gray-800">Job #JOB-2024005</h3>
+                        <p class="text-sm text-gray-600">Location: Site 5</p>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach((tab, index) => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Update content based on tab
+                const content = document.querySelector('.tab-content');
+                const tabNames = ['Feed', 'Jobs', 'Chat', 'Members'];
+                
+                if (index === 0) { // Feed
+                    content.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-full text-center">
+                            <i data-lucide="rss" class="w-16 h-16 text-gray-400 mb-4"></i>
+                            <h2 class="text-xl font-bold text-gray-800 mb-2">Feed Tab</h2>
+                            <p class="text-gray-600">Latest updates and announcements will appear here</p>
+                        </div>
+                    `;
+                } else if (index === 1) { // Jobs (current content)
+                    content.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-gray-800">Active Jobs</h2>
+                            <button class="bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                New Tailboard
+                            </button>
+                        </div>
+                        <div class="job-card">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">1</div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800">Job #JOB-2024001</h3>
+                                    <p class="text-sm text-gray-600">Location: Site 1</p>
+                                </div>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div class="job-card">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">2</div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800">Job #JOB-2024002</h3>
+                                    <p class="text-sm text-gray-600">Location: Site 2</p>
+                                </div>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                            </div>
+                        </div>
+                    `;
+                } else if (index === 2) { // Chat
+                    content.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-full text-center">
+                            <i data-lucide="message-circle" class="w-16 h-16 text-gray-400 mb-4"></i>
+                            <h2 class="text-xl font-bold text-gray-800 mb-2">Chat Tab</h2>
+                            <p class="text-gray-600">Team communication will appear here</p>
+                        </div>
+                    `;
+                } else if (index === 3) { // Members
+                    content.innerHTML = `
+                        <h2 class="text-lg font-bold text-gray-800 mb-4">Team Members</h2>
+                        <div class="job-card">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">J</div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800">John Smith</h3>
+                                    <p class="text-sm text-gray-600">Foreman</p>
+                                </div>
+                                <div class="online-indicator"></div>
+                            </div>
+                        </div>
+                        <div class="job-card">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">S</div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800">Sarah Johnson</h3>
+                                    <p class="text-sm text-gray-600">Electrician</p>
+                                </div>
+                                <div class="online-indicator"></div>
+                            </div>
+                        </div>
+                        <div class="job-card">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">M</div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800">Mike Wilson</h3>
+                                    <p class="text-sm text-gray-600">Apprentice</p>
+                                </div>
+                                <div class="offline-indicator"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Re-initialize icons after content change
+                lucide.createIcons();
+            });
+        });
+    </script>
+</body>
+</html>

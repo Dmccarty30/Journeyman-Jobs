@@ -1,6 +1,6 @@
 import 'package:journeyman_jobs/models/crew_invitation_model.dart';
-import 'package:journeyman_jobs/models/crew_message_model.dart';
-import 'package:journeyman_jobs/models/crew_model.dart';
+import 'package:journeyman_jobs/features/crews/models/crew.dart';
+import 'package:journeyman_jobs/features/crews/models/message.dart';
 import 'package:journeyman_jobs/models/user_model.dart';
 import 'package:journeyman_jobs/utils/crew_error_handling.dart';
 

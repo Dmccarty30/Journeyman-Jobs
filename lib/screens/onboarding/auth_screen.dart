@@ -10,7 +10,7 @@ import '../../design_system/components/reusable_components.dart'
 import '../../navigation/app_router.dart';
 import '../../electrical_components/circuit_board_background.dart';
 import '../../electrical_components/jj_snack_bar.dart';
-import '../../services/firestore_service.dart';
+import '../../services/unified_firestore_service.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -169,11 +169,8 @@ class _AuthScreenState extends State<AuthScreen>
       }
 
       try {
-        final FirestoreService firestoreService = FirestoreService();
-        await firestoreService.createUser(
-          uid: user.uid,
-          userData: {'email': user.email},
-        );
+        final UnifiedFirestoreService firestoreService = UnifiedFirestoreService();
+        await firestoreService.setUserWithMerge(uid: user.uid, data: {'email': user.email});
       } catch (firestoreError) {
         if (mounted) {
           JJSnackBar.showError(
@@ -239,10 +236,8 @@ class _AuthScreenState extends State<AuthScreen>
       }
 
       try {
-        final FirestoreService firestoreService = FirestoreService();
-        final DocumentSnapshot userDoc = await firestoreService.getUser(
-          user.uid,
-        );
+        final UnifiedFirestoreService firestoreService = UnifiedFirestoreService();
+        final DocumentSnapshot userDoc = await firestoreService.getUser(user.uid);
 
         if (!userDoc.exists) {
           await firestoreService.createUser(
@@ -335,10 +330,9 @@ class _AuthScreenState extends State<AuthScreen>
       }
 
       try {
-        final FirestoreService firestoreService = FirestoreService();
-        final bool userExists = await firestoreService.userProfileExists(
-          user.uid,
-        );
+        final UnifiedFirestoreService firestoreService = UnifiedFirestoreService();
+        final DocumentSnapshot userDoc = await firestoreService.getUser(user.uid);
+        final bool userExists = userDoc.exists;
 
         if (!userExists) {
           await firestoreService.createUser(
@@ -419,10 +413,9 @@ class _AuthScreenState extends State<AuthScreen>
       }
 
       try {
-        final FirestoreService firestoreService = FirestoreService();
-        final bool userExists = await firestoreService.userProfileExists(
-          user.uid,
-        );
+        final UnifiedFirestoreService firestoreService = UnifiedFirestoreService();
+        final DocumentSnapshot userDoc = await firestoreService.getUser(user.uid);
+        final bool userExists = userDoc.exists;
 
         if (!userExists) {
           await firestoreService.createUser(

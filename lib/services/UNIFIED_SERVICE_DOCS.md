@@ -6,7 +6,7 @@
 
 ### Architecture
 
-```
+```dart
 UnifiedFirestoreService
 ├── Core Operations (CRUD, collections, batch operations)
 ├── ResilienceStrategy (optional)
@@ -106,6 +106,7 @@ await service.createUser(
 ```
 
 Automatically sets:
+
 - `createdTime`: Server timestamp
 - `onboardingStatus`: 'incomplete'
 
@@ -439,7 +440,7 @@ service.resetCircuitBreaker();
 
 Provides multi-term search with relevance ranking.
 
-#### Configuration Options
+#### Configuration Optionss
 
 ```dart
 final service = UnifiedFirestoreService(
@@ -937,6 +938,7 @@ Provider<UnifiedFirestoreService>.value(
 **Error:** `FirestoreException: circuit-breaker-open`
 
 **Diagnosis:**
+
 ```dart
 final status = service.getCircuitBreakerStatus();
 print('Failure count: ${status?['failureCount']}');
@@ -944,9 +946,11 @@ print('Time until reset: ${status?['timeUntilReset']}s');
 ```
 
 **Solutions:**
+
 1. Check Firestore rules and permissions
 2. Verify network connectivity
 3. Increase circuit breaker threshold:
+
    ```dart
    resilienceConfig: ResilienceConfig(
      circuitBreakerThreshold: 10,  // More tolerant
@@ -956,6 +960,7 @@ print('Time until reset: ${status?['timeUntilReset']}s');
 ### Issue: Slow search performance
 
 **Diagnosis:**
+
 ```dart
 final stats = service.getSearchStatistics();
 print('Avg time: ${stats?['avgResponseTimeMs']}ms');
@@ -963,6 +968,7 @@ print('Cache hit rate: ${stats?['cacheHitRate']}%');
 ```
 
 **Solutions:**
+
 1. Increase search cache timeout
 2. Add state filters to narrow scope
 3. Enable sharding strategy (after migration)
@@ -973,12 +979,14 @@ print('Cache hit rate: ${stats?['cacheHitRate']}%');
 **Error:** Regional queries not using subcollections
 
 **Diagnosis:**
+
 ```dart
 final stats = service.getShardingStatistics();
 print('Regional queries: ${stats?['queries']['regional']}');
 ```
 
 **Solutions:**
+
 1. Verify data migration completed
 2. Ensure state filter is provided
 3. Check regional collection structure in Firestore
@@ -1007,6 +1015,7 @@ See inline documentation in `unified_firestore_service.dart` for complete API re
 ## Version History
 
 ### v1.0.0 (2025-10-25)
+
 - Initial release
 - Consolidates 4 services into unified architecture
 - Implements strategy pattern for pluggable features

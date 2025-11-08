@@ -8,12 +8,11 @@ import '../providers/crews_riverpod_provider.dart';
 import '../providers/feed_provider.dart';
 import '../widgets/post_card.dart';
 import '../../../models/job_model.dart';
-import '../../../widgets/rich_text_job_card.dart';
+import '../../../widgets/jj_job_card.dart';
 import '../../../widgets/dialogs/job_details_dialog.dart';
 import '../../../electrical_components/jj_electrical_toast.dart';
 import '../providers/crew_jobs_riverpod_provider.dart';
 import '../providers/jobs_filter_provider.dart';
-import '../../../screens/crew/crew_chat_screen.dart';
 
 class FeedTab extends ConsumerWidget {
   const FeedTab({super.key});
@@ -582,24 +581,22 @@ class _JobsTabState extends ConsumerState<JobsTab> {
                       Icon(Icons.work_outline, size: 48, color: AppTheme.mediumGray),
                       const SizedBox(height: 16),
                       Text(
-                        _searchQuery.isNotEmpty ? 'No matching jobs found' : 'No jobs available',
+                        filterState.searchQuery.isNotEmpty ? 'No matching jobs found' : 'No jobs available',
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        _searchQuery.isNotEmpty
+                        filterState.searchQuery.isNotEmpty
                             ? 'Try adjusting your search terms'
                             : 'Jobs matching your crew preferences will appear here',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.mediumGray),
                         textAlign: TextAlign.center,
                       ),
-                      if (_searchQuery.isNotEmpty) ...[
+                      if (filterState.searchQuery.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () {
-                            setState(() {
-                              _searchQuery = '';
-                            });
+                            ref.read(jobsFilterProvider.notifier).setSearchQuery('');
                           },
                           child: const Text('Clear Search'),
                         ),
@@ -621,11 +618,13 @@ class _JobsTabState extends ConsumerState<JobsTab> {
                   itemCount: filteredJobs.length,
                   itemBuilder: (context, index) {
                     final job = filteredJobs[index];
-                    return RichTextJobCard(
-                      job: job,
-                      onDetails: () => _showJobDetails(job),
-                      onBid: () => _handleBidAction(job),
-                    ).animate().fadeIn(
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+                      child: JJJobCard.detailed(
+                        job: job,
+                        onTap: () => _showJobDetails(job),
+                        onBookmark: () => _handleBidAction(job),
+                      ).animate().fadeIn(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                     ).slideY(
@@ -633,8 +632,9 @@ class _JobsTabState extends ConsumerState<JobsTab> {
                       end: 0,
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
-                    );
-                  },
+                    ),
+                  );
+                },
                 ),
               );
             },
@@ -675,10 +675,26 @@ class ChatTab extends ConsumerWidget {
       );
     }
 
-    // Navigate to the actual CrewChatScreen
-    return CrewChatScreen(
-      crewId: selectedCrew.id,
-      crewName: selectedCrew.name,
+    // TODO: Implement crew chat screen
+    // For now, show a placeholder
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.chat, size: 48, color: AppTheme.accentCopper),
+          const SizedBox(height: 16),
+          Text(
+            'Crew Chat',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Chat functionality coming soon for ${selectedCrew.name}',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.mediumGray),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

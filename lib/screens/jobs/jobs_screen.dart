@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../design_system/app_theme.dart';
 import '../../models/job_model.dart';
 import '../../providers/riverpod/jobs_riverpod_provider.dart';
-import '../../widgets/rich_text_job_card.dart';
+import '../../widgets/jj_job_card.dart';
 import '../../widgets/job_card_skeleton.dart';
 import '../../widgets/dialogs/job_details_dialog.dart';
 import '../../electrical_components/circuit_board_background.dart';
@@ -489,21 +489,23 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
                   padding: const EdgeInsets.all(16),
                   itemCount: filteredJobs.length,
                   // PERFORMANCE OPTIMIZATION: Add itemExtent for fixed-height job cards
-                  // RichTextJobCard has approximately consistent height (~200-220px)
+                  // JJJobCard.detailed has consistent height (200px)
                   // This enables the framework to avoid expensive layout calculations
-                  itemExtent: 210.0, // Average card height measured from UI
+                  itemExtent: 216.0, // 200px card + 16px bottom padding
                   // PERFORMANCE OPTIMIZATION: Add cacheExtent for better scroll performance
                   // Renders items slightly off-screen to reduce frame drops during scroll
                   cacheExtent: 500.0,
                   itemBuilder: (context, index) {
                     final job = filteredJobs[index];
-                    return RichTextJobCard(
-                      // PERFORMANCE OPTIMIZATION: Add stable key for efficient widget recycling
-                      // ValueKey based on job ID ensures widgets are reused correctly
-                      key: ValueKey<String>(job.id),
-                      job: job,
-                      onDetails: () => _showJobDetails(job),
-                      onBid: () => _handleBidAction(job),
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+                      child: JJJobCard(
+                        key: ValueKey<String>(job.id),
+                        job: job,
+                        variant: JJJobCardVariant.detailed,
+                        onTap: () => _showJobDetails(job),
+                        onBookmark: (_) => _handleBidAction(job),
+                      ),
                     );
                   },
                 ),

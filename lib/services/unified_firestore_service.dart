@@ -1,11 +1,19 @@
+import 'dart:io';
 import 'dart:async';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'cache_service.dart';
 import '../models/filter_criteria.dart';
+import '../models/job_model.dart';
 import '../models/locals_record.dart';
 import '../models/user_model.dart';
+import '../features/crews/models/post_model.dart';
+import '../models/conversation_model.dart' as conv;
+import '../features/crews/models/message.dart';
+import '../models/contractor_model.dart';
+import 'package:geolocator/geolocator.dart';
 
 // ============================================================================
 // UNIFIED FIRESTORE SERVICE - STRATEGY PATTERN IMPLEMENTATION
@@ -1204,6 +1212,7 @@ class ShardingStrategy implements FirestoreStrategy {
 /// ```
 class UnifiedFirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final CacheService _cacheService = CacheService();
 
   // Strategy instances
@@ -1480,6 +1489,28 @@ class UnifiedFirestoreService {
     return updateUser(uid: uid, data: userModel.toJson());
   }
 
+  /// Set user online status
+  Future<void> setOnlineStatus(bool status) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    Future<void> operation() async {
+      await usersCollection.doc(uid).update({
+        'onlineStatus': status,
+        'lastActive': FieldValue.serverTimestamp(),
+      });
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'setOnlineStatus',
+      );
+    } else {
+      return operation();
+    }
+  }
+
   // ============================================================================
   // JOB OPERATIONS
   // ============================================================================
@@ -1518,7 +1549,10 @@ class UnifiedFirestoreService {
 
     // Default implementation
     Stream<QuerySnapshot<Object?>> operation() {
-      Query query = jobsCollection.orderBy('timestamp', descending: true);
+      Query query = jobsCollection
+          .where('deleted', isEqualTo: false)
+          .where('matchesCriteria', isEqualTo: true)
+          .orderBy('timestamp', descending: true);
 
       // Apply filters
       if (filters != null) {
@@ -1691,9 +1725,405 @@ class UnifiedFirestoreService {
     }
   }
 
+  /// Share a job with a crew
+  Future<void> shareJob(String crewId, Job job) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    Future<void> operation() async {
+      final crew = await getCrew(crewId);
+      final jobToShare = job.copyWith(matchesCriteria: _computeJobMatch(job.jobDetails, (crew?.data() as Map<String, dynamic>)['jobPreferences'] ?? {}));
+
+      // Calculate match score as weighted average of individual criteria
+      double score = 0.0;
+
+      // Hours match
+      double jobHours = jobToShare.jobDetails['hours']?.toDouble() ?? 0.0;
+      double prefHours = ((crew?.data() as Map<String, dynamic>)['jobPreferences'] ?? {})['hoursWorked']?.toDouble() ?? 0.0;
+      bool hoursMatch = jobHours >= prefHours;
+      score += hoursMatch ? 0.3 : 0.0;
+
+      // Pay rate match
+      double jobPay = jobToShare.jobDetails['payRate']?.toDouble() ?? 0.0;
+      double prefPay = ((crew?.data() as Map<String, dynamic>)['jobPreferences'] ?? {})['payRate']?.toDouble() ?? 0.0;
+      bool payMatch = jobPay >= prefPay;
+      score += payMatch ? 0.3 : 0.0;
+
+      // Per diem match
+      double jobPerDiem = jobToShare.jobDetails['perDiem']?.toDouble() ?? 0.0;
+      double prefPerDiem = ((crew?.data() as Map<String, dynamic>)['jobPreferences'] ?? {})['perDiem']?.toDouble() ?? 0.0;
+      bool perDiemMatch = jobPerDiem >= prefPerDiem;
+      score += perDiemMatch ? 0.2 : 0.0;
+
+      // Contractor match
+      bool jobContractor = jobToShare.jobDetails['contractor'] ?? false;
+      bool prefContractor = ((crew?.data() as Map<String, dynamic>)['jobPreferences'] ?? {})['contractor'] ?? false;
+      bool contractorMatch = jobContractor == prefContractor;
+      score += contractorMatch ? 0.1 : 0.0;
+
+      // Location match
+      GeoPoint? jobLoc = jobToShare.jobDetails['location'];
+      GeoPoint? prefLoc = ((crew?.data() as Map<String, dynamic>)['jobPreferences'] ?? {})['location'];
+      bool locationMatch = true;
+      if (jobLoc != null && prefLoc != null) {
+        double distance = Geolocator.distanceBetween(
+          jobLoc.latitude,
+          jobLoc.longitude,
+          prefLoc.latitude,
+          prefLoc.longitude,
+        ) / 1000.0; // Convert to km
+        locationMatch = distance <= 100;
+      }
+      score += locationMatch ? 0.1 : 0.0;
+
+      final batch = _firestore.batch();
+      final jobRef = crewsCollection.doc(crewId).collection('jobs').doc();
+      batch.set(jobRef, jobToShare.toFirestore());
+
+      // Always increment total jobs shared
+      Map<String, dynamic> crewUpdates = {
+        'stats.totalJobsShared': FieldValue.increment(1),
+      };
+
+      // If matches criteria, update match stats
+      if (jobToShare.matchesCriteria) {
+        crewUpdates['stats.totalMatchScore'] = FieldValue.increment(score);
+        crewUpdates['stats.matchCount'] = FieldValue.increment(1);
+      }
+
+      batch.update(crewsCollection.doc(crewId), crewUpdates);
+      await batch.commit();
+
+      final jobId = jobRef.id;
+
+      // // Send notifications to crew members
+      // if (crew != null) {
+      //   final members = await usersCollection.where('crewIds', arrayContains: crewId).get();
+      //   for (var memberDoc in members.docs) {
+      //     final memberId = memberDoc.id;
+      //     if (memberId != uid) { // Exclude sharer
+      //       final user = UserModel.fromFirestore(memberDoc);
+      //       final token = user.fcmToken;
+      //       if (token != null && token.isNotEmpty) {
+      //         await NotificationService.sendNotification(
+      //           token: token,
+      //           title: 'New Job Shared in Crew',
+      //           body: '${jobToShare.jobTitle} at ${jobToShare.company}',
+      //           data: {
+      //             'type': 'job',
+      //             'jobId': jobId,
+      //             'crewId': crewId,
+      //           },
+      //         );
+      //       }
+      //     }
+      //   }
+      // }
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'shareJob',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  bool _computeJobMatch(Map<String, dynamic> jobDetails, Map<String, dynamic> prefs) {
+    // Hours check
+    double jobHours = jobDetails['hours']?.toDouble() ?? 0.0;
+    double prefHours = prefs['hoursWorked']?.toDouble() ?? 0.0;
+    if (jobHours < prefHours) return false;
+
+    // Pay rate check
+    double jobPay = jobDetails['payRate']?.toDouble() ?? 0.0;
+    double prefPay = prefs['payRate']?.toDouble() ?? 0.0;
+    if (jobPay < prefPay) return false;
+
+    // Per diem check
+    double jobPerDiem = jobDetails['perDiem']?.toDouble() ?? 0.0;
+    double prefPerDiem = prefs['perDiem']?.toDouble() ?? 0.0;
+    if (jobPerDiem < prefPerDiem) return false;
+
+    // Contractor check
+    bool jobContractor = jobDetails['contractor'] ?? false;
+    bool prefContractor = prefs['contractor'] ?? false;
+    if (jobContractor != prefContractor) return false;
+
+    // Location check
+    GeoPoint? jobLoc = jobDetails['location'];
+    GeoPoint? prefLoc = prefs['location'];
+    if (jobLoc != null && prefLoc != null) {
+      double distance = Geolocator.distanceBetween(
+        jobLoc.latitude,
+        jobLoc.longitude,
+        prefLoc.latitude,
+        prefLoc.longitude,
+      ) / 1000.0; // Convert to km
+      if (distance > 100) return false;
+    }
+    // If no locations, assume match
+
+    return true;
+  }
+
+  String _generateDirectConvId(List<String> participants) {
+    participants.sort();
+    return participants.join('_');
+  }
+  
   // ============================================================================
   // LOCAL UNION OPERATIONS
   // ============================================================================
+
+  // ============================================================================
+  // CREW OPERATIONS
+  // ============================================================================
+
+  /// Get crew document
+  Future<DocumentSnapshot?> getCrew(String crewId) async {
+    Future<DocumentSnapshot> operation() => crewsCollection.doc(crewId).get();
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'getCrew',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Create a new crew
+  Future<String> createCrew(Map<String, dynamic> crewData) async {
+    Future<String> operation() async {
+      final ref = await crewsCollection.add(crewData);
+      // Add to foreman's crewIds
+      await usersCollection.doc(crewData['foremanId']).update({
+        'crewIds': FieldValue.arrayUnion([ref.id]),
+      });
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'createCrew',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Join a crew
+  Future<void> joinCrew(String crewId) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    Future<void> operation() async {
+      await crewsCollection.doc(crewId).update({
+        'memberIds': FieldValue.arrayUnion([uid]),
+      });
+      await usersCollection.doc(uid).update({
+        'crewIds': FieldValue.arrayUnion([crewId]),
+      });
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'joinCrew',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Remove a member from a crew
+  Future<void> removeMember(String crewId, String memberId) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    Future<void> operation() async {
+      final crew = await getCrew(crewId);
+      if ((crew?.data() as Map<String, dynamic>)['foremanId'] != uid) {
+        throw Exception('Not authorized to remove member');
+      }
+      await crewsCollection.doc(crewId).update({
+        'memberIds': FieldValue.arrayRemove([memberId]),
+      });
+      await usersCollection.doc(memberId).update({
+        'crewIds': FieldValue.arrayRemove([crewId]),
+      });
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'removeMember',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Update job preferences for a crew
+  Future<void> updateJobPreferences(String crewId, Map<String, dynamic> prefs) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    Future<void> operation() async {
+      final crew = await getCrew(crewId);
+      if ((crew?.data() as Map<String, dynamic>)['foremanId'] != uid) {
+        throw Exception('Not authorized to update job preferences');
+      }
+      await crewsCollection.doc(crewId).update({'jobPreferences': prefs});
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'updateJobPreferences',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  // ============================================================================
+  // FEED POSTS
+  // ============================================================================
+
+  /// Get feed posts stream
+  Stream<QuerySnapshot> streamFeedPosts(String crewId, {int limit = 20, DocumentSnapshot? startAfter}) {
+    Stream<QuerySnapshot> operation() {
+      Query query = crewsCollection.doc(crewId).collection('feedPosts')
+          .where('deleted', isEqualTo: false)
+          .orderBy('timestamp', descending: true)
+          .limit(limit);
+      if (startAfter != null) {
+        query = query.startAfterDocument(startAfter);
+      }
+      return query.snapshots();
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeStreamWithRetry(
+        operation,
+        operationName: 'streamFeedPosts',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Create a new feed post
+  Future<void> createPost(String crewId, Map<String, dynamic> postData, {List<File>? mediaFiles}) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    Future<void> operation() async {
+      // List<String> mediaUrls = [];
+      // if (mediaFiles != null && mediaFiles.isNotEmpty) {
+      //   final connectivity = ConnectivityService();
+      //   try {
+      //     for (var file in mediaFiles) {
+      //       final timestamp = DateTime.now().millisecondsSinceEpoch;
+      //       final path = 'crews/$crewId/posts/${postData['id']}/media/$timestamp';
+      //       final url = await StorageService(connectivityService: connectivity).uploadMedia(file, path);
+      //       if (url != null) {
+      //         mediaUrls.add(url);
+      //       }
+      //     }
+      //     postData['mediaUrls'] = mediaUrls;
+      //   } on AppException {
+      //     // Log error, continue without media
+      //   } catch (e) {
+      //     throw AppException('Failed to upload media: $e');
+      //   }
+      // }
+
+      final postRef = await crewsCollection.doc(crewId).collection('feedPosts').add(postData);
+      final postId = postRef.id;
+
+      // // Send notifications to crew members except author
+      // final crew = await getCrew(crewId);
+      // if (crew != null) {
+      //   final members = await usersCollection.where('crewIds', arrayContains: crewId).get();
+      //   for (var memberDoc in members.docs) {
+      //     final memberId = memberDoc.id;
+      //     if (memberId != uid) {
+      //       final user = UserModel.fromFirestore(memberDoc);
+      //       final token = user.fcmToken;
+      //       if (token != null && token.isNotEmpty) {
+      //         await NotificationService.sendNotification(
+      //           token: token,
+      //           title: 'New Post in Crew',
+      //           body: postData['content'],
+      //           data: {
+      //             'type': 'post',
+      //             'postId': postId,
+      //             'crewId': crewId,
+      //           },
+      //         );
+      //       }
+      //     }
+      //   }
+      // }
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'addPost',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Like a feed post
+  Future<void> likePost(String crewId, String postId) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    Future<void> operation() async {
+      await crewsCollection.doc(crewId).collection('feedPosts').doc(postId).update({
+        'likes': FieldValue.arrayUnion([uid]),
+      });
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'likePost',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Delete a feed post
+  Future<void> deletePost(String crewId, String postId, String authorId) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    if (uid != authorId) {
+      throw Exception('Not authorized to delete post');
+    }
+
+    Future<void> operation() async {
+      await crewsCollection.doc(crewId).collection('feedPosts').doc(postId).update({'deleted': true});
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'deletePost',
+      );
+    } else {
+      return operation();
+    }
+  }
 
   /// Get locals stream with optional state filter and pagination
   ///
@@ -1874,6 +2304,397 @@ class UnifiedFirestoreService {
   }
 
   // ============================================================================
+  // CHAT OPERATIONS
+  // ============================================================================
+
+  /// Get or create a conversation
+  Future<String> getOrCreateConversation(String crewId, {bool isDirect = false, List<String>? participants}) async {
+    Future<String> operation() async {
+      final convId = isDirect ? _generateDirectConvId(participants!) : 'crew_chat';
+      final ref = crewsCollection.doc(crewId).collection('conversations').doc(convId);
+      final doc = await ref.get();
+      if (!doc.exists) {
+        await ref.set({
+          'type': isDirect ? 'direct' : 'crew',
+          'participantIds': isDirect ? participants : [],
+          'lastMessage': '',
+          'lastMessageTime': FieldValue.serverTimestamp(),
+        });
+      }
+      return convId;
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'getOrCreateConversation',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Get messages stream
+  Stream<QuerySnapshot> streamMessages(String crewId, String conversationId, {int limit = 20, DocumentSnapshot? startAfter}) {
+    Stream<QuerySnapshot> operation() {
+      Query query = crewsCollection.doc(crewId).collection('conversations').doc(conversationId)
+          .collection('messages')
+          .where('deleted', isEqualTo: false)
+          .orderBy('timestamp', descending: false)
+          .limit(limit);
+      if (startAfter != null) {
+        query = query.startAfterDocument(startAfter);
+      }
+      return query.snapshots();
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeStreamWithRetry(
+        operation,
+        operationName: 'streamMessages',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Send a message
+  Future<void> sendMessage(String crewId, String conversationId, Message message, {List<File>? mediaFiles}) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    Future<void> operation() async {
+      // if (mediaFiles != null && mediaFiles.isNotEmpty) {
+      //   final connectivity = ConnectivityService();
+      //   try {
+      //     List<Attachment> attachments = [];
+      //     for (var file in mediaFiles) {
+      //       final timestamp = DateTime.now().millisecondsSinceEpoch;
+      //       final path = 'crews/$crewId/conversations/$conversationId/messages/${message.id}/media/$timestamp';
+      //       final url = await StorageService(connectivityService: connectivity).uploadMedia(file, path);
+      //       if (url != null) {
+      //         // Create an Attachment object instead of just storing the URL
+      //         final attachment = Attachment(
+      //           url: url,
+      //           filename: file.path.split('/').last,
+      //           type: _getAttachmentTypeFromFile(file),
+      //           sizeBytes: await file.length(),
+      //         );
+      //         attachments.add(attachment);
+      //       }
+      //     }
+      //     // Update message with attachments instead of mediaUrls
+      //     message = message.copyWith(attachments: attachments);
+      //   } on AppException {
+      //     // Log error, continue without media
+      //   } catch (e) {
+      //     throw AppException('Failed to upload media: $e');
+      //   }
+      // }
+      final batch = _firestore.batch();
+      final messageRef = crewsCollection.doc(crewId).collection('conversations').doc(conversationId)
+          .collection('messages').doc();
+      batch.set(messageRef, message.toFirestore());
+      batch.update(crewsCollection.doc(crewId).collection('conversations').doc(conversationId), {
+        'lastMessage': message.content,
+        'lastMessageTime': FieldValue.serverTimestamp(),
+      });
+      await batch.commit();
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'sendMessage',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Mark a message as read
+  Future<void> markAsRead(String crewId, String conversationId, String messageId) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    Future<void> operation() async {
+      await crewsCollection.doc(crewId).collection('conversations').doc(conversationId)
+          .collection('messages').doc(messageId).update({
+        'readBy': FieldValue.arrayUnion([uid]),
+      });
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'markAsRead',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Get conversation stream
+  Stream<DocumentSnapshot> streamConversation(String crewId, String convId) {
+    Stream<DocumentSnapshot> operation() {
+      return crewsCollection.doc(crewId).collection('conversations').doc(convId).snapshots();
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeStreamWithRetry(
+        operation,
+        operationName: 'streamConversation',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Get conversations stream
+  Stream<List<conv.Conversation>> streamConversations(String crewId) {
+    Stream<List<conv.Conversation>> operation() {
+      return crewsCollection.doc(crewId).collection('conversations')
+          .where('deleted', isEqualTo: false)
+          .snapshots()
+          .map((snap) => snap.docs.map((doc) => conv.Conversation.fromFirestore(doc)).toList());
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeStreamWithRetry(
+        operation,
+        operationName: 'streamConversations',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Update typing status
+  Future<void> updateTyping(String crewId, String convId, String userId, bool typing) async {
+    Future<void> operation() async {
+      final updateData = typing
+          ? {'typingUsers': FieldValue.arrayUnion([userId])}
+          : {'typingUsers': FieldValue.arrayRemove([userId])};
+      await crewsCollection.doc(crewId).collection('conversations').doc(convId).update(updateData);
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'updateTyping',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Batch create a new feed post and notify crew members
+  Future<void> batchCreatePostAndNotify(String crewId, PostModel post, {List<File>? mediaFiles}) async {
+    Future<void> operation() async {
+      // List<String> mediaUrls = [];
+      // if (mediaFiles != null && mediaFiles.isNotEmpty) {
+      //   final connectivity = ConnectivityService();
+      //   try {
+      //     for (var file in mediaFiles) {
+      //       final timestamp = DateTime.now().millisecondsSinceEpoch;
+      //       final path = 'crews/$crewId/posts/${post.id}/media/$timestamp';
+      //       final url = await StorageService(connectivityService: connectivity).uploadMedia(file, path);
+      //       if (url != null) {
+      //         mediaUrls.add(url);
+      //       }
+      //     }
+      //     post = post.copyWith(mediaUrls: mediaUrls);
+      //   } on AppException {
+      //     // Log error, continue without media
+      //   } catch (e) {
+      //     throw AppException('Failed to upload media: $e');
+      //   }
+      // }
+      final batch = _firestore.batch();
+      final postRef = crewsCollection.doc(crewId).collection('feedPosts').doc();
+      batch.set(postRef, post.toFirestore());
+      batch.update(crewsCollection.doc(crewId), {
+        'stats.totalPosts': FieldValue.increment(1),
+      });
+      await batch.commit();
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'batchCreatePostAndNotify',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  AttachmentType _getAttachmentTypeFromFile(File file) {
+    final extension = file.path.split('.').last.toLowerCase();
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+      case 'webp':
+        return AttachmentType.image;
+      case 'mp4':
+      case 'mov':
+      case 'avi':
+      case 'mkv':
+        return AttachmentType.video;
+      case 'mp3':
+      case 'wav':
+      case 'aac':
+      case 'm4a':
+        return AttachmentType.audio;
+      case 'pdf':
+      case 'doc':
+      case 'docx':
+      case 'txt':
+      case 'xls':
+      case 'xlsx':
+        return AttachmentType.document;
+      default:
+        return AttachmentType.file;
+    }
+  }
+
+  // ============================================================================
+  // CONTRACTOR OPERATIONS
+  // ============================================================================
+
+  /// Get contractors stream
+  Stream<List<Contractor>> streamContractors({int limit = 50, DocumentSnapshot? startAfter}) {
+    Stream<List<Contractor>> operation() {
+      Query query = stormContractorsCollection
+          .orderBy('company')
+          .limit(limit);
+
+      if (startAfter != null) {
+        query = query.startAfterDocument(startAfter);
+      }
+
+      return query.snapshots().map((snapshot) {
+        return snapshot.docs.map((doc) {
+          return Contractor.fromJson(doc.data() as Map<String, dynamic>);
+        }).toList();
+      });
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeStreamWithRetry(
+        operation,
+        operationName: 'streamContractors',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+
+  /// Get a single contractor
+  Future<Contractor?> getContractor(String contractorId) async {
+    Future<Contractor?> operation() async {
+      final doc = await stormContractorsCollection.doc(contractorId).get();
+      if (!doc.exists) return null;
+      return Contractor.fromJson(doc.data() as Map<String, dynamic>);
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'getContractor',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Search for contractors
+  Stream<List<Contractor>> searchContractors(String searchQuery) {
+    Stream<List<Contractor>> operation() {
+      if (searchQuery.isEmpty) {
+        return streamContractors();
+      }
+
+      // Firestore doesn't support full-text search, so we'll get all and filter
+      return stormContractorsCollection
+          .orderBy('company')
+          .snapshots()
+          .map((snapshot) {
+        return snapshot.docs
+            .map((doc) => Contractor.fromJson(doc.data() as Map<String, dynamic>))
+            .where((contractor) =>
+                contractor.company.toLowerCase().contains(searchQuery.toLowerCase()))
+            .toList();
+      });
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeStreamWithRetry(
+        operation,
+        operationName: 'searchContractors',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Create a new contractor
+  Future<String> createContractor(Contractor contractor) async {
+    Future<String> operation() async {
+      final docRef = stormContractorsCollection.doc();
+      final newContractor = contractor.copyWith(id: docRef.id);
+      await docRef.set(newContractor.toFirestore());
+      return docRef.id;
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'createContractor',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Update a contractor
+  Future<void> updateContractor(Contractor contractor) async {
+    Future<void> operation() async {
+      await stormContractorsCollection
+          .doc(contractor.id)
+          .update(contractor.toFirestore());
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'updateContractor',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  /// Delete a contractor
+  Future<void> deleteContractor(String contractorId) async {
+    Future<void> operation() async {
+      await stormContractorsCollection.doc(contractorId).delete();
+    }
+
+    if (_resilienceStrategy != null) {
+      return _resilienceStrategy!.executeWithRetry(
+        operation,
+        operationName: 'deleteContractor',
+      );
+    } else {
+      return operation();
+    }
+  }
+
+  // ============================================================================
   // BATCH OPERATIONS
   // ============================================================================
 
@@ -2028,7 +2849,7 @@ class FirestoreException implements Exception {
 }
 
 /// Batch operation types
-enum OperationType { create, update, delete }
+enum OperationType { create, update, delete, loadJobs }
 
 /// Batch operation descriptor
 class BatchOperation {

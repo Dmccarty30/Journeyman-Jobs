@@ -46,7 +46,7 @@ Journeyman Jobs is a Flutter mobile application for IBEW electrical professional
 
 ## 🚦 Operational Guidelines for Gemini
 
-1. **Context First**: Always refer to `CLAUDE.md`, `PROJECT_OVERVIEW_REPORT.md`, `plan.md`, `TASK.md`, and `guide/screens.md` for project context, current status, and requirements.
+1. **Context First**: Always refer to `GEMINI.md`, `PROJECT_OVERVIEW_REPORT.md`, `plan.md`, `TASK.md`, and `guide/screens.md` for project context, current status, and requirements.
 2. **Adhere to Conventions**: Strictly follow Flutter/Dart conventions, project's code style, and architectural patterns.
 3. **Firebase Focus**: All backend interactions will be with Firebase. Do not assume other backend services.
 4. **Electrical Theme**: Maintain the electrical design theme in all UI/UX considerations.

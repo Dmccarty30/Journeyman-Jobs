@@ -10,13 +10,13 @@ part of 'session_timeout_provider.dart';
 // ignore_for_file: type=lint, type=warning
 /// Provides the singleton session timeout service instance.
 ///
-/// This provider creates and manages the SessionTimeoutService lifecycle.
+/// This provider creates and manages the ConsolidatedSessionService lifecycle.
 /// The service is initialized when first accessed and disposed when the provider is disposed.
 ///
 /// Example usage:
 /// ```dart
 /// final sessionService = ref.watch(sessionTimeoutServiceProvider);
-/// await sessionService.startSession(); // After successful login
+/// await sessionService.initialize(); // After successful login
 /// sessionService.recordActivity(); // On user interaction
 /// await sessionService.endSession(); // On logout
 /// ```
@@ -26,13 +26,13 @@ const sessionTimeoutServiceProvider = SessionTimeoutServiceProvider._();
 
 /// Provides the singleton session timeout service instance.
 ///
-/// This provider creates and manages the SessionTimeoutService lifecycle.
+/// This provider creates and manages the ConsolidatedSessionService lifecycle.
 /// The service is initialized when first accessed and disposed when the provider is disposed.
 ///
 /// Example usage:
 /// ```dart
 /// final sessionService = ref.watch(sessionTimeoutServiceProvider);
-/// await sessionService.startSession(); // After successful login
+/// await sessionService.initialize(); // After successful login
 /// sessionService.recordActivity(); // On user interaction
 /// await sessionService.endSession(); // On logout
 /// ```
@@ -40,20 +40,20 @@ const sessionTimeoutServiceProvider = SessionTimeoutServiceProvider._();
 final class SessionTimeoutServiceProvider
     extends
         $FunctionalProvider<
-          SessionTimeoutService,
-          SessionTimeoutService,
-          SessionTimeoutService
+          ConsolidatedSessionService,
+          ConsolidatedSessionService,
+          ConsolidatedSessionService
         >
-    with $Provider<SessionTimeoutService> {
+    with $Provider<ConsolidatedSessionService> {
   /// Provides the singleton session timeout service instance.
   ///
-  /// This provider creates and manages the SessionTimeoutService lifecycle.
+  /// This provider creates and manages the ConsolidatedSessionService lifecycle.
   /// The service is initialized when first accessed and disposed when the provider is disposed.
   ///
   /// Example usage:
   /// ```dart
   /// final sessionService = ref.watch(sessionTimeoutServiceProvider);
-  /// await sessionService.startSession(); // After successful login
+  /// await sessionService.initialize(); // After successful login
   /// sessionService.recordActivity(); // On user interaction
   /// await sessionService.endSession(); // On logout
   /// ```
@@ -73,26 +73,89 @@ final class SessionTimeoutServiceProvider
 
   @$internal
   @override
-  $ProviderElement<SessionTimeoutService> $createElement(
+  $ProviderElement<ConsolidatedSessionService> $createElement(
     $ProviderPointer pointer,
   ) => $ProviderElement(pointer);
 
   @override
-  SessionTimeoutService create(Ref ref) {
+  ConsolidatedSessionService create(Ref ref) {
     return sessionTimeoutService(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SessionTimeoutService value) {
+  Override overrideWithValue(ConsolidatedSessionService value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<SessionTimeoutService>(value),
+      providerOverride: $SyncValueProvider<ConsolidatedSessionService>(value),
     );
   }
 }
 
 String _$sessionTimeoutServiceHash() =>
-    r'7f294cd6b2166c6144c2860a5eef7794fc835182';
+    r'9069bfb8b30161f1cbcd766e02d79a1d5a5fe4c6';
+
+/// Provider for the consolidated session service that handles all session management.
+///
+/// This is the preferred way to access session management functionality.
+/// It prevents conflicts between multiple session services.
+
+@ProviderFor(consolidatedSessionService)
+const consolidatedSessionServiceProvider =
+    ConsolidatedSessionServiceProvider._();
+
+/// Provider for the consolidated session service that handles all session management.
+///
+/// This is the preferred way to access session management functionality.
+/// It prevents conflicts between multiple session services.
+
+final class ConsolidatedSessionServiceProvider
+    extends
+        $FunctionalProvider<
+          ConsolidatedSessionService,
+          ConsolidatedSessionService,
+          ConsolidatedSessionService
+        >
+    with $Provider<ConsolidatedSessionService> {
+  /// Provider for the consolidated session service that handles all session management.
+  ///
+  /// This is the preferred way to access session management functionality.
+  /// It prevents conflicts between multiple session services.
+  const ConsolidatedSessionServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'consolidatedSessionServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$consolidatedSessionServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<ConsolidatedSessionService> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ConsolidatedSessionService create(Ref ref) {
+    return consolidatedSessionService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ConsolidatedSessionService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ConsolidatedSessionService>(value),
+    );
+  }
+}
+
+String _$consolidatedSessionServiceHash() =>
+    r'77179ad087c32167672fc7918d308ee12f128167';
 
 /// Manages session timeout state and coordinates with auth system.
 ///
@@ -191,7 +254,7 @@ final class SessionTimeoutNotifierProvider
 }
 
 String _$sessionTimeoutNotifierHash() =>
-    r'8f160c4ee0387e6cded6219f881e86f3de6018f5';
+    r'ca848ab3ea9cb08e953cf539f51ffd91c4ef207a';
 
 /// Manages session timeout state and coordinates with auth system.
 ///

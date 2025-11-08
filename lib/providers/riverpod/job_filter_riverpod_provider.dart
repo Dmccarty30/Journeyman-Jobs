@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/filter_criteria.dart';
 import '../../models/filter_preset.dart';
 import '../../utils/structured_logging.dart';
+import '../../utils/error_handler.dart';
 
 part 'job_filter_riverpod_provider.g.dart';
 
@@ -85,51 +86,69 @@ class JobFilterNotifier extends _$JobFilterNotifier {
   Future<void> _loadFromStorage() async {
     state = state.copyWith(isLoading: true, error: null);
 
-    try {
-      final prefs = await ref.read(sharedPreferencesProvider.future);
-      
-      // Load current filter
-      final String? filterJson = prefs.getString(_filterKey);
-      JobFilterCriteria currentFilter = JobFilterCriteria.empty();
-      if (filterJson != null) {
-        final dynamic decoded = jsonDecode(filterJson);
-        currentFilter = JobFilterCriteria.fromJson(
-          Map<String, dynamic>.from(decoded as Map<String, dynamic>),
-        );
-      }
-      
-      // Load presets
-      List<FilterPreset> loadedPresets = <FilterPreset>[];
-      final String? presetsJson = prefs.getString(_presetsKey);
-      if (presetsJson != null) {
-        final dynamic decodedPresets = jsonDecode(presetsJson);
-        final List<dynamic> presetsList = decodedPresets as List<dynamic>;
-        loadedPresets = presetsList
-            .map((e) => FilterPreset.fromJson(
-                Map<String, dynamic>.from(e as Map<String, dynamic>),
-              ),)
-            .toList();
-      } else {
-        // Load default presets on first run
-        loadedPresets = DefaultFilterPresets.defaults;
-        await _savePresets(loadedPresets);
-      }
-      
-      // Load recent searches
-      final List<String> loadedSearches = 
-          prefs.getStringList(_recentSearchesKey) ?? <String>[];
+    final success = await ErrorHandler.handleAsyncOperation<Map<String, dynamic>>(
+      () async {
+        final prefs = await ref.read(sharedPreferencesProvider.future);
 
+        // Load current filter
+        final String? filterJson = prefs.getString(_filterKey);
+        JobFilterCriteria currentFilter = JobFilterCriteria.empty();
+        if (filterJson != null) {
+          final dynamic decoded = jsonDecode(filterJson);
+          currentFilter = JobFilterCriteria.fromJson(
+            Map<String, dynamic>.from(decoded as Map<String, dynamic>),
+          );
+        }
+
+        // Load presets
+        List<FilterPreset> loadedPresets = <FilterPreset>[];
+        final String? presetsJson = prefs.getString(_presetsKey);
+        if (presetsJson != null) {
+          final dynamic decodedPresets = jsonDecode(presetsJson);
+          final List<dynamic> presetsList = decodedPresets as List<dynamic>;
+          loadedPresets = presetsList
+              .map((e) => FilterPreset.fromJson(
+                  Map<String, dynamic>.from(e as Map<String, dynamic>),
+                ),)
+              .toList();
+        } else {
+          // Load default presets on first run
+          loadedPresets = DefaultFilterPresets.defaults;
+          await _savePresets(loadedPresets);
+        }
+
+        // Load recent searches
+        final List<String> loadedSearches =
+            prefs.getStringList(_recentSearchesKey) ?? <String>[];
+
+        return {
+          'currentFilter': currentFilter,
+          'presets': loadedPresets,
+          'recentSearches': loadedSearches,
+        };
+      },
+      operationName: 'loadFilterFromStorage',
+      errorMessage: 'Failed to load filter settings',
+      showToast: false,
+      context: {
+        'filterKey': _filterKey,
+        'presetsKey': _presetsKey,
+        'recentSearchesKey': _recentSearchesKey,
+      },
+    );
+
+    if (success != null) {
       state = state.copyWith(
-        currentFilter: currentFilter,
-        presets: loadedPresets,
-        recentSearches: loadedSearches,
+        currentFilter: success['currentFilter'] as JobFilterCriteria,
+        presets: success['presets'] as List<FilterPreset>,
+        recentSearches: success['recentSearches'] as List<String>,
         isLoading: false,
       );
-    } catch (e) {
-      StructuredLogger.debug('Error loading filters: $e');
+    } else {
+      // Error already handled by ErrorHandler
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: 'Failed to load filter settings',
       );
     }
   }

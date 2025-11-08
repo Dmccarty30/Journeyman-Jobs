@@ -39,6 +39,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 ## ✨ Features
 
 ### 🐝 **Swarm Coordination**
+
 - **4 Topologies**: Hierarchical, Mesh, Ring, Star
 - **Auto-Spawning**: Intelligent agent creation based on task complexity
 - **Auto-Optimization**: Dynamic topology adjustment for performance
@@ -46,6 +47,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - **Cross-Session Memory**: Persistent context and learnings
 
 ### 🎯 **SPARC Methodology**
+
 - **Specification**: Requirements analysis and planning
 - **Pseudocode**: Algorithm design and logic flow
 - **Architecture**: System design and component structure
@@ -54,6 +56,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - **18 Specialized Modes**: Complete development lifecycle coverage
 
 ### 🐙 **GitHub Integration**
+
 - **PR Management**: Automated pull request workflows
 - **Code Review Swarms**: Multi-agent code analysis
 - **Issue Tracking**: Intelligent issue triage and assignment
@@ -62,6 +65,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - **Multi-Repo Coordination**: Cross-repository synchronization
 
 ### 🧠 **Neural Training**
+
 - **27+ Models**: Pre-trained patterns for common tasks
 - **WASM Acceleration**: 2.8-4.4x speed improvement
 - **SIMD Optimization**: Advanced vector processing
@@ -71,6 +75,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 ### 🎨 **74+ Specialized Agents**
 
 #### Core Development (5)
+
 - `coder` - Code implementation specialist
 - `planner` - Strategic planning and roadmaps
 - `researcher` - Information gathering and analysis
@@ -78,6 +83,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `tester` - Comprehensive test creation
 
 #### Swarm Coordination (5)
+
 - `hierarchical-coordinator` - Queen-led command structure
 - `mesh-coordinator` - Peer-to-peer coordination
 - `adaptive-coordinator` - Dynamic topology management
@@ -85,6 +91,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `swarm-memory-manager` - Cross-agent memory coordination
 
 #### Consensus & Fault Tolerance (7)
+
 - `byzantine-coordinator` - Byzantine fault tolerance
 - `raft-manager` - Raft consensus protocol
 - `gossip-coordinator` - Gossip-based consensus
@@ -94,6 +101,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `performance-benchmarker` - Consensus performance testing
 
 #### GitHub Automation (13)
+
 - `pr-manager` - Pull request coordination
 - `code-review-swarm` - Multi-agent code reviews
 - `issue-tracker` - Issue management and triage
@@ -105,6 +113,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - And 5 more specialized GitHub agents...
 
 #### Specialized Development (8)
+
 - `backend-dev` - Backend API development
 - `mobile-dev` - React Native mobile development
 - `ml-developer` - Machine learning workflows
@@ -115,16 +124,18 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `base-template-generator` - Boilerplate generation
 
 #### SPARC Methodology (4)
+
 - `specification` - Requirements analysis
 - `pseudocode` - Algorithm design
 - `architecture` - System architecture
 - `refinement` - Iterative improvement
 
-#### And 32 more specialized agents!
+#### And 32 more specialized agents
 
 ### 📦 **150+ Commands**
 
 #### Coordination (6)
+
 - `/coordination-swarm-init` - Initialize swarm with topology
 - `/coordination-agent-spawn` - Create specialized agents
 - `/coordination-task-orchestrate` - Coordinate task execution
@@ -133,6 +144,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `/coordination-init` - Setup coordination environment
 
 #### SPARC Methodology (18)
+
 - `/sparc-modes` - List all SPARC modes
 - `/sparc-coder` - Clean code implementation
 - `/sparc-tdd` - Test-driven development
@@ -153,6 +165,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `/sparc-swarm-coordinator` - Swarm coordination
 
 #### GitHub Integration (18)
+
 - `/github-code-review` - Automated code reviews
 - `/github-code-review-swarm` - Multi-agent reviews
 - `/github-pr-manager` - PR lifecycle management
@@ -173,6 +186,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `/github-swarm` - GitHub swarm orchestration
 
 #### Hive Mind (11)
+
 - `/hive-mind` - Initialize hive mind coordination
 - `/hive-mind-init` - Setup hive mind topology
 - `/hive-mind-spawn` - Spawn hive agents
@@ -186,12 +200,14 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `/hive-mind-wizard` - Guided setup wizard
 
 #### Memory Management (5)
+
 - `/memory-usage` - Memory storage and retrieval
 - `/memory-persist` - Cross-session persistence
 - `/memory-search` - Pattern-based search
 - `/memory-neural` - Neural memory integration
 
 #### Monitoring (5)
+
 - `/monitoring-status` - System status overview
 - `/monitoring-agents` - Agent status monitoring
 - `/monitoring-agent-metrics` - Performance metrics
@@ -199,6 +215,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `/monitoring-real-time-view` - Live dashboard
 
 #### Optimization (5)
+
 - `/optimization-topology-optimize` - Auto-optimize topology
 - `/optimization-auto-topology` - Automatic topology selection
 - `/optimization-parallel-execution` - Parallel task execution
@@ -206,6 +223,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `/optimization-cache-manage` - Cache management
 
 #### Analysis (5)
+
 - `/analysis-performance-report` - Performance reports
 - `/analysis-performance-bottlenecks` - Bottleneck detection
 - `/analysis-bottleneck-detect` - Real-time bottleneck analysis
@@ -213,6 +231,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `/analysis-token-efficiency` - Token optimization
 
 #### Automation (6)
+
 - `/automation-smart-spawn` - Intelligent agent spawning
 - `/automation-smart-agents` - Auto-agent selection
 - `/automation-auto-agent` - Automated agent management
@@ -221,6 +240,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `/automation-workflow-select` - Workflow selection
 
 #### Hooks (7)
+
 - `/hooks-setup` - Configure hooks system
 - `/hooks-overview` - Hooks documentation
 - `/hooks-pre-task` - Pre-task hook setup
@@ -230,6 +250,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `/hooks-session-end` - Session end hook setup
 
 #### Swarm Management (15)
+
 - `/swarm` - Main swarm command
 - `/swarm-init` - Initialize swarm
 - `/swarm-spawn` - Spawn swarm agents
@@ -247,6 +268,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `/swarm-examples` - Swarm examples
 
 #### Workflows (5)
+
 - `/workflows-create` - Create custom workflows
 - `/workflows-execute` - Execute workflows
 - `/workflows-export` - Export workflow definitions
@@ -254,6 +276,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `/workflows-research` - Research workflows
 
 #### Neural Training (5)
+
 - `/training-neural-train` - Train neural patterns
 - `/training-neural-patterns` - Pattern management
 - `/training-pattern-learn` - Pattern learning
@@ -261,6 +284,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `/training-specialization` - Agent specialization
 
 #### Flow Nexus (9)
+
 - `/flow-nexus-swarm` - Cloud swarm orchestration
 - `/flow-nexus-workflow` - Event-driven workflows
 - `/flow-nexus-neural-network` - Distributed neural training
@@ -271,7 +295,7 @@ Claude Flow is the most comprehensive Claude Code plugin for enterprise AI agent
 - `/flow-nexus-user-tools` - User management
 - `/flow-nexus-login` - Authentication
 
-#### And 50+ more commands!
+#### And 50+ more commands
 
 ---
 
@@ -293,6 +317,7 @@ cd claude-flow
 ```
 
 Then in Claude Code:
+
 ```
 /plugin add .
 ```
@@ -337,6 +362,7 @@ claude plugin list
 ### Method 1: Direct Installation (Recommended)
 
 In Claude Code:
+
 ```
 /plugin add ruvnet/claude-flow
 /restart
@@ -518,6 +544,7 @@ Claude Flow integrates with 3 MCP servers providing 110+ tools:
 ```
 
 **Tools**: 40+ orchestration tools
+
 - Swarm initialization and management
 - Agent spawning and coordination
 - Task orchestration
@@ -539,6 +566,7 @@ Claude Flow integrates with 3 MCP servers providing 110+ tools:
 ```
 
 **Tools**: Enhanced coordination features
+
 - WASM acceleration (2.8-4.4x speed)
 - SIMD optimization
 - Advanced topology management
@@ -558,6 +586,7 @@ Claude Flow integrates with 3 MCP servers providing 110+ tools:
 ```
 
 **Tools**: 70+ cloud features
+
 - E2B sandbox execution
 - Distributed neural training
 - Event-driven workflows

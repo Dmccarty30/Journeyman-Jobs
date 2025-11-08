@@ -15,7 +15,7 @@ import '../../features/crews/providers/crews_riverpod_provider.dart';
 import '../../models/job_model.dart';
 import '../../legacy/flutterflow/schema/jobs_record.dart';
 import '../../widgets/notification_badge.dart';
-import '../../widgets/condensed_job_card.dart';
+import '../../widgets/jj_job_card.dart';
 import '../../widgets/dialogs/job_details_dialog.dart';
 import 'home_skeleton_screen.dart';
 
@@ -613,9 +613,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                           return Column(
                             children: jobs.take(5).map((job) {
-                              return CondensedJobCard(
-                                job: job,
-                                onTap: () => _showJobDetailsDialog(context, job),
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+                                child: JJJobCard(
+                                  job: job,
+                                  variant: JJJobCardVariant.standard,
+                                  onTap: () => _showJobDetailsDialog(context, job),
+                                ),
                               );
                             }).toList(),
                           );

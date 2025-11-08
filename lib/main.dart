@@ -8,8 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/services/notification_service.dart';
 import 'package:journeyman_jobs/services/auth_service.dart';
-import 'package:journeyman_jobs/services/app_lifecycle_service.dart';
-import 'package:journeyman_jobs/services/session_timeout_service.dart';
+import 'package:journeyman_jobs/services/consolidated_session_service.dart';
 import 'package:journeyman_jobs/services/hierarchical/hierarchical_initialization_service.dart';
 import 'package:journeyman_jobs/widgets/activity_detector.dart';
 import 'package:journeyman_jobs/widgets/session_activity_detector.dart';
@@ -22,11 +21,9 @@ import 'navigation/app_router.dart' show routerProvider; // For the router provi
 // import 'providers/riverpod/hierarchical_riverpod_provider.dart'; // DISABLED: Not needed
 // import 'providers/riverpod/theme_riverpod_provider.dart'; // DISABLED: Not needed while forcing light mode
 
-// Global app lifecycle service for token validation on app resume
-late AppLifecycleService _appLifecycleService;
-
-// Global session timeout service for inactivity tracking
-late SessionTimeoutService _sessionTimeoutService;
+// Global consolidated session service for unified session management
+// This prevents conflicts between multiple session services
+late ConsolidatedSessionService _consolidatedSessionService;
 
 // Global hierarchical initialization service
 late HierarchicalInitializationService hierarchicalInitializationService;
@@ -98,17 +95,11 @@ void main() async {
     cacheSizeBytes: 100 * 1024 * 1024, // 100MB
   );
 
-  // Initialize session timeout service for inactivity tracking
-  // This handles auto-logout after 10 minutes of inactivity
-  _sessionTimeoutService = SessionTimeoutService();
-  await _sessionTimeoutService.initialize();
-
-  // Initialize app lifecycle monitoring for token validation on app resume
-  // This ensures tokens are refreshed when app returns from background
-  // and handles auto-logout when app is closed
-  final authService = AuthService();
-  _appLifecycleService = AppLifecycleService(authService, _sessionTimeoutService);
-  _appLifecycleService.initialize();
+  // Initialize consolidated session service for unified session management
+  // This prevents conflicts between multiple session monitoring services
+  // that were causing rapid logout issues in crews/tailboard screens
+  _consolidatedSessionService = ConsolidatedSessionService();
+  await _consolidatedSessionService.initialize();
 
   // Initialize hierarchical data service for IBEW Union → Local → Member → Job hierarchy
   // This provides efficient loading and caching of hierarchical data

@@ -67,4 +67,79 @@ workflow-init --uc --ultrathink --all-mcp --persona-architect --analyze --verbos
 ```
 
 ---
+
+```dart
 /document  --c7 --seq --uc --ultrathink  --persona-mentor --aagent-docs-architect --agent-documentation-manager --agent-code-reviewer-pro --agent-product-manager"read @lib\features\CLAUDE.md to understand your role in this directory as well as how to use the archon mcp server tools. What i need for you to do is to spawn code reviewer pro to help the docs architect and documentation manager agents analyze and understandand the exact architecture of the @tailboard_screen.dart file. While the product-manager agent uses the archon mcp server tools to understand exactly what is required to build out the chatting feature, like the channel list, group(crew) messaging, user profiles, etc. The core and fundamental foundational blocks. One the product manager has a good understanding of what is required, that agent will colaborate with the others to figure out how to implement evrything using the existing scaffolding utilizing popup, overlays, the four containers in the row above the `tab-bar`. This will be a very complex and detail oriendted workflow. So be sure to take your time, plan your work, and work your plan."
+```
+
+```dart
+/analyze @lib/ @src/ --ultrathink --seq --c7 --persona-analyzer \
+  --code --deps --architecture --forensic --dry-run --evidence \
+  --introspect --uc > merge-plan.md
+```
+
+```dart
+/improve @merge-plan.md --quality --refactor --batch \
+  --persona-refactorer --iterate --force --validate \
+  --git-checkpoint "pre-unification" --parallel --uc --watch \
+  > unification-report.md
+```
+
+```dart
+/cleanup @src/ @lib/ --code --aggressive --persona-analyzer \
+  --seq --deps --validate --coverage --introspect \
+  --git-checkpoint "pre-callgraph-strip" --uc \
+  > callgraph-cleanup.md
+```
+
+```dart
+/design @src/state/ @src/providers/ --architecture --simplify \
+  --persona-architect --ultrathink --seq --refactor --validate \
+  --interactive --git-checkpoint "pre-state-collapse" --uc
+
+/improve @state-collapse-plan.md --quality --iterate \
+  --threshold 95% --force --validate
+```
+
+```dart
+/design @src/ --performance --architecture --persona-performance \
+  --ultrathink --seq --pup --cache --load-balance --introspect \
+  --git-checkpoint "pre-perf-rearch" --uc
+
+/build @performance-architecture.md --feature --tdd \
+  --validate --benchmark
+```
+
+```dart
+/cleanup @assets/ @node_modules/ @package.json --deps --files \
+  --assets --aggressive --persona-performance --validate \
+  --bundle-analyze --tree-shake --minify \
+  --git-checkpoint "pre-compression" --uc
+```
+
+```dart
+/scan @src/ @lib/ @tests/ --quality --complexity --performance \
+  --forensic --persona-analyzer --all-mcp --seq --c7 --pup \
+  --evidence --strict --coverage --introspect --uc
+```
+
+```dart
+/test @src/ @lib/ --coverage --e2e --integration --unit \
+  --mutation --performance --accessibility --persona-qa --pup \
+  --strict --threshold 95% --uc
+
+/document @src/ @lib/ @README.md --technical --user --api \
+  --interactive --persona-scribe --c7 --examples --visual --uc
+
+/git --checkpoint "40-percent-reduction-complete" \
+  --tag "v2.0.0-optimized" --validate --test --pre-commit
+
+/scan --security --owasp --compliance --quality --deps \
+  --persona-security --strict --validate
+```
+
+---
+---
+
+```bash
+/hive   --uc --ultrathink --parsona-frontend --deep-dive --seq --e2e --magic --seq --focus frontend  --wave-delegation folders --wave-strategy systematic adaptive --wave-mode force --concurrency 3 --delegate auto --introspection --interactive --scope 2 --focus-frontend --iterations 3

@@ -71,30 +71,23 @@ dependencies:
   badges: ^3.1.1
   google_fonts: ^6.2.1
   flutter_svg: ^2.0.10
-  shadcn_ui: ^0.38.1
-
-  # AI integration
-  google_generative_ai: ^0.4.7
 
   # Utilities
   collection: ^1.18.0
   meta: ^1.16.0
-  from_css_color: ^2.0.0
   font_awesome_flutter: ^10.8.0
-  timezone: ^0.10.1
-
-  # Image handling
-  image_cropper: ^11.0.0
-
-  # Video player
-  youtube_player_flutter: ^9.1.1
 
   # Map and weather radar
   flutter_map: ^8.2.1
   latlong2: ^0.9.1
   dio: ^5.7.0
   geolocator: ^14.0.2
-  state_notifier: ^1.0.0
+
+  # Connectivity checking
+  connectivity_plus: ^7.0.0
+
+  # State management compatibility
+  provider: ^6.1.0
 
   # HTTP client and cryptography
   http: ^1.2.2
@@ -111,7 +104,7 @@ dependencies:
   stream_chat_flutter_core: ^9.19.0
 
   # Firebase Cloud Functions for secure token generation
-  cloud_functions: ^5.0.3
+  cloud_functions: ^6.0.4
 
 dev_dependencies:
   flutter_test:
@@ -121,7 +114,7 @@ dev_dependencies:
   mocktail: ^1.0.0
   integration_test:
     sdk: flutter
-  build_runner: ^2.4.6
+  build_runner: ^2.7.1
   riverpod_generator: ^3.0.0-dev.17
   fake_cloud_firestore: ^4.0.0
   firebase_auth_mocks: ^0.15.1

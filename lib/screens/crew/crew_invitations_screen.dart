@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:journeyman_jobs/design_system/app_theme.dart';
-import 'package:journeyman_jobs/models/crew_invitation_model.dart';
 import 'package:journeyman_jobs/models/user_model.dart';
-import 'package:journeyman_jobs/services/crew_invitation_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:journeyman_jobs/models/crew_invitation_model.dart' as crew_model;
+import '../../services/unified_crew_service.dart' as unified;
 import 'package:journeyman_jobs/widgets/crew_invitation_card.dart';
 import 'package:journeyman_jobs/widgets/electrical_components.dart';
 import 'package:journeyman_jobs/widgets/jj_skeleton_loader.dart';
@@ -28,12 +29,12 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
   late AnimationController _fadeController;
   late AnimationController _slideController;
 
-  final CrewInvitationService _invitationService = CrewInvitationService();
+  final unified.UnifiedCrewService _invitationService = unified.UnifiedCrewService();
 
   bool _isLoading = true;
-  List<CrewInvitation> allInvitations = [];
-  List<CrewInvitation> _pendingInvitations = [];
-  List<CrewInvitation> _pastInvitations = [];
+  List<crew_model.CrewInvitation> allInvitations = [];
+  List<crew_model.CrewInvitation> _pendingInvitations = [];
+  List<crew_model.CrewInvitation> _pastInvitations = [];
   Map<String, bool> loadingStates = {};
 
   @override
@@ -70,17 +71,39 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
 
     try {
       final user = Provider.of<UserModel>(context, listen: false);
-      final invitations = await _invitationService.getInvitationsForUser(user.uid);
-
+      final List<unified.CrewInvitation> uInvitations = await _invitationService.getInvitationsForUser(user.uid);
+ 
       if (!mounted) return;
-
+ 
+      // Convert unified service invitations to local model type expected by widgets
+      final List<crew_model.CrewInvitation> modelInvitations = uInvitations.map((u) {
+        return crew_model.CrewInvitation(
+          id: u.id,
+          crewId: u.crewId,
+          inviterId: u.inviterId,
+          inviteeId: u.inviteeId,
+          status: crew_model.CrewInvitationStatus.values.firstWhere(
+            (e) => e.toString().split('.').last == u.status.name,
+            orElse: () => crew_model.CrewInvitationStatus.pending,
+          ),
+          createdAt: Timestamp.fromDate(u.createdAt),
+          updatedAt: Timestamp.fromDate(u.updatedAt),
+          expiresAt: Timestamp.fromDate(u.expiresAt),
+          message: u.message,
+          crewName: u.crewName,
+          inviterName: u.inviterName,
+          inviteeName: u.inviteeName,
+          jobDetails: u.jobDetails,
+        );
+      }).toList();
+ 
       setState(() {
-        allInvitations = invitations;
-        _pendingInvitations = invitations
-            .where((inv) => inv.status == CrewInvitationStatus.pending && !inv.isExpired)
+        allInvitations = modelInvitations;
+        _pendingInvitations = modelInvitations
+            .where((inv) => inv.status == crew_model.CrewInvitationStatus.pending && !inv.isExpired)
             .toList();
-        _pastInvitations = invitations
-            .where((inv) => inv.status != CrewInvitationStatus.pending || inv.isExpired)
+        _pastInvitations = modelInvitations
+            .where((inv) => inv.status != crew_model.CrewInvitationStatus.pending || inv.isExpired)
             .toList();
         _isLoading = false;
       });
@@ -164,6 +187,7 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
           // Skeleton for invitation cards
           for (int i = 0; i < 3; i++) ...[
             JJSkeletonLoader(
+              width: double.infinity,
               height: 180,
               borderRadius: AppTheme.radiusLg,
               showCircuitPattern: true,
@@ -257,9 +281,9 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
             ),
             child: CrewInvitationCard(
               invitation: invitation,
-              showActions: invitation.status == CrewInvitationStatus.accepted ||
-                           invitation.status == CrewInvitationStatus.declined,
-              onAccept: invitation.status == CrewInvitationStatus.accepted
+              showActions: invitation.status == crew_model.CrewInvitationStatus.accepted ||
+                           invitation.status == crew_model.CrewInvitationStatus.declined,
+              onAccept: invitation.status == crew_model.CrewInvitationStatus.accepted
                   ? () => _navigateToCrew(invitation.crewId)
                   : null,
             ),
@@ -328,7 +352,7 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
     );
   }
 
-  Future<void> _handleAcceptInvitation(CrewInvitation invitation) async {
+  Future<void> _handleAcceptInvitation(crew_model.CrewInvitation invitation) async {
     final user = Provider.of<UserModel>(context, listen: false);
 
     setState(() {
@@ -354,7 +378,7 @@ class _CrewInvitationsScreenState extends State<CrewInvitationsScreen>
     }
   }
 
-  Future<void> _handleDeclineInvitation(CrewInvitation invitation) async {
+  Future<void> _handleDeclineInvitation(crew_model.CrewInvitation invitation) async {
     final confirmed = await _showConfirmationDialog(
       title: 'Decline Invitation',
       content: 'Are you sure you want to decline the invitation to join ${invitation.crewName}?',

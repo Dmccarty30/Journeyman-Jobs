@@ -231,7 +231,7 @@ final class AppStateNotifierProvider
   }
 }
 
-String _$appStateNotifierHash() => r'5989c7bf78d1bd0f28fea212ba05e1a7bc3f5009';
+String _$appStateNotifierHash() => r'03c03b15ccf34adcad0cba3af6ce3e3c46af7dc8';
 
 /// App state notifier
 

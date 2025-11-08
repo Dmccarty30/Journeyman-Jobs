@@ -98,7 +98,7 @@ class SecureHttpService {
   /// Make secure HTTP DELETE request
   Future<http.Response> delete(
     String url, {
-    Map<String<String, String>? headers,
+    Map<String, String>? headers,
     Object? body,
     Encoding? encoding,
     Duration? timeout,
@@ -223,12 +223,12 @@ class SecureHttpService {
         operation,
         metadata: {
           'method': method,
-        'url': url,
-        'statusCode': response.statusCode,
-        'duration': duration.inMilliseconds,
-        'requiresAuth': requiresAuth,
-        'certificatePinning': _certificatePinning.isActive,
-      },
+          'url': url,
+          'statusCode': response.statusCode,
+          'duration': duration.inMilliseconds,
+          'requiresAuth': requiresAuth,
+          'certificatePinning': _certificatePinning.isActive,
+        },
       );
 
       debugPrint('[SecureHttpService] $method $url - ${response.statusCode} (${duration.inMilliseconds}ms)');

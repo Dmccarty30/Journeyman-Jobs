@@ -32,11 +32,13 @@
 ## Quick Task Status Check
 
 **To see all tasks for this project:**
+
 ```bash
 find_tasks(filter_by="project", filter_value="7ae92993-ea1b-43ee-86a9-c185697e4a07")
 ```
 
 **To see only TODO tasks:**
+
 ```bash
 find_tasks(
   filter_by="project",
@@ -48,6 +50,7 @@ find_tasks(
 ## Current Implementation Status
 
 ### ✅ Completed Phases (status: review/done)
+
 - ✅ **Phase 0**: Dependencies & Firebase Cloud Functions
 - ✅ **Phase 1**: StreamChatService & Riverpod providers (4 providers created)
 - ✅ **Phase 2**: Container 0 "Channels" - StreamChannelListView integration
@@ -55,6 +58,7 @@ find_tasks(
 - ✅ **Phase 4**: Container 2 "History" - Archived channels (Task: `2aa5cb63-6e73-45dc-9448-c54290b44cec`)
 
 ### 📋 Remaining Phases (status: todo)
+
 - 📋 **Phase 5** (Task: `2c677882-9853-43d1-8249-c798001256a8`): Container 3 "Crew Chat" - #general channel
 - 📋 **Phase 6** (Task: `8cbe37cd-5d85-4db2-9e88-60583cb17897`): Theme customization
 - 📋 **Phase 7** (Task: `56f5984c-ad4e-44f2-9e47-0f557846133c`): Team isolation enforcement
@@ -100,6 +104,7 @@ find_tasks(filter_by="status", filter_value="todo")
 ```
 
 **⚠️ CRITICAL RULES:**
+
 - ❌ NEVER skip Step 1 (checking for active tasks)
 - ❌ NEVER code without marking task as "doing"
 - ❌ NEVER mark task as "done" yourself (user reviews first)
@@ -150,6 +155,7 @@ rag_search_code_examples(query="channel creation", match_count=3)
 ```
 
 **💡 RAG TIPS:**
+
 - ✅ Use 2-5 keywords maximum (e.g., "direct messages Flutter")
 - ❌ Don't use full sentences (e.g., "How do I create a direct message in Stream Chat Flutter?")
 - ✅ Technical terms work best (e.g., "StreamChannelListView pagination")
@@ -248,7 +254,7 @@ Tasks should represent **30 minutes to 4 hours** of focused work.
 ## Good Task Examples (Right Size)
 
 ✅ "Replace _showChannelsList() method with StreamChannelListView"
-✅ "Add _buildElectricalChannelPreview() helper method"
+✅ "Add_buildElectricalChannelPreview() helper method"
 ✅ "Implement direct messaging with distinct channels"
 ✅ "Apply electrical theme to Stream Chat components"
 
@@ -261,6 +267,7 @@ Tasks should represent **30 minutes to 4 hours** of focused work.
 ## Task Breakdown Strategy
 
 **Large Feature (8+ hours):** Break into phases
+
 - Phase 0: Setup/Dependencies
 - Phase 1: Core infrastructure
 - Phase 2-N: Individual features
@@ -268,6 +275,7 @@ Tasks should represent **30 minutes to 4 hours** of focused work.
 - Phase N+2: Testing
 
 **Medium Feature (2-8 hours):** 2-4 tasks
+
 - Task 1: Setup/scaffolding
 - Task 2: Core implementation
 - Task 3: Integration
@@ -295,6 +303,7 @@ Tasks should represent **30 minutes to 4 hours** of focused work.
 - **done**: Verified by user, fully complete (USER sets this)
 
 **Important:**
+
 - Only ONE task should be "doing" at a time
 - YOU mark tasks as "review" when code is written
 - USER marks tasks as "done" after verification
@@ -425,7 +434,8 @@ rag_search_knowledge_base(query="StreamChannelListView", match_count=5)
 
 # 💡 Best Practices
 
-## DO:
+## DO
+
 - ✅ Check Archon for tasks BEFORE starting any work
 - ✅ Use full UUIDs in all task operations
 - ✅ Update task status immediately when starting/finishing
@@ -434,7 +444,8 @@ rag_search_knowledge_base(query="StreamChannelListView", match_count=5)
 - ✅ Create subtasks if phase seems too large
 - ✅ Reference task IDs in commit messages
 
-## DON'T:
+## DON'T
+
 - ❌ Use TodoWrite (it's disabled)
 - ❌ Skip Archon task checks
 - ❌ Mark tasks as "done" (only "review")
@@ -465,6 +476,7 @@ rag_search_knowledge_base(query="StreamChannelListView", match_count=5)
 ## Common Task Patterns
 
 **Research Task:**
+
 ```bash
 title: "Research X feature via RAG"
 assignee: "Archon"
@@ -472,6 +484,7 @@ description: "Use rag_search_knowledge_base to find documentation..."
 ```
 
 **Implementation Task:**
+
 ```bash
 title: "Implement X feature"
 assignee: "frontend-developer" or "backend-developer"
@@ -479,6 +492,7 @@ description: "Location: file.dart Lines X-Y\nImplementation: ...\nFeatures: ..."
 ```
 
 **Testing Task:**
+
 ```bash
 title: "Test X feature"
 assignee: "qa"
@@ -490,11 +504,13 @@ description: "Test Categories:\n1. ...\n2. ...\nVerification: ..."
 # 🎓 Learning Resources
 
 ## Archon MCP Documentation
+
 - Tool reference: See sections above
 - Examples: Review completed tasks in this project
 - Best practices: This document
 
 ## Stream Chat Integration
+
 - Project ID: `7ae92993-ea1b-43ee-86a9-c185697e4a07`
 - Research sources: Use `rag_get_available_sources()` to find Stream Chat docs
 - Code examples: Use `rag_search_code_examples(query="...")`

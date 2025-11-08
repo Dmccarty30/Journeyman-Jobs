@@ -18,11 +18,11 @@ const firestoreServiceProvider = FirestoreServiceProvider._();
 final class FirestoreServiceProvider
     extends
         $FunctionalProvider<
-          ResilientFirestoreService,
-          ResilientFirestoreService,
-          ResilientFirestoreService
+          UnifiedFirestoreService,
+          UnifiedFirestoreService,
+          UnifiedFirestoreService
         >
-    with $Provider<ResilientFirestoreService> {
+    with $Provider<UnifiedFirestoreService> {
   /// Firestore service provider
   const FirestoreServiceProvider._()
     : super(
@@ -40,25 +40,25 @@ final class FirestoreServiceProvider
 
   @$internal
   @override
-  $ProviderElement<ResilientFirestoreService> $createElement(
+  $ProviderElement<UnifiedFirestoreService> $createElement(
     $ProviderPointer pointer,
   ) => $ProviderElement(pointer);
 
   @override
-  ResilientFirestoreService create(Ref ref) {
+  UnifiedFirestoreService create(Ref ref) {
     return firestoreService(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(ResilientFirestoreService value) {
+  Override overrideWithValue(UnifiedFirestoreService value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<ResilientFirestoreService>(value),
+      providerOverride: $SyncValueProvider<UnifiedFirestoreService>(value),
     );
   }
 }
 
-String _$firestoreServiceHash() => r'665e0c40804f3306f3afbce70fab7d9fc5247907';
+String _$firestoreServiceHash() => r'c91cd85b00423bca4c8eb95371db65d1768496aa';
 
 /// Jobs notifier provider
 
@@ -96,7 +96,7 @@ final class JobsNotifierProvider
   }
 }
 
-String _$jobsNotifierHash() => r'1ecb48fbd36bae52251021703527c37c3a026bc8';
+String _$jobsNotifierHash() => r'1abf5d1c406842578f0f04296bf941c016c99ae3';
 
 /// Jobs notifier provider
 

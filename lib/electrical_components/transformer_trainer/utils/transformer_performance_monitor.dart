@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../../services/cache_service.dart';
+import '../../../services/unified_cache_service.dart';
 import '../../../services/performance_monitoring_service.dart';
 import '../services/structured_logger.dart';
 import 'mobile_performance_manager.dart';
@@ -76,7 +76,7 @@ class TransformerPerformanceMonitor {
         'total_frames': _totalFrames,
         'peak_memory_mb': _peakMemoryUsage,
         'animations_played': _animationMetrics.length,
-        'cache_hit_rate': CacheService().getStats()['hitRate'],
+        'cache_hit_rate': UnifiedCacheService.instance.getStats()['hitRate'],
       },
     );
     
@@ -252,7 +252,7 @@ class TransformerPerformanceMonitor {
   /// Cache asset for future use
   void _cacheAssetForFuture(String assetName, Map<String, dynamic>? metadata) {
     // Implement asset caching strategy
-    CacheService().set(
+    UnifiedCacheService.instance.set(
       'transformer_asset_$assetName',
       metadata ?? <String, dynamic>{},
       ttl: const Duration(days: 7),

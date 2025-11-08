@@ -7,6 +7,7 @@ import '../../services/analytics_service.dart';
 import '../../services/connectivity_service.dart';
 import '../../services/offline_data_service.dart';
 import '../../services/local_notification_service.dart';
+import '../../utils/error_handler.dart';
 import 'auth_riverpod_provider.dart';
 import 'jobs_riverpod_provider.dart';
 import 'locals_riverpod_provider.dart';
@@ -15,6 +16,7 @@ part 'app_state_riverpod_provider.g.dart';
 
 /// Global app state model
 class AppState {
+  static const Object _sentinel = Object();
 
   const AppState({
     this.isConnected = true,
@@ -30,16 +32,18 @@ class AppState {
   AppState copyWith({
     bool? isConnected,
     bool? isInitialized,
-    String? globalError,
+    Object? globalError = _sentinel,
     Map<String, dynamic>? performanceMetrics,
-  }) => AppState(
-      isConnected: isConnected ?? this.isConnected,
-      isInitialized: isInitialized ?? this.isInitialized,
-      globalError: globalError ?? this.globalError,
-      performanceMetrics: performanceMetrics ?? this.performanceMetrics,
-    );
+  }) =>
+      AppState(
+        isConnected: isConnected ?? this.isConnected,
+        isInitialized: isInitialized ?? this.isInitialized,
+        globalError:
+            globalError == _sentinel ? this.globalError : globalError as String?,
+        performanceMetrics: performanceMetrics ?? this.performanceMetrics,
+      );
 
-  AppState clearError() => copyWith();
+  AppState clearError() => copyWith(globalError: null);
 }
 
 /// Connectivity service provider
@@ -118,14 +122,22 @@ Stream<bool> connectivityStream(Ref ref) {
 class AppStateNotifier extends _$AppStateNotifier {
   @override
   AppState build() {
-    // Watch connectivity changes and update state reactively
-    final connectivityAsync = ref.watch(connectivityStreamProvider);
+    // Initialize app asynchronously (not blocking build). This is called once.
+    _initializeApp();
 
-    // Listen for connectivity changes to track analytics
-    // This is called in build() as required by Riverpod 2.x
-    ref.listen(connectivityStreamProvider, (AsyncValue<bool>? previous, AsyncValue<bool> next) {
-      next.whenData((bool isConnected) {
-        // Only log if connectivity actually changed
+    // Listen for connectivity changes to update state reactively.
+    ref.listen(connectivityStreamProvider,
+        (AsyncValue<bool>? previous, AsyncValue<bool> next) {
+      if (next.hasError && !next.isRefreshing) {
+        state = state.copyWith(globalError: 'Connectivity error: ${next.error}');
+        return;
+      }
+
+      if (next.hasValue) {
+        final bool isConnected = next.value!;
+        state = state.copyWith(isConnected: isConnected);
+
+        // Only log if connectivity actually changed.
         if (previous != null && previous.hasValue) {
           final previousConnected = previous.value;
           if (previousConnected != isConnected) {
@@ -135,43 +147,52 @@ class AppStateNotifier extends _$AppStateNotifier {
             );
           }
         }
-      });
+      }
     });
 
-    // Initialize app asynchronously (not blocking build)
-    _initializeApp();
-
-    // Return state based on connectivity status
-    return connectivityAsync.when(
-      data: (bool isConnected) => AppState(isConnected: isConnected),
-      loading: () => const AppState(),
-      error: (Object error, StackTrace stackTrace) => AppState(
-        globalError: 'Connectivity error: $error',
-      ),
-    );
+    // Return initial state. Connectivity will be updated by the listener,
+    // and isInitialized will be updated by _initializeApp.
+    final bool initialIsConnected = ref.read(connectivityServiceProvider).isOnline;
+    return AppState(isConnected: initialIsConnected);
   }
 
   /// Initialize the application
   Future<void> _initializeApp() async {
-    try {
-      // Initialize services
-      await Future.wait<void>(<Future<void>>[
-        ref.read(notificationServiceProvider).initialize(),
-      ]);
+    // Guard against multiple initializations.
+    if (state.isInitialized) return;
 
-      // Load initial data if user is authenticated
-      final bool isAuthenticated = ref.read(isAuthenticatedProvider);
-      if (isAuthenticated) {
-        await _loadInitialData();
-      }
+    final success = await ErrorHandler.handleAsyncOperation<bool>(
+      () async {
+        // Initialize services
+        await Future.wait<void>(<Future<void>>[
+          ref.read(notificationServiceProvider).initialize(),
+        ]);
 
-      state = state.copyWith(isInitialized: true);
-      
-      // Track app initialization
-      AnalyticsService.logCustomEvent('app_initialized', <String, dynamic>{});
-    } catch (e) {
+        // Load initial data if user is authenticated
+        final bool isAuthenticated = ref.read(isAuthenticatedProvider);
+        if (isAuthenticated) {
+          await _loadInitialData();
+        }
+
+        state = state.copyWith(isInitialized: true);
+
+        // Track app initialization
+        AnalyticsService.logCustomEvent('app_initialized', <String, dynamic>{});
+        
+        return true; // Return success indicator
+      },
+      operationName: 'initializeApp',
+      errorMessage: 'Failed to initialize app',
+      showToast: false,
+      context: {
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
+
+    if (success == null) {
+      // Error already handled by ErrorHandler
       state = state.copyWith(
-        globalError: 'Failed to initialize app: $e',
+        globalError: 'Failed to initialize app',
         isInitialized: true, // Still mark as initialized to prevent infinite loading
       );
     }

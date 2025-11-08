@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:journeyman_jobs/providers/riverpod/session_timeout_provider.dart';
+import 'package:journeyman_jobs/services/consolidated_session_service.dart';
 
 /// A widget that detects user activity and records it for session timeout tracking.
 ///
@@ -91,7 +92,13 @@ class _ActivityDetectorState extends ConsumerState<ActivityDetector> {
     // Record activity
     _lastActivityRecorded = now;
 
-    // Update session timeout
+    // Record activity using the consolidated session service
+    final sessionService = ConsolidatedSessionService();
+    if (sessionService.isInitialized) {
+      sessionService.recordActivity();
+    }
+
+    // Also update the existing session timeout provider for compatibility
     final notifier = ref.read(sessionTimeoutProvider.notifier);
     notifier.recordActivity();
 
@@ -250,7 +257,13 @@ class SessionTimeoutWarning extends ConsumerWidget {
             // Stay logged in button
             TextButton(
               onPressed: () {
-                // Record activity to reset timeout
+                // Record activity using the consolidated session service
+                final sessionService = ConsolidatedSessionService();
+                if (sessionService.isInitialized) {
+                  sessionService.recordActivity();
+                }
+
+                // Also update the existing provider for compatibility
                 final notifier = ref.read(sessionTimeoutProvider.notifier);
                 notifier.recordActivity();
               },

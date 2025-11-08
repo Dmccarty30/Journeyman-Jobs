@@ -1522,12 +1522,12 @@ Widget _buildElectricalChannelPreview(Channel channel) {
       color: TailboardTheme.surfaceLow,
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
-        color: TailboardTheme.accentCopper.withOpacity(0.2),
+        color: TailboardTheme.accentCopper.withValues(alpha:0.2),
       ),
     ),
     child: ListTile(
       leading: CircleAvatar(
-        backgroundColor: TailboardTheme.accentCopper.withOpacity(0.2),
+        backgroundColor: TailboardTheme.accentCopper.withValues(alpha:0.2),
         child: Icon(
           Icons.tag,
           color: TailboardTheme.accentCopper,
@@ -1749,7 +1749,7 @@ Widget _buildElectricalMemberTile({
       color: TailboardTheme.surfaceLow,
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
-        color: TailboardTheme.accentCopper.withOpacity(0.2),
+        color: TailboardTheme.accentCopper.withValues(alpha:0.2),
       ),
     ),
     child: ListTile(
@@ -1758,7 +1758,7 @@ Widget _buildElectricalMemberTile({
         backgroundImage: member.photoURL != null
             ? NetworkImage(member.photoURL!)
             : null,
-        backgroundColor: TailboardTheme.accentCopper.withOpacity(0.2),
+        backgroundColor: TailboardTheme.accentCopper.withValues(alpha:0.2),
         child: member.photoURL == null
             ? Icon(Icons.person, color: TailboardTheme.accentCopper)
             : null,
@@ -1974,7 +1974,7 @@ Widget _buildArchivedChannelTile({
       color: TailboardTheme.surfaceLow,
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
-        color: TailboardTheme.textSecondary.withOpacity(0.2),
+        color: TailboardTheme.textSecondary.withValues(alpha:0.2),
       ),
     ),
     child: ListTile(

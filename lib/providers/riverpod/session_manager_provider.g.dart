@@ -8,20 +8,20 @@ part of 'session_manager_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Provides the singleton SessionManagerService instance.
+/// Provides the singleton ConsolidatedSessionService instance.
 ///
-/// This provider creates and manages the SessionManagerService lifecycle.
+/// This provider creates and manages the ConsolidatedSessionService lifecycle.
 /// The service is initialized when first accessed and properly disposed
 /// when the provider is disposed.
 ///
 /// Example usage:
 /// ```dart
-/// final sessionManager = ref.watch(sessionManagerProvider);
-/// sessionManager.recordActivity(); // Record user activity
+/// final sessionService = ref.watch(sessionManagerProvider);
+/// sessionService.recordActivity(); // Record user activity
 ///
 /// // Check if in grace period
-/// if (sessionManager.isInGracePeriod) {
-///   final remaining = sessionManager.remainingGracePeriod;
+/// if (sessionService.isInGracePeriod) {
+///   final remaining = sessionService.remainingGracePeriod;
 ///   // Show warning with countdown
 /// }
 /// ```
@@ -29,20 +29,20 @@ part of 'session_manager_provider.dart';
 @ProviderFor(sessionManager)
 const sessionManagerProvider = SessionManagerProvider._();
 
-/// Provides the singleton SessionManagerService instance.
+/// Provides the singleton ConsolidatedSessionService instance.
 ///
-/// This provider creates and manages the SessionManagerService lifecycle.
+/// This provider creates and manages the ConsolidatedSessionService lifecycle.
 /// The service is initialized when first accessed and properly disposed
 /// when the provider is disposed.
 ///
 /// Example usage:
 /// ```dart
-/// final sessionManager = ref.watch(sessionManagerProvider);
-/// sessionManager.recordActivity(); // Record user activity
+/// final sessionService = ref.watch(sessionManagerProvider);
+/// sessionService.recordActivity(); // Record user activity
 ///
 /// // Check if in grace period
-/// if (sessionManager.isInGracePeriod) {
-///   final remaining = sessionManager.remainingGracePeriod;
+/// if (sessionService.isInGracePeriod) {
+///   final remaining = sessionService.remainingGracePeriod;
 ///   // Show warning with countdown
 /// }
 /// ```
@@ -50,25 +50,25 @@ const sessionManagerProvider = SessionManagerProvider._();
 final class SessionManagerProvider
     extends
         $FunctionalProvider<
-          SessionManagerService,
-          SessionManagerService,
-          SessionManagerService
+          ConsolidatedSessionService,
+          ConsolidatedSessionService,
+          ConsolidatedSessionService
         >
-    with $Provider<SessionManagerService> {
-  /// Provides the singleton SessionManagerService instance.
+    with $Provider<ConsolidatedSessionService> {
+  /// Provides the singleton ConsolidatedSessionService instance.
   ///
-  /// This provider creates and manages the SessionManagerService lifecycle.
+  /// This provider creates and manages the ConsolidatedSessionService lifecycle.
   /// The service is initialized when first accessed and properly disposed
   /// when the provider is disposed.
   ///
   /// Example usage:
   /// ```dart
-  /// final sessionManager = ref.watch(sessionManagerProvider);
-  /// sessionManager.recordActivity(); // Record user activity
+  /// final sessionService = ref.watch(sessionManagerProvider);
+  /// sessionService.recordActivity(); // Record user activity
   ///
   /// // Check if in grace period
-  /// if (sessionManager.isInGracePeriod) {
-  ///   final remaining = sessionManager.remainingGracePeriod;
+  /// if (sessionService.isInGracePeriod) {
+  ///   final remaining = sessionService.remainingGracePeriod;
   ///   // Show warning with countdown
   /// }
   /// ```
@@ -88,22 +88,22 @@ final class SessionManagerProvider
 
   @$internal
   @override
-  $ProviderElement<SessionManagerService> $createElement(
+  $ProviderElement<ConsolidatedSessionService> $createElement(
     $ProviderPointer pointer,
   ) => $ProviderElement(pointer);
 
   @override
-  SessionManagerService create(Ref ref) {
+  ConsolidatedSessionService create(Ref ref) {
     return sessionManager(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SessionManagerService value) {
+  Override overrideWithValue(ConsolidatedSessionService value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<SessionManagerService>(value),
+      providerOverride: $SyncValueProvider<ConsolidatedSessionService>(value),
     );
   }
 }
 
-String _$sessionManagerHash() => r'8e98893baad04e5dcfd5576c789fb5c2a3fec34e';
+String _$sessionManagerHash() => r'870ca3272639a912f9c6a1761a666a3bd3496dc8';

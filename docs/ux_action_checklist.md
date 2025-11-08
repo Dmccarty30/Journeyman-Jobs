@@ -1,4 +1,5 @@
 # UX Polish Action Checklist
+
 ## DynamicContainerRow Enhancement Plan
 
 **Date:** 2025-01-06
@@ -20,11 +21,13 @@ The DynamicContainerRow widget is **production-ready** with a score of 95/100. T
 ## Priority 1: Quick Wins (Week 1)
 
 ### ✅ Task 1.1: Add Haptic Feedback
+
 **Impact:** +2 points | **Effort:** 5 minutes | **Difficulty:** Easy
 
 **File:** `/lib/features/crews/widgets/dynamic_container_row.dart`
 
 **Implementation:**
+
 ```dart
 import 'package:flutter/services.dart';
 
@@ -38,6 +41,7 @@ onTapDown: (_) {
 ```
 
 **Testing:**
+
 ```bash
 # Run on physical device (haptics don't work in simulator)
 flutter run --release
@@ -45,12 +49,14 @@ flutter run --release
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Subtle vibration on tap (lightImpact, not selectionClick)
 - [ ] Haptic fires before visual animation
 - [ ] Works on both iOS and Android
 - [ ] No lag or delay in tap response
 
 **Notes:**
+
 - Use `HapticFeedback.lightImpact()` for subtle feedback
 - Alternative: `HapticFeedback.selectionClick()` for slightly stronger feedback
 - Test on multiple devices (haptic intensity varies)
@@ -58,11 +64,13 @@ flutter run --release
 ---
 
 ### ✅ Task 1.2: Add Long-Press Tooltips
+
 **Impact:** +5 points | **Effort:** 15 minutes | **Difficulty:** Easy
 
 **File:** `/lib/features/crews/widgets/dynamic_container_row.dart`
 
 **Implementation:**
+
 ```dart
 // Wrap the GestureDetector with Tooltip:
 Widget _buildContainer({...}) {
@@ -88,6 +96,7 @@ Widget _buildContainer({...}) {
 ```
 
 **Testing:**
+
 ```bash
 flutter test test/features/crews/widgets/dynamic_container_row_test.dart
 
@@ -114,6 +123,7 @@ testWidgets('shows tooltip on long press', (tester) async {
 ```
 
 **Acceptance Criteria:**
+
 - [ ] Tooltip appears after 800ms long press
 - [ ] Tooltip shows full label text
 - [ ] Tooltip styled with electrical theme (navy bg, copper accents)
@@ -122,6 +132,7 @@ testWidgets('shows tooltip on long press', (tester) async {
 - [ ] Works for both variants (basic and with icons)
 
 **Notes:**
+
 - Tooltip is especially helpful for truncated text
 - Consider adding only to containers with truncated text (optimization)
 - Ensure tooltip doesn't block other UI elements
@@ -131,11 +142,13 @@ testWidgets('shows tooltip on long press', (tester) async {
 ## Priority 2: Accessibility Enhancements (Week 2)
 
 ### ✅ Task 2.1: Add Screen Reader Support
+
 **Impact:** +8 points | **Effort:** 20 minutes | **Difficulty:** Medium
 
 **File:** `/lib/features/crews/widgets/dynamic_container_row.dart`
 
 **Implementation:**
+
 ```dart
 // Wrap the Tooltip with Semantics:
 Widget _buildContainer({...}) {
@@ -189,6 +202,7 @@ String _getIconDescription(IconData icon) {
 ```
 
 **Testing:**
+
 ```bash
 # iOS VoiceOver Testing:
 # 1. Enable VoiceOver: Settings > Accessibility > VoiceOver
@@ -226,6 +240,7 @@ testWidgets('has proper semantics for screen readers', (tester) async {
 ```
 
 **Acceptance Criteria:**
+
 - [ ] VoiceOver announces "Feed tab, button, selected" for selected container
 - [ ] VoiceOver announces "Jobs tab, button" for unselected containers
 - [ ] TalkBack provides same information on Android
@@ -236,6 +251,7 @@ testWidgets('has proper semantics for screen readers', (tester) async {
 - [ ] All containers are discoverable via swipe navigation
 
 **Notes:**
+
 - Test with actual screen readers (iOS VoiceOver, Android TalkBack)
 - Avoid overly verbose hints (keep under 10 words)
 - Ensure hint text is actionable ("Double tap to...")
@@ -246,11 +262,13 @@ testWidgets('has proper semantics for screen readers', (tester) async {
 ## Priority 3: Future Enhancements (Optional)
 
 ### 🔮 Task 3.1: Badge Indicators (Low Priority)
+
 **Impact:** +0 points (feature enhancement) | **Effort:** 30 minutes | **Difficulty:** Medium
 
 **Purpose:** Show unread counts on Chat/Feed tabs
 
 **Implementation Sketch:**
+
 ```dart
 Widget _buildContainer({
   required int index,
@@ -292,6 +310,7 @@ Widget _buildContainer({
 ```
 
 **Notes:**
+
 - Requires API changes to widget
 - Consider pulse animation for new notifications
 - Ensure badge doesn't obscure label text
@@ -299,11 +318,13 @@ Widget _buildContainer({
 ---
 
 ### 🔮 Task 3.2: Swipe Gestures (Low Priority)
+
 **Impact:** +0 points (feature enhancement) | **Effort:** 45 minutes | **Difficulty:** Hard
 
 **Purpose:** Enable horizontal swipe to switch tabs
 
 **Implementation Sketch:**
+
 ```dart
 return GestureDetector(
   onHorizontalDragEnd: (details) {
@@ -326,6 +347,7 @@ return GestureDetector(
 ```
 
 **Notes:**
+
 - Complex interaction - may conflict with page view gestures
 - Consider velocity threshold to prevent accidental swipes
 - Add visual feedback (container slide animation)
@@ -335,18 +357,21 @@ return GestureDetector(
 ## Testing Checklist
 
 ### Unit Tests
+
 - [ ] Test haptic feedback calls (mock HapticFeedback)
 - [ ] Test tooltip appearance/dismissal
 - [ ] Test semantics properties (label, hint, selected)
 - [ ] Test gesture handling with accessibility features
 
 ### Widget Tests
+
 - [ ] All existing tests still pass
 - [ ] New tooltip tests pass
 - [ ] New semantics tests pass
 - [ ] No regressions in visual appearance
 
 ### Manual Testing
+
 - [ ] Test on iOS physical device (haptics, VoiceOver)
 - [ ] Test on Android physical device (haptics, TalkBack)
 - [ ] Test with various label lengths (truncation + tooltip)
@@ -359,32 +384,40 @@ return GestureDetector(
 ## Deployment Plan
 
 ### Week 1: Quick Wins
+
 **Day 1:**
+
 - [ ] Implement haptic feedback (Task 1.1)
 - [ ] Test on physical devices
 - [ ] Commit: "feat: add haptic feedback to DynamicContainerRow"
 
 **Day 2:**
+
 - [ ] Implement long-press tooltips (Task 1.2)
 - [ ] Write tooltip tests
 - [ ] Commit: "feat: add long-press tooltips for truncated labels"
 
 **Day 3:**
+
 - [ ] Run full test suite
 - [ ] Manual testing on multiple devices
 - [ ] Tag release: v1.1.0
 
 ### Week 2: Accessibility
+
 **Day 1:**
+
 - [ ] Implement screen reader support (Task 2.1)
 - [ ] Write semantics tests
 
 **Day 2:**
+
 - [ ] Test with VoiceOver (iOS)
 - [ ] Test with TalkBack (Android)
 - [ ] Fix any accessibility issues found
 
 **Day 3:**
+
 - [ ] Run full test suite
 - [ ] Accessibility audit
 - [ ] Commit: "feat: add comprehensive screen reader support"
@@ -402,6 +435,7 @@ If any enhancement causes issues:
 4. **Fix forward:** Address issue and re-deploy
 
 **Safe Rollback Points:**
+
 - v1.0.0: Original production version (95/100)
 - v1.1.0: With haptics + tooltips (102/100)
 - v1.2.0: With full accessibility (100/100)
@@ -411,6 +445,7 @@ If any enhancement causes issues:
 ## Success Metrics
 
 ### Quantitative
+
 - [ ] Test coverage remains >95%
 - [ ] Build time remains <2ms
 - [ ] Animation maintains 60fps
@@ -418,12 +453,14 @@ If any enhancement causes issues:
 - [ ] Zero accessibility warnings in tests
 
 ### Qualitative
+
 - [ ] Haptic feedback feels natural (user survey)
 - [ ] Tooltips are discoverable and helpful
 - [ ] Screen reader users can navigate effectively
 - [ ] No performance degradation reported
 
 ### Accessibility Compliance
+
 - [ ] WCAG 2.1 Level AAA achieved
 - [ ] VoiceOver compatibility verified
 - [ ] TalkBack compatibility verified
@@ -435,18 +472,21 @@ If any enhancement causes issues:
 ## Resources
 
 ### Documentation
+
 - [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
 - [Flutter Accessibility](https://docs.flutter.dev/development/accessibility-and-localization/accessibility)
 - [iOS VoiceOver Testing](https://developer.apple.com/accessibility/voiceover/)
 - [Android TalkBack Testing](https://support.google.com/accessibility/android/answer/6283677)
 
 ### Internal References
+
 - Full UX Review: `/docs/ux_review_report.html`
 - Before/After Comparison: `/docs/ux_before_after_comparison.md`
 - Widget Documentation: `/docs/widgets/dynamic_container_row_documentation.html`
 - Test Suite: `/test/features/crews/widgets/dynamic_container_row_test.dart`
 
 ### Tools
+
 - iOS Accessibility Inspector (Xcode)
 - Android Accessibility Scanner
 - Flutter DevTools (Performance tab)

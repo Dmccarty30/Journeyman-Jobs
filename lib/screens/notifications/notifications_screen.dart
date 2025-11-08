@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
-import '../../services/notification_permission_service.dart';
+import '../../services/unified_notification_service.dart';
 import '../../navigation/app_router.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -79,7 +79,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
   
   Future<void> _loadSettings() async {
     try {
-      _notificationsEnabled = await NotificationPermissionService.areNotificationsEnabled();
+      _notificationsEnabled = await UnifiedNotificationService.areNotificationsEnabled();
       final prefs = await SharedPreferences.getInstance();
       
       setState(() {
@@ -125,7 +125,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
 
   Future<void> _handleMasterToggle(bool enabled) async {
     if (enabled && !_notificationsEnabled) {
-      final granted = await NotificationPermissionService.handleInitialPermissionFlow(context);
+      final granted = await UnifiedNotificationService.handleInitialPermissionFlow(context);
       if (!mounted) return;
 
       setState(() {

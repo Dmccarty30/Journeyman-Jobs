@@ -21,7 +21,6 @@ import '../providers/jobs_filter_provider.dart';
 import '../widgets/crew_selection_dropdown.dart';
 import '../widgets/crew_preferences_dialog.dart';
 import '../widgets/tab_widgets.dart';
-import '../widgets/enhanced_feed_tab.dart';
 import '../widgets/dynamic_container_row.dart';
 import '../providers/stream_chat_providers.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
@@ -48,7 +47,6 @@ class _ElectricalDialogBackground extends StatelessWidget {
 
   const _ElectricalDialogBackground({
     required this.child,
-    this.padding,
   });
 
   @override
@@ -79,14 +77,7 @@ class _ElectricalTextField extends StatelessWidget {
   final TextInputType? keyboardType;
 
   const _ElectricalTextField({
-    required this.controller,
-    this.labelText,
-    this.hintText,
-    this.validator,
-    this.maxLines = 1,
-    this.onTap,
-    this.readOnly = false,
-    this.keyboardType,
+    required this.controller, this.labelText, this.hintText, this.validator, this.maxLines, this.onTap, required this.readOnly, this.keyboardType,
   });
 
   @override
@@ -154,11 +145,8 @@ class _DialogActions extends StatelessWidget {
   final bool isConfirmLoading;
 
   const _DialogActions({
-    this.onCancel,
     this.onConfirm,
-    this.cancelText = 'Cancel',
-    this.confirmText = 'Submit',
-    this.isConfirmLoading = false,
+    this.confirmText = 'Submit', this.onCancel, required this.cancelText, required this.isConfirmLoading,
   });
 
   @override
@@ -191,6 +179,7 @@ class TailboardScreen extends ConsumerStatefulWidget {
 }
 
 class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+  _TailboardScreenState();
   late TabController _tabController;
   int _selectedTab = 0;
 
@@ -208,6 +197,49 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
 
     // Animations will be applied directly on widgets using flutter_animate extensions
     // (e.g., .animate().fadeIn().slideY(begin: 0.1, end: 0))
+
+    // Listen to crew selection changes and update Stream Chat team assignment
+    // This ensures proper team isolation for chat channels
+    _listenToCrewChanges();
+  }
+
+  /// Listen to crew selection changes and update Stream Chat team assignment
+  ///
+  /// This method:
+  /// - Watches selectedCrewProvider for changes
+  /// - Updates the user's team assignment in Stream Chat when crew changes
+  /// - Ensures message isolation between crews
+  /// - Handles null crew assignments gracefully
+  void _listenToCrewChanges() {
+    ref.listen<Crew?>(selectedCrewProvider, (previous, next) {
+      // Only update if crew actually changed and is not null
+      if (previous?.id != next?.id && next != null) {
+        debugPrint('[TailboardScreen] Crew changed from ${previous?.id} to ${next.id}');
+
+        // Update user's team assignment in Stream Chat
+        // This enforces team isolation - users only see channels from their crew
+        _updateUserStreamChatTeam(next.id);
+      }
+    });
+  }
+
+  /// Update user's team assignment in Stream Chat
+  ///
+  /// Calls the StreamChatService to update the user's team assignment,
+  /// which ensures they only have access to their crew's channels.
+  ///
+  /// Parameters:
+  /// - [crewId]: The ID of the crew to assign the user to
+  Future<void> _updateUserStreamChatTeam(String crewId) async {
+    try {
+      final streamService = ref.read(streamChatServiceProvider);
+      await streamService.updateUserTeam(crewId);
+      debugPrint('[TailboardScreen] Successfully updated Stream Chat team to: $crewId');
+    } catch (e) {
+      debugPrint('[TailboardScreen] Failed to update Stream Chat team: $e');
+      // Don't show error to user - chat will still work with limited functionality
+      // Team isolation is enforced server-side, so this is a safety measure
+    }
   }
 
   @override
@@ -515,8 +547,9 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
               'Commercial',
               'Industrial',
               'Residential',
-              'Utility',
-              'Maintenance',
+              'Transmission',
+              "Distibution",
+              'Sub-Station',
             ].map((type) => ListTile(
               leading: Icon(Icons.business, color: AppTheme.accentCopper),
               title: Text(type, style: TextStyle(color: AppTheme.textOnDark)),
@@ -796,7 +829,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: AppTheme.accentCopper.withOpacity(0.2),
+          color: AppTheme.accentCopper.withValues(alpha:0.2),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
@@ -849,7 +882,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
           : Text(
               'No messages yet',
               style: TextStyle(
-                color: AppTheme.mediumGray.withOpacity(0.7),
+                color: AppTheme.mediumGray.withValues(alpha:0.7),
                 fontSize: 14,
                 fontStyle: FontStyle.italic,
               ),
@@ -872,7 +905,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
             Icon(
               Icons.flash_on,
               size: 80,
-              color: AppTheme.accentCopper.withOpacity(0.3),
+              color: AppTheme.accentCopper.withValues(alpha:0.3),
             ),
             const SizedBox(height: 24),
             Text(
@@ -1059,7 +1092,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppTheme.accentCopper.withOpacity(0.2),
+              color: AppTheme.accentCopper.withValues(alpha:0.2),
               borderRadius: BorderRadius.circular(24),
             ),
             child: Center(
@@ -1107,7 +1140,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: AppTheme.accentCopper.withOpacity(0.3),
+                color: AppTheme.accentCopper.withValues(alpha:0.3),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -1149,7 +1182,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
             Icon(
               Icons.people_outline,
               size: 80,
-              color: AppTheme.accentCopper.withOpacity(0.3),
+              color: AppTheme.accentCopper.withValues(alpha:0.3),
             ),
             const SizedBox(height: 24),
             Text(
@@ -1410,13 +1443,13 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: AppTheme.accentCopper.withOpacity(0.15),
+          color: AppTheme.accentCopper.withValues(alpha:0.15),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Center(
           child: Icon(
             Icons.archive,
-            color: AppTheme.accentCopper.withOpacity(0.6),
+            color: AppTheme.accentCopper.withValues(alpha:0.6),
             size: 24,
           ),
         ),
@@ -1427,7 +1460,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
             child: Text(
               channelName,
               style: TextStyle(
-                color: AppTheme.textOnDark.withOpacity(0.7),
+                color: AppTheme.textOnDark.withValues(alpha:0.7),
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
               ),
@@ -1450,7 +1483,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
             Text(
               lastMessage.text ?? 'Attachment',
               style: TextStyle(
-                color: AppTheme.mediumGray.withOpacity(0.8),
+                color: AppTheme.mediumGray.withValues(alpha:0.8),
                 fontSize: 14,
               ),
               maxLines: 1,
@@ -1460,7 +1493,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
           Text(
             '$messageCount messages',
             style: TextStyle(
-              color: AppTheme.mediumGray.withOpacity(0.6),
+              color: AppTheme.mediumGray.withValues(alpha:0.6),
               fontSize: 12,
             ),
           ),
@@ -1497,7 +1530,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
             Icon(
               Icons.history,
               size: 80,
-              color: AppTheme.accentCopper.withOpacity(0.3),
+              color: AppTheme.accentCopper.withValues(alpha:0.3),
             ),
             const SizedBox(height: 24),
             Text(
@@ -1962,7 +1995,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
   // ============================================================
 
   /// Navigate to crew chat screen
-  void _navigateToCrewChat() {
+  void _navigateToCrewChat() async {
     final selectedCrew = ref.read(selectedCrewProvider);
 
     if (selectedCrew == null) {
@@ -1974,16 +2007,84 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
       return;
     }
 
-    // Set the selected tab to Chat (index 2)
-    _tabController.animateTo(2);
+    try {
+      // Get Stream Chat client
+      final client = await ref.read(streamChatClientProvider.future);
+      
+      // Query for the #general channel for this crew
+      // Using team filter to ensure we get the correct crew's general channel
+      final channels = await client.queryChannels(
+        filter: Filter.and([
+          Filter.equal('team', selectedCrew.id),  // Team isolation
+          Filter.equal('type', 'team'),            // Team channel type
+          Filter.equal('name', 'general'),         // General channel name
+        ]),
+        sort: [const SortOption('last_message_at', direction: SortOption.DESC)],
+      ).first;
 
-    JJElectricalNotifications.showElectricalToast(
-      context: context,
-      message: 'Navigating to crew chat',
-      type: ElectricalNotificationType.success,
-    );
+      if (channels.isNotEmpty) {
+        // Found the #general channel, navigate to it
+        final generalChannel = channels.first;
+        
+        // Update user's team assignment to ensure access
+        await ref.read(streamChatServiceProvider).updateUserTeam(selectedCrew.id);
+        
+        // Store as active channel
+        ref.read(activeChannelProvider.notifier).state = generalChannel;
+        
+        // Navigate to chat tab
+        _tabController.animateTo(2);
+        
+        JJElectricalNotifications.showElectricalToast(
+          context: context,
+          message: 'Opening #general channel',
+          type: ElectricalNotificationType.success,
+        );
+      } else {
+        // #general channel doesn't exist, create it
+        final generalChannel = await client.channel(
+          'team', 
+          'general-${selectedCrew.id}',  // Unique ID for crew's general channel
+          extraData: {
+            'name': 'general',
+            'team': selectedCrew.id,
+            'created_by': 'system',
+            'description': 'General announcements and discussions for ${selectedCrew.name}',
+          },
+        );
+        
+        // Create the channel
+        await generalChannel.create();
+        
+        // Add current user as a member
+        await generalChannel.addMembers([client.state.user!.id]);
+        
+        // Store as active channel
+        ref.read(activeChannelProvider.notifier).state = generalChannel;
+        
+        // Navigate to chat tab
+        _tabController.animateTo(2);
+        
+        JJElectricalNotifications.showElectricalToast(
+          context: context,
+          message: 'Created and opened #general channel',
+          type: ElectricalNotificationType.success,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error navigating to crew chat: $e');
+      JJElectricalNotifications.showElectricalToast(
+        context: context,
+        message: 'Failed to open crew chat',
+        type: ElectricalNotificationType.error,
+      );
+      
+      // Fallback: just navigate to chat tab
+      _tabController.animateTo(2);
+    }
   }
 
+  
   @override
   Widget build(BuildContext context) {
     final authInit = ref.watch(auth_providers.authInitializationProvider);
@@ -2996,5 +3097,237 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen> with SingleTi
         ),
       );
     }
+  }
+
+  /// Build electrical-themed Stream Chat configuration
+  ///
+  /// Creates a StreamChatThemeData with electrical theme colors:
+  /// - Primary accent: AppTheme.accentCopper (#B45309)
+  /// - Backgrounds: Navy shades from AppTheme
+  /// - Message bubbles with proper contrast for readability
+  StreamChatThemeData _buildElectricalStreamTheme() {
+    return StreamChatThemeData(
+      // Primary color theme - copper accent with navy backgrounds
+      colorTheme: StreamColorTheme.light(
+        primary: AppTheme.accentCopper, // Copper for primary actions/highlights
+        accent: AppTheme.accentCopper,  // Copper for accent elements
+        disabled: AppTheme.mediumGray,  // Gray for disabled elements
+        textHigh: AppTheme.textPrimary, // Dark navy text on light backgrounds
+        textLow: AppTheme.textSecondary, // Medium gray for secondary text
+        textBg: AppTheme.white,         // White text on colored backgrounds
+        borders: AppTheme.lightGray,    // Light gray borders
+        inputBg: AppTheme.white,        // White input backgrounds
+        appBg: AppTheme.surfaceLight,   // Light surface background
+        overlayDark: Colors.black.withValues(alpha: 0.5),
+        overlay: Colors.white.withValues(alpha: 0.8),
+      ),
+
+      // Own message theme (messages sent by current user)
+      ownMessageTheme: StreamMessageThemeData(
+        messageBackgroundColor: AppTheme.accentCopper, // Copper background for own messages
+        messageTextStyle: TextStyle(
+          color: AppTheme.white, // White text on copper for contrast (7.6:1 ratio)
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+        ),
+        avatarTheme: StreamAvatarThemeData(
+          backgroundColor: AppTheme.secondaryCopper,
+          borderRadius: BorderRadius.circular(20),
+          constraints: const BoxConstraints.tightFor(
+            height: 40,
+            width: 40,
+          ),
+        ),
+        createdAtTextStyle: TextStyle(
+          color: AppTheme.white.withValues(alpha: 0.8),
+          fontSize: 12,
+        ),
+      ),
+
+      // Other message theme (messages from other users)
+      otherMessageTheme: StreamMessageThemeData(
+        messageBackgroundColor: AppTheme.surfaceLight, // Light gray background for others' messages
+        messageTextStyle: TextStyle(
+          color: AppTheme.textPrimary, // Dark navy text for readability (14.8:1 ratio)
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+        ),
+        avatarTheme: StreamAvatarThemeData(
+          backgroundColor: AppTheme.primaryNavy, // Navy for others' avatars
+          borderRadius: BorderRadius.circular(20),
+          constraints: const BoxConstraints.tightFor(
+            height: 40,
+            width: 40,
+          ),
+        ),
+        createdAtTextStyle: TextStyle(
+          color: AppTheme.textLight, // Medium gray for timestamps
+          fontSize: 12,
+        ),
+      ),
+
+      // Channel list preview theme
+      channelPreviewTheme: StreamChannelPreviewThemeData(
+        avatarTheme: StreamAvatarThemeData(
+          backgroundColor: AppTheme.primaryNavy,
+          borderRadius: BorderRadius.circular(20),
+          constraints: const BoxConstraints.tightFor(
+            height: 40,
+            width: 40,
+          ),
+        ),
+        titleStyle: TextStyle(
+          color: AppTheme.textPrimary,
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
+        subtitleStyle: TextStyle(
+          color: AppTheme.textSecondary,
+          fontSize: 14,
+        ),
+        indicatorIconSize: 16,
+        lastMessageTextStyle: TextStyle(
+          color: AppTheme.textLight,
+          fontSize: 14,
+        ),
+      ),
+
+      // Channel header theme
+      channelHeaderTheme: StreamChannelHeaderThemeData(
+        avatarTheme: StreamAvatarThemeData(
+          backgroundColor: AppTheme.accentCopper,
+          borderRadius: BorderRadius.circular(20),
+          constraints: const BoxConstraints.tightFor(
+            height: 36,
+            width: 36,
+          ),
+        ),
+        titleStyle: TextStyle(
+          color: AppTheme.textPrimary,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+        subtitleStyle: TextStyle(
+          color: AppTheme.textSecondary,
+          fontSize: 14,
+        ),
+        color: AppTheme.white,
+        height: 56,
+      ),
+
+      // Message input theme
+      messageInputTheme: StreamMessageInputThemeData(
+        inputDecoration: InputDecoration(
+          fillColor: AppTheme.white,
+          filled: true,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24),
+            borderSide: const BorderSide(color: AppTheme.lightGray),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24),
+            borderSide: const BorderSide(color: AppTheme.lightGray),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(24),
+            borderSide: const BorderSide(
+              color: AppTheme.accentCopper,
+              width: 2,
+            ),
+          ),
+          hintStyle: TextStyle(
+            color: AppTheme.textLight,
+            fontSize: 16,
+          ),
+          labelStyle: TextStyle(
+            color: AppTheme.textSecondary,
+            fontSize: 14,
+          ),
+        ),
+        sendButtonColor: AppTheme.accentCopper,
+        actionButtonColor: AppTheme.textSecondary,
+        sendIcon: Icons.send,
+        uploadIcon: Icons.attach_file,
+      ),
+
+      // Gallery theme (for image attachments)
+      galleryTheme: StreamGalleryThemeData(
+        backgroundColor: AppTheme.primaryNavy,
+        headerBackgroundColor: AppTheme.primaryNavy,
+        headerTextStyle: TextStyle(
+          color: AppTheme.white,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+        closeButtonIcon: Icons.close,
+        closeButtonColor: AppTheme.white,
+        pageIndicatorColor: AppTheme.white.withValues(alpha: 0.4),
+        currentPageIndicatorColor: AppTheme.accentCopper,
+      ),
+
+      // Message list theme
+      messageListTheme: StreamMessageListThemeData(
+        backgroundColor: AppTheme.surfaceLight,
+        messageBackgroundColor: AppTheme.white,
+        errorColor: AppTheme.errorRed,
+        linkColor: AppTheme.infoBlue,
+        dateDividerTextStyle: TextStyle(
+          color: AppTheme.textLight,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+
+      // Avatar theme for consistency
+      avatarTheme: StreamAvatarThemeData(
+        backgroundColor: AppTheme.primaryNavy,
+        borderRadius: BorderRadius.circular(20),
+        constraints: const BoxConstraints.tightFor(
+          height: 40,
+          width: 40,
+        ),
+      ),
+
+      // Bottom sheet theme
+      bottomSheetTheme: StreamBottomSheetThemeData(
+        backgroundColor: AppTheme.white,
+        barrierColor: Colors.black.withValues(alpha: 0.5),
+        headerBackgroundColor: AppTheme.surfaceLight,
+        headerTextStyle: TextStyle(
+          color: AppTheme.textPrimary,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+
+      // Reaction picker theme
+      reactionPickerTheme: StreamReactionPickerThemeData(
+        backgroundColor: AppTheme.white,
+        backgroundColorHighlighted: AppTheme.accentCopper.withValues(alpha: 0.1),
+        reactionIconsColor: AppTheme.textPrimary,
+        reactionIconsColorHighlighted: AppTheme.accentCopper,
+      ),
+
+      // Lazy loading scroll view theme
+      lazyLoadingScrollViewTheme: StreamLazyLoadingScrollViewThemeData(
+        backgroundColor: AppTheme.surfaceLight,
+        loadingIndicatorColor: AppTheme.accentCopper,
+        errorColor: AppTheme.errorRed,
+        centerTextStyle: TextStyle(
+          color: AppTheme.textLight,
+          fontSize: 16,
+        ),
+        retryButtonTextStyle: TextStyle(
+          color: AppTheme.white,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+        retryButtonBackgroundColor: AppTheme.accentCopper,
+      ),
+    );
   }
 }

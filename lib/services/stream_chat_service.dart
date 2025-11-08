@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:stream_chat_flutter/stream_chat_flutter.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart' as stream;
 import 'package:flutter/foundation.dart';
+import 'consolidated_session_service.dart';
 
 /// Stream Chat service that handles chat client initialization and team management.
 ///
@@ -40,8 +41,8 @@ class StreamChatService {
   StreamChatService._internal();
 
   // Stream Chat client instance
-  StreamChatClient? _client;
-  StreamChatClient? get client => _client;
+  stream.StreamChatClient? _client;
+  stream.StreamChatClient? get client => _client;
 
   /// Initialize Stream Chat client with secure token from Firebase Cloud Function.
   ///
@@ -62,37 +63,42 @@ class StreamChatService {
   /// final streamService = StreamChatService();
   /// await streamService.initializeClient();
   /// ```
-  Future<StreamChatClient> initializeClient() async {
+  Future<stream.StreamChatClient> initializeClient() async {
     try {
-      // Verify Firebase user authentication
-      final firebaseUser = FirebaseAuth.instance.currentUser;
-      if (firebaseUser == null) {
-        throw Exception('User must be authenticated with Firebase');
-      }
+      // Use consolidated session service to prevent auth conflicts
+      final sessionService = ConsolidatedSessionService();
 
-      debugPrint('[StreamChatService] Initializing client for user: ${firebaseUser.uid}');
+      return await sessionService.initializeStreamChatSafely(() async {
+        // Verify Firebase user authentication
+        final firebaseUser = FirebaseAuth.instance.currentUser;
+        if (firebaseUser == null) {
+          throw Exception('User must be authenticated with Firebase');
+        }
 
-      // Call Cloud Function to get secure token
-      final functions = FirebaseFunctions.instance;
-      final result = await functions.httpsCallable('getStreamUserToken').call();
+        debugPrint('[StreamChatService] Initializing client for user: ${firebaseUser.uid}');
 
-      final token = result.data['token'] as String;
-      final userId = result.data['userId'] as String;
+        // Call Cloud Function to get secure token
+        final functions = FirebaseFunctions.instance;
+        final result = await functions.httpsCallable('getStreamUserToken').call();
 
-      debugPrint('[StreamChatService] Received token for user: $userId');
+        final token = result.data['token'] as String;
+        final userId = result.data['userId'] as String;
 
-      // Initialize Stream client if not already created
-      _client ??= StreamChatClient(_apiKey, logLevel: Level.INFO);
+        debugPrint('[StreamChatService] Received token for user: $userId');
 
-      // Connect user to Stream Chat with token
-      await _client!.connectUser(
-        User(id: userId),
-        token,
-      );
+        // Initialize Stream client if not already created
+        _client ??= stream.StreamChatClient(_apiKey, logLevel: stream.Level.INFO);
 
-      debugPrint('[StreamChatService] Client connected successfully');
+        // Connect user to Stream Chat with token
+        await _client!.connectUser(
+          stream.User(id: userId),
+          token,
+        );
 
-      return _client!;
+        debugPrint('[StreamChatService] Client connected successfully');
+
+        return _client!;
+      });
     } catch (e) {
       debugPrint('[StreamChatService] Failed to initialize client: $e');
       rethrow;
@@ -174,5 +180,5 @@ class StreamChatService {
   }
 
   /// Check if client is currently connected
-  bool get isConnected => _client?.wsConnectionStatus == ConnectionStatus.connected;
+  bool get isConnected => _client?.wsConnectionStatus == stream.ConnectionStatus.connected;
 }
