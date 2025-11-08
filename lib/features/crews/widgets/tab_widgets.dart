@@ -620,10 +620,11 @@ class _JobsTabState extends ConsumerState<JobsTab> {
                     final job = filteredJobs[index];
                     return Padding(
                       padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
-                      child: JJJobCard.detailed(
+                      child: JJJobCard(
                         job: job,
+                        variant: JJJobCardVariant.detailed,
                         onTap: () => _showJobDetails(job),
-                        onBookmark: () => _handleBidAction(job),
+                        onBookmark: (isBookmarked) => _handleBidAction(job),
                       ).animate().fadeIn(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,

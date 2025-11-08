@@ -30,9 +30,9 @@ class MessageBubble extends StatelessWidget {
         child: Column(
           crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            if (!isMe && message.senderId.isNotEmpty) // Display sender name for others' messages
+            if (!isMe && message.authorName.isNotEmpty) // Display sender name for others' messages
               Text(
-                message.senderId, // Replace with actual sender name if available
+                message.authorName, // Display name of the message author
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isMe ? Colors.white : Colors.black87,
@@ -46,7 +46,7 @@ class MessageBubble extends StatelessWidget {
             ),
             const SizedBox(height: 4.0),
             Text(
-              '${message.sentAt.hour}:${message.sentAt.minute.toString().padLeft(2, '0')}',
+              '${message.createdAt.hour}:${message.createdAt.minute.toString().padLeft(2, '0')}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: isMe ? Colors.white70 : Colors.black54,
                   ),

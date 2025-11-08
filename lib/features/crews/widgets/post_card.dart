@@ -499,7 +499,7 @@ class _PostCardState extends State<PostCard> {
                   children: [
                     Text(
                       timeago.format(comment.createdAt),
-                      style: AppTheme.bodyXSmall.copyWith(
+                      style: AppTheme.bodySmall.copyWith(
                         color: AppTheme.mediumGray,
                       ),
                     ),
@@ -510,7 +510,7 @@ class _PostCardState extends State<PostCard> {
                           : widget.onLikeComment(comment.id, widget.post.id),
                       child: Text(
                         isLiked ? 'Unlike' : 'Like',
-                        style: AppTheme.bodyXSmall.copyWith(
+                        style: AppTheme.bodySmall.copyWith(
                           color: AppTheme.accentCopper,
                           fontWeight: FontWeight.w600,
                         ),
@@ -520,7 +520,7 @@ class _PostCardState extends State<PostCard> {
                       const SizedBox(width: 8),
                       Text(
                         '${comment.likeCount} ${comment.likeCount == 1 ? 'like' : 'likes'}',
-                        style: AppTheme.bodyXSmall.copyWith(
+                        style: AppTheme.bodySmall.copyWith(
                           color: AppTheme.mediumGray,
                         ),
                       ),

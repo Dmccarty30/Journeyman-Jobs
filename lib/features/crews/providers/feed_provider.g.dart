@@ -209,7 +209,7 @@ final class CrewPostsProvider
   }
 }
 
-String _$crewPostsHash() => r'f01689962d331b29be280ae076619f7646049bc6';
+String _$crewPostsHash() => r'4e6b64c0ba02fab38a678fb0159ed5039e5426ca';
 
 /// Provider for crew posts (converts stream to AsyncValue)
 
@@ -317,7 +317,7 @@ final class GlobalFeedProvider
   }
 }
 
-String _$globalFeedHash() => r'59727fc631bac8371425e8095b31887e40b67c75';
+String _$globalFeedHash() => r'ac4d15b9867727e7634db2a5b03e6dd04d018244';
 
 /// Provider for filtered and sorted posts based on crew or global context
 
@@ -381,7 +381,7 @@ final class FilteredPostsProvider
   }
 }
 
-String _$filteredPostsHash() => r'441f5578be504055b7472f1f5c9530f91e972f19';
+String _$filteredPostsHash() => r'9bb090246d1a540b216c68a2cd330170750391e2';
 
 /// Provider for filtered and sorted posts based on crew or global context
 
@@ -554,7 +554,7 @@ final class PostCommentsProvider
   }
 }
 
-String _$postCommentsHash() => r'41091163f2749f427054395010391c7855d0aba5';
+String _$postCommentsHash() => r'6e63e43db0992f2888c9167f23cd58a5d5d8815e';
 
 /// Provider for post comments (converts stream to AsyncValue)
 

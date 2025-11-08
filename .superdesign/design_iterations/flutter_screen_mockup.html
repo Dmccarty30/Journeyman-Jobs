@@ -10,20 +10,21 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: #f8fafc;
+            background: #374151;
         }
         .phone-frame {
             width: 375px;
             height: 812px;
-            background: white;
+            background: #111827;
             border-radius: 24px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             overflow: hidden;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
         .status-bar {
             height: 44px;
-            background: #6366f1;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -31,48 +32,58 @@
             color: white;
             font-size: 14px;
             font-weight: 600;
+            flex-shrink: 0;
         }
         .app-bar {
-            height: 56px;
-            background: #e0e7ff;
             display: flex;
             align-items: center;
-            padding: 0 16px;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 8px 16px;
+            color: white;
+        }
+        .app-bar .icon-bg {
+            background-color: #f97316;
+            border-radius: 8px;
+            padding: 8px;
+        }
+        .app-bar .settings-bg {
+            background-color: #f97316;
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 0 15px #f97316;
         }
         .container-section {
             padding: 16px;
-            background: white;
-        }
-        .info-container {
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid;
             display: flex;
-            flex-direction: column;
+            gap: 8px;
         }
-        .info-container.blue {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: rgba(59, 130, 246, 0.3);
+        .folder-tab {
+            position: relative;
+            flex: 1;
+            background-color: #d1d5db;
+            color: #1f2937;
+            padding: 12px 8px;
+            border-radius: 0 6px 6px 6px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
         }
-        .info-container.green {
-            background: rgba(34, 197, 94, 0.1);
-            border-color: rgba(34, 197, 94, 0.3);
-        }
-        .info-container.orange {
-            background: rgba(249, 115, 22, 0.1);
-            border-color: rgba(249, 115, 22, 0.3);
-        }
-        .info-container.red {
-            background: rgba(239, 68, 68, 0.1);
-            border-color: rgba(239, 68, 68, 0.3);
+        .folder-tab::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 0;
+            width: 45%;
+            height: 8px;
+            background-color: #d1d5db;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
         }
         .tab-bar {
-            height: 56px;
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 60px;
+            background: #1f2937;
             display: flex;
+            align-items: center;
+            padding: 0 8px;
         }
         .tab {
             flex: 1;
@@ -83,18 +94,19 @@
             gap: 4px;
             cursor: pointer;
             transition: all 0.2s;
+            color: #9ca3af;
+            height: 100%;
+            border-radius: 8px;
         }
         .tab.active {
-            color: #6366f1;
-            border-bottom: 2px solid #6366f1;
-        }
-        .tab:not(.active) {
-            color: #64748b;
+            color: white;
+            background-color: #f97316;
         }
         .tab-content {
             flex: 1;
             overflow-y: auto;
             padding: 16px;
+            background: #f9fafb;
         }
         .job-card {
             background: white;
@@ -118,55 +130,34 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-8">
+<body class="bg-gray-800 flex items-center justify-center min-h-screen p-8">
     <div class="phone-frame">
         <!-- Status Bar -->
         <div class="status-bar">
-            <span>9:41</span>
-            <span>📶 📶 📶 🔋</span>
+            <span>9:16</span>
+            <span>📶 5G 🔋</span>
         </div>
 
         <!-- App Bar -->
         <div class="app-bar">
-            <h1 class="text-lg font-semibold text-gray-800">Journeyman Jobs</h1>
+            <div class="icon-bg mr-3">
+                <i data-lucide="users" class="w-8 h-8 text-white"></i>
+            </div>
+            <div class="flex-1">
+                <h1 class="text-xl font-bold">test</h1>
+                <p class="text-sm text-gray-400">1 members • Journeyman</p>
+            </div>
+            <div class="settings-bg">
+                <i data-lucide="settings" class="w-6 h-6 text-white"></i>
+            </div>
         </div>
 
-        <!-- Four Containers Section -->
+        <!-- Four Folder Containers -->
         <div class="container-section">
-            <!-- First Row -->
-            <div class="flex gap-3 mb-3">
-                <div class="flex-1 info-container blue">
-                    <div class="flex justify-between items-start mb-2">
-                        <i data-lucide="briefcase" class="w-6 h-6 text-blue-600"></i>
-                        <span class="text-2xl font-bold text-blue-600">12</span>
-                    </div>
-                    <span class="text-sm font-medium text-gray-700">Active Jobs</span>
-                </div>
-                <div class="flex-1 info-container green">
-                    <div class="flex justify-between items-start mb-2">
-                        <i data-lucide="users" class="w-6 h-6 text-green-600"></i>
-                        <span class="text-2xl font-bold text-green-600">8</span>
-                    </div>
-                    <span class="text-sm font-medium text-gray-700">Crew Members</span>
-                </div>
-            </div>
-            <!-- Second Row -->
-            <div class="flex gap-3">
-                <div class="flex-1 info-container orange">
-                    <div class="flex justify-between items-start mb-2">
-                        <i data-lucide="message-circle" class="w-6 h-6 text-orange-600"></i>
-                        <span class="text-2xl font-bold text-orange-600">5</span>
-                    </div>
-                    <span class="text-sm font-medium text-gray-700">Messages</span>
-                </div>
-                <div class="flex-1 info-container red">
-                    <div class="flex justify-between items-start mb-2">
-                        <i data-lucide="bell" class="w-6 h-6 text-red-600"></i>
-                        <span class="text-2xl font-bold text-red-600">3</span>
-                    </div>
-                    <span class="text-sm font-medium text-gray-700">Notifications</span>
-                </div>
-            </div>
+            <div class="folder-tab">Channels</div>
+            <div class="folder-tab">Files</div>
+            <div class="folder-tab">History</div>
+            <div class="folder-tab">Crew Chat</div>
         </div>
 
         <!-- Tab Bar -->
@@ -175,11 +166,11 @@
                 <i data-lucide="rss" class="w-5 h-5"></i>
                 <span class="text-xs font-medium">Feed</span>
             </div>
-            <div class="tab active">
+            <div class="tab">
                 <i data-lucide="briefcase" class="w-5 h-5"></i>
                 <span class="text-xs font-medium">Jobs</span>
             </div>
-            <div class="tab">
+            <div class="tab active">
                 <i data-lucide="message-circle" class="w-5 h-5"></i>
                 <span class="text-xs font-medium">Chat</span>
             </div>
@@ -189,80 +180,34 @@
             </div>
         </div>
 
-        <!-- Tab Content (Jobs Tab Active) -->
-        <div class="tab-content">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-bold text-gray-800">Active Jobs</h2>
-                <button class="bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                    New Tailboard
+        <!-- Tab Content (Chat Tab Active) -->
+        <div class="tab-content flex flex-col">
+             <div class="flex items-center pb-3 border-b border-gray-200 mb-4">
+                <div class="w-10 h-10 bg-orange-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">T</div>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-gray-800">test</h3>
+                    <p class="text-sm text-gray-600">1 members</p>
+                </div>
+                 <div class="online-indicator mr-3"></div>
+                <i data-lucide="users" class="w-5 h-5 text-gray-500 mr-3"></i>
+                <i data-lucide="more-vertical" class="w-5 h-5 text-gray-500"></i>
+            </div>
+            <div class="flex-1 flex flex-col items-center justify-center text-center">
+                <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mb-4">
+                    <i data-lucide="message-square" class="w-12 h-12 text-gray-400"></i>
+                </div>
+                <p class="text-gray-600">Send a message to connect with your team</p>
+            </div>
+            <div class="flex items-center gap-2 pt-3 border-t border-gray-200">
+                <button class="p-2 text-gray-400 hover:text-gray-600">
+                    <i data-lucide="paperclip" class="w-5 h-5"></i>
                 </button>
-            </div>
-            
-            <!-- Job Cards -->
-            <div class="job-card">
-                <div class="flex items-center">
-                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">
-                        1
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="font-semibold text-gray-800">Job #JOB-2024001</h3>
-                        <p class="text-sm text-gray-600">Location: Site 1</p>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                <div class="flex-1 relative">
+                    <input type="text" placeholder="Type a message..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                 </div>
-            </div>
-
-            <div class="job-card">
-                <div class="flex items-center">
-                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">
-                        2
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="font-semibold text-gray-800">Job #JOB-2024002</h3>
-                        <p class="text-sm text-gray-600">Location: Site 2</p>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                </div>
-            </div>
-
-            <div class="job-card">
-                <div class="flex items-center">
-                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">
-                        3
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="font-semibold text-gray-800">Job #JOB-2024003</h3>
-                        <p class="text-sm text-gray-600">Location: Site 3</p>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                </div>
-            </div>
-
-            <div class="job-card">
-                <div class="flex items-center">
-                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">
-                        4
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="font-semibold text-gray-800">Job #JOB-2024004</h3>
-                        <p class="text-sm text-gray-600">Location: Site 4</p>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                </div>
-            </div>
-
-            <div class="job-card">
-                <div class="flex items-center">
-                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">
-                        5
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="font-semibold text-gray-800">Job #JOB-2024005</h3>
-                        <p class="text-sm text-gray-600">Location: Site 5</p>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                </div>
+                <button class="p-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -281,85 +226,472 @@
                 
                 // Update content based on tab
                 const content = document.querySelector('.tab-content');
-                const tabNames = ['Feed', 'Jobs', 'Chat', 'Members'];
                 
-                if (index === 0) { // Feed
+                if (index === 0) { // Feed - Social Posts
                     content.innerHTML = `
-                        <div class="flex flex-col items-center justify-center h-full text-center">
-                            <i data-lucide="rss" class="w-16 h-16 text-gray-400 mb-4"></i>
-                            <h2 class="text-xl font-bold text-gray-800 mb-2">Feed Tab</h2>
-                            <p class="text-gray-600">Latest updates and announcements will appear here</p>
-                        </div>
-                    `;
-                } else if (index === 1) { // Jobs (current content)
-                    content.innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-bold text-gray-800">Active Jobs</h2>
-                            <button class="bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
-                                <i data-lucide="plus" class="w-4 h-4"></i>
-                                New Tailboard
-                            </button>
-                        </div>
-                        <div class="job-card">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">1</div>
+                        <h2 class="text-lg font-bold text-gray-800 mb-4">Team Feed</h2>
+                        
+                        <!-- Post 1 -->
+                        <div class="job-card mb-4">
+                            <div class="flex items-start mb-3">
+                                <div class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">J</div>
                                 <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-800">Job #JOB-2024001</h3>
-                                    <p class="text-sm text-gray-600">Location: Site 1</p>
-                                </div>
-                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                            </div>
-                        </div>
-                        <div class="job-card">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">2</div>
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-800">Job #JOB-2024002</h3>
-                                    <p class="text-sm text-gray-600">Location: Site 2</p>
-                                </div>
-                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                            </div>
-                        </div>
-                    `;
-                } else if (index === 2) { // Chat
-                    content.innerHTML = `
-                        <div class="flex flex-col items-center justify-center h-full text-center">
-                            <i data-lucide="message-circle" class="w-16 h-16 text-gray-400 mb-4"></i>
-                            <h2 class="text-xl font-bold text-gray-800 mb-2">Chat Tab</h2>
-                            <p class="text-gray-600">Team communication will appear here</p>
-                        </div>
-                    `;
-                } else if (index === 3) { // Members
-                    content.innerHTML = `
-                        <h2 class="text-lg font-bold text-gray-800 mb-4">Team Members</h2>
-                        <div class="job-card">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">J</div>
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-800">John Smith</h3>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h3 class="font-semibold text-gray-800">John Smith</h3>
+                                        <span class="text-xs text-gray-500">• 2h ago</span>
+                                    </div>
                                     <p class="text-sm text-gray-600">Foreman</p>
                                 </div>
-                                <div class="online-indicator"></div>
+                                <i data-lucide="more-horizontal" class="w-5 h-5 text-gray-400"></i>
+                            </div>
+                            <p class="text-gray-800 mb-3">Just completed the electrical installation at Site 3. Great teamwork today! 💪</p>
+                            <div class="flex items-center gap-4 text-sm text-gray-500">
+                                <button class="flex items-center gap-1 hover:text-blue-600">
+                                    <i data-lucide="heart" class="w-4 h-4"></i>
+                                    <span>12</span>
+                                </button>
+                                <button class="flex items-center gap-1 hover:text-blue-600">
+                                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                    <span>3</span>
+                                </button>
+                                <button class="flex items-center gap-1 hover:text-blue-600">
+                                    <i data-lucide="share" class="w-4 h-4"></i>
+                                </button>
                             </div>
                         </div>
-                        <div class="job-card">
-                            <div class="flex items-center">
+
+                        <!-- Post 2 -->
+                        <div class="job-card mb-4">
+                            <div class="flex items-start mb-3">
                                 <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">S</div>
                                 <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-800">Sarah Johnson</h3>
-                                    <p class="text-sm text-gray-600">Electrician</p>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h3 class="font-semibold text-gray-800">Sarah Johnson</h3>
+                                        <span class="text-xs text-gray-500">• 4h ago</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600">Safety Officer</p>
                                 </div>
-                                <div class="online-indicator"></div>
+                                <i data-lucide="more-horizontal" class="w-5 h-5 text-gray-400"></i>
+                            </div>
+                            <p class="text-gray-800 mb-3">🚨 Safety reminder: Always wear your hard hats and safety vests on site. Zero incidents this week - let's keep it up!</p>
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                                <div class="flex items-center gap-2 text-yellow-800">
+                                    <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                                    <span class="font-medium text-sm">Safety Alert</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 text-sm text-gray-500">
+                                <button class="flex items-center gap-1 hover:text-blue-600">
+                                    <i data-lucide="heart" class="w-4 h-4"></i>
+                                    <span>8</span>
+                                </button>
+                                <button class="flex items-center gap-1 hover:text-blue-600">
+                                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                    <span>1</span>
+                                </button>
+                                <button class="flex items-center gap-1 hover:text-blue-600">
+                                    <i data-lucide="share" class="w-4 h-4"></i>
+                                </button>
                             </div>
                         </div>
-                        <div class="job-card">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">M</div>
+
+                        <!-- Post 3 -->
+                        <div class="job-card mb-4">
+                            <div class="flex items-start mb-3">
+                                <div class="w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">M</div>
                                 <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-800">Mike Wilson</h3>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h3 class="font-semibold text-gray-800">Mike Wilson</h3>
+                                        <span class="text-xs text-gray-500">• 6h ago</span>
+                                    </div>
                                     <p class="text-sm text-gray-600">Apprentice</p>
                                 </div>
-                                <div class="offline-indicator"></div>
+                                <i data-lucide="more-horizontal" class="w-5 h-5 text-gray-400"></i>
+                            </div>
+                            <p class="text-gray-800 mb-3">Learning so much from the senior crew members. Thanks for the patience everyone! 📚</p>
+                            <div class="flex items-center gap-4 text-sm text-gray-500">
+                                <button class="flex items-center gap-1 hover:text-blue-600">
+                                    <i data-lucide="heart" class="w-4 h-4"></i>
+                                    <span>15</span>
+                                </button>
+                                <button class="flex items-center gap-1 hover:text-blue-600">
+                                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                    <span>5</span>
+                                </button>
+                                <button class="flex items-center gap-1 hover:text-blue-600">
+                                    <i data-lucide="share" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else if (index === 1) { // Jobs - Available Jobs to Apply
+                    content.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-gray-800">Available Jobs</h2>
+                            <button class="bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                                <i data-lucide="filter" class="w-4 h-4"></i>
+                                Filter
+                            </button>
+                        </div>
+                        
+                        <!-- Job 1 -->
+                        <div class="job-card mb-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800 mb-1">Electrical Installation - Downtown Office</h3>
+                                    <p class="text-sm text-gray-600 mb-2">ABC Construction Co.</p>
+                                    <div class="flex items-center gap-4 text-xs text-gray-500 mb-2">
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="map-pin" class="w-3 h-3"></i>
+                                            Downtown, City Center
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="calendar" class="w-3 h-3"></i>
+                                            Dec 15 - Jan 30
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">$45/hr</span>
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Full-time</span>
+                                        <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium">Urgent</span>
+                                    </div>
+                                </div>
+                                <button class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium">
+                                    Apply
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-700 mb-3">Looking for experienced electricians for commercial office building project. Must have commercial wiring experience.</p>
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <span>Posted 2 days ago</span>
+                                <span>12 applicants</span>
+                            </div>
+                        </div>
+
+                        <!-- Job 2 -->
+                        <div class="job-card mb-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800 mb-1">Residential Wiring - New Development</h3>
+                                    <p class="text-sm text-gray-600 mb-2">XYZ Builders</p>
+                                    <div class="flex items-center gap-4 text-xs text-gray-500 mb-2">
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="map-pin" class="w-3 h-3"></i>
+                                            Suburbs, North District
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="calendar" class="w-3 h-3"></i>
+                                            Jan 5 - Mar 15
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">$38/hr</span>
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Contract</span>
+                                    </div>
+                                </div>
+                                <button class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium">
+                                    Apply
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-700 mb-3">Multiple residential units need complete electrical installation. Great opportunity for steady work.</p>
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <span>Posted 1 week ago</span>
+                                <span>8 applicants</span>
+                            </div>
+                        </div>
+
+                        <!-- Job 3 -->
+                        <div class="job-card mb-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800 mb-1">Industrial Maintenance - Factory</h3>
+                                    <p class="text-sm text-gray-600 mb-2">Industrial Solutions Inc.</p>
+                                    <div class="flex items-center gap-4 text-xs text-gray-500 mb-2">
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="map-pin" class="w-3 h-3"></i>
+                                            Industrial Park, East Side
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="calendar" class="w-3 h-3"></i>
+                                            Ongoing
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">$52/hr</span>
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">Permanent</span>
+                                        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">Benefits</span>
+                                    </div>
+                                </div>
+                                <button class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium">
+                                    Apply
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-700 mb-3">Seeking skilled electrician for ongoing industrial maintenance. Must have industrial experience and safety certifications.</p>
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <span>Posted 3 days ago</span>
+                                <span>5 applicants</span>
+                            </div>
+                        </div>
+                    `;
+                } else if (index === 2) { // Chat - Message Interface
+                    content.innerHTML = `
+                        <div class="flex flex-col h-full">
+                            <!-- Chat Header -->
+                            <div class="flex items-center justify-between pb-3 border-b border-gray-200 mb-4">
+                                <h2 class="text-lg font-bold text-gray-800">Team Chat</h2>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex -space-x-2">
+                                        <div class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-semibold border-2 border-white">J</div>
+                                        <div class="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-semibold border-2 border-white">S</div>
+                                        <div class="w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-xs font-semibold border-2 border-white">M</div>
+                                        <div class="w-6 h-6 bg-gray-400 text-white rounded-full flex items-center justify-center text-xs font-semibold border-2 border-white">+5</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Messages Container -->
+                            <div class="flex-1 space-y-4 mb-4 overflow-y-auto">
+                                <!-- Message 1 - Other user -->
+                                <div class="flex items-start gap-2">
+                                    <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-semibold">J</div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-sm font-medium text-gray-800">John Smith</span>
+                                            <span class="text-xs text-gray-500">10:30 AM</span>
+                                        </div>
+                                        <div class="bg-gray-100 rounded-lg rounded-tl-none px-3 py-2 max-w-xs">
+                                            <p class="text-sm text-gray-800">Hey team, just finished the morning safety check. All equipment is ready to go!</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Message 2 - Current user -->
+                                <div class="flex items-start gap-2 justify-end">
+                                    <div class="flex-1 flex flex-col items-end">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-xs text-gray-500">10:32 AM</span>
+                                            <span class="text-sm font-medium text-gray-800">You</span>
+                                        </div>
+                                        <div class="bg-indigo-600 text-white rounded-lg rounded-tr-none px-3 py-2 max-w-xs">
+                                            <p class="text-sm">Perfect! I'll be there in 15 minutes. Did you check the new wire shipment?</p>
+                                        </div>
+                                    </div>
+                                    <div class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-semibold">Y</div>
+                                </div>
+
+                                <!-- Message 3 - Other user -->
+                                <div class="flex items-start gap-2">
+                                    <div class="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-semibold">S</div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-sm font-medium text-gray-800">Sarah Johnson</span>
+                                            <span class="text-xs text-gray-500">10:35 AM</span>
+                                        </div>
+                                        <div class="bg-gray-100 rounded-lg rounded-tl-none px-3 py-2 max-w-xs">
+                                            <p class="text-sm text-gray-800">Yes, the wire shipment arrived this morning. Everything looks good ✅</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Message 4 - Other user -->
+                                <div class="flex items-start gap-2">
+                                    <div class="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-xs font-semibold">M</div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-sm font-medium text-gray-800">Mike Wilson</span>
+                                            <span class="text-xs text-gray-500">10:38 AM</span>
+                                        </div>
+                                        <div class="bg-gray-100 rounded-lg rounded-tl-none px-3 py-2 max-w-xs">
+                                            <p class="text-sm text-gray-800">Should I start prepping the conduit runs for building 2?</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Typing indicator -->
+                                <div class="flex items-start gap-2">
+                                    <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-semibold">J</div>
+                                    <div class="flex-1">
+                                        <div class="bg-gray-100 rounded-lg rounded-tl-none px-3 py-2 max-w-xs">
+                                            <div class="flex items-center gap-1">
+                                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Message Input -->
+                            <div class="flex items-center gap-2 pt-3 border-t border-gray-200">
+                                <button class="p-2 text-gray-400 hover:text-gray-600">
+                                    <i data-lucide="paperclip" class="w-5 h-5"></i>
+                                </button>
+                                <div class="flex-1 relative">
+                                    <input type="text" placeholder="Type a message..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                </div>
+                                <button class="p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                                    <i data-lucide="send" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else if (index === 3) { // Members - Crew Members List
+                    content.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-gray-800">Crew Members</h2>
+                            <button class="bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                                <i data-lucide="user-plus" class="w-4 h-4"></i>
+                                Invite
+                            </button>
+                        </div>
+                        
+                        <!-- Member 1 -->
+                        <div class="job-card mb-3">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">JS</div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h3 class="font-semibold text-gray-800">John Smith</h3>
+                                        <span class="bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs font-medium">Lead</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mb-1">Foreman • 8 years experience</p>
+                                    <div class="flex items-center gap-4 text-xs text-gray-500">
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="phone" class="w-3 h-3"></i>
+                                            (555) 123-4567
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="mail" class="w-3 h-3"></i>
+                                            john@company.com
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="online-indicator"></div>
+                                    <button class="p-1 text-gray-400 hover:text-gray-600">
+                                        <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Member 2 -->
+                        <div class="job-card mb-3">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">SJ</div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h3 class="font-semibold text-gray-800">Sarah Johnson</h3>
+                                        <span class="bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full text-xs font-medium">Safety</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mb-1">Safety Officer • 6 years experience</p>
+                                    <div class="flex items-center gap-4 text-xs text-gray-500">
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="phone" class="w-3 h-3"></i>
+                                            (555) 234-5678
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="mail" class="w-3 h-3"></i>
+                                            sarah@company.com
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="online-indicator"></div>
+                                    <button class="p-1 text-gray-400 hover:text-gray-600">
+                                        <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Member 3 -->
+                        <div class="job-card mb-3">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">MW</div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h3 class="font-semibold text-gray-800">Mike Wilson</h3>
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-medium">Apprentice</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mb-1">Apprentice Electrician • 2 years experience</p>
+                                    <div class="flex items-center gap-4 text-xs text-gray-500">
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="phone" class="w-3 h-3"></i>
+                                            (555) 345-6789
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="mail" class="w-3 h-3"></i>
+                                            mike@company.com
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="offline-indicator"></div>
+                                    <button class="p-1 text-gray-400 hover:text-gray-600">
+                                        <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Member 4 -->
+                        <div class="job-card mb-3">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-red-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">ED</div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h3 class="font-semibold text-gray-800">Emily Davis</h3>
+                                        <span class="bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full text-xs font-medium">Specialist</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mb-1">Control Systems Specialist • 5 years experience</p>
+                                    <div class="flex items-center gap-4 text-xs text-gray-500">
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="phone" class="w-3 h-3"></i>
+                                            (555) 456-7890
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="mail" class="w-3 h-3"></i>
+                                            emily@company.com
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="online-indicator"></div>
+                                    <button class="p-1 text-gray-400 hover:text-gray-600">
+                                        <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Member 5 -->
+                        <div class="job-card mb-3">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-yellow-600 text-white rounded-full flex items-center justify-center font-semibold mr-3">CB</div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h3 class="font-semibold text-gray-800">Chris Brown</h3>
+                                        <span class="bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full text-xs font-medium">Technician</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mb-1">Maintenance Technician • 4 years experience</p>
+                                    <div class="flex items-center gap-4 text-xs text-gray-500">
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="phone" class="w-3 h-3"></i>
+                                            (555) 567-8901
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <i data-lucide="mail" class="w-3 h-3"></i>
+                                            chris@company.com
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="offline-indicator"></div>
+                                    <button class="p-1 text-gray-400 hover:text-gray-600">
+                                        <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     `;

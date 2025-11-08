@@ -4,12 +4,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Riverpod ThemeNotifier that exposes ThemeMode (light/dark/system)
 /// and persists selection under "jj.themeMode" via SharedPreferences.
-class ThemeNotifier extends StateNotifier<ThemeMode> {
-  ThemeNotifier() : super(ThemeMode.system) {
-    _restore();
-  }
-
+class ThemeNotifier extends Notifier<ThemeMode> {
   static const String _prefsKey = 'jj.themeMode';
+
+  @override
+  ThemeMode build() {
+    _restore();
+    return ThemeMode.system;
+  }
 
   Future<void> _restore() async {
     final prefs = await SharedPreferences.getInstance();
@@ -57,5 +59,6 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
 }
 
 /// Provider to consume ThemeMode and mutate via ThemeNotifier.
-final themeModeNotifierProvider =
-    StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) => ThemeNotifier());
+final themeModeNotifierProvider = NotifierProvider<ThemeNotifier, ThemeMode>(() {
+  return ThemeNotifier();
+});

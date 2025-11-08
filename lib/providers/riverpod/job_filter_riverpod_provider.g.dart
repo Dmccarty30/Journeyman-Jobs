@@ -90,7 +90,7 @@ final class JobFilterNotifierProvider
   }
 }
 
-String _$jobFilterNotifierHash() => r'53e6dec9974811d0b62bd682988c5defcff3d7e6';
+String _$jobFilterNotifierHash() => r'f4fb04b292f2e457992c39cac1155ec0e9fccd14';
 
 /// Job filter notifier for managing filter state and presets
 

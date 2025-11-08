@@ -1,7 +1,5 @@
 // lib/features/crews/providers/jobs_filter_provider.dart
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:state_notifier/state_notifier.dart';
 import '../../../models/job_model.dart';
 import 'crew_jobs_riverpod_provider.dart';
 
@@ -58,62 +56,6 @@ class JobsFilterState {
   }
 }
 
-/// State notifier for managing jobs filters
-class JobsFilterNotifier extends StateNotifier<JobsFilterState> {
-  JobsFilterNotifier() : super(const JobsFilterState());
-
-  /// Set construction type filter
-  void setConstructionType(String? type) {
-    state = state.copyWith(
-      constructionType: type,
-      clearConstructionType: type == null,
-    );
-  }
-
-  /// Set local number filter
-  void setLocalNumber(int? local) {
-    state = state.copyWith(
-      localNumber: local,
-      clearLocalNumber: local == null,
-    );
-  }
-
-  /// Set classification filter
-  void setClassification(String? classification) {
-    state = state.copyWith(
-      classification: classification,
-      clearClassification: classification == null,
-    );
-  }
-
-  /// Set search query
-  void setSearchQuery(String query) {
-    state = state.copyWith(searchQuery: query);
-  }
-
-  /// Clear all filters
-  void clearAllFilters() {
-    state = const JobsFilterState();
-  }
-
-  /// Clear a specific filter type
-  void clearFilter(String filterType) {
-    switch (filterType) {
-      case 'constructionType':
-        state = state.copyWith(clearConstructionType: true);
-        break;
-      case 'local':
-        state = state.copyWith(clearLocalNumber: true);
-        break;
-      case 'classification':
-        state = state.copyWith(clearClassification: true);
-        break;
-      case 'search':
-        state = state.copyWith(searchQuery: '');
-        break;
-    }
-  }
-}
 
 /// Provider for jobs filter state
 @riverpod
@@ -188,8 +130,7 @@ List<Job> filteredCrewJobs(Ref ref, String crewId) {
   return crewJobs.where((job) {
     // Apply construction type filter
     if (filterState.constructionType != null) {
-      final jobConstructionType = job.typeOfConstruction?.toLowerCase() ??
-                                   job.typeOfWork?.toLowerCase() ?? '';
+      final jobConstructionType = job.typeOfWork?.toLowerCase() ?? '';
       if (!jobConstructionType.contains(filterState.constructionType!.toLowerCase())) {
         return false;
       }

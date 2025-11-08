@@ -204,7 +204,7 @@ final class TailboardProvider
   }
 }
 
-String _$tailboardHash() => r'38db4fadb086a6affdfb17d72c4b97d82b0cb761';
+String _$tailboardHash() => r'fa23afa0b876bc3812f4d9ba8a32eb46fed7f492';
 
 /// Tailboard data for a specific crew
 
@@ -383,7 +383,7 @@ final class SuggestedJobsProvider
   }
 }
 
-String _$suggestedJobsHash() => r'53a7f5f0d20770a686980ef9c1e3c9716a8b486d';
+String _$suggestedJobsHash() => r'e303329f20467388185be8fc3f897e27fa60eb12';
 
 /// Suggested jobs for a specific crew
 
@@ -562,7 +562,7 @@ final class ActivityItemsProvider
   }
 }
 
-String _$activityItemsHash() => r'f556562361eb3d8a86ba3c2a25f075aab38f5b7d';
+String _$activityItemsHash() => r'841e87d99067ed028ea34d09ee152447c18dd9b5';
 
 /// Activity items for a specific crew
 
@@ -741,7 +741,7 @@ final class TailboardPostsProvider
   }
 }
 
-String _$tailboardPostsHash() => r'529a325af394dc05dcede426137632aedbf55f28';
+String _$tailboardPostsHash() => r'f1c16958095d817e1fac103fca5b586b9945b807';
 
 /// Tailboard posts for a specific crew
 

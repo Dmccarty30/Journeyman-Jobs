@@ -3,7 +3,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../models/user_job_preferences.dart';
 import '../../utils/concurrent_operations.dart';
 import '../../utils/error_handler.dart';
-import 'error_handling_provider.dart';
 
 part 'user_preferences_riverpod_provider.g.dart';
 

@@ -2714,6 +2714,9 @@ class UnifiedFirestoreService {
           case OperationType.delete:
             batch.delete(op.reference);
             break;
+          case OperationType.loadJobs:
+            // loadJobs is not a batch operation, but included for completeness
+            break;
         }
       }
 
@@ -2828,25 +2831,11 @@ class UnifiedFirestoreService {
   }
 }
 
+}
+
 // ============================================================================
 // HELPER CLASSES
 // ============================================================================
-
-/// Custom exception class for Firestore operations
-class FirestoreException implements Exception {
-  final String message;
-  final String code;
-  final dynamic originalError;
-
-  const FirestoreException(
-    this.message,
-    this.code, {
-    this.originalError,
-  });
-
-  @override
-  String toString() => 'FirestoreException: $message (code: $code)';
-}
 
 /// Batch operation types
 enum OperationType { create, update, delete, loadJobs }

@@ -97,7 +97,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha:0.1),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -106,7 +106,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             child: TabBar(
               controller: _tabController,
               labelColor: Theme.of(context).colorScheme.primary,
-              unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.6),
               indicatorColor: Theme.of(context).colorScheme.primary,
               tabs: const [
                 Tab(
@@ -156,10 +156,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha:0.3),
           width: 1,
         ),
       ),

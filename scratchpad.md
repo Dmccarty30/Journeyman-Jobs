@@ -11,7 +11,7 @@ workflow-init --uc --ultrathink --all-mcp --persona-architect --analyze --verbos
 ```
 
 ```bash
-   npx claude-flow@alpha hive-mind "Invoke @error-eliminator.md and have that agent unleash it's team of elite problem solvers to analyze and identify every possible error in the @lib directory." --auto-spawn --queen-type
+   npx claude-flow@alpha hive-mind "Invoke 10 agents to completed the tasks in archon. after each task has been complete, call Jenny and Keren to validadte the completion of the task." --auto-spawn --queen-type
   tactical --max-workers 10 --claude
 ```
 
@@ -59,7 +59,7 @@ workflow-init --uc --ultrathink --all-mcp --persona-architect --analyze --verbos
 ```
 
 ```bash
- /sparc:swarm-coordinator --uc --ultrathink --persona-frontend --all-mcp --agent-ui-comprehensive-tester --agent-ui-designer --agent-ui-ux-designer --agent-ux-designer --agent-flutter-expert --agent-ui-engineer --wave-delegation-files --wave-strategy-adaptive --wave-mode force  " I need for you invoke the swarm coordinator as well as all of this sub agents that I have referenced and identified in the prompt to perform this task. Which is to analyze the photos in these files @assets\chat-tab-new.png @assets\feed-tab-new.png @assets\jobs-tab-new.png @assets\members-tab-new.png. These screenshots are rough drafts and really rough low quality UI designs so I need for you to once they are built to implement the design theme and app theme regarding the color the border the radius the buttons and shadows and fonts and everything needs to be reapplied to these screens or these this tabs it's gonna be one individual screen but when each tab is selected then the four containers in the row above the tabbar will change according to which tab is selected just like the existing tail board screen to where whenever tab is selected whatever is below the tab bar will change according to which tab is selected This time it will be the row above the tab bar This will be a row with four containers in them spaced evenly all of the same sizes same border radius and thickness shadow and everything all must be consistent Once it's built out then we will attach the actions and backing query functions afterwards"
+ /sparc:swarm-coordinator --uc --ultrathink --persona-frontend --all-mcp --agent-ui-comprehensive-tester --agent-ui-designer --agent-ui-ux-designer --agent-ux-designer --agent-flutter-expert --agent-ui-engineer --wave-delegation-files --wave-strategy-adaptive --wave-mode force  "i am only concerned with the errors in the \lib directory. I want to work directory by directory correcting errors. lets start with the model and provider directories. 
 ```
 
 ```bash

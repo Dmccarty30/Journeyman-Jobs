@@ -64,7 +64,7 @@ class SessionState {
 /// await sessionService.endSession(); // On logout
 /// ```
 @riverpod
-ConsolidatedSessionService sessionTimeoutService(ref) {
+ConsolidatedSessionService sessionTimeoutService(Ref ref) {
   final service = ConsolidatedSessionService();
 
   // Dispose service when provider is disposed
@@ -80,7 +80,7 @@ ConsolidatedSessionService sessionTimeoutService(ref) {
 /// This is the preferred way to access session management functionality.
 /// It prevents conflicts between multiple session services.
 @riverpod
-ConsolidatedSessionService consolidatedSessionService(ConsolidatedSessionServiceRef ref) {
+ConsolidatedSessionService consolidatedSessionService(Ref ref) {
   final service = ConsolidatedSessionService();
 
   // Initialize if not already done
@@ -172,7 +172,7 @@ class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
       // Update state to reflect warning
       state = SessionState(
         isActive: state.isActive,
-        lastActivity: _service?.lastActivity,
+        lastActivity: _service?.lastActivityTime,
         timeUntilTimeout: _service?.timeUntilTimeout,
         isInGracePeriod: _service?.isInGracePeriod ?? false,
         gracePeriodStartTime: _service?.gracePeriodStartTime,
@@ -187,7 +187,7 @@ class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
     _service?.onAuthStateChanged = () {
       state = SessionState(
         isActive: _service?.isSessionActive ?? false,
-        lastActivity: _service?.lastActivity,
+        lastActivity: _service?.lastActivityTime,
         timeUntilTimeout: _service?.timeUntilTimeout,
         isInGracePeriod: _service?.isInGracePeriod ?? false,
         gracePeriodStartTime: _service?.gracePeriodStartTime,
@@ -207,7 +207,7 @@ class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
 
     state = SessionState(
       isActive: true,
-      lastActivity: _service?.lastActivity,
+      lastActivity: _service?.lastActivityTime,
       timeUntilTimeout: _service?.timeUntilTimeout,
       isInGracePeriod: false,
       gracePeriodStartTime: null,
@@ -235,7 +235,7 @@ class SessionTimeoutNotifier extends _$SessionTimeoutNotifier {
     // Update state with new activity time and grace period info
     state = SessionState(
       isActive: state.isActive,
-      lastActivity: _service?.lastActivity,
+      lastActivity: _service?.lastActivityTime,
       timeUntilTimeout: _service?.timeUntilTimeout,
       isInGracePeriod: _service?.isInGracePeriod ?? false,
       gracePeriodStartTime: _service?.gracePeriodStartTime,

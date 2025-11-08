@@ -1,6 +1,6 @@
-/// Export all hierarchical types for easy importing
-/// This barrel file ensures all hierarchical types are accessible
-/// from a single import, which helps with code generation.
+// Export all hierarchical types for easy importing
+// This barrel file ensures all hierarchical types are accessible
+// from a single import, which helps with code generation.
 
 // Core data models
 export 'hierarchical_data_model.dart';

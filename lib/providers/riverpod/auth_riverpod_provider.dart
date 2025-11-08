@@ -8,7 +8,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../services/auth_service.dart';
 import '../../utils/concurrent_operations.dart';
 import '../../utils/error_handler.dart';
-import 'error_handling_provider.dart';
 
 part 'auth_riverpod_provider.g.dart';
 

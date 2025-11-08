@@ -1,17 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/exceptions/app_exception.dart';
 import '../../models/locals_record.dart';
-import '../../utils/concurrent_operations.dart';
+import '../../services/unified_firestore_service.dart';
+import '../../utils/concurrent_operations.dart' as ops;
 import '../../utils/error_handler.dart';
 import 'auth_riverpod_provider.dart' as auth_providers;
-import 'jobs_riverpod_provider.dart' show firestoreServiceProvider;
-import 'error_handling_provider.dart';
 
 part 'locals_riverpod_provider.g.dart';
+
+// Create a singleton instance to avoid multiple instantiations
+final UnifiedFirestoreService _firestoreServiceInstance = UnifiedFirestoreService();
 /// Represents the state of locals data used by Riverpod.
 class LocalsState {
   /// Creates a [LocalsState] with optional initial values.
@@ -78,12 +77,12 @@ class LocalsState {
 @riverpod
 /// Riverpod notifier that manages loading and searching of locals.
 class LocalsNotifier extends _$LocalsNotifier {
-  late final ConcurrentOperationManager _operationManager;
+  late final ops.ConcurrentOperationManager _operationManager;
   static const int _pageSize = 20; // Define page size for pagination
 
   @override
   LocalsState build() {
-    _operationManager = ConcurrentOperationManager();
+    _operationManager = ops.ConcurrentOperationManager();
     return const LocalsState();
   }
 
@@ -125,12 +124,13 @@ class LocalsNotifier extends _$LocalsNotifier {
     final result = await ErrorHandler.handleAsyncOperation<QuerySnapshot<Object?>>(
       () async {
         return await _operationManager.executeOperation(
-          type: OperationType.loadLocals,
+          type: ops.OperationType.loadLocals,
           operation: () async {
-            return ref.read(firestoreServiceProvider).getLocals(
-              startAfter: loadMore ? state.lastDocument : null,
-              limit: _pageSize,
-            ).first;
+            Query query = _firestoreServiceInstance.localsCollection;
+            if (loadMore && state.lastDocument != null) {
+              query = query.startAfterDocument(state.lastDocument!);
+            }
+            return await query.limit(_pageSize).get();
           },
         );
       },
@@ -260,17 +260,17 @@ class LocalsNotifier extends _$LocalsNotifier {
 @riverpod
 /// Riverpod provider that fetches a single local by ID.
 Future<LocalsRecord?> localById(Ref ref, String localId) async {
-  final service = ref.watch(firestoreServiceProvider);
-  try {
-    final doc = await service.getLocal(localId);
-    if (doc.exists) {
-      return LocalsRecord.fromFirestore(doc);
-    }
-    return null;
-  } catch (e) {
-    // Log error and return null for graceful handling
-    return null;
+  final service = _firestoreServiceInstance;
+try {
+  final doc = await service.localsCollection.doc(localId).get();
+  if (doc.exists) {
+    return LocalsRecord.fromFirestore(doc);
   }
+  return null;
+} catch (e) {
+  // Log error and return null for graceful handling
+  return null;
+}
 }
 
 @riverpod

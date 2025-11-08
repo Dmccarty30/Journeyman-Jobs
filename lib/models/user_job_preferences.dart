@@ -70,7 +70,7 @@ class UserJobPreferences {
     );
   }
 
-  get preferences => null;
+  dynamic get preferences => null;
 
   UserJobPreferences copyWith({
     List<String>? classifications,

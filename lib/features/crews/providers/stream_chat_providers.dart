@@ -76,7 +76,6 @@ final crewChannelsProvider = FutureProvider.family<List<Channel>, String>((ref, 
   // Query channels with team filter for crew isolation
   final channels = await client.queryChannels(
     filter: Filter.equal('team', crewId),
-    sort: [const SortOption('last_message_at', direction: SortOption.ASC)],
   ).first;
 
   return channels;
@@ -112,7 +111,6 @@ final dmConversationsProvider = FutureProvider.family<List<Channel>, String>((re
       Filter.equal('team', crewId),
       Filter.equal('member_count', 2),
     ]),
-    sort: [const SortOption('last_message_at', direction: SortOption.ASC)],
   ).first;
 
   return channels;
@@ -137,4 +135,11 @@ final dmConversationsProvider = FutureProvider.family<List<Channel>, String>((re
 /// // Clear active channel when exiting
 /// ref.read(activeChannelProvider.notifier).state = null;
 /// ```
-final activeChannelProvider = StateProvider<Channel?>((ref) => null);
+class ActiveChannelController {
+  Channel? state;
+  void set(Channel? channel) => state = channel;
+  void clear() => state = null;
+}
+
+final activeChannelProvider =
+    Provider<ActiveChannelController>((ref) => ActiveChannelController());

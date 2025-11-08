@@ -92,7 +92,7 @@ final class SessionTimeoutServiceProvider
 }
 
 String _$sessionTimeoutServiceHash() =>
-    r'9069bfb8b30161f1cbcd766e02d79a1d5a5fe4c6';
+    r'd03c03eabf203a1f9f745756334b646acc1a4ebc';
 
 /// Provider for the consolidated session service that handles all session management.
 ///
@@ -155,7 +155,7 @@ final class ConsolidatedSessionServiceProvider
 }
 
 String _$consolidatedSessionServiceHash() =>
-    r'77179ad087c32167672fc7918d308ee12f128167';
+    r'59bab860b9b415e5bc4295faaefd3a6ed2149596';
 
 /// Manages session timeout state and coordinates with auth system.
 ///
@@ -254,7 +254,7 @@ final class SessionTimeoutNotifierProvider
 }
 
 String _$sessionTimeoutNotifierHash() =>
-    r'ca848ab3ea9cb08e953cf539f51ffd91c4ef207a';
+    r'fe356d123668471f8a9d9550a011837f3fcd45e2';
 
 /// Manages session timeout state and coordinates with auth system.
 ///

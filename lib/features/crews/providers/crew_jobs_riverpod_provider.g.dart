@@ -151,7 +151,7 @@ final class CrewFilteredJobsProvider
   }
 }
 
-String _$crewFilteredJobsHash() => r'2febd448c247fe67444a37e57a3a1ed090cf3b92';
+String _$crewFilteredJobsHash() => r'4ae451babda661a4b04f728b06849a739e9ac48f';
 
 /// Crew filtered jobs - extracts data from AsyncValue
 

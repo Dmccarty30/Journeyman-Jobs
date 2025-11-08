@@ -1,9 +1,12 @@
 // lib/features/crews/providers/feed_provider.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../models/post_model.dart';
-import '../../../providers/riverpod/auth_riverpod_provider.dart' as auth_providers;
+import '../../../providers/riverpod/auth_riverpod_provider.dart';
+import '../../../providers/core_providers.dart';
+import '../../../services/database_service.dart';
 
 part 'feed_provider.g.dart';
 
@@ -16,10 +19,10 @@ enum FeedSortOption {
 
 /// State class for feed filters and sort options
 class FeedFilterState {
-  /// Whether to show only the current user's posts
+  /// Whether to show only current user's posts
   final bool showMyPostsOnly;
 
-  /// Current sort option for the feed
+  /// Current sort option for feed
   final FeedSortOption sortOption;
 
   /// Whether to show archived posts
@@ -75,7 +78,7 @@ class FeedFilter extends _$FeedFilter {
     state = state.copyWith(showMyPostsOnly: !state.showMyPostsOnly);
   }
 
-  /// Set the sort option
+  /// Set sort option
   void setSortOption(FeedSortOption option) {
     state = state.copyWith(sortOption: option);
   }
@@ -109,8 +112,12 @@ Stream<List<Post>> crewPostsStream(Ref ref, String crewId) {
 /// Provider for crew posts (converts stream to AsyncValue)
 @riverpod
 Future<List<Post>> crewPosts(Ref ref, String crewId) async {
-  final stream = ref.watch(crewPostsStreamProvider(crewId));
-  return await stream.first;
+  final postsAsync = ref.watch(crewPostsStreamProvider(crewId));
+  return postsAsync.when(
+    data: (posts) => posts,
+    loading: () => [],
+    error: (_, _) => [],
+  );
 }
 
 /// Stream provider for global feed with real-time updates
@@ -132,7 +139,7 @@ Stream<List<Post>> globalFeedStream(Ref ref) {
 /// Provider for global feed (converts stream to AsyncValue)
 @riverpod
 Stream<List<Post>> globalFeed(Ref ref) {
-  return ref.watch(globalFeedStreamProvider);
+  return ref.watch(globalFeedStreamProvider as ProviderListenable<Stream<List<Post>>>);
 }
 
 /// Provider for filtered and sorted posts based on crew or global context
@@ -144,7 +151,7 @@ List<Post> filteredPosts(Ref ref, String? crewId) {
       : ref.watch(globalFeedStreamProvider);
 
   // Get current user for filtering
-  final currentUser = ref.watch(auth_providers.currentUserProvider);
+  final currentUser = ref.watch(currentUserProvider);
   final currentUserId = currentUser?.uid;
 
   // Get filter state
@@ -185,7 +192,7 @@ List<Post> filteredPosts(Ref ref, String? crewId) {
       return filteredPosts;
     },
     loading: () => [],
-    error: (_, __) => [],
+    error: (_, _) => [],
   );
 }
 
@@ -208,7 +215,7 @@ Stream<List<PostComment>> postCommentsStream(Ref ref, String postId) {
 /// Provider for post comments (converts stream to AsyncValue)
 @riverpod
 Stream<List<PostComment>> postComments(Ref ref, String postId) {
-  return ref.watch(postCommentsStreamProvider(postId));
+  return ref.watch(postCommentsStreamProvider(postId) as ProviderListenable<Stream<List<PostComment>>>);
 }
 
 /// Provider to check if any filters are active
@@ -245,3 +252,44 @@ Future<List<Post>> archivedPosts(Ref ref, String? crewId) async {
       .map((doc) => Post.fromFirestore(doc))
       .toList();
 }
+
+/// Provider for post creation service
+class PostCreationService {
+  final DatabaseService _databaseService;
+
+  PostCreationService(this._databaseService);
+
+  /// Create a new post in the crew feed or global feed
+  Future<void> createPost({
+    required String crewId,
+    required String content,
+    String? imageUrl,
+    PostType type = PostType.update,
+    List<String> tags = const [],
+  }) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      throw Exception('User not authenticated');
+    }
+
+    final post = Post(
+      id: '', // Will be set by Firestore
+      crewId: crewId.isEmpty ? null : crewId,
+      userId: currentUser.uid,
+      authorName: currentUser.displayName ?? 'Anonymous User',
+      content: content,
+      imageUrl: imageUrl,
+      createdAt: DateTime.now(),
+      type: type,
+      tags: tags,
+    );
+
+    await _databaseService.createPost(crewId, post);
+  }
+}
+
+/// Provider for post creation service
+final postCreationProvider = Provider<PostCreationService>((ref) {
+  final databaseService = ref.watch(databaseServiceProvider);
+  return PostCreationService(databaseService);
+});

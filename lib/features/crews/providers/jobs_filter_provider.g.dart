@@ -129,7 +129,7 @@ final class FilteredCrewJobsProvider
   }
 }
 
-String _$filteredCrewJobsHash() => r'caad85c0da4d8316ca47496ebda5b0ff71594333';
+String _$filteredCrewJobsHash() => r'1f97e1a06e7e719428307790902b5ce04f30b9ba';
 
 /// Provider for filtered jobs based on crew preferences AND user filters
 

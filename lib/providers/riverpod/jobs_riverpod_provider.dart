@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -7,13 +6,12 @@ import '../../domain/exceptions/app_exception.dart';
 import '../../models/filter_criteria.dart';
 import '../../models/job_model.dart';
 import '../../models/user_job_preferences.dart';
-import '../../services/unified_firestore_service.dart';
+import '../../services/unified_firestore_service.dart' hide OperationType;
 import '../../utils/concurrent_operations.dart';
 import '../../utils/filter_performance.dart';
 import '../../utils/memory_management.dart';
 import '../../utils/error_handler.dart';
 import 'auth_riverpod_provider.dart' as auth_providers;
-import 'error_handling_provider.dart';
 
 part 'jobs_riverpod_provider.g.dart';
 
@@ -466,78 +464,6 @@ class JobsNotifier extends _$JobsNotifier {
     // _boundedJobList.dispose(); // Not needed - only manages List<Job>
     // _virtualJobList.dispose(); // Not needed - only manages Map<String, Job> and List<String>
     _filterEngine.clearCaches(); // Clear filter caches to free memory
-  }
-
-  /// Attempts to refresh the user's authentication token.
-  ///
-  /// Returns true if token refresh succeeded, false otherwise.
-  /// Used for automatic recovery from expired token errors.
-  Future<bool> _attemptTokenRefresh() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) return false;
-
-      // Force token refresh
-      await user.getIdToken(true);
-
-      if (kDebugMode) {
-        print('[JobsProvider] Token refresh successful');
-      }
-
-      return true;
-    } catch (e) {
-      if (kDebugMode) {
-        print('[JobsProvider] Token refresh failed: $e');
-      }
-      return false;
-    }
-  }
-
-  /// Maps Firebase errors to user-friendly error messages.
-  ///
-  /// Provides clear, actionable guidance for common error scenarios.
-  String _mapFirebaseError(Object error) {
-    if (error is UnauthenticatedException) {
-      return 'Please sign in to access job listings';
-    }
-
-    if (error is InsufficientPermissionsException) {
-      return error.message;
-    }
-
-    if (error is FirebaseException) {
-      switch (error.code) {
-        case 'permission-denied':
-          return 'You do not have permission to access this resource. Please sign in.';
-        case 'unauthenticated':
-          return 'Authentication required. Please sign in to continue.';
-        case 'unavailable':
-          return 'Service temporarily unavailable. Please try again.';
-        case 'network-request-failed':
-          return 'Network error. Please check your connection.';
-        case 'deadline-exceeded':
-          return 'Request timed out. Please try again.';
-        case 'not-found':
-          return 'The requested data was not found.';
-        default:
-          return 'An error occurred: ${error.message ?? 'Unknown error'}';
-      }
-    }
-
-    if (error is FirebaseAuthException) {
-      switch (error.code) {
-        case 'user-token-expired':
-          return 'Your session has expired. Please sign in again.';
-        case 'user-not-found':
-          return 'User account not found. Please sign in.';
-        case 'invalid-user-token':
-          return 'Invalid session. Please sign in again.';
-        default:
-          return 'Authentication error: ${error.message ?? 'Unknown error'}';
-      }
-    }
-
-    return 'An unexpected error occurred. Please try again.';
   }
 }
 

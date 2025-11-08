@@ -35,7 +35,7 @@ List<Job> crewFilteredJobs(Ref ref, String crewId) {
   return jobsAsync.when(
     data: (jobs) => jobs,
     loading: () => [],
-    error: (_, __) => [],
+    error: (_, _) => [],
   );
 }
 

@@ -104,7 +104,7 @@ class WireConnection {
       'toPointId': toPointId,
       'isCorrect': isCorrect,
       'errorReason': errorReason,
-      'color': color.value,
+      'color': color.toARGB32(),
       'phase': phase,
     };
 }

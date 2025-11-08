@@ -45,7 +45,7 @@ final class UserPreferencesNotifierProvider
 }
 
 String _$userPreferencesNotifierHash() =>
-    r'dd925adf92ec67d1ba883029c7d4241c14f83447';
+    r'e06079f24c5972ba98506db28a49230d9ec11bdd';
 
 /// User preferences notifier for managing user job preferences
 

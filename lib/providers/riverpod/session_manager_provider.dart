@@ -21,7 +21,7 @@ part 'session_manager_provider.g.dart';
 /// }
 /// ```
 @riverpod
-ConsolidatedSessionService sessionManager(ref) {
+ConsolidatedSessionService sessionManager(Ref ref) {
   final service = ConsolidatedSessionService();
 
   // Initialize the service

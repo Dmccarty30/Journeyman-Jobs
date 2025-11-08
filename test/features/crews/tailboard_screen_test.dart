@@ -6,6 +6,7 @@ import 'package:journeyman_jobs/features/crews/models/crew.dart';
 import 'package:journeyman_jobs/features/crews/models/crew_stats.dart';
 import 'package:journeyman_jobs/features/crews/providers/crews_riverpod_provider.dart';
 import 'package:journeyman_jobs/providers/riverpod/auth_riverpod_provider.dart';
+import 'package:journeyman_jobs/providers/core_providers.dart';
 import 'package:mocktail/mocktail.dart';
 
 void main() {

@@ -9,12 +9,13 @@ class JJJobCardExampleScreen extends StatelessWidget {
 
   // Sample job data
   static final _sampleJob = Job(
+    id: '1',
+    sharerId: 'test-sharer',
     company: 'PowerGrid Solutions',
     wage: 45.50,
     local: 124,
     classification: 'Journeyman Lineman',
     location: 'Houston, TX',
-    status: 'Hiring',
     jobDetails: {
       'title': 'Transmission Line Technician',
       'description': 'Installing and maintaining high-voltage transmission lines',
@@ -26,7 +27,6 @@ class JJJobCardExampleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundGrey,
       appBar: AppBar(
         title: const Text('JJJobCard Examples'),
         backgroundColor: AppTheme.primaryNavy,
@@ -44,13 +44,14 @@ class JJJobCardExampleScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          JJJobCard.compact(
+          JJJobCard(
             job: _sampleJob,
+            variant: JJJobCardVariant.compact,
             onTap: () {
               print('Compact card tapped');
             },
             onBookmark: (bookmarked) {
-              print('Job bookmarked: \$bookmarked');
+              print('Job bookmarked: $bookmarked');
             },
           ),
           
@@ -65,13 +66,14 @@ class JJJobCardExampleScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          JJJobCard.standard(
+          JJJobCard(
             job: _sampleJob,
+            variant: JJJobCardVariant.standard,
             onTap: () {
               print('Standard card tapped');
             },
             onBookmark: (bookmarked) {
-              print('Job bookmarked: \$bookmarked');
+              print('Job bookmarked: $bookmarked');
             },
           ),
           
@@ -86,19 +88,20 @@ class JJJobCardExampleScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          JJJobCard.detailed(
+          JJJobCard(
             job: _sampleJob,
+            variant: JJJobCardVariant.detailed,
             onTap: () {
               print('Detailed card tapped');
             },
             onBookmark: (bookmarked) {
-              print('Job bookmarked: \$bookmarked');
+              print('Job bookmarked: $bookmarked');
             },
             isSelected: true,
             footer: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.primaryNavy.withOpacity(0.1),
+                color: AppTheme.primaryNavy.withValues(alpha:0.1),
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(16),
                   bottomRight: Radius.circular(16),

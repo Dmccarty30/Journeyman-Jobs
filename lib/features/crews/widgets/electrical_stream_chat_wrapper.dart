@@ -33,15 +33,15 @@ class ElectricalStreamChatWrapper extends StatelessWidget {
     return StreamChatThemeData(
       // Primary color theme - copper accent with navy backgrounds
       colorTheme: StreamColorTheme.light(
-        primary: AppTheme.accentCopper, // Copper for primary actions/highlights
-        accent: AppTheme.accentCopper,  // Copper for accent elements
-        disabled: AppTheme.mediumGray,  // Gray for disabled elements
-        textHigh: AppTheme.textPrimary, // Dark navy text on light backgrounds
-        textLow: AppTheme.textSecondary, // Medium gray for secondary text
-        textBg: AppTheme.white,         // White text on colored backgrounds
-        borders: AppTheme.lightGray,    // Light gray borders
-        inputBg: AppTheme.white,        // White input backgrounds
-        appBg: AppTheme.surfaceLight,   // Light surface background
+        accentPrimary: AppTheme.accentCopper, // Copper for primary actions/highlights
+        accentError: AppTheme.errorRed,     // Error red for validation states
+        accentInfo: AppTheme.infoBlue,        // Info blue for informational states
+        textHighEmphasis: AppTheme.textPrimary, // Dark navy text on light backgrounds
+        textLowEmphasis: AppTheme.textSecondary, // Medium gray for secondary text
+        disabled: AppTheme.mediumGray,      // Gray for disabled elements
+        borders: AppTheme.lightGray,        // Light gray borders
+        inputBg: AppTheme.white,            // White input backgrounds
+        appBg: AppTheme.surfaceLight,       // Light surface background
         overlayDark: Colors.black.withValues(alpha: 0.5),
         overlay: Colors.white.withValues(alpha: 0.8),
       ),
@@ -55,14 +55,13 @@ class ElectricalStreamChatWrapper extends StatelessWidget {
           fontWeight: FontWeight.w400,
         ),
         avatarTheme: StreamAvatarThemeData(
-          backgroundColor: AppTheme.secondaryCopper,
           borderRadius: BorderRadius.circular(20),
           constraints: const BoxConstraints.tightFor(
             height: 40,
             width: 40,
           ),
         ),
-        createdAtTextStyle: TextStyle(
+        createdAtStyle: TextStyle(
           color: AppTheme.white.withValues(alpha: 0.8),
           fontSize: 12,
         ),
@@ -77,14 +76,13 @@ class ElectricalStreamChatWrapper extends StatelessWidget {
           fontWeight: FontWeight.w400,
         ),
         avatarTheme: StreamAvatarThemeData(
-          backgroundColor: AppTheme.primaryNavy, // Navy for others' avatars
           borderRadius: BorderRadius.circular(20),
           constraints: const BoxConstraints.tightFor(
             height: 40,
             width: 40,
           ),
         ),
-        createdAtTextStyle: TextStyle(
+        createdAtStyle: TextStyle(
           color: AppTheme.textLight, // Medium gray for timestamps
           fontSize: 12,
         ),
@@ -93,7 +91,6 @@ class ElectricalStreamChatWrapper extends StatelessWidget {
       // Channel list preview theme
       channelPreviewTheme: StreamChannelPreviewThemeData(
         avatarTheme: StreamAvatarThemeData(
-          backgroundColor: AppTheme.primaryNavy,
           borderRadius: BorderRadius.circular(20),
           constraints: const BoxConstraints.tightFor(
             height: 40,
@@ -110,16 +107,11 @@ class ElectricalStreamChatWrapper extends StatelessWidget {
           fontSize: 14,
         ),
         indicatorIconSize: 16,
-        lastMessageTextStyle: TextStyle(
-          color: AppTheme.textLight,
-          fontSize: 14,
-        ),
       ),
 
       // Channel header theme
       channelHeaderTheme: StreamChannelHeaderThemeData(
         avatarTheme: StreamAvatarThemeData(
-          backgroundColor: AppTheme.accentCopper,
           borderRadius: BorderRadius.circular(20),
           constraints: const BoxConstraints.tightFor(
             height: 36,
@@ -136,7 +128,6 @@ class ElectricalStreamChatWrapper extends StatelessWidget {
           fontSize: 14,
         ),
         color: AppTheme.white,
-        height: 56,
       ),
 
       // Message input theme
@@ -174,83 +165,6 @@ class ElectricalStreamChatWrapper extends StatelessWidget {
         ),
         sendButtonColor: AppTheme.accentCopper,
         actionButtonColor: AppTheme.textSecondary,
-        sendIcon: Icons.send,
-        uploadIcon: Icons.attach_file,
-      ),
-
-      // Gallery theme (for image attachments)
-      galleryTheme: StreamGalleryThemeData(
-        backgroundColor: AppTheme.primaryNavy,
-        headerBackgroundColor: AppTheme.primaryNavy,
-        headerTextStyle: TextStyle(
-          color: AppTheme.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-        ),
-        closeButtonIcon: Icons.close,
-        closeButtonColor: AppTheme.white,
-        pageIndicatorColor: AppTheme.white.withValues(alpha: 0.4),
-        currentPageIndicatorColor: AppTheme.accentCopper,
-      ),
-
-      // Message list theme
-      messageListTheme: StreamMessageListThemeData(
-        backgroundColor: AppTheme.surfaceLight,
-        messageBackgroundColor: AppTheme.white,
-        errorColor: AppTheme.errorRed,
-        linkColor: AppTheme.infoBlue,
-        dateDividerTextStyle: TextStyle(
-          color: AppTheme.textLight,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-
-      // Avatar theme for consistency
-      avatarTheme: StreamAvatarThemeData(
-        backgroundColor: AppTheme.primaryNavy,
-        borderRadius: BorderRadius.circular(20),
-        constraints: const BoxConstraints.tightFor(
-          height: 40,
-          width: 40,
-        ),
-      ),
-
-      // Bottom sheet theme
-      bottomSheetTheme: StreamBottomSheetThemeData(
-        backgroundColor: AppTheme.white,
-        barrierColor: Colors.black.withValues(alpha: 0.5),
-        headerBackgroundColor: AppTheme.surfaceLight,
-        headerTextStyle: TextStyle(
-          color: AppTheme.textPrimary,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-
-      // Reaction picker theme
-      reactionPickerTheme: StreamReactionPickerThemeData(
-        backgroundColor: AppTheme.white,
-        backgroundColorHighlighted: AppTheme.accentCopper.withValues(alpha: 0.1),
-        reactionIconsColor: AppTheme.textPrimary,
-        reactionIconsColorHighlighted: AppTheme.accentCopper,
-      ),
-
-      // Lazy loading scroll view theme
-      lazyLoadingScrollViewTheme: LazyLoadingScrollViewThemeData(
-        backgroundColor: AppTheme.surfaceLight,
-        loadingIndicatorColor: AppTheme.accentCopper,
-        errorColor: AppTheme.errorRed,
-        centerTextStyle: TextStyle(
-          color: AppTheme.textLight,
-          fontSize: 16,
-        ),
-        retryButtonTextStyle: TextStyle(
-          color: AppTheme.white,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-        retryButtonBackgroundColor: AppTheme.accentCopper,
       ),
     );
   }

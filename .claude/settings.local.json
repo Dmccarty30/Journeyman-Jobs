@@ -49,7 +49,12 @@
       "Skill(pair-programming)",
       "Bash(awk:*)",
       "Bash(dart run build_runner build:*)",
-      "Bash(flutter pub:*)"
+      "Bash(flutter pub:*)",
+      "Bash(dir:*)",
+      "Bash(flutter build:*)",
+      "Skill(hive-mind-advanced)",
+      "Skill(code-validation-enforcer)",
+      "Bash(dart analyze:*)"
     ],
     "deny": [],
     "ask": []

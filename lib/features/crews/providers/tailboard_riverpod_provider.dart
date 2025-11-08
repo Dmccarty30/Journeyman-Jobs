@@ -25,7 +25,7 @@ Tailboard? tailboard(Ref ref, String crewId) {
   return tailboardAsync.when(
     data: (tailboard) => tailboard,
     loading: () => null,
-    error: (_, __) => null,
+    error: (_, _) => null,
   );
 }
 
@@ -44,7 +44,7 @@ List<SuggestedJob> suggestedJobs(Ref ref, String crewId) {
   return jobsAsync.when(
     data: (jobs) => jobs,
     loading: () => [],
-    error: (_, __) => [],
+    error: (_, _) => [],
   );
 }
 
@@ -63,7 +63,7 @@ List<ActivityItem> activityItems(Ref ref, String crewId) {
   return activitiesAsync.when(
     data: (activities) => activities,
     loading: () => [],
-    error: (_, __) => [],
+    error: (_, _) => [],
   );
 }
 
@@ -82,7 +82,7 @@ List<TailboardPost> tailboardPosts(Ref ref, String crewId) {
   return postsAsync.when(
     data: (posts) => posts,
     loading: () => [],
-    error: (_, __) => [],
+    error: (_, _) => [],
   );
 }
 

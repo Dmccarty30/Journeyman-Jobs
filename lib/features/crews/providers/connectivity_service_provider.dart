@@ -31,7 +31,8 @@ class ConnectivityServiceAdapter extends ConnectivityService {
   }
 
   Future<List<ConnectivityResult>> getConnection() async {
-    return await _appService.isConnected ? await Connectivity().checkConnectivity() : [ConnectivityResult.none];
+    final isConnected = await _appService.isConnected;
+    return isConnected ? await Connectivity().checkConnectivity() : [ConnectivityResult.none];
   }
 }
 
@@ -50,11 +51,11 @@ class AppConnectivityService {
 
   Future<bool> get isConnected async {
     final connectivityResults = await Connectivity().checkConnectivity();
-    return connectivityResults != ConnectivityResult.none;
+    return !connectivityResults.contains(ConnectivityResult.none);
   }
 
   Future<bool> get isOnline async {
     final connectivityResults = await Connectivity().checkConnectivity();
-    return connectivityResults != ConnectivityResult.none;
+    return !connectivityResults.contains(ConnectivityResult.none);
   }
 }
