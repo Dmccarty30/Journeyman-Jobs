@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:journeyman_jobs/features/crews/models/crew.dart';
-import 'package:journeyman_jobs/features/crews/models/crew_preferences.dart';
-import 'package:journeyman_jobs/features/crews/services/job_sharing_service_impl.dart';
+import '../models/crew.dart';
+import '../models/crew_preferences.dart';
+import 'job_sharing_service_impl.dart';
 
 /// Service responsible for matching jobs with crews based on preferences and performance
 class JobMatchingService {

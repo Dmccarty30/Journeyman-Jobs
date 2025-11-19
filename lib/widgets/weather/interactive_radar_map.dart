@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../services/weather_radar_service.dart';
 import '../../services/location_service.dart';
 import '../../design_system/app_theme.dart';
@@ -26,14 +25,14 @@ class InteractiveRadarMap extends StatefulWidget {
   final Function(LatLng)? onLocationTap;
   
   const InteractiveRadarMap({
-    Key? key,
+    super.key,
     this.initialLatitude = 39.8283, // US center
     this.initialLongitude = -98.5795,
     this.initialZoom = 5.0,
     this.showControls = true,
     this.animateRadar = false,
     this.onLocationTap,
-  }) : super(key: key);
+  });
 
   @override
   State<InteractiveRadarMap> createState() => _InteractiveRadarMapState();
@@ -60,7 +59,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
   // Radar settings
   double _radarOpacity = 0.7;
   RadarColorScheme _colorScheme = RadarColorScheme.universal;
-  bool _showSatellite = false;
+  bool showSatellite = false;
   
   @override
   void initState() {
@@ -243,7 +242,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               userAgentPackageName: 'com.journeymanjobs.app',
-              tileProvider: CancellableNetworkTileProvider(),
+              tileProvider: NetworkTileProvider(),
             ),
             
             // Weather radar overlay
@@ -254,14 +253,13 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                     : AlwaysStoppedAnimation(_radarOpacity),
                 child: TileLayer(
                   urlTemplate: _getRadarTileUrl(),
-                  tileProvider: CancellableNetworkTileProvider(),
-                  backgroundColor: Colors.transparent,
+                  tileProvider: NetworkTileProvider(),
                   keepBuffer: 2,
                 ),
               ),
             
             // Satellite overlay (if enabled)
-            if (_showSatellite)
+            if (showSatellite)
               Opacity(
                 opacity: 0.3,
                 child: TileLayer(
@@ -270,8 +268,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                     x: 0, // Will be replaced by flutter_map
                     y: 0, // Will be replaced by flutter_map
                   ).replaceAll('/0/0/', '/{x}/{y}/'),
-                  tileProvider: CancellableNetworkTileProvider(),
-                  backgroundColor: Colors.transparent,
+                  tileProvider: NetworkTileProvider(),
                 ),
               ),
             
@@ -392,7 +389,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
                       min: 0.0,
                       max: 1.0,
                       activeColor: AppTheme.accentCopper,
-                      inactiveColor: AppTheme.textMuted,
+                      inactiveColor: AppTheme.textLight,
                       onChanged: (value) {
                         setState(() {
                           _radarOpacity = value;
@@ -534,7 +531,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
           Text(
             label,
             style: AppTheme.bodySmall.copyWith(
-              color: AppTheme.textMuted,
+              color: AppTheme.textLight,
               fontSize: 10,
             ),
           ),

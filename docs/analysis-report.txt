@@ -1,0 +1,1157 @@
+Analyzing tailboard-modernization...                            
+
+warning - The library 'package:journeyman_jobs/data/repositories/job_repository.dart' doesn't export a member with the hidden name 'Job' - lib\data\repositories\job_repository_impl.dart:2:35 - undefined_hidden_name
+   info - Instances of 'Color' should be created using an 8-digit hexadecimal integer (such as '0xFFFFFFFF') - lib\design_system\app_theme.dart:202:18 - use_full_hex_values_for_flutter_colors
+   info - 'background' is deprecated and shouldn't be used. Use surface instead. This feature was deprecated after v3.18.0-0.1.pre - lib\design_system\app_theme.dart:679:9 - deprecated_member_use
+   info - Parameters ''message' and 'code'' could be super parameters - lib\domain\exceptions\app_exception.dart:22:3 - use_super_parameters
+   info - Parameters ''message' and 'code'' could be super parameters - lib\domain\exceptions\app_exception.dart:27:3 - use_super_parameters
+   info - Parameters ''message' and 'code'' could be super parameters - lib\domain\exceptions\app_exception.dart:32:3 - use_super_parameters
+   info - Parameters ''message' and 'code'' could be super parameters - lib\domain\exceptions\app_exception.dart:37:3 - use_super_parameters
+   info - Parameters ''message' and 'code'' could be super parameters - lib\domain\exceptions\app_exception.dart:42:3 - use_super_parameters
+   info - Parameters ''message' and 'code'' could be super parameters - lib\domain\exceptions\app_exception.dart:47:3 - use_super_parameters
+   info - Parameters ''message' and 'code'' could be super parameters - lib\domain\exceptions\crew_exception.dart:5:3 - use_super_parameters
+   info - Parameters ''message' and 'code'' could be super parameters - lib\domain\exceptions\member_exception.dart:5:3 - use_super_parameters
+   info - Dangling library doc comment - lib\domain\use_cases\get_jobs_use_case.dart:1:1 - dangling_library_doc_comments
+warning - Unused import: 'dart:ui' - lib\electrical_components\circuit_board_background.dart:3:8 - unused_import
+   info - 'opacity' is deprecated and shouldn't be used. Use .a - lib\electrical_components\circuit_board_background.dart:553:59 - deprecated_member_use
+warning - This default clause is covered by the previous cases - lib\electrical_components\jj_electrical_notifications.dart:97:7 - unreachable_switch_default
+   info - Parameter 'key' could be a super parameter - lib\electrical_components\jj_electrical_notifications.dart:113:9 - use_super_parameters
+warning - This default clause is covered by the previous cases - lib\electrical_components\jj_electrical_notifications.dart:309:7 - unreachable_switch_default
+warning - This default clause is covered by the previous cases - lib\electrical_components\jj_electrical_notifications.dart:323:7 - unreachable_switch_default
+   info - Parameter 'key' could be a super parameter - lib\electrical_components\jj_electrical_notifications.dart:331:9 - use_super_parameters
+warning - This default clause is covered by the previous cases - lib\electrical_components\jj_electrical_notifications.dart:444:7 - unreachable_switch_default
+   info - Parameter 'key' could be a super parameter - lib\electrical_components\jj_electrical_notifications.dart:452:9 - use_super_parameters
+warning - This default clause is covered by the previous cases - lib\electrical_components\jj_electrical_notifications.dart:577:7 - unreachable_switch_default
+warning - The declaration '_MiniCircuitPainter' isn't referenced - lib\electrical_components\jj_electrical_notifications.dart:584:7 - unused_element
+warning - The declaration '_SnackBarCircuitPainter' isn't referenced - lib\electrical_components\jj_electrical_notifications.dart:663:7 - unused_element
+  error - The argument type 'BorderRadius' can't be assigned to the parameter type 'double'.  - lib\electrical_components\transformer_trainer\modes\guided_mode.dart:339:49 - argument_type_not_assignable
+  error - The argument type 'BorderRadius' can't be assigned to the parameter type 'double'.  - lib\electrical_components\transformer_trainer\modes\quiz_mode.dart:313:49 - argument_type_not_assignable
+  error - The argument type 'BorderRadius' can't be assigned to the parameter type 'double'.  - lib\electrical_components\transformer_trainer\modes\quiz_mode.dart:376:49 - argument_type_not_assignable
+  error - The argument type 'BorderRadius' can't be assigned to the parameter type 'double'.  - lib\electrical_components\transformer_trainer\modes\quiz_mode.dart:482:49 - argument_type_not_assignable
+   info - 'window' is deprecated and shouldn't be used. Look up the current FlutterView from the context via View.of(context) or consult the PlatformDispatcher directly instead. Deprecated to prepare for the upcoming multi-window support. This feature was deprecated after v3.7.0-32.0.pre - lib\electrical_components\transformer_trainer\painters\base_transformer_painter.dart:72:29 - deprecated_member_use
+   info - 'textScaleFactor' is deprecated and shouldn't be used. Use textScaler instead. Use of textScaleFactor was deprecated in preparation for the upcoming nonlinear text scaling support. This feature was deprecated after v3.12.0-2.0.pre - lib\electrical_components\transformer_trainer\utils\accessibility_manager.dart:21:35 - deprecated_member_use
+   info - The import of 'package:flutter/scheduler.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\electrical_components\transformer_trainer\utils\battery_efficient_animations.dart:5:8 - unnecessary_import
+   info - The import of 'package:flutter/rendering.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\electrical_components\transformer_trainer\utils\render_optimization_manager.dart:4:8 - unnecessary_import
+   info - 'textScaleFactor' is deprecated and shouldn't be used. Use textScaler instead. Use of textScaleFactor was deprecated in preparation for the upcoming nonlinear text scaling support. This feature was deprecated after v3.12.0-2.0.pre - lib\electrical_components\transformer_trainer\utils\responsive_layout_manager.dart:145:59 - deprecated_member_use
+   info - Type could be non-nullable - lib\electrical_components\transformer_trainer\widgets\connection_point.dart:253:29 - unnecessary_nullable_for_final_variable_declarations
+  error - The argument type 'BorderRadius' can't be assigned to the parameter type 'double'.  - lib\electrical_components\transformer_trainer\widgets\trainer_widget.dart:223:49 - argument_type_not_assignable
+   info - The type of the right operand ('ConnectivityResult') isn't a subtype or a supertype of the left operand ('List<ConnectivityResult>') - lib\features\crews\providers\connectivity_service_provider.dart:53:32 - unrelated_type_equality_checks
+   info - The type of the right operand ('ConnectivityResult') isn't a subtype or a supertype of the left operand ('List<ConnectivityResult>') - lib\features\crews\providers\connectivity_service_provider.dart:58:32 - unrelated_type_equality_checks
+   info - The import of 'package:flutter_riverpod/flutter_riverpod.dart' is unnecessary because all of the used elements are also provided by the import of 'package:riverpod_annotation/riverpod_annotation.dart' - lib\features\crews\providers\feed_filter_provider.dart:1:8 - unnecessary_import
+   info - The import of 'package:flutter_riverpod/flutter_riverpod.dart' is unnecessary because all of the used elements are also provided by the import of 'package:riverpod_annotation/riverpod_annotation.dart' - lib\features\crews\providers\feed_provider.dart:2:8 - unnecessary_import
+warning - Unused import: 'crews_riverpod_provider.dart' - lib\features\crews\providers\feed_provider.dart:12:8 - unused_import
+   info - The parameter name 'count' matches a visible type name - lib\features\crews\providers\feed_provider.dart:456:33 - avoid_types_as_parameter_names
+warning - Unused import: '../services/crew_service.dart' - lib\features\crews\screens\create_crew_screen.dart:12:8 - unused_import
+   info - Don't use 'BuildContext's across async gaps - lib\features\crews\screens\create_crew_screen.dart:76:13 - use_build_context_synchronously
+warning - The value of the local variable 'selectedCrew' isn't used - lib\features\crews\screens\tailboard_screen.dart:340:11 - unused_local_variable
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\crews\screens\tailboard_screen.dart:417:34 - use_build_context_synchronously
+warning - The value of the local variable 'selectedCrew' isn't used - lib\features\crews\screens\tailboard_screen.dart:452:11 - unused_local_variable
+  error - Expected an identifier - lib\features\crews\screens\tailboard_screen.dart:502:47 - missing_identifier
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\crews\screens\tailboard_screen.dart:545:34 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\crews\screens\tailboard_screen.dart:727:34 - use_build_context_synchronously
+warning - The value of the field '_chatService' isn't used - lib\features\crews\services\message_service.dart:7:26 - unused_field
+   info - Angle brackets will be interpreted as HTML - lib\features\crews\services\user_profile_service.dart:18:39 - unintended_html_in_doc_comment
+   info - The local variable '_buildHeader' starts with an underscore - lib\features\crews\widgets\crew_preferences_dialog.dart:84:12 - no_leading_underscores_for_local_identifiers
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\features\crews\widgets\crew_preferences_dialog.dart:505:11 - deprecated_member_use
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\features\crews\widgets\crew_selection_dropdown.dart:57:11 - deprecated_member_use
+   info - Unnecessary braces in a string interpolation - lib\features\crews\widgets\job_match_card.dart:51:24 - unnecessary_brace_in_string_interps
+   info - Unnecessary use of 'toList' in a spread - lib\features\crews\widgets\job_match_card.dart:151:24 - unnecessary_to_list_in_spreads
+warning - This default clause is covered by the previous cases - lib\features\crews\widgets\message_bubble.dart:340:7 - unreachable_switch_default
+warning - The declaration '_toggleReactionPicker' isn't referenced - lib\features\crews\widgets\post_card.dart:113:8 - unused_element
+warning - The declaration '_handleReactionSelected' isn't referenced - lib\features\crews\widgets\post_card.dart:119:8 - unused_element
+warning - The declaration '_handleCommentAdded' isn't referenced - lib\features\crews\widgets\post_card.dart:166:8 - unused_element
+warning - Unused import: 'package:intl/intl.dart' - lib\features\crews\widgets\tailboard\feed_history_dialog.dart:3:8 - unused_import
+warning - Unused import: '../../providers/feed_provider.dart' - lib\features\crews\widgets\tailboard\feed_history_dialog.dart:6:8 - unused_import
+warning - Unused import: '../../services/crew_service.dart' - lib\features\crews\widgets\tailboard\job_preferences_dialog.dart:6:8 - unused_import
+warning - Unused import: '../../../../providers/core_providers.dart' - lib\features\crews\widgets\tailboard\job_preferences_dialog.dart:7:8 - unused_import
+  error - The method 'updateCrewPreferences' isn't defined for the type 'CrewService' - lib\features\crews\widgets\tailboard\job_preferences_dialog.dart:306:25 - undefined_method
+  error - The method 'when' isn't defined for the type 'List' - lib\features\crews\widgets\tailboard\member_availability_dialog.dart:56:33 - undefined_method
+warning - Dead code - lib\features\crews\widgets\tailboard\member_availability_dialog.dart:176:25 - dead_code
+warning - This null-check will always throw an exception because the expression will always evaluate to 'null' - lib\features\crews\widgets\tailboard\member_availability_dialog.dart:178:29 - null_check_always_fails
+  error - The method '[]' can't be unconditionally invoked because the receiver can be 'null' - lib\features\crews\widgets\tailboard\member_availability_dialog.dart:185:45 - unchecked_use_of_nullable_value
+  error - The argument type 'String?' can't be assigned to the parameter type 'String'.  - lib\features\crews\widgets\tailboard\member_availability_dialog.dart:217:21 - argument_type_not_assignable
+warning - Dead code - lib\features\crews\widgets\tailboard\member_availability_dialog.dart:222:54 - dead_code
+warning - This null-check will always throw an exception because the expression will always evaluate to 'null' - lib\features\crews\widgets\tailboard\member_availability_dialog.dart:225:23 - null_check_always_fails
+  error - The method 'when' isn't defined for the type 'List' - lib\features\crews\widgets\tailboard\member_roles_dialog.dart:63:35 - undefined_method
+  error - The argument type 'String?' can't be assigned to the parameter type 'String'.  - lib\features\crews\widgets\tailboard\member_roles_dialog.dart:182:21 - argument_type_not_assignable
+  error - The method 'when' isn't defined for the type 'List' - lib\features\crews\widgets\tailboard\member_roster_dialog.dart:57:33 - undefined_method
+warning - Dead code - lib\features\crews\widgets\tailboard\member_roster_dialog.dart:112:21 - dead_code
+warning - This null-check will always throw an exception because the expression will always evaluate to 'null' - lib\features\crews\widgets\tailboard\member_roster_dialog.dart:114:25 - null_check_always_fails
+  error - The method '[]' can't be unconditionally invoked because the receiver can be 'null' - lib\features\crews\widgets\tailboard\member_roster_dialog.dart:121:41 - unchecked_use_of_nullable_value
+  error - The argument type 'String?' can't be assigned to the parameter type 'String'.  - lib\features\crews\widgets\tailboard\member_roster_dialog.dart:133:21 - argument_type_not_assignable
+warning - Dead code - lib\features\crews\widgets\tailboard\member_roster_dialog.dart:143:54 - dead_code
+warning - This null-check will always throw an exception because the expression will always evaluate to 'null' - lib\features\crews\widgets\tailboard\member_roster_dialog.dart:155:25 - null_check_always_fails
+   info - The import of 'package:collection/collection.dart' is unnecessary because all of the used elements are also provided by the import of 'package:cloud_firestore/cloud_firestore.dart' - lib\models\job_model.dart:2:8 - unnecessary_import
+   info - 'value' is deprecated and shouldn't be used. Use component accessors like .r or .g, or toARGB32 for an explicit conversion - lib\models\transformer_models.dart:107:22 - deprecated_member_use
+   info - The import of 'package:flutter_riverpod/flutter_riverpod.dart' is unnecessary because all of the used elements are also provided by the import of 'package:riverpod_annotation/riverpod_annotation.dart' - lib\providers\riverpod\auth_riverpod_provider.dart:2:8 - unnecessary_import
+   info - Import of a library in the 'lib/src' directory of another package - lib\providers\riverpod\jobs_riverpod_provider.dart:2:8 - implementation_imports
+  error - The body might complete normally, causing 'null' to be returned, but the return type, 'Widget', is a potentially non-nullable type - lib\providers\riverpod\jobs_riverpod_provider.dart:64:10 - body_might_complete_normally
+   info - Don't invoke 'print' in production code - lib\providers\riverpod\jobs_riverpod_provider.dart:101:5 - avoid_print
+   info - The import of 'package:flutter_riverpod/flutter_riverpod.dart' is unnecessary because all of the used elements are also provided by the import of 'package:riverpod_annotation/riverpod_annotation.dart' - lib\providers\riverpod\locals_riverpod_provider.dart:3:8 - unnecessary_import
+   info - Unnecessary braces in a string interpolation - lib\screens\admin\performance_dashboard.dart:271:41 - unnecessary_brace_in_string_interps
+   info - Don't use 'BuildContext's across async gaps - lib\screens\home\electrical_demo_screen.dart:351:9 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\home\electrical_demo_screen.dart:360:9 - use_build_context_synchronously
+warning - The declaration '_buildDetailRow' isn't referenced - lib\screens\home\home_screen.dart:441:10 - unused_element
+warning - The declaration '_submitJobApplication' isn't referenced - lib\screens\home\home_screen.dart:467:8 - unused_element
+warning - The declaration '_showSearchDialog' isn't referenced - lib\screens\jobs\jobs_screen.dart:71:8 - unused_element
+   info - Parameter 'key' could be a super parameter - lib\screens\onboarding\auth_screen.dart:562:9 - use_super_parameters
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\screens\settings\support\calculators\conduit_fill_calculator.dart:690:11 - deprecated_member_use
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\screens\settings\support\calculators\voltage_drop_calculator.dart:421:11 - deprecated_member_use
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\settings\support\calculators\voltage_drop_calculator.dart:470:9 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\settings\support\calculators\voltage_drop_calculator.dart:471:9 - deprecated_member_use
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\settings\support\calculators\wire_size_chart.dart:593:17 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\settings\support\calculators\wire_size_chart.dart:594:17 - deprecated_member_use
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\settings\support\calculators\wire_size_chart.dart:635:17 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\settings\support\calculators\wire_size_chart.dart:636:17 - deprecated_member_use
+warning - The declaration '_buildStormDetailCard' isn't referenced - lib\screens\storm\storm_screen.dart:198:10 - unused_element
+warning - The declaration '_showStormDetails' isn't referenced - lib\screens\storm\storm_screen.dart:776:8 - unused_element
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\sync_settings_screen.dart:237:7 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\screens\sync_settings_screen.dart:238:7 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\screens\sync_settings_screen.dart:482:32 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\screens\sync_settings_screen.dart:491:32 - use_build_context_synchronously
+   info - Parameter 'key' could be a super parameter - lib\screens\tools\electrical_components_showcase_screen.dart:14:9 - use_super_parameters
+   info - Don't invoke 'print' in production code - lib\services\cache_service.dart:313:7 - avoid_print
+   info - Use interpolation to compose strings and values - lib\services\contractor_service.dart:39:50 - prefer_interpolation_to_compose_strings
+warning - Unnecessary cast - lib\services\contractor_service.dart:84:28 - unnecessary_cast
+warning - Unused import: '../features/crews/models/tailboard.dart' - lib\services\feed_service.dart:5:8 - unused_import
+warning - The declaration '_crewsCollection' isn't referenced - lib\services\feed_service.dart:17:27 - unused_element
+warning - The declaration '_isValidPostData' isn't referenced - lib\services\feed_service.dart:521:8 - unused_element
+warning - The declaration '_isValidCommentData' isn't referenced - lib\services\feed_service.dart:532:8 - unused_element
+   info - The constant name 'REGIONS' isn't a lowerCamelCase identifier - lib\services\geographic_firestore_service.dart:17:42 - constant_identifier_names
+   info - The parameter name 'count' matches a visible type name - lib\services\geographic_firestore_service.dart:384:17 - avoid_types_as_parameter_names
+   info - The parameter name 'sum' matches a visible type name - lib\services\geographic_firestore_service.dart:385:19 - avoid_types_as_parameter_names
+   info - The parameter name 'count' matches a visible type name - lib\services\geographic_firestore_service.dart:385:24 - avoid_types_as_parameter_names
+   info - 'desiredAccuracy' is deprecated and shouldn't be used. use settings parameter with AndroidSettings, AppleSettings, WebSettings, or LocationSettings - lib\services\location_service.dart:162:9 - deprecated_member_use
+   info - 'timeLimit' is deprecated and shouldn't be used. use settings parameter with AndroidSettings, AppleSettings, WebSettings, or LocationSettings - lib\services\location_service.dart:163:9 - deprecated_member_use
+warning - The value of the field '_radarCacheDuration' isn't used - lib\services\noaa_weather_service.dart:46:25 - unused_field
+   info - Unnecessary braces in a string interpolation - lib\services\noaa_weather_service.dart:55:49 - unnecessary_brace_in_string_interps
+warning - The value of the local variable 'gridId' isn't used - lib\services\noaa_weather_service.dart:75:13 - unused_local_variable
+warning - The value of the local variable 'gridX' isn't used - lib\services\noaa_weather_service.dart:76:13 - unused_local_variable
+warning - The value of the local variable 'gridY' isn't used - lib\services\noaa_weather_service.dart:77:13 - unused_local_variable
+   info - Unnecessary braces in a string interpolation - lib\services\noaa_weather_service.dart:153:36 - unnecessary_brace_in_string_interps
+   info - Unnecessary braces in a string interpolation - lib\services\noaa_weather_service.dart:174:34 - unnecessary_brace_in_string_interps
+   info - Unnecessary braces in a string interpolation - lib\services\noaa_weather_service.dart:174:60 - unnecessary_brace_in_string_interps
+   info - The imported package 'http' isn't a dependency of the importing package - lib\services\notification_service.dart:8:8 - depend_on_referenced_packages
+   info - Don't use 'BuildContext's across async gaps - lib\services\notification_service.dart:428:35 - use_build_context_synchronously
+   info - Use 'rethrow' to rethrow a caught exception - lib\services\offline_data_service.dart:602:9 - use_rethrow_when_possible
+   info - The private field _currentOutages could be 'final' - lib\services\power_outage_service.dart:34:26 - prefer_final_fields
+   info - Unnecessary braces in a string interpolation - lib\services\search_optimized_firestore_service.dart:355:34 - unnecessary_brace_in_string_interps
+warning - The value of the field '_satelliteCacheDuration' isn't used - lib\services\weather_radar_service.dart:32:25 - unused_field
+   info - The import of 'dart:typed_data' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/foundation.dart' - lib\utils\compressed_state_manager.dart:3:8 - unnecessary_import
+   info - The imported package 'crypto' isn't a dependency of the importing package - lib\utils\compressed_state_manager.dart:6:8 - depend_on_referenced_packages
+   info - Unnecessary braces in a string interpolation - lib\utils\compressed_state_manager.dart:144:17 - unnecessary_brace_in_string_interps
+warning - The value of the field '_scaleAnimation' isn't used - lib\widgets\comment_animation.dart:275:26 - unused_field
+   info - The private field _displayedCount could be 'final' - lib\widgets\comment_animation.dart:533:7 - prefer_final_fields
+warning - The value of the field '_displayedCount' isn't used - lib\widgets\comment_animation.dart:533:7 - unused_field
+   info - 'scale' is deprecated and shouldn't be used. Use scaleByVector3, scaleByVector4, or scaleByDouble instead - lib\widgets\generic_connection_point.dart:151:46 - deprecated_member_use
+warning - The value of the field '_countAnimation' isn't used - lib\widgets\like_animation.dart:175:26 - unused_field
+  error - The method 'read' isn't defined for the type 'BuildContext' - lib\widgets\offline_indicator.dart:349:34 - undefined_method
+  error - The type 'Consumer' is declared with 0 type parameters, but 1 type arguments were given - lib\widgets\offline_indicator.dart:361:12 - wrong_number_of_type_arguments
+  error - The getter 'isOnline' isn't defined for the type 'WidgetRef' - lib\widgets\offline_indicator.dart:363:26 - undefined_getter
+  error - The getter 'wasOffline' isn't defined for the type 'WidgetRef' - lib\widgets\offline_indicator.dart:363:52 - undefined_getter
+  error - The getter 'isOnline' isn't defined for the type 'WidgetRef' - lib\widgets\offline_indicator.dart:370:33 - undefined_getter
+  error - The getter 'isOnline' isn't defined for the type 'WidgetRef' - lib\widgets\offline_indicator.dart:379:30 - undefined_getter
+  error - The getter 'isOnline' isn't defined for the type 'WidgetRef' - lib\widgets\offline_indicator.dart:385:30 - undefined_getter
+   info - Unnecessary braces in a string interpolation - lib\widgets\offline_indicators.dart:509:24 - unnecessary_brace_in_string_interps
+   info - Import of a library in the 'lib/src' directory of another package - lib\widgets\optimized_virtual_job_list.dart:6:8 - implementation_imports
+warning - The value of the field '_scaleAnimation' isn't used - lib\widgets\reaction_animation.dart:368:26 - unused_field
+warning - Unused import: 'package:cached_network_image/cached_network_image.dart' - lib\widgets\weather\interactive_radar_map.dart:5:8 - unused_import
+   info - Parameter 'key' could be a super parameter - lib\widgets\weather\interactive_radar_map.dart:28:9 - use_super_parameters
+   info - The private field _colorScheme could be 'final' - lib\widgets\weather\interactive_radar_map.dart:62:20 - prefer_final_fields
+   info - The private field _showSatellite could be 'final' - lib\widgets\weather\interactive_radar_map.dart:63:8 - prefer_final_fields
+  error - The method 'CancellableNetworkTileProvider' isn't defined for the type '_InteractiveRadarMapState' - lib\widgets\weather\interactive_radar_map.dart:246:29 - undefined_method
+  error - The method 'CancellableNetworkTileProvider' isn't defined for the type '_InteractiveRadarMapState' - lib\widgets\weather\interactive_radar_map.dart:257:33 - undefined_method
+  error - The named parameter 'backgroundColor' isn't defined - lib\widgets\weather\interactive_radar_map.dart:258:19 - undefined_named_parameter
+  error - The method 'CancellableNetworkTileProvider' isn't defined for the type '_InteractiveRadarMapState' - lib\widgets\weather\interactive_radar_map.dart:273:33 - undefined_method
+  error - The named parameter 'backgroundColor' isn't defined - lib\widgets\weather\interactive_radar_map.dart:274:19 - undefined_named_parameter
+  error - The getter 'textMuted' isn't defined for the type 'AppTheme' - lib\widgets\weather\interactive_radar_map.dart:395:47 - undefined_getter
+  error - The getter 'textMuted' isn't defined for the type 'AppTheme' - lib\widgets\weather\interactive_radar_map.dart:537:31 - undefined_getter
+   info - Parameter 'key' could be a super parameter - lib\widgets\weather\noaa_radar_map.dart:28:9 - use_super_parameters
+   info - Don't invoke 'print' in production code - scraping_scripts\populate_contractors.dart:18:5 - avoid_print
+   info - Don't invoke 'print' in production code - scraping_scripts\populate_contractors.dart:20:5 - avoid_print
+   info - Don't invoke 'print' in production code - scraping_scripts\populate_contractors.dart:31:5 - avoid_print
+   info - Don't invoke 'print' in production code - scraping_scripts\populate_contractors.dart:42:3 - avoid_print
+   info - Don't invoke 'print' in production code - scraping_scripts\populate_contractors.dart:61:7 - avoid_print
+   info - Don't invoke 'print' in production code - scraping_scripts\populate_contractors.dart:70:5 - avoid_print
+   info - Don't invoke 'print' in production code - scraping_scripts\populate_contractors.dart:73:3 - avoid_print
+   info - Don't invoke 'print' in production code - scraping_scripts\populate_contractors.dart:74:3 - avoid_print
+   info - Don't invoke 'print' in production code - scraping_scripts\populate_contractors.dart:75:3 - avoid_print
+warning - Unused import: 'package:journeyman_jobs/utils/color_extensions.dart' - test\core\extensions\color_extensions_test.dart:3:8 - unused_import
+   info - 'red' is deprecated and shouldn't be used. Use (*.r * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:16:20 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use (*.g * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:17:20 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use (*.b * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:18:20 - deprecated_member_use
+   info - 'alpha' is deprecated and shouldn't be used. Use (*.a * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:19:20 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use (*.r * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:31:20 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use (*.g * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:32:20 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use (*.b * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:33:20 - deprecated_member_use
+   info - 'opacity' is deprecated and shouldn't be used. Use .a - test\core\extensions\color_extensions_test.dart:78:31 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use (*.r * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:79:31 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use (*.r * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:79:53 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use (*.g * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:80:31 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use (*.g * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:80:55 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use (*.b * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:81:31 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use (*.b * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:81:54 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use (*.r * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:96:27 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use (*.r * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:96:48 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use (*.b * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:97:27 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use (*.b * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:97:49 - deprecated_member_use
+   info - 'value' is deprecated and shouldn't be used. Use component accessors like .r or .g, or toARGB32 for an explicit conversion - test\core\extensions\color_extensions_test.dart:191:17 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use (*.r * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:195:32 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use (*.g * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:195:46 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use (*.b * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:195:62 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - test\core\extensions\color_extensions_test.dart:204:12 - deprecated_member_use
+   info - 'red' is deprecated and shouldn't be used. Use (*.r * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:228:15 - deprecated_member_use
+   info - 'green' is deprecated and shouldn't be used. Use (*.g * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:229:15 - deprecated_member_use
+   info - 'blue' is deprecated and shouldn't be used. Use (*.b * 255.0).round() & 0xff - test\core\extensions\color_extensions_test.dart:230:15 - deprecated_member_use
+  error - The named parameter 'jobDetails' is required, but there's no corresponding argument - test\data\models\job_model_test.dart:11:19 - missing_required_argument
+  error - The named parameter 'sharerId' is required, but there's no corresponding argument - test\data\models\job_model_test.dart:11:19 - missing_required_argument
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\models\job_model_test.dart:165:26 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\models\job_model_test.dart:173:16 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\models\user_model_test.dart:11:14 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\models\user_model_test.dart:12:16 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\models\user_model_test.dart:13:22 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\models\user_model_test.dart:17:31 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\models\user_model_test.dart:18:33 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\models\user_model_test.dart:19:39 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\models\user_model_test.dart:32:14 - ambiguous_import
+  error - The method 'isBefore' can't be unconditionally invoked because the receiver can be 'null' - test\data\models\user_model_test.dart:74:31 - unchecked_use_of_nullable_value
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\models\user_model_test.dart:81:33 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\models\user_model_test.dart:87:16 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\models\user_model_test.dart:92:36 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\models\user_model_test.dart:98:16 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:26:40 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:42:38 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:43:38 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:58:38 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:59:38 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:74:38 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:75:38 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:90:40 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:105:38 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:106:38 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:130:38 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:135:38 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:163:40 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:172:54 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:180:36 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:183:40 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:190:32 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:192:36 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:199:38 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:201:40 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:222:21 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:236:21 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:250:21 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:263:40 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:283:21 - ambiguous_import
+   info - Use interpolation to compose strings and values - test\data\repositories\job_repository_test.dart:285:39 - prefer_interpolation_to_compose_strings
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:298:21 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\repositories\job_repository_test.dart:312:21 - ambiguous_import
+  error - Target of URI doesn't exist: '../../test_utils/test_helpers.dart' - test\data\services\auth_service_test.dart:7:8 - uri_does_not_exist
+warning - The value of the local variable 'mockUser' isn't used - test\data\services\auth_service_test.dart:25:13 - unused_local_variable
+warning - The value of the local variable 'mockUserCredential' isn't used - test\data\services\auth_service_test.dart:31:13 - unused_local_variable
+  error - The named parameter 'authExceptions' isn't defined - test\data\services\auth_service_test.dart:35:9 - undefined_named_parameter
+  error - The function 'AuthExceptions' isn't defined - test\data\services\auth_service_test.dart:35:25 - undefined_function
+  error - The named parameter 'authExceptions' isn't defined - test\data\services\auth_service_test.dart:55:9 - undefined_named_parameter
+  error - The function 'AuthExceptions' isn't defined - test\data\services\auth_service_test.dart:55:25 - undefined_function
+  error - The method 'createUserWithEmailAndPassword' isn't defined for the type 'AuthService' - test\data\services\auth_service_test.dart:81:40 - undefined_method
+  error - The named parameter 'authExceptions' isn't defined - test\data\services\auth_service_test.dart:96:9 - undefined_named_parameter
+  error - The function 'AuthExceptions' isn't defined - test\data\services\auth_service_test.dart:96:25 - undefined_function
+  error - The method 'createUserWithEmailAndPassword' isn't defined for the type 'AuthService' - test\data\services\auth_service_test.dart:106:27 - undefined_method
+  error - The named parameter 'authExceptions' isn't defined - test\data\services\auth_service_test.dart:123:9 - undefined_named_parameter
+  error - The function 'AuthExceptions' isn't defined - test\data\services\auth_service_test.dart:123:25 - undefined_function
+  error - The method 'createUserWithEmailAndPassword' isn't defined for the type 'AuthService' - test\data\services\auth_service_test.dart:133:27 - undefined_method
+  error - The named parameter 'authExceptions' isn't defined - test\data\services\auth_service_test.dart:181:9 - undefined_named_parameter
+  error - The function 'AuthExceptions' isn't defined - test\data\services\auth_service_test.dart:181:25 - undefined_function
+  error - The named parameter 'authExceptions' isn't defined - test\data\services\auth_service_test.dart:204:9 - undefined_named_parameter
+  error - The function 'AuthExceptions' isn't defined - test\data\services\auth_service_test.dart:204:25 - undefined_function
+warning - The value of the local variable 'mockUser' isn't used - test\data\services\auth_service_test.dart:271:13 - unused_local_variable
+warning - The value of the local variable 'user' isn't used - test\data\services\auth_service_test.dart:289:13 - unused_local_variable
+  error - The named parameter 'authExceptions' isn't defined - test\data\services\auth_service_test.dart:300:9 - undefined_named_parameter
+  error - The function 'AuthExceptions' isn't defined - test\data\services\auth_service_test.dart:300:25 - undefined_function
+  error - The named parameter 'authExceptions' isn't defined - test\data\services\auth_service_test.dart:325:9 - undefined_named_parameter
+  error - The function 'AuthExceptions' isn't defined - test\data\services\auth_service_test.dart:325:25 - undefined_function
+  error - The named parameter 'authExceptions' isn't defined - test\data\services\auth_service_test.dart:349:9 - undefined_named_parameter
+  error - The function 'AuthExceptions' isn't defined - test\data\services\auth_service_test.dart:349:25 - undefined_function
+  error - The method 'clearMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:22:18 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:32:26 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:33:41 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:42:41 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:55:26 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:60:41 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:74:26 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:75:26 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:78:26 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:81:33 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:82:33 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:94:28 - undefined_method
+  error - The method 'getCacheStats' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:98:34 - undefined_method
+  error - Undefined name 'json' - test\data\services\cache_service_test.dart:109:27 - undefined_identifier
+  error - The method 'setPersistentCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:117:26 - undefined_method
+  error - The method 'getPersistentCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:118:41 - undefined_method
+  error - The method 'getPersistentCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:132:41 - undefined_method
+  error - The method 'getPersistentCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:146:28 - undefined_method
+  error - Undefined name 'json' - test\data\services\cache_service_test.dart:160:23 - undefined_identifier
+  error - The method 'getPersistentCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:165:41 - undefined_method
+  error - The method 'toJson' isn't defined for the type 'LocalsRecord' - test\data\services\cache_service_test.dart:176:48 - undefined_method
+  error - The method 'cacheLocalData' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:180:26 - undefined_method
+  error - The method 'getLocalData' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:181:41 - undefined_method
+  error - The method 'cacheJobData' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:194:26 - undefined_method
+  error - The method 'getJobData' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:195:41 - undefined_method
+  error - Const variables must be initialized with a constant value - test\data\services\cache_service_test.dart:210:22 - const_initialized_with_non_constant_value
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\cache_service_test.dart:210:22 - ambiguous_import
+  error - The method 'getUserPreferences' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:214:41 - undefined_method
+  error - The method 'toJson' isn't defined for the type 'LocalsRecord' - test\data\services\cache_service_test.dart:226:57 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:229:26 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:230:41 - undefined_method
+  error - The method 'cacheJobData' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:246:26 - undefined_method
+  error - The method 'getJobData' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:247:41 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:263:26 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:264:26 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:265:26 - undefined_method
+  error - The method 'getCacheStats' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:268:34 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:277:28 - undefined_method
+  error - The method 'getCacheStats' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:281:34 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:291:26 - undefined_method
+  error - The method 'cleanupExpiredEntries' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:299:26 - undefined_method
+  error - The method 'getCacheStats' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:302:34 - undefined_method
+  error - The method 'toJson' isn't defined for the type 'LocalsRecord' - test\data\services\cache_service_test.dart:309:50 - undefined_method
+  error - The method 'warmCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:312:26 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:313:41 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:324:26 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:325:26 - undefined_method
+  error - The method 'clearMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:328:20 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:331:33 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:332:33 - undefined_method
+  error - The method 'getCacheStats' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:334:34 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:341:28 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:349:28 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:360:34 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:367:43 - undefined_method
+  error - The method 'setMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:389:26 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:392:33 - undefined_method
+  error - The method 'getMemoryCache' isn't defined for the type 'CacheService' - test\data\services\cache_service_test.dart:398:33 - undefined_method
+warning - Unused import: '../../fixtures/test_constants.dart' - test\data\services\connectivity_service_test.dart:7:8 - unused_import
+  error - The name 'VoidCallback' isn't a type, so it can't be used as a type argument - test\data\services\connectivity_service_test.dart:284:26 - non_type_as_type_argument
+   info - Use a function declaration rather than a variable assignment to bind a function to a name - test\data\services\connectivity_service_test.dart:286:15 - prefer_function_declarations_over_variables
+warning - The member 'hasListeners' can only be used within instance members of subclasses of 'ChangeNotifier' - test\data\services\connectivity_service_test.dart:295:34 - invalid_use_of_protected_member
+warning - The value of the local variable 'mockQuerySnapshot' isn't used - test\data\services\firestore_service_test.dart:28:26 - unused_local_variable
+  error - The argument type 'MockCollectionReference<Object?>' can't be assigned to the parameter type 'CollectionReference<Map<String, dynamic>>'.  - test\data\services\firestore_service_test.dart:40:56 - argument_type_not_assignable
+  error - The argument type 'MockCollectionReference<Object?>' can't be assigned to the parameter type 'CollectionReference<Map<String, dynamic>>'.  - test\data\services\firestore_service_test.dart:41:55 - argument_type_not_assignable
+  error - The argument type 'MockCollectionReference<Object?>' can't be assigned to the parameter type 'CollectionReference<Map<String, dynamic>>'.  - test\data\services\firestore_service_test.dart:42:57 - argument_type_not_assignable
+  error - Const variables must be initialized with a constant value - test\data\services\firestore_service_test.dart:50:22 - const_initialized_with_non_constant_value
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\firestore_service_test.dart:50:22 - ambiguous_import
+  error - Const variables must be initialized with a constant value - test\data\services\firestore_service_test.dart:72:22 - const_initialized_with_non_constant_value
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\firestore_service_test.dart:72:22 - ambiguous_import
+  error - Const variables must be initialized with a constant value - test\data\services\firestore_service_test.dart:88:22 - const_initialized_with_non_constant_value
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\firestore_service_test.dart:88:22 - ambiguous_import
+  error - Const variables must be initialized with a constant value - test\data\services\firestore_service_test.dart:105:22 - const_initialized_with_non_constant_value
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\firestore_service_test.dart:105:22 - ambiguous_import
+  error - Const variables must be initialized with a constant value - test\data\services\firestore_service_test.dart:120:22 - const_initialized_with_non_constant_value
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\firestore_service_test.dart:120:22 - ambiguous_import
+  error - Const variables must be initialized with a constant value - test\data\services\firestore_service_test.dart:183:22 - const_initialized_with_non_constant_value
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\firestore_service_test.dart:183:22 - ambiguous_import
+  error - Const variables must be initialized with a constant value - test\data\services\firestore_service_test.dart:210:22 - const_initialized_with_non_constant_value
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\firestore_service_test.dart:210:22 - ambiguous_import
+  error - Const variables must be initialized with a constant value - test\data\services\firestore_service_test.dart:235:22 - const_initialized_with_non_constant_value
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\firestore_service_test.dart:235:22 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\firestore_service_test.dart:240:32 - ambiguous_import
+  error - Const variables must be initialized with a constant value - test\data\services\firestore_service_test.dart:251:22 - const_initialized_with_non_constant_value
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\firestore_service_test.dart:251:22 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\firestore_service_test.dart:255:32 - ambiguous_import
+  error - Const variables must be initialized with a constant value - test\data\services\firestore_service_test.dart:266:22 - const_initialized_with_non_constant_value
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\firestore_service_test.dart:266:22 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\data\services\firestore_service_test.dart:271:32 - ambiguous_import
+warning - The diagnostic 'must_be_immutable' doesn't need to be ignored here because it's already being ignored - test\data\services\firestore_service_test.mocks.dart:508:12 - duplicate_ignore
+warning - The diagnostic 'must_be_immutable' doesn't need to be ignored here because it's already being ignored - test\data\services\firestore_service_test.mocks.dart:1001:12 - duplicate_ignore
+warning - The diagnostic 'must_be_immutable' doesn't need to be ignored here because it's already being ignored - test\data\services\firestore_service_test.mocks.dart:1255:12 - duplicate_ignore
+  error - The method 'getJobs' isn't defined for the type 'MockJobRepository' - test\domain\use_cases\get_jobs_use_case_test.dart:25:30 - undefined_method
+  error - The method 'getJobs' isn't defined for the type 'MockJobRepository' - test\domain\use_cases\get_jobs_use_case_test.dart:46:30 - undefined_method
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\domain\use_cases\get_jobs_use_case_test.dart:66:27 - ambiguous_import
+  error - The method 'getJobs' isn't defined for the type 'MockJobRepository' - test\domain\use_cases\get_jobs_use_case_test.dart:70:30 - undefined_method
+  error - The method 'getJobs' isn't defined for the type 'MockJobRepository' - test\domain\use_cases\get_jobs_use_case_test.dart:90:30 - undefined_method
+  error - The method 'getJobs' isn't defined for the type 'MockJobRepository' - test\domain\use_cases\get_jobs_use_case_test.dart:108:30 - undefined_method
+  error - The method 'getJobs' isn't defined for the type 'MockJobRepository' - test\domain\use_cases\get_jobs_use_case_test.dart:131:30 - undefined_method
+  error - The method 'getJobs' isn't defined for the type 'MockJobRepository' - test\domain\use_cases\get_jobs_use_case_test.dart:149:30 - undefined_method
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\domain\use_cases\get_jobs_use_case_test.dart:169:26 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\domain\use_cases\get_jobs_use_case_test.dart:170:23 - ambiguous_import
+  error - The name 'TestConstants' is defined in the libraries 'file:///D:/worktrees/tailboard-modernization/test/fixtures/mock_data.dart' and 'file:///D:/worktrees/tailboard-modernization/test/fixtures/test_constants.dart' - test\domain\use_cases\get_jobs_use_case_test.dart:171:28 - ambiguous_import
+  error - The method 'getJobs' isn't defined for the type 'JobRepository' - test\domain\use_cases\get_jobs_use_case_test.dart:230:37 - undefined_method
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\integration\tailboard_service_test.dart:5:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\integration\tailboard_service_test.dart:6:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\integration\tailboard_service_test.dart:7:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\integration\tailboard_service_test.dart:8:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\integration\tailboard_service_test.dart:9:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\integration\tailboard_service_test.dart:10:8 - avoid_relative_lib_imports
+  error - The class 'User' doesn't have an unnamed constructor - test\features\crews\integration\tailboard_service_test.dart:20:16 - new_with_undefined_constructor_default
+  error - The method 'toFirestore' isn't defined for the type 'User' - test\features\crews\integration\tailboard_service_test.dart:36:77 - undefined_method
+  error - The method 'complete' isn't defined for the type 'Future' - test\features\crews\integration\tailboard_service_test.dart:88:17 - undefined_method
+  error - The function 'JobModel' isn't defined - test\features\crews\integration\tailboard_service_test.dart:131:27 - undefined_function
+  error - The function 'JobModel' isn't defined - test\features\crews\integration\tailboard_service_test.dart:144:30 - undefined_function
+  error - The getter 'content' isn't defined for the type 'Job' - test\features\crews\integration\tailboard_service_test.dart:160:25 - undefined_getter
+  error - The function 'JobModel' isn't defined - test\features\crews\integration\tailboard_service_test.dart:163:30 - undefined_function
+  error - The function 'JobModel' isn't defined - test\features\crews\integration\tailboard_service_test.dart:183:23 - undefined_function
+  error - The method 'createJob' isn't defined for the type 'DatabaseService' - test\features\crews\integration\tailboard_service_test.dart:190:29 - undefined_method
+  error - The getter 'content' isn't defined for the type 'Job' - test\features\crews\integration\tailboard_service_test.dart:196:25 - undefined_getter
+  error - The method 'deleteJob' isn't defined for the type 'DatabaseService' - test\features\crews\integration\tailboard_service_test.dart:199:29 - undefined_method
+warning - Unused import: 'package:mockito/mockito.dart' - test\features\crews\screens\tailboard_screen_test.dart:4:8 - unused_import
+   info - Parameters ''id', 'name', 'foremanId', 'memberIds', and 'createdAt'' could be super parameters - test\features\crews\screens\tailboard_screen_test.dart:13:3 - use_super_parameters
+  error - The named parameter 'filters' isn't defined - test\features\crews\screens\tailboard_screen_test.dart:25:11 - undefined_named_parameter
+warning - The value of the local variable 'mockCrew' isn't used - test\features\crews\screens\tailboard_screen_test.dart:88:13 - unused_local_variable
+  error - The named parameter 'jobTypes' is required, but there's no corresponding argument - test\features\crews\screens\tailboard_screen_test.dart:93:18 - missing_required_argument
+  error - The named parameter 'payMin' isn't defined - test\features\crews\screens\tailboard_screen_test.dart:94:11 - undefined_named_parameter
+  error - The named parameter 'type' isn't defined - test\features\crews\screens\tailboard_screen_test.dart:95:11 - undefined_named_parameter
+  error - The named parameter 'maxDistance' isn't defined - test\features\crews\screens\tailboard_screen_test.dart:96:11 - undefined_named_parameter
+  error - The named parameter 'perDiem' isn't defined - test\features\crews\screens\tailboard_screen_test.dart:97:11 - undefined_named_parameter
+warning - The value of the local variable 'crew1' isn't used - test\features\crews\screens\tailboard_screen_test.dart:177:13 - unused_local_variable
+  error - The named parameter 'jobTypes' is required, but there's no corresponding argument - test\features\crews\screens\tailboard_screen_test.dart:182:18 - missing_required_argument
+  error - The named parameter 'payMin' isn't defined - test\features\crews\screens\tailboard_screen_test.dart:183:11 - undefined_named_parameter
+  error - The named parameter 'type' isn't defined - test\features\crews\screens\tailboard_screen_test.dart:184:11 - undefined_named_parameter
+  error - The named parameter 'maxDistance' isn't defined - test\features\crews\screens\tailboard_screen_test.dart:185:11 - undefined_named_parameter
+  error - The named parameter 'perDiem' isn't defined - test\features\crews\screens\tailboard_screen_test.dart:186:11 - undefined_named_parameter
+warning - The value of the local variable 'crew2' isn't used - test\features\crews\screens\tailboard_screen_test.dart:191:13 - unused_local_variable
+  error - The named parameter 'jobTypes' is required, but there's no corresponding argument - test\features\crews\screens\tailboard_screen_test.dart:196:18 - missing_required_argument
+  error - The named parameter 'payMin' isn't defined - test\features\crews\screens\tailboard_screen_test.dart:197:11 - undefined_named_parameter
+  error - The named parameter 'type' isn't defined - test\features\crews\screens\tailboard_screen_test.dart:198:11 - undefined_named_parameter
+  error - The named parameter 'maxDistance' isn't defined - test\features\crews\screens\tailboard_screen_test.dart:199:11 - undefined_named_parameter
+  error - The named parameter 'perDiem' isn't defined - test\features\crews\screens\tailboard_screen_test.dart:200:11 - undefined_named_parameter
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/lib/domain/exceptions/app_exception.dart' - test\features\crews\services\crew_service_test.dart:8:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/lib/domain/exceptions/crew_exception.dart' - test\features\crews\services\crew_service_test.dart:9:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/lib/domain/exceptions/member_exception.dart' - test\features\crews\services\crew_service_test.dart:10:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/lib/services/connectivity_service.dart' - test\features\crews\services\crew_service_test.dart:11:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/lib/services/offline_data_service.dart' - test\features\crews\services\crew_service_test.dart:12:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/features/crews/services/job_sharing_service.dart' - test\features\crews\services\crew_service_test.dart:13:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/features/crews/services/job_matching_service.dart' - test\features\crews\services\crew_service_test.dart:14:8 - uri_does_not_exist
+warning - The class 'Query' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\services\crew_service_test.dart:21:1 - subtype_of_sealed_class
+warning - This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: Mock._givenName, Mock._givenHashCode, Mock._defaultResponse - test\features\crews\services\crew_service_test.dart:21:7 - must_be_immutable
+warning - The class 'DocumentReference' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\services\crew_service_test.dart:22:1 - subtype_of_sealed_class
+warning - This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: Mock._givenName, Mock._givenHashCode, Mock._defaultResponse - test\features\crews\services\crew_service_test.dart:22:7 - must_be_immutable
+warning - The class 'DocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\services\crew_service_test.dart:23:1 - subtype_of_sealed_class
+warning - The class 'Query' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\services\crew_service_test.dart:25:1 - subtype_of_sealed_class
+warning - This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: Mock._givenName, Mock._givenHashCode, Mock._defaultResponse - test\features\crews\services\crew_service_test.dart:25:7 - must_be_immutable
+  error - Classes and mixins can only implement other classes and mixins - test\features\crews\services\crew_service_test.dart:26:53 - implements_non_class
+  error - Classes and mixins can only implement other classes and mixins - test\features\crews\services\crew_service_test.dart:27:54 - implements_non_class
+  error - Classes and mixins can only implement other classes and mixins - test\features\crews\services\crew_service_test.dart:28:54 - implements_non_class
+  error - Classes and mixins can only implement other classes and mixins - test\features\crews\services\crew_service_test.dart:29:55 - implements_non_class
+  error - The argument type 'MockCollectionReference' can't be assigned to the parameter type 'CollectionReference<Map<String, dynamic>>'.  - test\features\crews\services\crew_service_test.dart:67:56 - argument_type_not_assignable
+  error - The argument type 'MockCollectionReference' can't be assigned to the parameter type 'CollectionReference<Map<String, dynamic>>'.  - test\features\crews\services\crew_service_test.dart:69:56 - argument_type_not_assignable
+  error - The argument type 'MockCollectionReference' can't be assigned to the parameter type 'CollectionReference<Map<String, dynamic>>'.  - test\features\crews\services\crew_service_test.dart:71:60 - argument_type_not_assignable
+  error - The argument type 'MockCollectionReference' can't be assigned to the parameter type 'CollectionReference<Map<String, dynamic>>'.  - test\features\crews\services\crew_service_test.dart:73:59 - argument_type_not_assignable
+  error - The argument type 'MockCollectionReference' can't be assigned to the parameter type 'CollectionReference<Map<String, dynamic>>'.  - test\features\crews\services\crew_service_test.dart:75:63 - argument_type_not_assignable
+  error - The getter 'isOnline' isn't defined for the type 'MockConnectivityService' - test\features\crews\services\crew_service_test.dart:79:34 - undefined_getter
+  error - The argument type 'MockJobSharingService' can't be assigned to the parameter type 'JobSharingService'.  - test\features\crews\services\crew_service_test.dart:82:26 - argument_type_not_assignable
+  error - The argument type 'MockJobMatchingService' can't be assigned to the parameter type 'JobMatchingService?'.  - test\features\crews\services\crew_service_test.dart:83:27 - argument_type_not_assignable
+  error - The argument type 'MockOfflineDataService' can't be assigned to the parameter type 'OfflineDataService'.  - test\features\crews\services\crew_service_test.dart:84:27 - argument_type_not_assignable
+  error - The argument type 'MockConnectivityService' can't be assigned to the parameter type 'ConnectivityService'.  - test\features\crews\services\crew_service_test.dart:85:28 - argument_type_not_assignable
+  error - The argument type 'Null' can't be assigned to the parameter type 'TransactionHandler<int>'.  - test\features\crews\services\crew_service_test.dart:103:48 - argument_type_not_assignable
+  error - The argument type 'Null' can't be assigned to the parameter type 'DocumentReference<Object?>'.  - test\features\crews\services\crew_service_test.dart:106:36 - argument_type_not_assignable
+  error - The argument type 'Null' can't be assigned to the parameter type 'String'.  - test\features\crews\services\crew_service_test.dart:111:46 - argument_type_not_assignable
+  error - The argument type 'Null' can't be assigned to the parameter type 'FirebaseFirestore'.  - test\features\crews\services\crew_service_test.dart:111:51 - argument_type_not_assignable
+  error - The argument type 'Null' can't be assigned to the parameter type 'String'.  - test\features\crews\services\crew_service_test.dart:129:46 - argument_type_not_assignable
+  error - The argument type 'Null' can't be assigned to the parameter type 'FirebaseFirestore'.  - test\features\crews\services\crew_service_test.dart:129:51 - argument_type_not_assignable
+  error - The name 'CrewException' isn't a type, so it can't be used as a type argument - test\features\crews\services\crew_service_test.dart:137:23 - non_type_as_type_argument
+  error - The property 'code' can't be unconditionally accessed because the receiver can be 'null' - test\features\crews\services\crew_service_test.dart:138:22 - unchecked_use_of_nullable_value
+  error - The getter 'isOnline' isn't defined for the type 'MockConnectivityService' - test\features\crews\services\crew_service_test.dart:146:38 - undefined_getter
+  error - The method 'storeCrewsOffline' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:147:37 - undefined_method
+  error - The method 'markDataDirty' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:148:37 - undefined_method
+  error - The method 'storeCrewsOffline' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:157:39 - undefined_method
+  error - The method 'markDataDirty' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:158:39 - undefined_method
+  error - The named parameter 'lastActivityAt' is required, but there's no corresponding argument - test\features\crews\services\crew_service_test.dart:168:24 - missing_required_argument
+  error - The function 'CrewStats' isn't defined - test\features\crews\services\crew_service_test.dart:176:16 - undefined_function
+  error - The method 'storeCrewsOffline' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:196:37 - undefined_method
+  error - The method 'storeCrewsOffline' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:202:39 - undefined_method
+  error - The method 'getOfflineCrews' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:203:44 - undefined_method
+  error - The getter 'isOnline' isn't defined for the type 'MockConnectivityService' - test\features\crews\services\crew_service_test.dart:207:38 - undefined_getter
+  error - The method 'getOfflineCrews' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:208:37 - undefined_method
+  error - The method 'getOfflineCrews' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:213:39 - undefined_method
+  error - The method 'getOfflineCrews' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:219:37 - undefined_method
+  error - The getter 'isOnline' isn't defined for the type 'MockConnectivityService' - test\features\crews\services\crew_service_test.dart:224:38 - undefined_getter
+  error - The named parameter 'lastActivityAt' is required, but there's no corresponding argument - test\features\crews\services\crew_service_test.dart:236:24 - missing_required_argument
+  error - The function 'CrewStats' isn't defined - test\features\crews\services\crew_service_test.dart:244:16 - undefined_function
+  error - The argument type 'Null' can't be assigned to the parameter type 'String'.  - test\features\crews\services\crew_service_test.dart:260:46 - argument_type_not_assignable
+  error - The argument type 'Null' can't be assigned to the parameter type 'FirebaseFirestore'.  - test\features\crews\services\crew_service_test.dart:260:51 - argument_type_not_assignable
+  error - The argument type 'Null' can't be assigned to the parameter type 'Map<Object, Object?>'.  - test\features\crews\services\crew_service_test.dart:261:33 - argument_type_not_assignable
+  error - The argument type 'Null' can't be assigned to the parameter type 'String'.  - test\features\crews\services\crew_service_test.dart:269:46 - argument_type_not_assignable
+  error - The argument type 'Null' can't be assigned to the parameter type 'FirebaseFirestore'.  - test\features\crews\services\crew_service_test.dart:269:51 - argument_type_not_assignable
+  error - The name 'CrewException' isn't a type, so it can't be used as a type argument - test\features\crews\services\crew_service_test.dart:273:23 - non_type_as_type_argument
+  error - The property 'code' can't be unconditionally accessed because the receiver can be 'null' - test\features\crews\services\crew_service_test.dart:274:22 - unchecked_use_of_nullable_value
+  error - The getter 'isOnline' isn't defined for the type 'MockConnectivityService' - test\features\crews\services\crew_service_test.dart:282:38 - undefined_getter
+  error - The method 'getOfflineCrews' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:283:37 - undefined_method
+  error - The method 'storeCrewsOffline' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:284:37 - undefined_method
+  error - The method 'markDataDirty' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:285:37 - undefined_method
+  error - The method 'storeCrewsOffline' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:289:39 - undefined_method
+  error - The method 'markDataDirty' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:290:39 - undefined_method
+  error - The argument type 'Null' can't be assigned to the parameter type 'Map<Object, Object?>'.  - test\features\crews\services\crew_service_test.dart:291:40 - argument_type_not_assignable
+  error - The named parameter 'lastActivityAt' is required, but there's no corresponding argument - test\features\crews\services\crew_service_test.dart:298:24 - missing_required_argument
+  error - The function 'CrewStats' isn't defined - test\features\crews\services\crew_service_test.dart:306:16 - undefined_function
+  error - The argument type 'Null' can't be assigned to the parameter type 'Map<Object, Object?>'.  - test\features\crews\services\crew_service_test.dart:322:33 - argument_type_not_assignable
+  error - The getter 'isOnline' isn't defined for the type 'MockConnectivityService' - test\features\crews\services\crew_service_test.dart:330:38 - undefined_getter
+  error - The method 'getOfflineCrews' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:331:37 - undefined_method
+  error - The method 'storeCrewsOffline' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:332:37 - undefined_method
+  error - The method 'markDataDirty' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:333:37 - undefined_method
+  error - The method 'storeCrewsOffline' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:337:39 - undefined_method
+  error - The method 'markDataDirty' isn't defined for the type 'MockOfflineDataService' - test\features\crews\services\crew_service_test.dart:338:39 - undefined_method
+  error - The argument type 'Null' can't be assigned to the parameter type 'Map<Object, Object?>'.  - test\features\crews\services\crew_service_test.dart:339:40 - argument_type_not_assignable
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/services/crews_service.dart' - test\features\crews\services\crews_service_test.dart:5:8 - uri_does_not_exist
+warning - The class 'Query' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\services\crews_service_test.dart:16:1 - subtype_of_sealed_class
+warning - This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: Mock._givenName, Mock._givenHashCode, Mock._defaultResponse - test\features\crews\services\crews_service_test.dart:16:7 - must_be_immutable
+warning - The class 'DocumentReference' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\services\crews_service_test.dart:17:1 - subtype_of_sealed_class
+warning - This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: Mock._givenName, Mock._givenHashCode, Mock._defaultResponse - test\features\crews\services\crews_service_test.dart:17:7 - must_be_immutable
+warning - The class 'DocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\services\crews_service_test.dart:18:1 - subtype_of_sealed_class
+warning - The class 'DocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\services\crews_service_test.dart:20:1 - subtype_of_sealed_class
+warning - The class 'QueryDocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\services\crews_service_test.dart:20:1 - subtype_of_sealed_class
+  error - Undefined class 'CrewsService' - test\features\crews\services\crews_service_test.dart:27:10 - undefined_class
+  error - The function 'CrewsService' isn't defined - test\features\crews\services\crews_service_test.dart:32:22 - undefined_function
+  error - The name 'CrewsService' isn't a type, so it can't be used as a type argument - test\features\crews\services\crews_service_test.dart:40:34 - non_type_as_type_argument
+  error - The named parameter 'jobTypes' is required, but there's no corresponding argument - test\features\crews\services\crews_service_test.dart:112:29 - missing_required_argument
+  error - The named parameter 'payMin' isn't defined - test\features\crews\services\crews_service_test.dart:113:11 - undefined_named_parameter
+  error - The named parameter 'type' isn't defined - test\features\crews\services\crews_service_test.dart:114:11 - undefined_named_parameter
+  error - The named parameter 'maxDistance' isn't defined - test\features\crews\services\crews_service_test.dart:115:11 - undefined_named_parameter
+  error - The named parameter 'perDiem' isn't defined - test\features\crews\services\crews_service_test.dart:116:11 - undefined_named_parameter
+  error - The getter 'payMin' isn't defined for the type 'CrewPreferences' - test\features\crews\services\crews_service_test.dart:119:28 - undefined_getter
+  error - The getter 'type' isn't defined for the type 'CrewPreferences' - test\features\crews\services\crews_service_test.dart:120:28 - undefined_getter
+  error - The getter 'maxDistance' isn't defined for the type 'CrewPreferences' - test\features\crews\services\crews_service_test.dart:121:28 - undefined_getter
+  error - The getter 'perDiem' isn't defined for the type 'CrewPreferences' - test\features\crews\services\crews_service_test.dart:122:28 - undefined_getter
+  error - The named parameter 'jobTypes' is required, but there's no corresponding argument - test\features\crews\services\crews_service_test.dart:126:29 - missing_required_argument
+  error - The named parameter 'payMin' isn't defined - test\features\crews\services\crews_service_test.dart:127:11 - undefined_named_parameter
+  error - The named parameter 'type' isn't defined - test\features\crews\services\crews_service_test.dart:128:11 - undefined_named_parameter
+  error - The named parameter 'maxDistance' isn't defined - test\features\crews\services\crews_service_test.dart:129:11 - undefined_named_parameter
+  error - The named parameter 'perDiem' isn't defined - test\features\crews\services\crews_service_test.dart:130:11 - undefined_named_parameter
+  error - The named parameter 'filters' isn't defined - test\features\crews\services\crews_service_test.dart:149:11 - undefined_named_parameter
+  error - The named parameter 'jobTypes' is required, but there's no corresponding argument - test\features\crews\services\crews_service_test.dart:149:20 - missing_required_argument
+  error - The named parameter 'payMin' isn't defined - test\features\crews\services\crews_service_test.dart:150:13 - undefined_named_parameter
+  error - The named parameter 'type' isn't defined - test\features\crews\services\crews_service_test.dart:151:13 - undefined_named_parameter
+  error - The named parameter 'maxDistance' isn't defined - test\features\crews\services\crews_service_test.dart:152:13 - undefined_named_parameter
+  error - The named parameter 'perDiem' isn't defined - test\features\crews\services\crews_service_test.dart:153:13 - undefined_named_parameter
+  error - The named parameter 'jobTypes' is required, but there's no corresponding argument - test\features\crews\services\crews_service_test.dart:156:24 - missing_required_argument
+  error - The named parameter 'payMin' isn't defined - test\features\crews\services\crews_service_test.dart:157:13 - undefined_named_parameter
+  error - The named parameter 'type' isn't defined - test\features\crews\services\crews_service_test.dart:158:13 - undefined_named_parameter
+  error - The named parameter 'maxDistance' isn't defined - test\features\crews\services\crews_service_test.dart:159:13 - undefined_named_parameter
+  error - The named parameter 'perDiem' isn't defined - test\features\crews\services\crews_service_test.dart:160:13 - undefined_named_parameter
+  error - The getter 'filters' isn't defined for the type 'Crew' - test\features\crews\services\crews_service_test.dart:183:21 - undefined_getter
+  error - The named parameter 'filters' isn't defined - test\features\crews\services\crews_service_test.dart:192:11 - undefined_named_parameter
+  error - The named parameter 'jobTypes' is required, but there's no corresponding argument - test\features\crews\services\crews_service_test.dart:192:20 - missing_required_argument
+  error - The named parameter 'payMin' isn't defined - test\features\crews\services\crews_service_test.dart:193:13 - undefined_named_parameter
+  error - The named parameter 'type' isn't defined - test\features\crews\services\crews_service_test.dart:194:13 - undefined_named_parameter
+  error - The named parameter 'maxDistance' isn't defined - test\features\crews\services\crews_service_test.dart:195:13 - undefined_named_parameter
+  error - The named parameter 'perDiem' isn't defined - test\features\crews\services\crews_service_test.dart:196:13 - undefined_named_parameter
+  error - The named parameter 'jobTypes' is required, but there's no corresponding argument - test\features\crews\services\crews_service_test.dart:199:24 - missing_required_argument
+  error - The named parameter 'payMin' isn't defined - test\features\crews\services\crews_service_test.dart:200:13 - undefined_named_parameter
+  error - The named parameter 'type' isn't defined - test\features\crews\services\crews_service_test.dart:201:13 - undefined_named_parameter
+  error - The named parameter 'maxDistance' isn't defined - test\features\crews\services\crews_service_test.dart:202:13 - undefined_named_parameter
+  error - The named parameter 'perDiem' isn't defined - test\features\crews\services\crews_service_test.dart:203:13 - undefined_named_parameter
+  error - The argument type 'MockCollectionReference' can't be assigned to the parameter type 'CollectionReference<Map<String, dynamic>>'.  - test\features\crews\services\crews_service_test.dart:261:60 - argument_type_not_assignable
+  error - The element type 'MockDocumentSnapshot' can't be assigned to the list type 'QueryDocumentSnapshot<Object?>' - test\features\crews\services\crews_service_test.dart:275:45 - list_element_type_not_assignable
+  error - Invalid constant value - test\features\crews\tailboard_screen_test.dart:52:17 - invalid_constant
+  error - The function 'FeedTab' isn't defined - test\features\crews\tailboard_screen_test.dart:52:17 - undefined_function
+  error - Invalid constant value - test\features\crews\tailboard_screen_test.dart:66:17 - invalid_constant
+  error - The function 'JobsTab' isn't defined - test\features\crews\tailboard_screen_test.dart:66:17 - undefined_function
+  error - Invalid constant value - test\features\crews\tailboard_screen_test.dart:82:17 - invalid_constant
+  error - The function 'MembersTab' isn't defined - test\features\crews\tailboard_screen_test.dart:82:17 - undefined_function
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:10:54 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:23:54 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:36:54 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:96:62 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:119:34 - undefined_identifier
+  error - The named parameter 'isActive' is required, but there's no corresponding argument - test\features\crews\unit\crew_member_service_test.dart:127:29 - missing_required_argument
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:130:15 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:132:49 - undefined_identifier
+  error - The named parameter 'isActive' is required, but there's no corresponding argument - test\features\crews\unit\crew_member_service_test.dart:137:29 - missing_required_argument
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:140:15 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:142:49 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:173:47 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:176:41 - undefined_identifier
+  error - Const variables must be initialized with a constant value - test\features\crews\unit\crew_member_service_test.dart:215:23 - const_initialized_with_non_constant_value
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:215:23 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:216:57 - undefined_identifier
+  error - The named parameter 'isActive' is required, but there's no corresponding argument - test\features\crews\unit\crew_member_service_test.dart:257:23 - missing_required_argument
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:260:15 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:262:49 - undefined_identifier
+  error - The named parameter 'isActive' is required, but there's no corresponding argument - test\features\crews\unit\crew_member_service_test.dart:267:20 - missing_required_argument
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:270:15 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:272:49 - undefined_identifier
+  error - The named parameter 'isActive' is required, but there's no corresponding argument - test\features\crews\unit\crew_member_service_test.dart:277:22 - missing_required_argument
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:280:15 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:282:49 - undefined_identifier
+  error - The named parameter 'isActive' is required, but there's no corresponding argument - test\features\crews\unit\crew_member_service_test.dart:310:20 - missing_required_argument
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:313:15 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:315:49 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:321:34 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:324:34 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:329:34 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:332:34 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:337:34 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:340:34 - undefined_identifier
+  error - The named parameter 'isActive' is required, but there's no corresponding argument - test\features\crews\unit\crew_member_service_test.dart:349:10 - missing_required_argument
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:352:11 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_member_service_test.dart:354:45 - undefined_identifier
+warning - Unused import: 'package:cloud_firestore/cloud_firestore.dart' - test\features\crews\unit\crew_model_test.dart:2:8 - unused_import
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\crew_model_test.dart:4:8 - avoid_relative_lib_imports
+  error - The getter 'canOperate' isn't defined for the type 'Crew' - test\features\crews\unit\crew_service_test.dart:19:19 - undefined_getter
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_service_test.dart:72:34 - undefined_identifier
+  error - The named parameter 'isActive' is required, but there's no corresponding argument - test\features\crews\unit\crew_service_test.dart:80:29 - missing_required_argument
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_service_test.dart:83:15 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_service_test.dart:85:49 - undefined_identifier
+  error - The named parameter 'isActive' is required, but there's no corresponding argument - test\features\crews\unit\crew_service_test.dart:90:26 - missing_required_argument
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_service_test.dart:93:15 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_service_test.dart:95:49 - undefined_identifier
+  error - The named parameter 'isActive' is required, but there's no corresponding argument - test\features\crews\unit\crew_service_test.dart:100:29 - missing_required_argument
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_service_test.dart:103:15 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_service_test.dart:105:49 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_service_test.dart:151:47 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_service_test.dart:154:41 - undefined_identifier
+  error - The named parameter 'successRate' is required, but there's no corresponding argument - test\features\crews\unit\crew_service_test.dart:258:29 - missing_required_argument
+  error - The named parameter 'successRate' is required, but there's no corresponding argument - test\features\crews\unit\crew_service_test.dart:269:32 - missing_required_argument
+  error - The named parameter 'lastActivityAt' is required, but there's no corresponding argument - test\features\crews\unit\crew_service_test.dart:338:10 - missing_required_argument
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_service_test.dart:345:30 - undefined_identifier
+  error - The named parameter 'isActive' is required, but there's no corresponding argument - test\features\crews\unit\crew_service_test.dart:352:10 - missing_required_argument
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_service_test.dart:355:11 - undefined_identifier
+  error - Undefined name 'MemberRole' - test\features\crews\unit\crew_service_test.dart:357:45 - undefined_identifier
+  error - The named parameter 'successRate' is required, but there's no corresponding argument - test\features\crews\unit\crew_service_test.dart:376:10 - missing_required_argument
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\database_service_test.dart:6:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\database_service_test.dart:7:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\database_service_test.dart:8:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\database_service_test.dart:9:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\database_service_test.dart:10:8 - avoid_relative_lib_imports
+warning - Unused import: '../../../../lib/models/job_model.dart' - test\features\crews\unit\database_service_test.dart:10:8 - unused_import
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\database_service_test.dart:11:8 - avoid_relative_lib_imports
+warning - Unused import: '../../../../lib/models/message_model.dart' - test\features\crews\unit\database_service_test.dart:11:8 - unused_import
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\database_service_test.dart:12:8 - avoid_relative_lib_imports
+warning - Unused import: '../../../../lib/services/storage_service.dart' - test\features\crews\unit\database_service_test.dart:12:8 - unused_import
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\database_service_test.dart:13:8 - avoid_relative_lib_imports
+warning - Unused import: '../../../../lib/services/notification_service.dart' - test\features\crews\unit\database_service_test.dart:13:8 - unused_import
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\database_service_test.dart:14:8 - avoid_relative_lib_imports
+warning - Unused import: '../../../../lib/services/connectivity_service.dart' - test\features\crews\unit\database_service_test.dart:14:8 - unused_import
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\database_service_test.dart:15:8 - avoid_relative_lib_imports
+warning - The value of the local variable 'mockUser' isn't used - test\features\crews\unit\database_service_test.dart:58:27 - unused_local_variable
+warning - The value of the local variable 'mockStorage' isn't used - test\features\crews\unit\database_service_test.dart:60:27 - unused_local_variable
+  error - The method '_' isn't defined for the type 'DatabaseService' - test\features\crews\unit\database_service_test.dart:70:39 - undefined_method
+  error - The named parameter 'betterBenefits' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:108:24 - missing_required_argument
+  error - The named parameter 'careerAdvancements' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:108:24 - missing_required_argument
+  error - The named parameter 'findLongTermWork' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:108:24 - missing_required_argument
+  error - The named parameter 'higherPayRate' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:108:24 - missing_required_argument
+  error - The named parameter 'learnNewSkill' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:108:24 - missing_required_argument
+  error - The named parameter 'networkWithOthers' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:108:24 - missing_required_argument
+  error - The named parameter 'travelToNewLocation' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:108:24 - missing_required_argument
+warning - Unnecessary cast - test\features\crews\unit\database_service_test.dart:191:27 - unnecessary_cast
+  error - The method '_computeJobMatch' isn't defined for the type 'DatabaseService' - test\features\crews\unit\database_service_test.dart:307:37 - undefined_method
+  error - The method '_computeJobMatch' isn't defined for the type 'DatabaseService' - test\features\crews\unit\database_service_test.dart:328:37 - undefined_method
+  error - The method '_computeJobMatch' isn't defined for the type 'DatabaseService' - test\features\crews\unit\database_service_test.dart:349:37 - undefined_method
+  error - The named parameter 'betterBenefits' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:365:27 - missing_required_argument
+  error - The named parameter 'careerAdvancements' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:365:27 - missing_required_argument
+  error - The named parameter 'findLongTermWork' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:365:27 - missing_required_argument
+  error - The named parameter 'higherPayRate' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:365:27 - missing_required_argument
+  error - The named parameter 'learnNewSkill' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:365:27 - missing_required_argument
+  error - The named parameter 'networkWithOthers' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:365:27 - missing_required_argument
+  error - The named parameter 'travelToNewLocation' is required, but there's no corresponding argument - test\features\crews\unit\database_service_test.dart:365:27 - missing_required_argument
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\job_model_test.dart:4:8 - avoid_relative_lib_imports
+  error - The argument type 'Timestamp' can't be assigned to the parameter type 'DateTime?'.  - test\features\crews\unit\job_model_test.dart:127:20 - argument_type_not_assignable
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\message_model_test.dart:4:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\notification_service_test.dart:7:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\notification_service_test.dart:8:8 - avoid_relative_lib_imports
+warning - The class 'DocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\unit\notification_service_test.dart:27:1 - subtype_of_sealed_class
+  error - 'MockDocumentSnapshot.get' ('dynamic Function(String)') isn't a valid override of 'DocumentSnapshot.get' ('dynamic Function(Object)') - test\features\crews\unit\notification_service_test.dart:44:11 - invalid_override
+warning - The method doesn't override an inherited method - test\features\crews\unit\notification_service_test.dart:47:8 - override_on_non_overriding_member
+warning - The method doesn't override an inherited method - test\features\crews\unit\notification_service_test.dart:50:25 - override_on_non_overriding_member
+warning - The class 'DocumentReference' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\unit\notification_service_test.dart:56:1 - subtype_of_sealed_class
+warning - The getter doesn't override an inherited getter - test\features\crews\unit\notification_service_test.dart:64:24 - override_on_non_overriding_member
+  error - 'MockDocumentReference.get' ('Future<DocumentSnapshot<Object?>> Function()') isn't a valid override of 'DocumentReference.get' ('Future<DocumentSnapshot<Object?>> Function([GetOptions?])') - test\features\crews\unit\notification_service_test.dart:67:28 - invalid_override
+  error - 'MockDocumentReference.update' ('Future<void> Function(Map<String, dynamic>)') isn't a valid override of 'DocumentReference.update' ('Future<void> Function(Map<Object, Object?>)') - test\features\crews\unit\notification_service_test.dart:70:16 - invalid_override
+  error - 'MockDocumentReference.set' ('Future<void> Function(Map<String, dynamic>, [SetOptions?])') isn't a valid override of 'DocumentReference.set' ('Future<void> Function(Object?, [SetOptions?])') - test\features\crews\unit\notification_service_test.dart:73:16 - invalid_override
+  error - 'MockDocumentReference.collection' ('CollectionReference<Object?> Function(String)') isn't a valid override of 'DocumentReference.collection' ('CollectionReference<Map<String, dynamic>> Function(String)') - test\features\crews\unit\notification_service_test.dart:79:23 - invalid_override
+warning - The class 'Query' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\unit\notification_service_test.dart:85:1 - subtype_of_sealed_class
+  error - 'MockCollectionReference.get' ('Query<Object?> Function()') isn't a valid override of 'Query.get' ('Future<QuerySnapshot<Object?>> Function([GetOptions?])') - test\features\crews\unit\notification_service_test.dart:93:9 - invalid_override
+  error - 'MockCollectionReference.get' ('Future<QuerySnapshot<Object?>> Function()') isn't a valid override of 'Query.get' ('Future<QuerySnapshot<Object?>> Function([GetOptions?])') - test\features\crews\unit\notification_service_test.dart:96:25 - invalid_override
+  error - The name 'get' is already defined - test\features\crews\unit\notification_service_test.dart:96:25 - duplicate_definition
+warning - The class 'Query' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\unit\notification_service_test.dart:102:1 - subtype_of_sealed_class
+  error - 'MockQuery.where' ('Query<Object?> Function(String, {dynamic arrayContains, List<dynamic>? arrayContainsAll, List<dynamic>? arrayContainsAny, dynamic isEqualTo, dynamic isGreaterThan, dynamic isGreaterThanOrEqualTo, dynamic isLessThan, dynamic isLessThanOrEqualTo, dynamic isNull})') isn't a valid override of 'Query.where' ('Query<Object?> Function(Object, {Object? arrayContains, Iterable<Object?>? arrayContainsAny, Object? isEqualTo, Object? isGreaterThan, Object? isGreaterThanOrEqualTo, Object? isLessThan, Object? isLessThanOrEqualTo, Object? isNotEqualTo, bool? isNull, Iterable<Object?>? whereIn, Iterable<Object?>? whereNotIn})') - test\features\crews\unit\notification_service_test.dart:104:9 - invalid_override
+  error - 'MockQuery.orderBy' ('Query<Object?> Function(String, {bool descending})') isn't a valid override of 'Query.orderBy' ('Query<Object?> Function(Object, {bool descending})') - test\features\crews\unit\notification_service_test.dart:107:9 - invalid_override
+  error - 'MockQuery.snapshots' ('Stream<QuerySnapshot<Object?>> Function()') isn't a valid override of 'Query.snapshots' ('Stream<QuerySnapshot<Object?>> Function({bool includeMetadataChanges, ListenSource source})') - test\features\crews\unit\notification_service_test.dart:113:25 - invalid_override
+warning - The class 'DocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\unit\notification_service_test.dart:130:1 - subtype_of_sealed_class
+warning - The class 'QueryDocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\unit\notification_service_test.dart:130:1 - subtype_of_sealed_class
+  error - 'MockQueryDocumentSnapshot.reference' ('DocumentSnapshot<Object?> Function()') isn't a valid override of 'DocumentSnapshot.reference' ('DocumentReference<Object?> Function()') - test\features\crews\unit\notification_service_test.dart:132:24 - invalid_override
+  error - Missing concrete implementations of 'class SharedPreferences.commit', 'class SharedPreferences.getDouble', 'class SharedPreferences.getStringList', 'class SharedPreferences.setDouble', and 1 more - test\features\crews\unit\notification_service_test.dart:141:7 - non_abstract_class_inherits_abstract_member
+   info - The private field _values could be 'final' - test\features\crews\unit\notification_service_test.dart:142:24 - prefer_final_fields
+  error - 'MockSharedPreferences.clear' ('Future<void> Function()') isn't a valid override of 'SharedPreferences.clear' ('Future<bool> Function()') - test\features\crews\unit\notification_service_test.dart:184:16 - invalid_override
+  error - Undefined class 'MockFirebaseFirestore' - test\features\crews\unit\notification_service_test.dart:196:8 - undefined_class
+  error - Undefined class 'MockFirebaseAuth' - test\features\crews\unit\notification_service_test.dart:197:8 - undefined_class
+  error - The function 'MockFirebaseFirestore' isn't defined - test\features\crews\unit\notification_service_test.dart:203:21 - undefined_function
+  error - The function 'MockFirebaseAuth' isn't defined - test\features\crews\unit\notification_service_test.dart:204:16 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:214:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:215:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:227:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:228:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:232:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:233:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:234:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:247:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:255:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:256:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:268:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:269:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:270:7 - undefined_function
+  error - Undefined name 'any' - test\features\crews\unit\notification_service_test.dart:270:26 - undefined_identifier
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:275:7 - undefined_function
+  error - The function 'argThat' isn't defined - test\features\crews\unit\notification_service_test.dart:275:28 - undefined_function
+  error - The function 'isMapContaining' isn't defined - test\features\crews\unit\notification_service_test.dart:275:36 - undefined_function
+  error - Undefined name 'any' - test\features\crews\unit\notification_service_test.dart:277:22 - undefined_identifier
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:282:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:283:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:285:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:289:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:290:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:291:7 - undefined_function
+  error - Undefined name 'any' - test\features\crews\unit\notification_service_test.dart:291:26 - undefined_identifier
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:296:7 - undefined_function
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:297:7 - undefined_function
+  error - The function 'argThat' isn't defined - test\features\crews\unit\notification_service_test.dart:297:28 - undefined_function
+  error - The function 'isMapContaining' isn't defined - test\features\crews\unit\notification_service_test.dart:297:36 - undefined_function
+  error - Undefined name 'any' - test\features\crews\unit\notification_service_test.dart:299:22 - undefined_identifier
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:306:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:307:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:308:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:309:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:310:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:313:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:314:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:317:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:321:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:322:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:323:7 - undefined_function
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:329:7 - undefined_function
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:330:7 - undefined_function
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:331:7 - undefined_function
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:332:7 - undefined_function
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:333:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:339:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:340:7 - undefined_function
+  error - Undefined name 'any' - test\features\crews\unit\notification_service_test.dart:340:27 - undefined_identifier
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:350:7 - undefined_function
+  error - The function 'argThat' isn't defined - test\features\crews\unit\notification_service_test.dart:350:29 - undefined_function
+  error - The function 'isMapContaining' isn't defined - test\features\crews\unit\notification_service_test.dart:350:37 - undefined_function
+  error - Undefined name 'any' - test\features\crews\unit\notification_service_test.dart:356:22 - undefined_identifier
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:364:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:365:7 - undefined_function
+  error - Undefined name 'any' - test\features\crews\unit\notification_service_test.dart:365:27 - undefined_identifier
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:376:7 - undefined_function
+  error - The function 'argThat' isn't defined - test\features\crews\unit\notification_service_test.dart:376:29 - undefined_function
+  error - The function 'isMapContaining' isn't defined - test\features\crews\unit\notification_service_test.dart:376:37 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:387:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:388:7 - undefined_function
+  error - Undefined name 'any' - test\features\crews\unit\notification_service_test.dart:388:27 - undefined_identifier
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:397:7 - undefined_function
+  error - The function 'argThat' isn't defined - test\features\crews\unit\notification_service_test.dart:397:29 - undefined_function
+  error - The function 'isMapContaining' isn't defined - test\features\crews\unit\notification_service_test.dart:397:37 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:408:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:409:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:410:7 - undefined_function
+  error - Undefined name 'any' - test\features\crews\unit\notification_service_test.dart:410:26 - undefined_identifier
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:415:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:424:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:428:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:429:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:430:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:431:7 - undefined_function
+  error - The function 'MockWriteBatch' isn't defined - test\features\crews\unit\notification_service_test.dart:433:21 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:434:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:435:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:436:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:437:7 - undefined_function
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:442:7 - undefined_function
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:443:7 - undefined_function
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:444:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:451:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:455:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:456:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:457:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:458:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:467:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:476:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:477:7 - undefined_function
+  error - The function 'when' isn't defined - test\features\crews\unit\notification_service_test.dart:478:7 - undefined_function
+warning - The value of the local variable 'isQuiet' isn't used - test\features\crews\unit\notification_service_test.dart:485:13 - unused_local_variable
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:487:7 - undefined_function
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:488:7 - undefined_function
+  error - The function 'verify' isn't defined - test\features\crews\unit\notification_service_test.dart:489:7 - undefined_function
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\post_model_test.dart:4:8 - avoid_relative_lib_imports
+   info - Can't use a relative path to import a library in 'lib' - test\features\crews\unit\user_model_test.dart:3:8 - avoid_relative_lib_imports
+warning - The class 'DocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\features\crews\unit\user_model_test.dart:5:1 - subtype_of_sealed_class
+  error - Missing concrete implementations of 'abstract class DocumentSnapshot<T extends Object?>.[]' and 'getter abstract class DocumentSnapshot<T extends Object?>.metadata' - test\features\crews\unit\user_model_test.dart:5:7 - non_abstract_class_inherits_abstract_member
+  error - Class 'MockDocumentSnapshot' can't define field 'data' and have method 'DocumentSnapshot.data' with the same name - test\features\crews\unit\user_model_test.dart:10:29 - conflicting_field_and_method
+  error - 'MockDocumentSnapshot.reference' ('DocumentSnapshot<Object?> Function()') isn't a valid override of 'DocumentSnapshot.reference' ('DocumentReference<Object?> Function()') - test\features\crews\unit\user_model_test.dart:16:24 - invalid_override
+  error - 'MockDocumentSnapshot.get' ('dynamic Function(String)') isn't a valid override of 'DocumentSnapshot.get' ('dynamic Function(Object)') - test\features\crews\unit\user_model_test.dart:19:11 - invalid_override
+warning - The method doesn't override an inherited method - test\features\crews\unit\user_model_test.dart:22:8 - override_on_non_overriding_member
+warning - The method doesn't override an inherited method - test\features\crews\unit\user_model_test.dart:25:25 - override_on_non_overriding_member
+  error - The named parameter 'betterBenefits' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:148:20 - missing_required_argument
+  error - The named parameter 'careerAdvancements' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:148:20 - missing_required_argument
+  error - The named parameter 'findLongTermWork' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:148:20 - missing_required_argument
+  error - The named parameter 'higherPayRate' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:148:20 - missing_required_argument
+  error - The named parameter 'learnNewSkill' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:148:20 - missing_required_argument
+  error - The named parameter 'networkWithOthers' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:148:20 - missing_required_argument
+  error - The named parameter 'travelToNewLocation' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:148:20 - missing_required_argument
+  error - The named parameter 'betterBenefits' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:176:20 - missing_required_argument
+  error - The named parameter 'careerAdvancements' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:176:20 - missing_required_argument
+  error - The named parameter 'findLongTermWork' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:176:20 - missing_required_argument
+  error - The named parameter 'higherPayRate' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:176:20 - missing_required_argument
+  error - The named parameter 'learnNewSkill' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:176:20 - missing_required_argument
+  error - The named parameter 'networkWithOthers' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:176:20 - missing_required_argument
+  error - The named parameter 'travelToNewLocation' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:176:20 - missing_required_argument
+  error - The named parameter 'betterBenefits' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:194:20 - missing_required_argument
+  error - The named parameter 'careerAdvancements' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:194:20 - missing_required_argument
+  error - The named parameter 'findLongTermWork' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:194:20 - missing_required_argument
+  error - The named parameter 'higherPayRate' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:194:20 - missing_required_argument
+  error - The named parameter 'learnNewSkill' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:194:20 - missing_required_argument
+  error - The named parameter 'networkWithOthers' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:194:20 - missing_required_argument
+  error - The named parameter 'travelToNewLocation' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:194:20 - missing_required_argument
+  error - The named parameter 'betterBenefits' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:210:20 - missing_required_argument
+  error - The named parameter 'careerAdvancements' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:210:20 - missing_required_argument
+  error - The named parameter 'findLongTermWork' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:210:20 - missing_required_argument
+  error - The named parameter 'higherPayRate' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:210:20 - missing_required_argument
+  error - The named parameter 'learnNewSkill' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:210:20 - missing_required_argument
+  error - The named parameter 'networkWithOthers' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:210:20 - missing_required_argument
+  error - The named parameter 'travelToNewLocation' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:210:20 - missing_required_argument
+  error - The named parameter 'betterBenefits' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:226:20 - missing_required_argument
+  error - The named parameter 'careerAdvancements' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:226:20 - missing_required_argument
+  error - The named parameter 'findLongTermWork' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:226:20 - missing_required_argument
+  error - The named parameter 'higherPayRate' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:226:20 - missing_required_argument
+  error - The named parameter 'learnNewSkill' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:226:20 - missing_required_argument
+  error - The named parameter 'networkWithOthers' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:226:20 - missing_required_argument
+  error - The named parameter 'travelToNewLocation' is required, but there's no corresponding argument - test\features\crews\unit\user_model_test.dart:226:20 - missing_required_argument
+  error - The named parameter 'jobDetails' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:60:12 - missing_required_argument
+  error - The named parameter 'sharerId' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:60:12 - missing_required_argument
+  error - The named parameter 'betterBenefits' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:86:12 - missing_required_argument
+  error - The named parameter 'careerAdvancements' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:86:12 - missing_required_argument
+  error - The named parameter 'findLongTermWork' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:86:12 - missing_required_argument
+  error - The named parameter 'firstName' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:86:12 - missing_required_argument
+  error - The named parameter 'higherPayRate' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:86:12 - missing_required_argument
+  error - The named parameter 'homeLocal' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:86:12 - missing_required_argument
+  error - The named parameter 'lastActive' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:86:12 - missing_required_argument
+  error - The named parameter 'lastName' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:86:12 - missing_required_argument
+  error - The named parameter 'learnNewSkill' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:86:12 - missing_required_argument
+  error - The named parameter 'networkWithOthers' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:86:12 - missing_required_argument
+  error - The named parameter 'role' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:86:12 - missing_required_argument
+  error - The named parameter 'travelToNewLocation' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:86:12 - missing_required_argument
+  error - The named parameter 'username' is required, but there's no corresponding argument - test\fixtures\mock_data.dart:86:12 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'String'.  - test\fixtures\mock_data.dart:90:20 - argument_type_not_assignable
+  error - The class 'LocalsRecord' doesn't have an unnamed constructor - test\fixtures\mock_data.dart:111:12 - new_with_undefined_constructor_default
+  error - The property 'first' can't be unconditionally accessed because the receiver can be 'null' - test\fixtures\mock_data.dart:171:68 - unchecked_use_of_nullable_value
+  error - The method 'MockUserCredential' isn't defined for the type 'TestAuthService' - test\helpers\test_helpers.dart:37:12 - undefined_method
+   info - Use interpolation to compose strings and values - test\helpers\test_helpers.dart:64:36 - prefer_interpolation_to_compose_strings
+warning - The getter doesn't override an inherited getter - test\helpers\test_helpers.dart:137:12 - override_on_non_overriding_member
+warning - The getter doesn't override an inherited getter - test\helpers\test_helpers.dart:140:20 - override_on_non_overriding_member
+  error - Undefined class 'AppStateProvider' - test\helpers\test_helpers.dart:162:9 - undefined_class
+  error - Undefined class 'JobFilterProvider' - test\helpers\test_helpers.dart:163:9 - undefined_class
+   info - Parameter 'key' could be a super parameter - test\helpers\test_helpers.dart:165:9 - use_super_parameters
+  error - The name 'JobFilterProvider' isn't a type, so it can't be used as a type argument - test\helpers\test_helpers.dart:188:32 - non_type_as_type_argument
+  error - The method 'JobFilterProvider' isn't defined for the type 'TestAppWrapper' - test\helpers\test_helpers.dart:189:47 - undefined_method
+  error - The name 'AppStateProvider' isn't a type, so it can't be used as a type argument - test\helpers\test_helpers.dart:192:34 - non_type_as_type_argument
+  error - The method 'AppStateProvider' isn't defined for the type 'TestAppWrapper' - test\helpers\test_helpers.dart:195:15 - undefined_method
+  error - The method 'AppStateProvider' isn't defined for the type 'TestAppWrapper' - test\helpers\test_helpers.dart:203:15 - undefined_method
+  error - Undefined class 'AppStateProvider' - test\helpers\test_helpers.dart:223:3 - undefined_class
+  error - Undefined class 'JobFilterProvider' - test\helpers\test_helpers.dart:224:3 - undefined_class
+   info - The 'child' argument should be last in widget constructor invocations - test\helpers\test_helpers.dart:227:5 - sort_child_properties_last
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/providers/app_state_provider.dart' - test\helpers\widget_test_helpers.dart:5:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/providers/job_filter_provider.dart' - test\helpers\widget_test_helpers.dart:6:8 - uri_does_not_exist
+  error - Undefined class 'AppStateProvider' - test\helpers\widget_test_helpers.dart:28:5 - undefined_class
+  error - Undefined class 'JobFilterProvider' - test\helpers\widget_test_helpers.dart:29:5 - undefined_class
+  error - The name 'JobFilterProvider' isn't a type, so it can't be used as a type argument - test\helpers\widget_test_helpers.dart:44:34 - non_type_as_type_argument
+  error - The method 'JobFilterProvider' isn't defined for the type 'WidgetTestHelpers' - test\helpers\widget_test_helpers.dart:45:49 - undefined_method
+  error - The name 'AppStateProvider' isn't a type, so it can't be used as a type argument - test\helpers\widget_test_helpers.dart:48:36 - non_type_as_type_argument
+  error - The method 'AppStateProvider' isn't defined for the type 'WidgetTestHelpers' - test\helpers\widget_test_helpers.dart:51:17 - undefined_method
+  error - The method 'AppStateProvider' isn't defined for the type 'WidgetTestHelpers' - test\helpers\widget_test_helpers.dart:59:17 - undefined_method
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - test\integration\crew_flow_test.dart:127:35 - deprecated_member_use
+   info - The imported package 'riverpod' isn't a dependency of the importing package - test\integration_test\tailboard_flow_test.dart:6:8 - depend_on_referenced_packages
+  error - There isn't a setter named 'instance' in class 'FirebaseFirestore' - test\integration_test\tailboard_flow_test.dart:17:25 - assignment_to_final_no_setter
+  error - Undefined name 'TextField' - test\integration_test\tailboard_flow_test.dart:39:42 - undefined_identifier
+  error - Undefined name 'TextField' - test\integration_test\tailboard_flow_test.dart:41:42 - undefined_identifier
+  error - Undefined name 'TextField' - test\integration_test\tailboard_flow_test.dart:43:42 - undefined_identifier
+  error - Undefined name 'TextField' - test\integration_test\tailboard_flow_test.dart:45:42 - undefined_identifier
+  error - Undefined name 'TabBar' - test\integration_test\tailboard_flow_test.dart:55:26 - undefined_identifier
+  error - Undefined name 'FloatingActionButton' - test\integration_test\tailboard_flow_test.dart:85:26 - undefined_identifier
+  error - The named parameter 'jobDetails' is required, but there's no corresponding argument - test\job_details_dialog_test.dart:10:21 - missing_required_argument
+  error - The named parameter 'sharerId' is required, but there's no corresponding argument - test\job_details_dialog_test.dart:10:21 - missing_required_argument
+  error - The named parameter 'jobDetails' is required, but there's no corresponding argument - test\job_details_dialog_test.dart:69:24 - missing_required_argument
+  error - The named parameter 'sharerId' is required, but there's no corresponding argument - test\job_details_dialog_test.dart:69:24 - missing_required_argument
+warning - Unused import: 'package:shared_preferences/shared_preferences.dart' - test\performance\backend_performance_test.dart:12:8 - unused_import
+warning - Unused import: 'package:connectivity_plus/connectivity_plus.dart' - test\performance\backend_performance_test.dart:13:8 - unused_import
+warning - The value of the local variable 'mockAuth' isn't used - test\performance\backend_performance_test.dart:21:27 - unused_local_variable
+  error - Too many positional arguments: 1 expected, but 2 found - test\performance\backend_performance_test.dart:334:72 - extra_positional_arguments
+warning - The value of the local variable 'userLng' isn't used - test\performance\backend_performance_test.dart:367:15 - unused_local_variable
+  error - The named parameter 'jobDetails' is required, but there's no corresponding argument - test\performance\backend_performance_test.dart:592:10 - missing_required_argument
+  error - The named parameter 'sharerId' is required, but there's no corresponding argument - test\performance\backend_performance_test.dart:592:10 - missing_required_argument
+warning - The value of the local variable 'firestoreService' isn't used - test\performance\firestore_load_test.dart:20:27 - unused_local_variable
+warning - The value of the local variable 'mockAuth' isn't used - test\performance\firestore_load_test.dart:21:27 - unused_local_variable
+   info - The parameter name 'sum' matches a visible type name - test\performance\firestore_load_test.dart:79:28 - avoid_types_as_parameter_names
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:83:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:140:9 - avoid_print
+   info - The parameter name 'sum' matches a visible type name - test\performance\firestore_load_test.dart:167:44 - avoid_types_as_parameter_names
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:171:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:207:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:230:9 - avoid_print
+  error - Too many positional arguments: 1 expected, but 2 found - test\performance\firestore_load_test.dart:239:72 - extra_positional_arguments
+  error - The named parameter 'jobDetails' is required, but there's no corresponding argument - test\performance\firestore_load_test.dart:247:20 - missing_required_argument
+  error - The named parameter 'sharerId' is required, but there's no corresponding argument - test\performance\firestore_load_test.dart:247:20 - missing_required_argument
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:277:9 - avoid_print
+  error - Too many positional arguments: 1 expected, but 2 found - test\performance\firestore_load_test.dart:284:72 - extra_positional_arguments
+  error - The named parameter 'jobDetails' is required, but there's no corresponding argument - test\performance\firestore_load_test.dart:294:13 - missing_required_argument
+  error - The named parameter 'sharerId' is required, but there's no corresponding argument - test\performance\firestore_load_test.dart:294:13 - missing_required_argument
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:326:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:373:9 - avoid_print
+   info - Unnecessary braces in a string interpolation - test\performance\firestore_load_test.dart:373:42 - unnecessary_brace_in_string_interps
+warning - The value of the local variable 'timer' isn't used - test\performance\firestore_load_test.dart:385:15 - unused_local_variable
+   info - The parameter name 'sum' matches a visible type name - test\performance\firestore_load_test.dart:418:62 - avoid_types_as_parameter_names
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:425:9 - avoid_print
+   info - Unnecessary braces in a string interpolation - test\performance\firestore_load_test.dart:425:34 - unnecessary_brace_in_string_interps
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:433:9 - avoid_print
+warning - A value of type 'Null' can't be returned by the 'onError' handler because it must be assignable to 'FutureOr<QuerySnapshot<Map<String, dynamic>>>' - test\performance\firestore_load_test.dart:441:34 - invalid_return_type_for_catch_error
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:454:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:479:9 - avoid_print
+   info - Unnecessary braces in a string interpolation - test\performance\firestore_load_test.dart:479:28 - unnecessary_brace_in_string_interps
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:480:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:521:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:522:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:523:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:531:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:548:9 - avoid_print
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:557:3 - avoid_print
+   info - Don't invoke 'print' in production code - test\performance\firestore_load_test.dart:606:3 - avoid_print
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/providers/app_state_provider.dart' - test\presentation\providers\app_state_provider_test.dart:2:8 - uri_does_not_exist
+  error - Undefined class 'AppStateProvider' - test\presentation\providers\app_state_provider_test.dart:16:8 - undefined_class
+warning - The value of the local variable 'fakeFirestore' isn't used - test\presentation\providers\app_state_provider_test.dart:20:30 - unused_local_variable
+  error - The function 'AppStateProvider' isn't defined - test\presentation\providers\app_state_provider_test.dart:34:24 - undefined_function
+  error - The function 'AppStateProvider' isn't defined - test\presentation\providers\app_state_provider_test.dart:73:26 - undefined_function
+  error - The function 'AppStateProvider' isn't defined - test\presentation\providers\app_state_provider_test.dart:96:26 - undefined_function
+  error - The function 'AppStateProvider' isn't defined - test\presentation\providers\app_state_provider_test.dart:111:26 - undefined_function
+  error - The function 'AppStateProvider' isn't defined - test\presentation\providers\app_state_provider_test.dart:131:26 - undefined_function
+  error - The named parameter 'classifications' isn't defined - test\presentation\providers\app_state_provider_test.dart:164:9 - undefined_named_parameter
+  error - The named parameter 'locals' isn't defined - test\presentation\providers\app_state_provider_test.dart:165:9 - undefined_named_parameter
+  error - The argument type 'Null' can't be assigned to the parameter type 'int'.  - test\presentation\providers\app_state_provider_test.dart:166:16 - argument_type_not_assignable
+  error - The named parameter 'lastDocument' isn't defined - test\presentation\providers\app_state_provider_test.dart:167:9 - undefined_named_parameter
+  error - The named parameter 'classifications' isn't defined - test\presentation\providers\app_state_provider_test.dart:182:9 - undefined_named_parameter
+  error - The named parameter 'locals' isn't defined - test\presentation\providers\app_state_provider_test.dart:183:9 - undefined_named_parameter
+  error - The argument type 'Null' can't be assigned to the parameter type 'int'.  - test\presentation\providers\app_state_provider_test.dart:184:16 - argument_type_not_assignable
+  error - The named parameter 'lastDocument' isn't defined - test\presentation\providers\app_state_provider_test.dart:185:9 - undefined_named_parameter
+  error - The named parameter 'classifications' isn't defined - test\presentation\providers\app_state_provider_test.dart:222:9 - undefined_named_parameter
+  error - The named parameter 'locals' isn't defined - test\presentation\providers\app_state_provider_test.dart:223:9 - undefined_named_parameter
+  error - The argument type 'Null' can't be assigned to the parameter type 'int'.  - test\presentation\providers\app_state_provider_test.dart:224:16 - argument_type_not_assignable
+  error - The named parameter 'lastDocument' isn't defined - test\presentation\providers\app_state_provider_test.dart:225:9 - undefined_named_parameter
+  error - The named parameter 'classifications' isn't defined - test\presentation\providers\app_state_provider_test.dart:229:9 - undefined_named_parameter
+  error - The named parameter 'locals' isn't defined - test\presentation\providers\app_state_provider_test.dart:230:9 - undefined_named_parameter
+  error - The argument type 'Null' can't be assigned to the parameter type 'int'.  - test\presentation\providers\app_state_provider_test.dart:231:16 - argument_type_not_assignable
+  error - The named parameter 'lastDocument' isn't defined - test\presentation\providers\app_state_provider_test.dart:232:9 - undefined_named_parameter
+warning - The value of the local variable 'initialJobs' isn't used - test\presentation\providers\app_state_provider_test.dart:250:13 - unused_local_variable
+  error - The named parameter 'classifications' isn't defined - test\presentation\providers\app_state_provider_test.dart:268:9 - undefined_named_parameter
+  error - The named parameter 'locals' isn't defined - test\presentation\providers\app_state_provider_test.dart:269:9 - undefined_named_parameter
+  error - The argument type 'Null' can't be assigned to the parameter type 'int'.  - test\presentation\providers\app_state_provider_test.dart:270:16 - argument_type_not_assignable
+  error - The named parameter 'lastDocument' isn't defined - test\presentation\providers\app_state_provider_test.dart:271:9 - undefined_named_parameter
+  error - The argument type 'Null' can't be assigned to the parameter type 'int'.  - test\presentation\providers\app_state_provider_test.dart:301:16 - argument_type_not_assignable
+warning - The value of the local variable 'searchResults' isn't used - test\presentation\providers\app_state_provider_test.dart:316:13 - unused_local_variable
+  error - The argument type 'Null' can't be assigned to the parameter type 'String'.  - test\presentation\providers\app_state_provider_test.dart:324:9 - argument_type_not_assignable
+  error - The argument type 'Null' can't be assigned to the parameter type 'int'.  - test\presentation\providers\app_state_provider_test.dart:325:16 - argument_type_not_assignable
+  error - The argument type 'Null' can't be assigned to the parameter type 'int'.  - test\presentation\providers\app_state_provider_test.dart:334:16 - argument_type_not_assignable
+  error - The named parameter 'classifications' isn't defined - test\presentation\providers\app_state_provider_test.dart:361:9 - undefined_named_parameter
+  error - The named parameter 'locals' isn't defined - test\presentation\providers\app_state_provider_test.dart:362:9 - undefined_named_parameter
+  error - The argument type 'Null' can't be assigned to the parameter type 'int'.  - test\presentation\providers\app_state_provider_test.dart:363:16 - argument_type_not_assignable
+  error - The named parameter 'lastDocument' isn't defined - test\presentation\providers\app_state_provider_test.dart:364:9 - undefined_named_parameter
+  error - The named parameter 'classifications' isn't defined - test\presentation\providers\app_state_provider_test.dart:377:9 - undefined_named_parameter
+  error - The named parameter 'locals' isn't defined - test\presentation\providers\app_state_provider_test.dart:378:9 - undefined_named_parameter
+  error - The argument type 'Null' can't be assigned to the parameter type 'int'.  - test\presentation\providers\app_state_provider_test.dart:379:16 - argument_type_not_assignable
+  error - The named parameter 'lastDocument' isn't defined - test\presentation\providers\app_state_provider_test.dart:380:9 - undefined_named_parameter
+  error - The function 'StreamController' isn't defined - test\presentation\providers\app_state_provider_test.dart:388:26 - undefined_function
+  error - The function 'AppStateProvider' isn't defined - test\presentation\providers\app_state_provider_test.dart:392:26 - undefined_function
+  error - The named parameter 'classifications' isn't defined - test\presentation\providers\app_state_provider_test.dart:424:9 - undefined_named_parameter
+  error - The named parameter 'locals' isn't defined - test\presentation\providers\app_state_provider_test.dart:425:9 - undefined_named_parameter
+  error - The argument type 'Null' can't be assigned to the parameter type 'int'.  - test\presentation\providers\app_state_provider_test.dart:426:16 - argument_type_not_assignable
+  error - The named parameter 'lastDocument' isn't defined - test\presentation\providers\app_state_provider_test.dart:427:9 - undefined_named_parameter
+  error - The named parameter 'classifications' isn't defined - test\presentation\providers\app_state_provider_test.dart:448:9 - undefined_named_parameter
+  error - The named parameter 'locals' isn't defined - test\presentation\providers\app_state_provider_test.dart:449:9 - undefined_named_parameter
+  error - The argument type 'Null' can't be assigned to the parameter type 'int'.  - test\presentation\providers\app_state_provider_test.dart:450:16 - argument_type_not_assignable
+  error - The named parameter 'lastDocument' isn't defined - test\presentation\providers\app_state_provider_test.dart:451:9 - undefined_named_parameter
+warning - The class 'DocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\presentation\providers\app_state_provider_test.dart:486:1 - subtype_of_sealed_class
+warning - The class 'QueryDocumentSnapshot' shouldn't be extended, mixed in, or implemented because it's sealed - test\presentation\providers\app_state_provider_test.dart:486:1 - subtype_of_sealed_class
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/providers/job_filter_provider.dart' - test\presentation\providers\job_filter_provider_test.dart:2:8 - uri_does_not_exist
+  error - Undefined class 'JobFilterProvider' - test\presentation\providers\job_filter_provider_test.dart:9:8 - undefined_class
+  error - The function 'JobFilterProvider' isn't defined - test\presentation\providers\job_filter_provider_test.dart:14:22 - undefined_function
+  error - The function 'JobFilterProvider' isn't defined - test\presentation\providers\job_filter_provider_test.dart:51:24 - undefined_function
+warning - The value of the local variable 'presetA' isn't used - test\presentation\providers\job_filter_provider_test.dart:298:13 - unused_local_variable
+  error - Target of URI doesn't exist: '../../../test_utils/test_helpers.dart' - test\presentation\screens\auth\auth_screen_test.dart:7:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: '../../../test_utils/test_helpers.mocks.dart' - test\presentation\screens\auth\auth_screen_test.dart:8:8 - uri_does_not_exist
+  error - Undefined class 'MockAuthService' - test\presentation\screens\auth\auth_screen_test.dart:11:8 - undefined_class
+  error - Undefined class 'MockAppStateProvider' - test\presentation\screens\auth\auth_screen_test.dart:12:8 - undefined_class
+  error - The function 'MockAuthService' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:15:23 - undefined_function
+  error - The function 'MockAppStateProvider' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:16:28 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:24:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:45:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:67:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:91:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:124:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:158:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:197:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:225:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:243:9 - undefined_function
+  error - The getter 'obscureText' isn't defined for the type 'TextFormField' - test\presentation\screens\auth\auth_screen_test.dart:256:24 - undefined_getter
+  error - The getter 'obscureText' isn't defined for the type 'TextFormField' - test\presentation\screens\auth\auth_screen_test.dart:266:33 - undefined_getter
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:274:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:290:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:314:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\auth\auth_screen_test.dart:331:9 - undefined_function
+  error - Undefined name 'LogicalKeyboardKey' - test\presentation\screens\auth\auth_screen_test.dart:340:33 - undefined_identifier
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/providers/app_state_provider.dart' - test\presentation\screens\home\home_screen_test.dart:8:8 - uri_does_not_exist
+  error - Undefined class 'MockAppStateProvider' - test\presentation\screens\home\home_screen_test.dart:19:8 - undefined_class
+  error - Undefined class 'MockGoRouter' - test\presentation\screens\home\home_screen_test.dart:20:8 - undefined_class
+warning - The value of the local variable 'mockGoRouter' isn't used - test\presentation\screens\home\home_screen_test.dart:20:21 - unused_local_variable
+  error - The function 'MockAppStateProvider' isn't defined - test\presentation\screens\home\home_screen_test.dart:23:28 - undefined_function
+  error - The function 'MockGoRouter' isn't defined - test\presentation\screens\home\home_screen_test.dart:24:20 - undefined_function
+warning - This function has a nullable return type of 'FutureOr<Object?>', but ends without returning a value - test\presentation\screens\home\home_screen_test.dart:30:67 - body_might_complete_normally_nullable
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\screens\home\home_screen_test.dart:34:30 - undefined_method
+  error - The name 'AppStateProvider' isn't a type, so it can't be used as a type argument - test\presentation\screens\home\home_screen_test.dart:35:37 - non_type_as_type_argument
+  error - The function 'atLeast' isn't defined - test\presentation\screens\home\home_screen_test.dart:297:57 - undefined_function
+warning - This function has a nullable return type of 'FutureOr<Object?>', but ends without returning a value - test\presentation\screens\home\home_screen_test.dart:349:69 - body_might_complete_normally_nullable
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/screens/jobs/optimized_jobs_screen.dart' - test\presentation\screens\jobs\jobs_screen_test.dart:6:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/providers/app_state_provider.dart' - test\presentation\screens\jobs\jobs_screen_test.dart:7:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/providers/job_filter_provider.dart' - test\presentation\screens\jobs\jobs_screen_test.dart:8:8 - uri_does_not_exist
+  error - Undefined class 'MockJobsProvider' - test\presentation\screens\jobs\jobs_screen_test.dart:20:8 - undefined_class
+  error - Undefined class 'MockJobFilterProvider' - test\presentation\screens\jobs\jobs_screen_test.dart:21:8 - undefined_class
+  error - The function 'MockJobsProvider' isn't defined - test\presentation\screens\jobs\jobs_screen_test.dart:24:24 - undefined_function
+  error - The function 'MockJobFilterProvider' isn't defined - test\presentation\screens\jobs\jobs_screen_test.dart:25:29 - undefined_function
+warning - This function has a nullable return type of 'FutureOr<Object?>', but ends without returning a value - test\presentation\screens\jobs\jobs_screen_test.dart:32:60 - body_might_complete_normally_nullable
+warning - This function has a nullable return type of 'FutureOr<Object?>', but ends without returning a value - test\presentation\screens\jobs\jobs_screen_test.dart:33:64 - body_might_complete_normally_nullable
+warning - This function has a nullable return type of 'FutureOr<Object?>', but ends without returning a value - test\presentation\screens\jobs\jobs_screen_test.dart:34:63 - body_might_complete_normally_nullable
+  error - Undefined name 'FilterCriteria' - test\presentation\screens\jobs\jobs_screen_test.dart:36:58 - undefined_identifier
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\screens\jobs\jobs_screen_test.dart:42:30 - undefined_method
+  error - The name 'JobsProvider' isn't a type, so it can't be used as a type argument - test\presentation\screens\jobs\jobs_screen_test.dart:45:34 - non_type_as_type_argument
+  error - The name 'JobFilterProvider' isn't a type, so it can't be used as a type argument - test\presentation\screens\jobs\jobs_screen_test.dart:46:34 - non_type_as_type_argument
+  error - The name 'OptimizedJobsScreen' isn't a class - test\presentation\screens\jobs\jobs_screen_test.dart:48:22 - creation_with_non_type
+  error - The function 'FilterCriteria' isn't defined - test\presentation\screens\jobs\jobs_screen_test.dart:177:23 - undefined_function
+  error - The function 'FilterCriteria' isn't defined - test\presentation\screens\jobs\jobs_screen_test.dart:194:23 - undefined_function
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/providers/app_state_provider.dart' - test\presentation\screens\locals\locals_screen_test.dart:7:8 - uri_does_not_exist
+  error - Undefined class 'MockLocalsProvider' - test\presentation\screens\locals\locals_screen_test.dart:18:8 - undefined_class
+  error - The function 'MockLocalsProvider' isn't defined - test\presentation\screens\locals\locals_screen_test.dart:21:26 - undefined_function
+warning - This function has a nullable return type of 'FutureOr<Object?>', but ends without returning a value - test\presentation\screens\locals\locals_screen_test.dart:31:64 - body_might_complete_normally_nullable
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\screens\locals\locals_screen_test.dart:38:30 - undefined_method
+  error - The name 'LocalsProvider' isn't a type, so it can't be used as a type argument - test\presentation\screens\locals\locals_screen_test.dart:39:37 - non_type_as_type_argument
+  error - Target of URI doesn't exist: '../../../test_utils/test_helpers.dart' - test\presentation\screens\splash\splash_screen_test.dart:7:8 - uri_does_not_exist
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\splash\splash_screen_test.dart:14:31 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\splash\splash_screen_test.dart:46:31 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\splash\splash_screen_test.dart:58:31 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\splash\splash_screen_test.dart:78:31 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\splash\splash_screen_test.dart:103:31 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\splash\splash_screen_test.dart:109:31 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\splash\splash_screen_test.dart:121:31 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\splash\splash_screen_test.dart:131:31 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\splash\splash_screen_test.dart:145:31 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\screens\splash\splash_screen_test.dart:166:31 - undefined_function
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:12:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:29:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:52:27 - undefined_method
+  error - The named parameter 'color' isn't defined - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:53:48 - undefined_named_parameter
+  error - The getter 'color' isn't defined for the type 'ElectricalRotationMeter' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:62:26 - undefined_getter
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:68:27 - undefined_method
+  error - The getter 'color' isn't defined for the type 'ElectricalRotationMeter' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:78:26 - undefined_getter
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:86:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:115:27 - undefined_method
+  error - The named parameter 'animationDuration' isn't defined - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:117:13 - undefined_named_parameter
+  error - The getter 'animationDuration' isn't defined for the type 'ElectricalRotationMeter' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:126:26 - undefined_getter
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:132:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:140:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:154:27 - undefined_method
+  error - The getter 'color' isn't defined for the type 'ElectricalRotationMeter' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:164:26 - undefined_getter
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:170:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:189:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:210:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:230:29 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:237:29 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:252:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:265:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:278:27 - undefined_method
+  error - The named parameter 'color' isn't defined - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:279:48 - undefined_named_parameter
+  error - The getter 'color' isn't defined for the type 'ElectricalRotationMeter' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:288:26 - undefined_getter
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:296:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:309:27 - undefined_method
+  error - A value of type 'FakeAccessibilityFeatures' can't be assigned to a variable of type 'AccessibilityFeatures' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:326:11 - invalid_assignment
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:330:27 - undefined_method
+  error - Classes and mixins can only implement other classes and mixins - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:342:44 - implements_non_class
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:354:14 - override_on_non_overriding_member
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:357:14 - override_on_non_overriding_member
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:360:14 - override_on_non_overriding_member
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:363:14 - override_on_non_overriding_member
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:366:14 - override_on_non_overriding_member
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:369:14 - override_on_non_overriding_member
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\electrical_rotation_meter_test.dart:372:14 - override_on_non_overriding_member
+  error - Target of URI doesn't exist: '../../test_utils/test_helpers.dart' - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:6:8 - uri_does_not_exist
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:16:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:43:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:68:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:95:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:118:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:152:9 - undefined_function
+warning - The value of the local variable 'foundOnStateColor' isn't used - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:168:12 - unused_local_variable
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:189:9 - undefined_function
+warning - The value of the local variable 'foundOffStateColor' isn't used - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:205:12 - unused_local_variable
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:228:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:250:9 - undefined_function
+  error - The named parameter 'amperage' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:254:13 - undefined_named_parameter
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:272:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:305:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:335:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:349:9 - undefined_function
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:369:9 - undefined_function
+  error - The named parameter 'showSafetyIndicators' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:373:13 - undefined_named_parameter
+  error - The function 'createTestWidget' isn't defined - test\presentation\widgets\electrical_components\jj_circuit_breaker_switch_test.dart:395:9 - undefined_function
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:12:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:30:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:57:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:73:27 - undefined_method
+  error - The getter 'sparkColor' isn't defined for the type 'PowerLineLoader' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:84:27 - undefined_getter
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:92:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:121:27 - undefined_method
+  error - The named parameter 'animationDuration' isn't defined - test\presentation\widgets\electrical_components\power_line_loader_test.dart:123:13 - undefined_named_parameter
+  error - The getter 'animationDuration' isn't defined for the type 'PowerLineLoader' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:132:27 - undefined_getter
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:138:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:156:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:164:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:178:27 - undefined_method
+  error - The getter 'sparkColor' isn't defined for the type 'PowerLineLoader' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:192:27 - undefined_getter
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:198:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:221:27 - undefined_method
+  error - The named parameter 'sparkColor' isn't defined - test\presentation\widgets\electrical_components\power_line_loader_test.dart:234:21 - undefined_named_parameter
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:253:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:281:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:305:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:322:29 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:329:29 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:344:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:357:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:370:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:383:27 - undefined_method
+  error - A value of type 'Null' can't be assigned to a parameter of type 'Color' in a const constructor - test\presentation\widgets\electrical_components\power_line_loader_test.dart:385:13 - const_constructor_param_type_mismatch
+  error - The argument type 'Null' can't be assigned to the parameter type 'Color'.  - test\presentation\widgets\electrical_components\power_line_loader_test.dart:385:24 - argument_type_not_assignable
+  error - The named parameter 'sparkColor' isn't defined - test\presentation\widgets\electrical_components\power_line_loader_test.dart:386:13 - undefined_named_parameter
+  error - The getter 'sparkColor' isn't defined for the type 'PowerLineLoader' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:397:27 - undefined_getter
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:405:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:418:27 - undefined_method
+  error - A value of type 'FakeAccessibilityFeatures' can't be assigned to a variable of type 'AccessibilityFeatures' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:435:11 - invalid_assignment
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:439:27 - undefined_method
+  error - The method 'createTestApp' isn't defined for the type 'WidgetTestHelpers' - test\presentation\widgets\electrical_components\power_line_loader_test.dart:452:27 - undefined_method
+  error - The constructor being called isn't a const constructor - test\presentation\widgets\electrical_components\power_line_loader_test.dart:453:18 - const_with_non_const
+  error - Classes and mixins can only implement other classes and mixins - test\presentation\widgets\electrical_components\power_line_loader_test.dart:467:44 - implements_non_class
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\power_line_loader_test.dart:479:14 - override_on_non_overriding_member
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\power_line_loader_test.dart:482:14 - override_on_non_overriding_member
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\power_line_loader_test.dart:485:14 - override_on_non_overriding_member
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\power_line_loader_test.dart:488:14 - override_on_non_overriding_member
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\power_line_loader_test.dart:491:14 - override_on_non_overriding_member
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\power_line_loader_test.dart:494:14 - override_on_non_overriding_member
+warning - The field doesn't override an inherited getter or setter - test\presentation\widgets\electrical_components\power_line_loader_test.dart:497:14 - override_on_non_overriding_member
+warning - Unused import: 'package:cloud_firestore/cloud_firestore.dart' - test\services\counter_service_test.dart:2:8 - unused_import
+  error - Target of URI doesn't exist: 'package:journeyman_jobs/services/crews_service.dart' - test\services\crews_service_test.dart:4:8 - uri_does_not_exist
+  error - Undefined class 'CrewsService' - test\services\crews_service_test.dart:25:8 - undefined_class
+  error - The function 'CrewsService' isn't defined - test\services\crews_service_test.dart:30:15 - undefined_function
+warning - Unused import: 'package:cloud_firestore/cloud_firestore.dart' - test\services\user_profile_service_test.dart:2:8 - unused_import
+   info - Parameter 'key' could be a super parameter - test_electrical_notifications.dart:6:9 - use_super_parameters
+  error - Target of URI doesn't exist: 'test/widget_test/screens/splash/splash_screen_test.dart' - test_runner.dart:5:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'test/widget_test/screens/auth/auth_screen_test.dart' - test_runner.dart:6:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'test/unit_test/providers/app_state_provider_test.dart' - test_runner.dart:7:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'test/unit_test/providers/job_filter_provider_test.dart' - test_runner.dart:8:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'test/unit_test/services/auth_service_test.dart' - test_runner.dart:9:8 - uri_does_not_exist
+
+1153 issues found. (ran in 2.5s)

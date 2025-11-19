@@ -7,41 +7,34 @@ class TailboardService {
   // Get Firestore collections
   CollectionReference get crewsCollection => _firestore.collection('crews');
 
-  // Get Tailboard data for a crew
-  Future<Tailboard?> getTailboard(String crewId) async {
+  // Get Tailboard metadata (analytics, calendar) for a crew
+  Future<Map<String, dynamic>?> getTailboardMetadata(String crewId) async {
     try {
-      final doc = await crewsCollection.doc(crewId).collection('tailboard').doc('main').get();
+      final doc = await crewsCollection.doc(crewId).collection('tailboard_metadata').doc('main').get();
       if (doc.exists) {
-        return Tailboard.fromMap(doc.data() as Map<String, dynamic>);
+        return doc.data();
       }
       return null;
     } catch (e) {
-      throw Exception('Error getting tailboard: $e');
+      throw Exception('Error getting tailboard metadata: $e');
     }
   }
 
-  // Stream Tailboard data for real-time updates
-  Stream<Tailboard?> getTailboardStream(String crewId) {
+  // Stream Tailboard metadata for real-time updates
+  Stream<Map<String, dynamic>?> getTailboardMetadataStream(String crewId) {
     return crewsCollection
         .doc(crewId)
-        .collection('tailboard')
+        .collection('tailboard_metadata')
         .doc('main')
         .snapshots()
-        .map((snapshot) {
-      if (snapshot.exists) {
-        return Tailboard.fromMap(snapshot.data() as Map<String, dynamic>);
-      }
-      return null;
-    });
+        .map((snapshot) => snapshot.data());
   }
 
   // Get job feed stream
   Stream<List<SuggestedJob>> getJobFeedStream(String crewId) {
     return crewsCollection
         .doc(crewId)
-        .collection('tailboard')
-        .doc('main')
-        .collection('jobFeed')
+        .collection('job_feed')
         .orderBy('suggestedAt', descending: true)
         .snapshots()
         .map((snapshot) {
@@ -53,8 +46,6 @@ class TailboardService {
   Stream<List<ActivityItem>> getActivityStream(String crewId) {
     return crewsCollection
         .doc(crewId)
-        .collection('tailboard')
-        .doc('main')
         .collection('activity')
         .orderBy('timestamp', descending: true)
         .limit(50) // Limit to recent activities
@@ -68,8 +59,6 @@ class TailboardService {
   Stream<List<TailboardPost>> getPostsStream(String crewId) {
     return crewsCollection
         .doc(crewId)
-        .collection('tailboard')
-        .doc('main')
         .collection('posts')
         .orderBy('postedAt', descending: true)
         .snapshots()
@@ -100,9 +89,7 @@ class TailboardService {
 
       await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
-          .doc('main')
-          .collection('jobFeed')
+          .collection('job_feed')
           .add(suggestedJob.toMap());
     } catch (e) {
       throw Exception('Error adding suggested job: $e');
@@ -118,9 +105,7 @@ class TailboardService {
     try {
       final querySnapshot = await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
-          .doc('main')
-          .collection('jobFeed')
+          .collection('job_feed')
           .where('jobId', isEqualTo: jobId)
           .get();
 
@@ -143,9 +128,7 @@ class TailboardService {
     try {
       final querySnapshot = await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
-          .doc('main')
-          .collection('jobFeed')
+          .collection('job_feed')
           .where('jobId', isEqualTo: jobId)
           .get();
 
@@ -168,9 +151,7 @@ class TailboardService {
     try {
       final querySnapshot = await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
-          .doc('main')
-          .collection('jobFeed')
+          .collection('job_feed')
           .where('jobId', isEqualTo: jobId)
           .get();
 
@@ -203,8 +184,6 @@ class TailboardService {
 
       await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
-          .doc('main')
           .collection('activity')
           .add(activityItem.toFirestore());
     } catch (e) {
@@ -233,8 +212,6 @@ class TailboardService {
 
       await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
-          .doc('main')
           .collection('posts')
           .add(post.toMap());
 
@@ -263,8 +240,6 @@ class TailboardService {
     try {
       final postDoc = await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
-          .doc('main')
           .collection('posts')
           .doc(postId)
           .get();
@@ -288,8 +263,6 @@ class TailboardService {
     try {
       final postDoc = await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
-          .doc('main')
           .collection('posts')
           .doc(postId)
           .get();
@@ -321,8 +294,6 @@ class TailboardService {
 
       final postDoc = await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
-          .doc('main')
           .collection('posts')
           .doc(postId)
           .get();
@@ -345,8 +316,6 @@ class TailboardService {
     try {
       final postDoc = await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
-          .doc('main')
           .collection('posts')
           .doc(postId)
           .get();
@@ -370,8 +339,6 @@ class TailboardService {
     try {
       final activityDoc = await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
-          .doc('main')
           .collection('activity')
           .doc(activityId)
           .get();
@@ -394,8 +361,6 @@ class TailboardService {
     try {
       final snapshot = await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
-          .doc('main')
           .collection('activity')
           .get();
 
@@ -420,7 +385,7 @@ class TailboardService {
     try {
       await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
+          .collection('tailboard_metadata')
           .doc('main')
           .update({
         'analytics': analytics.toMap(),
@@ -438,9 +403,7 @@ class TailboardService {
       
       final snapshot = await crewsCollection
           .doc(crewId)
-          .collection('tailboard')
-          .doc('main')
-          .collection('jobFeed')
+          .collection('job_feed')
           .where('suggestedAt', isLessThan: thirtyDaysAgo.toIso8601String())
           .get();
 

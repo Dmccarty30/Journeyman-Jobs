@@ -974,95 +974,6 @@ final class IsCrewForemanFamily extends $Family
   String toString() => r'isCrewForemanProvider';
 }
 
-/// Provider to check if current user is crew lead
-
-@ProviderFor(isCrewLead)
-const isCrewLeadProvider = IsCrewLeadFamily._();
-
-/// Provider to check if current user is crew lead
-
-final class IsCrewLeadProvider extends $FunctionalProvider<bool, bool, bool>
-    with $Provider<bool> {
-  /// Provider to check if current user is crew lead
-  const IsCrewLeadProvider._(
-      {required IsCrewLeadFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'isCrewLeadProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$isCrewLeadHash();
-
-  @override
-  String toString() {
-    return r'isCrewLeadProvider'
-        ''
-        '($argument)';
-  }
-
-  @$internal
-  @override
-  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  bool create(Ref ref) {
-    final argument = this.argument as String;
-    return isCrewLead(
-      ref,
-      argument,
-    );
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is IsCrewLeadProvider && other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
-}
-
-String _$isCrewLeadHash() => r'719b23c61f72d11ee0577575441acea28ad721e4';
-
-/// Provider to check if current user is crew lead
-
-final class IsCrewLeadFamily extends $Family
-    with $FunctionalFamilyOverride<bool, String> {
-  const IsCrewLeadFamily._()
-      : super(
-          retry: null,
-          name: r'isCrewLeadProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
-
-  /// Provider to check if current user is crew lead
-
-  IsCrewLeadProvider call(
-    String crewId,
-  ) =>
-      IsCrewLeadProvider._(argument: crewId, from: this);
-
-  @override
-  String toString() => r'isCrewLeadProvider';
-}
-
 /// Provider to get crew by ID
 
 @ProviderFor(crewById)
@@ -1473,4 +1384,4 @@ final class CrewCreationStateProvider extends $FunctionalProvider<
   }
 }
 
-String _$crewCreationStateHash() => r'b8e1ab233f97a91148ba1618c0a5fc021b193846';
+String _$crewCreationStateHash() => r'298083a6536d7e748562a55e99d5876d3c5cf8f0';

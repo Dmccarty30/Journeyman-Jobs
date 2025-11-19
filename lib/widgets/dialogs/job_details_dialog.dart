@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../design_system/app_theme.dart';
+import '../../design_system/tailboard_theme.dart';
 import '../../models/job_model.dart';
 import '../../models/locals_record.dart';
 import '../../providers/riverpod/locals_riverpod_provider.dart';
@@ -12,18 +13,31 @@ import '../../screens/locals/locals_screen.dart';
 
 /// A dialog widget displaying detailed job information
 /// Matches the exact styling of the locals screen popup
+/// Supports both Legacy (AppTheme) and Modern (TailboardTheme) styles
 class JobDetailsDialog extends ConsumerWidget {
+  const JobDetailsDialog({
+    required this.job,
+    this.isDarkTheme = false,
+    super.key,
+  });
 
-  const JobDetailsDialog({required this.job, super.key});
   final Job job;
+  final bool isDarkTheme;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Dialog(
-      backgroundColor: AppTheme.white,
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Theme colors based on mode
+    final backgroundColor = isDarkTheme ? TailboardTheme.backgroundCard : AppTheme.white;
+    final borderColor = isDarkTheme ? TailboardTheme.copper : AppTheme.accentCopper;
+    final headerColor = isDarkTheme ? TailboardTheme.backgroundDark : AppTheme.primaryNavy;
+    final textColor = isDarkTheme ? TailboardTheme.textPrimary : AppTheme.primaryNavy;
+
+    return Dialog(
+      backgroundColor: backgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        side: const BorderSide(
-          color: AppTheme.accentCopper,
+        side: BorderSide(
+          color: borderColor,
         ),
       ),
       child: Container(
@@ -34,12 +48,12 @@ class JobDetailsDialog extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Header with Navy background
+            // Header with Navy/Dark background
             Container(
               padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: const BoxDecoration(
-                color: AppTheme.primaryNavy,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: headerColor,
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(AppTheme.radiusLg),
                   topRight: Radius.circular(AppTheme.radiusLg),
                 ),
@@ -52,25 +66,32 @@ class JobDetailsDialog extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          job.jobTitle?.isNotEmpty ?? false 
-                              ? job.jobTitle! 
+                          job.jobTitle?.isNotEmpty ?? false
+                              ? job.jobTitle!
                               : job.classification?.isNotEmpty ?? false
                                   ? job.classification!
                                   : 'Job Opportunity',
-                          style: AppTheme.headlineSmall.copyWith(
-                            color: AppTheme.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                          style: isDarkTheme
+                              ? TailboardTheme.headingSmall.copyWith(fontSize: 16)
+                              : AppTheme.headlineSmall.copyWith(
+                                  color: AppTheme.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                         ),
                         const SizedBox(height: AppTheme.spacingXs),
                         if (job.company.isNotEmpty)
                           Text(
                             job.company,
-                            style: AppTheme.bodyMedium.copyWith(
-                              color: AppTheme.white.withAlpha(204),
-                              fontSize: 13,
-                            ),
+                            style: isDarkTheme
+                                ? TailboardTheme.bodyMedium.copyWith(
+                                    color: TailboardTheme.textSecondary,
+                                    fontSize: 13,
+                                  )
+                                : AppTheme.bodyMedium.copyWith(
+                                    color: AppTheme.white.withAlpha(204),
+                                    fontSize: 13,
+                                  ),
                           ),
                         if (job.local != null || job.localNumber != null) ...[
                           const SizedBox(height: AppTheme.spacingXs),
@@ -80,16 +101,23 @@ class JobDetailsDialog extends ConsumerWidget {
                               vertical: AppTheme.spacingXs,
                             ),
                             decoration: BoxDecoration(
-                              color: AppTheme.accentCopper.withAlpha(51),
+                              color: isDarkTheme
+                                  ? TailboardTheme.copper.withValues(alpha: 0.2)
+                                  : AppTheme.accentCopper.withAlpha(51),
                               borderRadius: BorderRadius.circular(AppTheme.radiusRound),
                             ),
                             child: Text(
                               'IBEW Local ${job.localNumber ?? job.local ?? 'N/A'}',
-                              style: AppTheme.labelSmall.copyWith(
-                                color: AppTheme.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 10,
-                              ),
+                              style: isDarkTheme
+                                  ? TailboardTheme.labelSmall.copyWith(
+                                      color: TailboardTheme.copperLight,
+                                      fontSize: 10,
+                                    )
+                                  : AppTheme.labelSmall.copyWith(
+                                      color: AppTheme.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 10,
+                                    ),
                             ),
                           ),
                         ],
@@ -99,9 +127,11 @@ class JobDetailsDialog extends ConsumerWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
-                    color: AppTheme.white,
+                    color: isDarkTheme ? TailboardTheme.textSecondary : AppTheme.white,
                     style: IconButton.styleFrom(
-                      backgroundColor: AppTheme.white.withAlpha(26),
+                      backgroundColor: isDarkTheme
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : AppTheme.white.withAlpha(26),
                     ),
                   ),
                 ],
@@ -114,11 +144,11 @@ class JobDetailsDialog extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSectionHeader('Job Information'),
+                    _buildSectionHeader('Job Information', textColor),
                     const SizedBox(height: AppTheme.spacingMd),
                     _buildJobInfoCard(context, ref),
                     const SizedBox(height: AppTheme.spacingLg),
-                    _buildSectionHeader('Additional Details'),
+                    _buildSectionHeader('Additional Details', textColor),
                     const SizedBox(height: AppTheme.spacingMd),
                     _buildAdditionalDetailsCard(),
                   ],
@@ -129,101 +159,107 @@ class JobDetailsDialog extends ConsumerWidget {
         ),
       ),
     );
+  }
 
-  Widget _buildSectionHeader(String title) => Row(
-      children: [
-        Container(
-          width: 3,
-          height: 20,
-          decoration: BoxDecoration(
-            color: AppTheme.accentCopper,
-            borderRadius: BorderRadius.circular(2),
+  Widget _buildSectionHeader(String title, Color textColor) => Row(
+        children: [
+          Container(
+            width: 3,
+            height: 20,
+            decoration: BoxDecoration(
+              color: isDarkTheme ? TailboardTheme.copper : AppTheme.accentCopper,
+              borderRadius: BorderRadius.circular(2),
+            ),
           ),
-        ),
-        const SizedBox(width: AppTheme.spacingSm),
-        Text(
-          title,
-          style: AppTheme.titleMedium.copyWith(
-            color: AppTheme.primaryNavy,
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
+          const SizedBox(width: AppTheme.spacingSm),
+          Text(
+            title,
+            style: isDarkTheme
+                ? TailboardTheme.headingSmall.copyWith(
+                    fontSize: 14,
+                    color: TailboardTheme.textPrimary,
+                  )
+                : AppTheme.titleMedium.copyWith(
+                    color: AppTheme.primaryNavy,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
 
   Widget _buildJobInfoCard(BuildContext context, WidgetRef ref) => Container(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: AppTheme.offWhite,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(
-          color: AppTheme.lightGray,
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
+        decoration: BoxDecoration(
+          color: isDarkTheme ? TailboardTheme.backgroundDark : AppTheme.offWhite,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          border: Border.all(
+            color: isDarkTheme ? TailboardTheme.border : AppTheme.lightGray,
+          ),
         ),
-      ),
-      child: Column(
-        children: [
-          if (job.location.isNotEmpty)
-            _buildClickableRow(
-              context,
-              icon: Icons.location_on_outlined,
-              label: 'Location',
-              value: job.location,
-              iconColor: AppTheme.accentCopper,
-              onTap: () => _launchMaps(job.location),
-            ),
-          if (job.local != null || job.localNumber != null)
-            _buildClickableRow(
-              context,
-              icon: Icons.business_outlined,
-              label: 'Local Union',
-              value: 'IBEW Local ${job.localNumber ?? job.local}',
-              iconColor: AppTheme.accentCopper,
-              onTap: () => _navigateToLocal(context, ref),
-            ),
-          if (job.classification?.isNotEmpty ?? false)
-            _buildClickableRow(
-              context,
-              icon: Icons.work_outline,
-              label: 'Classification',
-              value: job.classification!,
-              iconColor: AppTheme.textLight,
-            ),
-          if (job.wage != null && job.wage! > 0)
-            _buildClickableRow(
-              context,
-              icon: Icons.attach_money_outlined,
-              label: 'Wage',
-              value: '\$${job.wage!.toStringAsFixed(2)}/hour',
-              iconColor: AppTheme.successGreen,
-            ),
-          if (job.hours != null && job.hours! > 0)
-            _buildClickableRow(
-              context,
-              icon: Icons.schedule_outlined,
-              label: 'Hours',
-              value: '${job.hours} hours/week',
-              iconColor: AppTheme.textLight,
-            ),
-          if (job.startDate?.isNotEmpty ?? false)
-            _buildClickableRow(
-              context,
-              icon: Icons.calendar_today_outlined,
-              label: 'Start Date',
-              value: job.startDate!,
-              iconColor: AppTheme.textLight,
-            ),
-          if (job.numberOfJobs?.isNotEmpty ?? false)
-            _buildClickableRow(
-              context,
-              icon: Icons.people_outline,
-              label: 'Positions Available',
-              value: job.numberOfJobs!,
-              iconColor: AppTheme.textLight,
-            ),
-        ],
-      ),
-    );
+        child: Column(
+          children: [
+            if (job.location.isNotEmpty)
+              _buildClickableRow(
+                context,
+                icon: Icons.location_on_outlined,
+                label: 'Location',
+                value: job.location,
+                iconColor: isDarkTheme ? TailboardTheme.copper : AppTheme.accentCopper,
+                onTap: () => _launchMaps(job.location),
+              ),
+            if (job.local != null || job.localNumber != null)
+              _buildClickableRow(
+                context,
+                icon: Icons.business_outlined,
+                label: 'Local Union',
+                value: 'IBEW Local ${job.localNumber ?? job.local}',
+                iconColor: isDarkTheme ? TailboardTheme.copper : AppTheme.accentCopper,
+                onTap: () => _navigateToLocal(context, ref),
+              ),
+            if (job.classification?.isNotEmpty ?? false)
+              _buildClickableRow(
+                context,
+                icon: Icons.work_outline,
+                label: 'Classification',
+                value: job.classification!,
+                iconColor: isDarkTheme ? TailboardTheme.textSecondary : AppTheme.textLight,
+              ),
+            if (job.wage != null && job.wage! > 0)
+              _buildClickableRow(
+                context,
+                icon: Icons.attach_money_outlined,
+                label: 'Wage',
+                value: '\$${job.wage!.toStringAsFixed(2)}/hour',
+                iconColor: isDarkTheme ? TailboardTheme.success : AppTheme.successGreen,
+              ),
+            if (job.hours != null && job.hours! > 0)
+              _buildClickableRow(
+                context,
+                icon: Icons.schedule_outlined,
+                label: 'Hours',
+                value: '${job.hours} hours/week',
+                iconColor: isDarkTheme ? TailboardTheme.textSecondary : AppTheme.textLight,
+              ),
+            if (job.startDate?.isNotEmpty ?? false)
+              _buildClickableRow(
+                context,
+                icon: Icons.calendar_today_outlined,
+                label: 'Start Date',
+                value: job.startDate!,
+                iconColor: isDarkTheme ? TailboardTheme.textSecondary : AppTheme.textLight,
+              ),
+            if (job.numberOfJobs?.isNotEmpty ?? false)
+              _buildClickableRow(
+                context,
+                icon: Icons.people_outline,
+                label: 'Positions Available',
+                value: job.numberOfJobs!,
+                iconColor: isDarkTheme ? TailboardTheme.textSecondary : AppTheme.textLight,
+              ),
+          ],
+        ),
+      );
 
   Widget _buildAdditionalDetailsCard() {
     // Check if we have any additional details to show
@@ -239,22 +275,30 @@ class JobDetailsDialog extends ConsumerWidget {
       job.datePosted,
     ].any((field) => field?.isNotEmpty ?? false);
 
+    final cardColor = isDarkTheme ? TailboardTheme.backgroundDark : AppTheme.lightGray.withAlpha(102);
+    final borderColor = isDarkTheme ? TailboardTheme.border : AppTheme.mediumGray.withAlpha(51);
+
     if (!hasAdditionalDetails) {
       return Container(
         padding: const EdgeInsets.all(AppTheme.spacingMd),
         decoration: BoxDecoration(
-          color: AppTheme.lightGray.withAlpha(102),
+          color: cardColor,
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           border: Border.all(
-            color: AppTheme.mediumGray.withAlpha(51),
+            color: borderColor,
           ),
         ),
         child: Text(
           'No additional details available.',
-          style: AppTheme.bodyMedium.copyWith(
-            color: AppTheme.textLight,
-            fontStyle: FontStyle.italic,
-          ),
+          style: isDarkTheme
+              ? TailboardTheme.bodyMedium.copyWith(
+                  color: TailboardTheme.textSecondary,
+                  fontStyle: FontStyle.italic,
+                )
+              : AppTheme.bodyMedium.copyWith(
+                  color: AppTheme.textLight,
+                  fontStyle: FontStyle.italic,
+                ),
         ),
       );
     }
@@ -262,10 +306,10 @@ class JobDetailsDialog extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
       decoration: BoxDecoration(
-        color: AppTheme.lightGray.withAlpha(102),
+        color: cardColor,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         border: Border.all(
-          color: AppTheme.mediumGray.withAlpha(51),
+          color: borderColor,
         ),
       ),
       child: Column(
@@ -329,21 +373,33 @@ class JobDetailsDialog extends ConsumerWidget {
                   children: [
                     Text(
                       label,
-                      style: AppTheme.labelSmall.copyWith(
-                        color: AppTheme.textLight,
-                        fontSize: 9,
-                      ),
+                      style: isDarkTheme
+                          ? TailboardTheme.labelSmall.copyWith(
+                              color: TailboardTheme.textSecondary,
+                            )
+                          : AppTheme.labelSmall.copyWith(
+                              color: AppTheme.textLight,
+                              fontSize: 9,
+                            ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       value,
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: isClickable ? AppTheme.accentCopper : AppTheme.textDark,
-                        decoration: isClickable ? TextDecoration.underline : null,
-                        decorationColor: AppTheme.accentCopper,
-                        fontWeight: isClickable ? FontWeight.w500 : FontWeight.normal,
-                        fontSize: 12,
-                      ),
+                      style: isDarkTheme
+                          ? TailboardTheme.bodyMedium.copyWith(
+                              color: isClickable ? TailboardTheme.copper : TailboardTheme.textPrimary,
+                              decoration: isClickable ? TextDecoration.underline : null,
+                              decorationColor: TailboardTheme.copper,
+                              fontWeight: isClickable ? FontWeight.w600 : FontWeight.normal,
+                              fontSize: 12,
+                            )
+                          : AppTheme.bodyMedium.copyWith(
+                              color: isClickable ? AppTheme.accentCopper : AppTheme.textDark,
+                              decoration: isClickable ? TextDecoration.underline : null,
+                              decorationColor: AppTheme.accentCopper,
+                              fontWeight: isClickable ? FontWeight.w500 : FontWeight.normal,
+                              fontSize: 12,
+                            ),
                     ),
                   ],
                 ),
@@ -352,7 +408,9 @@ class JobDetailsDialog extends ConsumerWidget {
                 Icon(
                   Icons.open_in_new,
                   size: AppTheme.iconSm,
-                  color: AppTheme.accentCopper.withAlpha(153),
+                  color: isDarkTheme
+                      ? TailboardTheme.copper.withValues(alpha: 0.6)
+                      : AppTheme.accentCopper.withAlpha(153),
                 ),
             ],
           ),
@@ -362,33 +420,37 @@ class JobDetailsDialog extends ConsumerWidget {
   }
 
   Widget _buildDetailRow(String label, String value) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingXs),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 120,
-            child: Text(
-              label,
-              style: AppTheme.labelSmall.copyWith(
-                color: AppTheme.textLight,
-                fontWeight: FontWeight.w600,
-                fontSize: 10,
+        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingXs),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 120,
+              child: Text(
+                label,
+                style: isDarkTheme
+                    ? TailboardTheme.labelSmall.copyWith(fontSize: 10)
+                    : AppTheme.labelSmall.copyWith(
+                        color: AppTheme.textLight,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 10,
+                      ),
               ),
             ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textDark,
-                fontSize: 11,
+            Expanded(
+              child: Text(
+                value,
+                style: isDarkTheme
+                    ? TailboardTheme.bodyMedium.copyWith(fontSize: 11)
+                    : AppTheme.bodyMedium.copyWith(
+                        color: AppTheme.textDark,
+                        fontSize: 11,
+                      ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
 
   Future<void> _launchMaps(String location) async {
     final encodedLocation = Uri.encodeComponent(location);
@@ -411,14 +473,14 @@ class JobDetailsDialog extends ConsumerWidget {
 
   void _navigateToLocal(BuildContext context, WidgetRef ref) {
     Navigator.of(context).pop(); // Close the current job dialog first
-    
+
     // Get the local number from the job
     final localNumber = (job.localNumber ?? job.local)?.toString();
     if (localNumber == null) return;
-    
+
     // Find the local record by number
     final localsState = ref.read(localsProvider);
-    
+
     // Try to find the matching local
     LocalsRecord? matchingLocal;
     try {
@@ -428,7 +490,7 @@ class JobDetailsDialog extends ConsumerWidget {
     } catch (e) {
       matchingLocal = null;
     }
-    
+
     if (matchingLocal != null) {
       // Show the local details dialog
       showDialog(

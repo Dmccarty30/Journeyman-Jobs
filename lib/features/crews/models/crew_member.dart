@@ -20,15 +20,6 @@ class MemberPermissions {
 
   factory MemberPermissions.fromRole(MemberRole role) {
     switch (role) {
-      case MemberRole.admin:
-        return MemberPermissions(
-          canInviteMembers: true,
-          canRemoveMembers: true,
-          canShareJobs: true,
-          canPostAnnouncements: true,
-          canEditCrewInfo: true,
-          canViewAnalytics: true,
-        );
       case MemberRole.foreman:
         return MemberPermissions(
           canInviteMembers: true,
@@ -38,23 +29,14 @@ class MemberPermissions {
           canEditCrewInfo: true,
           canViewAnalytics: true,
         );
-      case MemberRole.lead:
-        return MemberPermissions(
-          canInviteMembers: true,
-          canRemoveMembers: false,
-          canShareJobs: true,
-          canPostAnnouncements: true,
-          canEditCrewInfo: false,
-          canViewAnalytics: false,
-        );
       case MemberRole.member:
         return MemberPermissions(
           canInviteMembers: false,
           canRemoveMembers: false,
-          canShareJobs: false,
+          canShareJobs: true,
           canPostAnnouncements: false,
           canEditCrewInfo: false,
-          canViewAnalytics: false,
+          canViewAnalytics: true,
         );
     }
   }
@@ -171,6 +153,12 @@ class CrewMember {
       isActive: map['isActive'] ?? true,
     );
   }
+
+  String? get displayName => null;
+
+  Null get avatarUrl => null;
+
+  Null get classification => null;
 
   CrewMember copyWith({
     String? userId,

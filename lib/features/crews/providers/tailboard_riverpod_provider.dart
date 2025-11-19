@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
 import '../models/tailboard.dart';
@@ -10,24 +11,6 @@ part 'tailboard_riverpod_provider.g.dart';
 @riverpod
 TailboardService tailboardService(Ref ref) => TailboardService();
 
-/// Stream of tailboard data for a specific crew
-@riverpod
-Stream<Tailboard?> tailboardStream(Ref ref, String crewId) {
-  final tailboardService = ref.watch(tailboardServiceProvider);
-  return tailboardService.getTailboardStream(crewId);
-}
-
-/// Tailboard data for a specific crew
-@riverpod
-Tailboard? tailboard(Ref ref, String crewId) {
-  final tailboardAsync = ref.watch(tailboardStreamProvider(crewId));
-  
-  return tailboardAsync.when(
-    data: (tailboard) => tailboard,
-    loading: () => null,
-    error: (_, __) => null,
-  );
-}
 
 /// Stream of suggested jobs for a specific crew
 @riverpod
@@ -147,68 +130,108 @@ List<SuggestedJob> appliedJobs(Ref ref, String crewId) {
   return jobs.where((job) => job.appliedMemberIds.isNotEmpty).toList();
 }
 
-/// Provider to get tailboard analytics
-@riverpod
-TailboardAnalytics? tailboardAnalytics(Ref ref, String crewId) {
-  final tailboard = ref.watch(tailboardProvider(crewId));
-  return tailboard?.analytics;
-}
+  // Get tailboard metadata stream for analytics
+  @riverpod
+  Stream<Map<String, dynamic>?> tailboardMetadataStream(Ref ref, String crewId) {
+    final tailboardService = ref.watch(tailboardServiceProvider);
+    return tailboardService.getTailboardMetadataStream(crewId);
+  }
 
-/// Provider to get tailboard engagement rate
-@riverpod
-double engagementRate(Ref ref, String crewId) {
-  final analytics = ref.watch(tailboardAnalyticsProvider(crewId));
-  return analytics?.engagementRate ?? 0.0;
-}
+  /// Provider to get tailboard analytics from metadata
+  @riverpod
+  TailboardAnalytics? tailboardAnalytics(Ref ref, String crewId) {
+    final metadataAsync = ref.watch(tailboardMetadataStreamProvider(crewId));
+    
+    return metadataAsync.when(
+      data: (metadata) {
+        if (metadata != null && metadata['analytics'] != null) {
+          return TailboardAnalytics.fromMap(metadata['analytics'] as Map<String, dynamic>);
+        }
+        return null;
+      },
+      loading: () => null,
+      error: (_, __) => null,
+    );
+  }
 
-/// Provider to get total posts count
-@riverpod
-int totalPostsCount(Ref ref, String crewId) {
-  final analytics = ref.watch(tailboardAnalyticsProvider(crewId));
-  return analytics?.totalPosts ?? 0;
-}
+  /// Provider to get tailboard engagement rate
+  @riverpod
+  double engagementRate(Ref ref, String crewId) {
+    final analytics = ref.watch(tailboardAnalyticsProvider(crewId));
+    return analytics?.engagementRate ?? 0.0;
+  }
 
-/// Provider to get total activities count
-@riverpod
-int totalActivitiesCount(Ref ref, String crewId) {
-  final analytics = ref.watch(tailboardAnalyticsProvider(crewId));
-  return analytics?.totalActivities ?? 0;
-}
+  /// Provider to get total posts count
+  @riverpod
+  int totalPostsCount(Ref ref, String crewId) {
+    final analytics = ref.watch(tailboardAnalyticsProvider(crewId));
+    return analytics?.totalPosts ?? 0;
+  }
 
-/// Provider to get total suggested jobs count
-@riverpod
-int totalSuggestedJobsCount(Ref ref, String crewId) {
-  final analytics = ref.watch(tailboardAnalyticsProvider(crewId));
-  return analytics?.totalSuggestedJobs ?? 0;
-}
+  /// Provider to get total activities count
+  @riverpod
+  int totalActivitiesCount(Ref ref, String crewId) {
+    final analytics = ref.watch(tailboardAnalyticsProvider(crewId));
+    return analytics?.totalActivities ?? 0;
+  }
 
-/// Provider to check if tailboard is loaded
-@riverpod
-bool isTailboardLoaded(Ref ref, String crewId) {
-  final tailboard = ref.watch(tailboardProvider(crewId));
-  return tailboard != null;
-}
+  /// Provider to get total suggested jobs count
+  @riverpod
+  int totalSuggestedJobsCount(Ref ref, String crewId) {
+    final analytics = ref.watch(tailboardAnalyticsProvider(crewId));
+    return analytics?.totalSuggestedJobs ?? 0;
+  }
 
-/// Provider to get last updated timestamp
-@riverpod
-DateTime? tailboardLastUpdated(Ref ref, String crewId) {
-  final tailboard = ref.watch(tailboardProvider(crewId));
-  return tailboard?.lastUpdated;
-}
+  /// Provider to check if tailboard metadata is loaded
+  @riverpod
+  bool isTailboardMetadataLoaded(Ref ref, String crewId) {
+    final metadataAsync = ref.watch(tailboardMetadataStreamProvider(crewId));
+    return metadataAsync.when(
+      data: (metadata) => metadata != null,
+      loading: () => false,
+      error: (_, __) => false,
+    );
+  }
 
-/// Provider to get crew calendar
-@riverpod
-CrewCalendar? crewCalendar(Ref ref, String crewId) {
-  final tailboard = ref.watch(tailboardProvider(crewId));
-  return tailboard?.calendar;
-}
+  /// Provider to get last updated timestamp from metadata
+  @riverpod
+  DateTime? tailboardLastUpdated(Ref ref, String crewId) {
+    final metadataAsync = ref.watch(tailboardMetadataStreamProvider(crewId));
+    return metadataAsync.when(
+      data: (metadata) {
+        if (metadata != null && metadata['lastUpdated'] != null) {
+          return (metadata['lastUpdated'] as Timestamp?)?.toDate();
+        }
+        return null;
+      },
+      loading: () => null,
+      error: (_, __) => null,
+    );
+  }
 
-/// Provider to get recent messages
-@riverpod
-List<String> recentMessages(Ref ref, String crewId) {
-  final tailboard = ref.watch(tailboardProvider(crewId));
-  return tailboard?.recentMessages ?? [];
-}
+  /// Provider to get crew calendar from metadata
+  @riverpod
+  CrewCalendar? crewCalendar(Ref ref, String crewId) {
+    final metadataAsync = ref.watch(tailboardMetadataStreamProvider(crewId));
+    return metadataAsync.when(
+      data: (metadata) {
+        if (metadata != null && metadata['calendar'] != null) {
+          return CrewCalendar.fromMap(metadata['calendar'] as Map<String, dynamic>);
+        }
+        return null;
+      },
+      loading: () => null,
+      error: (_, __) => null,
+    );
+  }
+
+  /// Provider to get recent messages (placeholder - implement if needed)
+  @riverpod
+  List<String> recentMessages(Ref ref, String crewId) {
+    // This would need a separate collection or stream
+    // For now, return empty list
+    return [];
+  }
 
 /// Provider to get activity by type
 @riverpod

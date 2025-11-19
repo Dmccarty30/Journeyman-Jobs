@@ -1,7 +1,7 @@
 // lib/features/crews/providers/crews_riverpod_provider.dart
-import 'package:journeyman_jobs/domain/enums/member_role.dart';
-import 'package:journeyman_jobs/features/crews/services/job_matching_service_impl.dart';
-import 'package:journeyman_jobs/features/crews/services/job_sharing_service_impl.dart';
+import '../../../domain/enums/member_role.dart';
+import '../services/job_matching_service_impl.dart';
+import '../services/job_sharing_service_impl.dart';
 import '../../../providers/riverpod/app_state_riverpod_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:state_notifier/state_notifier.dart';
@@ -43,7 +43,7 @@ CrewService crewService(Ref ref) {
 Stream<List<Crew>> userCrewsStream(Ref ref) {
   final crewService = ref.watch(crewServiceProvider);
   final currentUser = ref.watch(currentUserProvider);
-  
+
   if (currentUser == null) return Stream.value([]);
   return crewService.getUserCrewsStream(currentUser.uid).map((snapshot) {
     return snapshot.docs.map((doc) => Crew.fromFirestore(doc)).toList();
@@ -54,7 +54,7 @@ Stream<List<Crew>> userCrewsStream(Ref ref) {
 @riverpod
 List<Crew> userCrews(Ref ref) {
   final crewsAsync = ref.watch(userCrewsStreamProvider);
-  
+
   return crewsAsync.when(
     data: (crews) => crews,
     loading: () => [],
@@ -97,9 +97,9 @@ SelectedCrewNotifier selectedCrewNotifierProvider(Ref ref) {
 bool isUserInCrew(Ref ref, String crewId) {
   final currentUser = ref.watch(currentUserProvider);
   final crews = ref.watch(userCrewsProvider);
-  
+
   if (currentUser == null) return false;
-  
+
   return crews.any((crew) => crew.id == crewId);
 }
 
@@ -108,9 +108,9 @@ bool isUserInCrew(Ref ref, String crewId) {
 MemberRole? userRoleInCrew(Ref ref, String crewId) {
   final currentUser = ref.watch(currentUserProvider);
   final crews = ref.watch(userCrewsProvider);
-  
+
   if (currentUser == null) return null;
-  
+
   final crew = crews.firstWhere(
     (crew) => crew.id == crewId,
     orElse: () => Crew(
@@ -127,9 +127,9 @@ MemberRole? userRoleInCrew(Ref ref, String crewId) {
       isActive: true,
     ),
   );
-  
+
   if (crew.id.isEmpty) return null;
-  
+
   return crew.roles[currentUser.uid];
 }
 
@@ -138,7 +138,7 @@ MemberRole? userRoleInCrew(Ref ref, String crewId) {
 bool hasCrewPermission(Ref ref, String crewId, String permission) {
   final role = ref.watch(userRoleInCrewProvider(crewId));
   if (role == null) return false;
-  
+
   final permissions = MemberPermissions.fromRole(role);
   switch (permission) {
     case 'canInviteMembers':
@@ -171,7 +171,7 @@ Stream<List<CrewMember>> crewMembersStream(Ref ref, String crewId) {
 @riverpod
 List<CrewMember> crewMembers(Ref ref, String crewId) {
   final membersAsync = ref.watch(crewMembersStreamProvider(crewId));
-  
+
   return membersAsync.when(
     data: (members) => members,
     loading: () => [],
@@ -184,9 +184,9 @@ List<CrewMember> crewMembers(Ref ref, String crewId) {
 CrewMember? currentUserCrewMember(Ref ref, String crewId) {
   final currentUser = ref.watch(currentUserProvider);
   final members = ref.watch(crewMembersProvider(crewId));
-  
+
   if (currentUser == null) return null;
-  
+
   return members.firstWhere(
     (member) => member.userId == currentUser.uid,
     orElse: () => CrewMember(
@@ -207,13 +207,6 @@ CrewMember? currentUserCrewMember(Ref ref, String crewId) {
 bool isCrewForeman(Ref ref, String crewId) {
   final role = ref.watch(userRoleInCrewProvider(crewId));
   return role == MemberRole.foreman;
-}
-
-/// Provider to check if current user is crew lead
-@riverpod
-bool isCrewLead(Ref ref, String crewId) {
-  final role = ref.watch(userRoleInCrewProvider(crewId));
-  return role == MemberRole.lead;
 }
 
 /// Provider to get crew by ID

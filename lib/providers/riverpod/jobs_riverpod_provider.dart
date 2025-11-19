@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:journeyman_jobs/design_system/tailboard_components.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../models/filter_criteria.dart';

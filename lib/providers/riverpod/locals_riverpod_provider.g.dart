@@ -44,7 +44,7 @@ final class LocalsNotifierProvider
   }
 }
 
-String _$localsNotifierHash() => r'78548fbfac6f75d39c8eeaf41a2a55c95470ab68';
+String _$localsNotifierHash() => r'a2bdb5c7d6f400fc50377d9b6cd30ff1c97a59d8';
 
 /// Riverpod notifier that manages loading and searching of locals.
 

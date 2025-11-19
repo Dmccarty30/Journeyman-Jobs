@@ -183,7 +183,7 @@ class _PostCardState extends State<PostCard> {
     if (widget.onShare != null) {
       widget.onShare!(widget.currentUserId, widget.post);
     }
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Post shared!'),
@@ -345,7 +345,10 @@ class _PostCardState extends State<PostCard> {
             ),
           if (widget.post.mediaUrls.isNotEmpty) ...[
             const SizedBox(height: 16),
-            _buildMediaGrid(),
+            SizedBox(
+              height: 200, // Constrain height to prevent overflow
+              child: _buildMediaGrid(),
+            ),
           ],
         ],
       ),
@@ -355,6 +358,7 @@ class _PostCardState extends State<PostCard> {
   Widget _buildMediaGrid() {
     if (widget.post.mediaUrls.length == 1) {
       return Container(
+        width: double.infinity,
         height: 200,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -477,7 +481,9 @@ class _PostCardState extends State<PostCard> {
             },
             icon: Icon(
               _isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-              color: _isBookmarked ? AppTheme.accentCopper : AppTheme.textSecondary,
+              color: _isBookmarked
+                  ? AppTheme.accentCopper
+                  : AppTheme.textSecondary,
               size: 24,
             ),
           ),
@@ -494,42 +500,46 @@ class _PostCardState extends State<PostCard> {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Comment input field
             if (widget.showCommentInput)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: CommentInput(
                   postId: widget.post.id,
                   currentUserId: widget.commentUserId,
                   currentUserName: widget.currentUserName,
-                  onCommentAdded: () {
+                  onCommentAdded: (comment) {
                     setState(() {
                       _isAddingComment = true;
+                    });
+                    widget.onAddComment?.call(widget.post.id, comment);
+                    // Simulate delay for better UX
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      if (mounted) {
+                        setState(() {
+                          _isAddingComment = false;
+                        });
+                      }
                     });
                   },
                 ),
               ),
-
-            const SizedBox(height: 8),
-
-            // Comment thread
             if (widget.comments != null && widget.comments!.isNotEmpty)
               CommentThread(
                 comments: widget.comments!,
                 postId: widget.post.id,
                 currentUserId: widget.commentUserId,
-                onLikeComment: (postId, commentId) {
+                onLikeComment: (commentId, postId) {
                   widget.onLikeComment?.call(commentId, postId);
                 },
-                onUnlikeComment: (postId, commentId) {
+                onUnlikeComment: (commentId, postId) {
                   widget.onUnlikeComment?.call(commentId, postId);
                 },
-                onEditComment: (postId, commentId) {
+                onEditComment: (commentId, postId) {
                   widget.onEditComment?.call(commentId, postId);
                 },
-                onDeleteComment: (postId, commentId) {
+                onDeleteComment: (commentId, postId) {
                   widget.onDeleteComment?.call(commentId, postId);
                 },
                 onReplyToComment: (commentId) {
@@ -538,29 +548,19 @@ class _PostCardState extends State<PostCard> {
               )
             else if (_isAddingComment)
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.all(16.0),
                 child: Center(
                   child: CircularProgressIndicator(),
                 ),
               )
             else
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.offWhite,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                    border: Border.all(
-                      color: AppTheme.borderLight,
-                      width: AppTheme.borderWidthThin,
-                    ),
-                  ),
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
                   child: Text(
                     'No comments yet. Be the first to comment!',
-                    style: AppTheme.bodyMedium.copyWith(
+                    style: AppTheme.bodySmall.copyWith(
                       color: AppTheme.textSecondary,
-                      fontStyle: FontStyle.italic,
                     ),
                   ),
                 ),
@@ -574,15 +574,10 @@ class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 0,
-      color: AppTheme.electricalSurface,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        side: BorderSide(
-          color: AppTheme.borderCopperLight,
-          width: AppTheme.borderWidthThin,
-        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

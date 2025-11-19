@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:journeyman_jobs/features/crews/models/message.dart';
+import '../models/message.dart';
 import 'chat_service.dart';
 
 class MessageService {

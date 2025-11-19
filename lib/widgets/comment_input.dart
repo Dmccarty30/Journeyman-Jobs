@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../design_system/app_theme.dart';
-import '../../features/crews/providers/feed_provider.dart';
+import '../design_system/app_theme.dart';
 
 class CommentInput extends StatefulWidget {
   final String postId;
-  final VoidCallback onCommentAdded;
+  final Function(String) onCommentAdded;
   final String? currentUserId;
   final String? currentUserName;
 
@@ -60,7 +58,7 @@ class _CommentInputState extends State<CommentInput> {
 
     try {
       // Notify parent that a comment was added
-      widget.onCommentAdded();
+      widget.onCommentAdded(content);
 
       // Clear the input
       _commentController.clear();
@@ -97,7 +95,8 @@ class _CommentInputState extends State<CommentInput> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.comment, color: AppTheme.textSecondary, size: 20),
+                  const Icon(Icons.comment,
+                      color: AppTheme.textSecondary, size: 20),
                   const SizedBox(width: 8),
                   Text(
                     'Add a comment...',
@@ -173,7 +172,8 @@ class _CommentInputState extends State<CommentInput> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.accentCopper,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                              borderRadius:
+                                  BorderRadius.circular(AppTheme.radiusSm),
                             ),
                           ),
                           child: _isSending
@@ -182,7 +182,8 @@ class _CommentInputState extends State<CommentInput> {
                                   height: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
                                   ),
                                 )
                               : Text(

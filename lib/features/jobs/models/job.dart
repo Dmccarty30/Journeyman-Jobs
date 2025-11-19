@@ -33,19 +33,36 @@ class Job {
   /// Creates a Job instance from Firestore data
   factory Job.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+
+    // Helper to parse double from various types
+    double parseDouble(dynamic value) {
+      if (value is num) return value.toDouble();
+      if (value is String) {
+        return double.tryParse(value.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0.0;
+      }
+      return 0.0;
+    }
+
+    // Helper to parse DateTime
+    DateTime parseDateTime(dynamic value) {
+      if (value is Timestamp) return value.toDate();
+      if (value is String) return DateTime.tryParse(value) ?? DateTime.now();
+      return DateTime.now();
+    }
+
     return Job(
       id: doc.id,
-      title: data['title'] ?? '',
-      description: data['description'] ?? '',
-      jobType: data['jobType'] ?? '',
-      hourlyRate: (data['hourlyRate'] as num?)?.toDouble() ?? 0.0,
+      title: data['title'] ?? data['job_title'] ?? '',
+      description: data['description'] ?? data['job_description'] ?? '',
+      jobType: data['jobType'] ?? data['typeOfWork'] ?? data['Type of Work'] ?? '',
+      hourlyRate: parseDouble(data['hourlyRate'] ?? data['wage'] ?? data['hourlyWage']),
       location: data['location'] as GeoPoint?,
-      postedAt: (data['postedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      postedAt: parseDateTime(data['postedAt'] ?? data['timestamp'] ?? data['date_posted']),
       postedByUserId: data['postedByUserId'] ?? '',
       isActive: data['isActive'] ?? true,
       estimatedDuration: data['estimatedDuration'] ?? 0,
       requiredSkills: List<String>.from(data['requiredSkills'] ?? []),
-      companyName: data['companyName'],
+      companyName: data['companyName'] ?? data['company'] ?? data['employer'],
     );
   }
 

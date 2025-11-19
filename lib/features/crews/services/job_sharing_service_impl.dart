@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:journeyman_jobs/features/crews/models/crew.dart';
-import 'package:journeyman_jobs/features/crews/models/shared_job.dart';
+import '../models/crew.dart';
+import '../models/shared_job.dart';
 import 'package:journeyman_jobs/features/jobs/models/job.dart';
 
 

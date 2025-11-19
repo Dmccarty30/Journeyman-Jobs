@@ -5,11 +5,11 @@ import '../models/crew_preferences.dart';
 import '../models/crew_stats.dart';
 import 'job_matching_service_impl.dart';
 import 'job_sharing_service_impl.dart';
-import 'package:journeyman_jobs/utils/validation.dart';
-import 'package:journeyman_jobs/domain/exceptions/app_exception.dart';
-import 'package:journeyman_jobs/domain/exceptions/crew_exception.dart';
-import 'package:journeyman_jobs/domain/exceptions/member_exception.dart';
-import 'package:journeyman_jobs/domain/exceptions/messaging_exception.dart';
+import '../../../utils/validation.dart';
+import '../../../domain/exceptions/app_exception.dart';
+import '../../../domain/exceptions/crew_exception.dart';
+import '../../../domain/exceptions/member_exception.dart';
+import '../../../domain/exceptions/messaging_exception.dart';
 import '../../../services/offline_data_service.dart';
 import '../../../services/connectivity_service.dart';
 
@@ -31,12 +31,6 @@ class RolePermissions {
       Permission.moderateContent,
       Permission.viewStats,
       Permission.manageSettings,
-    },
-    MemberRole.lead: {
-      Permission.inviteMember,
-      Permission.shareJob,
-      Permission.moderateContent,
-      Permission.viewStats,
     },
     MemberRole.member: {
       Permission.shareJob,

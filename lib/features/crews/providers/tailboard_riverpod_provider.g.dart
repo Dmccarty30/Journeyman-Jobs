@@ -55,179 +55,6 @@ final class TailboardServiceProvider extends $FunctionalProvider<
 
 String _$tailboardServiceHash() => r'a008ee27926f60cfa4901bb94d74ed464864c13b';
 
-/// Stream of tailboard data for a specific crew
-
-@ProviderFor(tailboardStream)
-const tailboardStreamProvider = TailboardStreamFamily._();
-
-/// Stream of tailboard data for a specific crew
-
-final class TailboardStreamProvider extends $FunctionalProvider<
-        AsyncValue<Tailboard?>, Tailboard?, Stream<Tailboard?>>
-    with $FutureModifier<Tailboard?>, $StreamProvider<Tailboard?> {
-  /// Stream of tailboard data for a specific crew
-  const TailboardStreamProvider._(
-      {required TailboardStreamFamily super.from,
-      required String super.argument})
-      : super(
-          retry: null,
-          name: r'tailboardStreamProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$tailboardStreamHash();
-
-  @override
-  String toString() {
-    return r'tailboardStreamProvider'
-        ''
-        '($argument)';
-  }
-
-  @$internal
-  @override
-  $StreamProviderElement<Tailboard?> $createElement($ProviderPointer pointer) =>
-      $StreamProviderElement(pointer);
-
-  @override
-  Stream<Tailboard?> create(Ref ref) {
-    final argument = this.argument as String;
-    return tailboardStream(
-      ref,
-      argument,
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is TailboardStreamProvider && other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
-}
-
-String _$tailboardStreamHash() => r'695857c8ddee060db4eee0951e34af3a35c347c8';
-
-/// Stream of tailboard data for a specific crew
-
-final class TailboardStreamFamily extends $Family
-    with $FunctionalFamilyOverride<Stream<Tailboard?>, String> {
-  const TailboardStreamFamily._()
-      : super(
-          retry: null,
-          name: r'tailboardStreamProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
-
-  /// Stream of tailboard data for a specific crew
-
-  TailboardStreamProvider call(
-    String crewId,
-  ) =>
-      TailboardStreamProvider._(argument: crewId, from: this);
-
-  @override
-  String toString() => r'tailboardStreamProvider';
-}
-
-/// Tailboard data for a specific crew
-
-@ProviderFor(tailboard)
-const tailboardProvider = TailboardFamily._();
-
-/// Tailboard data for a specific crew
-
-final class TailboardProvider
-    extends $FunctionalProvider<Tailboard?, Tailboard?, Tailboard?>
-    with $Provider<Tailboard?> {
-  /// Tailboard data for a specific crew
-  const TailboardProvider._(
-      {required TailboardFamily super.from, required String super.argument})
-      : super(
-          retry: null,
-          name: r'tailboardProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$tailboardHash();
-
-  @override
-  String toString() {
-    return r'tailboardProvider'
-        ''
-        '($argument)';
-  }
-
-  @$internal
-  @override
-  $ProviderElement<Tailboard?> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  Tailboard? create(Ref ref) {
-    final argument = this.argument as String;
-    return tailboard(
-      ref,
-      argument,
-    );
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(Tailboard? value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<Tailboard?>(value),
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is TailboardProvider && other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
-}
-
-String _$tailboardHash() => r'38db4fadb086a6affdfb17d72c4b97d82b0cb761';
-
-/// Tailboard data for a specific crew
-
-final class TailboardFamily extends $Family
-    with $FunctionalFamilyOverride<Tailboard?, String> {
-  const TailboardFamily._()
-      : super(
-          retry: null,
-          name: r'tailboardProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
-
-  /// Tailboard data for a specific crew
-
-  TailboardProvider call(
-    String crewId,
-  ) =>
-      TailboardProvider._(argument: crewId, from: this);
-
-  @override
-  String toString() => r'tailboardProvider';
-}
-
 /// Stream of suggested jobs for a specific crew
 
 @ProviderFor(suggestedJobsStream)
@@ -1430,18 +1257,99 @@ final class AppliedJobsFamily extends $Family
   String toString() => r'appliedJobsProvider';
 }
 
-/// Provider to get tailboard analytics
+@ProviderFor(tailboardMetadataStream)
+const tailboardMetadataStreamProvider = TailboardMetadataStreamFamily._();
+
+final class TailboardMetadataStreamProvider extends $FunctionalProvider<
+        AsyncValue<Map<String, dynamic>?>,
+        Map<String, dynamic>?,
+        Stream<Map<String, dynamic>?>>
+    with
+        $FutureModifier<Map<String, dynamic>?>,
+        $StreamProvider<Map<String, dynamic>?> {
+  const TailboardMetadataStreamProvider._(
+      {required TailboardMetadataStreamFamily super.from,
+      required String super.argument})
+      : super(
+          retry: null,
+          name: r'tailboardMetadataStreamProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$tailboardMetadataStreamHash();
+
+  @override
+  String toString() {
+    return r'tailboardMetadataStreamProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<Map<String, dynamic>?> $createElement(
+          $ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<Map<String, dynamic>?> create(Ref ref) {
+    final argument = this.argument as String;
+    return tailboardMetadataStream(
+      ref,
+      argument,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is TailboardMetadataStreamProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$tailboardMetadataStreamHash() =>
+    r'7d207c1d9027080160f5dc417875bca4dde4524a';
+
+final class TailboardMetadataStreamFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<Map<String, dynamic>?>, String> {
+  const TailboardMetadataStreamFamily._()
+      : super(
+          retry: null,
+          name: r'tailboardMetadataStreamProvider',
+          dependencies: null,
+          $allTransitiveDependencies: null,
+          isAutoDispose: true,
+        );
+
+  TailboardMetadataStreamProvider call(
+    String crewId,
+  ) =>
+      TailboardMetadataStreamProvider._(argument: crewId, from: this);
+
+  @override
+  String toString() => r'tailboardMetadataStreamProvider';
+}
+
+/// Provider to get tailboard analytics from metadata
 
 @ProviderFor(tailboardAnalytics)
 const tailboardAnalyticsProvider = TailboardAnalyticsFamily._();
 
-/// Provider to get tailboard analytics
+/// Provider to get tailboard analytics from metadata
 
 final class TailboardAnalyticsProvider extends $FunctionalProvider<
     TailboardAnalytics?,
     TailboardAnalytics?,
     TailboardAnalytics?> with $Provider<TailboardAnalytics?> {
-  /// Provider to get tailboard analytics
+  /// Provider to get tailboard analytics from metadata
   const TailboardAnalyticsProvider._(
       {required TailboardAnalyticsFamily super.from,
       required String super.argument})
@@ -1498,9 +1406,9 @@ final class TailboardAnalyticsProvider extends $FunctionalProvider<
 }
 
 String _$tailboardAnalyticsHash() =>
-    r'4ce2612a24e7d86f013bc66c5b3b3dc44f354bcf';
+    r'107b048a83219cea5b0528729c936563250a482f';
 
-/// Provider to get tailboard analytics
+/// Provider to get tailboard analytics from metadata
 
 final class TailboardAnalyticsFamily extends $Family
     with $FunctionalFamilyOverride<TailboardAnalytics?, String> {
@@ -1513,7 +1421,7 @@ final class TailboardAnalyticsFamily extends $Family
           isAutoDispose: true,
         );
 
-  /// Provider to get tailboard analytics
+  /// Provider to get tailboard analytics from metadata
 
   TailboardAnalyticsProvider call(
     String crewId,
@@ -1887,33 +1795,33 @@ final class TotalSuggestedJobsCountFamily extends $Family
   String toString() => r'totalSuggestedJobsCountProvider';
 }
 
-/// Provider to check if tailboard is loaded
+/// Provider to check if tailboard metadata is loaded
 
-@ProviderFor(isTailboardLoaded)
-const isTailboardLoadedProvider = IsTailboardLoadedFamily._();
+@ProviderFor(isTailboardMetadataLoaded)
+const isTailboardMetadataLoadedProvider = IsTailboardMetadataLoadedFamily._();
 
-/// Provider to check if tailboard is loaded
+/// Provider to check if tailboard metadata is loaded
 
-final class IsTailboardLoadedProvider
+final class IsTailboardMetadataLoadedProvider
     extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
-  /// Provider to check if tailboard is loaded
-  const IsTailboardLoadedProvider._(
-      {required IsTailboardLoadedFamily super.from,
+  /// Provider to check if tailboard metadata is loaded
+  const IsTailboardMetadataLoadedProvider._(
+      {required IsTailboardMetadataLoadedFamily super.from,
       required String super.argument})
       : super(
           retry: null,
-          name: r'isTailboardLoadedProvider',
+          name: r'isTailboardMetadataLoadedProvider',
           isAutoDispose: true,
           dependencies: null,
           $allTransitiveDependencies: null,
         );
 
   @override
-  String debugGetCreateSourceHash() => _$isTailboardLoadedHash();
+  String debugGetCreateSourceHash() => _$isTailboardMetadataLoadedHash();
 
   @override
   String toString() {
-    return r'isTailboardLoadedProvider'
+    return r'isTailboardMetadataLoadedProvider'
         ''
         '($argument)';
   }
@@ -1926,7 +1834,7 @@ final class IsTailboardLoadedProvider
   @override
   bool create(Ref ref) {
     final argument = this.argument as String;
-    return isTailboardLoaded(
+    return isTailboardMetadataLoaded(
       ref,
       argument,
     );
@@ -1942,7 +1850,8 @@ final class IsTailboardLoadedProvider
 
   @override
   bool operator ==(Object other) {
-    return other is IsTailboardLoadedProvider && other.argument == argument;
+    return other is IsTailboardMetadataLoadedProvider &&
+        other.argument == argument;
   }
 
   @override
@@ -1951,43 +1860,44 @@ final class IsTailboardLoadedProvider
   }
 }
 
-String _$isTailboardLoadedHash() => r'8fa28e30ff5816ed31611c8aba883a0ac8867a17';
+String _$isTailboardMetadataLoadedHash() =>
+    r'1c4c48615c70c67aac91946ce62f572a12d6249e';
 
-/// Provider to check if tailboard is loaded
+/// Provider to check if tailboard metadata is loaded
 
-final class IsTailboardLoadedFamily extends $Family
+final class IsTailboardMetadataLoadedFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
-  const IsTailboardLoadedFamily._()
+  const IsTailboardMetadataLoadedFamily._()
       : super(
           retry: null,
-          name: r'isTailboardLoadedProvider',
+          name: r'isTailboardMetadataLoadedProvider',
           dependencies: null,
           $allTransitiveDependencies: null,
           isAutoDispose: true,
         );
 
-  /// Provider to check if tailboard is loaded
+  /// Provider to check if tailboard metadata is loaded
 
-  IsTailboardLoadedProvider call(
+  IsTailboardMetadataLoadedProvider call(
     String crewId,
   ) =>
-      IsTailboardLoadedProvider._(argument: crewId, from: this);
+      IsTailboardMetadataLoadedProvider._(argument: crewId, from: this);
 
   @override
-  String toString() => r'isTailboardLoadedProvider';
+  String toString() => r'isTailboardMetadataLoadedProvider';
 }
 
-/// Provider to get last updated timestamp
+/// Provider to get last updated timestamp from metadata
 
 @ProviderFor(tailboardLastUpdated)
 const tailboardLastUpdatedProvider = TailboardLastUpdatedFamily._();
 
-/// Provider to get last updated timestamp
+/// Provider to get last updated timestamp from metadata
 
 final class TailboardLastUpdatedProvider
     extends $FunctionalProvider<DateTime?, DateTime?, DateTime?>
     with $Provider<DateTime?> {
-  /// Provider to get last updated timestamp
+  /// Provider to get last updated timestamp from metadata
   const TailboardLastUpdatedProvider._(
       {required TailboardLastUpdatedFamily super.from,
       required String super.argument})
@@ -2043,9 +1953,9 @@ final class TailboardLastUpdatedProvider
 }
 
 String _$tailboardLastUpdatedHash() =>
-    r'8f25d27b5c7b35f738b71963e4ef1d160d7c7d37';
+    r'2fdcabd767a68cd60c3d90a33cb18d9fc5fe5188';
 
-/// Provider to get last updated timestamp
+/// Provider to get last updated timestamp from metadata
 
 final class TailboardLastUpdatedFamily extends $Family
     with $FunctionalFamilyOverride<DateTime?, String> {
@@ -2058,7 +1968,7 @@ final class TailboardLastUpdatedFamily extends $Family
           isAutoDispose: true,
         );
 
-  /// Provider to get last updated timestamp
+  /// Provider to get last updated timestamp from metadata
 
   TailboardLastUpdatedProvider call(
     String crewId,
@@ -2069,17 +1979,17 @@ final class TailboardLastUpdatedFamily extends $Family
   String toString() => r'tailboardLastUpdatedProvider';
 }
 
-/// Provider to get crew calendar
+/// Provider to get crew calendar from metadata
 
 @ProviderFor(crewCalendar)
 const crewCalendarProvider = CrewCalendarFamily._();
 
-/// Provider to get crew calendar
+/// Provider to get crew calendar from metadata
 
 final class CrewCalendarProvider
     extends $FunctionalProvider<CrewCalendar?, CrewCalendar?, CrewCalendar?>
     with $Provider<CrewCalendar?> {
-  /// Provider to get crew calendar
+  /// Provider to get crew calendar from metadata
   const CrewCalendarProvider._(
       {required CrewCalendarFamily super.from, required String super.argument})
       : super(
@@ -2133,9 +2043,9 @@ final class CrewCalendarProvider
   }
 }
 
-String _$crewCalendarHash() => r'9b3d4ffdf2d6a6ed1f2edcc07e980ef8f5cb7e8f';
+String _$crewCalendarHash() => r'49503d1830f5a44c6bc042119af382e7c6930daa';
 
-/// Provider to get crew calendar
+/// Provider to get crew calendar from metadata
 
 final class CrewCalendarFamily extends $Family
     with $FunctionalFamilyOverride<CrewCalendar?, String> {
@@ -2148,7 +2058,7 @@ final class CrewCalendarFamily extends $Family
           isAutoDispose: true,
         );
 
-  /// Provider to get crew calendar
+  /// Provider to get crew calendar from metadata
 
   CrewCalendarProvider call(
     String crewId,
@@ -2159,17 +2069,17 @@ final class CrewCalendarFamily extends $Family
   String toString() => r'crewCalendarProvider';
 }
 
-/// Provider to get recent messages
+/// Provider to get recent messages (placeholder - implement if needed)
 
 @ProviderFor(recentMessages)
 const recentMessagesProvider = RecentMessagesFamily._();
 
-/// Provider to get recent messages
+/// Provider to get recent messages (placeholder - implement if needed)
 
 final class RecentMessagesProvider
     extends $FunctionalProvider<List<String>, List<String>, List<String>>
     with $Provider<List<String>> {
-  /// Provider to get recent messages
+  /// Provider to get recent messages (placeholder - implement if needed)
   const RecentMessagesProvider._(
       {required RecentMessagesFamily super.from,
       required String super.argument})
@@ -2224,9 +2134,9 @@ final class RecentMessagesProvider
   }
 }
 
-String _$recentMessagesHash() => r'd62a6143bf8668517e0923ee013ecea78df28fa2';
+String _$recentMessagesHash() => r'79f46815cc85c7a975593a94f431add9136bc1b9';
 
-/// Provider to get recent messages
+/// Provider to get recent messages (placeholder - implement if needed)
 
 final class RecentMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<String>, String> {
@@ -2239,7 +2149,7 @@ final class RecentMessagesFamily extends $Family
           isAutoDispose: true,
         );
 
-  /// Provider to get recent messages
+  /// Provider to get recent messages (placeholder - implement if needed)
 
   RecentMessagesProvider call(
     String crewId,

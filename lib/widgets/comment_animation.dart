@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 import 'social_animations.dart';
 import '../design_system/app_theme.dart';
 
@@ -227,7 +226,6 @@ class _AnimatedCommentListState extends State<AnimatedCommentList> {
   Widget build(BuildContext context) {
     return Column(
       children: widget.comments.asMap().entries.map((entry) {
-        final index = entry.key;
         final comment = entry.value;
         
         return CommentAnimation(

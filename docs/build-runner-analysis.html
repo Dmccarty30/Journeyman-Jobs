@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build Runner Analysis - Tailboard Modernization</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .status-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success {
+            border-left: 5px solid #10b981;
+        }
+        .error {
+            border-left: 5px solid #ef4444;
+        }
+        .warning {
+            border-left: 5px solid #f59e0b;
+        }
+        .info {
+            border-left: 5px solid #3b82f6;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+        }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .metric {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .metric-label {
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .p0 { background-color: #dbeafe; color: #1e40af; }
+        .p1 { background-color: #fee2e2; color: #991b1b; }
+        .p2 { background-color: #fed7aa; color: #9a3412; }
+        .p3 { background-color: #fef3c7; color: #92400e; }
+        .p4 { background-color: #d1fae5; color: #065f46; }
+        .code {
+            background-color: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background-color: #e5e7eb;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Build Runner Analysis Report</h1>
+        <p>Tailboard Modernization - Post Syntax Fix Analysis</p>
+        <p><strong>Generated:</strong> November 19, 2025</p>
+    </div>
+
+    <div class="status-card success">
+        <h2>✅ Build Runner Status: SUCCESS</h2>
+        <p>Code generation completed successfully after fixing syntax error in tailboard_screen.dart</p>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 100%;">Build Complete</div>
+        </div>
+    </div>
+
+    <div class="metric-grid">
+        <div class="metric">
+            <div class="metric-label">Total Issues</div>
+            <div class="metric-value" style="color: #ef4444;">1,139</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">Errors</div>
+            <div class="metric-value" style="color: #dc2626;">813</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">Warnings</div>
+            <div class="metric-value" style="color: #f59e0b;">142</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">Info</div>
+            <div class="metric-value" style="color: #3b82f6;">181</div>
+        </div>
+    </div>
+
+    <div class="status-card info">
+        <h2>Comparison: Before vs After Fix</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Before Fix</th>
+                    <th>After Fix</th>
+                    <th>Change</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Build Status</strong></td>
+                    <td>❌ FAILED</td>
+                    <td>✅ SUCCESS</td>
+                    <td style="color: #10b981;">Fixed</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Issues</strong></td>
+                    <td>166</td>
+                    <td>1,139</td>
+                    <td>+973 (more comprehensive analysis)</td>
+                </tr>
+                <tr>
+                    <td><strong>Errors</strong></td>
+                    <td>29</td>
+                    <td>813</td>
+                    <td>+784 (includes test errors)</td>
+                </tr>
+                <tr>
+                    <td><strong>Warnings</strong></td>
+                    <td>44</td>
+                    <td>142</td>
+                    <td>+98</td>
+                </tr>
+                <tr>
+                    <td><strong>Info</strong></td>
+                    <td>93</td>
+                    <td>181</td>
+                    <td>+88</td>
+                </tr>
+                <tr>
+                    <td><strong>Build Time</strong></td>
+                    <td>41s</td>
+                    <td>27s</td>
+                    <td style="color: #10b981;">-14s (34% faster)</td>
+                </tr>
+            </tbody>
+        </table>
+        <p style="margin-top: 15px;"><em>Note: The increase in reported issues is due to successful build_runner completion, which now allows flutter analyze to scan all generated files and test code that was previously blocked.</em></p>
+    </div>
+
+    <div class="status-card error">
+        <h2>Top 5 Critical Issues to Fix Next</h2>
+        <ol>
+            <li>
+                <strong><span class="priority-badge p1">P1-CRITICAL</span> Ambiguous TestConstants Import (58 errors)</strong>
+                <ul>
+                    <li><strong>Impact:</strong> Compilation ambiguity, unpredictable behavior</li>
+                    <li><strong>Issue:</strong> <span class="code">TestConstants</span> defined in both mock_data.dart and test_constants.dart</li>
+                    <li><strong>Fix:</strong> Consolidate or namespace the class, update all test imports</li>
+                    <li><strong>Estimated Effort:</strong> 30-45 minutes</li>
+                </ul>
+            </li>
+            <li>
+                <strong><span class="priority-badge p1">P1-CRITICAL</span> Missing Required Arguments (103 errors)</strong>
+                <ul>
+                    <li><strong>Impact:</strong> Runtime crashes, null pointer exceptions</li>
+                    <li><strong>Issue:</strong> <span class="code">jobDetails</span> and <span class="code">sharerId</span> parameters missing in JobModel instantiations</li>
+                    <li><strong>Fix:</strong> Add required parameters to all constructor calls</li>
+                    <li><strong>Estimated Effort:</strong> 2-3 hours (systematic fix across multiple files)</li>
+                </ul>
+            </li>
+            <li>
+                <strong><span class="priority-badge p1">P1-CRITICAL</span> Missing Service Files (28 errors)</strong>
+                <ul>
+                    <li><strong>Impact:</strong> Build failures, missing dependencies</li>
+                    <li><strong>Issue:</strong> <span class="code">lib/services/crews_service.dart</span> and test files don't exist</li>
+                    <li><strong>Fix:</strong> Create missing files or update import paths</li>
+                    <li><strong>Estimated Effort:</strong> 1-2 hours (architecture decision needed)</li>
+                </ul>
+            </li>
+            <li>
+                <strong><span class="priority-badge p1">P1-CRITICAL</span> Undefined .when() Method (Multiple errors)</strong>
+                <ul>
+                    <li><strong>Impact:</strong> Compilation failures in member dialogs</li>
+                    <li><strong>Issue:</strong> <span class="code">.when()</span> method not defined for List types</li>
+                    <li><strong>Fix:</strong> Create extension method or refactor to use proper Riverpod AsyncValue</li>
+                    <li><strong>Estimated Effort:</strong> 1-2 hours</li>
+                </ul>
+            </li>
+            <li>
+                <strong><span class="priority-badge p1">P1-CRITICAL</span> Undefined References (510 total errors)</strong>
+                <ul>
+                    <li><strong>Impact:</strong> Compilation failures, runtime crashes</li>
+                    <li><strong>Top Issues:</strong>
+                        <ul>
+                            <li><span class="code">ref</span> undefined in offline_indicator.dart:164</li>
+                            <li><span class="code">textMuted</span> getter missing from AppTheme class</li>
+                            <li><span class="code">updateCrewPreferences</span> method not implemented</li>
+                            <li><span class="code">CancellableNetworkTileProvider</span> class not defined</li>
+                        </ul>
+                    </li>
+                    <li><strong>Fix:</strong> Systematic review and implementation of missing references</li>
+                    <li><strong>Estimated Effort:</strong> 4-6 hours (requires careful analysis)</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+
+    <div class="status-card warning">
+        <h2>Error Category Breakdown</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Count</th>
+                    <th>Priority</th>
+                    <th>Impact</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Undefined References</td>
+                    <td>510</td>
+                    <td><span class="priority-badge p1">P1</span></td>
+                    <td>Compilation failures, runtime crashes</td>
+                </tr>
+                <tr>
+                    <td>Missing Required Arguments</td>
+                    <td>103</td>
+                    <td><span class="priority-badge p1">P1</span></td>
+                    <td>Runtime crashes, null pointer exceptions</td>
+                </tr>
+                <tr>
+                    <td>Ambiguous Imports</td>
+                    <td>58</td>
+                    <td><span class="priority-badge p1">P1</span></td>
+                    <td>Compilation ambiguity</td>
+                </tr>
+                <tr>
+                    <td>Missing Imports/Files</td>
+                    <td>28</td>
+                    <td><span class="priority-badge p1">P1</span></td>
+                    <td>Build failures</td>
+                </tr>
+                <tr>
+                    <td>Type Assignment Errors</td>
+                    <td>11</td>
+                    <td><span class="priority-badge p2">P2</span></td>
+                    <td>Type safety violations</td>
+                </tr>
+                <tr>
+                    <td>Other Errors</td>
+                    <td>103</td>
+                    <td><span class="priority-badge p2">P2</span></td>
+                    <td>Various compilation issues</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="status-card success">
+        <h2>Impact Analysis</h2>
+        <p><strong>Estimated Impact of Fixing Top 4 P1 Issues:</strong></p>
+        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 15px 0;">
+            <p style="font-size: 1.2em; margin: 0;">Fixing the top 4 P1 issues would eliminate:</p>
+            <p style="font-size: 2em; font-weight: bold; color: #10b981; margin: 10px 0;">699 out of 813 errors</p>
+            <p style="font-size: 1.1em; color: #6b7280; margin: 0;">That's an <strong>86% reduction</strong> in total errors</p>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 86%;">86% Error Reduction Potential</div>
+        </div>
+    </div>
+
+    <div class="status-card info">
+        <h2>Next Steps & Recommendations</h2>
+        <ol>
+            <li><strong>Quick Win:</strong> Fix ambiguous TestConstants import (58 errors, 30-45 min)</li>
+            <li><strong>Systematic Fix:</strong> Address missing required arguments (103 errors, 2-3 hours)</li>
+            <li><strong>Architecture Decision:</strong> Create or fix missing service files (28 errors, 1-2 hours)</li>
+            <li><strong>Deep Dive:</strong> Tackle undefined references systematically (510 errors, 4-6 hours)</li>
+        </ol>
+        <p><strong>Recommended Approach:</strong> Start with the ambiguous import fix as it's the quickest win with significant impact (58 errors). Then proceed to missing arguments as it follows a systematic pattern. The remaining issues require more careful analysis and architectural decisions.</p>
+    </div>
+
+    <div class="status-card">
+        <h2>Build Runner Output Summary</h2>
+        <ul>
+            <li><strong>Status:</strong> ✅ Completed successfully</li>
+            <li><strong>Build Time:</strong> 27 seconds</li>
+            <li><strong>Outputs Generated:</strong> 4 files</li>
+            <li><strong>Inputs Processed:</strong> 335 files</li>
+            <li><strong>Generators Used:</strong>
+                <ul>
+                    <li>riverpod_generator (335 inputs, 1 output)</li>
+                    <li>source_gen:combining_builder (335 inputs, 2 outputs)</li>
+                    <li>mockito:mockBuilder (96 inputs, 11 outputs)</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <footer style="text-align: center; margin-top: 40px; padding: 20px; color: #6b7280;">
+        <p>Generated by Claude Code - Flutter Development Specialist</p>
+        <p>Analysis Date: November 19, 2025</p>
+    </footer>
+</body>
+</html>

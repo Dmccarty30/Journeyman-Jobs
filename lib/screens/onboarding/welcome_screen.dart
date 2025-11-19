@@ -21,19 +21,22 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       icon: Icons.electrical_services,
       title: 'Welcome to Journeyman Jobs',
       subtitle: 'Clearing the Books',
-      description: 'Your gateway to IBEW electrical opportunities. Connect with electrical contractors across the nation and find your next journeyman position with ease.',
+      description:
+          'Your gateway to IBEW electrical opportunities. Connect with electrical contractors across the nation and find your next journeyman position with ease.',
     ),
     WelcomePageData(
       icon: Icons.work,
       title: 'Find Quality Jobs',
       subtitle: 'Browse verified journeyman positions',
-      description: 'Access job referrals from IBEW locals nationwide. Filter by classification, location, and pay rate.',
+      description:
+          'Access job referrals from IBEW locals nationwide. Filter by classification, location, and pay rate.',
     ),
     WelcomePageData(
       icon: Icons.people,
       title: 'Built for Journeyman',
       subtitle: 'By Journeyman, for Journeyman',
-      description: 'Streamlined job search designed specifically for IBEW members and electrical professionals.',
+      description:
+          'Streamlined job search designed specifically for IBEW members and electrical professionals.',
     ),
   ];
 
@@ -93,7 +96,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ],
               ),
             ),
-            
+
             // Page content
             Expanded(
               child: PageView.builder(
@@ -102,107 +105,110 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 itemCount: _pages.length,
                 itemBuilder: (context, index) {
                   final page = _pages[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Icon with animation
-                        Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            gradient: AppTheme.buttonGradient,
-                            shape: BoxShape.circle,
-                            boxShadow: [AppTheme.shadowMd],
-                          ),
-                          child: Icon(
-                            page.icon,
-                            size: 60,
-                            color: AppTheme.white,
-                          ),
-                        )
-                        .animate()
-                        .scale(
-                          delay: const Duration(milliseconds: 200),
-                          duration: const Duration(milliseconds: 600),
-                          curve: Curves.elasticOut,
+                  return Center(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacingXl),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Icon with animation
+                            Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                gradient: AppTheme.buttonGradient,
+                                shape: BoxShape.circle,
+                                boxShadow: [AppTheme.shadowMd],
+                              ),
+                              child: Icon(
+                                page.icon,
+                                size: 60,
+                                color: AppTheme.white,
+                              ),
+                            ).animate().scale(
+                                  delay: const Duration(milliseconds: 200),
+                                  duration: const Duration(milliseconds: 600),
+                                  curve: Curves.elasticOut,
+                                ),
+
+                            const SizedBox(height: AppTheme.spacingXl),
+
+                            // Title
+                            Text(
+                              page.title,
+                              style: AppTheme.displaySmall.copyWith(
+                                color: AppTheme.primaryNavy,
+                              ),
+                              textAlign: TextAlign.center,
+                            )
+                                .animate()
+                                .fadeIn(
+                                  delay: const Duration(milliseconds: 400),
+                                  duration: const Duration(milliseconds: 600),
+                                )
+                                .slideY(
+                                  begin: 0.2,
+                                  end: 0,
+                                  delay: const Duration(milliseconds: 400),
+                                  duration: const Duration(milliseconds: 600),
+                                ),
+
+                            const SizedBox(height: AppTheme.spacingMd),
+
+                            // Subtitle
+                            Text(
+                              page.subtitle,
+                              style: AppTheme.headlineSmall.copyWith(
+                                color: AppTheme.accentCopper,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                            )
+                                .animate()
+                                .fadeIn(
+                                  delay: const Duration(milliseconds: 600),
+                                  duration: const Duration(milliseconds: 600),
+                                )
+                                .slideY(
+                                  begin: 0.2,
+                                  end: 0,
+                                  delay: const Duration(milliseconds: 600),
+                                  duration: const Duration(milliseconds: 600),
+                                ),
+
+                            const SizedBox(height: AppTheme.spacingLg),
+
+                            // Description
+                            Text(
+                              page.description,
+                              style: AppTheme.bodyLarge.copyWith(
+                                color: AppTheme.textSecondary,
+                                height: 1.6,
+                              ),
+                              textAlign: TextAlign.center,
+                            )
+                                .animate()
+                                .fadeIn(
+                                  delay: const Duration(milliseconds: 800),
+                                  duration: const Duration(milliseconds: 600),
+                                )
+                                .slideY(
+                                  begin: 0.2,
+                                  end: 0,
+                                  delay: const Duration(milliseconds: 800),
+                                  duration: const Duration(milliseconds: 600),
+                                ),
+                          ],
                         ),
-                        
-                        const SizedBox(height: AppTheme.spacingXl),
-                        
-                        // Title
-                        Text(
-                          page.title,
-                          style: AppTheme.displaySmall.copyWith(
-                            color: AppTheme.primaryNavy,
-                          ),
-                          textAlign: TextAlign.center,
-                        )
-                        .animate()
-                        .fadeIn(
-                          delay: const Duration(milliseconds: 400),
-                          duration: const Duration(milliseconds: 600),
-                        )
-                        .slideY(
-                          begin: 0.2,
-                          end: 0,
-                          delay: const Duration(milliseconds: 400),
-                          duration: const Duration(milliseconds: 600),
-                        ),
-                        
-                        const SizedBox(height: AppTheme.spacingMd),
-                        
-                        // Subtitle
-                        Text(
-                          page.subtitle,
-                          style: AppTheme.headlineSmall.copyWith(
-                            color: AppTheme.accentCopper,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          textAlign: TextAlign.center,
-                        )
-                        .animate()
-                        .fadeIn(
-                          delay: const Duration(milliseconds: 600),
-                          duration: const Duration(milliseconds: 600),
-                        )
-                        .slideY(
-                          begin: 0.2,
-                          end: 0,
-                          delay: const Duration(milliseconds: 600),
-                          duration: const Duration(milliseconds: 600),
-                        ),
-                        
-                        const SizedBox(height: AppTheme.spacingLg),
-                        
-                        // Description
-                        Text(
-                          page.description,
-                          style: AppTheme.bodyLarge.copyWith(
-                            color: AppTheme.textSecondary,
-                            height: 1.6,
-                          ),
-                          textAlign: TextAlign.center,
-                        )
-                        .animate()
-                        .fadeIn(
-                          delay: const Duration(milliseconds: 800),
-                          duration: const Duration(milliseconds: 600),
-                        )
-                        .slideY(
-                          begin: 0.2,
-                          end: 0,
-                          delay: const Duration(milliseconds: 800),
-                          duration: const Duration(milliseconds: 600),
-                        ),
-                      ],
+                      ),
                     ),
                   );
                 },
               ),
             ),
-            
+
             // Bottom section with progress and navigation
             Padding(
               padding: const EdgeInsets.all(AppTheme.spacingXl),
@@ -223,16 +229,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               : AppTheme.lightGray,
                           borderRadius: BorderRadius.circular(4),
                         ),
-                      )
-                      .animate()
-                      .scale(
-                        duration: const Duration(milliseconds: 200),
-                      ),
+                      ).animate().scale(
+                            duration: const Duration(milliseconds: 200),
+                          ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: AppTheme.spacingXl),
-                  
+
                   // Navigation buttons
                   Row(
                     children: [
@@ -251,9 +255,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         )
                       else
                         const Expanded(child: SizedBox()),
-                      
+
                       const SizedBox(width: AppTheme.spacingMd),
-                      
+
                       // Next/Get Started button
                       Expanded(
                         child: JJPrimaryButton(

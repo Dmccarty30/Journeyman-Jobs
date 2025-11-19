@@ -47,33 +47,42 @@ class CrewSelectionDropdown extends ConsumerWidget {
             ref.read(selectedCrewNotifierProviderProvider).setCrew(firstCrew);
           });
         }
-        
+
         return DropdownButtonFormField<String>(
+          isExpanded: true,
           decoration: InputDecoration(
             labelText: selectedCrew == null ? 'Select Crew' : 'Selected Crew',
             border: const OutlineInputBorder(),
             hintText: crews.isEmpty ? 'No crews available' : 'Select a crew',
           ),
-          value: selectedCrew?.id,
+          initialValue: selectedCrew?.id,
           items: crews.map((Crew crew) {
             return DropdownMenuItem<String>(
               value: crew.id,
-              child: Text(crew.name),
+              child: Text(
+                crew.name,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
             );
           }).toList(),
-          onChanged: crews.isEmpty ? null : (String? value) {
-            if (value != null) {
-              final crew = crews.firstWhere((c) => c.id == value);
-              ref.read(selectedCrewNotifierProviderProvider).setCrew(crew);
-              
-              // Notify tabs about the crew change
-              // This will trigger a rebuild of the TabBarView and all its tabs
-              if (context.mounted) {
-                // Focus the dropdown to close it after selection
-                FocusScope.of(context).unfocus();
-              }
-            }
-          },
+          onChanged: crews.isEmpty
+              ? null
+              : (String? value) {
+                  if (value != null) {
+                    final crew = crews.firstWhere((c) => c.id == value);
+                    ref
+                        .read(selectedCrewNotifierProviderProvider)
+                        .setCrew(crew);
+
+                    // Notify tabs about the crew change
+                    // This will trigger a rebuild of the TabBarView and all its tabs
+                    if (context.mounted) {
+                      // Focus the dropdown to close it after selection
+                      FocusScope.of(context).unfocus();
+                    }
+                  }
+                },
           onTap: () {
             // This callback is called when the dropdown is opened
             // It can be used to perform any actions needed when the dropdown is opened
