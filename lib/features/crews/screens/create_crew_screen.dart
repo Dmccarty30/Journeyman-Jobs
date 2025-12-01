@@ -9,7 +9,6 @@ import '../../../electrical_components/jj_electrical_toast.dart';
 import '../models/crew_preferences.dart';
 import '../providers/crews_riverpod_provider.dart';
 import '../widgets/crew_preferences_dialog.dart';
-import '../services/crew_service.dart';
 import '../../../providers/riverpod/auth_riverpod_provider.dart';
 
 class CreateCrewScreen extends ConsumerStatefulWidget {

@@ -225,7 +225,7 @@ class JJTransformerTrainer extends StatelessWidget {
           children: <Widget>[
             const Icon(
               Icons.electrical_services_outlined,
-              size: AppTheme.iconXxl,
+              size: AppTheme.iconLg,
               color: AppTheme.errorRed,
             ),
             const SizedBox(height: AppTheme.spacingMd),

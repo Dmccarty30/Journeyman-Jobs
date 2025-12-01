@@ -224,7 +224,7 @@ class BadgeWidget extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: backgroundColor ?? TailboardTheme.copper,
-        borderRadius: BorderRadius.circular(TailboardTheme.radiusRound),
+        borderRadius: BorderRadius.circular(TailboardTheme.radiusXl),
       ),
       child: Text(
         text,

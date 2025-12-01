@@ -42,8 +42,10 @@ class RichTextJobCard extends StatelessWidget {
             _buildTwoColumnRow(
               leftLabel: 'Local',
               leftValue: job.localNumber?.toString() ?? job.local?.toString() ?? 'N/A',
+              leftIcon: Icons.vpn_key_outlined,
               rightLabel: 'Classification',
               rightValue: toTitleCase(job.classification ?? 'N/A'),
+              rightIcon: Icons.badge_outlined,
             ),
             const SizedBox(height: 8),
 
@@ -51,11 +53,13 @@ class RichTextJobCard extends StatelessWidget {
             _buildTwoColumnRow(
               leftLabel: 'Contractor',
               leftValue: toTitleCase(job.company.isNotEmpty ? job.company : 'N/A'),
+              leftIcon: Icons.business_center_outlined,
               rightLabel: 'Wages',
               rightValue: job.wage != null && job.wage! > 0 
-                  ? '\${job.wage!.toStringAsFixed(2)}/hr' 
+                  ? '\$${job.wage!.toStringAsFixed(2)}/hr' 
                   : 'N/A',
               rightValueColor: job.wage != null && job.wage! > 0 ? AppTheme.successGreen : null,
+              rightIcon: Icons.attach_money,
             ),
             const SizedBox(height: 8),
 
@@ -63,8 +67,10 @@ class RichTextJobCard extends StatelessWidget {
             _buildTwoColumnRow(
               leftLabel: 'Location',
               leftValue: toTitleCase(job.location.isNotEmpty ? job.location : 'N/A'),
+              leftIcon: Icons.location_on_outlined,
               rightLabel: 'Hours',
               rightValue: job.hours != null ? '${job.hours}/week' : 'N/A',
+              rightIcon: Icons.access_time,
             ),
             const SizedBox(height: 8),
 
@@ -72,8 +78,10 @@ class RichTextJobCard extends StatelessWidget {
             _buildTwoColumnRow(
               leftLabel: 'Start Date',
               leftValue: job.startDate ?? 'N/A',
+              leftIcon: Icons.calendar_today_outlined,
               rightLabel: 'Per Diem',
               rightValue: job.perDiem ?? 'N/A',
+              rightIcon: Icons.hotel_outlined,
             ),
             const SizedBox(height: 8),
 
@@ -81,6 +89,7 @@ class RichTextJobCard extends StatelessWidget {
             _buildInfoRow(
               label: 'Type of Work',
               value: toTitleCase(job.typeOfWork ?? 'N/A'),
+              icon: Icons.build_outlined,
             ),
             const SizedBox(height: 8),
 
@@ -89,6 +98,7 @@ class RichTextJobCard extends StatelessWidget {
               _buildInfoRow(
                 label: 'Notes/Requirements',
                 value: job.qualifications!,
+                icon: Icons.library_books_outlined,
               ),
 
             const SizedBox(height: 16),
@@ -174,9 +184,11 @@ class RichTextJobCard extends StatelessWidget {
   Widget _buildTwoColumnRow({
     required String leftLabel,
     required String leftValue,
+    IconData? leftIcon,
+    Color? leftValueColor,
     required String rightLabel,
     required String rightValue,
-    Color? leftValueColor,
+    IconData? rightIcon,
     Color? rightValueColor,
   }) => Row(
       children: [
@@ -185,6 +197,13 @@ class RichTextJobCard extends StatelessWidget {
           child: RichText(
             text: TextSpan(
               children: [
+                if (leftIcon != null)
+                  WidgetSpan(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 4.0),
+                      child: Icon(leftIcon, size: 16, color: AppTheme.textDark),
+                    ),
+                  ),
                 TextSpan(
                   text: '$leftLabel: ',
                   style: const TextStyle(
@@ -210,10 +229,17 @@ class RichTextJobCard extends StatelessWidget {
           child: RichText(
             text: TextSpan(
               children: [
+                if (rightIcon != null)
+                  WidgetSpan(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 4.0),
+                      child: Icon(rightIcon, size: 16, color: AppTheme.textDark),
+                    ),
+                  ),
                 TextSpan(
                   text: '$rightLabel: ',
                   style: const TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600, // Adjusted to match bold
                     color: AppTheme.textDark,
                     fontSize: 13,
                   ),
@@ -236,10 +262,18 @@ class RichTextJobCard extends StatelessWidget {
   Widget _buildInfoRow({
     required String label,
     required String value,
+    IconData? icon,
     Color? valueColor,
   }) => RichText(
       text: TextSpan(
         children: [
+          if (icon != null)
+            WidgetSpan(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 4.0),
+                child: Icon(icon, size: 16, color: AppTheme.textDark),
+              ),
+            ),
           TextSpan(
             text: '$label: ',
             style: const TextStyle(

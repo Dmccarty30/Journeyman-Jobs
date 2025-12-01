@@ -62,7 +62,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final user = FirebaseAuth.instance.currentUser;
     
     return Scaffold(
-      backgroundColor: AppTheme.offWhite,
+      backgroundColor: Colors.transparent, // Changed to transparent
       appBar: AppBar(
         backgroundColor: AppTheme.primaryNavy,
         elevation: 0,
@@ -71,184 +71,214 @@ class _SettingsScreenState extends State<SettingsScreen> {
           style: AppTheme.headlineMedium.copyWith(color: AppTheme.white),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppTheme.spacingMd),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // User profile section
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                gradient: AppTheme.cardGradient,
-                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                border: Border.all(
-                  color: AppTheme.accentCopper,
-                  width: AppTheme.borderWidthThin,
-                ),
-                boxShadow: [AppTheme.shadowMd],
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      gradient: AppTheme.buttonGradient,
-                      shape: BoxShape.circle,
+      body: Stack(
+        children: [
+          ElectricalCircuitBackground( // Added background
+            opacity: 0.35,
+            componentDensity: ComponentDensity.high,
+          ),
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // User profile section
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(AppTheme.spacingLg),
+                  decoration: BoxDecoration(
+                    gradient: AppTheme.cardGradient,
+                    borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                    border: Border.all(
+                      color: AppTheme.accentCopper,
+                      width: AppTheme.borderWidthThin,
                     ),
-                    child: Icon(
-                      Icons.person,
-                      size: AppTheme.iconXl,
-                      color: AppTheme.white,
-                    ),
+                    boxShadow: [AppTheme.shadowMd],
                   ),
-                  const SizedBox(height: AppTheme.spacingMd),
-                  Text(
-                    user?.displayName ?? user?.email ?? 'Journeyman',
-                    style: AppTheme.headlineSmall.copyWith(
-                      color: AppTheme.primaryNavy,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppTheme.spacingSm),
-                  if (_isLoading)
-                    const SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          gradient: AppTheme.buttonGradient,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          size: AppTheme.iconLg,
+                          color: AppTheme.white,
+                        ),
                       ),
-                    )
-                  else
-                    Text(
-                      _ticketNumber != null ? 'Ticket #$_ticketNumber' : 'IBEW Member',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.textSecondary,
+                      const SizedBox(height: AppTheme.spacingMd),
+                      Text(
+                        user?.displayName ?? user?.email ?? 'Journeyman',
+                        style: AppTheme.headlineSmall.copyWith(
+                          color: AppTheme.primaryNavy,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
+                      const SizedBox(height: AppTheme.spacingSm),
+                      if (_isLoading)
+                        const SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                      else
+                        Text(
+                          _ticketNumber != null ? 'Ticket #$_ticketNumber' : 'IBEW Member',
+                          style: AppTheme.bodyMedium.copyWith(
+                            color: AppTheme.textSecondary,
+                          ),
+                        ),
+                      const SizedBox(height: AppTheme.spacingLg),
+                      JJPrimaryButton(
+                        text: 'Edit Profile',
+                        icon: Icons.edit,
+                        onPressed: () {
+                          context.push(AppRouter.profile);
+                        },
+                        isFullWidth: true,
+                        variant: JJButtonVariant.primary,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: AppTheme.spacingLg),
+
+                // Menu sections
+                _buildMenuSection(
+                  'Account',
+                  [
+                    _MenuOption(
+                      icon: Icons.person_outline,
+                      title: 'Profile',
+                      subtitle: 'Manage your personal information',
+                      onTap: () => context.push(AppRouter.profile),
                     ),
-                  const SizedBox(height: AppTheme.spacingLg),
-                  JJPrimaryButton(
-                    text: 'Edit Profile',
-                    icon: Icons.edit,
-                    onPressed: () {
-                      context.push(AppRouter.profile);
-                    },
-                    isFullWidth: true,
-                    variant: JJButtonVariant.primary,
+                                    _MenuOption(
+                                      icon: Icons.badge_outlined,
+                                      title: 'Training & Certificates',
+                                      subtitle: 'Track your professional credentials',
+                                      onTap: () => context.push(AppRouter.training),
+                                    ),
+                                    _MenuOption(
+                                      icon: Icons.work_outline, // Icon for job preferences
+                                      title: 'Job Search Preferences',
+                                      subtitle: 'Manage job search radius, rates, and auto-apply',
+                                      onTap: () => context.push(AppRouter.jobSearchPreferences),
+                                    ),                  ],
+                ),
+
+                const SizedBox(height: AppTheme.spacingLg),
+
+                _buildMenuSection(
+                  'Support',
+                  [
+                    _MenuOption(
+                      icon: Icons.help_outline,
+                      title: 'Help & Support',
+                      subtitle: 'Get assistance and FAQ',
+                      onTap: () => context.push(AppRouter.help),
+                    ),
+                    _MenuOption(
+                      icon: Icons.library_books_outlined,
+                      title: 'Resources',
+                      subtitle: 'Useful documents and links',
+                      onTap: () => context.push(AppRouter.resources),
+                    ),
+                    _MenuOption(
+                      icon: Icons.feedback_outlined,
+                      title: 'Send Feedback',
+                      subtitle: 'Help us improve the app',
+                      onTap: () => context.push(AppRouter.feedback),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: AppTheme.spacingLg),
+
+                _buildMenuSection(
+                  'App',
+                  [
+                                    _MenuOption(
+                                      icon: Icons.notifications_outlined,
+                                      title: 'Notifications',
+                                      subtitle: 'Manage notification preferences',
+                                      onTap: () => context.push(AppRouter.notificationSettings),
+                                    ),
+                                                    _MenuOption(
+                                                      icon: Icons.color_lens_outlined, // New icon for Appearance
+                                                      title: 'Appearance & Display',
+                                                      subtitle: 'Theme, font size, and visual effects',
+                                                      onTap: () => context.push(AppRouter.appearanceDisplay),
+                                                    ),
+                                                                    _MenuOption(
+                                                                      icon: Icons.data_usage_outlined, // Icon for Data & Storage
+                                                                      title: 'Data & Storage',
+                                                                      subtitle: 'Manage offline data, downloads, and cache',
+                                                                      onTap: () => context.push(AppRouter.dataStorage),
+                                                                    ),
+                                                                    _MenuOption(
+                                                                      icon: Icons.language_outlined, // Icon for Language & Region
+                                                                      title: 'Language & Region',
+                                                                      subtitle: 'Set language, date, and time formats',
+                                                                      onTap: () => context.push(AppRouter.languageRegion),
+                                                                    ),
+                                                                    _MenuOption(
+                                                                      icon: Icons.security_outlined,
+                                                                      title: 'Privacy & Security',
+                                                                      subtitle: 'Control your data and privacy',
+                                                                      onTap: () {
+                                                                        context.push(AppRouter.privacySecurity);
+                                                                      },
+                                                                    ),                                        _MenuOption(
+                      icon: Icons.info_outline,
+                      title: 'About',
+                      subtitle: 'App version and information',
+                      onTap: () {
+                        _showAboutDialog();
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: AppTheme.spacingXl),
+
+                // Sign out button
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(AppTheme.spacingLg),
+                  decoration: BoxDecoration(
+                    color: AppTheme.white,
+                    borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                    border: Border.all(
+                      color: AppTheme.accentCopper,
+                      width: AppTheme.borderWidthThin,
+                    ),
+                    boxShadow: [AppTheme.shadowSm],
                   ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: AppTheme.spacingLg),
-
-            // Menu sections
-            _buildMenuSection(
-              'Account',
-              [
-                _MenuOption(
-                  icon: Icons.person_outline,
-                  title: 'Profile',
-                  subtitle: 'Manage your personal information',
-                  onTap: () => context.push(AppRouter.profile),
-                ),
-                _MenuOption(
-                  icon: Icons.badge_outlined,
-                  title: 'Training & Certificates',
-                  subtitle: 'Track your professional credentials',
-                  onTap: () => context.push(AppRouter.training),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: AppTheme.spacingLg),
-
-            _buildMenuSection(
-              'Support',
-              [
-                _MenuOption(
-                  icon: Icons.help_outline,
-                  title: 'Help & Support',
-                  subtitle: 'Get assistance and FAQ',
-                  onTap: () => context.push(AppRouter.help),
-                ),
-                _MenuOption(
-                  icon: Icons.library_books_outlined,
-                  title: 'Resources',
-                  subtitle: 'Useful documents and links',
-                  onTap: () => context.push(AppRouter.resources),
-                ),
-                _MenuOption(
-                  icon: Icons.feedback_outlined,
-                  title: 'Send Feedback',
-                  subtitle: 'Help us improve the app',
-                  onTap: () => context.push(AppRouter.feedback),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: AppTheme.spacingLg),
-
-            _buildMenuSection(
-              'App',
-              [
-                _MenuOption(
-                  icon: Icons.notifications_outlined,
-                  title: 'Notifications',
-                  subtitle: 'Manage notification preferences',
-                  onTap: () => context.push(AppRouter.notificationSettings),
-                ),
-                _MenuOption(
-                  icon: Icons.security_outlined,
-                  title: 'Privacy & Security',
-                  subtitle: 'Control your data and privacy',
-                  onTap: () {
-                    // TODO: Show privacy settings
-                  },
-                ),
-                _MenuOption(
-                  icon: Icons.info_outline,
-                  title: 'About',
-                  subtitle: 'App version and information',
-                  onTap: () {
-                    _showAboutDialog();
-                  },
-                ),
-              ],
-            ),
-
-            const SizedBox(height: AppTheme.spacingXl),
-
-            // Sign out button
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                color: AppTheme.white,
-                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                border: Border.all(
-                  color: AppTheme.accentCopper,
-                  width: AppTheme.borderWidthThin,
-                ),
-                boxShadow: [AppTheme.shadowSm],
-              ),
-              child: Column(
-                children: [
-                  JJSecondaryButton(
-                    text: 'Sign Out',
-                    icon: Icons.logout,
-                    onPressed: _signOut,
-                    isFullWidth: true,
+                  child: Column(
+                    children: [
+                      JJSecondaryButton(
+                        text: 'Sign Out',
+                        icon: Icons.logout,
+                        onPressed: _signOut,
+                        isFullWidth: true,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
 
-            const SizedBox(height: AppTheme.spacingXxl),
-          ],
-        ),
+                const SizedBox(height: AppTheme.spacingXl),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

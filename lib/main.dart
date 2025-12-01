@@ -6,7 +6,6 @@ import 'package:firebase_performance/firebase_performance.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journeyman_jobs/services/notification_service.dart';
 import 'firebase_options.dart';
 import 'design_system/app_theme.dart';
 import 'navigation/app_router.dart';
@@ -24,9 +23,8 @@ void main() async {
     await FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
 
     // Initialize Firebase Crashlytics
-    FlutterError.onError = (errorDetails) {
-      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-    };
+    FlutterError.onError = (errorDetails) =>
+        FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
     PlatformDispatcher.instance.onError = (error, stack) {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
@@ -34,30 +32,32 @@ void main() async {
   }
   
   // Enable Firestore offline persistence for better user experience
-  // Note: Cache limited to 100MB to prevent excessive local storage usage; monitor for eviction issues in production
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
-    cacheSizeBytes: 100 * 1024 * 1024, // 100MB
+    cacheSizeBytes: 100 * 1024 * 1024, // 100MB cache
   );
-  
-  runApp(const ProviderScope(child: MyApp()));
+
+  // ProviderScope wrapper around Material App
+  runApp(
+    const ProviderScope(
+      child: JourneymanJobsApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class JourneymanJobsApp extends ConsumerWidget {
+  const JourneymanJobsApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Initialize notifications after first frame
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await NotificationService.init(context);
-    });
-
-    return MaterialApp.router(
-      title: 'Journeyman Jobs',
-      theme: AppTheme.lightTheme,
-      debugShowCheckedModeBanner: false,
-      routerConfig: AppRouter.router,
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) => MaterialApp.router(
+    title: 'Journeyman Jobs',
+    theme: AppTheme.lightTheme,
+    darkTheme: AppTheme.darkTheme,
+    routerConfig: AppRouter.router,
+    debugShowCheckedModeBanner: false,
+    builder: (BuildContext context, Widget? child) {
+      // Add any global error handling or loading overlays here if needed
+      return child ?? const SizedBox.shrink();
+    },
+  );
 }

@@ -771,7 +771,7 @@ class JJChip extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+        borderRadius: BorderRadius.circular(AppTheme.radiusXl),
         child: Container(
           padding: const EdgeInsets.symmetric(
             horizontal: AppTheme.spacingMd,
@@ -781,7 +781,7 @@ class JJChip extends StatelessWidget {
             color: isSelected
                 ? selectedColor ?? AppTheme.accentCopper
                 : unselectedColor ?? AppTheme.lightGray,
-            borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+            borderRadius: BorderRadius.circular(AppTheme.radiusXl),
             border: isSelected
                 ? null
                 : Border.all(color: AppTheme.mediumGray, width: 0.5),
@@ -854,7 +854,7 @@ class JJEmptyState extends StatelessWidget {
             ] else if (icon != null) ...[
               Icon(
                 icon,
-                size: AppTheme.iconXxl + 16,
+                size: AppTheme.iconLg + 16,
                 color: AppTheme.textLight,
               ),
               const SizedBox(height: AppTheme.spacingMd),

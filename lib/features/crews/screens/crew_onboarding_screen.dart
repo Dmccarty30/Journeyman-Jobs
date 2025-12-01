@@ -100,7 +100,7 @@ class _CrewOnboardingScreenState extends State<CrewOnboardingScreen> {
                 duration: const Duration(milliseconds: 600),
               ),
               
-              const SizedBox(height: AppTheme.spacingXxl),
+              const SizedBox(height: AppTheme.spacingXl),
               
               // Create Crew Button (Primary)
               SizedBox(

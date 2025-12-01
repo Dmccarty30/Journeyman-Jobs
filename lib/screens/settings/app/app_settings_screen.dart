@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+  import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart';
-import '../../electrical_components/jj_circuit_breaker_switch.dart';
+import '../../../design_system/app_theme.dart';
+import '../../../design_system/components/reusable_components.dart';
+import '../../../electrical_components/jj_circuit_breaker_switch.dart';
 
 class AppSettingsScreen extends StatefulWidget {
   const AppSettingsScreen({super.key});
@@ -12,29 +12,13 @@ class AppSettingsScreen extends StatefulWidget {
 }
 
 class _AppSettingsScreenState extends State<AppSettingsScreen> {
-  // Appearance Settings
-  bool _darkModeEnabled = false;
-  bool _highContrastMode = false;
-  bool _electricalEffects = true;
-  String _selectedFontSize = 'Medium';
+
   
-  // Job Search Preferences
-  double _defaultSearchRadius = 50.0;
-  String _units = 'Miles';
-  bool _autoApplyEnabled = false;
-  double _minimumHourlyRate = 35.0;
+
   
-  // Data & Storage
-  bool _offlineModeEnabled = false;
-  bool _autoDownloadEnabled = true;
-  bool _wifiOnlyDownloads = true;
-  String _cacheSize = 'Calculating...';
+
   
-  // Privacy & Security
-  String _profileVisibility = 'Union Members Only';
-  bool _locationServicesEnabled = true;
-  bool _biometricLoginEnabled = false;
-  bool _twoFactorEnabled = false;
+
   
   // Language & Region
   String _selectedLanguage = 'English';
@@ -57,27 +41,16 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
     
     setState(() {
       // Appearance
-      _darkModeEnabled = prefs.getBool('dark_mode') ?? false;
-      _highContrastMode = prefs.getBool('high_contrast') ?? false;
-      _electricalEffects = prefs.getBool('electrical_effects') ?? true;
-      _selectedFontSize = prefs.getString('font_size') ?? 'Medium';
+      // Removed as these settings are now handled by AppearanceDisplayScreen
       
       // Job Search
-      _defaultSearchRadius = prefs.getDouble('default_search_radius') ?? 50.0;
-      _units = prefs.getString('units') ?? 'Miles';
-      _autoApplyEnabled = prefs.getBool('auto_apply') ?? false;
-      _minimumHourlyRate = prefs.getDouble('minimum_hourly_rate') ?? 35.0;
+      // Removed as these settings are now handled by JobSearchPreferencesScreen
       
       // Data & Storage
-      _offlineModeEnabled = prefs.getBool('offline_mode') ?? false;
-      _autoDownloadEnabled = prefs.getBool('auto_download') ?? true;
-      _wifiOnlyDownloads = prefs.getBool('wifi_only_downloads') ?? true;
+      // Removed as these settings are now handled by DataStorageScreen
       
       // Privacy & Security
-      _profileVisibility = prefs.getString('profile_visibility') ?? 'Union Members Only';
-      _locationServicesEnabled = prefs.getBool('location_services') ?? true;
-      _biometricLoginEnabled = prefs.getBool('biometric_login') ?? false;
-      _twoFactorEnabled = prefs.getBool('two_factor') ?? false;
+      // Removed as these settings are now handled by PrivacySecurityScreen
       
       // Language & Region
       _selectedLanguage = prefs.getString('language') ?? 'English';
@@ -191,209 +164,15 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Appearance Section
-            _buildSectionHeader('Appearance & Display'),
-            _buildSettingsCard([
-              _buildSwitchTile(
-                icon: Icons.dark_mode,
-                title: 'Dark Mode',
-                subtitle: 'TODO: Implement dark theme',
-                value: _darkModeEnabled,
-                onChanged: (value) {
-                  setState(() => _darkModeEnabled = value);
-                  _saveSetting('dark_mode', value);
-                  JJSnackBar.showInfo(
-                    context: context,
-                    message: 'Dark mode coming soon!',
-                  );
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.contrast,
-                title: 'High Contrast',
-                subtitle: 'Better visibility in bright sunlight',
-                value: _highContrastMode,
-                onChanged: (value) {
-                  setState(() => _highContrastMode = value);
-                  _saveSetting('high_contrast', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.bolt,
-                title: 'Electrical Effects',
-                subtitle: 'Animations and visual effects',
-                value: _electricalEffects,
-                onChanged: (value) {
-                  setState(() => _electricalEffects = value);
-                  _saveSetting('electrical_effects', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildDropdownTile(
-                icon: Icons.text_fields,
-                title: 'Font Size',
-                value: _selectedFontSize,
-                options: ['Small', 'Medium', 'Large', 'Extra Large'],
-                onChanged: (value) {
-                  setState(() => _selectedFontSize = value!);
-                  _saveSetting('font_size', value);
-                },
-              ),
-            ]),
+
             
             const SizedBox(height: AppTheme.spacingLg),
             
-            // Job Search Preferences
-            _buildSectionHeader('Job Search Preferences'),
-            _buildSettingsCard([
-              _buildSliderTile(
-                icon: Icons.location_on,
-                title: 'Default Search Radius',
-                subtitle: '${_defaultSearchRadius.toInt()} $_units',
-                value: _defaultSearchRadius,
-                min: 10,
-                max: 500,
-                divisions: 49,
-                onChanged: (value) {
-                  setState(() => _defaultSearchRadius = value);
-                  _saveSetting('default_search_radius', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildDropdownTile(
-                icon: Icons.straighten,
-                title: 'Distance Units',
-                value: _units,
-                options: ['Miles', 'Kilometers'],
-                onChanged: (value) {
-                  setState(() => _units = value!);
-                  _saveSetting('units', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSliderTile(
-                icon: Icons.attach_money,
-                title: 'Minimum Hourly Rate',
-                subtitle: '\$${_minimumHourlyRate.toStringAsFixed(2)}/hr',
-                value: _minimumHourlyRate,
-                min: 20,
-                max: 100,
-                divisions: 80,
-                onChanged: (value) {
-                  setState(() => _minimumHourlyRate = value);
-                  _saveSetting('minimum_hourly_rate', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.flash_auto,
-                title: 'Auto-Apply',
-                subtitle: 'Automatically apply to matching jobs',
-                value: _autoApplyEnabled,
-                onChanged: (value) {
-                  setState(() => _autoApplyEnabled = value);
-                  _saveSetting('auto_apply', value);
-                },
-              ),
-            ]),
+
             
-            const SizedBox(height: AppTheme.spacingLg),
+
             
-            // Data & Storage
-            _buildSectionHeader('Data & Storage'),
-            _buildSettingsCard([
-              _buildSwitchTile(
-                icon: Icons.offline_pin,
-                title: 'Offline Mode',
-                subtitle: 'Download union data for offline access',
-                value: _offlineModeEnabled,
-                onChanged: (value) {
-                  setState(() => _offlineModeEnabled = value);
-                  _saveSetting('offline_mode', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.download,
-                title: 'Auto-Download',
-                subtitle: 'Weather maps and union updates',
-                value: _autoDownloadEnabled,
-                onChanged: (value) {
-                  setState(() => _autoDownloadEnabled = value);
-                  _saveSetting('auto_download', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.wifi,
-                title: 'Wi-Fi Only Downloads',
-                subtitle: 'Limit downloads to Wi-Fi connections',
-                value: _wifiOnlyDownloads,
-                onChanged: (value) {
-                  setState(() => _wifiOnlyDownloads = value);
-                  _saveSetting('wifi_only_downloads', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildActionTile(
-                icon: Icons.cleaning_services,
-                title: 'Clear Cache',
-                subtitle: 'Current size: $_cacheSize',
-                onTap: _clearCache,
-              ),
-            ]),
-            
-            const SizedBox(height: AppTheme.spacingLg),
-            
-            // Privacy & Security
-            _buildSectionHeader('Privacy & Security'),
-            _buildSettingsCard([
-              _buildDropdownTile(
-                icon: Icons.visibility,
-                title: 'Profile Visibility',
-                value: _profileVisibility,
-                options: ['Public', 'Union Members Only', 'Private'],
-                onChanged: (value) {
-                  setState(() => _profileVisibility = value!);
-                  _saveSetting('profile_visibility', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.location_on,
-                title: 'Location Services',
-                subtitle: 'Used for job and weather alerts',
-                value: _locationServicesEnabled,
-                onChanged: (value) {
-                  setState(() => _locationServicesEnabled = value);
-                  _saveSetting('location_services', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.fingerprint,
-                title: 'Biometric Login',
-                subtitle: 'Use Face ID or Touch ID',
-                value: _biometricLoginEnabled,
-                onChanged: (value) {
-                  setState(() => _biometricLoginEnabled = value);
-                  _saveSetting('biometric_login', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSwitchTile(
-                icon: Icons.security,
-                title: 'Two-Factor Authentication',
-                subtitle: 'Extra security for your account',
-                value: _twoFactorEnabled,
-                onChanged: (value) {
-                  setState(() => _twoFactorEnabled = value);
-                  _saveSetting('two_factor', value);
-                },
-              ),
-            ]),
+
             
             const SizedBox(height: AppTheme.spacingLg),
             

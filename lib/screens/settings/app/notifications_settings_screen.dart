@@ -3,10 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
-import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart';
-import '../../services/notification_permission_service.dart';
-import '../../navigation/app_router.dart';
+import '../../../design_system/app_theme.dart';
+import '../../../design_system/components/reusable_components.dart';
+import '../../../services/notification_permission_service.dart';
+import '../../../navigation/app_router.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -530,13 +530,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      backgroundColor: AppTheme.lightGray,
+      backgroundColor: Colors.transparent, // Changed to transparent
       appBar: AppBar(
         title: Text(
           'Notifications',
           style: AppTheme.headlineSmall.copyWith(
             color: AppTheme.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
           ),
         ),
         backgroundColor: AppTheme.primaryNavy,
@@ -560,9 +560,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Stack(
         children: [
+          ElectricalCircuitBackground( // Added background
+            opacity: 0.35,
+            componentDensity: ComponentDensity.high,
+          ),
+          TabBarView(
+            controller: _tabController,
+            children: [
           // Notifications Tab
           Column(
             children: [

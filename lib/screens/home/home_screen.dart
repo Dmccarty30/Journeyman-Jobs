@@ -68,7 +68,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             iconColor: AppTheme.white,
             showPopupOnTap: false,
             onTap: () {
-              context.push(AppRouter.notifications);
+              context.push(AppRouter.notificationSettings);
             },
           ),
         ],
@@ -89,6 +89,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Consumer(
                     builder: (context, ref, child) {
                       final authState = ref.watch(authProvider);
+                      final userModelAsync = ref.watch(userModelStreamProvider);
+
                       if (!authState.isAuthenticated) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,50 +113,90 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         );
                       }
 
-                      final displayName = authState.user?.displayName ?? 'User';
                       final photoUrl = authState.user?.photoURL;
-                      final userInitial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
+                      
+                      return userModelAsync.when(
+                        data: (userModel) {
+                          final displayName = '${userModel.firstName} ${userModel.lastName}'.trim();
+                          final userInitial = displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U';
 
-                      return Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundColor: AppTheme.primaryNavy,
-                            backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
-                            child: photoUrl == null
-                                ? Text(
-                                    userInitial,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
+                          return Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundColor: AppTheme.primaryNavy,
+                                backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+                                child: photoUrl == null
+                                    ? Text(
+                                        userInitial,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                    : null,
+                              ),
+                              const SizedBox(width: AppTheme.spacingMd),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Welcome back!',
+                                      style: AppTheme.headlineMedium.copyWith(
+                                        color: AppTheme.primaryNavy,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  )
-                                : null,
-                          ),
-                          const SizedBox(width: AppTheme.spacingMd),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Welcome back!',
-                                  style: AppTheme.headlineMedium.copyWith(
-                                    color: AppTheme.primaryNavy,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                    const SizedBox(height: AppTheme.spacingSm),
+                                    Text(
+                                      displayName,
+                                      style: AppTheme.bodyLarge.copyWith(
+                                        color: AppTheme.textSecondary,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: AppTheme.spacingSm),
-                                Text(
-                                  displayName,
-                                  style: AppTheme.bodyLarge.copyWith(
-                                    color: AppTheme.textSecondary,
-                                  ),
+                              ),
+                            ],
+                          );
+                        },
+                        loading: () => const CircularProgressIndicator(),
+                        error: (err, stack) {
+                          final displayName = authState.user?.displayName ?? 'User';
+                           return Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundColor: AppTheme.primaryNavy,
+                                backgroundImage: photoUrl != null ? NetworkImage(photoUrl) : null,
+                              ),
+                              const SizedBox(width: AppTheme.spacingMd),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Welcome back!',
+                                      style: AppTheme.headlineMedium.copyWith(
+                                        color: AppTheme.primaryNavy,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: AppTheme.spacingSm),
+                                    Text(
+                                      displayName,
+                                      style: AppTheme.bodyLarge.copyWith(
+                                        color: AppTheme.textSecondary,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        ],
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
                   ),
@@ -169,37 +211,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: AppTheme.spacingLg),
 
-                  Consumer(
-                    builder: (context, ref, child) {
-                      final userCrews = ref.watch(userCrewsProvider);
-                      if (userCrews.isNotEmpty) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Active Crews',
-                              style: AppTheme.headlineSmall.copyWith(
-                                color: AppTheme.primaryNavy,
-                              ),
-                            ),
-                            const SizedBox(height: AppTheme.spacingMd),
-                            _buildActiveCrewsWidget(userCrews),
-                            const SizedBox(height: AppTheme.spacingLg),
-                          ],
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  ),
-
                   Row(
                     children: [
                       Expanded(
                         child: _buildElectricalActionCard(
-                          'Electrical calc',
+                          'Electrical Calc',
                           Icons.calculate_outlined,
                           () {
                             context.push(AppRouter.electricalCalculators);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            final userCrews = ref.watch(userCrewsProvider);
+                            if (userCrews.isNotEmpty) {
+                              return _buildElectricalActionCard(
+                                'View Crews',
+                                Icons.group_outlined,
+                                () {
+                                  context.push(AppRouter.crews);
+                                },
+                              );
+                            }
+                            return const SizedBox(); // Return an empty box if no crews
                           },
                         ),
                       ),
@@ -315,7 +352,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     },
                   ),
 
-                  const SizedBox(height: AppTheme.spacingXxl),
+                  const SizedBox(height: AppTheme.spacingXl),
                 ],
               ),
             ),

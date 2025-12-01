@@ -1,15 +1,16 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../models/storm_event.dart';
 import '../../widgets/weather/noaa_radar_map.dart';
-import '../../widgets/contractor_card.dart';
 import '../../services/power_outage_service.dart';
 import '../../widgets/storm/power_outage_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../electrical_components/circuit_board_background.dart'; // Added import for electrical background
-import '../../providers/riverpod/contractor_provider.dart'; // Added import for contractor provider
+import '../../electrical_components/circuit_board_background.dart';
+import '../../providers/riverpod/contractor_provider.dart';
+import '../../widgets/jj_contractor_card.dart';
 
 // import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
@@ -101,6 +102,10 @@ class _StormScreenState extends State<StormScreen> {
   List<PowerOutageState> _powerOutages = [];
   bool _isLoadingOutages = true;
   
+  // Storm Contractors
+  List<Map<String, dynamic>> _stormContractors = [];
+  bool _isLoadingContractors = true;
+
   final List<String> _regions = [
     'All Regions',
     'Southeast',
@@ -168,6 +173,7 @@ class _StormScreenState extends State<StormScreen> {
   void initState() {
     super.initState();
     _loadPowerOutages();
+    _loadStormContractors();
   }
 
   @override
@@ -194,6 +200,27 @@ class _StormScreenState extends State<StormScreen> {
       }
     }
   }
+
+  Future<void> _loadStormContractors() async {
+    try {
+      final String response = await DefaultAssetBundle.of(context).loadString('assets/data/storm_roster.json');
+      final List<dynamic> jsonList = json.decode(response);
+      if (mounted) {
+        setState(() {
+          _stormContractors = jsonList.cast<Map<String, dynamic>>();
+          _isLoadingContractors = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading storm contractors: $e');
+      if (mounted) {
+        setState(() {
+          _isLoadingContractors = false;
+        });
+      }
+    }
+  }
+
 
   Widget _buildStormDetailCard(String title, String description, IconData icon, Color iconColor) {
     return Container(
@@ -264,20 +291,13 @@ class _StormScreenState extends State<StormScreen> {
         actions: [
           IconButton(
             icon: Icon(
-              _notificationsEnabled ? Icons.notifications_active : Icons.notifications_outlined,
+              Icons.notifications_outlined, // Changed to a static icon as it now navigates
               color: AppTheme.white,
             ),
             onPressed: () {
-              setState(() {
-                _notificationsEnabled = !_notificationsEnabled;
-              });
-              JJSnackBar.showSuccess(
-                context: context,
-                message: _notificationsEnabled
-                  ? 'Storm work notifications enabled'
-                  : 'Storm work notifications disabled',
-              );
+              context.push(AppRouter.notificationSettings);
             },
+            tooltip: 'Notifications Settings',
           ),
         ],
       ),
@@ -293,61 +313,7 @@ class _StormScreenState extends State<StormScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Emergency alert banner
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(AppTheme.spacingLg),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppTheme.warningYellow, AppTheme.errorRed],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                      boxShadow: [AppTheme.shadowMd],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.warning,
-                              color: AppTheme.white,
-                              size: AppTheme.iconLg,
-                            ),
-                            const SizedBox(width: AppTheme.spacingSm),
-                            Expanded(
-                              child: Text(
-                                'EMERGENCY WORK AVAILABLE',
-                                style: AppTheme.titleLarge.copyWith(
-                                  color: AppTheme.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppTheme.spacingSm),
-                        Text(
-                          'Storm restoration work is currently available. These are high-priority assignments with enhanced compensation and rapid deployment.',
-                          style: AppTheme.bodyLarge.copyWith(
-                            color: AppTheme.white,
-                          ),
-                        ),
-                        const SizedBox(height: AppTheme.spacingMd),
-                        JJPrimaryButton(
-                          text: 'View Live Weather Radar',
-                          icon: FontAwesomeIcons.cloudBolt,
-                          onPressed: () => _showWeatherRadar(context),
-                          isFullWidth: false,
-                          variant: JJButtonVariant.primary,
-                        ),
-                      ],
-                    ),
-                  ),
 
-                  const SizedBox(height: AppTheme.spacingLg),
 
                   // Storm work stats
                   Text(
@@ -526,46 +492,29 @@ class _StormScreenState extends State<StormScreen> {
                         ),
                         const SizedBox(height: AppTheme.spacingMd),
                         SizedBox(
-                          height: 200, // Fixed height for the list
-                          child: Consumer(
-                            builder: (context, ref, child) {
-                              final asyncContractors = ref.watch(contractorsStreamProvider);
-                              return asyncContractors.when(
-                                data: (contractors) {
-                                  if (contractors.isEmpty) {
-                                    return Center(
+                          height: 250, // Increased height for better visibility
+                          child: _isLoadingContractors
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppTheme.accentCopper,
+                                  ),
+                                )
+                              : _stormContractors.isEmpty
+                                  ? Center(
                                       child: Text(
-                                        'No contractors available',
+                                        'No storm contractors available',
                                         style: AppTheme.bodyMedium.copyWith(
                                           color: AppTheme.textSecondary,
                                         ),
                                       ),
-                                    );
-                                  }
-                                  return ListView.builder(
-                                    itemCount: contractors.length,
-                                    itemBuilder: (context, index) {
-                                      final contractor = contractors[index];
-                                      return ContractorCard(contractor: contractor);
-                                    },
-                                  );
-                                },
-                                loading: () => const Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppTheme.accentCopper,
-                                  ),
-                                ),
-                                error: (error, stack) => Center(
-                                  child: Text(
-                                    'Error loading contractors: $error',
-                                    style: AppTheme.bodyMedium.copyWith(
-                                      color: AppTheme.errorRed,
+                                    )
+                                  : ListView.builder(
+                                      itemCount: _stormContractors.length,
+                                      itemBuilder: (context, index) {
+                                        final contractor = _stormContractors[index];
+                                        return JJContractorCard(contractor: contractor);
+                                      },
                                     ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
                         ),
                         const SizedBox(height: AppTheme.spacingXl),
                       ],

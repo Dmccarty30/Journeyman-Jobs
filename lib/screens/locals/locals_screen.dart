@@ -117,35 +117,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
           ),
           Column(
             children: [
-              // State filter dropdown
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
-                child: DropdownButton<String>(
-                  value: _selectedState,
-                  hint: const Text('Filter by State'),
-                  isExpanded: true,
-                  items: [
-                    const DropdownMenuItem<String>(
-                      value: null,
-                      child: Text('All States'),
-                    ),
-                    // Common states - you can expand this list
-                    ...['CA', 'TX', 'NY', 'FL', 'PA', 'IL', 'OH', 'GA', 'NC', 'MI']
-                        .map((state) => DropdownMenuItem<String>(
-                              value: state,
-                              child: Text(state),
-                            )),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedState = value;
-                    });
-                    ref.read(localsProvider.notifier).loadLocals();
-                  },
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingSm),
+
               // Locals list
               Expanded(
                 child: Consumer(
@@ -178,7 +150,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
           children: [
             Icon(
               Icons.error_outline,
-              size: AppTheme.iconXxl,
+              size: AppTheme.iconLg,
               color: AppTheme.errorRed,
             ),
             const SizedBox(height: AppTheme.spacingMd),
@@ -224,7 +196,7 @@ class _LocalsScreenState extends ConsumerState<LocalsScreen> {
           children: [
             Icon(
               Icons.location_city,
-              size: AppTheme.iconXxl,
+              size: AppTheme.iconLg,
               color: AppTheme.mediumGray,
             ),
             const SizedBox(height: AppTheme.spacingMd),
@@ -335,7 +307,7 @@ class LocalCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: AppTheme.accentCopper.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusXl),
                     ),
                     child: Icon(
                       Icons.arrow_forward_ios,
@@ -573,7 +545,7 @@ class LocalDetailsDialog extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: AppTheme.accentCopper.withAlpha(51),
-                              borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+                              borderRadius: BorderRadius.circular(AppTheme.radiusXl),
                             ),
                             child: Text(
                               toTitleCase(local.classification!),

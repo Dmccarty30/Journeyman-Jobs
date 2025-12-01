@@ -29,6 +29,8 @@ class AppTheme {
   static const Color borderLight = lightGray;
   static const Color borderCopper = accentCopper;
   static const Color borderCopperLight = secondaryCopper;
+  static const Color borderNavy = primaryNavy;
+  static const Color borderNavyLight = secondaryNavy;
   
   // =================== BORDER WIDTHS ===================
 
@@ -106,8 +108,7 @@ class AppTheme {
   static const double spacingMd = 16.0;
   static const double spacingLg = 24.0;
   static const double spacingXl = 32.0;
-  static const double spacingXxl = 48.0;
-  static const double spacingXxxl = 64.0;
+
   
   // =================== BORDER RADIUS ===================
   
@@ -116,8 +117,7 @@ class AppTheme {
   static const double radiusMd = 12.0;
   static const double radiusLg = 16.0;
   static const double radiusXl = 20.0;
-  static const double radiusXxl = 24.0;
-  static const double radiusRound = 50.0;
+
   
   // JJElectricalComponents Border Radius
   static const double radiusElectricalToast = 12.0;
@@ -199,7 +199,7 @@ class AppTheme {
   );
   
   static const BoxShadow shadowElectricalWarning = BoxShadow(
-    color: Color(0x3FFFFD700),
+    color: Color(0xFFF6DA3B),
     blurRadius: 15,
     spreadRadius: 2,
     offset: Offset(0, 4),
@@ -225,8 +225,7 @@ class AppTheme {
   static const double iconSm = 20.0;
   static const double iconMd = 24.0;
   static const double iconLg = 28.0;
-  static const double iconXl = 32.0;
-  static const double iconXxl = 40.0;
+
   
   // =================== JJElectricalComponents ANIMATION DURATIONS ===================
   
@@ -604,7 +603,7 @@ class AppTheme {
         labelStyle: labelMedium,
         padding: const EdgeInsets.symmetric(horizontal: spacingMd, vertical: spacingSm),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusRound),
+          borderRadius: BorderRadius.circular(radiusXl),
         ),
       ),
       

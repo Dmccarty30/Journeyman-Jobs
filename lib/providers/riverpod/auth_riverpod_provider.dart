@@ -2,10 +2,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../models/user_model.dart';
 import '../../services/auth_service.dart';
 import '../../utils/concurrent_operations.dart';
+import '../core_providers.dart';
 
 part 'auth_riverpod_provider.g.dart';
+
+/// Provides a stream of the current user's `UserModel`.
+final userModelStreamProvider = StreamProvider.autoDispose<UserModel>((ref) {
+  final firestoreService = ref.watch(realFirestoreServiceProvider);
+  final user = ref.watch(currentUserProvider);
+
+  if (user == null) {
+    return Stream.error('User not logged in');
+  }
+
+  return firestoreService.getUserStream(user.uid).map(
+        (snapshot) => UserModel.fromFirestore(snapshot),
+      );
+});
 
 /// Authentication state model for Riverpod
 class AuthState {

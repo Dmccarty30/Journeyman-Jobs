@@ -115,7 +115,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       child: Icon(
                         _emailSent ? Icons.mark_email_read : Icons.lock_reset,
-                        size: AppTheme.iconXl,
+                        size: AppTheme.iconLg,
                         color: AppTheme.primaryNavy,
                       ),
                     ),

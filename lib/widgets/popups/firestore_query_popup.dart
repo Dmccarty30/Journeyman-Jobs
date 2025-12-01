@@ -584,7 +584,7 @@ class QueryPopupBuilders {
               ),
               decoration: BoxDecoration(
                 color: AppTheme.successGreen.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+                borderRadius: BorderRadius.circular(AppTheme.radiusXl),
               ),
               child: Text(
                 '${company['jobCount']} jobs',

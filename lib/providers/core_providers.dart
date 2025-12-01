@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../services/database_service.dart';
 import 'package:journeyman_jobs/services/connectivity_service.dart';
+import 'package:journeyman_jobs/services/firestore_service.dart' as real_firestore;
 import 'package:journeyman_jobs/models/user_model.dart';
 import 'package:journeyman_jobs/features/crews/models/crew.dart';
 import 'package:journeyman_jobs/features/crews/models/tailboard.dart';
@@ -35,6 +36,8 @@ final coreErrorReporterProvider = Provider<ErrorReporter>((ref) => ErrorReporter
 // Legacy providers (keeping for backward compatibility)
 final firestoreServiceProvider = Provider<FirestoreService>((ref) => FirestoreService());
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
+
+final realFirestoreServiceProvider = Provider<real_firestore.FirestoreService>((ref) => real_firestore.FirestoreService());
 
 // Database Service Provider
 final databaseServiceProvider = Provider<DatabaseService>((ref) {

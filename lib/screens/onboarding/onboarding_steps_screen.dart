@@ -196,18 +196,28 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
       if (user == null) throw Exception('No authenticated user');
 
       final firestoreService = FirestoreService();
-      await firestoreService.updateUser(
+      
+      final userModel = UserModel(
         uid: user.uid,
-        data: {
-          'firstName': _firstNameController.text.trim(),
-          'lastName': _lastNameController.text.trim(),
-          'phoneNumber': _phoneController.text.trim(),
-          'address1': _address1Controller.text.trim(),
-          'address2': _address2Controller.text.trim(),
-          'city': _cityController.text.trim(),
-          'state': _stateController.text.trim(),
-          'zipcode': int.parse(_zipcodeController.text.trim()),
-        },
+        email: user.email ?? '',
+        username: user.email?.split('@')[0] ?? '',
+        role: 'electrician',
+        lastActive: Timestamp.now(),
+        createdTime: DateTime.now(),
+        onboardingStatus: OnboardingStatus.incomplete,
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        phoneNumber: _phoneController.text.trim(),
+        address1: _address1Controller.text.trim(),
+        address2: _address2Controller.text.trim(),
+        city: _cityController.text.trim(),
+        state: _stateController.text.trim(),
+        zipcode: int.tryParse(_zipcodeController.text.trim()) ?? 0,
+      );
+
+      await firestoreService.createUser(
+        uid: user.uid,
+        userData: userModel.toJson(),
       );
 
       if (mounted) {
@@ -274,56 +284,37 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
   }
 
   void _completeOnboarding() async {
+    setState(() => _isSaving = true);
     try {
-      // Get current user from Firebase Auth
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         throw Exception('No authenticated user found');
       }
 
-      // Create user model from form data
-      final userModel = UserModel(
-        uid: user.uid,
-        username: user.email?.split('@')[0] ?? 'user',
-        firstName: _firstNameController.text.trim(),
-        lastName: _lastNameController.text.trim(),
-        phoneNumber: _phoneController.text.trim(),
-        email: user.email ?? '',
-        role: 'electrician',
-        lastActive: Timestamp.now(),
-        address1: _address1Controller.text.trim(),
-        address2: _address2Controller.text.trim().isEmpty ? null : _address2Controller.text.trim(),
-        city: _cityController.text.trim(),
-        state: _stateController.text.trim(),
-        zipcode: int.parse(_zipcodeController.text.trim()),
-        homeLocal: int.parse(_homeLocalController.text.trim()),
-        ticketNumber: _ticketNumberController.text.trim(),
-        classification: _selectedClassification ?? '',
-        isWorking: _isWorking,
-        booksOn: _booksOnController.text.trim().isEmpty ? null : _booksOnController.text.trim(),
-        constructionTypes: _selectedConstructionTypes.toList(),
-        hoursPerWeek: _selectedHoursPerWeek,
-        perDiemRequirement: _selectedPerDiem,
-        preferredLocals: _preferredLocalsController.text.trim().isEmpty ? null : _preferredLocalsController.text.trim(),
-        networkWithOthers: _networkWithOthers,
-        careerAdvancements: _careerAdvancements,
-        betterBenefits: _betterBenefits,
-        higherPayRate: _higherPayRate,
-        learnNewSkill: _learnNewSkill,
-        travelToNewLocation: _travelToNewLocation,
-        findLongTermWork: _findLongTermWork,
-        careerGoals: _careerGoalsController.text.trim().isEmpty ? null : _careerGoalsController.text.trim(),
-        howHeardAboutUs: _howHeardAboutUsController.text.trim().isEmpty ? null : _howHeardAboutUsController.text.trim(),
-        lookingToAccomplish: _lookingToAccomplishController.text.trim().isEmpty ? null : _lookingToAccomplishController.text.trim(),
-        onboardingStatus: OnboardingStatus.complete,
-        createdTime: DateTime.now(),
-      );
+      // Prepare Step 3 data for update
+      final Map<String, dynamic> step3Data = {
+        'constructionTypes': _selectedConstructionTypes.toList(),
+        'hoursPerWeek': _selectedHoursPerWeek,
+        'perDiemRequirement': _selectedPerDiem,
+        'preferredLocals': _preferredLocalsController.text.trim().isEmpty ? null : _preferredLocalsController.text.trim(),
+        'networkWithOthers': _networkWithOthers,
+        'careerAdvancements': _careerAdvancements,
+        'betterBenefits': _betterBenefits,
+        'higherPayRate': _higherPayRate,
+        'learnNewSkill': _learnNewSkill,
+        'travelToNewLocation': _travelToNewLocation,
+        'findLongTermWork': _findLongTermWork,
+        'careerGoals': _careerGoalsController.text.trim().isEmpty ? null : _careerGoalsController.text.trim(),
+        'howHeardAboutUs': _howHeardAboutUsController.text.trim().isEmpty ? null : _howHeardAboutUsController.text.trim(),
+        'lookingToAccomplish': _lookingToAccomplishController.text.trim().isEmpty ? null : _lookingToAccomplishController.text.trim(),
+        'onboardingStatus': OnboardingStatus.complete.name, // Mark as complete
+      };
 
       // Save to Firestore
       final firestoreService = FirestoreService();
-      await firestoreService.createUser(
+      await firestoreService.updateUser(
         uid: user.uid,
-        userData: userModel.toJson(),
+        data: step3Data,
       );
 
       // Mark onboarding as complete in local storage
@@ -350,6 +341,10 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
           context: context,
           message: 'Error saving profile. Please try again.',
         );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
       }
     }
   }
@@ -633,7 +628,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
               ),
               const SizedBox(width: AppTheme.spacingSm),
               Expanded(
-                flex: 2,
+                flex: 3,
                 child: JJTextField(
                   label: 'Zip Code',
                   controller: _zipcodeController,
@@ -649,7 +644,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
             ],
           ),
           
-          const SizedBox(height: AppTheme.spacingXxl),
+          const SizedBox(height: AppTheme.spacingXl),
         ],
       ),
     ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.2, end: 0);
@@ -800,7 +795,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
             ),
           ),
           
-          const SizedBox(height: AppTheme.spacingXxl),
+          const SizedBox(height: AppTheme.spacingXl),
         ],
       ),
     ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.2, end: 0);
@@ -1077,7 +1072,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
             hintText: 'What do you hope to achieve through our platform?',
           ),
           
-          const SizedBox(height: AppTheme.spacingXxl),
+          const SizedBox(height: AppTheme.spacingXl),
         ],
       ),
     ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.2, end: 0);

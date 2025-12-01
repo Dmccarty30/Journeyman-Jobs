@@ -153,24 +153,30 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
       filtered = filtered.where((job) {
-        return job.company.toLowerCase().contains(query) ||
-               job.location.toLowerCase().contains(query) ||
-               (job.classification?.toLowerCase().contains(query) ?? false) ||
-               (job.jobTitle?.toLowerCase().contains(query) ?? false);
+        final String? company = job.company as String?;
+        final String? location = job.location as String?;
+        final String? classification = job.classification as String?;
+        final String? jobTitle = job.jobTitle as String?;
+
+        return (company?.toLowerCase().contains(query) ?? false) ||
+               (location?.toLowerCase().contains(query) ?? false) ||
+               (classification?.toLowerCase().contains(query) ?? false) ||
+               (jobTitle?.toLowerCase().contains(query) ?? false);
       }).toList();
     }
 
     // Apply category filter
     if (_selectedFilter != 'All Jobs') {
       filtered = filtered.where((job) {
-        final classification = job.classification?.toLowerCase() ?? '';
-        final jobTitle = job.jobTitle?.toLowerCase() ?? '';
-        final typeOfWork = job.typeOfWork?.toLowerCase() ?? '';
+        final String? classification = job.classification as String?;
+        final String? jobTitle = job.jobTitle as String?;
+        final String? typeOfWork = job.typeOfWork as String?;
+
         final filterLower = _selectedFilter.toLowerCase();
 
-        return classification.contains(filterLower) ||
-               jobTitle.contains(filterLower) ||
-               typeOfWork.contains(filterLower);
+        return (classification?.toLowerCase().contains(filterLower) ?? false) ||
+               (jobTitle?.toLowerCase().contains(filterLower) ?? false) ||
+               (typeOfWork?.toLowerCase().contains(filterLower) ?? false);
       }).toList();
     }
 
@@ -421,7 +427,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
           IconButton(
             icon: const Icon(Icons.notifications),
             onPressed: () {
-              context.push(AppRouter.notifications);
+              context.push(AppRouter.notificationSettings);
             },
             tooltip: 'Notifications',
           ),

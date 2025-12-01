@@ -25,16 +25,20 @@ import '../screens/settings/support/help_support_screen.dart';
 import '../screens/settings/support/resources_screen.dart';
 import '../screens/settings/account/training_certificates_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
-import '../screens/settings/feedback/feedback_screen.dart';
+import '../screens/settings/support/feedback_screen.dart';
 import '../screens/tools/electrical_calculators_screen.dart';
 import '../screens/tools/transformer_reference_screen.dart';
 import '../screens/tools/transformer_workbench_screen.dart';
 import '../screens/tools/transformer_bank_screen.dart';
 import '../screens/tools/electrical_components_showcase_screen.dart';
 import '../models/transformer_models.dart';
-import '../screens/notifications/notifications_screen.dart';
+import '../screens/settings/app/notifications_settings_screen.dart';
 import '../screens/settings/notification_settings_screen.dart';
-import '../screens/settings/app_settings_screen.dart';
+import '../screens/settings/app/app_settings_screen.dart';
+import '../screens/settings/privacy_security_screen.dart'; // New import
+import '../screens/settings/app/appearance_display_screen.dart'; // New import
+import '../screens/settings/app/job_search_preferences_screen.dart'; // New import
+import '../screens/settings/app/data_storage_screen.dart'; // New import
 
 class AppRouter {
   static const String splash = '/';
@@ -64,6 +68,10 @@ class AppRouter {
   static const String notifications = '/notifications';
   static const String notificationSettings = '/notification-settings';
   static const String appSettings = '/settings/app';
+  static const String privacySecurity = '/settings/privacy-security'; // New route constant
+  static const String appearanceDisplay = '/settings/appearance-display'; // New route constant
+  static const String jobSearchPreferences = '/settings/job-search-preferences'; // New route constant
+  static const String dataStorage = '/settings/data-storage'; // New route constant
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -220,6 +228,26 @@ class AppRouter {
         path: appSettings,
         name: 'app-settings',
         builder: (context, state) => const AppSettingsScreen(),
+      ),
+      GoRoute(
+        path: privacySecurity,
+        name: 'privacy-security',
+        builder: (context, state) => const PrivacySecurityScreen(),
+      ),
+      GoRoute(
+        path: appearanceDisplay,
+        name: 'appearance-display',
+        builder: (context, state) => const AppearanceDisplayScreen(),
+      ),
+      GoRoute(
+        path: jobSearchPreferences,
+        name: 'job-search-preferences',
+        builder: (context, state) => const JobSearchPreferencesScreen(),
+      ),
+      GoRoute(
+        path: dataStorage,
+        name: 'data-storage',
+        builder: (context, state) => const DataStorageScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

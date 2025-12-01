@@ -44,7 +44,7 @@ class TailboardTheme {
   static const double radiusM = 8.0;
   static const double radiusL = 12.0;
   static const double radiusXL = 16.0;
-  static const double radiusRound = 999.0;
+  static const double radiusXl = 999.0;
 
   // Shadows
   static List<BoxShadow> get shadowSmall => [

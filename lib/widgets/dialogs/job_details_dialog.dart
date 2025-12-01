@@ -104,7 +104,7 @@ class JobDetailsDialog extends ConsumerWidget {
                               color: isDarkTheme
                                   ? TailboardTheme.copper.withValues(alpha: 0.2)
                                   : AppTheme.accentCopper.withAlpha(51),
-                              borderRadius: BorderRadius.circular(AppTheme.radiusRound),
+                              borderRadius: BorderRadius.circular(AppTheme.radiusXl),
                             ),
                             child: Text(
                               'IBEW Local ${job.localNumber ?? job.local ?? 'N/A'}',

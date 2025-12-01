@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import '../../electrical_components/circuit_board_background.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
@@ -74,210 +75,218 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Skip button
-            Padding(
-              padding: const EdgeInsets.all(AppTheme.spacingMd),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: _skipToAuth,
-                    child: Text(
-                      'Skip',
-                      style: AppTheme.labelLarge.copyWith(
-                        color: AppTheme.textSecondary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Page content
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: _onPageChanged,
-                itemCount: _pages.length,
-                itemBuilder: (context, index) {
-                  final page = _pages[index];
-                  return Center(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: AppTheme.spacingXl),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Icon with animation
-                            Container(
-                              width: 120,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                gradient: AppTheme.buttonGradient,
-                                shape: BoxShape.circle,
-                                boxShadow: [AppTheme.shadowMd],
-                              ),
-                              child: Icon(
-                                page.icon,
-                                size: 60,
-                                color: AppTheme.white,
-                              ),
-                            ).animate().scale(
-                                  delay: const Duration(milliseconds: 200),
-                                  duration: const Duration(milliseconds: 600),
-                                  curve: Curves.elasticOut,
-                                ),
-
-                            const SizedBox(height: AppTheme.spacingXl),
-
-                            // Title
-                            Text(
-                              page.title,
-                              style: AppTheme.displaySmall.copyWith(
-                                color: AppTheme.primaryNavy,
-                              ),
-                              textAlign: TextAlign.center,
-                            )
-                                .animate()
-                                .fadeIn(
-                                  delay: const Duration(milliseconds: 400),
-                                  duration: const Duration(milliseconds: 600),
-                                )
-                                .slideY(
-                                  begin: 0.2,
-                                  end: 0,
-                                  delay: const Duration(milliseconds: 400),
-                                  duration: const Duration(milliseconds: 600),
-                                ),
-
-                            const SizedBox(height: AppTheme.spacingMd),
-
-                            // Subtitle
-                            Text(
-                              page.subtitle,
-                              style: AppTheme.headlineSmall.copyWith(
-                                color: AppTheme.accentCopper,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              textAlign: TextAlign.center,
-                            )
-                                .animate()
-                                .fadeIn(
-                                  delay: const Duration(milliseconds: 600),
-                                  duration: const Duration(milliseconds: 600),
-                                )
-                                .slideY(
-                                  begin: 0.2,
-                                  end: 0,
-                                  delay: const Duration(milliseconds: 600),
-                                  duration: const Duration(milliseconds: 600),
-                                ),
-
-                            const SizedBox(height: AppTheme.spacingLg),
-
-                            // Description
-                            Text(
-                              page.description,
-                              style: AppTheme.bodyLarge.copyWith(
-                                color: AppTheme.textSecondary,
-                                height: 1.6,
-                              ),
-                              textAlign: TextAlign.center,
-                            )
-                                .animate()
-                                .fadeIn(
-                                  delay: const Duration(milliseconds: 800),
-                                  duration: const Duration(milliseconds: 600),
-                                )
-                                .slideY(
-                                  begin: 0.2,
-                                  end: 0,
-                                  delay: const Duration(milliseconds: 800),
-                                  duration: const Duration(milliseconds: 600),
-                                ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-
-            // Bottom section with progress and navigation
-            Padding(
-              padding: const EdgeInsets.all(AppTheme.spacingXl),
-              child: Column(
-                children: [
-                  // Page indicators
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      _pages.length,
-                      (index) => Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        width: _currentPage == index ? 24 : 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: _currentPage == index
-                              ? AppTheme.accentCopper
-                              : AppTheme.lightGray,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ).animate().scale(
-                            duration: const Duration(milliseconds: 200),
-                          ),
-                    ),
-                  ),
-
-                  const SizedBox(height: AppTheme.spacingXl),
-
-                  // Navigation buttons
-                  Row(
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          ElectricalCircuitBackground(
+            opacity: 0.08,
+            componentDensity: ComponentDensity.high,
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                // Skip button
+                Padding(
+                  padding: const EdgeInsets.all(AppTheme.spacingMd),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      // Back button (hidden on first page)
-                      if (_currentPage > 0)
-                        Expanded(
-                          child: JJSecondaryButton(
-                            text: 'Back',
-                            onPressed: () {
-                              _pageController.previousPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            },
+                      TextButton(
+                        onPressed: _skipToAuth,
+                        child: Text(
+                          'Skip',
+                          style: AppTheme.labelLarge.copyWith(
+                            color: AppTheme.textSecondary,
                           ),
-                        )
-                      else
-                        const Expanded(child: SizedBox()),
-
-                      const SizedBox(width: AppTheme.spacingMd),
-
-                      // Next/Get Started button
-                      Expanded(
-                        child: JJPrimaryButton(
-                          text: _currentPage == _pages.length - 1
-                              ? 'Get Started'
-                              : 'Next',
-                          icon: _currentPage == _pages.length - 1
-                              ? Icons.arrow_forward
-                              : Icons.arrow_forward_ios,
-                          onPressed: _nextPage,
-                          variant: JJButtonVariant.primary,
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+
+                // Page content
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    onPageChanged: _onPageChanged,
+                    itemCount: _pages.length,
+                    itemBuilder: (context, index) {
+                      final page = _pages[index];
+                      return Center(
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: AppTheme.spacingXl),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Icon with animation
+                                Container(
+                                  width: 120,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    gradient: AppTheme.buttonGradient,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [AppTheme.shadowMd],
+                                  ),
+                                  child: Icon(
+                                    page.icon,
+                                    size: 60,
+                                    color: AppTheme.white,
+                                  ),
+                                ).animate().scale(
+                                      delay: const Duration(milliseconds: 200),
+                                      duration: const Duration(milliseconds: 600),
+                                      curve: Curves.elasticOut,
+                                    ),
+
+                                const SizedBox(height: AppTheme.spacingXl),
+
+                                // Title
+                                Text(
+                                  page.title,
+                                  style: AppTheme.displaySmall.copyWith(
+                                    color: AppTheme.primaryNavy,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                )
+                                    .animate()
+                                    .fadeIn(
+                                      delay: const Duration(milliseconds: 400),
+                                      duration: const Duration(milliseconds: 600),
+                                    )
+                                    .slideY(
+                                      begin: 0.2,
+                                      end: 0,
+                                      delay: const Duration(milliseconds: 400),
+                                      duration: const Duration(milliseconds: 600),
+                                    ),
+
+                                const SizedBox(height: AppTheme.spacingMd),
+
+                                // Subtitle
+                                Text(
+                                  page.subtitle,
+                                  style: AppTheme.headlineSmall.copyWith(
+                                    color: AppTheme.accentCopper,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                )
+                                    .animate()
+                                    .fadeIn(
+                                      delay: const Duration(milliseconds: 600),
+                                      duration: const Duration(milliseconds: 600),
+                                    )
+                                    .slideY(
+                                      begin: 0.2,
+                                      end: 0,
+                                      delay: const Duration(milliseconds: 600),
+                                      duration: const Duration(milliseconds: 600),
+                                    ),
+
+                                const SizedBox(height: AppTheme.spacingLg),
+
+                                // Description
+                                Text(
+                                  page.description,
+                                  style: AppTheme.bodyLarge.copyWith(
+                                    color: AppTheme.textSecondary,
+                                    height: 1.6,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                )
+                                    .animate()
+                                    .fadeIn(
+                                      delay: const Duration(milliseconds: 800),
+                                      duration: const Duration(milliseconds: 600),
+                                    )
+                                    .slideY(
+                                      begin: 0.2,
+                                      end: 0,
+                                      delay: const Duration(milliseconds: 800),
+                                      duration: const Duration(milliseconds: 600),
+                                    ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                // Bottom section with progress and navigation
+                Padding(
+                  padding: const EdgeInsets.all(AppTheme.spacingXl),
+                  child: Column(
+                    children: [
+                      // Page indicators
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          _pages.length,
+                          (index) => Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: _currentPage == index ? 24 : 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: _currentPage == index
+                                  ? AppTheme.accentCopper
+                                  : AppTheme.lightGray,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ).animate().scale(
+                                duration: const Duration(milliseconds: 200),
+                              ),
+                        ),
+                      ),
+
+                      const SizedBox(height: AppTheme.spacingXl),
+
+                      // Navigation buttons
+                      Row(
+                        children: [
+                          // Back button (hidden on first page)
+                          if (_currentPage > 0)
+                            Expanded(
+                              child: JJSecondaryButton(
+                                text: 'Back',
+                                onPressed: () {
+                                  _pageController.previousPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                              ),
+                            )
+                          else
+                            const Expanded(child: SizedBox()),
+
+                          const SizedBox(width: AppTheme.spacingMd),
+
+                          // Next/Get Started button
+                          Expanded(
+                            child: JJPrimaryButton(
+                              text: _currentPage == _pages.length - 1
+                                  ? 'Get Started'
+                                  : 'Next',
+                              icon: _currentPage == _pages.length - 1
+                                  ? Icons.arrow_forward
+                                  : Icons.arrow_forward_ios,
+                              onPressed: _nextPage,
+                              variant: JJButtonVariant.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
