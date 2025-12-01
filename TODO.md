@@ -14,9 +14,7 @@
 
 ### AUTH SCREEN
 
-- Be sure to add the copper boarder to every `text field` for both the `signup` and the `signin` tabs.
-
-- I want to change the `tab bar` on the auth screen with this upgraded and enhanced `tab bar` in this file "guide\tab-bar-enhancement.md". Be sure to maintain all of the original functionality of the existing `tab bar` simply change the UI to this enhanced version.
+- Be sure to add the copper boarder to every `text field` for both the `sigDl functionality of the existing `tab bar` simply change the UI to this enhanced version.
 
 ### ONBOARDING STEPS SCREEN
 
@@ -140,20 +138,21 @@ This section displays the best fitting and criteria fitting jobs set by the user
 ### PROFILE SCREEN
 
 - **The [[app settings screen]] located under the `settings tab` needs to dismantled and the contents applied to the proper screen/tab**
+
 - Be sure to initiate a coaching tooltip thing to help guide and explain to users to press on the `pencil icon` in the top right corner of the `app bar`
 - This screen needs to be made over to fit the `JJ App Theme`
 - Everything in the [[profile screen]] needs to store the user's data provided during onboarding. Looking at the code, there are multiple values, hardcoded
 
-#### PERSONAL TAB
+- **PERSONAL TAB**
 
 - When finished editing your personal information, there needs to be a `toast` or `snack bar` confirming that the changes have been saved.
 
-#### PROFESSIONAL TAB
+- **PROFESSIONAL TAB**
 
 - The `ticketNumber text field` needs to only display the number pad like when you are inputting your phone number.
 - When finished editing your personal information, there needs to be a `toast` or `snack bar` confirming that the changes have been saved.
 
-#### SETTINGS TAB
+- **SETTINGS TAB**
 
 - **The [[app settings screen]] located under the `settings tab` needs to dismantled and the contents applied to the proper screen/tab**
 
@@ -161,38 +160,38 @@ This section displays the best fitting and criteria fitting jobs set by the user
 
 app routing will change for all three of these sections
 
-- *app settings*
+- **APP SETTINGS**
 This will no longer exist once moved to its own link
-- *notification settings*
+- **NOTIFICATION SETTINGS**
 This will take over the 'notifications link' on the [[settings screen]]in the 'app' section.
-- *Privacy and Security*
+- **PRIVACY AND SECURITY**
 I need to work on drafting this
 
 ##### ACCOUNT ACTIONS
 
-- *Change my Password*
+- **CHANGE MY PASSWORD**
 I need to implement a processes to change your password. This doesn't do anything when pressed
-- *Download my Data*
+- **DOWNLOAD MY DATA**
 I need to implement a processes to change your password. This doesn't do anything when pressed
-- **Delete My Account**
+- **DELET MY ACCOUNT**
 I need to implement a processes to change your password. This doesn't do anything when pressed
 
 ##### SUPPORT AND ABOUT
 
-- *Help and Support*
+- **HELP AND SUPPORT**
 When finalized, this will navigate the user to the [[help support screen]]
-- *Terms of service*
+- **TERMS OF SERVICE**
 I need to implement a processes to change your password. This doesn't do anything when pressed
-- *Privacy policy*
+- **PRIVACY POLICY**
 I need to implement a processes to change your password. This doesn't do anything when pressed
 
 ### TRAINING CERTIFICATIONS SCREEN
 
-#### CERTIFICATES TAB
+- **CERTIFICATES TAB**
 
-#### COURSES TAB
+- **COURSES TAB**
 
-#### HISTORY TAB
+- **HISTORY TAB**
 
 ---
 
@@ -214,31 +213,31 @@ I need to implement a processes to change your password. This doesn't do anythin
 
 ### HELP AND SUPPORT SCREEN
 
-#### FAQ TAB
+- **FAQ TAB**
 
-#### CONTACT TAB
+- **CONTACT TAB**
 
-#### GUIDES TAB
+- **GUIDES TAB**
 
 ### RESOURCES SCREEN
 
 #### DOCUMENTS TAB
 
-##### IBEW DOCUMENTS
+- **IBEW DOCUMENTS**
 
-##### SAFETY
+- **SAFETY**
 
-##### TECHNICAL
+- **TECHNICAL**
 
 #### TOOLS TAB
 
 ##### CALCULATORS
 
-###### CONDUIT FILL CALCULATOR SCREEN
+- **CONDUIT FILL CALCULATOR SCREEN**
 
-###### LOAD CALCULATOR SCREEN
+- **LOAD CALCULATOR SCREEN**
 
-###### VOLTAGE DROP CALCULATOR SCREEN
+- **VOLTAGE DROP CALCULATOR SCREEN**
 
 ##### REFERENCE
 
@@ -288,6 +287,8 @@ I need to implement a processes to change your password. This doesn't do anythin
 
 #### STORM WORK SETTINGS
 
+-Depending on if i decide to implamemt the 'storm tracker' feature, this would be where the user would set or modify that features settings
+
 #### ABOUT
 
 ### NOTIFICATION SETTINGS SCREEN
@@ -333,7 +334,7 @@ This is exactly the industry best-practice structure for a trade-specific B2C ap
 
 ### Recommended Final Information Architecture
 
-```
+```bash
 Profile Screen (4 tabs)
 ├── Personal        → name, photo, ticket #, contact info, bio
 ├── Professional    → classification, certifications, licenses, experience

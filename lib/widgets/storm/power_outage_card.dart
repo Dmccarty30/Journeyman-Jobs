@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../design_system/app_theme.dart';
+import '../../screens/storm/storm_theme.dart';
 import '../../services/power_outage_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -22,13 +23,19 @@ class PowerOutageCard extends StatelessWidget {
     
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-      decoration: BoxDecoration(
+      decoration: StormTheme.stormCardDecoration.copyWith(
         color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        boxShadow: [AppTheme.shadowSm],
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.white,
+            StormTheme.electricBlue.withOpacity(0.05),
+          ],
+        ),
         border: Border.all(
-          color: AppTheme.accentCopper,
-          width: AppTheme.borderWidthMedium,
+          color: _getSeverityColor(severity).withOpacity(0.5),
+          width: 1,
         ),
       ),
       child: Material(
@@ -205,15 +212,15 @@ class PowerOutageCard extends StatelessWidget {
   Color _getSeverityColor(OutageSeverity severity) {
     switch (severity) {
       case OutageSeverity.critical:
-        return Color(0xFFD8006D); // Magenta
+        return StormTheme.dangerRed;
       case OutageSeverity.severe:
         return AppTheme.errorRed;
       case OutageSeverity.moderate:
-        return AppTheme.warningYellow;
+        return StormTheme.lightningYellow;
       case OutageSeverity.minor:
-        return Colors.orange;
+        return AppTheme.warningOrange;
       case OutageSeverity.minimal:
-        return AppTheme.textLight;
+        return StormTheme.rainGrey;
     }
   }
   
@@ -251,16 +258,16 @@ class PowerOutageSummary extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppTheme.errorRed.withAlpha((255 * 0.9).round()),
-            AppTheme.warningYellow.withAlpha((255 * 0.9).round()),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: StormTheme.dangerGradient,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        boxShadow: [AppTheme.shadowMd],
+        boxShadow: [
+          StormTheme.lightningGlow,
+          AppTheme.shadowMd,
+        ],
+        border: Border.all(
+          color: StormTheme.lightningYellow.withOpacity(0.5),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

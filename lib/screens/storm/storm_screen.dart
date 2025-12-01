@@ -1,16 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../navigation/app_router.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
+import 'storm_theme.dart';
 import '../../models/storm_event.dart';
 import '../../widgets/weather/noaa_radar_map.dart';
 import '../../services/power_outage_service.dart';
 import '../../widgets/storm/power_outage_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../electrical_components/circuit_board_background.dart';
-import '../../providers/riverpod/contractor_provider.dart';
-import '../../widgets/jj_contractor_card.dart';
+import 'widgets/storm_contractor_card.dart';
 
 // import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
 // import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
@@ -94,7 +95,6 @@ class _StormScreenState extends State<StormScreen> {
       );
     }).toList();
   }*/
-  bool _notificationsEnabled = false;
   String _selectedRegion = 'All Regions';
   
   // Power outage tracking
@@ -222,64 +222,26 @@ class _StormScreenState extends State<StormScreen> {
   }
 
 
-  Widget _buildStormDetailCard(String title, String description, IconData icon, Color iconColor) {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(
-          color: AppTheme.lightGray,
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                icon,
-                color: iconColor,
-                size: AppTheme.iconMd,
-              ),
-              const SizedBox(width: AppTheme.spacingSm),
-              Expanded(
-                child: Text(
-                  title,
-                  style: AppTheme.bodyMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppTheme.spacingSm),
-          Text(
-            description,
-            style: AppTheme.bodySmall.copyWith(
-              color: AppTheme.textSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent, // Transparent for circuit background
       appBar: AppBar(
-        backgroundColor: AppTheme.primaryNavy, // Blue app bar per theme
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: StormTheme.stormSurgeGradient,
+          ),
+        ),
         elevation: 0,
         title: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.flash_on,
-              color: AppTheme.white,
+              color: StormTheme.lightningYellow,
               size: AppTheme.iconMd,
+              shadows: [StormTheme.lightningGlow],
             ),
             const SizedBox(width: AppTheme.spacingSm),
             Text(
@@ -316,11 +278,22 @@ class _StormScreenState extends State<StormScreen> {
 
 
                   // Storm work stats
-                  Text(
-                    'Current Storm Activity',
-                    style: AppTheme.headlineSmall.copyWith(
-                      color: AppTheme.primaryNavy,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Current Storm Activity',
+                        style: AppTheme.headlineSmall.copyWith(
+                          color: AppTheme.primaryNavy,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.radar),
+                        color: StormTheme.electricBlue,
+                        tooltip: 'Weather Radar',
+                        onPressed: () => _showWeatherRadar(context),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
                   
@@ -512,7 +485,7 @@ class _StormScreenState extends State<StormScreen> {
                                       itemCount: _stormContractors.length,
                                       itemBuilder: (context, index) {
                                         final contractor = _stormContractors[index];
-                                        return JJContractorCard(contractor: contractor);
+                                        return StormContractorCard(contractor: contractor);
                                       },
                                     ),
                         ),
@@ -542,6 +515,14 @@ class _StormScreenState extends State<StormScreen> {
           color: color.withValues(alpha: 0.2),
           width: 1,
         ),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.white,
+            color.withOpacity(0.05),
+          ],
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -553,6 +534,13 @@ class _StormScreenState extends State<StormScreen> {
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withOpacity(0.2),
+                      blurRadius: 8,
+                      spreadRadius: 1,
+                    )
+                  ],
                 ),
                 child: Icon(icon, color: color, size: AppTheme.iconMd),
               ),
@@ -722,26 +710,6 @@ class _StormScreenState extends State<StormScreen> {
     );
   }
 
-  void _showStormDetails(BuildContext context, StormEvent storm) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppTheme.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.radiusLg)),
-      ),
-      isScrollControlled: true,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.9,
-          maxChildSize: 0.9,
-          minChildSize: 0.5,
-          builder: (context, scrollController) {
-            return StormDetailsSheet(storm: storm, scrollController: scrollController);
-          },
-        );
-      },
-    );
-  }
 }
 
 
@@ -758,10 +726,7 @@ class StormEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        boxShadow: [AppTheme.shadowSm],
+      decoration: StormTheme.activeStormCardDecoration.copyWith(
         border: Border.all(color: _severityColor, width: AppTheme.borderWidthThick),
       ),
       child: Material(
