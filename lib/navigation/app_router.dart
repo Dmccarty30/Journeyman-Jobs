@@ -33,7 +33,6 @@ import '../screens/tools/transformer_bank_screen.dart';
 import '../screens/tools/electrical_components_showcase_screen.dart';
 import '../models/transformer_models.dart';
 import '../screens/settings/app/notifications_settings_screen.dart';
-import '../screens/settings/notification_settings_screen.dart';
 import '../screens/settings/app/app_settings_screen.dart';
 import '../screens/settings/privacy_security_screen.dart'; // New import
 import '../screens/settings/app/appearance_display_screen.dart'; // New import
@@ -218,11 +217,6 @@ class AppRouter {
         path: notifications,
         name: 'notifications',
         builder: (context, state) => const NotificationsScreen(),
-      ),
-      GoRoute(
-        path: notificationSettings,
-        name: 'notification-settings',
-        builder: (context, state) => const NotificationSettingsScreen(),
       ),
       GoRoute(
         path: appSettings,

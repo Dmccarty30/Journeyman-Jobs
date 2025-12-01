@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../models/user_model.dart';
 import '../../services/auth_service.dart';
 import '../../utils/concurrent_operations.dart';
-import '../core_providers.dart';
+import '../core_providers.dart' hide AuthService;
 
 part 'auth_riverpod_provider.g.dart';
 
