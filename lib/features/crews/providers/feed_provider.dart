@@ -10,7 +10,6 @@ import '../../../providers/riverpod/auth_riverpod_provider.dart'
 import '../../../services/feed_service.dart';
 import '../../../models/post_model.dart';
 import '../models/tailboard.dart';
-import 'crews_riverpod_provider.dart';
 
 part 'feed_provider.g.dart';
 

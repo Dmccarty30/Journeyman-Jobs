@@ -173,7 +173,7 @@ class ChatService {
 
     return snapshotStream.map((snapshot) {
       if (snapshot.exists) {
-        final data = snapshot.data() as Map<String, dynamic>?;
+        final data = snapshot.data();
         final statusString = data?['status'] as String? ?? 'sent';
         return MessageStatus.values.firstWhere(
           (s) => s.toString().split('.').last == statusString,
@@ -196,7 +196,7 @@ class ChatService {
 
     return snapshotStream.map((snapshot) {
       if (snapshot.exists) {
-        final data = snapshot.data() as Map<String, dynamic>?;
+        final data = snapshot.data();
         final deliveredTo = <String, DateTime>{};
         
         if (data?['deliveredTo'] != null) {
@@ -225,7 +225,7 @@ class ChatService {
 
     return snapshotStream.map((snapshot) {
       if (snapshot.exists) {
-        final data = snapshot.data() as Map<String, dynamic>?;
+        final data = snapshot.data();
         final readBy = <String, DateTime>{};
         
         if (data?['readBy'] != null) {

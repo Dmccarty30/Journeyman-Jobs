@@ -51,7 +51,7 @@ class StormContractorCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         boxShadow: [AppTheme.shadowSm],
         border: Border.all(
-          color: StormTheme.electricBlue.withOpacity(0.3),
+          color: StormTheme.electricBlue.withValues(alpha: 0.3),
           width: 1,
         ),
         gradient: LinearGradient(
@@ -59,7 +59,7 @@ class StormContractorCard extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             AppTheme.white,
-            StormTheme.electricBlue.withOpacity(0.05),
+            StormTheme.electricBlue.withValues(alpha: 0.05),
           ],
         ),
       ),
@@ -128,7 +128,7 @@ class StormContractorCard extends StatelessWidget {
         ),
         Text(
           label,
-          style: AppTheme.labelSmall.copyWith(color: color.withOpacity(0.8)),
+          style: AppTheme.labelSmall.copyWith(color: color.withValues(alpha: 0.8)),
         ),
       ],
     );

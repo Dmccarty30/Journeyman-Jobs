@@ -275,6 +275,8 @@ class AppRouter {
     ),
   );
 
+  static String get languageRegion => null;
+
   /// Handles route redirection based on authentication state
   static String? _redirect(BuildContext context, GoRouterState state) {
     final user = FirebaseAuth.instance.currentUser;

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'job_repository.dart' hide Job;
+import 'job_repository.dart';
 import '../../models/job_model.dart';
 
 class JobRepositoryImpl implements JobRepository {

@@ -49,7 +49,7 @@ class JJContractorCard extends StatelessWidget {
         color: AppTheme.white,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         boxShadow: [AppTheme.shadowSm],
-        border: Border.all(color: AppTheme.primaryNavy.withOpacity(0.1), width: 1),
+        border: Border.all(color: AppTheme.primaryNavy.withValues(alpha: 0.1), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

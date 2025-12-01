@@ -45,13 +45,13 @@ class StormTheme {
   // =================== SHADOWS ===================
 
   static BoxShadow lightningGlow = BoxShadow(
-    color: lightningYellow.withOpacity(0.4),
+    color: lightningYellow.withValues(alpha: 0.4),
     blurRadius: 10,
     spreadRadius: 1,
   );
 
   static BoxShadow electricGlow = BoxShadow(
-    color: electricBlue.withOpacity(0.4),
+    color: electricBlue.withValues(alpha: 0.4),
     blurRadius: 10,
     spreadRadius: 1,
   );
@@ -62,12 +62,12 @@ class StormTheme {
     gradient: stormSurgeGradient,
     borderRadius: BorderRadius.circular(AppTheme.radiusMd),
     border: Border.all(
-      color: electricBlue.withOpacity(0.3),
+      color: electricBlue.withValues(alpha: 0.3),
       width: 1,
     ),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.3),
+        color: Colors.black.withValues(alpha: 0.3),
         blurRadius: 8,
         offset: const Offset(0, 4),
       ),
@@ -83,7 +83,7 @@ class StormTheme {
     ),
     boxShadow: [
       BoxShadow(
-        color: lightningYellow.withOpacity(0.2),
+        color: lightningYellow.withValues(alpha: 0.2),
         blurRadius: 8,
         offset: const Offset(0, 4),
       ),

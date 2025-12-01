@@ -520,7 +520,7 @@ class _StormScreenState extends State<StormScreen> {
           end: Alignment.bottomRight,
           colors: [
             AppTheme.white,
-            color.withOpacity(0.05),
+            color.withValues(alpha: 0.05),
           ],
         ),
       ),
@@ -536,7 +536,7 @@ class _StormScreenState extends State<StormScreen> {
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                   boxShadow: [
                     BoxShadow(
-                      color: color.withOpacity(0.2),
+                      color: color.withValues(alpha: 0.2),
                       blurRadius: 8,
                       spreadRadius: 1,
                     )

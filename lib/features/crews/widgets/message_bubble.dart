@@ -337,8 +337,7 @@ class MessageBubble extends StatelessWidget {
         iconColor = AppTheme.accentCopper;
         break;
       case MessageType.text:
-      default:
-        return const SizedBox.shrink();
+      return const SizedBox.shrink();
     }
     
     return Icon(

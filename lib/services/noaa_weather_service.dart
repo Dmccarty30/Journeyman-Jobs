@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -52,7 +54,7 @@ class NoaaWeatherService {
     required double longitude,
   }) async {
     try {
-      final cacheKey = 'noaa_alerts_${latitude}_${longitude}';
+      final cacheKey = 'noaa_alerts_${latitude}_$longitude';
       
       // Check cache first
       final cached = await _cacheService.get<String>(cacheKey);
@@ -150,7 +152,7 @@ class NoaaWeatherService {
       return '$_radarBase/standard/${stationId}_loop.gif';
     } else {
       // Latest single frame
-      return '$_radarBase/standard/${stationId}/${stationId}_${product}_0.gif';
+      return '$_radarBase/standard/$stationId/${stationId}_${product}_0.gif';
     }
   }
   
@@ -171,7 +173,7 @@ class NoaaWeatherService {
     
     final layerString = layers.isNotEmpty ? '_${layers.join('_')}' : '';
     
-    return '$_radarBase/standard/${stationId}/${stationId}_${product}${layerString}_0.gif';
+    return '$_radarBase/standard/$stationId/${stationId}_$product${layerString}_0.gif';
   }
   
   /// Get current tropical systems from National Hurricane Center

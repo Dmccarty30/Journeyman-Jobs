@@ -30,11 +30,11 @@ class PowerOutageCard extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             AppTheme.white,
-            StormTheme.electricBlue.withOpacity(0.05),
+            StormTheme.electricBlue.withValues(alpha: 0.05),
           ],
         ),
         border: Border.all(
-          color: _getSeverityColor(severity).withOpacity(0.5),
+          color: _getSeverityColor(severity).withValues(alpha: 0.5),
           width: 1,
         ),
       ),
@@ -265,7 +265,7 @@ class PowerOutageSummary extends StatelessWidget {
           AppTheme.shadowMd,
         ],
         border: Border.all(
-          color: StormTheme.lightningYellow.withOpacity(0.5),
+          color: StormTheme.lightningYellow.withValues(alpha: 0.5),
           width: 1,
         ),
       ),

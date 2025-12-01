@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import '../../../../design_system/tailboard_theme.dart';
 import '../../../../design_system/tailboard_components.dart';
-import '../../providers/feed_provider.dart';
 
 class FeedHistoryDialog extends ConsumerWidget {
   const FeedHistoryDialog({super.key});

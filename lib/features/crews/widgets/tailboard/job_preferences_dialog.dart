@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../design_system/tailboard_theme.dart';
 import '../../models/crew_preferences.dart';
 import '../../providers/crews_riverpod_provider.dart';
-import '../../services/crew_service.dart';
-import '../../../../providers/core_providers.dart';
+
 
 class JobPreferencesDialog extends ConsumerStatefulWidget {
   final String crewId;

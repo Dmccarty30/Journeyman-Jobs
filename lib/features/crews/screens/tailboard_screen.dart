@@ -420,7 +420,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen>
                         final feedService = ref.read(feedServiceProvider);
                         await feedService.createPost(
                           crewId: selectedCrew?.id ?? 'global',
-                          authorId: currentUser!.uid,
+                          authorId: currentUser.uid,
                           content: contentController.text,
                         );
 
@@ -461,7 +461,7 @@ class _TailboardScreenState extends ConsumerState<TailboardScreen>
 
   void _showShareJobDialog() {
     final currentUser = firebase_auth.FirebaseAuth.instance.currentUser;
-    final selectedCrew = ref.read(selectedCrewProvider);
+    ref.read(selectedCrewProvider);
 
     if (currentUser == null) {
       _showSnackBar('Please sign in to share a job', isError: true);

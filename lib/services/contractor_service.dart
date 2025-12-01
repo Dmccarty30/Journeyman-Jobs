@@ -36,7 +36,7 @@ class ContractorService {
       final QuerySnapshot snapshot = await _firestore
           .collection(_collection)
           .where('company', isGreaterThanOrEqualTo: query)
-          .where('company', isLessThanOrEqualTo: query + '\uf8ff')
+          .where('company', isLessThanOrEqualTo: '$query\uf8ff')
           .orderBy('company')
           .get();
 
@@ -81,7 +81,7 @@ class ContractorService {
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) {
-              final data = doc.data() as Map<String, dynamic>;
+              final data = doc.data();
               data['id'] = doc.id;
               return Contractor.fromJson(data);
             })
