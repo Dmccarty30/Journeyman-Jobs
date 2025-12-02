@@ -2,7 +2,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
-import '../../../electrical_components/jj_circuit_breaker_switch.dart';
 
 class AppSettingsScreen extends StatefulWidget {
   const AppSettingsScreen({super.key});
@@ -28,12 +27,12 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
   // Storm Work Settings
   double _stormAlertRadius = 100.0;
   double _stormRateMultiplier = 1.5;
+  String _units = 'miles';
   
   @override
   void initState() {
     super.initState();
     _loadSettings();
-    _calculateCacheSize();
   }
   
   Future<void> _loadSettings() async {
@@ -75,74 +74,6 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
     }
   }
   
-  Future<void> _calculateCacheSize() async {
-    // Simulate cache size calculation
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      setState(() {
-        _cacheSize = '156 MB';
-      });
-    }
-  }
-  
-  Future<void> _clearCache() async {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        ),
-        title: Row(
-          children: [
-            Icon(
-              Icons.delete_outline,
-              color: AppTheme.warningYellow,
-              size: AppTheme.iconMd,
-            ),
-            const SizedBox(width: AppTheme.spacingMd),
-            Text(
-              'Clear Cache?',
-              style: AppTheme.headlineSmall.copyWith(
-                color: AppTheme.primaryNavy,
-              ),
-            ),
-          ],
-        ),
-        content: Text(
-          'This will delete all cached data including offline union directories and weather maps. You\'ll need to re-download them.',
-          style: AppTheme.bodyMedium.copyWith(
-            color: AppTheme.textPrimary,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(
-              'Cancel',
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textSecondary,
-              ),
-            ),
-          ),
-          JJPrimaryButton(
-            text: 'Clear Cache',
-            onPressed: () async {
-              Navigator.of(context).pop();
-              // Simulate cache clearing
-              JJSnackBar.showSuccess(
-                context: context,
-                message: 'Cache cleared successfully',
-              );
-              _calculateCacheSize();
-            },
-            width: 120,
-            variant: JJButtonVariant.primary,
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -317,60 +248,6 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
     );
   }
   
-  Widget _buildSwitchTile({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AppTheme.spacingSm),
-            decoration: BoxDecoration(
-              color: AppTheme.accentCopper.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-            ),
-            child: Icon(
-              icon,
-              color: AppTheme.accentCopper,
-              size: AppTheme.iconSm,
-            ),
-          ),
-          const SizedBox(width: AppTheme.spacingMd),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTheme.titleMedium.copyWith(
-                    color: AppTheme.primaryNavy,
-                  ),
-                ),
-                const SizedBox(height: AppTheme.spacingXs),
-                Text(
-                  subtitle,
-                  style: AppTheme.bodySmall.copyWith(
-                    color: AppTheme.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          JJCircuitBreakerSwitch(
-            value: value,
-            onChanged: onChanged,
-            size: JJCircuitBreakerSize.small,
-            showElectricalEffects: true,
-          ),
-        ],
-      ),
-    );
-  }
   
   Widget _buildDropdownTile({
     required IconData icon,

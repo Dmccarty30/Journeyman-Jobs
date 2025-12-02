@@ -213,6 +213,15 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
         city: _cityController.text.trim(),
         state: _stateController.text.trim(),
         zipcode: int.tryParse(_zipcodeController.text.trim()) ?? 0,
+        classification: '',
+        homeLocal: 0,
+        networkWithOthers: false,
+        careerAdvancements: false,
+        betterBenefits: false,
+        higherPayRate: false,
+        learnNewSkill: false,
+        travelToNewLocation: false,
+        findLongTermWork: false,
       );
 
       await firestoreService.createUser(

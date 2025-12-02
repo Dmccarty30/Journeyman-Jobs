@@ -38,6 +38,7 @@ import '../screens/settings/privacy_security_screen.dart'; // New import
 import '../screens/settings/app/appearance_display_screen.dart'; // New import
 import '../screens/settings/app/job_search_preferences_screen.dart'; // New import
 import '../screens/settings/app/data_storage_screen.dart'; // New import
+import '../screens/settings/app/language_region_screen.dart'; // New import
 
 class AppRouter {
   static const String splash = '/';
@@ -71,6 +72,7 @@ class AppRouter {
   static const String appearanceDisplay = '/settings/appearance-display'; // New route constant
   static const String jobSearchPreferences = '/settings/job-search-preferences'; // New route constant
   static const String dataStorage = '/settings/data-storage'; // New route constant
+  static const String languageRegion = '/settings/language-region'; // New route constant
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -243,6 +245,11 @@ class AppRouter {
         name: 'data-storage',
         builder: (context, state) => const DataStorageScreen(),
       ),
+      GoRoute(
+        path: languageRegion,
+        name: 'language-region',
+        builder: (context, state) => const LanguageRegionScreen(),
+      ),
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(
@@ -274,8 +281,6 @@ class AppRouter {
       ),
     ),
   );
-
-  static String get languageRegion => null;
 
   /// Handles route redirection based on authentication state
   static String? _redirect(BuildContext context, GoRouterState state) {

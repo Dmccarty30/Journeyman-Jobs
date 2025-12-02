@@ -921,9 +921,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                     ],
                   ),
                 ),
+            ],
+          ),
         ],
       ),
-      );
+    );
   }
 
   Widget _buildSettingsRow(String title, String subtitle, bool value, ValueChanged<bool> onChanged) {

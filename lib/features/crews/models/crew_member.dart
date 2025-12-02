@@ -92,6 +92,9 @@ class CrewMember {
   final String? customTitle;           // Optional role title
   final DateTime lastActive;           // Last interaction timestamp
   final bool isActive;                 // Member active status
+  final String? displayName;
+  final String? avatarUrl;
+  final String? classification;
 
   CrewMember({
     required this.userId,
@@ -103,6 +106,9 @@ class CrewMember {
     this.customTitle,
     required this.lastActive,
     required this.isActive,
+    this.displayName,
+    this.avatarUrl,
+    this.classification,
   });
 
   factory CrewMember.fromFirestore(DocumentSnapshot doc) {
@@ -120,6 +126,9 @@ class CrewMember {
       customTitle: data['customTitle'],
       lastActive: (data['lastActive'] as Timestamp?)?.toDate() ?? DateTime.now(),
       isActive: data['isActive'] ?? true,
+      displayName: data['displayName'],
+      avatarUrl: data['avatarUrl'],
+      classification: data['classification'],
     );
   }
 
@@ -133,6 +142,9 @@ class CrewMember {
       'customTitle': customTitle,
       'lastActive': Timestamp.fromDate(lastActive),
       'isActive': isActive,
+      'displayName': displayName,
+      'avatarUrl': avatarUrl,
+      'classification': classification,
     };
   }
 
@@ -151,14 +163,11 @@ class CrewMember {
       customTitle: map['customTitle'],
       lastActive: (map['lastActive'] as Timestamp?)?.toDate() ?? DateTime.now(),
       isActive: map['isActive'] ?? true,
+      displayName: map['displayName'],
+      avatarUrl: map['avatarUrl'],
+      classification: map['classification'],
     );
   }
-
-  String? get displayName => null;
-
-  Null get avatarUrl => null;
-
-  Null get classification => null;
 
   CrewMember copyWith({
     String? userId,
@@ -170,6 +179,9 @@ class CrewMember {
     String? customTitle,
     DateTime? lastActive,
     bool? isActive,
+    String? displayName,
+    String? avatarUrl,
+    String? classification,
   }) {
     return CrewMember(
       userId: userId ?? this.userId,
@@ -181,6 +193,9 @@ class CrewMember {
       customTitle: customTitle ?? this.customTitle,
       lastActive: lastActive ?? this.lastActive,
       isActive: isActive ?? this.isActive,
+      displayName: displayName ?? this.displayName,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      classification: classification ?? this.classification,
     );
   }
 
