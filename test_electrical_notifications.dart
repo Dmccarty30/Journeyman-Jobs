@@ -3,7 +3,7 @@ import 'lib/electrical_components/jj_electrical_notifications.dart';
 
 /// Test widget to demonstrate the electrical notifications with circuit theming
 class ElectricalNotificationsTest extends StatelessWidget {
-  const ElectricalNotificationsTest({Key? key}) : super(key: key);
+  const ElectricalNotificationsTest({super.key});
 
   @override
   Widget build(BuildContext context) {

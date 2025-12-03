@@ -72,50 +72,8 @@ class _TestAreaState extends State<TestArea> {
               // ============================================================
 
               // Example 1: Testing the Electrical Button
-              JJElectricalButton(
-                onPressed: () {
-                  debugPrint('Test Button Pressed');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Button Pressed!')),
-                  );
-                },
-                child: const Text('Test Button'),
-              ),
-              
-              const SizedBox(height: 32),
-              
-              // Example 2: Testing the Electrical Text Field
-              JJElectricalTextField(
-                controller: _controller,
-                decoration: const InputDecoration(
-                  labelText: 'Test Field',
-                  hintText: 'Type here to test current flow',
-                ),
-              ),
 
-              const SizedBox(height: 32),
 
-              // Example 3: Testing Page Transitions
-              JJElectricalButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    JJElectricalPageTransitions.lightningTransition(
-                      settings: const RouteSettings(name: '/test'),
-                      child: Scaffold(
-                        backgroundColor: AppTheme.primaryNavy,
-                        appBar: AppBar(title: const Text('Transition Test')),
-                        body: Center(
-                          child: JJElectricalButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Go Back'),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                child: const Text('Test Transition'),
-              ),
 
               // ============================================================
               // END TEST COMPONENTS

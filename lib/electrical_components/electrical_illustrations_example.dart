@@ -3,6 +3,10 @@ import '../../design_system/app_theme.dart';
 import '../../design_system/illustrations/electrical_illustrations.dart';
 import '../../design_system/components/reusable_components.dart';
 
+void main() {
+  runApp(const ElectricalIllustrationsExample());
+}
+
 /// Example screen showing how to implement electrical illustrations
 class ElectricalIllustrationsExample extends StatelessWidget {
   const ElectricalIllustrationsExample({super.key});
@@ -16,6 +20,7 @@ class ElectricalIllustrationsExample extends StatelessWidget {
         foregroundColor: AppTheme.white,
       ),
       body: SingleChildScrollView(
+        
         padding: const EdgeInsets.all(AppTheme.spacingMd),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

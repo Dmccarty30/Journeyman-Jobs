@@ -2,69 +2,29 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../design_system/app_theme.dart';
 
-/// Voltage levels used across electrical-themed UI components.
-enum VoltageLevel {
-  low,
-  medium,
-  high,
+
+void main() {
+  runApp(const EnhancedBackgroundApp());
 }
 
 /// Enhanced electrical-themed background components for the app
-class EnhancedBackgrounds {
-  EnhancedBackgrounds._();
+class EnhancedBackgroundApp extends StatelessWidget {
+  const EnhancedBackgroundApp({super.key});
 
-  /// Returns a BoxDecoration appropriate for the given voltage level.
-  /// This is used by various widgets (status chips, indicators) that need
-  /// a consistent gradient / styling depending on voltage severity.
-  static BoxDecoration voltageStatusGradient(
-    VoltageLevel level, {
-    BorderRadius? borderRadius,
-  }) {
-    final BorderRadius resolvedRadius =
-        borderRadius ?? BorderRadius.circular(AppTheme.radiusSm);
-
-    switch (level) {
-      case VoltageLevel.high:
-        return BoxDecoration(
-          gradient: LinearGradient(
-            colors: <Color>[
-              AppTheme.errorRed,
-              AppTheme.accentCopper,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: resolvedRadius,
-        );
-      case VoltageLevel.medium:
-        return BoxDecoration(
-          gradient: LinearGradient(
-            colors: <Color>[
-              AppTheme.accentCopper,
-              AppTheme.primaryNavy,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: resolvedRadius,
-        );
-      case VoltageLevel.low:
-        return BoxDecoration(
-          gradient: LinearGradient(
-            colors: <Color>[
-              AppTheme.offWhite,
-              AppTheme.white,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: resolvedRadius,
-        );
-    }
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Simple Component Tester',
+      // Using the app's dark theme which suits electrical components best
+      theme: AppTheme.darkTheme, 
+      home: const EnhancedBackgroundApp(),
+      debugShowCheckedModeBanner: false,
+    );
   }
+}
 
   /// Circuit pattern background with animated electricity flow
-  static Widget circuitPatternBackground({
+  Widget circuitPatternBackground({
     required Widget child,
     double opacity = 0.05,
     Color? patternColor,
@@ -88,7 +48,7 @@ class EnhancedBackgrounds {
       );
 
   /// Gradient background with electrical theme
-  static Widget electricalGradient({
+  Widget electricalGradient({
     required Widget child,
     List<Color>? colors,
     AlignmentGeometry begin = Alignment.topLeft,
@@ -110,7 +70,7 @@ class EnhancedBackgrounds {
       );
 
   /// Spark effect background for loading states
-  static Widget sparkEffectBackground({
+  Widget sparkEffectBackground({
     required Widget child,
     bool active = true,
   }) =>
@@ -127,7 +87,7 @@ class EnhancedBackgrounds {
       );
 
   /// Enhanced card background with subtle circuit pattern
-  static Widget enhancedCardBackground({
+  Widget enhancedCardBackground({
     required Widget child,
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
@@ -174,7 +134,7 @@ class EnhancedBackgrounds {
       );
 
   /// Grid pattern background for technical screens
-  static Widget gridPatternBackground({
+  Widget gridPatternBackground({
     required Widget child,
     double spacing = 20.0,
     Color? gridColor,
@@ -198,7 +158,7 @@ class EnhancedBackgrounds {
       );
 
   /// Lightning bolt accent for headers and titles
-  static Widget lightningAccent({
+  Widget lightningAccent({
     required Widget child,
     bool showLightning = true,
     AlignmentGeometry alignment = Alignment.topRight,
@@ -218,8 +178,7 @@ class EnhancedBackgrounds {
             ),
         ],
       );
-}
-
+      
 /// Circuit pattern painter for background effects
 class CircuitPatternPainter extends CustomPainter {
   CircuitPatternPainter({
@@ -253,14 +212,12 @@ class CircuitPatternPainter extends CustomPainter {
     }
 
     // Draw vertical lines
-    for (double x = 0; x < size.width; x += spacing) {
-      if (random.nextBool()) {
-        canvas.drawLine(
-          Offset(x, 0),
-          Offset(x, size.height),
-          paint,
-        );
-      }
+    for (double x = 0; x <= size.width; x += spacing) {
+      canvas.drawLine(
+        Offset(x, 0),
+        Offset(x, size.height),
+        paint,
+      );
     }
 
     // Draw connection points
@@ -269,7 +226,7 @@ class CircuitPatternPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     for (double x = 0; x < size.width; x += spacing) {
-      for (double y = 0; y < size.height; y += spacing) {
+      for (double y = 0; y <= size.height; y += spacing) {
         if (random.nextDouble() > 0.7) {
           canvas.drawCircle(Offset(x, y), 2, dotPaint);
         }

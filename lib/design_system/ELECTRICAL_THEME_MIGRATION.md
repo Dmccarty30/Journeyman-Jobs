@@ -5,12 +5,15 @@ This guide helps you migrate from the basic theme to the enhanced electrical the
 ## Quick Migration Steps
 
 ### 1. Import Enhanced Backgrounds
+
 ```dart
 import '../../design_system/components/enhanced_backgrounds.dart';
 ```
 
 ### 2. Replace AppBar
+
 **Before:**
+
 ```dart
 AppBar(
   backgroundColor: AppTheme.primaryNavy,
@@ -19,6 +22,7 @@ AppBar(
 ```
 
 **After:**
+
 ```dart
 EnhancedBackgrounds.enhancedAppBar(
   title: 'Title',
@@ -27,7 +31,9 @@ EnhancedBackgrounds.enhancedAppBar(
 ```
 
 ### 3. Add Circuit Pattern Background
+
 **Before:**
+
 ```dart
 Scaffold(
   backgroundColor: AppTheme.offWhite,
@@ -36,6 +42,7 @@ Scaffold(
 ```
 
 **After:**
+
 ```dart
 Scaffold(
   backgroundColor: AppTheme.offWhite,
@@ -47,7 +54,9 @@ Scaffold(
 ```
 
 ### 4. Replace Cards
+
 **Before:**
+
 ```dart
 Container(
   decoration: BoxDecoration(
@@ -60,6 +69,7 @@ Container(
 ```
 
 **After:**
+
 ```dart
 EnhancedBackgrounds.enhancedCardBackground(
   showCircuitPattern: true,
@@ -68,12 +78,15 @@ EnhancedBackgrounds.enhancedCardBackground(
 ```
 
 ### 5. Update Loading States
+
 **Before:**
+
 ```dart
 CircularProgressIndicator()
 ```
 
 **After:**
+
 ```dart
 EnhancedBackgrounds.sparkEffectBackground(
   child: CircularProgressIndicator(
@@ -85,6 +98,7 @@ EnhancedBackgrounds.sparkEffectBackground(
 ## Component Updates
 
 ### Home Screen
+
 - ✅ Enhanced AppBar with electrical icon
 - ✅ Circuit pattern background
 - ✅ Enhanced card backgrounds for all sections
@@ -93,6 +107,7 @@ EnhancedBackgrounds.sparkEffectBackground(
 - ✅ Spark effect loading states
 
 ### Jobs Screen
+
 - ✅ Enhanced search bar with gradient accent
 - ✅ Animated filter section
 - ✅ Electrical loading indicator with rotating power flow
@@ -101,6 +116,7 @@ EnhancedBackgrounds.sparkEffectBackground(
 - ✅ Circuit pattern overlay
 
 ### Job Cards
+
 - ✅ Enhanced electrical headers
 - ✅ Voltage level indicators
 - ✅ Status gradients for storm work
@@ -111,7 +127,9 @@ EnhancedBackgrounds.sparkEffectBackground(
 ## Performance Considerations
 
 ### RepaintBoundary Usage
+
 All custom painters are wrapped in RepaintBoundary:
+
 ```dart
 RepaintBoundary(
   child: CustomPaint(
@@ -121,7 +139,9 @@ RepaintBoundary(
 ```
 
 ### Animation Controllers
+
 Dispose animation controllers properly:
+
 ```dart
 @override
 void dispose() {
@@ -131,7 +151,9 @@ void dispose() {
 ```
 
 ### Conditional Rendering
+
 Use conditional rendering for expensive widgets:
+
 ```dart
 showCircuitPattern
   ? Stack([pattern, child])
@@ -141,6 +163,7 @@ showCircuitPattern
 ## Accessibility Updates
 
 ### Enhanced Focus States
+
 ```dart
 Material(
   child: InkWell(
@@ -152,6 +175,7 @@ Material(
 ```
 
 ### Semantic Labels
+
 ```dart
 Semantics(
   label: 'IBEW Local ${job.local}',
@@ -161,6 +185,7 @@ Semantics(
 ```
 
 ### High Contrast Support
+
 ```dart
 // Check for high contrast mode
 final isHighContrast = MediaQuery.of(context).accessibleNavigation;
@@ -170,6 +195,7 @@ final patternOpacity = isHighContrast ? 0.0 : 0.03;
 ## Testing Updates
 
 ### Widget Tests
+
 ```dart
 testWidgets('Enhanced job card displays electrical theme', (tester) async {
   await tester.pumpWidget(MaterialApp(
@@ -186,6 +212,7 @@ testWidgets('Enhanced job card displays electrical theme', (tester) async {
 ```
 
 ### Performance Tests
+
 ```dart
 testWidgets('Circuit pattern does not cause excessive rebuilds', (tester) async {
   var paintCount = 0;
@@ -227,20 +254,25 @@ lib/design_system/components/
 ## Common Issues
 
 ### Issue: Circuit patterns not showing
+
 **Solution:** Check opacity value and ensure RepaintBoundary is used
 
 ### Issue: Animations causing performance issues
+
 **Solution:** Reduce animation frequency or add fps limiting
 
 ### Issue: Cards not responding to taps
+
 **Solution:** Ensure InkWell is properly configured with onTap
 
 ### Issue: Gradient colors not displaying correctly
+
 **Solution:** Verify color values and gradient stop positions
 
 ## Rollback Plan
 
 To rollback to original theme:
+
 1. Remove enhanced_backgrounds.dart imports
 2. Replace enhanced components with original ones
 3. Remove circuit pattern backgrounds
