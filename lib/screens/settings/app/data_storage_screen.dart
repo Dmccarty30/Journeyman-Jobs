@@ -115,7 +115,7 @@ class _DataStorageScreenState extends State<DataStorageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           'Data & Storage',

@@ -48,15 +48,12 @@ class CondensedJobCard extends StatelessWidget {
                     horizontal: AppTheme.spacingSm,
                     vertical: AppTheme.spacingXs,
                   ),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryNavy.withValues(alpha: 26/255),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                  ),
+
                   child: Text(
                     'Local ${job.localNumber ?? job.local ?? 'N/A'}',
-                    style: AppTheme.labelSmall.copyWith(
+                    style: AppTheme.bodyMedium.copyWith(
                       color: AppTheme.primaryNavy,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -87,6 +84,7 @@ class CondensedJobCard extends StatelessWidget {
             _buildTwoColumnRow(
               leftLabel: 'Contractor',
               leftValue: JobDataFormatter.formatCompany(job.company),
+              
               rightLabel: 'Wages',
               rightValue: job.wage != null ? '\$${job.wage!.toStringAsFixed(2)}/hr' : 'N/A',
               rightValueColor: job.wage != null && job.wage! > 0 ? AppTheme.successGreen : null,

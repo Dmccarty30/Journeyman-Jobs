@@ -531,7 +531,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      backgroundColor: Colors.transparent, // Changed to transparent
+      backgroundColor: AppTheme.white, // Changed to transparent
       appBar: AppBar(
         title: Text(
           'Notifications',
@@ -679,7 +679,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                           side: BorderSide(
-                            color: AppTheme.borderLight,
+                            color: AppTheme.borderCopper,
                             width: 1,
                           ),
                         ),
@@ -731,7 +731,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                           side: BorderSide(
-                            color: AppTheme.borderLight,
+                            color: AppTheme.borderCopper,
                             width: 1,
                           ),
                         ),
@@ -814,7 +814,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                           side: BorderSide(
-                            color: AppTheme.borderLight,
+                            color: AppTheme.borderCopper,
                             width: 1,
                           ),
                         ),
@@ -861,7 +861,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                           side: BorderSide(
-                            color: AppTheme.borderLight,
+                            color: AppTheme.borderCopper,
                             width: 1,
                           ),
                         ),
@@ -942,8 +942,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
               children: [
                 Text(
                   title,
-                  style: AppTheme.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w500,
+                  style: AppTheme.bodyLarge.copyWith(
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 if (subtitle.isNotEmpty) ...[
@@ -972,7 +972,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     return Divider(
       height: 1,
       thickness: 1,
-      color: AppTheme.borderLight,
+      color: AppTheme.borderCopper,
       indent: AppTheme.spacingMd,
       endIndent: AppTheme.spacingMd,
     );

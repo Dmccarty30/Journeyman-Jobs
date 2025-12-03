@@ -43,7 +43,7 @@ class _LanguageRegionScreenState extends State<LanguageRegionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           'Language & Region',

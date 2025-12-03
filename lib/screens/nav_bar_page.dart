@@ -46,7 +46,7 @@ class _NavBarPageState extends State<NavBarPage> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.transparent,
               blurRadius: 8,
               offset: const Offset(0, -2),
             ),
@@ -56,9 +56,9 @@ class _NavBarPageState extends State<NavBarPage> {
           type: BottomNavigationBarType.fixed,
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
-          backgroundColor: AppTheme.white,
+          backgroundColor: AppTheme.primaryNavy,
           selectedItemColor: AppTheme.accentCopper,
-          unselectedItemColor: AppTheme.mediumGray,
+          unselectedItemColor: AppTheme.white,
           selectedLabelStyle: AppTheme.labelSmall.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -104,7 +104,7 @@ class _NavBarPageState extends State<NavBarPage> {
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: isSelected 
-            ? AppTheme.accentCopper.withValues(alpha: 0.1)
+            ? Colors.transparent
             : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
       ),

@@ -48,7 +48,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           'Privacy & Security',

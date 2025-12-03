@@ -351,6 +351,10 @@ class _ResourcesScreenState extends State<ResourcesScreen> with SingleTickerProv
               decoration: BoxDecoration(
                 color: AppTheme.white,
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                border: Border.all(
+                      color: AppTheme.accentCopper,
+                      width: AppTheme.borderWidthThin,
+                    ),
                 boxShadow: [AppTheme.shadowSm],
               ),
               child: Column(
@@ -365,6 +369,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> with SingleTickerProv
                       if (!isLast)
                         const Divider(
                           height: 1,
+                          thickness: 1,
+                          color: AppTheme.borderCopper,
                           indent: AppTheme.spacingXl,
                           endIndent: AppTheme.spacingMd,
                         ),

@@ -31,7 +31,7 @@ class PowerOutageService {
   static const int _minimumOutageThreshold = 20000; // Only show states with 20k+ outages
   
   // Current data
-  List<PowerOutageState> _currentOutages = [];
+  final List<PowerOutageState> _currentOutages = [];
   Timer? _refreshTimer;
   DateTime? _lastUpdate;
   

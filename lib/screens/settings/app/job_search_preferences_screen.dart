@@ -50,7 +50,7 @@ class _JobSearchPreferencesScreenState extends State<JobSearchPreferencesScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           'Job Search Preferences',

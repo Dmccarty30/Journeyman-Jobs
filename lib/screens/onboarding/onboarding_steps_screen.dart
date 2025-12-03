@@ -382,7 +382,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: AppTheme.white,

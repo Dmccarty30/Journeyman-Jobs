@@ -12,9 +12,8 @@ import '../../widgets/storm/power_outage_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../electrical_components/circuit_board_background.dart';
 import 'widgets/storm_contractor_card.dart';
-
-// import '../../models/power_grid_status.dart'; // TODO: Uncomment when power grid status is implemented
-// import '../../../electrical_components/electrical_components.dart'; // Temporarily disabled
+import 'widgets/storm_tracker_section.dart';
+import 'widgets/fox_weather_widget.dart';
 
 class StormScreen extends StatefulWidget {
   const StormScreen({super.key});
@@ -24,84 +23,16 @@ class StormScreen extends StatefulWidget {
 }
 
 class _StormScreenState extends State<StormScreen> {
+  // Storm Tracker
+  // final StormTrackingService _stormTrackingService = StormTrackingService();
 
-  // TODO: Use when power grid status cards are implemented
-  // final List<PowerGridStatus> _powerGridStatuses = PowerGridMockData.getSampleData();
-
-  // TODO: Implement power grid status cards when needed
-  /*List<Widget> _buildPowerGridStatusCards() {
-    return _powerGridStatuses.map((status) {
-      return Container(
-        margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          boxShadow: [AppTheme.shadowSm],
-        ),
-        padding: const EdgeInsets.all(AppTheme.spacingMd),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.power,
-                    color: status.stateColor, size: 30),
-                const SizedBox(width: AppTheme.spacingSm),
-                Text(
-                  status.gridName,
-                  style: AppTheme.headlineSmall
-                      .copyWith(color: AppTheme.primaryNavy),
-                ),
-                const Spacer(),
-                Text(
-                  status.stateLabel,
-                  style: AppTheme.bodySmall
-                      .copyWith(color: status.stateColor),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spacingSm),
-            Text(
-              'Load: ${status.loadPercentage.toStringAsFixed(1)}%, Affected Customers: ${status.affectedCustomers}',
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textPrimary,
-              ),
-            ),
-            Text(
-              'Voltage Level: ${status.voltageLevel.toStringAsFixed(1)} kV',
-              style: AppTheme.bodySmall.copyWith(
-                color: AppTheme.textSecondary,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingSm),
-            if (status.activeHazards.isNotEmpty)
-              Wrap(
-                spacing: AppTheme.spacingSm,
-                children: status.activeHazards.map((hazard) {
-                  return Chip(
-                    backgroundColor: AppTheme.accentCopper.withValues(alpha: 0.2),
-                    label: Text(
-                      hazard,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.accentCopper,
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-          ],
-        ),
-      );
-    }).toList();
-  }*/
   String _selectedRegion = 'All Regions';
-  
+
   // Power outage tracking
   final PowerOutageService _powerOutageService = PowerOutageService();
   List<PowerOutageState> _powerOutages = [];
   bool _isLoadingOutages = true;
-  
+
   // Storm Contractors
   List<Map<String, dynamic>> _stormContractors = [];
   bool _isLoadingContractors = true;
@@ -129,7 +60,8 @@ class _StormScreenState extends State<StormScreen> {
       payRate: '\$65-85/hr',
       perDiem: '\$125/day',
       status: 'Active Restoration',
-      description: 'Major power restoration effort following Category 4 hurricane impact. Multiple transmission lines down, extensive distribution damage.',
+      description:
+          'Major power restoration effort following Category 4 hurricane impact. Multiple transmission lines down, extensive distribution damage.',
       deploymentDate: DateTime.now().add(const Duration(days: 1)),
     ),
     StormEvent(
@@ -143,7 +75,8 @@ class _StormScreenState extends State<StormScreen> {
       payRate: '\$58-72/hr',
       perDiem: '\$110/day',
       status: 'Mobilizing',
-      description: 'Ice accumulation caused widespread outages across central Texas. Tree clearing and line repair needed.',
+      description:
+          'Ice accumulation caused widespread outages across central Texas. Tree clearing and line repair needed.',
       deploymentDate: DateTime.now().add(const Duration(hours: 18)),
     ),
     StormEvent(
@@ -157,7 +90,8 @@ class _StormScreenState extends State<StormScreen> {
       payRate: '\$54-68/hr',
       perDiem: '\$95/day',
       status: 'Final Phase',
-      description: 'Straight-line wind damage to distribution system. Most transmission restored.',
+      description:
+          'Straight-line wind damage to distribution system. Most transmission restored.',
       deploymentDate: DateTime.now().subtract(const Duration(days: 3)),
     ),
   ];
@@ -166,7 +100,9 @@ class _StormScreenState extends State<StormScreen> {
     if (_selectedRegion == 'All Regions') {
       return _activeStorms;
     }
-    return _activeStorms.where((storm) => storm.region == _selectedRegion).toList();
+    return _activeStorms
+        .where((storm) => storm.region == _selectedRegion)
+        .toList();
   }
 
   @override
@@ -203,7 +139,8 @@ class _StormScreenState extends State<StormScreen> {
 
   Future<void> _loadStormContractors() async {
     try {
-      final String response = await DefaultAssetBundle.of(context).loadString('assets/data/storm_roster.json');
+      final String response = await DefaultAssetBundle.of(context)
+          .loadString('assets/data/storm_roster.json');
       final List<dynamic> jsonList = json.decode(response);
       if (mounted) {
         setState(() {
@@ -221,14 +158,12 @@ class _StormScreenState extends State<StormScreen> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent, // Transparent for circuit background
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppTheme.primaryNavy,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: StormTheme.stormSurgeGradient,
@@ -253,7 +188,8 @@ class _StormScreenState extends State<StormScreen> {
         actions: [
           IconButton(
             icon: Icon(
-              Icons.notifications_outlined, // Changed to a static icon as it now navigates
+              Icons
+                  .notifications_outlined, // Changed to a static icon as it now navigates
               color: AppTheme.white,
             ),
             onPressed: () {
@@ -275,8 +211,6 @@ class _StormScreenState extends State<StormScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-
                   // Storm work stats
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -296,7 +230,15 @@ class _StormScreenState extends State<StormScreen> {
                     ],
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
-                  
+
+                  // Fox Weather Live
+                  const FoxWeatherWidget(),
+                  const SizedBox(height: AppTheme.spacingLg),
+
+                  // Storm Tracker
+                  const StormTrackerSection(),
+                  const SizedBox(height: AppTheme.spacingLg),
+
                   Row(
                     children: [
                       Expanded(
@@ -349,7 +291,6 @@ class _StormScreenState extends State<StormScreen> {
                   if (_powerOutages.isNotEmpty) ...[
                     PowerOutageSummary(outages: _powerOutages),
                     const SizedBox(height: AppTheme.spacingLg),
-                    
                     Text(
                       'Major Power Outages by State',
                       style: AppTheme.headlineSmall.copyWith(
@@ -357,7 +298,6 @@ class _StormScreenState extends State<StormScreen> {
                       ),
                     ),
                     const SizedBox(height: AppTheme.spacingMd),
-                    
                     if (_isLoadingOutages)
                       Center(
                         child: CircularProgressIndicator(
@@ -366,10 +306,9 @@ class _StormScreenState extends State<StormScreen> {
                       )
                     else
                       ..._powerOutages.map((outage) => PowerOutageCard(
-                        outageData: outage,
-                        onTap: () => _showOutageDetails(context, outage),
-                      )),
-                    
+                            outageData: outage,
+                            onTap: () => _showOutageDetails(context, outage),
+                          )),
                     const SizedBox(height: AppTheme.spacingLg),
                   ],
 
@@ -386,10 +325,12 @@ class _StormScreenState extends State<StormScreen> {
                       const SizedBox(width: AppTheme.spacingMd),
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: AppTheme.spacingMd),
                           decoration: BoxDecoration(
                             color: AppTheme.white,
-                            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                            borderRadius:
+                                BorderRadius.circular(AppTheme.radiusMd),
                             border: Border.all(color: AppTheme.lightGray),
                           ),
                           child: DropdownButtonHideUnderline(
@@ -426,7 +367,8 @@ class _StormScreenState extends State<StormScreen> {
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
 
-                  ..._filteredStorms.map((storm) => StormEventCard(storm: storm)),
+                  ..._filteredStorms
+                      .map((storm) => StormEventCard(storm: storm)),
 
                   const SizedBox(height: AppTheme.spacingLg),
 
@@ -484,8 +426,10 @@ class _StormScreenState extends State<StormScreen> {
                                   : ListView.builder(
                                       itemCount: _stormContractors.length,
                                       itemBuilder: (context, index) {
-                                        final contractor = _stormContractors[index];
-                                        return StormContractorCard(contractor: contractor);
+                                        final contractor =
+                                            _stormContractors[index];
+                                        return StormContractorCard(
+                                            contractor: contractor);
                                       },
                                     ),
                         ),
@@ -493,8 +437,6 @@ class _StormScreenState extends State<StormScreen> {
                       ],
                     ),
                   ),
-
-
                 ],
               ),
             ),
@@ -504,7 +446,8 @@ class _StormScreenState extends State<StormScreen> {
     );
   }
 
-  Widget _buildStormStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStormStatCard(
+      String title, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
       decoration: BoxDecoration(
@@ -587,7 +530,8 @@ class _StormScreenState extends State<StormScreen> {
       context: context,
       backgroundColor: AppTheme.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.radiusLg)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(AppTheme.radiusLg)),
       ),
       isScrollControlled: true,
       builder: (context) {
@@ -709,9 +653,7 @@ class _StormScreenState extends State<StormScreen> {
       },
     );
   }
-
 }
-
 
 class StormEventCard extends StatelessWidget {
   final StormEvent storm;
@@ -727,7 +669,8 @@ class StormEventCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
       decoration: StormTheme.activeStormCardDecoration.copyWith(
-        border: Border.all(color: _severityColor, width: AppTheme.borderWidthThick),
+        border:
+            Border.all(color: _severityColor, width: AppTheme.borderWidthThick),
       ),
       child: Material(
         color: Colors.transparent,
@@ -756,7 +699,8 @@ class StormEventCard extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: _severityColor,
-                              borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                              borderRadius:
+                                  BorderRadius.circular(AppTheme.radiusXs),
                             ),
                             child: Text(
                               storm.severity.toUpperCase(),
@@ -804,9 +748,9 @@ class StormEventCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: AppTheme.spacingMd),
-                
+
                 // Status and duration
                 Row(
                   children: [
@@ -842,9 +786,9 @@ class StormEventCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: AppTheme.spacingMd),
-                
+
                 // Description
                 Text(
                   storm.description,
@@ -854,9 +798,9 @@ class StormEventCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                
+
                 const SizedBox(height: AppTheme.spacingMd),
-                
+
                 // Pay information
                 Row(
                   children: [
@@ -909,7 +853,8 @@ class StormEventCard extends StatelessWidget {
       context: context,
       backgroundColor: AppTheme.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.radiusLg)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(AppTheme.radiusLg)),
       ),
       isScrollControlled: true,
       builder: (context) {
@@ -918,7 +863,8 @@ class StormEventCard extends StatelessWidget {
           maxChildSize: 0.9,
           minChildSize: 0.5,
           builder: (context, scrollController) {
-            return StormDetailsSheet(storm: storm, scrollController: scrollController);
+            return StormDetailsSheet(
+                storm: storm, scrollController: scrollController);
           },
         );
       },
@@ -958,9 +904,9 @@ class StormDetailsSheet extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: AppTheme.spacingLg),
-            
+
             // Header
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -976,7 +922,8 @@ class StormDetailsSheet extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: _severityColor,
-                          borderRadius: BorderRadius.circular(AppTheme.radiusXs),
+                          borderRadius:
+                              BorderRadius.circular(AppTheme.radiusXs),
                         ),
                         child: Text(
                           '${storm.severity.toUpperCase()} PRIORITY',
@@ -1009,9 +956,9 @@ class StormDetailsSheet extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: AppTheme.spacingLg),
-            
+
             // Key metrics
             Row(
               children: [
@@ -1072,9 +1019,9 @@ class StormDetailsSheet extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: AppTheme.spacingMd),
-            
+
             // Description
             Text(
               'Description',
@@ -1090,9 +1037,9 @@ class StormDetailsSheet extends StatelessWidget {
                 color: AppTheme.textPrimary,
               ),
             ),
-            
+
             const SizedBox(height: AppTheme.spacingMd),
-            
+
             // What to Expect
             Text(
               'What to Expect',
@@ -1108,9 +1055,9 @@ class StormDetailsSheet extends StatelessWidget {
                 color: AppTheme.textPrimary,
               ),
             ),
-            
+
             const SizedBox(height: AppTheme.spacingMd),
-            
+
             // Action buttons
             Row(
               children: [

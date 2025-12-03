@@ -68,66 +68,6 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     }
   }
 
-  void _showSearchDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Search Jobs',
-          style: AppTheme.headlineSmall.copyWith(
-            color: AppTheme.primaryNavy,
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search by company, location, or classification...',
-                prefixIcon: Icon(Icons.search, color: AppTheme.primaryNavy),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                  borderSide: BorderSide(color: AppTheme.primaryNavy, width: 2),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              setState(() {
-                _searchQuery = '';
-                _searchController.clear();
-              });
-            },
-            child: Text('Clear', style: TextStyle(color: AppTheme.textSecondary)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _applyFilters();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryNavy,
-              foregroundColor: AppTheme.white,
-            ),
-            child: const Text('Search'),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _applyFilters() {
     // Trigger a new search with current filters
@@ -155,8 +95,8 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
       filtered = filtered.where((job) {
         final String? company = job.company as String?;
         final String? location = job.location as String?;
-        final String? classification = job.classification as String?;
-        final String? jobTitle = job.jobTitle as String?;
+        final String? classification = job.classification;
+        final String? jobTitle = job.jobTitle;
 
         return (company?.toLowerCase().contains(query) ?? false) ||
                (location?.toLowerCase().contains(query) ?? false) ||
@@ -168,9 +108,9 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     // Apply category filter
     if (_selectedFilter != 'All Jobs') {
       filtered = filtered.where((job) {
-        final String? classification = job.classification as String?;
-        final String? jobTitle = job.jobTitle as String?;
-        final String? typeOfWork = job.typeOfWork as String?;
+        final String? classification = job.classification;
+        final String? jobTitle = job.jobTitle;
+        final String? typeOfWork = job.typeOfWork;
 
         final filterLower = _selectedFilter.toLowerCase();
 

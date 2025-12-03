@@ -8,7 +8,6 @@ import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
 import '../../../electrical_components/jj_circuit_breaker_switch.dart';
 import '../../../services/avatar_service.dart';
-import '../../../navigation/app_router.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -1105,14 +1104,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               context.push('/settings/app');
             },
           ),
-          _buildNavigationTile(
-            'Notification Settings',
-            'Manage alerts and notification preferences',
-            Icons.notifications_outlined,
-            () {
-              context.go('${AppRouter.notifications}?tab=settings');
-            },
-          ),
+
           _buildNavigationTile(
             'Privacy & Security',
             'Manage your privacy and security settings',

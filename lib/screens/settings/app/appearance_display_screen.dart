@@ -48,7 +48,7 @@ class _AppearanceDisplayScreenState extends State<AppearanceDisplayScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           'Appearance & Display',

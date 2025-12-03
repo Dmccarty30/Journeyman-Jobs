@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design_system/app_theme.dart';
 import '../../electrical_components/circuit_board_background.dart';
-import '../../electrical_components/jj_electrical_toast.dart';
 import '../../navigation/app_router.dart';
 import '../../providers/riverpod/jobs_riverpod_provider.dart';
 import '../../providers/riverpod/auth_riverpod_provider.dart';
@@ -14,6 +13,8 @@ import '../../legacy/flutterflow/schema/jobs_record.dart';
 import '../../widgets/notification_badge.dart';
 import '../../widgets/condensed_job_card.dart';
 import '../../widgets/dialogs/job_details_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -23,12 +24,45 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  String? _ticketNumber;
+
+
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(jobsProvider.notifier).loadJobs();
     });
+  }
+
+  Future<void> _loadUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        
+        if (doc.exists && mounted) {
+          setState(() {
+            _ticketNumber = doc.data()?['ticket_number']?.toString();
+          });
+        } else if (mounted) {
+          setState(() {
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+          });
+        }
+      }
+    } else {
+      setState(() {
+      });
+    }
   }
 
   @override
@@ -104,8 +138,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                             const SizedBox(height: AppTheme.spacingSm),
                             Text(
-                              'Guest User',
-                              style: AppTheme.bodyLarge.copyWith(
+                              _ticketNumber != null ? 'Ticket #$_ticketNumber' : 'IBEW Member',
+                              style: AppTheme.bodyMedium.copyWith(
                                 color: AppTheme.textSecondary,
                               ),
                             ),
@@ -151,8 +185,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     ),
                                     const SizedBox(height: AppTheme.spacingSm),
                                     Text(
-                                      displayName,
-                                      style: AppTheme.bodyLarge.copyWith(
+                                      _ticketNumber != null ? 'Ticket #$_ticketNumber' : 'IBEW Member',
+                                      style: AppTheme.bodyMedium.copyWith(
                                         color: AppTheme.textSecondary,
                                       ),
                                     ),
@@ -164,7 +198,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         },
                         loading: () => const CircularProgressIndicator(),
                         error: (err, stack) {
-                          final displayName = authState.user?.displayName ?? 'User';
                            return Row(
                             children: [
                               CircleAvatar(
@@ -186,8 +219,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     ),
                                     const SizedBox(height: AppTheme.spacingSm),
                                     Text(
-                                      displayName,
-                                      style: AppTheme.bodyLarge.copyWith(
+                                      _ticketNumber != null ? 'Ticket #$_ticketNumber' : 'IBEW Member',
+                                      style: AppTheme.bodyMedium.copyWith(
                                         color: AppTheme.textSecondary,
                                       ),
                                     ),
@@ -399,72 +432,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildActiveCrewsWidget(List<dynamic> userCrews) {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        boxShadow: [AppTheme.shadowSm],
-        border: Border.all(
-          color: AppTheme.lightGray,
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.group,
-                color: AppTheme.accentCopper,
-                size: AppTheme.iconMd,
-              ),
-              const SizedBox(width: AppTheme.spacingSm),
-              Text(
-                '${userCrews.length} Active Crew${userCrews.length == 1 ? '' : 's'}',
-                style: AppTheme.bodyLarge.copyWith(
-                  color: AppTheme.primaryNavy,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppTheme.spacingSm),
-          Text(
-            'Collaborate with your team on shared jobs and opportunities.',
-            style: AppTheme.bodyMedium.copyWith(
-              color: AppTheme.textSecondary,
-            ),
-          ),
-          const SizedBox(height: AppTheme.spacingMd),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                // Navigate to Crews tab
-                context.go(AppRouter.crews);
-              },
-              icon: const Icon(Icons.arrow_forward),
-              label: const Text('View Crews'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.accentCopper,
-                foregroundColor: AppTheme.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                textStyle: AppTheme.bodyMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
 
   void _showJobDetailsDialog(BuildContext context, dynamic job) {
@@ -475,35 +442,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingXs),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              '$label:',
-              style: AppTheme.bodyMedium.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: AppTheme.bodyMedium,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
-  void _submitJobApplication(Job job) {
-    JJElectricalToast.showSuccess(context: context, message: 'Application submitted for ${job.classification ?? 'the position'}!');
-  }
 
   Job _convertJobsRecordToJob(JobsRecord jobsRecord) {
     return Job(
