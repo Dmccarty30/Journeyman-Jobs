@@ -2,6 +2,7 @@ import 'dart:async'; // Required for Timer
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:journeyman_jobs/providers/riverpod/jobs_riverpod_provider.dart';
 // ignore: depend_on_referenced_packages
 import 'package:riverpod/src/providers/stream_provider.dart';
 import 'dart:math'; // Required for max/min

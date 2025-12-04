@@ -674,48 +674,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Master toggle
-                      Card(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                          side: BorderSide(
-                            color: AppTheme.borderCopper,
-                            width: 1,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(AppTheme.spacingMd),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Notifications',
-                                      style: AppTheme.bodyLarge.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const SizedBox(height: AppTheme.spacingXs),
-                                    Text(
-                                      'Enable or disable all notifications',
-                                      style: AppTheme.bodySmall.copyWith(
-                                        color: AppTheme.textSecondary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Switch(
-                                value: _notificationsEnabled,
-                                onChanged: _handleMasterToggle,
-                                activeThumbColor: AppTheme.accentCopper,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      _buildMasterToggleCard(),
+
                       const SizedBox(height: AppTheme.spacingLg),
                       // Notification types
                       Text(
@@ -726,79 +686,78 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                         ),
                       ),
                       const SizedBox(height: AppTheme.spacingMd),
-                      Card(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                          side: BorderSide(
-                            color: AppTheme.borderCopper,
-                            width: 1,
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            _buildSettingsRow(
-                              'Job Alerts',
-                              'Get notified about new job opportunities',
-                              _jobAlertsEnabled,
-                              (value) {
-                                setState(() {
-                                  _jobAlertsEnabled = value;
-                                });
-                                _savePreference('job_alerts_enabled', value);
-                              },
-                            ),
-                            _buildDivider(),
-                            _buildSettingsRow(
-                              'Union Updates',
-                              'Important updates from your union',
-                              _unionUpdatesEnabled,
-                              (value) {
-                                setState(() {
-                                  _unionUpdatesEnabled = value;
-                                });
-                                _savePreference('union_updates_enabled', value);
-                              },
-                            ),
-                            _buildDivider(),
-                            _buildSettingsRow(
-                              'System Notifications',
-                              'App updates and system messages',
-                              _systemNotificationsEnabled,
-                              (value) {
-                                setState(() {
-                                  _systemNotificationsEnabled = value;
-                                });
-                                _savePreference('system_notifications_enabled', value);
-                              },
-                            ),
-                            _buildDivider(),
-                            _buildSettingsRow(
-                              'Storm Work',
-                              'Emergency storm work opportunities',
-                              _stormWorkEnabled,
-                              (value) {
-                                setState(() {
-                                  _stormWorkEnabled = value;
-                                });
-                                _savePreference('storm_work_enabled', value);
-                              },
-                            ),
-                            _buildDivider(),
-                            _buildSettingsRow(
-                              'Union Reminders',
-                              'Reminders for union events and deadlines',
-                              _unionRemindersEnabled,
-                              (value) {
-                                setState(() {
-                                  _unionRemindersEnabled = value;
-                                });
-                                _savePreference('union_reminders_enabled', value);
-                              },
-                            ),
-                          ],
-                        ),
+
+                      // Individual notification type cards
+                      _buildSettingCard(
+                        icon: Icons.work_outline,
+                        title: 'Job Alerts',
+                        subtitle: 'Get notified about new job opportunities',
+                        value: _jobAlertsEnabled,
+                        onChanged: (value) {
+                          setState(() {
+                            _jobAlertsEnabled = value;
+                          });
+                          _savePreference('job_alerts_enabled', value);
+                        },
+                        color: AppTheme.accentCopper,
                       ),
+
+                      _buildSettingCard(
+                        icon: Icons.group,
+                        title: 'Union Updates',
+                        subtitle: 'Important updates from your union',
+                        value: _unionUpdatesEnabled,
+                        onChanged: (value) {
+                          setState(() {
+                            _unionUpdatesEnabled = value;
+                          });
+                          _savePreference('union_updates_enabled', value);
+                        },
+                        color: AppTheme.primaryNavy,
+                      ),
+
+                      _buildSettingCard(
+                        icon: Icons.settings,
+                        title: 'System Notifications',
+                        subtitle: 'App updates and system messages',
+                        value: _systemNotificationsEnabled,
+                        onChanged: (value) {
+                          setState(() {
+                            _systemNotificationsEnabled = value;
+                          });
+                          _savePreference('system_notifications_enabled', value);
+                        },
+                        color: AppTheme.infoBlue,
+                      ),
+
+                      _buildSettingCard(
+                        icon: Icons.flash_on,
+                        title: 'Storm Work',
+                        subtitle: 'Emergency storm work opportunities',
+                        value: _stormWorkEnabled,
+                        onChanged: (value) {
+                          setState(() {
+                            _stormWorkEnabled = value;
+                          });
+                          _savePreference('storm_work_enabled', value);
+                        },
+                        color: AppTheme.warningYellow,
+                      ),
+
+                      _buildSettingCard(
+                        icon: Icons.event_note,
+                        title: 'Union Reminders',
+                        subtitle: 'Reminders for union events and deadlines',
+                        value: _unionRemindersEnabled,
+                        onChanged: (value) {
+                          setState(() {
+                            _unionRemindersEnabled = value;
+                          });
+                          _savePreference('union_reminders_enabled', value);
+                        },
+                        color: AppTheme.successGreen,
+                      ),
+
                       const SizedBox(height: AppTheme.spacingLg),
                       // Sound & Vibration
                       Text(
@@ -809,43 +768,36 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                         ),
                       ),
                       const SizedBox(height: AppTheme.spacingMd),
-                      Card(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                          side: BorderSide(
-                            color: AppTheme.borderCopper,
-                            width: 1,
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            _buildSettingsRow(
-                              'Sound',
-                              'Play sound for notifications',
-                              _soundEnabled,
-                              (value) {
-                                setState(() {
-                                  _soundEnabled = value;
-                                });
-                                _savePreference('sound_enabled', value);
-                              },
-                            ),
-                            _buildDivider(),
-                            _buildSettingsRow(
-                              'Vibration',
-                              'Vibrate for notifications',
-                              _vibrationEnabled,
-                              (value) {
-                                setState(() {
-                                  _vibrationEnabled = value;
-                                });
-                                _savePreference('vibration_enabled', value);
-                              },
-                            ),
-                          ],
-                        ),
+
+                      // Individual sound and vibration cards
+                      _buildSettingCard(
+                        icon: Icons.volume_up,
+                        title: 'Sound',
+                        subtitle: 'Play sound for notifications',
+                        value: _soundEnabled,
+                        onChanged: (value) {
+                          setState(() {
+                            _soundEnabled = value;
+                          });
+                          _savePreference('sound_enabled', value);
+                        },
+                        color: AppTheme.accentCopper,
                       ),
+
+                      _buildSettingCard(
+                        icon: Icons.vibration,
+                        title: 'Vibration',
+                        subtitle: 'Vibrate for notifications',
+                        value: _vibrationEnabled,
+                        onChanged: (value) {
+                          setState(() {
+                            _vibrationEnabled = value;
+                          });
+                          _savePreference('vibration_enabled', value);
+                        },
+                        color: AppTheme.primaryNavy,
+                      ),
+
                       const SizedBox(height: AppTheme.spacingLg),
                       // Quiet Hours
                       Text(
@@ -856,68 +808,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                         ),
                       ),
                       const SizedBox(height: AppTheme.spacingMd),
-                      Card(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                          side: BorderSide(
-                            color: AppTheme.borderCopper,
-                            width: 1,
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            _buildSettingsRow(
-                              'Quiet Hours',
-                              'Silence notifications during specified hours',
-                              _quietHoursEnabled,
-                              (value) {
-                                setState(() {
-                                  _quietHoursEnabled = value;
-                                });
-                                _savePreference('quiet_hours_enabled', value);
-                              },
-                            ),
-                            if (_quietHoursEnabled) ...[
-                              _buildDivider(),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: AppTheme.spacingMd,
-                                  vertical: AppTheme.spacingSm,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: TextButton(
-                                        onPressed: () => _selectQuietHoursTime(true),
-                                        child: Text(
-                                          'Start: ${_quietHoursStart.format(context)}',
-                                          style: AppTheme.bodyMedium,
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      'to',
-                                      style: AppTheme.bodySmall.copyWith(
-                                        color: AppTheme.textSecondary,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: TextButton(
-                                        onPressed: () => _selectQuietHoursTime(false),
-                                        child: Text(
-                                          'End: ${_quietHoursEnd.format(context)}',
-                                          style: AppTheme.bodyMedium,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
+
+                      // Quiet hours card
+                      _buildQuietHoursCard(),
                     ],
                   ),
                 ),
@@ -928,53 +821,263 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     );
   }
 
-  Widget _buildSettingsRow(String title, String subtitle, bool value, ValueChanged<bool> onChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingMd,
-        vertical: AppTheme.spacingSm,
+  // New individual setting card widget
+  Widget _buildSettingCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    required Color color,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [AppTheme.shadowSm],
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          onTap: () {
+            onChanged(!value);
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            child: Row(
               children: [
-                Text(
-                  title,
-                  style: AppTheme.bodyLarge.copyWith(
-                    fontWeight: FontWeight.w600,
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: color,
+                    size: AppTheme.iconMd,
                   ),
                 ),
-                if (subtitle.isNotEmpty) ...[
-                  const SizedBox(height: AppTheme.spacingXs),
-                  Text(
-                    subtitle,
-                    style: AppTheme.bodySmall.copyWith(
-                      color: AppTheme.textSecondary,
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: AppTheme.bodyLarge.copyWith(
+                          color: AppTheme.textPrimary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacingXs),
+                      Text(
+                        subtitle,
+                        style: AppTheme.bodyMedium.copyWith(
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Switch(
+                  value: value,
+                  onChanged: onChanged,
+                  activeThumbColor: AppTheme.accentCopper,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Special card for master toggle
+  Widget _buildMasterToggleCard() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [AppTheme.shadowSm],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          onTap: () {
+            _handleMasterToggle(!_notificationsEnabled);
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentCopper.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: Icon(
+                    Icons.notifications_outlined,
+                    color: AppTheme.accentCopper,
+                    size: AppTheme.iconMd,
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Notifications',
+                        style: AppTheme.bodyLarge.copyWith(
+                          color: AppTheme.textPrimary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacingXs),
+                      Text(
+                        'Enable or disable all notifications',
+                        style: AppTheme.bodyMedium.copyWith(
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Switch(
+                  value: _notificationsEnabled,
+                  onChanged: _handleMasterToggle,
+                  activeThumbColor: AppTheme.accentCopper,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Special card for quiet hours with time selectors
+  Widget _buildQuietHoursCard() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [AppTheme.shadowSm],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          onTap: () {
+            setState(() {
+              _quietHoursEnabled = !_quietHoursEnabled;
+            });
+            _savePreference('quiet_hours_enabled', _quietHoursEnabled);
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: AppTheme.infoBlue.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                      ),
+                      child: Icon(
+                        Icons.schedule,
+                        color: AppTheme.infoBlue,
+                        size: AppTheme.iconMd,
+                      ),
+                    ),
+                    const SizedBox(width: AppTheme.spacingMd),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Quiet Hours',
+                            style: AppTheme.bodyLarge.copyWith(
+                              color: AppTheme.textPrimary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: AppTheme.spacingXs),
+                          Text(
+                            'Silence notifications during specified hours',
+                            style: AppTheme.bodyMedium.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Switch(
+                      value: _quietHoursEnabled,
+                      onChanged: (value) {
+                        setState(() {
+                          _quietHoursEnabled = value;
+                        });
+                        _savePreference('quiet_hours_enabled', value);
+                      },
+                      activeThumbColor: AppTheme.accentCopper,
+                    ),
+                  ],
+                ),
+                if (_quietHoursEnabled) ...[
+                  const SizedBox(height: AppTheme.spacingMd),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacingMd,
+                      vertical: AppTheme.spacingSm,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () => _selectQuietHoursTime(true),
+                            child: Text(
+                              'Start: ${_quietHoursStart.format(context)}',
+                              style: AppTheme.bodyMedium,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          'to',
+                          style: AppTheme.bodySmall.copyWith(
+                            color: AppTheme.textSecondary,
+                          ),
+                        ),
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () => _selectQuietHoursTime(false),
+                            child: Text(
+                              'End: ${_quietHoursEnd.format(context)}',
+                              style: AppTheme.bodyMedium,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ],
             ),
           ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: AppTheme.accentCopper,
-          ),
-        ],
+        ),
       ),
-    );
-  }
-
-  Widget _buildDivider() {
-    return Divider(
-      height: 1,
-      thickness: 1,
-      color: AppTheme.borderCopper,
-      indent: AppTheme.spacingMd,
-      endIndent: AppTheme.spacingMd,
     );
   }
 }

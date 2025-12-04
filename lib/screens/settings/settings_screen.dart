@@ -299,92 +299,75 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         const SizedBox(height: AppTheme.spacingSm),
-        Container(
-          decoration: BoxDecoration(
-            color: AppTheme.white,
-            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-            border: Border.all(
-              color: AppTheme.accentCopper,
-              width: AppTheme.borderWidthThin,
-            ),
-            boxShadow: [AppTheme.shadowSm],
-          ),
-          child: Column(
-            children: options.asMap().entries.map((entry) {
-              final index = entry.key;
-              final option = entry.value;
-              final isLast = index == options.length - 1;
-              
-              return Column(
-                children: [
-                  _buildMenuItem(option),
-                  if (!isLast) 
-                    const Divider(
-                      height: 1,
-                      indent: AppTheme.spacingXl,
-                      endIndent: AppTheme.spacingMd,
-                    ),
-                ],
-              );
-            }).toList(),
-          ),
-        ),
+        ...options.map((option) => _buildMenuItem(option)),
       ],
     );
   }
 
   Widget _buildMenuItem(_MenuOption option) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: option.onTap,
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingMd),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppTheme.accentCopper.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        border: Border.all(
+          color: AppTheme.accentCopper,
+          width: AppTheme.borderWidthThin,
+        ),
+        boxShadow: [AppTheme.shadowSm],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: option.onTap,
+          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          child: Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentCopper.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: Icon(
+                    option.icon,
+                    color: AppTheme.accentCopper,
+                    size: AppTheme.iconSm,
+                  ),
                 ),
-                child: Icon(
-                  option.icon,
-                  color: AppTheme.accentCopper,
-                  size: AppTheme.iconSm,
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingMd),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      option.title,
-                      style: AppTheme.titleMedium.copyWith(
-                        color: AppTheme.primaryNavy,
-                      ),
-                    ),
-                    if (option.subtitle != null) ...[
-                      const SizedBox(height: AppTheme.spacingXs),
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        option.subtitle!,
-                        style: AppTheme.bodySmall.copyWith(
-                          color: AppTheme.textSecondary,
+                        option.title,
+                        style: AppTheme.titleMedium.copyWith(
+                          color: AppTheme.primaryNavy,
                         ),
                       ),
+                      if (option.subtitle != null) ...[
+                        const SizedBox(height: AppTheme.spacingXs),
+                        Text(
+                          option.subtitle!,
+                          style: AppTheme.bodySmall.copyWith(
+                            color: AppTheme.textSecondary,
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: AppTheme.textLight,
-                size: AppTheme.iconSm,
-              ),
-            ],
+                Icon(
+                  Icons.chevron_right,
+                  color: AppTheme.textLight,
+                  size: AppTheme.iconSm,
+                ),
+              ],
+            ),
           ),
         ),
       ),

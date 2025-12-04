@@ -48,6 +48,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
   final _zipcodeFocus = FocusNode();
 
   // Step 2: Professional Details
+  final _step2FormKey = GlobalKey<FormState>(); // New: Form key for Step 2
   final _homeLocalController = TextEditingController();
   final _ticketNumberController = TextEditingController();
   String? _selectedClassification;
@@ -254,6 +255,12 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
   Future<void> _saveStep2Data() async {
     setState(() => _isSaving = true);
 
+    // New: Trigger form validation
+    if (!_step2FormKey.currentState!.validate()) {
+      setState(() => _isSaving = false);
+      return; // Return early if validation fails
+    }
+
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) throw Exception('No authenticated user');
@@ -441,8 +448,8 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
               ],
             ),
           ),
-            ],
-          ),
+        ],
+      ),
         ],
       ),
       bottomNavigationBar: Container(
@@ -593,7 +600,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
           Row(
             children: [
               Expanded(
-                flex: 1,
+                flex: 1, // Keep state as flex 1, it will proportionally become smaller
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -637,7 +644,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
               ),
               const SizedBox(width: AppTheme.spacingSm),
               Expanded(
-                flex: 3,
+                flex: 7, // Changed from 3 to 7 to make Zip Code much wider
                 child: JJTextField(
                   label: 'Zip Code',
                   controller: _zipcodeController,
@@ -662,15 +669,17 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
   Widget _buildStep2() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacingMd),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          _buildStepHeader(
-            icon: Icons.electrical_services,
-            title: 'IBEW Professional Details',
-            subtitle: 'Tell us about your electrical career and qualifications',
-          ),
+      child: Form( // Wrap with Form
+        key: _step2FormKey, // Assign key
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            _buildStepHeader(
+              icon: Icons.electrical_services,
+              title: 'IBEW Professional Details',
+              subtitle: 'Tell us about your electrical career and qualifications',
+            ),
           
           const SizedBox(height: AppTheme.spacingMd),
           
@@ -685,6 +694,12 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             prefixIcon: Icons.badge_outlined,
             hintText: 'Enter your ticket number',
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Ticket number is required';
+              }
+              return null;
+            },
           ),
           
           const SizedBox(height: AppTheme.spacingMd),
@@ -700,6 +715,15 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             prefixIcon: Icons.location_on_outlined,
             hintText: 'Enter your home local number',
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Home Local number is required';
+              }
+              if (int.tryParse(value) == null) {
+                return 'Please enter a valid number';
+              }
+              return null;
+            },
           ),
           
           const SizedBox(height: AppTheme.spacingMd),

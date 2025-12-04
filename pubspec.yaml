@@ -68,6 +68,9 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_svg: ^2.0.10
   shadcn_ui: ^0.39.7
+  local_ai_model:
+    path: ./packages/local_ai_model
+  
   
   # AI integration
   google_generative_ai: ^0.4.7

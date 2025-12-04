@@ -108,115 +108,103 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
             const SizedBox(height: AppTheme.spacingLg),
             
             // Language & Region
+            // Language & Region
             _buildSectionHeader('Language & Region'),
-            _buildSettingsCard([
-              _buildDropdownTile(
-                icon: Icons.language,
-                title: 'Language',
-                value: _selectedLanguage,
-                options: ['English', 'Spanish', 'French'],
-                onChanged: (value) {
-                  setState(() => _selectedLanguage = value!);
-                  _saveSetting('language', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildDropdownTile(
-                icon: Icons.calendar_today,
-                title: 'Date Format',
-                value: _dateFormat,
-                options: ['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY-MM-DD'],
-                onChanged: (value) {
-                  setState(() => _dateFormat = value!);
-                  _saveSetting('date_format', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildDropdownTile(
-                icon: Icons.access_time,
-                title: 'Time Format',
-                value: _timeFormat,
-                options: ['12-hour', '24-hour'],
-                onChanged: (value) {
-                  setState(() => _timeFormat = value!);
-                  _saveSetting('time_format', value);
-                },
-              ),
-            ]),
+            _buildDropdownTile(
+              icon: Icons.language,
+              title: 'Language',
+              value: _selectedLanguage,
+              options: ['English', 'Spanish', 'French'],
+              onChanged: (value) {
+                setState(() => _selectedLanguage = value!);
+                _saveSetting('language', value);
+              },
+            ),
+            _buildDropdownTile(
+              icon: Icons.calendar_today,
+              title: 'Date Format',
+              value: _dateFormat,
+              options: ['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY-MM-DD'],
+              onChanged: (value) {
+                setState(() => _dateFormat = value!);
+                _saveSetting('date_format', value);
+              },
+            ),
+            _buildDropdownTile(
+              icon: Icons.access_time,
+              title: 'Time Format',
+              value: _timeFormat,
+              options: ['12-hour', '24-hour'],
+              onChanged: (value) {
+                setState(() => _timeFormat = value!);
+                _saveSetting('time_format', value);
+              },
+            ),
             
             const SizedBox(height: AppTheme.spacingLg),
             
             // Storm Work Settings
             _buildSectionHeader('Storm Work Settings'),
-            _buildSettingsCard([
-              _buildSliderTile(
-                icon: Icons.warning_amber,
-                title: 'Storm Alert Radius',
-                subtitle: '${_stormAlertRadius.toInt()} $_units',
-                value: _stormAlertRadius,
-                min: 50,
-                max: 500,
-                divisions: 45,
-                onChanged: (value) {
-                  setState(() => _stormAlertRadius = value);
-                  _saveSetting('storm_alert_radius', value);
-                },
-              ),
-              const Divider(height: 1),
-              _buildSliderTile(
-                icon: Icons.trending_up,
-                title: 'Minimum Rate Multiplier',
-                subtitle: '${_stormRateMultiplier}x regular rate',
-                value: _stormRateMultiplier,
-                min: 1.0,
-                max: 3.0,
-                divisions: 20,
-                onChanged: (value) {
-                  setState(() => _stormRateMultiplier = value);
-                  _saveSetting('storm_rate_multiplier', value);
-                },
-              ),
-            ]),
+            _buildSliderTile(
+              icon: Icons.warning_amber,
+              title: 'Storm Alert Radius',
+              subtitle: '${_stormAlertRadius.toInt()} $_units',
+              value: _stormAlertRadius,
+              min: 50,
+              max: 500,
+              divisions: 45,
+              onChanged: (value) {
+                setState(() => _stormAlertRadius = value);
+                _saveSetting('storm_alert_radius', value);
+              },
+            ),
+            _buildSliderTile(
+              icon: Icons.trending_up,
+              title: 'Minimum Rate Multiplier',
+              subtitle: '${_stormRateMultiplier}x regular rate',
+              value: _stormRateMultiplier,
+              min: 1.0,
+              max: 3.0,
+              divisions: 20,
+              onChanged: (value) {
+                setState(() => _stormRateMultiplier = value);
+                _saveSetting('storm_rate_multiplier', value);
+              },
+            ),
             
             const SizedBox(height: AppTheme.spacingLg),
             
             // About Section
             _buildSectionHeader('About'),
-            _buildSettingsCard([
-              _buildInfoTile(
-                icon: Icons.info_outline,
-                title: 'Version',
-                value: '1.0.0',
-              ),
-              const Divider(height: 1),
-              _buildActionTile(
-                icon: Icons.description,
-                title: 'Terms of Service',
-                subtitle: 'View terms and conditions',
-                onTap: () {
-                  // Navigate to terms
-                },
-              ),
-              const Divider(height: 1),
-              _buildActionTile(
-                icon: Icons.privacy_tip,
-                title: 'Privacy Policy',
-                subtitle: 'View privacy policy',
-                onTap: () {
-                  // Navigate to privacy policy
-                },
-              ),
-              const Divider(height: 1),
-              _buildActionTile(
-                icon: Icons.help_outline,
-                title: 'Help & Support',
-                subtitle: 'Get help or contact support',
-                onTap: () {
-                  // Navigate to help
-                },
-              ),
-            ]),
-            
+            _buildInfoTile(
+              icon: Icons.info_outline,
+              title: 'Version',
+              value: '1.0.0',
+            ),
+            _buildActionTile(
+              icon: Icons.description,
+              title: 'Terms of Service',
+              subtitle: 'View terms and conditions',
+              onTap: () {
+                // Navigate to terms
+              },
+            ),
+            _buildActionTile(
+              icon: Icons.privacy_tip,
+              title: 'Privacy Policy',
+              subtitle: 'View privacy policy',
+              onTap: () {
+                // Navigate to privacy policy
+              },
+            ),
+            _buildActionTile(
+              icon: Icons.help_outline,
+              title: 'Help & Support',
+              subtitle: 'Get help or contact support',
+              onTap: () {
+                // Navigate to help
+              },
+            ),
             const SizedBox(height: AppTheme.spacingXl),
           ],
         ),
@@ -256,8 +244,14 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
     required List<String> options,
     required ValueChanged<String?> onChanged,
   }) {
-    return Padding(
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
       padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [AppTheme.shadowSm],
+      ),
       child: Row(
         children: [
           Container(
@@ -327,8 +321,14 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
     required int divisions,
     required ValueChanged<double> onChanged,
   }) {
-    return Padding(
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
       padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [AppTheme.shadowSm],
+      ),
       child: Column(
         children: [
           Row(
@@ -395,53 +395,62 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
     required String subtitle,
     required VoidCallback onTap,
   }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingMd),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppTheme.spacingSm),
-                decoration: BoxDecoration(
-                  color: AppTheme.accentCopper.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [AppTheme.shadowSm],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          child: Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AppTheme.spacingSm),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentCopper.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: AppTheme.accentCopper,
+                    size: AppTheme.iconSm,
+                  ),
                 ),
-                child: Icon(
-                  icon,
-                  color: AppTheme.accentCopper,
-                  size: AppTheme.iconSm,
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingMd),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: AppTheme.titleMedium.copyWith(
-                        color: AppTheme.primaryNavy,
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: AppTheme.titleMedium.copyWith(
+                          color: AppTheme.primaryNavy,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: AppTheme.spacingXs),
-                    Text(
-                      subtitle,
-                      style: AppTheme.bodySmall.copyWith(
-                        color: AppTheme.textSecondary,
+                      const SizedBox(height: AppTheme.spacingXs),
+                      Text(
+                        subtitle,
+                        style: AppTheme.bodySmall.copyWith(
+                          color: AppTheme.textSecondary,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: AppTheme.textLight,
-                size: AppTheme.iconMd,
-              ),
-            ],
+                Icon(
+                  Icons.chevron_right,
+                  color: AppTheme.textLight,
+                  size: AppTheme.iconMd,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -453,8 +462,14 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
     required String title,
     required String value,
   }) {
-    return Padding(
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
       padding: const EdgeInsets.all(AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [AppTheme.shadowSm],
+      ),
       child: Row(
         children: [
           Container(

@@ -237,6 +237,27 @@ class ResilientFirestoreService extends FirestoreService {
     );
   }
 
+  /// Get jobs based on a list of suggested job IDs.
+  /// This method simulates an optimized query for jobs directly relevant to AI suggestions.
+  Future<QuerySnapshot> getJobsBySuggestionIds(List<String> suggestedJobIds) async {
+    return _executeWithRetryFuture(
+      () async {
+        if (suggestedJobIds.isEmpty) {
+          // Return an empty snapshot if no IDs are provided
+          return await FirebaseFirestore.instance.collection('jobs').limit(0).get();
+        }
+        // Firestore 'whereIn' clause is limited to 10 items.
+        // For more than 10, multiple queries or a backend function would be needed.
+        // For this placeholder, we'll take the first 10.
+        Query query = FirebaseFirestore.instance.collection('jobs')
+            .where(FieldPath.documentId, whereIn: suggestedJobIds.take(10).toList()); 
+
+        return await query.get();
+      },
+      operationName: 'getJobsBySuggestionIds',
+    );
+  }
+
   /// Get user profile document (alias for getUser with better semantics)
   Future<DocumentSnapshot?> getUserProfile(String uid) async {
     try {

@@ -347,39 +347,9 @@ class _ResourcesScreenState extends State<ResourcesScreen> with SingleTickerProv
             ),
 
             // Category items
-            Container(
-              decoration: BoxDecoration(
-                color: AppTheme.white,
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-                border: Border.all(
-                      color: AppTheme.accentCopper,
-                      width: AppTheme.borderWidthThin,
-                    ),
-                boxShadow: [AppTheme.shadowSm],
-              ),
-              child: Column(
-                children: categoryItems.asMap().entries.map((entry) {
-                  final itemIndex = entry.key;
-                  final item = entry.value;
-                  final isLast = itemIndex == categoryItems.length - 1;
-
-                  return Column(
-                    children: [
-                      ResourceCard(item: item),
-                      if (!isLast)
-                        const Divider(
-                          height: 1,
-                          thickness: 1,
-                          color: AppTheme.borderCopper,
-                          indent: AppTheme.spacingXl,
-                          endIndent: AppTheme.spacingMd,
-                        ),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
+            // Category items
+            ...categoryItems.map((item) => ResourceCard(item: item)),
+          ]  
         );
       },
     );
@@ -415,56 +385,64 @@ class ResourceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => _handleResourceAction(context, item),
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spacingMd),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: item.color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        boxShadow: [AppTheme.shadowSm],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _handleResourceAction(context, item),
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          child: Padding(
+            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: item.color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  ),
+                  child: Icon(
+                    item.icon,
+                    color: item.color,
+                    size: AppTheme.iconMd,
+                  ),
                 ),
-                child: Icon(
-                  item.icon,
-                  color: item.color,
-                  size: AppTheme.iconMd,
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingMd),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title,
-                      style: AppTheme.bodyLarge.copyWith(
-                        color: AppTheme.textPrimary,
-                        fontWeight: FontWeight.w500,
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.title,
+                        style: AppTheme.bodyLarge.copyWith(
+                          color: AppTheme.textPrimary,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: AppTheme.spacingXs),
-                    Text(
-                      item.description,
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.textSecondary,
+                      const SizedBox(height: AppTheme.spacingXs),
+                      Text(
+                        item.description,
+                        style: AppTheme.bodyMedium.copyWith(
+                          color: AppTheme.textSecondary,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Icon(
-                _getActionIcon(item.type),
-                size: 16,
-                color: AppTheme.textLight,
-              ),
-            ],
+                Icon(
+                  _getActionIcon(item.type),
+                  size: 16,
+                  color: AppTheme.textLight,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -507,7 +485,7 @@ class ResourceCard extends StatelessWidget {
 
   void _navigateToTool(BuildContext context, ResourceItem item) {
     Widget? toolScreen;
-    
+
     switch (item.action) {
       case 'voltage_drop_calc':
         toolScreen = const VoltageDropCalculator();
@@ -528,12 +506,12 @@ class ResourceCard extends StatelessWidget {
         _showToolDialog(context, item);
         return;
     }
-    
+
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => toolScreen!),
     );
-    }
+  }
 
   void _showToolDialog(BuildContext context, ResourceItem item) {
     showDialog(

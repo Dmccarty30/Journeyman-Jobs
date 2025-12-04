@@ -697,7 +697,7 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
               ),
               Container(
                 width: 1,
-                height: 0.44,
+                height: 24.0, // Fixed height to address layout issue
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,

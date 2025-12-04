@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:journeyman_jobs/providers/riverpod/jobs_riverpod_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../services/analytics_service.dart';

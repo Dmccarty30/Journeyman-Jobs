@@ -1,0 +1,16 @@
+name: local_ai_model
+description: A new Flutter package project.
+version: 0.0.1
+publish_to: 'none' # Prevents accidental publishing to pub.dev
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0

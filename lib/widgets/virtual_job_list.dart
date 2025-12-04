@@ -1,6 +1,7 @@
 import 'dart:async'; // Required for Timer
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:journeyman_jobs/providers/riverpod/jobs_riverpod_provider.dart';
 import 'dart:math'; // Required for max/min
 import '../design_system/app_theme.dart';
 import '../design_system/components/job_card.dart';

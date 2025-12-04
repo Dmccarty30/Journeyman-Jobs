@@ -1,3 +1,5 @@
+import 'package:journeyman_jobs/providers/riverpod/jobs_riverpod_provider.dart';
+
 import '../../utils/text_formatting_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -178,13 +180,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Welcome back!',
+                                      'Welcome back${displayName.isNotEmpty ? ', $displayName' : ', IBEW Member'}!', // Combined personalized greeting
                                       style: AppTheme.headlineMedium.copyWith(
                                         color: AppTheme.primaryNavy,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     const SizedBox(height: AppTheme.spacingSm),
+                                    // Removed the separate Text(displayName) widget
                                     Text(
                                       _ticketNumber != null ? 'Ticket #$_ticketNumber' : 'IBEW Member',
                                       style: AppTheme.bodyMedium.copyWith(
@@ -244,38 +247,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: AppTheme.spacingLg),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildElectricalActionCard(
-                          'Electrical Calc',
-                          Icons.calculate_outlined,
-                          () {
-                            context.push(AppRouter.electricalCalculators);
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: AppTheme.spacingMd),
-                      Expanded(
-                        child: Consumer(
-                          builder: (context, ref, child) {
-                            final userCrews = ref.watch(userCrewsProvider);
-                            if (userCrews.isNotEmpty) {
-                              return _buildElectricalActionCard(
-                                'View Crews',
-                                Icons.group_outlined,
-                                () {
-                                  context.push(AppRouter.crews);
-                                },
-                              );
-                            }
-                            return const SizedBox(); // Return an empty box if no crews
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
 
                   const SizedBox(height: AppTheme.spacingLg),
 

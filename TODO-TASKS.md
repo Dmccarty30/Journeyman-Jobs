@@ -66,37 +66,37 @@ This comprehensive implementation guide breaks down all requirements from TODO.m
 
 ## APP WIDE CHANGES
 
-Status: [Not Started]
+Status: [In Progress]
 
 ### Custom Model Integration Tasks
 
-- [ ] [AI-ML] Define data model interfaces for job summaries, user feedback, and suggestions structures
-- [ ] [AI-ML] Create pub.dev/package library structure for custom local AI model integration
-- [ ] [AI-ML] Implement local model initialization and configuration system
-- [ ] [Backend] Add job feedback logging system to capture user experiences and opinions
-- [ ] [AI-ML] Build job summarization algorithm that analyzes job data for key highlights
-- [ ] [AI-ML] Create user experience matching logic to correlate feedback with user preferences
-- [ ] [UI-UX] Design UI components for displaying personalized job suggestions
-- [ ] [Backend] Implement real-time feedback collection during job browsing
-- [ ] [AI-ML] Develop job recommendation engine using preference matching
-- [ ] [Backend] Add Firebase query optimization for real-time job filtering by suggestions
-- [ ] [Security] Implement user data privacy controls for feedback sharing
-- [ ] [Backend] Create admin interface for model training data management
-- [ ] [AI-ML] Add model accuracy metrics and improvement tracking
-- [ ] [UI-UX] Integrate suggestion previews in job card hover states
-- [ ] [QA/QC] Test suggestion accuracy with user feedback validation
+- [x] [AI-ML] Define data model interfaces for job summaries, user feedback, and suggestions structures
+- [x] [AI-ML] Create pub.dev/package library structure for custom local AI model integration
+- [x] [AI-ML] Implement local model initialization and configuration system
+- [x] [Backend] Add job feedback logging system to capture user experiences and opinions
+- [x] [AI-ML] Build job summarization algorithm that analyzes job data for key highlights
+- [x] [AI-ML] Create user experience matching logic to correlate feedback with user preferences
+- [x] [UI-UX] Design UI components for displaying personalized job suggestions
+- [x] [Backend] Implement real-time feedback collection during job browsing
+- [x] [AI-ML] Develop job recommendation engine using preference matching
+- [x] [Backend] Add Firebase query optimization for real-time job filtering by suggestions
+- [x] [Security] Implement user data privacy controls for feedback sharing
+- [x] [Backend] Create admin interface for model training data management
+- [x] [AI-ML] Add model accuracy metrics and improvement tracking
+- [x] [UI-UX] Integrate suggestion previews in job card hover states
+- [x] [QA/QC] Test suggestion accuracy with user feedback validation
 
 ### Custom Model Pro Actions
 
-- [ ] [AI-ML] Implement subscription-based feature gating for AI interactions
-- [ ] [Backend] Create settings update API for preferences and notifications
-- [ ] [AI-ML] Add real-time job query and notification system for matches
-- [ ] [Security] Implement premium subscription verification before actions
-- [ ] [Backend] Build Firebase query automation for user's current preferences
-- [ ] [UI-UX] Create notification dialog system for AI job recommendations
-- [ ] [Backend] Add direct message composition from AI suggestions to user chats
-- [ ] [Security] Implement rate limiting for AI action triggering
-- [ ] [QA/QC] Create user flow testing for AI action automation
+- [x] [AI-ML] Implement subscription-based feature gating for AI interactions
+- [x] [Backend] Create settings update API for preferences and notifications
+- [x] [AI-ML] Add real-time job query and notification system for matches
+- [x] [Security] Implement premium subscription verification before actions
+- [x] [Backend] Build Firebase query automation for user's current preferences
+- [x] [UI-UX] Create notification dialog system for AI job recommendations
+- [x] [Backend] Add direct message composition from AI suggestions to user chats
+- [x] [Security] Implement rate limiting for AI action triggering
+- [x] [QA/QC] Create user flow testing for AI action automation
 - [ ] [Platform] Add billing integration for subscription verification
 
 ---
@@ -124,36 +124,51 @@ Status: [Not Started]
 
 ### ONBOARDING STEPS SCREEN - STEP 1
 
-- [ ] [UI-UX] Locate onboarding steps screen file structure
-- [ ] [UI-UX] Adjust buildStepHeader positioning for centered alignment
-- [ ] [UI-UX] Add copper border styling to all text fields in step 1
+- [x] [UI-UX] Locate onboarding steps screen file structure
+- [x] [UI-UX] Adjust buildStepHeader positioning for centered alignment
+- [x] [UI-UX] Add copper border styling to all text fields in step 1
 - [ ] [UI-UX] Reduce state dropdown width by half for better layout
 - [ ] [UI-UX] Expand zip code field to fill remaining space
-- [ ] [Backend] Create user document creation logic on Next button press
-- [ ] [Database] Implement Cloud Firestore user document schema
-- [ ] [Integration] Add Firebase authentication user ID to new document
-- [ ] [UI-UX] Add confirmation feedback when user document is created
-- [ ] [QA/QC] Test user document creation workflow from onboarding
+- [x] [Backend] Create user document creation logic on Next button press
+- [x] [Database] Implement Cloud Firestore user document schema
+- [x] [Integration] Add Firebase authentication user ID to new document
+- [x] [UI-UX] Add confirmation feedback when user document is created
+- [x] [QA/QC] Test user document creation workflow from onboarding
 
 ### ONBOARDING STEPS SCREEN - STEP 2
 
 - [ ] [UI-UX] Verify Next button functionality from step 2 screens
 - [ ] [UI-UX] Add copper border styling to all step 2 text fields
-- [ ] [Backend] Implement field data saving to existing user document on step 2 completion
-- [ ] [UI-UX] Validate all form fields have proper validation feedback
-- [ ] [Backend] Add document update logic for step 2 navigation
-- [ ] [UI-UX] Ensure seamless transition between step 1 and step 2
-- [ ] [QA/QC] Validate step 2 field persistence and navigation flow
+- [x] [Backend] Implement field data saving to existing user document on step 2 completion
+- [x] [UI-UX] Validate all form fields have proper validation feedback
+- [x] [Backend] Add document update logic for step 2 navigation
+- [x] [UI-UX] Ensure seamless transition between step 1 and step 2
+- [x] [QA/QC] Validate step 2 field persistence and navigation flow
 
 ### ONBOARDING STEPS SCREEN - STEP 3
 
-- [ ] [UI-UX] Verify Next button functionality from step 3 screens
-- [ ] [UI-UX] Add copper border styling to all step 3 text fields
-- [ ] [Backend] Implement final field data saving to user document on step 3 completion
-- [ ] [Backend] Add navigation logic from step 3 to home screen
-- [ ] [UI-UX] Create completion animation or success state
-- [ ] [Backend] Validate all user document fields are properly saved
-- [ ] [Platform] Ensure user authentication state is properly updated
+- [x] [UI-UX] Verify Next button functionality from step 3 screens
+- [x] [UI-UX] Add copper border styling to all step 3 text fields
+- [x] [Backend] Implement final field data saving to user document on step 3 completion
+- [x] [Backend] Add navigation logic from step 3 to home screen
+- [x] [UI-UX] Create completion animation or success state
+- [x] [Backend] Validate all user document fields are properly saved
+- [x] [Platform] Ensure user authentication state is properly updated
+
+### General Onboarding Theme
+
+- [x] [UI-UX] Ensure theme consistency (light/dark mode) across all onboarding screens to prevent mode switching after authentication.
+
+### AUTH SCREEN Enhancements
+
+- [x] [UI-UX] Replace the existing `tab bar` on the Auth Screen with the enhanced version specified in `guide/tab-bar-enhancement.md`.
+- [x] [UI-UX] Ensure all original tab bar functionality is maintained after the UI upgrade.
+- [x] [UI-UX] Fix the layout issue causing a gap between the sign-up/sign-in tabs and the surrounding border.
+
+### ONBOARDING STEPS SCREEN - STEP 1 Enhancements
+
+- [x] [UI-UX] Shorten the `state` dropdown field to half its current width.
+- [x] [UI-UX] Expand the `zip code` text field to occupy the remaining horizontal space next to the state dropdown.
 
 ---
 
@@ -163,21 +178,21 @@ Status: [Not Started]
 
 ### Personalization Updates
 
-- [ ] [Backend] Create user profile data retrieval for personalized greeting
-- [ ] [UI-UX] Update home screen welcome text to use "Welcome Back! {firstName lastName}"
-- [ ] [Backend] Add Firebase user document query for name field retrieval
-- [ ] [UI-UX] Handle missing name scenarios with fallback greeting
-- [ ] [QA/QC] Test name display across different user profile states
+- [x] [Backend] Create user profile data retrieval for personalized greeting
+- [x] [UI-UX] Update home screen welcome text to use "Welcome Back! {firstName lastName}"
+- [x] [Backend] Add Firebase user document query for name field retrieval
+- [x] [UI-UX] Handle missing name scenarios with fallback greeting
+- [x] [QA/QC] Test name display across different user profile states
 
 ### Active Crews Subsection Removal
 
-- [ ] [UI-UX] Remove Active Crews section from home screen
-- [ ] [UI-UX] Adjust home screen layout to fill empty space
-- [ ] [UI-UX] Update responsive design without active crews section
+- [x] [UI-UX] Remove Active Crews section from home screen
+- [x] [UI-UX] Adjust home screen layout to fill empty space
+- [x] [UI-UX] Update responsive design without active crews section
 
 ### Realtime Summary Feed Implementation
 
-- [ ] [UI-UX] Design realtime summary feed component replacing active crews
+- [x] [UI-UX] Design realtime summary feed component replacing active crews
 - [ ] [Backend] Create Firebase listener for user's recent posts, messages, jobs
 - [ ] [UI-UX] Implement scrolling horizontal/vertical feed layout
 - [ ] [Backend] Build basic query logic for posts, messages, jobs aggregation
@@ -323,6 +338,19 @@ Status: [In Progress]
 - [ ] [Platform] Test cross-platform URL launching functionality
 - [ ] [QA/QC] Validate interaction with various contact method types
 
+### App Bar Color Fix
+
+- [ ] [UI-UX] Change the `app bar` color on the Storm Screen to be solid primary navy blue.
+
+### Storm Statistics Feature
+
+- [ ] [UI-UX] Design and implement the "Storm Stats" section UI.
+- [ ] [UI-UX] Build the `StormTrackForm` as a modal or bottom sheet for user input, using the provided code from `TODO.md` as a reference.
+- [ ] [Backend] Implement the `StormTrackingService` to handle adding, updating, and deleting storm track records in Firestore.
+- [ ] [UI-UX] Develop the UI for displaying comprehensive storm stat summaries based on user-provided data.
+- [ ] [UI-UX] Create an interactive tool for users to calculate different values from their storm history.
+- [ ] [Backend] Implement a feedback mechanism for users to submit their experience with the storm tracking feature.
+
 ---
 
 ## TAILBOARD SCREEN
@@ -389,6 +417,43 @@ Status: [Not Started]
 - [ ] [Realtime] Update member status in real-time (online/offline)
 - [ ] [Backend] Implement crew member audit trails
 - [ ] [QA/QC] Test member management across different permission levels
+
+### UI/UX Enhancements
+
+- [ ] [UI-UX] Modify crew selection dropdown to disappear after selection, but remain accessible via a 3-dot menu.
+- [ ] [UI-UX] Redesign the screen background to use gradients or patterns (e.g., copper streaks) instead of solid colors.
+- [ ] [UI-UX] Implement electrical-themed animations for transitions between the Feed, Jobs, Chat, and Members tabs.
+- [ ] [UI-UX] Redefine and improve the layout of all content appearing above the tab bar.
+
+### Permissions & Navigation
+
+- [ ] [Security] Remove the 'Settings' action (the 4th action) from the tab action handlers for users who are not crew foremen.
+
+### Feed Tab Fixes & Features
+
+- [ ] [Backend] Debug and fix the 'Submit' button functionality for creating a new post.
+- [ ] [UI-UX] Implement the "My Posts" filter action handler.
+- [ ] [UI-UX] Implement the "Sort" (by date, popularity) action handler.
+- [ ] [UI-UX] Implement the "History" action handler.
+
+### Jobs Tab Features
+
+- [ ] [UI-UX] Design and implement the UI for the `Jobs Tab`.
+- [ ] [Backend] Implement the "Construction Type" filter action handler.
+- [ ] [Backend] Implement the "Local" filter action handler.
+- [ ] [Backend] Implement the "Classification" filter action handler.
+
+### Chat Tab Features
+
+- [ ] [UI-UX] Implement the "Channels" action handler.
+- [ ] [UI-UX] Implement the "DMs" (Direct Messages) action handler.
+- [ ] [UI-UX] Implement the "History" action handler.
+
+### Members Tab Features
+
+- [ ] [UI-UX] Implement the "Roster" action handler.
+- [ ] [UI-UX] Implement the "Availability" action handler.
+- [ ] [UI-UX] Implement the "Roles" action handler.
 
 ---
 
@@ -496,6 +561,19 @@ Status: [Not Started]
 
 - [ ] [UI-UX] Redirect settings tab to notifications settings screen (preferred among duplicates)
 - [ ] [Platform] Ensure consistent navigation to single notifications settings location
+
+### Account Actions Implementation
+
+- [ ] [Security] Implement the end-to-end process for a user to change their password securely.
+- [ ] [Backend] Develop a service to gather all of a user's data from Firestore and Storage for download.
+- [ ] [UI-UX] Implement the "Download my Data" feature, allowing the user to trigger the data export.
+- [ ] [Security] Implement a secure, multi-step process for a user to permanently delete their account and associated data.
+
+### Support and About Implementation
+
+- [ ] [Platform] Wire up the "Help and Support" link to navigate to the `Help and Support Screen`.
+- [ ] [Content] Compose the official `Journeyman Jobs Terms of Service` document and create a view to display it.
+- [ ] [Content] Compose the official `Journeyman Jobs Privacy Policy` document and create a view to display it.
 
 ---
 
@@ -718,6 +796,20 @@ Status: [Not Started]
 - [ ] [UI-UX] Merge app settings, privacy, and account actions into unified interface
 - [ ] [Platform] Ensure consistent navigation to merged settings sections
 
+### Appearance & Display Settings
+
+- [ ] [UI-UX] Implement the `Dark Mode` toggle switch (`JJBreaker_switch`) to change the app's theme.
+- [ ] [UI-UX] Implement the `High Contrast` toggle switch to apply a high-contrast theme.
+- [ ] [UI-UX] Implement the `Electrical Effects` toggle switch to enable/disable visual effects.
+- [ ] [UI-UX] Implement the `Font Size` control for accessibility.
+
+### Data & Storage Settings
+
+- [ ] [Performance] Implement a basic `Offline Mode`.
+- [ ] [Backend] Implement the `Auto-Download` feature.
+- [ ] [Backend] Implement the `WIFI-Only Downloads` setting.
+- [ ] [Performance] Create and implement a `Clear Cache` function.
+
 ---
 
 ## NOTIFICATION SETTINGS SCREEN
@@ -729,6 +821,11 @@ Status: [Not Started]
 - [ ] [UI-UX] Apply electrical circuit background to notification settings
 - [ ] [UI-UX] Verify text readability with electrical background
 - [ ] [UI-UX] Test visual consistency with other thematically designed screens
+
+### Component and Theme Enhancements
+
+- [ ] [UI-UX] Replace generic toggle switches with the custom `JJBreaker_switch` component.
+- [ ] [UI-UX] Ensure the electrical background correctly adapts to the user's selected theme (light or dark mode).
 
 ---
 
