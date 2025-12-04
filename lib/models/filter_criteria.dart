@@ -186,7 +186,6 @@ class JobFilterCriteria {
     );
   }
 
-  @override
   JobFilterCriteria clearFilter(FilterType filterType) {
     switch (filterType) {
       case FilterType.searchQuery:

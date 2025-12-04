@@ -8,7 +8,7 @@ import 'storm_theme.dart';
 import '../../models/storm_event.dart';
 import '../../widgets/weather/noaa_radar_map.dart';
 import '../../services/power_outage_service.dart';
-import '../../widgets/storm/power_outage_card.dart';
+import 'widgets/power_outage_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../electrical_components/circuit_board_background.dart';
 import 'widgets/storm_contractor_card.dart';

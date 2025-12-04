@@ -27,7 +27,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
   // Storm Work Settings
   double _stormAlertRadius = 100.0;
   double _stormRateMultiplier = 1.5;
-  String _units = 'miles';
+  final String _units = 'miles';
   
   @override
   void initState() {
@@ -224,14 +224,6 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
           color: AppTheme.textSecondary,
           fontWeight: FontWeight.w600,
         ),
-      ),
-    );
-  }
-  
-  Widget _buildSettingsCard(List<Widget> children) {
-    return JJCard(
-      child: Column(
-        children: children,
       ),
     );
   }
