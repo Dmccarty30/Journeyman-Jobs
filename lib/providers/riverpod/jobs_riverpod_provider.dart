@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:journeyman_jobs/design_system/tailboard_components.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../models/filter_criteria.dart';
 import '../../models/job_model.dart';
-import '../../models/user_feedback_model.dart'; // New import
-import '../../services/feedback_service.dart'; // New import
-import '../../services/user_preference_service.dart'; // New import
-import 'package:local_ai_model/local_ai_model.dart'; // New import for LocalModelService
+import '../../models/user_feedback_model.dart';
+import '../../services/feedback_service.dart';
+import '../../services/user_preference_service.dart';
+import '../../services/local_model_service.dart';
 import '../../services/resilient_firestore_service.dart';
 import '../../utils/concurrent_operations.dart';
 // TODO: Add back when utility classes are implemented
@@ -19,7 +18,6 @@ part 'jobs_riverpod_provider.g.dart';
 
 /// Jobs state model for Riverpod
 class JobsState {
-
   const JobsState({
     this.jobs = const <Job>[],
     this.visibleJobs = const <Job>[],
@@ -51,24 +49,26 @@ class JobsState {
     DocumentSnapshot? lastDocument,
     List<Duration>? loadTimes,
     int? totalJobsLoaded,
-  }) => JobsState(
-      jobs: jobs ?? this.jobs,
-      visibleJobs: visibleJobs ?? this.visibleJobs,
-      activeFilter: activeFilter ?? this.activeFilter,
-      isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
-      hasMoreJobs: hasMoreJobs ?? this.hasMoreJobs,
-      lastDocument: lastDocument ?? this.lastDocument,
-      loadTimes: loadTimes ?? this.loadTimes,
-      totalJobsLoaded: totalJobsLoaded ?? this.totalJobsLoaded,
-    );
+  }) =>
+      JobsState(
+        jobs: jobs ?? this.jobs,
+        visibleJobs: visibleJobs ?? this.visibleJobs,
+        activeFilter: activeFilter ?? this.activeFilter,
+        isLoading: isLoading ?? this.isLoading,
+        error: error ?? this.error,
+        hasMoreJobs: hasMoreJobs ?? this.hasMoreJobs,
+        lastDocument: lastDocument ?? this.lastDocument,
+        loadTimes: loadTimes ?? this.loadTimes,
+        totalJobsLoaded: totalJobsLoaded ?? this.totalJobsLoaded,
+      );
 
   JobsState clearError() => copyWith();
 }
 
 /// Firestore service provider
 @riverpod
-ResilientFirestoreService firestoreService(Ref ref) => ResilientFirestoreService();
+ResilientFirestoreService firestoreService(Ref ref) =>
+    ResilientFirestoreService();
 
 /// Feedback service provider
 @riverpod
@@ -76,11 +76,11 @@ FeedbackService feedbackService(Ref ref) => FeedbackService();
 
 /// User Preference Service provider
 @riverpod
-UserPreferenceService userPreferenceService(UserPreferenceServiceRef ref) => UserPreferenceService();
+UserPreferenceService userPreferenceService(Ref ref) => UserPreferenceService();
 
 /// Local AI Model Service provider
 @riverpod
-LocalModelService localModelServicePod(LocalModelServicePodRef ref) => LocalModelService();
+LocalModelService localModelServicePod(Ref ref) => LocalModelService();
 
 /// Jobs notifier for managing job data and operations
 @riverpod
@@ -112,7 +112,10 @@ class JobsNotifier extends _$JobsNotifier {
       return;
     }
 
-    print('[DEBUG] JobsNotifier.loadJobs called - isRefresh: $isRefresh, filter: ${filter?.toString()}, limit: $limit');
+    if (kDebugMode) {
+      debugPrint(
+          '[DEBUG] JobsNotifier.loadJobs called - isRefresh: $isRefresh, filter: ${filter?.toString()}, limit: $limit');
+    }
 
     if (isRefresh) {
       state = state.copyWith(
@@ -132,17 +135,16 @@ class JobsNotifier extends _$JobsNotifier {
         type: OperationType.loadJobs,
         operation: () async {
           final firestoreService = ref.read(firestoreServiceProvider);
-          print('[DEBUG] Calling Firestore service...');
-          
+          if (kDebugMode) debugPrint('[DEBUG] Calling Firestore service...');
+
           if (filter != null) {
-            print('[DEBUG] Using filtered query');
             return await firestoreService.getJobsWithFilter(
               filter: filter,
               startAfter: isRefresh ? null : state.lastDocument,
               limit: limit,
             );
           } else {
-            print('[DEBUG] Using basic jobs query');
+            if (kDebugMode) debugPrint('[DEBUG] Using basic jobs query');
             final stream = firestoreService.getJobs(
               startAfter: isRefresh ? null : state.lastDocument,
               limit: limit,
@@ -153,26 +155,40 @@ class JobsNotifier extends _$JobsNotifier {
       );
 
       stopwatch.stop();
-      print('[DEBUG] Query completed in ${stopwatch.elapsedMilliseconds}ms');
-      print('[DEBUG] Documents received: ${result.docs.length}');
-      
+      if (kDebugMode) {
+        debugPrint(
+            '[DEBUG] Query completed in ${stopwatch.elapsedMilliseconds}ms');
+        debugPrint('[DEBUG] Documents received: ${result.docs.length}');
+      }
+
       if (result.docs.isNotEmpty) {
-        print('[DEBUG] Sample document ID: ${result.docs.first.id}');
-        print('[DEBUG] Sample document data keys: ${result.docs.first.data().keys.toList()}');
-        print('[DEBUG] Sample raw data: ${result.docs.first.data()}');
+        if (kDebugMode) {
+          debugPrint('[DEBUG] Sample document ID: ${result.docs.first.id}');
+          debugPrint(
+              '[DEBUG] Sample document data keys: ${(result.docs.first.data() as Map<String, dynamic>).keys.toList()}');
+          debugPrint('[DEBUG] Sample raw data: ${result.docs.first.data()}');
+        }
       }
 
       // Convert QuerySnapshot to Job objects
       final jobs = result.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
         data['id'] = doc.id;
-        print('[DEBUG] Parsing job ${doc.id}: raw hours=${data['hours']}, wage=${data['wage']}, perDiem=${data['perDiem']}, startDate=${data['startDate']}');
+        if (kDebugMode) {
+          debugPrint(
+              '[DEBUG] Parsing job ${doc.id}: raw hours=${data['hours']}, wage=${data['wage']}, perDiem=${data['perDiem']}, startDate=${data['startDate']}');
+        }
         final job = Job.fromJson(data);
-        print('[DEBUG] Parsed job ${doc.id}: hours=${job.hours}, wage=${job.wage}, perDiem=${job.perDiem}, startDate=${job.startDate}');
+        if (kDebugMode) {
+          debugPrint(
+              '[DEBUG] Parsed job ${doc.id}: hours=${job.hours}, wage=${job.wage}, perDiem=${job.perDiem}, startDate=${job.startDate}');
+        }
         return job;
       }).toList();
 
-      print('[DEBUG] Successfully parsed ${jobs.length} jobs');
+      if (kDebugMode) {
+        debugPrint('[DEBUG] Successfully parsed ${jobs.length} jobs');
+      }
 
       // Update state with the new jobs
       final List<Job> updatedJobs = isRefresh ? jobs : [...state.jobs, ...jobs];
@@ -194,13 +210,15 @@ class JobsNotifier extends _$JobsNotifier {
         loadTimes: newLoadTimes,
         totalJobsLoaded: updatedJobs.length,
       );
-      print('[DEBUG] State updated - total jobs: ${updatedJobs.length}');
+      if (kDebugMode) {
+        debugPrint('[DEBUG] State updated - total jobs: ${updatedJobs.length}');
+      }
 
       // After loading jobs, check for matches and notify
       await checkForNewJobMatches(jobs);
     } catch (e) {
       stopwatch.stop();
-      print('[DEBUG] LoadJobs ERROR: $e');
+      if (kDebugMode) debugPrint('[DEBUG] LoadJobs ERROR: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -216,7 +234,6 @@ class JobsNotifier extends _$JobsNotifier {
     }
 
     final Stopwatch stopwatch = Stopwatch()..start();
-
     try {
       // Store the filter and reload jobs
       state = state.copyWith(activeFilter: filter);
@@ -258,7 +275,8 @@ class JobsNotifier extends _$JobsNotifier {
     if (startIndex >= state.jobs.length) {
       visibleJobs = <Job>[];
     } else {
-      final safeEndIndex = endIndex >= state.jobs.length ? state.jobs.length - 1 : endIndex;
+      final safeEndIndex =
+          endIndex >= state.jobs.length ? state.jobs.length - 1 : endIndex;
       visibleJobs = state.jobs.sublist(startIndex, safeEndIndex + 1);
     }
 
@@ -276,60 +294,83 @@ class JobsNotifier extends _$JobsNotifier {
 
   /// Checks newly loaded jobs against user preferences and triggers notifications for matches.
   Future<void> checkForNewJobMatches(List<Job> newJobs) async {
-    print('[DEBUG] Checking ${newJobs.length} new jobs for matches...');
+    if (kDebugMode) {
+      debugPrint('[DEBUG] Checking ${newJobs.length} new jobs for matches...');
+    }
     // Placeholder for userId - in a real app, this would come from an auth provider.
-    final String userId = 'dummy_user_id'; 
-    final UserPreferenceService preferenceService = ref.read(userPreferenceServiceProvider);
-    final LocalModelService localModelService = ref.read(localModelServicePod);
+    final String userId = 'dummy_user_id';
+    final UserPreferenceService preferenceService =
+        ref.read(userPreferenceServiceProvider);
+    final LocalModelService localModelService =
+        ref.read(localModelServicePodProvider);
 
     // Placeholder: Get user preferences.
     // In a real app, this would fetch actual user preferences from Firestore via preferenceService.
-    final Map<String, dynamic> userPreferences = await preferenceService.getUserPreferences(userId) ?? {
-      'preferredLocation': 'Florida',
-      'minWage': 30.0,
-      'hasPerDiem': true,
-    };
-    print('[DEBUG] User preferences for matching: $userPreferences');
+    final Map<String, dynamic> userPreferences =
+        await preferenceService.getUserPreferences(userId) ??
+            {
+              'preferredLocation': 'Florida',
+              'minWage': 30.0,
+              'hasPerDiem': true,
+            };
+    if (kDebugMode) {
+      debugPrint('[DEBUG] User preferences for matching: $userPreferences');
+    }
 
     for (final job in newJobs) {
       // Placeholder for actual matching logic with AI model.
       // Here, we simulate a match based on simple criteria.
       bool isMatch = false;
-      if (userPreferences.containsKey('minWage') && job.wage != null && job.wage! >= userPreferences['minWage']) {
+      if (userPreferences.containsKey('minWage') &&
+          job.wage != null &&
+          job.wage! >= userPreferences['minWage']) {
         isMatch = true;
       }
-      if (userPreferences.containsKey('hasPerDiem') && userPreferences['hasPerDiem'] == true && job.perDiem != null && job.perDiem!.isNotEmpty) {
+      if (userPreferences.containsKey('hasPerDiem') &&
+          userPreferences['hasPerDiem'] == true &&
+          job.perDiem != null &&
+          job.perDiem!.isNotEmpty) {
         isMatch = true;
       }
       // Simulate calling a local AI model for a more sophisticated match
       // For now, localModelService.matchUserExperienceToPreferences is used as a generic AI check
       // In a real scenario, a dedicated matching method might be more appropriate.
       // For simplicity, we'll just check if the model would "process" it.
-      await localModelService.summarizeJob(job.jobTitle ?? job.company); // Simulate processing
+      await localModelService
+          .summarizeJob(job.jobTitle ?? job.company); // Simulate processing
 
       if (isMatch) {
-        print('[DEBUG] Job match found: ${job.jobTitle} at ${job.company}');
+        if (kDebugMode) {
+          debugPrint(
+              '[DEBUG] Job match found: ${job.jobTitle} at ${job.company}');
+        }
         // Placeholder for triggering a notification.
         // In a real app, this would use flutter_local_notifications or FCM.
-        _triggerNotification('New Job Match!', 'A new job matching your preferences has been found: ${job.jobTitle} at ${job.company}.');
+        _triggerNotification('New Job Match!',
+            'A new job matching your preferences has been found: ${job.jobTitle} at ${job.company}.');
       }
     }
-    print('[DEBUG] Finished checking new jobs for matches.');
+    if (kDebugMode) {
+      debugPrint('[DEBUG] Finished checking new jobs for matches.');
+    }
   }
 
   /// Placeholder for triggering local notifications.
   void _triggerNotification(String title, String body) {
-    print('[NOTIFICATION] $title: $body');
+    if (kDebugMode) debugPrint('[NOTIFICATION] $title: $body');
     // TODO: Integrate with flutter_local_notifications package here.
   }
 
   /// Collects user feedback for a specific job.
-  Future<void> collectJobFeedback(Job job, {String? feedbackText, double rating = 0.0}) async {
-    print('[DEBUG] Collecting feedback for job: ${job.id}');
+  Future<void> collectJobFeedback(Job job,
+      {String? feedbackText, double rating = 0.0}) async {
+    if (kDebugMode) {
+      debugPrint('[DEBUG] Collecting feedback for job: ${job.id}');
+    }
     final FeedbackService feedbackService = ref.read(feedbackServiceProvider);
-    
+
     // Placeholder for userId - in a real app, this would come from an auth provider
-    final String userId = 'dummy_user_id'; 
+    final String userId = 'dummy_user_id';
 
     final UserFeedback feedback = UserFeedback(
       id: '', // Firestore will assign an ID
@@ -343,9 +384,14 @@ class JobsNotifier extends _$JobsNotifier {
 
     try {
       await feedbackService.addFeedback(feedback);
-      print('[DEBUG] Feedback successfully collected for job: ${job.id}');
+      if (kDebugMode) {
+        debugPrint(
+            '[DEBUG] Feedback successfully collected for job: ${job.id}');
+      }
     } catch (e) {
-      print('[ERROR] Failed to collect feedback for job ${job.id}: $e');
+      if (kDebugMode) {
+        debugPrint('[ERROR] Failed to collect feedback for job ${job.id}: $e');
+      }
       // Handle error, e.g., show a toast to the user
     }
   }
@@ -357,19 +403,19 @@ class JobsNotifier extends _$JobsNotifier {
 
   /// Get performance metrics
   Map<String, dynamic> getPerformanceMetrics() => <String, dynamic>{
-      'averageLoadTime': state.loadTimes.isEmpty
-          ? Duration.zero
-          : Duration(
-              milliseconds: state.loadTimes
-                  .map((Duration d) => d.inMilliseconds)
-                  .reduce((int a, int b) => a + b) ~/
-                  state.loadTimes.length,
-            ),
-      'totalJobsLoaded': state.totalJobsLoaded,
-      // TODO: Add back when utility classes are implemented
-      // 'memoryUsage': _boundedJobList.estimatedMemoryUsage,
-      // 'filterPerformance': _filterEngine.getAverageFilterTime(),
-    };
+        'averageLoadTime': state.loadTimes.isEmpty
+            ? Duration.zero
+            : Duration(
+                milliseconds: state.loadTimes
+                        .map((Duration d) => d.inMilliseconds)
+                        .reduce((int a, int b) => a + b) ~/
+                    state.loadTimes.length,
+              ),
+        'totalJobsLoaded': state.totalJobsLoaded,
+        // TODO: Add back when utility classes are implemented
+        // 'memoryUsage': _boundedJobList.estimatedMemoryUsage,
+        // 'filterPerformance': _filterEngine.getAverageFilterTime(),
+      };
 
   /// Dispose resources
   void dispose() {

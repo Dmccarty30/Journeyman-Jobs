@@ -11,25 +11,28 @@ part 'user_job_preference_query_provider.g.dart';
 
 // Provides the UserPreferenceService
 @Riverpod(keepAlive: true)
-UserPreferenceService userPreferenceService(UserPreferenceServiceRef ref) => UserPreferenceService();
+UserPreferenceService userPreferenceService(Ref ref) => UserPreferenceService();
 
 // Provides the ResilientFirestoreService
 @Riverpod(keepAlive: true)
-ResilientFirestoreService firestoreService(ResilientFirestoreServiceRef ref) => ResilientFirestoreService();
+ResilientFirestoreService firestoreService(Ref ref) =>
+    ResilientFirestoreService();
 
 @riverpod
-Future<JobFilterCriteria> userJobFilterCriteria(UserJobFilterCriteriaRef ref) async {
+Future<JobFilterCriteria> userJobFilterCriteria(Ref ref) async {
   final User? currentUser = FirebaseAuth.instance.currentUser;
   if (currentUser == null) {
     return const JobFilterCriteria(); // Default empty filter if no user
   }
 
   final userPreferenceService = ref.watch(userPreferenceServiceProvider);
-  final preferences = await userPreferenceService.getUserPreferences(currentUser.uid);
+  final preferences =
+      await userPreferenceService.getUserPreferences(currentUser.uid);
 
   // Construct JobFilterCriteria from user preferences
   return JobFilterCriteria(
-    classifications: List<String>.from(preferences?['preferredClassifications'] ?? []),
+    classifications:
+        List<String>.from(preferences?['preferredClassifications'] ?? []),
     state: preferences?['statePreference'] as String?,
     city: preferences?['cityPreference'] as String?,
     hasPerDiem: preferences?['wantsPerDiem'] as bool?,
@@ -39,20 +42,20 @@ Future<JobFilterCriteria> userJobFilterCriteria(UserJobFilterCriteriaRef ref) as
 }
 
 @riverpod
-Future<List<Job>> userPreferredJobs(UserPreferredJobsRef ref) async {
+Future<List<Job>> userPreferredJobs(Ref ref) async {
   final filterCriteria = await ref.watch(userJobFilterCriteriaProvider.future);
   final firestore = ref.watch(firestoreServiceProvider);
 
   try {
     // This uses the existing getJobsWithFilter method from ResilientFirestoreService
-    final QuerySnapshot snapshot = await firestore.getJobsWithFilter(filter: filterCriteria);
+    final QuerySnapshot snapshot =
+        await firestore.getJobsWithFilter(filter: filterCriteria);
     return snapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
       data['id'] = doc.id;
       return Job.fromJson(data);
     }).toList();
   } catch (e) {
-    print('Error fetching user preferred jobs: $e');
     return [];
   }
 }

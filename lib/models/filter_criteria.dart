@@ -1,291 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Model representing job filter criteria
-class JobFilterCriteria {
-  // Location filters
-  final String? city;
-  final String? state;
-  final double? maxDistance; // in miles
-  
-  // Classification filters
-  final List<String> classifications;
-  final List<int> localNumbers;
-  
-  // Job type filters
-  final List<String> constructionTypes;
-  final List<String> jobClasses;
-
-  // Time filters
-  final DateTime? postedAfter;
-  final DateTime? startDateBefore;
-  final DateTime? startDateAfter;
-  
-  // Work preferences
-  final bool? hasPerDiem;
-  final String? durationPreference; // 'short-term', 'long-term', 'any'
-  final List<String> companies;
-
-  // Sorting
-  final JobSortOption sortBy;
-  final bool sortDescending;
-  
-  // Search query
-  final String? searchQuery;
-
-  const JobFilterCriteria({
-    this.city,
-    this.state,
-    this.maxDistance,
-    this.classifications = const [],
-    this.localNumbers = const [],
-    this.constructionTypes = const [],
-    this.jobClasses = const [],
-    this.postedAfter,
-    this.startDateBefore,
-    this.startDateAfter,
-    this.hasPerDiem,
-    this.durationPreference,
-    this.companies = const [],
-    this.sortBy = JobSortOption.datePosted,
-    this.sortDescending = true,
-    this.searchQuery,
-  });
-
-  /// Create an empty filter criteria
-  factory JobFilterCriteria.empty() => const JobFilterCriteria();
-
-  /// Check if any filters are active
-  bool get hasActiveFilters {
-    return city != null ||
-        state != null ||
-        maxDistance != null ||
-        classifications.isNotEmpty ||
-        localNumbers.isNotEmpty ||
-        constructionTypes.isNotEmpty ||
-        jobClasses.isNotEmpty ||
-        postedAfter != null ||
-        startDateBefore != null ||
-        startDateAfter != null ||
-        hasPerDiem != null ||
-        durationPreference != null ||
-        companies.isNotEmpty ||
-        searchQuery != null;
-  }
-
-  /// Get the count of active filters
-  int get activeFilterCount {
-    int count = 0;
-    if (city != null) count++;
-    if (state != null) count++;
-    if (maxDistance != null) count++;
-    if (classifications.isNotEmpty) count++;
-    if (localNumbers.isNotEmpty) count++;
-    if (constructionTypes.isNotEmpty) count++;
-    if (jobClasses.isNotEmpty) count++;
-    if (postedAfter != null) count++;
-    if (startDateBefore != null) count++;
-    if (startDateAfter != null) count++;
-    if (hasPerDiem != null) count++;
-    if (durationPreference != null) count++;
-    if (companies.isNotEmpty) count++;
-    if (searchQuery != null) count++;
-    return count;
-  }
-
-  /// Apply filters to a Firestore query
-  Query applyToQuery(Query query) {
-    // Apply classification filters
-    if (classifications.isNotEmpty) {
-      query = query.where('classification', whereIn: classifications);
-    }
-    
-    // Apply local number filters
-    if (localNumbers.isNotEmpty) {
-      query = query.where('localNumber', whereIn: localNumbers);
-    }
-    
-    // Apply construction type filters
-    if (constructionTypes.isNotEmpty) {
-      query = query.where('typeOfWork', whereIn: constructionTypes);
-    }
-
-    // Apply date filters
-    if (postedAfter != null) {
-      query = query.where('timestamp', isGreaterThanOrEqualTo: postedAfter);
-    }
-    
-    if (startDateBefore != null) {
-      query = query.where('startDate_timestamp', isLessThanOrEqualTo: startDateBefore);
-    }
-    
-    if (startDateAfter != null) {
-      query = query.where('startDate_timestamp', isGreaterThanOrEqualTo: startDateAfter);
-    }
-    
-    // Apply per diem filter
-    if (hasPerDiem != null) {
-      if (hasPerDiem == true) {
-        query = query.where('per_diem', isNotEqualTo: '');
-      }
-    }
-    
-    // Apply company filters
-    if (companies.isNotEmpty) {
-      query = query.where('company', whereIn: companies);
-    }
-
-    // Apply sorting
-    switch (sortBy) {
-      case JobSortOption.datePosted:
-        query = query.orderBy('timestamp', descending: sortDescending);
-        break;
-      case JobSortOption.wage:
-        query = query.orderBy('wage_numeric', descending: sortDescending);
-        break;
-      case JobSortOption.startDate:
-        query = query.orderBy('startDate_timestamp', descending: sortDescending);
-        break;
-      case JobSortOption.distance:
-        // Distance sorting would need to be done client-side
-        query = query.orderBy('timestamp', descending: sortDescending);
-        break;
-    }
-    
-    return query;
-  }
-
-  /// Copy with new values
-  JobFilterCriteria copyWith({
-    String? city,
-    String? state,
-    double? maxDistance,
-    List<String>? classifications,
-    List<int>? localNumbers,
-    List<String>? constructionTypes,
-    List<String>? jobClasses,
-    DateTime? postedAfter,
-    DateTime? startDateBefore,
-    DateTime? startDateAfter,
-    bool? hasPerDiem,
-    String? durationPreference,
-    List<String>? companies,
-    JobSortOption? sortBy,
-    bool? sortDescending,
-    String? searchQuery,
-  }) {
-    return JobFilterCriteria(
-      city: city ?? this.city,
-      state: state ?? this.state,
-      maxDistance: maxDistance ?? this.maxDistance,
-      classifications: classifications ?? this.classifications,
-      localNumbers: localNumbers ?? this.localNumbers,
-      constructionTypes: constructionTypes ?? this.constructionTypes,
-      jobClasses: jobClasses ?? this.jobClasses,
-      postedAfter: postedAfter ?? this.postedAfter,
-      startDateBefore: startDateBefore ?? this.startDateBefore,
-      startDateAfter: startDateAfter ?? this.startDateAfter,
-      hasPerDiem: hasPerDiem ?? this.hasPerDiem,
-      durationPreference: durationPreference ?? this.durationPreference,
-      companies: companies ?? this.companies,
-      sortBy: sortBy ?? this.sortBy,
-      sortDescending: sortDescending ?? this.sortDescending,
-      searchQuery: searchQuery ?? this.searchQuery,
-    );
-  }
-
-  /// Clear specific filter
-  JobFilterCriteria clearFilter(FilterType filterType) {
-    switch (filterType) {
-      case FilterType.location:
-        return copyWith(city: null, state: null, maxDistance: null);
-      case FilterType.classification:
-        return copyWith(classifications: []);
-      case FilterType.local:
-        return copyWith(localNumbers: []);
-      case FilterType.constructionType:
-        return copyWith(constructionTypes: []);
-      case FilterType.date:
-        return copyWith(
-          postedAfter: null,
-          startDateBefore: null,
-          startDateAfter: null,
-        );
-      case FilterType.perDiem:
-        return copyWith(hasPerDiem: null);
-      case FilterType.duration:
-        return copyWith(durationPreference: null);
-      case FilterType.company:
-        return copyWith(companies: []);
-      case FilterType.search:
-        return copyWith(searchQuery: null);
-    }
-  }
-
-  /// Convert to JSON for storage
-  Map<String, dynamic> toJson() {
-    return {
-      'city': city,
-      'state': state,
-      'maxDistance': maxDistance,
-      'classifications': classifications,
-      'localNumbers': localNumbers,
-      'constructionTypes': constructionTypes,
-      'jobClasses': jobClasses,
-      'postedAfter': postedAfter?.toIso8601String(),
-      'startDateBefore': startDateBefore?.toIso8601String(),
-      'startDateAfter': startDateAfter?.toIso8601String(),
-      'hasPerDiem': hasPerDiem,
-      'durationPreference': durationPreference,
-      'companies': companies,
-      'sortBy': sortBy.index,
-      'sortDescending': sortDescending,
-      'searchQuery': searchQuery,
-    };
-  }
-
-  /// Create from JSON
-  factory JobFilterCriteria.fromJson(Map<String, dynamic> json) {
-    return JobFilterCriteria(
-      city: json['city'],
-      state: json['state'],
-      maxDistance: json['maxDistance']?.toDouble(),
-      classifications: List<String>.from(json['classifications'] ?? []),
-      localNumbers: List<int>.from(json['localNumbers'] ?? []),
-      constructionTypes: List<String>.from(json['constructionTypes'] ?? []),
-      jobClasses: List<String>.from(json['jobClasses'] ?? []),
-      postedAfter: json['postedAfter'] != null
-          ? DateTime.parse(json['postedAfter'])
-          : null,
-      startDateBefore: json['startDateBefore'] != null
-          ? DateTime.parse(json['startDateBefore'])
-          : null,
-      startDateAfter: json['startDateAfter'] != null
-          ? DateTime.parse(json['startDateAfter'])
-          : null,
-      hasPerDiem: json['hasPerDiem'],
-      durationPreference: json['durationPreference'],
-      companies: List<String>.from(json['companies'] ?? []),
-      sortBy: JobSortOption.values[json['sortBy'] ?? 0],
-      sortDescending: json['sortDescending'] ?? true,
-      searchQuery: json['searchQuery'],
-    );
-  }
-}
-
-/// Enum for different filter types
-enum FilterType {
-  location,
-  classification,
-  local,
-  constructionType,
-  date,
-  perDiem,
-  duration,
-  company,
-  search,
-}
-
-/// Enum for job sorting options
 enum JobSortOption {
   datePosted,
   wage,
@@ -293,18 +6,215 @@ enum JobSortOption {
   distance,
 }
 
-/// Extension to get display names for sort options
-extension JobSortOptionExtension on JobSortOption {
-  String get displayName {
-    switch (this) {
-      case JobSortOption.datePosted:
-        return 'Date Posted';
-      case JobSortOption.wage:
-        return 'Wage';
-      case JobSortOption.startDate:
-        return 'Start Date';
-      case JobSortOption.distance:
-        return 'Distance';
+enum FilterType {
+  searchQuery,
+  constructionTypes,
+  classifications,
+  state,
+  city,
+  hasPerDiem,
+  minWage,
+  maxDistance,
+  postedAfter,
+  localNumbers,
+  companies,
+  startDate,
+  durationPreference,
+}
+
+class JobFilterCriteria {
+  final String? searchQuery;
+  final JobSortOption? sortBy;
+  final bool sortDescending;
+  final List<String>? constructionTypes;
+  final List<String>? classifications;
+  final String? state;
+  final String? city;
+  final bool? hasPerDiem;
+  final double? minWage;
+  final double? maxDistance;
+  final DateTime? postedAfter;
+  final List<String>? localNumbers;
+  final List<String>? companies;
+  final DateTime? startDateAfter;
+  final DateTime? startDateBefore;
+  final String? durationPreference;
+
+  const JobFilterCriteria({
+    this.searchQuery,
+    this.sortBy,
+    this.sortDescending = true,
+    this.constructionTypes,
+    this.classifications,
+    this.state,
+    this.city,
+    this.hasPerDiem,
+    this.minWage,
+    this.maxDistance,
+    this.postedAfter,
+    this.localNumbers,
+    this.companies,
+    this.startDateAfter,
+    this.startDateBefore,
+    this.durationPreference,
+  });
+
+  JobFilterCriteria copyWith({
+    String? searchQuery,
+    JobSortOption? sortBy,
+    bool? sortDescending,
+    List<String>? constructionTypes,
+    List<String>? classifications,
+    String? state,
+    String? city,
+    bool? hasPerDiem,
+    double? minWage,
+    double? maxDistance,
+    DateTime? postedAfter,
+    List<String>? localNumbers,
+    List<String>? companies,
+    DateTime? startDateAfter,
+    DateTime? startDateBefore,
+    String? durationPreference,
+  }) {
+    return JobFilterCriteria(
+      searchQuery: searchQuery ?? this.searchQuery,
+      sortBy: sortBy ?? this.sortBy,
+      sortDescending: sortDescending ?? this.sortDescending,
+      constructionTypes: constructionTypes ?? this.constructionTypes,
+      classifications: classifications ?? this.classifications,
+      state: state ?? this.state,
+      city: city ?? this.city,
+      hasPerDiem: hasPerDiem ?? this.hasPerDiem,
+      minWage: minWage ?? this.minWage,
+      maxDistance: maxDistance ?? this.maxDistance,
+      postedAfter: postedAfter ?? this.postedAfter,
+      localNumbers: localNumbers ?? this.localNumbers,
+      companies: companies ?? this.companies,
+      startDateAfter: startDateAfter ?? this.startDateAfter,
+      startDateBefore: startDateBefore ?? this.startDateBefore,
+      durationPreference: durationPreference ?? this.durationPreference,
+    );
+  }
+
+  factory JobFilterCriteria.empty() => const JobFilterCriteria();
+
+  bool get hasActiveFilters {
+    return searchQuery != null ||
+        (constructionTypes != null && constructionTypes!.isNotEmpty) ||
+        (classifications != null && classifications!.isNotEmpty) ||
+        state != null ||
+        city != null ||
+        hasPerDiem != null ||
+        minWage != null ||
+        maxDistance != null ||
+        postedAfter != null ||
+        (localNumbers != null && localNumbers!.isNotEmpty) ||
+        (companies != null && companies!.isNotEmpty) ||
+        startDateAfter != null ||
+        startDateBefore != null ||
+        durationPreference != null;
+  }
+
+  int get activeFilterCount {
+    int count = 0;
+    if (searchQuery != null) count++;
+    if (constructionTypes != null && constructionTypes!.isNotEmpty) count++;
+    if (classifications != null && classifications!.isNotEmpty) count++;
+    if (state != null) count++;
+    if (city != null) count++;
+    if (hasPerDiem != null) count++;
+    if (minWage != null) count++;
+    if (maxDistance != null) count++;
+    if (postedAfter != null) count++;
+    if (localNumbers != null && localNumbers!.isNotEmpty) count++;
+    if (companies != null && companies!.isNotEmpty) count++;
+    if (startDateAfter != null) count++;
+    if (startDateBefore != null) count++;
+    if (durationPreference != null) count++;
+    return count;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'searchQuery': searchQuery,
+      'sortBy': sortBy?.index,
+      'sortDescending': sortDescending,
+      'constructionTypes': constructionTypes,
+      'classifications': classifications,
+      'state': state,
+      'city': city,
+      'hasPerDiem': hasPerDiem,
+      'minWage': minWage,
+      'maxDistance': maxDistance,
+      'postedAfter': postedAfter?.toIso8601String(),
+      'localNumbers': localNumbers,
+      'companies': companies,
+      'startDateAfter': startDateAfter?.toIso8601String(),
+      'startDateBefore': startDateBefore?.toIso8601String(),
+      'durationPreference': durationPreference,
+    };
+  }
+
+  factory JobFilterCriteria.fromJson(Map<String, dynamic> json) {
+    return JobFilterCriteria(
+      searchQuery: json['searchQuery'],
+      sortBy:
+          json['sortBy'] != null ? JobSortOption.values[json['sortBy']] : null,
+      sortDescending: json['sortDescending'] ?? true,
+      constructionTypes:
+          (json['constructionTypes'] as List<dynamic>?)?.cast<String>(),
+      classifications:
+          (json['classifications'] as List<dynamic>?)?.cast<String>(),
+      state: json['state'],
+      city: json['city'],
+      hasPerDiem: json['hasPerDiem'],
+      minWage: (json['minWage'] as num?)?.toDouble(),
+      maxDistance: (json['maxDistance'] as num?)?.toDouble(),
+      postedAfter: json['postedAfter'] != null
+          ? DateTime.parse(json['postedAfter'])
+          : null,
+      localNumbers: (json['localNumbers'] as List<dynamic>?)?.cast<String>(),
+      companies: (json['companies'] as List<dynamic>?)?.cast<String>(),
+      startDateAfter: json['startDateAfter'] != null
+          ? DateTime.parse(json['startDateAfter'])
+          : null,
+      startDateBefore: json['startDateBefore'] != null
+          ? DateTime.parse(json['startDateBefore'])
+          : null,
+      durationPreference: json['durationPreference'],
+    );
+  }
+
+  @override
+  JobFilterCriteria clearFilter(FilterType filterType) {
+    switch (filterType) {
+      case FilterType.searchQuery:
+        return copyWith(searchQuery: null);
+      case FilterType.constructionTypes:
+        return copyWith(constructionTypes: <String>[]);
+      case FilterType.classifications:
+        return copyWith(classifications: <String>[]);
+      case FilterType.state:
+        return copyWith(state: null);
+      case FilterType.city:
+        return copyWith(city: null);
+      case FilterType.hasPerDiem:
+        return copyWith(hasPerDiem: null);
+      case FilterType.minWage:
+        return copyWith(minWage: null);
+      case FilterType.maxDistance:
+        return copyWith(maxDistance: null);
+      case FilterType.postedAfter:
+        return copyWith(postedAfter: null);
+      case FilterType.localNumbers:
+        return copyWith(localNumbers: <String>[]);
+      case FilterType.companies:
+        return copyWith(companies: <String>[]);
+      case FilterType.startDate:
+        return copyWith(startDateAfter: null, startDateBefore: null);
+      case FilterType.durationPreference:
+        return copyWith(durationPreference: null);
     }
   }
 }

@@ -13,7 +13,6 @@ part 'job_filter_riverpod_provider.g.dart';
 
 /// Job filter state model for Riverpod
 class JobFilterState {
-
   const JobFilterState({
     this.currentFilter = const JobFilterCriteria(),
     this.presets = const <FilterPreset>[],
@@ -33,13 +32,14 @@ class JobFilterState {
     List<String>? recentSearches,
     bool? isLoading,
     String? error,
-  }) => JobFilterState(
-      currentFilter: currentFilter ?? this.currentFilter,
-      presets: presets ?? this.presets,
-      recentSearches: recentSearches ?? this.recentSearches,
-      isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
-    );
+  }) =>
+      JobFilterState(
+        currentFilter: currentFilter ?? this.currentFilter,
+        presets: presets ?? this.presets,
+        recentSearches: recentSearches ?? this.recentSearches,
+        isLoading: isLoading ?? this.isLoading,
+        error: error ?? this.error,
+      );
 
   JobFilterState clearError() => copyWith();
 
@@ -56,14 +56,16 @@ class JobFilterState {
   /// Get recently used presets (sorted by last used)
   List<FilterPreset> get recentPresets {
     final List<FilterPreset> sorted = List<FilterPreset>.from(presets)
-      ..sort((FilterPreset a, FilterPreset b) => b.lastUsedAt.compareTo(a.lastUsedAt));
+      ..sort((FilterPreset a, FilterPreset b) =>
+          b.lastUsedAt.compareTo(a.lastUsedAt));
     return sorted.take(5).toList();
   }
 }
 
 /// SharedPreferences provider
 @riverpod
-Future<SharedPreferences> sharedPreferences(Ref ref) async => SharedPreferences.getInstance();
+Future<SharedPreferences> sharedPreferences(Ref ref) async =>
+    SharedPreferences.getInstance();
 
 /// Job filter notifier for managing filter state and presets
 @riverpod
@@ -72,7 +74,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
   static const String _presetsKey = 'filter_presets';
   static const String _recentSearchesKey = 'recent_searches';
   static const Duration _debounceDuration = Duration(milliseconds: 300);
-  
+
   Timer? _debounceTimer;
 
   @override
@@ -87,7 +89,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
 
     try {
       final prefs = await ref.read(sharedPreferencesProvider.future);
-      
+
       // Load current filter
       final String? filterJson = prefs.getString(_filterKey);
       JobFilterCriteria currentFilter = JobFilterCriteria.empty();
@@ -97,7 +99,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
           Map<String, dynamic>.from(decoded as Map<String, dynamic>),
         );
       }
-      
+
       // Load presets
       List<FilterPreset> loadedPresets = <FilterPreset>[];
       final String? presetsJson = prefs.getString(_presetsKey);
@@ -105,18 +107,20 @@ class JobFilterNotifier extends _$JobFilterNotifier {
         final dynamic decodedPresets = jsonDecode(presetsJson);
         final List<dynamic> presetsList = decodedPresets as List<dynamic>;
         loadedPresets = presetsList
-            .map((e) => FilterPreset.fromJson(
+            .map(
+              (e) => FilterPreset.fromJson(
                 Map<String, dynamic>.from(e as Map<String, dynamic>),
-              ),)
+              ),
+            )
             .toList();
       } else {
         // Load default presets on first run
         loadedPresets = DefaultFilterPresets.defaults;
         await _savePresets(loadedPresets);
       }
-      
+
       // Load recent searches
-      final List<String> loadedSearches = 
+      final List<String> loadedSearches =
           prefs.getStringList(_recentSearchesKey) ?? <String>[];
 
       state = state.copyWith(
@@ -138,7 +142,8 @@ class JobFilterNotifier extends _$JobFilterNotifier {
   Future<void> _saveFilter() async {
     try {
       final prefs = await ref.read(sharedPreferencesProvider.future);
-      await prefs.setString(_filterKey, jsonEncode(state.currentFilter.toJson()));
+      await prefs.setString(
+          _filterKey, jsonEncode(state.currentFilter.toJson()));
     } catch (e) {
       StructuredLogger.debug('Error saving filter: $e');
     }
@@ -148,9 +153,8 @@ class JobFilterNotifier extends _$JobFilterNotifier {
   Future<void> _savePresets(List<FilterPreset> presets) async {
     try {
       final prefs = await ref.read(sharedPreferencesProvider.future);
-      final List<Map<String, dynamic>> presetsJson = presets
-          .map((FilterPreset p) => p.toJson())
-          .toList();
+      final List<Map<String, dynamic>> presetsJson =
+          presets.map((FilterPreset p) => p.toJson()).toList();
       await prefs.setString(_presetsKey, jsonEncode(presetsJson));
     } catch (e) {
       StructuredLogger.debug('Error saving presets: $e');
@@ -202,10 +206,10 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     double? maxDistance,
   }) {
     final updatedFilter = this.state.currentFilter.copyWith(
-      city: city,
-      state: state,
-      maxDistance: maxDistance,
-    );
+          city: city,
+          state: state,
+          maxDistance: maxDistance,
+        );
     this.state = this.state.copyWith(currentFilter: updatedFilter);
     _saveFilter();
     _debounceNotification(ref.invalidateSelf);
@@ -222,7 +226,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
   }
 
   /// Update local numbers filter (immediate for deliberate selection)
-  void updateLocalNumbersFilter(List<int> localNumbers) {
+  void updateLocalNumbersFilter(List<String> localNumbers) {
     final updatedFilter = state.currentFilter.copyWith(
       localNumbers: localNumbers,
     );
@@ -308,7 +312,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     );
     state = state.copyWith(currentFilter: updatedFilter);
     _saveFilter();
-    
+
     // Add to recent searches if not empty (but only on final submission)
     if (query != null && query.isNotEmpty) {
       // Only add to recent searches after debounce period to avoid spam
@@ -325,19 +329,20 @@ class JobFilterNotifier extends _$JobFilterNotifier {
 
   /// Add a recent search
   void _addRecentSearch(String search) {
-    final List<String> updatedSearches = List<String>.from(state.recentSearches);
-    
+    final List<String> updatedSearches =
+        List<String>.from(state.recentSearches);
+
     // Remove if already exists
     updatedSearches.remove(search);
-    
+
     // Add to beginning
     updatedSearches.insert(0, search);
-    
+
     // Keep only last 10
     if (updatedSearches.length > 10) {
       updatedSearches.removeRange(10, updatedSearches.length);
     }
-    
+
     state = state.copyWith(recentSearches: updatedSearches);
     _saveRecentSearches();
   }
@@ -350,15 +355,17 @@ class JobFilterNotifier extends _$JobFilterNotifier {
   }
 
   /// Save current filter as preset (immediate for deliberate action)
-  Future<void> saveAsPreset(String name, {String? description, IconData? icon}) async {
+  Future<void> saveAsPreset(String name,
+      {String? description, IconData? icon}) async {
     final FilterPreset preset = FilterPreset.create(
       name: name,
       description: description,
       criteria: state.currentFilter,
       icon: icon,
     );
-    
-    final List<FilterPreset> updatedPresets = List<FilterPreset>.from(state.presets)..add(preset);
+
+    final List<FilterPreset> updatedPresets =
+        List<FilterPreset>.from(state.presets)..add(preset);
     state = state.copyWith(presets: updatedPresets);
     await _savePresets(updatedPresets);
     ref.invalidateSelf();
@@ -370,18 +377,20 @@ class JobFilterNotifier extends _$JobFilterNotifier {
       (FilterPreset p) => p.id == presetId,
       orElse: () => throw Exception('Preset not found'),
     );
-    
+
     // Update preset usage
-    final List<FilterPreset> updatedPresets = List<FilterPreset>.from(state.presets);
-    final int index = updatedPresets.indexWhere((FilterPreset p) => p.id == presetId);
+    final List<FilterPreset> updatedPresets =
+        List<FilterPreset>.from(state.presets);
+    final int index =
+        updatedPresets.indexWhere((FilterPreset p) => p.id == presetId);
     updatedPresets[index] = preset.markAsUsed();
-    
+
     // Apply the filter
     state = state.copyWith(
       currentFilter: preset.criteria,
       presets: updatedPresets,
     );
-    
+
     _saveFilter();
     _savePresets(updatedPresets);
     ref.invalidateSelf();
@@ -395,19 +404,21 @@ class JobFilterNotifier extends _$JobFilterNotifier {
     JobFilterCriteria? criteria,
     IconData? icon,
   }) async {
-    final List<FilterPreset> updatedPresets = List<FilterPreset>.from(state.presets);
-    final int index = updatedPresets.indexWhere((FilterPreset p) => p.id == presetId);
+    final List<FilterPreset> updatedPresets =
+        List<FilterPreset>.from(state.presets);
+    final int index =
+        updatedPresets.indexWhere((FilterPreset p) => p.id == presetId);
     if (index == -1) {
       throw Exception('Preset not found');
     }
-    
+
     updatedPresets[index] = updatedPresets[index].copyWith(
       name: name,
       description: description,
       criteria: criteria,
       icon: icon,
     );
-    
+
     state = state.copyWith(presets: updatedPresets);
     await _savePresets(updatedPresets);
     ref.invalidateSelf();
@@ -415,7 +426,8 @@ class JobFilterNotifier extends _$JobFilterNotifier {
 
   /// Delete a preset (immediate for deliberate action)
   Future<void> deletePreset(String presetId) async {
-    final updatedPresets = state.presets.where((FilterPreset p) => p.id != presetId).toList();
+    final updatedPresets =
+        state.presets.where((FilterPreset p) => p.id != presetId).toList();
     state = state.copyWith(presets: updatedPresets);
     await _savePresets(updatedPresets);
     ref.invalidateSelf();
@@ -423,12 +435,14 @@ class JobFilterNotifier extends _$JobFilterNotifier {
 
   /// Toggle preset pinned status (immediate for deliberate action)
   Future<void> togglePresetPinned(String presetId) async {
-    final List<FilterPreset> updatedPresets = List<FilterPreset>.from(state.presets);
-    final int index = updatedPresets.indexWhere((FilterPreset p) => p.id == presetId);
+    final List<FilterPreset> updatedPresets =
+        List<FilterPreset>.from(state.presets);
+    final int index =
+        updatedPresets.indexWhere((FilterPreset p) => p.id == presetId);
     if (index == -1) {
       throw Exception('Preset not found');
     }
-    
+
     updatedPresets[index] = updatedPresets[index].togglePinned();
     state = state.copyWith(presets: updatedPresets);
     await _savePresets(updatedPresets);
@@ -446,7 +460,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
   /// Get quick filter suggestions based on user data
   List<QuickFilterSuggestion> getQuickFilterSuggestions() {
     final List<QuickFilterSuggestion> suggestions = <QuickFilterSuggestion>[];
-    
+
     // Suggest clearing all if filters are active
     if (state.hasActiveFilters) {
       suggestions.add(
@@ -468,7 +482,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
         ),
       );
     }
-    
+
     // Suggest recent posts if no date filter
     if (state.currentFilter.postedAfter == null) {
       suggestions.add(
@@ -481,7 +495,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
         ),
       );
     }
-    
+
     // Suggest per diem if not filtered
     if (state.currentFilter.hasPerDiem == null) {
       suggestions.add(
@@ -492,7 +506,7 @@ class JobFilterNotifier extends _$JobFilterNotifier {
         ),
       );
     }
-    
+
     return suggestions;
   }
 
@@ -531,23 +545,28 @@ class QuickFilterSuggestion {
 
 /// Current filter provider (computed from state)
 @riverpod
-JobFilterCriteria currentJobFilter(Ref ref) => ref.watch(jobFilterProvider).currentFilter;
+JobFilterCriteria currentJobFilter(Ref ref) =>
+    ref.watch(jobFilterProvider).currentFilter;
 
 /// Presets provider (computed from state)
 @riverpod
-List<FilterPreset> filterPresets(Ref ref) => ref.watch(jobFilterProvider).presets;
+List<FilterPreset> filterPresets(Ref ref) =>
+    ref.watch(jobFilterProvider).presets;
 
 /// Recent searches provider (computed from state)
 @riverpod
-List<String> recentSearches(Ref ref) => ref.watch(jobFilterProvider).recentSearches;
+List<String> recentSearches(Ref ref) =>
+    ref.watch(jobFilterProvider).recentSearches;
 
 /// Pinned presets provider (computed from state)
 @riverpod
-List<FilterPreset> pinnedPresets(Ref ref) => ref.watch(jobFilterProvider).pinnedPresets;
+List<FilterPreset> pinnedPresets(Ref ref) =>
+    ref.watch(jobFilterProvider).pinnedPresets;
 
 /// Recent presets provider (computed from state)
 @riverpod
-List<FilterPreset> recentPresets(Ref ref) => ref.watch(jobFilterProvider).recentPresets;
+List<FilterPreset> recentPresets(Ref ref) =>
+    ref.watch(jobFilterProvider).recentPresets;
 
 /// Active filters status provider (computed from state)
 @riverpod
@@ -555,7 +574,8 @@ bool hasActiveFilters(Ref ref) => ref.watch(jobFilterProvider).hasActiveFilters;
 
 /// Active filter count provider (computed from state)
 @riverpod
-int activeFilterCount(Ref ref) => ref.watch(jobFilterProvider).activeFilterCount;
+int activeFilterCount(Ref ref) =>
+    ref.watch(jobFilterProvider).activeFilterCount;
 
 /// Quick filter suggestions provider (computed from state)
 @riverpod

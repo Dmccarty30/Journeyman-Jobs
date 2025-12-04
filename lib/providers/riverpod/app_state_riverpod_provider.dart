@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:journeyman_jobs/providers/riverpod/jobs_riverpod_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../services/analytics_service.dart';
@@ -171,10 +170,10 @@ class AppStateNotifier extends _$AppStateNotifier {
   /// Load initial data for authenticated users
   Future<void> _loadInitialData() async {
     try {
-      await Future.wait(<Future<void>>[
-        ref.read(jobsProvider.notifier).loadJobs(),
-        ref.read(localsProvider.notifier).loadLocals(),
-      ]);
+        await Future.wait(<Future<void>>[
+          ref.read(jobsProvider.notifier).loadJobs(),
+          ref.read(localsProvider.notifier).loadLocals(),
+        ]);
     } catch (e) {
       // Don't set global error for data loading failures
       // Individual providers will handle their own errors

@@ -59,7 +59,15 @@ class JJPrimaryButton extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: _getButtonGradient(),
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        boxShadow: [AppTheme.shadowSm],
+        boxShadow: [
+          // Modern shadcn-like shadow for primary action
+          BoxShadow(
+            color: AppTheme.accentCopper.withValues(alpha: 0.25),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
@@ -158,9 +166,17 @@ class JJSecondaryButton extends StatelessWidget {
       width: isFullWidth ? double.infinity : width,
       height: height ?? 56,
       decoration: BoxDecoration(
-        border: Border.all(color: AppTheme.primaryNavy, width: 1.5),
+        border: Border.all(color: AppTheme.primaryNavy.withValues(alpha: 0.2), width: 1.5),
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         color: AppTheme.white,
+        boxShadow: [
+          // Subtle shadow for secondary action
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,

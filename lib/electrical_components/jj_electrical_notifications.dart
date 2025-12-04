@@ -438,8 +438,7 @@ class _ElectricalSnackBarContentState extends State<ElectricalSnackBarContent>
       case ElectricalNotificationType.error:
         return AppTheme.electricalErrorTheme;
       case ElectricalNotificationType.info:
-      default:
-        return AppTheme.electricalInfoTheme;
+      return AppTheme.electricalInfoTheme;
     }
   }
 }
@@ -571,8 +570,7 @@ class _ElectricalTooltipState extends State<ElectricalTooltip>
       case ElectricalNotificationType.error:
         return AppTheme.electricalErrorTheme;
       case ElectricalNotificationType.info:
-      default:
-        return AppTheme.electricalInfoTheme;
+      return AppTheme.electricalInfoTheme;
     }
   }
 }

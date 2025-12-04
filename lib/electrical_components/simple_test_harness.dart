@@ -4,8 +4,7 @@ import '../design_system/app_theme.dart';
 // --------------------------------------------------------------------------
 // IMPORT YOUR COMPONENT FILES HERE
 // --------------------------------------------------------------------------
-import 'jj_electrical_interactive_widgets.dart';
-import 'jj_electrical_page_transitions.dart';
+
 
 void main() {
   runApp(const ComponentTesterApp());

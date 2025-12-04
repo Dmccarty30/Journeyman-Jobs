@@ -47,15 +47,17 @@ class AuthState {
     String? error,
     Duration? lastSignInDuration,
     double? signInSuccessRate,
-  }) => AuthState(
-      user: user ?? this.user,
-      isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
-      lastSignInDuration: lastSignInDuration ?? this.lastSignInDuration,
-      signInSuccessRate: signInSuccessRate ?? this.signInSuccessRate,
-    );
+    bool clearError = false,
+  }) =>
+      AuthState(
+        user: user ?? this.user,
+        isLoading: isLoading ?? this.isLoading,
+        error: clearError ? null : error ?? this.error,
+        lastSignInDuration: lastSignInDuration ?? this.lastSignInDuration,
+        signInSuccessRate: signInSuccessRate ?? this.signInSuccessRate,
+      );
 
-  AuthState clearError() => copyWith();
+  AuthState clearError() => copyWith(clearError: true);
 }
 
 /// AuthService provider

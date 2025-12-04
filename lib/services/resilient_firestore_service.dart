@@ -19,12 +19,12 @@ class ResilientFirestoreService extends FirestoreService {
   static const Duration initialRetryDelay = Duration(seconds: 1);
   static const Duration maxRetryDelay = Duration(seconds: 10);
   static const Duration circuitBreakerTimeout = Duration(minutes: 5);
-  
+
   // Circuit breaker state
   bool _circuitOpen = false;
   DateTime? _circuitOpenTime;
   int _failureCount = 0;
-  
+
   @override
   Stream<QuerySnapshot> getJobs({
     int limit = FirestoreService.defaultPageSize,
@@ -101,10 +101,10 @@ class ResilientFirestoreService extends FirestoreService {
       () => super.updateUser(uid: uid, data: data),
       operationName: 'updateUser',
     );
-    
+
     // Invalidate user cache after update
     await _cacheService.remove('${CacheService.userDataPrefix}$uid');
-    
+
     return result;
   }
 
@@ -153,84 +153,88 @@ class ResilientFirestoreService extends FirestoreService {
     return _executeWithRetryFuture(
       () async {
         Query query = FirebaseFirestore.instance.collection('jobs');
-        
+
         // Apply filters based on criteria
-        if (filter.classifications.isNotEmpty) {
-          query = query.where('classification', whereIn: filter.classifications);
+        if (filter.classifications?.isNotEmpty ?? false) {
+          query =
+              query.where('classification', whereIn: filter.classifications);
         }
-        
-        if (filter.localNumbers.isNotEmpty) {
+
+        if (filter.localNumbers?.isNotEmpty ?? false) {
           query = query.where('local', whereIn: filter.localNumbers);
         }
-        
-        if (filter.constructionTypes.isNotEmpty) {
-          query = query.where('constructionType', whereIn: filter.constructionTypes);
+
+        if (filter.constructionTypes?.isNotEmpty ?? false) {
+          query = query.where('constructionType',
+              whereIn: filter.constructionTypes);
         }
-        
-        if (filter.companies.isNotEmpty) {
+
+        if (filter.companies?.isNotEmpty ?? false) {
           query = query.where('company', whereIn: filter.companies);
         }
-        
+
         if (filter.hasPerDiem != null) {
           query = query.where('hasPerDiem', isEqualTo: filter.hasPerDiem);
         }
-        
+
         if (filter.state != null) {
           query = query.where('state', isEqualTo: filter.state);
         }
-        
+
         if (filter.city != null) {
           query = query.where('city', isEqualTo: filter.city);
         }
-        
+
         // Date filters
         if (filter.postedAfter != null) {
           query = query.where('timestamp', isGreaterThan: filter.postedAfter);
         }
-        
+
         if (filter.startDateAfter != null) {
-          query = query.where('startDate', isGreaterThan: filter.startDateAfter);
+          query =
+              query.where('startDate', isGreaterThan: filter.startDateAfter);
         }
-        
+
         if (filter.startDateBefore != null) {
           query = query.where('startDate', isLessThan: filter.startDateBefore);
         }
-        
+
         // Search query (basic text search on job title and description)
         if (filter.searchQuery != null && filter.searchQuery!.isNotEmpty) {
           final searchTerm = filter.searchQuery!.toLowerCase();
-          query = query
-              .where('searchTerms', arrayContains: searchTerm);
+          query = query.where('searchTerms', arrayContains: searchTerm);
         }
-        
+
         // Sorting
         switch (filter.sortBy) {
           case JobSortOption.datePosted:
-            query = query.orderBy('timestamp',
-                descending: filter.sortDescending);
+            query =
+                query.orderBy('timestamp', descending: filter.sortDescending);
             break;
           case JobSortOption.startDate:
-            query = query.orderBy('startDate',
-                descending: filter.sortDescending);
+            query =
+                query.orderBy('startDate', descending: filter.sortDescending);
             break;
           case JobSortOption.wage:
-            query = query.orderBy('wage',
-                descending: filter.sortDescending);
+            query = query.orderBy('wage', descending: filter.sortDescending);
             break;
           case JobSortOption.distance:
             // Distance sorting would require location-based queries
             // For now, default to timestamp sorting
             query = query.orderBy('timestamp', descending: true);
             break;
+          default:
+            query = query.orderBy('timestamp', descending: true);
+            break;
         }
-        
+
         // Pagination
         if (startAfter != null) {
           query = query.startAfterDocument(startAfter);
         }
-        
+
         query = query.limit(limit);
-        
+
         return await query.get();
       },
       operationName: 'getJobsWithFilter',
@@ -239,18 +243,23 @@ class ResilientFirestoreService extends FirestoreService {
 
   /// Get jobs based on a list of suggested job IDs.
   /// This method simulates an optimized query for jobs directly relevant to AI suggestions.
-  Future<QuerySnapshot> getJobsBySuggestionIds(List<String> suggestedJobIds) async {
+  Future<QuerySnapshot> getJobsBySuggestionIds(
+      List<String> suggestedJobIds) async {
     return _executeWithRetryFuture(
       () async {
         if (suggestedJobIds.isEmpty) {
           // Return an empty snapshot if no IDs are provided
-          return await FirebaseFirestore.instance.collection('jobs').limit(0).get();
+          return await FirebaseFirestore.instance
+              .collection('jobs')
+              .limit(0)
+              .get();
         }
         // Firestore 'whereIn' clause is limited to 10 items.
         // For more than 10, multiple queries or a backend function would be needed.
         // For this placeholder, we'll take the first 10.
-        Query query = FirebaseFirestore.instance.collection('jobs')
-            .where(FieldPath.documentId, whereIn: suggestedJobIds.take(10).toList()); 
+        Query query = FirebaseFirestore.instance.collection('jobs').where(
+            FieldPath.documentId,
+            whereIn: suggestedJobIds.take(10).toList());
 
         return await query.get();
       },
@@ -296,11 +305,12 @@ class ResilientFirestoreService extends FirestoreService {
     } catch (error) {
       if (_isRetryableError(error) && retryCount < maxRetries) {
         final delay = _calculateRetryDelay(retryCount);
-        
+
         if (kDebugMode) {
-          print('$operationName failed (attempt ${retryCount + 1}/$maxRetries), retrying in ${delay.inMilliseconds}ms: $error');
+          print(
+              '$operationName failed (attempt ${retryCount + 1}/$maxRetries), retrying in ${delay.inMilliseconds}ms: $error');
         }
-        
+
         await Future.delayed(delay);
         return _executeWithRetryFuture(
           operation,
@@ -330,11 +340,12 @@ class ResilientFirestoreService extends FirestoreService {
     return operation().handleError((error) {
       if (_isRetryableError(error) && retryCount < maxRetries) {
         final delay = _calculateRetryDelay(retryCount);
-        
+
         if (kDebugMode) {
-          print('$operationName stream failed (attempt ${retryCount + 1}/$maxRetries), retrying in ${delay.inMilliseconds}ms: $error');
+          print(
+              '$operationName stream failed (attempt ${retryCount + 1}/$maxRetries), retrying in ${delay.inMilliseconds}ms: $error');
         }
-        
+
         return Future.delayed(delay).then((_) {
           return _executeWithRetryStream(
             operation,
@@ -352,13 +363,13 @@ class ResilientFirestoreService extends FirestoreService {
   /// Check if the circuit breaker is open
   bool _isCircuitOpen() {
     if (!_circuitOpen) return false;
-    
-    if (_circuitOpenTime != null && 
+
+    if (_circuitOpenTime != null &&
         DateTime.now().difference(_circuitOpenTime!) > circuitBreakerTimeout) {
       _resetCircuitBreaker();
       return false;
     }
-    
+
     return true;
   }
 
@@ -373,14 +384,15 @@ class ResilientFirestoreService extends FirestoreService {
   /// Handle failed operation
   void _onFailure() {
     _failureCount++;
-    
+
     // Open circuit breaker after 5 consecutive failures
     if (_failureCount >= 5) {
       _circuitOpen = true;
       _circuitOpenTime = DateTime.now();
-      
+
       if (kDebugMode) {
-        print('Circuit breaker opened due to $_failureCount consecutive failures');
+        print(
+            'Circuit breaker opened due to $_failureCount consecutive failures');
       }
     }
   }
@@ -390,7 +402,7 @@ class ResilientFirestoreService extends FirestoreService {
     _circuitOpen = false;
     _circuitOpenTime = null;
     _failureCount = 0;
-    
+
     if (kDebugMode) {
       print('Circuit breaker reset to closed state');
     }
@@ -420,14 +432,14 @@ class ResilientFirestoreService extends FirestoreService {
           return false;
       }
     }
-    
+
     // Network-related errors are generally retryable
-    if (error is TimeoutException || 
+    if (error is TimeoutException ||
         error.toString().contains('network') ||
         error.toString().contains('connection')) {
       return true;
     }
-    
+
     return false;
   }
 
@@ -435,13 +447,14 @@ class ResilientFirestoreService extends FirestoreService {
   Duration _calculateRetryDelay(int retryCount) {
     final exponentialDelay = initialRetryDelay * pow(2, retryCount);
     final cappedDelay = Duration(
-      milliseconds: min(exponentialDelay.inMilliseconds, maxRetryDelay.inMilliseconds),
+      milliseconds:
+          min(exponentialDelay.inMilliseconds, maxRetryDelay.inMilliseconds),
     );
-    
+
     // Add jitter to prevent thundering herd
     final jitter = Random().nextDouble() * 0.1; // ±10% jitter
     final jitterMs = (cappedDelay.inMilliseconds * jitter).round();
-    
+
     return Duration(milliseconds: cappedDelay.inMilliseconds + jitterMs);
   }
 
@@ -454,7 +467,7 @@ class ResilientFirestoreService extends FirestoreService {
         originalError: error,
       );
     }
-    
+
     return FirestoreException(
       'Operation "$operationName" failed: $error',
       'unknown-error',
@@ -469,8 +482,8 @@ class ResilientFirestoreService extends FirestoreService {
       'openSince': _circuitOpenTime?.toIso8601String(),
       'failureCount': _failureCount,
       'timeUntilReset': _circuitOpen && _circuitOpenTime != null
-          ? circuitBreakerTimeout.inSeconds - 
-            DateTime.now().difference(_circuitOpenTime!).inSeconds
+          ? circuitBreakerTimeout.inSeconds -
+              DateTime.now().difference(_circuitOpenTime!).inSeconds
           : null,
     };
   }

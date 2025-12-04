@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/components/reusable_components.dart';
 import '../../navigation/app_router.dart';
-import '../../electrical_components/circuit_board_background.dart';
+import '../../electrical_components/modern_svg_circuit_background.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -266,9 +266,8 @@ class _AuthScreenState extends State<AuthScreen>
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          ElectricalCircuitBackground(
+          const ModernSvgCircuitBackground(
             opacity: 0.08,
-            componentDensity: ComponentDensity.high,
           ),
           SafeArea(
         child: Column(
@@ -560,10 +559,10 @@ class SegmentedTabBar extends StatefulWidget {
   final Function(int) onTabChanged;
 
   const SegmentedTabBar({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onTabChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<SegmentedTabBar> createState() => _SegmentedTabBarState();
@@ -623,48 +622,50 @@ class _SegmentedTabBarState extends State<SegmentedTabBar>
 
   @override
   Widget build(BuildContext context) {
+    // Total width available for the tab bar content (screen width - margins)
+    // margin horizontal: spacingLg * 2 = 24 * 2 = 48
+    final double totalWidth = MediaQuery.of(context).size.width - (AppTheme.spacingLg * 2);
+    // Padding inside the main container
+    const double innerPadding = 4.0;
+    // Width of each tab: (totalWidth - (innerPadding * 2)) / 2
+    final double tabWidth = (totalWidth - (innerPadding * 2)) / 2;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
-      height: 56,
+      height: 60, // Slightly taller for modern look
       decoration: BoxDecoration(
-        color: AppTheme.lightGray,
+        color: AppTheme.offWhite,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(color: AppTheme.accentCopper, width: 2),
+        border: Border.all(color: AppTheme.lightGray, width: 1), // Subtle border
+        boxShadow: [
+          // Inner shadow simulation or subtle outer shadow
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
+      padding: const EdgeInsets.all(innerPadding),
       child: Stack(
         children: [
-          // Background
-          Container(
-            margin: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: AppTheme.lightGray,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd - 4),
-            ),
-          ),
-          
           // Animated indicator
           AnimatedBuilder(
             animation: _animation,
             builder: (context, child) {
               final double position = _currentIndex.toDouble();
               return Transform.translate(
-                offset: Offset(position * (MediaQuery.of(context).size.width - 56) / 2, 0),
+                offset: Offset(position * tabWidth, 0),
                 child: Container(
-                  width: (MediaQuery.of(context).size.width - 56) / 2,
-                  height: 48,
+                  width: tabWidth,
+                  height: double.infinity,
                   decoration: BoxDecoration(
                     gradient: _getGradient(_currentIndex),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd - 4),
-                    border: Border.all(color: AppTheme.accentCopper, width: 2),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMd - 2),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primaryNavy.withValues(alpha: 0.18),
-                        blurRadius: 30,
-                        offset: const Offset(0, 10),
-                      ),
-                      BoxShadow(
-                        color: AppTheme.accentCopper.withValues(alpha: 0.12),
-                        blurRadius: 12,
+                        color: AppTheme.primaryNavy.withValues(alpha: 0.2),
+                        blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
                     ],

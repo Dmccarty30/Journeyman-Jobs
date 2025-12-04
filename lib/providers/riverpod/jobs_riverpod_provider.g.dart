@@ -56,6 +56,149 @@ final class FirestoreServiceProvider extends $FunctionalProvider<
 
 String _$firestoreServiceHash() => r'665e0c40804f3306f3afbce70fab7d9fc5247907';
 
+/// Feedback service provider
+
+@ProviderFor(feedbackService)
+const feedbackServiceProvider = FeedbackServiceProvider._();
+
+/// Feedback service provider
+
+final class FeedbackServiceProvider extends $FunctionalProvider<FeedbackService,
+    FeedbackService, FeedbackService> with $Provider<FeedbackService> {
+  /// Feedback service provider
+  const FeedbackServiceProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'feedbackServiceProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$feedbackServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<FeedbackService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  FeedbackService create(Ref ref) {
+    return feedbackService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FeedbackService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FeedbackService>(value),
+    );
+  }
+}
+
+String _$feedbackServiceHash() => r'e3a2aa2c2ed5ebd1eea084b6f68c0bef3a68b8e7';
+
+/// User Preference Service provider
+
+@ProviderFor(userPreferenceService)
+const userPreferenceServiceProvider = UserPreferenceServiceProvider._();
+
+/// User Preference Service provider
+
+final class UserPreferenceServiceProvider extends $FunctionalProvider<
+    UserPreferenceService,
+    UserPreferenceService,
+    UserPreferenceService> with $Provider<UserPreferenceService> {
+  /// User Preference Service provider
+  const UserPreferenceServiceProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'userPreferenceServiceProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$userPreferenceServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<UserPreferenceService> $createElement(
+          $ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  UserPreferenceService create(Ref ref) {
+    return userPreferenceService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UserPreferenceService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UserPreferenceService>(value),
+    );
+  }
+}
+
+String _$userPreferenceServiceHash() =>
+    r'1cd146953c28b40960faa768664c813321f0f342';
+
+/// Local AI Model Service provider
+
+@ProviderFor(localModelServicePod)
+const localModelServicePodProvider = LocalModelServicePodProvider._();
+
+/// Local AI Model Service provider
+
+final class LocalModelServicePodProvider extends $FunctionalProvider<
+    LocalModelService,
+    LocalModelService,
+    LocalModelService> with $Provider<LocalModelService> {
+  /// Local AI Model Service provider
+  const LocalModelServicePodProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'localModelServicePodProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$localModelServicePodHash();
+
+  @$internal
+  @override
+  $ProviderElement<LocalModelService> $createElement(
+          $ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  LocalModelService create(Ref ref) {
+    return localModelServicePod(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(LocalModelService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<LocalModelService>(value),
+    );
+  }
+}
+
+String _$localModelServicePodHash() =>
+    r'3e81c0dbab2f0c8336d4275401721ea63283bbe3';
+
 /// Jobs notifier for managing job data and operations
 
 @ProviderFor(JobsNotifier)
@@ -92,7 +235,7 @@ final class JobsNotifierProvider
   }
 }
 
-String _$jobsNotifierHash() => r'b15e27fb956ad2338db7f5b34b77e63627ae3750';
+String _$jobsNotifierHash() => r'd974d74edc1dac5d763609a3322bdccea8e423b6';
 
 /// Jobs notifier for managing job data and operations
 

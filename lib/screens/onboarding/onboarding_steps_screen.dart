@@ -14,7 +14,7 @@ import '../../services/onboarding_service.dart';
 import '../../services/firestore_service.dart';
 import '../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
 import '../../electrical_components/jj_circuit_breaker_switch.dart';
-import '../../electrical_components/circuit_board_background.dart';
+import '../../electrical_components/modern_svg_circuit_background.dart';
 
 class OnboardingStepsScreen extends StatefulWidget {
   const OnboardingStepsScreen({super.key});
@@ -408,9 +408,8 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
       ),
       body: Stack(
         children: [
-          ElectricalCircuitBackground(
+          const ModernSvgCircuitBackground(
             opacity: 0.08,
-            componentDensity: ComponentDensity.high,
           ),
           Column(
             children: [
@@ -453,19 +452,26 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
         ],
       ),
       bottomNavigationBar: Container(
+        padding: const EdgeInsets.only(
+          left: AppTheme.spacingMd,
+          right: AppTheme.spacingMd,
+          top: AppTheme.spacingSm,
+          bottom: 0, // Ensure no extra padding at bottom
+        ),
         decoration: BoxDecoration(
           color: AppTheme.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 4,
-              offset: const Offset(0, -2),
+              color: Colors.black.withValues(alpha: 0.2), // Darker shadcn-like shadow
+              blurRadius: 12,
+              spreadRadius: -1,
+              offset: const Offset(0, -6),
             ),
           ],
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(AppTheme.spacingMd),
+            padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
             child: Row(
               children: [
                 if (_currentStep > 0)
@@ -600,7 +606,22 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
           Row(
             children: [
               Expanded(
-                flex: 1, // Keep state as flex 1, it will proportionally become smaller
+                flex: 7, // 70% of the row for the textfield
+                child: JJTextField(
+                  label: 'Zip Code',
+                  controller: _zipcodeController,
+                  focusNode: _zipcodeFocus,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  prefixIcon: Icons.mail_outline,
+                  hintText: 'Zip',
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacingSm),
+              Expanded(
+                flex: 3, // 30% of the row for the dropdown
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -640,21 +661,6 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
                       ),
                     ),
                   ],
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingSm),
-              Expanded(
-                flex: 7, // Changed from 3 to 7 to make Zip Code much wider
-                child: JJTextField(
-                  label: 'Zip Code',
-                  controller: _zipcodeController,
-                  focusNode: _zipcodeFocus,
-                  keyboardType: TextInputType.number,
-                  textInputAction: TextInputAction.done,
-                  onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  prefixIcon: Icons.mail_outline,
-                  hintText: 'Zip',
                 ),
               ),
             ],
@@ -830,6 +836,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
           
           const SizedBox(height: AppTheme.spacingXl),
         ],
+      ),
       ),
     ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.2, end: 0);
   }
