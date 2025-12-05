@@ -8,7 +8,7 @@ export 'notification_badge.dart';
 export 'notification_popup.dart';
 export 'offline_indicator.dart';
 export 'offline_indicators.dart';
-export 'optimized_job_card.dart';
+export 'optimized_job_card.dart' hide JobCardSkeleton;
 export 'optimized_selector_widgets.dart';
 export 'optimized_virtual_job_list.dart';
 export 'rich_text_job_card.dart';

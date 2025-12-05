@@ -102,40 +102,40 @@ class JJButton extends StatelessWidget {
     switch (variant) {
       case JJButtonVariant.primary:
         return _ButtonColors(
-          bg: AppTheme.primary,
-          text: Colors.white,
+          backgroundColor: AppTheme.primaryNavy,
+          textColor: Colors.white,
         );
       case JJButtonVariant.secondary:
         return _ButtonColors(
-          bg: AppTheme.surface,
-          text: AppTheme.textPrimary,
-          border: AppTheme.border,
+          backgroundColor: AppTheme.white,
+          textColor: AppTheme.textPrimary,
+          borderColor: AppTheme.lightGray,
         );
       case JJButtonVariant.outline:
         return _ButtonColors(
-          bg: Colors.transparent,
-          text: AppTheme.primary,
-          border: AppTheme.primary,
+          backgroundColor: Colors.transparent,
+          textColor: AppTheme.primaryNavy,
+          borderColor: AppTheme.primaryNavy,
         );
       case JJButtonVariant.danger:
         return _ButtonColors(
-          bg: AppTheme.error,
-          text: Colors.white,
+          backgroundColor: AppTheme.errorRed,
+          textColor: Colors.white,
         );
     }
   }
 
   BoxDecoration _getDecoration(_ButtonColors colors) {
     return BoxDecoration(
-      color: colors.bg,
+      color: colors.backgroundColor,
       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-      border: colors.border != null
-          ? Border.all(color: colors.border!, width: 1.5)
+      border: colors.borderColor != null
+          ? Border.all(color: colors.borderColor!, width: 1.5)
           : null,
       boxShadow: variant == JJButtonVariant.primary
           ? [
               BoxShadow(
-                color: AppTheme.primary.withOpacity(0.3),
+                color: AppTheme.primaryNavy.withOpacity(0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               )
@@ -160,9 +160,13 @@ class _ButtonDimensions {
 }
 
 class _ButtonColors {
-  final Color bg;
-  final Color text;
-  final Color? border;
+  final Color backgroundColor;
+  final Color textColor;
+  final Color? borderColor;
 
-  _ButtonColors({required this.bg, required this.text, this.border});
+  _ButtonColors({
+    required this.backgroundColor,
+    required this.textColor,
+    this.borderColor,
+  });
 }

@@ -51,7 +51,8 @@ class JJTextField extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Primary = navy (light mode), Secondary = copper (dark mode)
-    final Color borderColor = isDark ? AppTheme.copper : AppTheme.primary;
+    final Color borderColor =
+        isDark ? AppTheme.accentCopper : AppTheme.primaryNavy;
 
     // --------------------------------------------------------
     //  Build the InputDecoration that gives us the floating label,
@@ -74,11 +75,11 @@ class JJTextField extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       errorBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppTheme.error, width: 1.5),
+        borderSide: BorderSide(color: AppTheme.errorRed, width: 1.5),
         borderRadius: BorderRadius.circular(8),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppTheme.error, width: 2),
+        borderSide: BorderSide(color: AppTheme.errorRed, width: 2),
         borderRadius: BorderRadius.circular(8),
       ),
     );

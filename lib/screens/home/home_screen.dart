@@ -14,6 +14,8 @@ import 'package:journeyman_jobs/utils/text_formatting_wrapper.dart';
 import 'package:journeyman_jobs/widgets/condensed_job_card.dart';
 import 'package:journeyman_jobs/widgets/dialogs/job_details_dialog.dart';
 import 'package:journeyman_jobs/widgets/notification_badge.dart';
+import 'package:journeyman_jobs/screens/component_demo_screen.dart';
+import 'package:journeyman_jobs/widgets/jj_button.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -275,6 +277,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
           ],
+        ),
+        const SizedBox(height: AppTheme.spacingMd),
+        JJButton(
+          text: 'View Component Demo',
+          icon: Icons.design_services,
+          variant: JJButtonVariant.secondary,
+          isFullWidth: true,
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const ComponentDemoScreen(),
+              ),
+            );
+          },
         ),
       ],
     );

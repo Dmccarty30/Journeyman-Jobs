@@ -27,7 +27,7 @@ class JJText extends StatelessWidget {
   factory JJText.h1(String text, {Color? color, TextAlign? textAlign}) {
     return JJText._(
       text: text,
-      style: AppTheme.headerLarge,
+      style: AppTheme.headlineLarge,
       color: color,
       textAlign: textAlign,
     );
@@ -37,7 +37,7 @@ class JJText extends StatelessWidget {
   factory JJText.h2(String text, {Color? color, TextAlign? textAlign}) {
     return JJText._(
       text: text,
-      style: AppTheme.headerMedium,
+      style: AppTheme.headlineMedium,
       color: color,
       textAlign: textAlign,
     );
@@ -47,7 +47,7 @@ class JJText extends StatelessWidget {
   factory JJText.h3(String text, {Color? color, TextAlign? textAlign}) {
     return JJText._(
       text: text,
-      style: AppTheme.headerSmall,
+      style: AppTheme.headlineSmall,
       color: color,
       textAlign: textAlign,
     );

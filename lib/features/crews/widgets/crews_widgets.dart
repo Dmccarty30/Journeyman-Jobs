@@ -1,6 +1,6 @@
 export 'activity_card.dart';
 export 'announcement_card.dart';
-export 'chat_components.dart';
+export 'chat_components.dart' hide MessageBubble, ChatInput, TypingIndicator;
 export 'chat_input.dart';
 export 'comment_animation.dart';
 export 'comment_input.dart';
@@ -20,5 +20,5 @@ export 'message_status_indicator.dart';
 export 'post_card.dart';
 export 'reaction_animation.dart';
 export 'realtime_summary_feed.dart';
-export 'social_animations.dart';
+export 'social_animations.dart' hide TypingIndicator, ElectricalArcPainter;
 export 'tab_widgets.dart';

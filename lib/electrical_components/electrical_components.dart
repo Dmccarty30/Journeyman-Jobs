@@ -3,7 +3,7 @@ export 'circuit_breaker_toggle.dart';
 export 'circuit_pattern_painter.dart';
 export 'electrical_loader.dart';
 export 'electrical_rotation_meter.dart';
-export 'enhanced_backgrounds.dart';
+export 'enhanced_backgrounds.dart' hide CircuitPatternPainter, main;
 export 'hard_hat_icon.dart';
 export 'jj_circuit_breaker_switch.dart';
 export 'jj_circuit_breaker_switch_list_tile.dart';
