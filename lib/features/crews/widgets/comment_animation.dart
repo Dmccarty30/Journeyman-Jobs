@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'social_animations.dart';
-import '../design_system/app_theme.dart';
+import '../../../design_system/app_theme.dart';
 
 /// Comment animation with slide-in effects and transitions
 class CommentAnimation extends StatefulWidget {

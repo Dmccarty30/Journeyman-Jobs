@@ -23,7 +23,7 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
   final _crewNameController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  String _selectedJobType = 'Inside Wireman';
+  String _selectedJobType = 'Journeyman Lineman';
   int _minHourlyRate = 25;
   bool _autoShareEnabled = false;
 
@@ -72,6 +72,7 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
             );
             
             // Navigate to Tailboard screen
+            // ignore: use_build_context_synchronously
             context.go('${AppRouter.crews}/$crewId');
           } else if (mounted) {
             // User cancelled preferences, navigate to Tailboard with initial preferences
@@ -118,8 +119,13 @@ class CreateCrewScreenState extends ConsumerState<CreateCrewScreen> {
                 DropdownButtonFormField<String>(
                   initialValue: _selectedJobType,
                   items: const [
-                    DropdownMenuItem(value: 'Inside Wireman', child: Text('Inside Wireman')),
                     DropdownMenuItem(value: 'Journeyman Lineman', child: Text('Journeyman Lineman')),
+                    DropdownMenuItem(value: 'Inside Wireman', child: Text('Inside Wireman')),
+                    DropdownMenuItem(value: 'Journeyman Electrician', child: Text('Journeyman Electrician')),
+                    DropdownMenuItem(value: 'Operator', child: Text('Operator')),
+                    DropdownMenuItem(value: 'URD Technician', child: Text('URD Technician')),
+                    DropdownMenuItem(value: 'Transmission Technician', child: Text('Transmission Technician')),
+                    DropdownMenuItem(value: 'Cable Splicer', child: Text('Cable Splicer')),
                   ],
                   onChanged: (String? newValue) {
                     setState(() {

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:from_css_color/from_css_color.dart';
 
-import '../../../utils/enum_utils.dart' as enum_utils;
+import '../../../features/crews/enum_utils.dart' as enum_utils;
 import 'firestore_util.dart';
 
 export 'package:flutter/material.dart' show Color, Colors;

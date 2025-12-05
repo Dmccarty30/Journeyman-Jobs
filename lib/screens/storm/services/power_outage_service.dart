@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'cache_service.dart';
+import '../../../services/cache_service.dart';
 
 /// Power outage data service using PowerOutage.us public API
 /// 

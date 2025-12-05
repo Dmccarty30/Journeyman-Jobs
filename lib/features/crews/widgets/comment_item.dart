@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../design_system/app_theme.dart';
-import '../features/crews/models/tailboard.dart';
+import '../../../design_system/app_theme.dart';
+import '../models/tailboard.dart';
 
 class CommentItem extends StatefulWidget {
   final Comment comment;

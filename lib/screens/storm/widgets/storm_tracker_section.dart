@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/components/reusable_components.dart';
 import '../../../models/storm_track.dart';
-import '../../../services/storm_tracking_service.dart';
+import '../services/storm_tracking_service.dart';
 import 'storm_track_form.dart';
 import 'package:intl/intl.dart';
 

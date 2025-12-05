@@ -1,166 +1,115 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import '../../../design_system/app_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:journeyman_jobs/providers/core_providers.dart';
+import 'dart:async';
 
-class ChatInput extends StatefulWidget {
+
+class ChatInput extends ConsumerStatefulWidget {
+  final String crewId;
+  final String convId;
   final Function(String) onSendMessage;
-  final VoidCallback? onAttachmentPressed;
-  final VoidCallback? onVoicePressed;
-  final bool isVoiceEnabled;
-  final String hintText;
 
   const ChatInput({
     super.key,
+    required this.crewId,
+    required this.convId,
     required this.onSendMessage,
-    this.onAttachmentPressed,
-    this.onVoicePressed,
-    this.isVoiceEnabled = true,
-    this.hintText = 'Type a message...',
   });
 
   @override
-  State<ChatInput> createState() => _ChatInputState();
+  ConsumerState<ChatInput> createState() => _ChatInputState();
 }
 
-class _ChatInputState extends State<ChatInput> {
+class _ChatInputState extends ConsumerState<ChatInput> {
   final TextEditingController _controller = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
-  bool _canSend = false;
+  Timer? _typingTimer;
+  bool _isTyping = false;
 
   @override
   void initState() {
     super.initState();
-    _controller.addListener(_onTextChanged);
+    _controller.addListener(_handleTextChange);
   }
 
-  @override
-  void dispose() {
-    _controller.removeListener(_onTextChanged);
-    _controller.dispose();
-    _focusNode.dispose();
-    super.dispose();
+  void _handleTextChange() {
+    final text = _controller.text.trim();
+    final typing = text.isNotEmpty;
+    if (typing != _isTyping) {
+      _isTyping = typing;
+      if (typing) {
+        _startTypingTimer();
+      } else {
+        _stopTyping();
+      }
+    }
   }
 
-  void _onTextChanged() {
-    setState(() {
-      _canSend = _controller.text.trim().isNotEmpty;
+  void _startTypingTimer() {
+    _typingTimer?.cancel();
+    _typingTimer = Timer(const Duration(milliseconds: 400), () {
+      final dbService = ref.read(databaseServiceProvider);
+      final currentUserAsync = ref.read(currentUserProvider);
+      final userId = currentUserAsync?.uid ?? '';
+      if (userId.isNotEmpty) {
+        dbService.updateTyping(widget.crewId, widget.convId, userId, true);
+      }
     });
   }
 
+  void _stopTyping() {
+    _typingTimer?.cancel();
+    final dbService = ref.read(databaseServiceProvider);
+    final currentUserAsync = ref.read(currentUserProvider);
+    final userId = currentUserAsync?.uid ?? '';
+    if (userId.isNotEmpty) {
+      dbService.updateTyping(widget.crewId, widget.convId, userId, false);
+    }
+  }
+
   void _sendMessage() {
-    final text = _controller.text.trim();
-    if (text.isNotEmpty) {
-      widget.onSendMessage(text);
+    if (_controller.text.trim().isNotEmpty) {
+      final msg = _controller.text.trim();
+      widget.onSendMessage(msg);
       _controller.clear();
-      _focusNode.requestFocus();
+      _stopTyping();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        border: Border(
-          top: BorderSide(
-            color: AppTheme.borderLight.withValues(alpha: 0.5),
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (widget.onAttachmentPressed != null)
-            IconButton(
-              icon: Icon(
-                Icons.attach_file,
-                color: AppTheme.textSecondary,
-                size: 24,
-              ),
-              onPressed: widget.onAttachmentPressed,
-              padding: const EdgeInsets.all(8),
-              constraints: const BoxConstraints(),
-            ),
-          const SizedBox(width: 8),
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppTheme.offWhite,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppTheme.borderLight,
-                  width: 1,
+            child: TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                hintText: 'Send a message...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
                 ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
               ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      focusNode: _focusNode,
-                      maxLines: null,
-                      minLines: 1,
-                      maxLength: 1000,
-                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                      textCapitalization: TextCapitalization.sentences,
-                      decoration: InputDecoration(
-                        hintText: widget.hintText,
-                        hintStyle: TextStyle(
-                          color: AppTheme.textLight,
-                          fontSize: 14,
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        counterText: '',
-                      ),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: AppTheme.textPrimary,
-                      ),
-                      onSubmitted: (_) => _sendMessage(),
-                    ),
-                  ),
-                  if (_controller.text.isEmpty && widget.isVoiceEnabled && widget.onVoicePressed != null)
-                    IconButton(
-                      icon: Icon(
-                        Icons.mic,
-                        color: AppTheme.accentCopper,
-                        size: 24,
-                      ),
-                      onPressed: widget.onVoicePressed,
-                      padding: const EdgeInsets.all(8),
-                      constraints: const BoxConstraints(),
-                    ),
-                ],
-              ),
+              onSubmitted: (_) => _sendMessage(),
             ),
           ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: Icon(
-              _canSend ? Icons.send : Icons.keyboard_voice,
-              color: _canSend ? AppTheme.accentCopper : AppTheme.textSecondary,
-              size: 24,
-            ),
-            onPressed: _canSend ? _sendMessage : null,
-            padding: const EdgeInsets.all(8),
-            constraints: const BoxConstraints(),
+          const SizedBox(width: 8.0),
+          FloatingActionButton(
+            onPressed: _sendMessage,
+            mini: true,
+            child: const Icon(Icons.send),
           ),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_handleTextChange);
+    _typingTimer?.cancel();
+    _controller.dispose();
+    super.dispose();
   }
 }

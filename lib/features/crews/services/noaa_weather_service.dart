@@ -6,7 +6,7 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
-import 'cache_service.dart';
+import '../../../services/cache_service.dart';
 
 /// NOAA Weather Service for authoritative US weather data
 /// 

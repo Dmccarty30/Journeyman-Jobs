@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../design_system/app_theme.dart';
+import '../../../design_system/app_theme.dart';
 
 class CommentInput extends StatefulWidget {
   final String postId;

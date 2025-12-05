@@ -1,4 +1,4 @@
-import '../models/job_suggestion_model.dart';
+import '../../../models/job_suggestion_model.dart';
 
 class ChatCompositionService {
   /// Simulates composing a message for a user based on an AI job suggestion.

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'social_animations.dart';
-import '../design_system/app_theme.dart';
+import '../../../design_system/app_theme.dart';
 
 /// Pull-to-refresh widget with electrical theme animation
 class ElectricalPullToRefresh extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../design_system/app_theme.dart';
-import '../features/crews/models/tailboard.dart';
+import '../../../design_system/app_theme.dart';
+import '../models/tailboard.dart';
 import 'comment_item.dart';
 
 class CommentThread extends StatefulWidget {

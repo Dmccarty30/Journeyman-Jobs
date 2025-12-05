@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../models/post_model.dart';
 import '../../../design_system/app_theme.dart';
-import '../../../widgets/reaction_animation.dart';
-import '../../../widgets/like_animation.dart';
-import '../../../widgets/comment_animation.dart';
+import 'reaction_animation.dart';
+import 'like_animation.dart';
+import 'comment_animation.dart';
 import 'crew_member_avatar.dart';
-import '../../../widgets/comment_input.dart';
-import '../../../widgets/comment_thread.dart';
+import 'comment_input.dart';
+import 'comment_thread.dart';
 import '../models/tailboard.dart';
 
 class PostCard extends StatefulWidget {

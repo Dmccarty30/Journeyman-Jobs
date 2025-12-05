@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../design_system/app_theme.dart';
+import '../../../design_system/app_theme.dart';
 // Assuming models for posts, messages, jobs exist or will be created
 // import '../../models/post_model.dart';
 // import '../../models/message_model.dart';

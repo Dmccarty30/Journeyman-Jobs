@@ -7,7 +7,7 @@ import 'package:state_notifier/state_notifier.dart';
 import '../../../providers/core_providers.dart' as core_providers;
 import '../../../providers/riverpod/auth_riverpod_provider.dart'
     as auth_providers;
-import '../../../services/feed_service.dart';
+import '../services/feed_service.dart';
 import '../../../models/post_model.dart';
 import '../models/tailboard.dart';
 

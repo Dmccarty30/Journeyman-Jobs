@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'social_animations.dart';
-import '../design_system/app_theme.dart';
+import '../../../design_system/app_theme.dart';
 
 /// Enhanced reaction animation with bounce, particle effects, and electrical theme
 class EnhancedReactionAnimation extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 
-import '../domain/exceptions/app_exception.dart';
-import '../models/post_model.dart';
+import '../../../domain/exceptions/app_exception.dart';
+import '../../../models/post_model.dart';
 
 class FeedService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
