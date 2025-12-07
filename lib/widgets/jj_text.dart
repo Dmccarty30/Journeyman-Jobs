@@ -14,14 +14,13 @@ class JJText extends StatelessWidget {
   final Color? color;
 
   const JJText._({
-    Key? key,
     required this.text,
     required this.style,
     this.textAlign,
     this.maxLines,
     this.overflow,
     this.color,
-  }) : super(key: key);
+  });
 
   /// Large Header (H1)
   factory JJText.h1(String text, {Color? color, TextAlign? textAlign}) {

@@ -1,0 +1,34 @@
+{
+  "output": {
+    "filePath": "d:\\Journeyman-Jobs\\repomix-output.md",
+    "style": "markdown",
+    "parsableStyle": true,
+    "headerText": "",
+    "instructionFilePath": "",
+    "fileSummary": true,
+    "directoryStructure": true,
+    "removeComments": true,
+    "removeEmptyLines": true,
+    "topFilesLength": 5,
+    "showLineNumbers": false,
+    "copyToClipboard": true,
+    "includeEmptyDirectories": false,
+    "compress": true
+  },
+  "include": [
+    "lib/features/crews/**/**.dart",
+    "lib/design_system/*.dart"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": []
+  },
+  "security": {
+    "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
+  },
+  "cwd": "d:\\Journeyman-Jobs"
+}

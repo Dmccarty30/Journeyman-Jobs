@@ -1,2 +1,0 @@
-command = "echo Hello from the example command extension!"
-description = "Greets the user with a custom message."

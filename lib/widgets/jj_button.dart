@@ -15,7 +15,7 @@ class JJButton extends StatelessWidget {
   final JJButtonSize size;
 
   const JJButton({
-    Key? key,
+    super.key,
     required this.text,
     this.onPressed,
     this.icon,
@@ -23,7 +23,7 @@ class JJButton extends StatelessWidget {
     this.isFullWidth = false,
     this.variant = JJButtonVariant.primary,
     this.size = JJButtonSize.medium,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +135,7 @@ class JJButton extends StatelessWidget {
       boxShadow: variant == JJButtonVariant.primary
           ? [
               BoxShadow(
-                color: AppTheme.primaryNavy.withOpacity(0.3),
+                color: AppTheme.primaryNavy.withValues(alpha:0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               )

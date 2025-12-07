@@ -8,7 +8,7 @@ import '../design_system/app_theme.dart';
 ///   • Accepts a controller, optional focus node and any other TextFormField params.
 class JJTextField extends StatelessWidget {
   const JJTextField({
-    Key? key,
+    super.key,
     required this.label,
     required this.hint,
     required this.controller,
@@ -24,7 +24,7 @@ class JJTextField extends StatelessWidget {
     this.onFieldSubmitted,
     this.inputFormatters,
     this.enabled = true,
-  }) : super(key: key);
+  });
 
   final String label;
   final String hint;
