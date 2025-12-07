@@ -1069,6 +1069,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             controller: _careerGoalsController,
             enabled: _isEditing,
             prefixIcon: Icons.trending_up,
+            hintText: 'BE MORE LIKE ELI SMITH',
             maxLines: 3,
           ),
         ],
