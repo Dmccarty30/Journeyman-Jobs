@@ -37,7 +37,28 @@ Journeyman Jobs is a Flutter mobile application for IBEW electrical professional
     └── navigation/
     ```
 
-* **Imports**: Prefer relative within feature, absolute for cross-feature.
+* **Imports**
+
+* Always use package imports (package:journeyman_jobs/...) for any file inside lib/.
+* Never use relative imports (../..) inside lib/ (except in main.dart or very rare cases).
+* Relative imports are only allowed inside the test/ folder or when a file in lib/ imports something outside lib/ (e.g., lib/main.dart importing src/ or gen/).
+
+Correct examples:
+
+```Dart
+import 'package:journeyman_jobs/core/utils/extensions.dart';
+import 'package:journeyman_jobs/design_system/components/button.dart';
+import 'package:journeyman_jobs/features/auth/presentation/login_screen.dart';
+import 'package:journeyman_jobs/features/profile/data/profile_repository.dart';
+```
+
+Incorrect (forbidden inside lib/):
+
+```Dart
+import '../../core/utils/extensions.dart';
+import '../../../design_system/components/button.dart';
+import '../data/profile_repository.dart';
+```
 
 ## 🧪 Testing Guidelines
 
@@ -46,7 +67,7 @@ Journeyman Jobs is a Flutter mobile application for IBEW electrical professional
 
 ## 🚦 Operational Guidelines for Gemini
 
-1. **Context First**: Always refer to `CLAUDE.md`, `PROJECT_OVERVIEW_REPORT.md`, `plan.md`, `TASK.md`, and `guide/screens.md` for project context, current status, and requirements.
+1. **Context First**: Always refer to for project context, current status, and requirements.
 2. **Adhere to Conventions**: Strictly follow Flutter/Dart conventions, project's code style, and architectural patterns.
 3. **Firebase Focus**: All backend interactions will be with Firebase. Do not assume other backend services.
 4. **Electrical Theme**: Maintain the electrical design theme in all UI/UX considerations.

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/widgets/design_system_widgets.dart';
+import 'package:journeyman_jobs/electrical_components/electrical_components.dart';
 import '../../../models/storm_track.dart';
 import '../services/storm_tracking_service.dart';
 
