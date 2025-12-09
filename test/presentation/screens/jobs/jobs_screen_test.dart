@@ -29,9 +29,15 @@ void main() {
     when(mockJobsProvider.jobs).thenReturn([]);
     when(mockJobsProvider.error).thenReturn(null);
     when(mockJobsProvider.hasMore).thenReturn(false);
-    when(mockJobsProvider.loadJobs()).thenAnswer((_) async {});
-    when(mockJobsProvider.loadMoreJobs()).thenAnswer((_) async {});
-    when(mockJobsProvider.refreshJobs()).thenAnswer((_) async {});
+    when(mockJobsProvider.loadJobs()).thenAnswer((_) async {
+      return null;
+    });
+    when(mockJobsProvider.loadMoreJobs()).thenAnswer((_) async {
+      return null;
+    });
+    when(mockJobsProvider.refreshJobs()).thenAnswer((_) async {
+      return null;
+    });
     
     when(mockJobFilterProvider.activeFilters).thenReturn(FilterCriteria.empty());
     when(mockJobFilterProvider.hasActiveFilters).thenReturn(false);

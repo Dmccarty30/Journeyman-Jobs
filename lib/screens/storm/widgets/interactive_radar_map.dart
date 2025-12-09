@@ -58,7 +58,7 @@ class _InteractiveRadarMapState extends State<InteractiveRadarMap>
   
   // Radar settings
   double _radarOpacity = 0.7;
-  RadarColorScheme _colorScheme = RadarColorScheme.universal;
+  final RadarColorScheme _colorScheme = RadarColorScheme.universal;
   bool showSatellite = false;
   
   @override

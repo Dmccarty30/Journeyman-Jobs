@@ -28,7 +28,9 @@ void main() {
     when(mockLocalsProvider.searchQuery).thenReturn('');
     when(mockLocalsProvider.selectedState).thenReturn(null);
     when(mockLocalsProvider.availableStates).thenReturn(MockData.ibewStates);
-    when(mockLocalsProvider.loadLocals()).thenAnswer((_) async {});
+    when(mockLocalsProvider.loadLocals()).thenAnswer((_) async {
+      return null;
+    });
     when(mockLocalsProvider.searchLocals(any)).thenReturn(null);
     when(mockLocalsProvider.filterByState(any)).thenReturn(null);
     when(mockLocalsProvider.clearFilters()).thenReturn(null);

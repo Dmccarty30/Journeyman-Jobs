@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mockito/mockito.dart';
 import 'package:journeyman_jobs/features/crews/screens/tailboard_screen.dart';
 import 'package:journeyman_jobs/features/crews/models/crew.dart';
 import 'package:journeyman_jobs/features/crews/models/crew_preferences.dart';
@@ -11,19 +10,14 @@ import 'package:journeyman_jobs/domain/enums/member_role.dart';
 // Mock classes for testing
 class MockCrew extends Crew {
   MockCrew({
-    required String id,
-    required String name,
-    required String foremanId,
-    required List<String> memberIds,
+    required super.id,
+    required super.name,
+    required super.foremanId,
+    required super.memberIds,
     required CrewPreferences filters,
-    required DateTime createdAt,
+    required super.createdAt,
   }) : super(
-          id: id,
-          name: name,
-          foremanId: foremanId,
-          memberIds: memberIds,
           filters: filters,
-          createdAt: createdAt,
           preferences: filters,
           roles: {foremanId: MemberRole.foreman},
           stats: CrewStats(

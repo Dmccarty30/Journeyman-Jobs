@@ -26,14 +26,14 @@ class NoaaRadarMap extends StatefulWidget {
   final Function(NoaaAlert)? onAlertTap;
   
   const NoaaRadarMap({
-    Key? key,
+    super.key,
     this.initialLatitude = 39.8283, // US center
     this.initialLongitude = -98.5795,
     this.initialZoom = 5.0,
     this.showAlerts = true,
     this.showHurricanes = true,
     this.onAlertTap,
-  }) : super(key: key);
+  });
 
   @override
   State<NoaaRadarMap> createState() => _NoaaRadarMapState();

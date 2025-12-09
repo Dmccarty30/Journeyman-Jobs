@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart';
+import '../../design_system/widgets/design_system_widgets.dart';
 import '../../utils/error_sanitizer.dart';
+import '../../design_system/components/reusable_components.dart'; 
 
 /// Generic query popup that can query any Firestore collection
 class FirestoreQueryPopup<T> extends StatefulWidget {

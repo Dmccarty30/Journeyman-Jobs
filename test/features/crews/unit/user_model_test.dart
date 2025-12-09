@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../lib/models/user_model.dart';
+import 'package:journeyman_jobs/models/user_model.dart';
 
 class MockDocumentSnapshot implements DocumentSnapshot {
   @override

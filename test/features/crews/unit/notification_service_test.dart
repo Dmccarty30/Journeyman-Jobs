@@ -4,8 +4,8 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
-import '../../../../lib/services/notification_service.dart';
-import '../../../../lib/models/notification/notification_preferences_model.dart';
+import 'package:journeyman_jobs/services/notification_service.dart';
+import 'package:journeyman_jobs/models/notification/notification_preferences_model.dart';
 
 class MockUser implements firebase_auth.User {
   @override
@@ -139,7 +139,7 @@ class MockQueryDocumentSnapshot implements QueryDocumentSnapshot {
 }
 
 class MockSharedPreferences implements SharedPreferences {
-  Map<String, dynamic> _values = {};
+  final Map<String, dynamic> _values = {};
 
   @override
   Future<bool> setBool(String key, bool value) async {

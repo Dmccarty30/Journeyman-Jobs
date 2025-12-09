@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:journeyman_jobs/design_system/widgets/design_system_widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../design_system/app_theme.dart';
-import '../design_system/components/reusable_components.dart';
 
 /// Service to handle notification permissions and guide users through setup
 class NotificationPermissionService {

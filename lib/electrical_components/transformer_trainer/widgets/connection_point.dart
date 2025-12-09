@@ -250,8 +250,7 @@ class _ConnectionPointWidgetState extends State<ConnectionPointWidget>
               );
             },
             onWillAcceptWithDetails: (DragTargetDetails<String> details) {
-              final String? data = details.data;
-              if (data == null) return false;
+              final String data = details.data;
               final bool canAccept = data != widget.connectionPoint.id;
               if (canAccept) {
                 HapticFeedback.selectionClick(); // Preview feedback

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:journeyman_jobs/design_system/components/reusable_components.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:go_router/go_router.dart';
 import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart';
+import '../../design_system/widgets/design_system_widgets.dart';
 import '../../navigation/app_router.dart';
 import '../../electrical_components/modern_svg_circuit_background.dart';
 

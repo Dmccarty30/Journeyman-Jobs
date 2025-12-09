@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:journeyman_jobs/design_system/components/reusable_components.dart';
 import 'package:journeyman_jobs/electrical_components/circuit_board_background.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import '../../../design_system/app_theme.dart';
-import '../../../design_system/components/reusable_components.dart';
+import '../../../design_system/widgets/design_system_widgets.dart';
 import '../../../services/notification_permission_service.dart';
 import '../../../navigation/app_router.dart';
 

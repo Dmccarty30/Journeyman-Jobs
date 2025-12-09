@@ -11,7 +11,7 @@ import '../../design_system/app_theme.dart';
 /// Showcase screen demonstrating all electrical-themed components
 /// Perfect for testing and previewing the electrical theme implementation
 class ElectricalComponentsShowcaseScreen extends StatefulWidget {
-  const ElectricalComponentsShowcaseScreen({Key? key}) : super(key: key);
+  const ElectricalComponentsShowcaseScreen({super.key});
 
   @override
   State<ElectricalComponentsShowcaseScreen> createState() => _ElectricalComponentsShowcaseScreenState();

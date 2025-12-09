@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:journeyman_jobs/design_system/components/reusable_components.dart';
 import '../../../../design_system/app_theme.dart';
-import '../../../../design_system/components/reusable_components.dart';
+import '../../../../design_system/widgets/design_system_widgets.dart';
 import '../../../../electrical_components/jj_circuit_breaker_switch_list_tile.dart';
 import '../../../../electrical_components/jj_circuit_breaker_switch.dart';
 import 'calculation_helpers.dart';

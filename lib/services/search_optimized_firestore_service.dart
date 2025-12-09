@@ -352,7 +352,7 @@ class SearchOptimizedFirestoreService extends ResilientFirestoreService {
     _searchMetrics[query] = metrics;
     
     if (kDebugMode) {
-      print('Search: "$query" -> ${resultCount} results in ${responseTime.inMilliseconds}ms '
+      print('Search: "$query" -> $resultCount results in ${responseTime.inMilliseconds}ms '
           '${cacheHit ? '(cached)' : '(fresh)'}');
     }
   }

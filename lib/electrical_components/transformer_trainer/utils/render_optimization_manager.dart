@@ -1,7 +1,6 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 import '../services/structured_logger.dart';
 import 'transformer_performance_monitor.dart';

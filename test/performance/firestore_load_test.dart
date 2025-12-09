@@ -370,7 +370,7 @@ void main() {
               reason: 'Poor scaling from $prevLoad to $currentLoad users');
         }
         
-        print('✅ Scaling test completed: ${responseTimes}');
+        print('✅ Scaling test completed: $responseTimes');
       });
 
       test('Should handle sustained load over time', () async {
@@ -422,7 +422,7 @@ void main() {
         expect(successRate, greaterThan(0.8),
             reason: 'Sustained load success rate too low: ${(successRate * 100).toStringAsFixed(1)}%');
         
-        print('✅ Sustained load: ${totalSuccessful}/$expectedOperations ops (${(successRate * 100).toStringAsFixed(1)}%)');
+        print('✅ Sustained load: $totalSuccessful/$expectedOperations ops (${(successRate * 100).toStringAsFixed(1)}%)');
       });
 
       test('Should recover gracefully from overload', () async {
@@ -476,7 +476,7 @@ void main() {
         expect(overloadSuccessRate, greaterThan(0.3),
             reason: 'System failed completely under overload');
         
-        print('✅ Overload: ${overloadSuccesses}/$overloadUsers succeeded (${(overloadSuccessRate * 100).toStringAsFixed(1)}%)');
+        print('✅ Overload: $overloadSuccesses/$overloadUsers succeeded (${(overloadSuccessRate * 100).toStringAsFixed(1)}%)');
         print('✅ Recovery: $recoveryUsers/$recoveryUsers in ${recoveryStopwatch.elapsedMilliseconds}ms');
       });
     });

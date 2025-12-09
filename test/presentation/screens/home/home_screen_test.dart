@@ -27,7 +27,9 @@ void main() {
     when(mockAppStateProvider.isLoading).thenReturn(false);
     when(mockAppStateProvider.jobs).thenReturn([]);
     when(mockAppStateProvider.error).thenReturn(null);
-    when(mockAppStateProvider.refreshJobs()).thenAnswer((_) async {});
+    when(mockAppStateProvider.refreshJobs()).thenAnswer((_) async {
+      return null;
+    });
   });
 
   Widget createHomeScreen() {
@@ -346,7 +348,9 @@ void main() {
       await tester.pumpAndSettle();
       
       // Trigger refresh
-      when(mockAppStateProvider.refreshJobs()).thenAnswer((_) async {});
+      when(mockAppStateProvider.refreshJobs()).thenAnswer((_) async {
+        return null;
+      });
       await tester.fling(find.byType(ListView), const Offset(0, 500), 1000);
       await tester.pumpAndSettle();
 

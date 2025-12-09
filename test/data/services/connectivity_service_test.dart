@@ -4,7 +4,6 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:journeyman_jobs/services/connectivity_service.dart';
-import '../../fixtures/test_constants.dart';
 
 // Generate mocks
 @GenerateMocks([Connectivity])
@@ -283,7 +282,7 @@ void main() {
       // Arrange
       final listeners = <VoidCallback>[];
       for (int i = 0; i < 10; i++) {
-        final listener = () {};
+        void listener() {}
         listeners.add(listener);
         connectivityService.addListener(listener);
       }

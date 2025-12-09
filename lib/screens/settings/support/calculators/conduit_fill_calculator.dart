@@ -687,7 +687,7 @@ class _ConduitFillCalculatorState extends State<ConduitFillCalculator> {
         ),
         const SizedBox(height: AppTheme.spacingSm),
         DropdownButtonFormField<T>(
-          value: value,
+          initialValue: value,
           items: items,
           onChanged: onChanged,
           decoration: InputDecoration(

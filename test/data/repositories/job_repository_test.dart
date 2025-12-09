@@ -282,7 +282,7 @@ class JobRepositoryImpl implements JobRepository {
     final snapshot = await firestore
         .collection(TestConstants.jobsCollection)
         .where('company', isGreaterThanOrEqualTo: searchTerm)
-        .where('company', isLessThan: searchTerm + '\uf8ff')
+        .where('company', isLessThan: '$searchTerm\uf8ff')
         .get();
     
     return snapshot.docs.map((doc) {

@@ -9,8 +9,6 @@ import 'package:journeyman_jobs/services/connectivity_service.dart';
 import 'package:journeyman_jobs/services/performance_monitoring_service.dart';
 import 'package:journeyman_jobs/models/job_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
 /// Comprehensive performance test suite for backend optimizations
 /// Tests all Phase 1-3 performance improvements and Phase 4 monitoring

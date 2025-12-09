@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
 import '../../../design_system/app_theme.dart';
-import '../../../design_system/components/reusable_components.dart';
+import '../../../design_system/widgets/design_system_widgets.dart';
 import '../../../electrical_components/jj_circuit_breaker_switch.dart';
 import '../../../services/avatar_service.dart';
 

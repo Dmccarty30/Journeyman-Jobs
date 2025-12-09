@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/widgets.dart';
+import 'package:journeyman_jobs/widgets/jj_text.dart';
+import '../design_system/widgets/design_system_widgets.dart';
 import '../design_system/design_system.dart';
 
 class ComponentDemoScreen extends StatefulWidget {
@@ -70,25 +71,25 @@ class _ComponentDemoScreenState extends State<ComponentDemoScreen> {
             const _SectionHeader('Text Fields (JJTextField)'),
             JJTextField(
               label: 'Standard Field',
-              hint: 'Type something...',
+              hintText: 'Type something...',
               controller: _textCtrl,
             ),
             const SizedBox(height: 16),
             JJTextField(
               label: 'Email Address',
-              hint: 'worker@ibew.org',
+              hintText: 'worker@ibew.org',
               controller: _emailCtrl,
               keyboardType: TextInputType.emailAddress,
-              prefixIcon: const Icon(Icons.email_outlined),
+              prefixIcon: Icons.email_outlined,
             ),
             const SizedBox(height: 16),
             JJTextField(
               label: 'Password',
-              hint: 'Enter your password',
+              hintText: 'Enter your password',
               controller: _passwordCtrl,
               obscureText: true,
-              prefixIcon: const Icon(Icons.lock_outline),
-              suffixIcon: const Icon(Icons.visibility_off),
+              prefixIcon: Icons.lock_outline,
+              suffixIcon: Icons.visibility_off,
             ),
 
             const SizedBox(height: 32),

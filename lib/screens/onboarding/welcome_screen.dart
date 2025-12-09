@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../electrical_components/circuit_board_background.dart';
 import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart';
+import '../../design_system/widgets/design_system_widgets.dart';
 import '../../navigation/app_router.dart';
 
 class WelcomeScreen extends StatefulWidget {

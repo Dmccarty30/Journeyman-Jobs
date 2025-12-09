@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../design_system/app_theme.dart';
-import '../../../../design_system/components/reusable_components.dart';
+import '../../../../design_system/widgets/design_system_widgets.dart';
 import 'electrical_constants.dart';
 import 'calculation_helpers.dart';
 
@@ -418,7 +418,7 @@ class _VoltageDropCalculatorState extends State<VoltageDropCalculator> {
         ),
         const SizedBox(height: AppTheme.spacingSm),
         DropdownButtonFormField<T>(
-          value: value,
+          initialValue: value,
           items: items,
           onChanged: onChanged,
           decoration: InputDecoration(

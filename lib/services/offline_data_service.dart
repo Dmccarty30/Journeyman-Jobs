@@ -599,7 +599,7 @@ class OfflineDataService {
         
       } catch (e) {
         debugPrint('Failed to sync change ${entry.key}: $e');
-        throw e; // Re-throw to handle in main sync method
+        rethrow; // Re-throw to handle in main sync method
       }
     }
 

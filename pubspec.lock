@@ -250,7 +250,7 @@ packages:
     source: hosted
     version: "6.1.0"
   cloud_firestore_platform_interface:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: cloud_firestore_platform_interface
       sha256: "2d2ee96a32ec3dd22fb682295e9bed6336e49a43f056d7841690228adca3ee7d"
@@ -290,7 +290,7 @@ packages:
     source: hosted
     version: "7.0.0"
   connectivity_plus_platform_interface:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: connectivity_plus_platform_interface
       sha256: "42657c1715d48b167930d5f34d00222ac100475f73d10162ddf43e714932f204"
@@ -322,7 +322,7 @@ packages:
     source: hosted
     version: "0.3.5+1"
   crypto:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: crypto
       sha256: c8ea0233063ba03258fbcf2ca4d6dadfefe14f02fab57702265467a19f27fadf
@@ -1080,7 +1080,7 @@ packages:
     source: hosted
     version: "0.2.8"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       sha256: "87721a4a50b19c7f1d49001e51409bddc46303966ce89a65af4f4e6004896412"
@@ -1660,7 +1660,7 @@ packages:
     source: hosted
     version: "3.2.2"
   riverpod:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: riverpod
       sha256: c406de02bff19d920b832bddfb8283548bfa05ce41c59afba57ce643e116aa59

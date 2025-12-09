@@ -48,7 +48,7 @@ class JobMatchCard extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
-                      '${matchScore}% Match',
+                      '$matchScore% Match',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
@@ -148,7 +148,7 @@ class JobMatchCard extends ConsumerWidget {
                           ],
                         ),
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               const SizedBox(height: 12),

@@ -19,30 +19,30 @@ class AppException implements Exception {
 
 /// Authentication-related errors
 class AuthError extends AppException {
-  AuthError(String message, {String? code}) : super(message, code: code);
+  AuthError(super.message, {super.code});
 }
 
 /// Network and connectivity errors
 class NetworkError extends AppException {
-  NetworkError(String message, {String? code}) : super(message, code: code);
+  NetworkError(super.message, {super.code});
 }
 
 /// Permission and authorization errors
 class PermissionError extends AppException {
-  PermissionError(String message, {String? code}) : super(message, code: code);
+  PermissionError(super.message, {super.code});
 }
 
 /// Offline connectivity errors
 class OfflineError extends AppException {
-  OfflineError(String message, {String? code}) : super(message, code: code);
+  OfflineError(super.message, {super.code});
 }
 
 /// Data validation errors
 class ValidationError extends AppException {
-  ValidationError(String message, {String? code}) : super(message, code: code);
+  ValidationError(super.message, {super.code});
 }
 
 /// Storage and file operation errors
 class StorageError extends AppException {
-  StorageError(String message, {String? code}) : super(message, code: code);
+  StorageError(super.message, {super.code});
 }

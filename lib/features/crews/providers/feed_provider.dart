@@ -1,5 +1,4 @@
 // lib/features/crews/providers/feed_provider.dart
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:state_notifier/state_notifier.dart';

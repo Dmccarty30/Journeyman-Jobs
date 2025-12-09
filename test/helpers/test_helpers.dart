@@ -61,7 +61,7 @@ class TestResilientFirestoreService extends Mock implements ResilientFirestoreSe
     return await _firestore
         .collection('locals')
         .where('name', isGreaterThanOrEqualTo: searchQuery)
-        .where('name', isLessThan: searchQuery + '\uf8ff')
+        .where('name', isLessThan: '$searchQuery\uf8ff')
         .limit(limit)
         .get();
   }
@@ -163,14 +163,14 @@ class TestAppWrapper extends StatelessWidget {
   final JobFilterProvider? jobFilterProvider;
 
   const TestAppWrapper({
-    Key? key,
+    super.key,
     required this.child,
     this.authService,
     this.firestoreService,
     this.connectivityService,
     this.appStateProvider,
     this.jobFilterProvider,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -224,12 +224,12 @@ Widget createTestWidget(
   JobFilterProvider? jobFilterProvider,
 }) {
   return TestAppWrapper(
-    child: widget,
     authService: authService,
     firestoreService: firestoreService,
     connectivityService: connectivityService,
     appStateProvider: appStateProvider,
     jobFilterProvider: jobFilterProvider,
+    child: widget,
   );
 }
 

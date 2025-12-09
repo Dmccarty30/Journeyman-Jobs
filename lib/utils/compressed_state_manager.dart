@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
@@ -141,7 +140,7 @@ class CompressedStateManager {
         if (kDebugMode) {
           print('CompressedStateManager: Saved $key - '
               'Original: ${originalSize}B, Compressed: ${compressedSize}B '
-              '(${compressionRatio}% reduction) in ${stopwatch?.elapsedMilliseconds}ms');
+              '($compressionRatio% reduction) in ${stopwatch?.elapsedMilliseconds}ms');
         }
       }
     } catch (e) {

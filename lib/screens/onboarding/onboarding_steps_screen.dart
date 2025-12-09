@@ -4,10 +4,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:journeyman_jobs/design_system/components/reusable_components.dart';
 import 'package:journeyman_jobs/domain/enums/enums.dart';
 import 'package:journeyman_jobs/domain/enums/onboarding_status.dart';
 import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart';
+import '../../design_system/widgets/design_system_widgets.dart';
 import '../../models/user_model.dart';
 import '../../navigation/app_router.dart';
 import '../../services/onboarding_service.dart';
@@ -202,7 +203,7 @@ class _OnboardingStepsScreenState extends State<OnboardingStepsScreen> {
         uid: user.uid,
         email: user.email ?? '',
         username: user.email?.split('@')[0] ?? '',
-        role: 'electrician',
+        role: '',
         lastActive: Timestamp.now(),
         createdTime: DateTime.now(),
         onboardingStatus: OnboardingStatus.incomplete,

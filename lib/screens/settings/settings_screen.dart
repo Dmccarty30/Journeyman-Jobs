@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:journeyman_jobs/electrical_components/circuit_board_background.dart';
 import '../../design_system/app_theme.dart';
-import '../../design_system/components/reusable_components.dart';
+import '../../design_system/widgets/design_system_widgets.dart';
 import '../../navigation/app_router.dart';
 import '../../services/onboarding_service.dart';
 

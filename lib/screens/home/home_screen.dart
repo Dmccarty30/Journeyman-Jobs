@@ -13,9 +13,10 @@ import 'package:journeyman_jobs/providers/riverpod/jobs_riverpod_provider.dart';
 import 'package:journeyman_jobs/utils/text_formatting_wrapper.dart';
 import 'package:journeyman_jobs/widgets/condensed_job_card.dart';
 import 'package:journeyman_jobs/widgets/dialogs/job_details_dialog.dart';
+import 'package:journeyman_jobs/design_system/widgets/design_system_widgets.dart';
 import 'package:journeyman_jobs/widgets/notification_badge.dart';
 import 'package:journeyman_jobs/screens/component_demo_screen.dart';
-import 'package:journeyman_jobs/widgets/jj_button.dart';
+
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

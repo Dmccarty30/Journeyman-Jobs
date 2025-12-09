@@ -530,7 +530,7 @@ class _AnimatedCommentCounterState extends State<AnimatedCommentCounter>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<int> _countAnimation;
-  int _displayedCount = 0;
+  final int _displayedCount = 0;
   
   @override
   void initState() {

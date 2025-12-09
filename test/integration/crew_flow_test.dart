@@ -124,7 +124,7 @@ void main() {
                                   controller: TextEditingController(text: '25.00'),
                                 ),
                                 DropdownButtonFormField<String>(
-                                  value: 'transmission',
+                                  initialValue: 'transmission',
                                   decoration: const InputDecoration(
                                     labelText: 'Job Type',
                                   ),

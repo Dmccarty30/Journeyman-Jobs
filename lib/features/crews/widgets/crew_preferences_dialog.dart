@@ -81,7 +81,7 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
 
   @override
   Widget build(BuildContext context) {
-    Widget _buildHeader() {
+    Widget buildHeader() {
       return Container(
         padding: const EdgeInsets.all(AppTheme.spacingMd),
         decoration: BoxDecoration(
@@ -137,7 +137,7 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
         child: Column(
           children: [
             // Header
-            _buildHeader(),
+            buildHeader(),
             // Content
             Expanded(
               child: Container(
@@ -502,7 +502,7 @@ class _CrewPreferencesDialogState extends State<CrewPreferencesDialog> {
               _preferences = _preferences.copyWith(autoShareEnabled: value);
             });
           },
-          activeColor: AppTheme.accentCopper,
+          activeThumbColor: AppTheme.accentCopper,
           tileColor: AppTheme.offWhite,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppTheme.radiusSm),

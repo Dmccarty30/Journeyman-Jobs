@@ -1,73 +1,149 @@
-# OVERVIEW
+# WIDGET & THEME REFACTOR - COMPREHENSIVE TASK PLAN
 
-The purpose of this document is to thoroughly detail and plan the comprehensive overhaul and refactoring of the entire `App Theme` without disrupting existing code or functionality. The primary objective involves modernizing the app's design by incorporating advanced features, maintaining responsiveness, and enhancing user experience (UX) while preserving operational integrity.
+## OVERVIEW
+
+The purpose of this document is to thoroughly detail and plan the comprehensive **Widget & Design System Refactor** combined with **App Theme Modernization**. This addresses the current chaos of duplicate widgets across multiple files/barrels, inconsistent theming, and fragmented imports while delivering the visual enhancements (animations, gradients, electrical motifs, job card redesigns) specified in the original goals.
+
+**Primary Objectives:**
+
+1. **Eliminate widget duplication** and establish clear ownership (design_system vs electrical_components)
+2. **Create structured widget hierarchy** with category-based directories and canonical barrels
+3. **Centralize theming** to ensure consistent light/dark mode across all widgets
+4. **Modernize visual design** with gradients, animations, enhanced job/locals cards, electrical motifs
+5. **Normalize imports** across the entire codebase
+6. **Comprehensive documentation** and showcase
 
 ## GOALS
 
-1. **Modernization**: Transform the app's top-tier mobile design and app interface with a refreshed look that aligns with premier standards.
+### Widget System Goals
 
-2. **Documentation of Current State**: Understand and document current functionalities, components, and color schemes to ensure seamless transition during updates or new implementations.
+- ✅ Single source of truth for each widget type (no more duplicates)
+- ✅ Clear hierarchy: `lib/design_system/widgets/` (core) vs `lib/electrical_components/` (themed)
+- ✅ Single barrel imports: `design_system_widgets.dart` and `electrical_components.dart`
+- ✅ Each widget in its own focused file under category directories
+- ✅ Centralized `widget_themes.dart` eliminating inline theme duplication
 
-3. **Brainstorm & Decide Final State**: Identify desired outcomes for the final state, including enhancements like highlights, shading, fades, opacity, gradients, etc., which will contribute to a vibrant user interface (UI).
+### Visual/Theme Goals
 
-4. **Implementation Strategy**: Methodically execute changes ensuring consistency across different components and features throughout the app's development lifecycle.
+- Maintain Navy Blue + Copper palette with enhanced gradients/opacity/shadows
+- Lightning/hurricane animations for key interactions (notifications, navigation)
+- Electrical circuit backgrounds (60-70% opacity) for snackbars/toasts by state
+- Redesigned job cards and locals cards (data-first, visually engaging)
+- Animated bottom nav icons and dialog popups
+- Professional, less formal typography
+- Optional sound design hooks
 
-### CURRENT STATE
+## CURRENT STATE (Widget Chaos)
 
-1. **Identification & Documentation**: Thoroughly document existing color schemes, UI elements, animations, transitions, and component specifications to maintain their integrity during updates or new implementations.
+**Duplicate Widgets:**
 
-2. **App/Color Theme Analysis**: Review current application of colors (Navy Blue and Copper), highlighting, shading, fades, opacity, gradients, etc., ensuring these enhance the app's visual appeal without affecting existing functionality.
+- `JJTextField`: Defined in `lib/widgets/jj_text_field.dart` AND `reusable_components.dart`
+- `JJButton`: Defined in `lib/widgets/jj_button.dart` AND `reusable_components.dart`
+- `JJPowerLineLoader`: Design system AND electrical_components versions
+- `JJSnackBar`: Multiple implementations with diverging behavior
 
-3. **Animations Assessment**: Evaluate pre-existing animations for user interactions to either update or create new ones that improve engagement while maintaining operational stability.
+**Fragmented Structure:**
 
-4. **Transitions Examination & Customization**: Analyze and customize transitions, particularly navigation between screens like the 'storm' feature; establish unique custom animations or transitions when switching between pages within the app.
+```
+lib/widgets/                 ← Legacy + duplicates
+lib/design_system/components/reusable_components.dart ← Monolith (40+ widgets)
+lib/electrical_components/   ← Themed widgets (inconsistent exports)
+```
 
-5. **Component Audit & Design Specifications**: Review all components (bottom nav bar, dialog popups) to establish consistent design standards that are uniform in appearance but flexible enough for various data displays without disrupting functionality. Customize animated icons as well.
+**Import Hell:** Screens import from 5+ different widget barrels/files directly
 
-6. **Widgets Standardization & Sound Enhancement**: Evaluate and standardize UI elements like snack bars, tooltips, toasts with a recurring motif of an electrical circuit background (60%-70% opacity) corresponding to 'Success', 'Warning', or 'Danger' colors; consider adding custom sounds for actions, navigations, or notifications.
+## END STATE (Clean Architecture)
 
-### END STATE
+```
+lib/design_system/
+├── widgets/
+│   ├── design_system_widgets.dart (BARREL)
+│   ├── inputs/jj_text_field.dart
+│   ├── buttons/jj_button.dart
+│   ├── layout/ (cards, bottom sheets)
+│   ├── indicators/ (chips, progress)
+│   └── feedback/ (snackbars, empty states)
+├── theme/
+│   └── widget_themes.dart (CENTRALIZED)
+└── app_theme.dart
 
-1. **App/Color Theme**: Maintain the existing primary color scheme with Navy Blue and Copper, incorporating more highlights, shading, fades, opacity, gradients to enhance visual appeal across the app.
+lib/electrical_components/
+├── electrical_components.dart (BARREL)
+├── animated/ (JJElectricalButton, etc.)
+└── specialized/ (JJCircuitBreakerSwitch, etc.)
+```
 
-2. **Animations & Transitions**: Implement lightning bolts that animate screens during user interactions for increased engagement. Introduce flash of lightning or arcs when users receive notifications or bid on jobs. Create custom hurricane and transition animations during navigation between pages in the 'storm' screen, ensuring smooth transitions with unique visual cues.
+## COMPREHENSIVE TASKS (Phased Execution)
 
-3. **Components**: Design a consistent 'bottom nav bar' with animated icons to improve user interaction and consistency across different components. All dialog popups will follow uniform design standards to ensure data displays are properly represented without affecting functionality.
+### Phase 1: Audit & Planning [Docs Only]
 
-4. **Widgets & Sound Design**: Standardize widgets (snack bars, tooltips, toasts) with an electrical circuit background consistent in appearance for all 'success', 'warning', and 'danger' states. Introduce custom sounds to enhance user engagement during action triggers, navigation changes, and notifications across the app.
+- [ ] **Task 1**: Comprehensive widget audit documenting all duplicates, APIs, usage
+- [ ] **Create WIDGET_AUDIT.md** with findings before any code changes
 
-### PROPOSED ACTIONS
+### Phase 2: Directory Structure & File Creation
 
-1. **Hierarchical Review**: Begin by identifying core components that form the foundation of user interactions; minimal disruption is crucial for maintaining existing functionality while allowing room for significant UX improvements.
+- [ ] **Task 2**: Create `lib/design_system/widgets/` hierarchy (buttons/, inputs/, layout/, etc.)
+- [ ] **Task 3**: Create `lib/design_system/widgets/design_system_widgets.dart` barrel
+- [ ] **Task 4**: Organize electrical_components into animated/ + specialized/
 
-2. **Highest/Most Gains**: Focus on enhancements promising substantial impact, such as advanced animations and transitions, to boost user engagement, satisfaction, or brand recognition without compromising operational stability.
+### Phase 3: Consolidate Duplicates (Critical Path)
 
-3. **Less Breaking**: Prioritize updates with minimal risk of breaking existing features; this includes ensuring new components integrate seamlessly into the app's functionalities.
+- [ ] **Task 5**: Merge `JJTextField` → `lib/design_system/widgets/inputs/jj_text_field.dart`
+- [ ] **Task 6**: Merge `JJButton` variants → `lib/design_system/widgets/buttons/jj_button.dart`
+- [ ] **Task 7**: Consolidate `JJPowerLineLoader` & `JJSnackBar` (choose canonical)
+- [ ] **Task 8**: Move all `reusable_components.dart` widgets to new files
 
-4. **Most Frequently Used**: Update the most used UI elements first as they are highly visible to users and any enhancements here can significantly improve overall user experience without requiring significant effort from them for adaptation.
+### Phase 4: Theme Centralization
 
-### ORDER OF OPERATIONS (Methodical Approach)
+- [ ] **Task 9**: Create `lib/design_system/theme/widget_themes.dart` (InputDecorationTheme, ButtonThemeData, etc.)
+- [ ] **Task 10**: Wire widget_themes into app_theme.dart (light/dark)
+- [ ] **Task 11**: Refactor widgets to use centralized themes (remove inline colors)
 
-1. **Hierarchical Review of Core Components** - Begin by identifying the scope of changes, new features to be introduced or existing ones that need updates for consistency and performance enhancement purposes.
+### Phase 5: Import Normalization (Big Bang)
 
-2. **Identification & Documentation**: Thoroughly document pre-existing functionalities, components, color schemes before implementation to track changes and revert if necessary without impacting app functionality.
+- [ ] **Task 12**: Update ALL imports across codebase to use new barrels
+- [ ] **Task 13**: Remove conflicting exports from `lib/widgets/widgets.dart`
+- [ ] **Task 14**: Retire `reusable_components.dart` (compatibility layer or delete)
 
-3. **Comparision with Current Implementations** - Compare new additions against previous versions/designs for continuity checks.
+### Phase 6: Visual Enhancements
 
-4. **Coding, Testing, Validation**: Rigorous testing using predefined grading criteria ensures app stability, performance optimization, and UX enhancements are in line with project goals without disrupting existing functionality or user experience flows within the app.
+- [ ] **Task 15**: Redesign job cards + locals cards (gradients, animations, data-first)
+- [ ] **Task 16**: Electrical snackbar/toast backgrounds (circuit 60-70% opacity)
+- [ ] **Task 17**: Animated bottom nav icons + dialog popups
+- [ ] **Task 18**: Typography evaluation/update (professional, less formal)
+- [ ] **Task 19**: Lightning/hurricane animations (notifications, storm nav)
 
-5. **Continuous Integration & Deployment** - Practices for smooth transition of updated features into production environments ensure continuous delivery while maintaining operational integrity.
+### Phase 7: Documentation & Showcase
 
-6. **Post-Deployment Monitoring**: Identify and resolve any unforeseen issues promptly to maintain a stable, high-performing application.
+- [ ] **Task 20**: Expand `component_demo_screen.dart` → full widget gallery
+- [ ] **Task 21**: Create `WIDGETS.md` (hierarchy, imports, conventions)
+- [ ] **Task 22**: Dartdoc on all public widgets
+
+### Phase 8: Validation & Polish
+
+- [ ] **Task 23**: `flutter analyze` + `flutter test` → clean
+- [ ] **Task 24**: Manual visual verification (all screens, light/dark)
+- [ ] **Task 25**: Update TASK.md with completion status
+
+## EXECUTION NOTES
+
+**Order Critical**: Phases 1-3 first (structure + duplicates), then imports (Phase 5), then visuals (Phase 6).
+
+**Batch Size**: Do 1-2 tasks per session, test after each batch.
+
+**Rollback**: Git commits after each phase. Barrel forwards maintain compatibility.
+
+**Validation**: After Phase 5 imports, app must run without errors in light/dark mode.
+
+## SUCCESS CRITERIA
+
+- [ ] No duplicate widget definitions
+- [ ] Single barrel import per screen (`design_system_widgets.dart` + `electrical_components.dart`)
+- [ ] `flutter analyze` clean
+- [ ] All screens visually consistent (light/dark)
+- [ ] Job cards/locals cards enhanced
+- [ ] Electrical snackbars working
+- [ ] Full widget showcase in component_demo_screen
 
 ---
-
-## NOTES/OBSERVATIONS/SUGGESTIONS
-
-- **Job Cards**: I want to develop an app wide design theme for the job cards. They are simple, minimal, boring. I want to make them, just like the dialog popups, more animated, or colorful, or appealing. Without losing or taking away from the importance and data of the cards.
-
-- **Fonts**: Perhaps even try changing the font to a less formal and exact style. Nothing childish, or to much, just better fitting.
-
-- **Locals Cards**: Same goes for this as well. Enhance, better design, make more visually appealing.
-
-- **Icons**: Look into custom and animated icons. Have the icons animated by touch gesture or triggered by another users interaction to get their attention.
+*Generated from REFACTOR_PLAN.md - Execute phases sequentially*

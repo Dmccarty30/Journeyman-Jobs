@@ -506,7 +506,7 @@ class StorageUsageIndicator extends ConsumerWidget {
                       style: const TextStyle(fontSize: 12),
                     ),
                     Text(
-                      '${maxMB} MB limit',
+                      '$maxMB MB limit',
                       style: const TextStyle(fontSize: 12),
                     ),
                   ],
