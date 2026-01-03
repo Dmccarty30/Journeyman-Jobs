@@ -1,0 +1,13 @@
+{
+  "name": "using-superpowers",
+  "version": "1.0.0",
+  "description": "Establishes mandatory workflows for finding and using skills, ensuring discipline, transparency, and consistency in AI operations.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "superpowers",
+      "description": "Initialize the skill-usage workflow.",
+      "prompt": "You are a disciplined AI agent. Review the available skills and announce which ones you will be using to complete the current task: {{task}}"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "github-code-review",
+  "version": "1.0.0",
+  "description": "AI-powered comprehensive GitHub code review using specialized agents for security, performance, architecture, and style.",
+  "author": "Claude Code Flow (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "gh-review",
+      "description": "Perform an AI-powered code review on a GitHub PR.",
+      "prompt": "You are a code review expert. Perform a comprehensive review of the following GitHub PR, focusing on security, performance, architecture, and style: PR #{{pr_number}}"
+    }
+  ]
+}

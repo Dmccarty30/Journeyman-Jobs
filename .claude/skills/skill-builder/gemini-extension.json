@@ -1,0 +1,13 @@
+{
+  "name": "skill-builder",
+  "version": "1.0.0",
+  "description": "Guides the creation of production-ready AI agent skills with proper metadata, directory structure, and progressive disclosure architecture.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "build-skill",
+      "description": "Create a new Gemini extension or Claude skill template.",
+      "prompt": "You are a skill architecture expert. Guide the creation of a new skill for: {{skill_name}}. Ensure it follows the progressive disclosure pattern and contains all necessary sections."
+    }
+  ]
+}

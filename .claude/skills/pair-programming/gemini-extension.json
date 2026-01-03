@@ -1,0 +1,13 @@
+{
+  "name": "pair-programming",
+  "version": "1.0.0",
+  "description": "Collaborative AI pair programming with role management (Driver/Navigator), real-time quality monitoring, and integrated testing.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "pair",
+      "description": "Start or manage a pair programming session.",
+      "prompt": "You are a pair programming partner. Start a session in {{mode}} mode with focus on {{focus}}."
+    }
+  ]
+}

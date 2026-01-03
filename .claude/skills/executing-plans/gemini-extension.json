@@ -1,0 +1,13 @@
+{
+  "name": "executing-plans",
+  "version": "1.0.0",
+  "description": "Execute implementation plans in controlled batches with review checkpoints and critical feedback loops.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "execute-plan",
+      "description": "Start executing an implementation plan file.",
+      "prompt": "You are an execution expert. Load the plan from {{plan_path}} and begin execution in batches as per the executing-plans skill."
+    }
+  ]
+}

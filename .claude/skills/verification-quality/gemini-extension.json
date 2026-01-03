@@ -1,0 +1,13 @@
+{
+  "name": "verification-quality",
+  "version": "1.0.0",
+  "description": "Comprehensive truth scoring, code quality verification, and automatic rollback system with accuracy thresholds to ensure high-quality agent outputs.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "verify-quality",
+      "description": "Perform a quality assurance check on the current code or task.",
+      "prompt": "You are a quality assurance lead. Evaluate the current work and provide a truth score (0.0-1.0) based on correctness, best practices, security, and performance: {{target}}"
+    }
+  ]
+}

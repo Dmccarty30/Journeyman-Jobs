@@ -1,0 +1,13 @@
+{
+  "name": "writing-skills",
+  "version": "1.0.0",
+  "description": "Applies Test-Driven Development (TDD) to process documentation. Use when creating or editing AI skills to ensure they are bulletproof against rationalization and loopholes.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "write-skill",
+      "description": "Create or update an AI skill using the TDD documentation workflow.",
+      "prompt": "You are a technical documentation architect. Apply the TDD cycle (Red-Green-Refactor) to create a new skill for: {{skill_topic}}"
+    }
+  ]
+}

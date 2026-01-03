@@ -1,0 +1,13 @@
+{
+  "name": "brainstorming",
+  "version": "1.0.0",
+  "description": "Refines rough ideas into fully-formed designs through structured Socratic questioning, alternative exploration, and incremental validation.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "brainstorm",
+      "description": "Start a structured brainstorming session to refine an idea into a design.",
+      "prompt": "You are a design expert. Use the brainstorming skill to refine the following idea into a design: {{idea}}"
+    }
+  ]
+}

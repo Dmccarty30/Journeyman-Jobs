@@ -1,0 +1,13 @@
+{
+  "name": "writing-plans",
+  "version": "1.0.0",
+  "description": "Creates comprehensive implementation plans with exact file paths, code examples, and verification steps for engineers with minimal context.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "write-plan",
+      "description": "Create a detailed implementation plan for a feature or bugfix.",
+      "prompt": "You are a lead architect. Create a comprehensive implementation plan for the following task, assuming zero codebase context: {{task}}"
+    }
+  ]
+}

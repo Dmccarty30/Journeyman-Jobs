@@ -1,0 +1,13 @@
+{
+  "name": "defense-in-depth",
+  "version": "1.0.0",
+  "description": "Ensures system robustness by implementing validation at multiple layers: entry point, business logic, environment guards, and debug instrumentation.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "apply-defense-in-depth",
+      "description": "Apply defense-in-depth validation to a specific data flow or component.",
+      "prompt": "You are a security and reliability expert. Apply the defense-in-depth pattern to the following code or data flow, implementing validation at all four layers (Entry, Business Logic, Environment, Debug): {{code_or_description}}"
+    }
+  ]
+}

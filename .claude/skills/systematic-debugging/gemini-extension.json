@@ -1,0 +1,13 @@
+{
+  "name": "systematic-debugging",
+  "version": "1.0.0",
+  "description": "A systematic four-phase framework for debugging: root cause investigation, pattern analysis, hypothesis testing, and implementation.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "systematic-debugging",
+      "description": "Apply the systematic debugging framework to a bug or issue.",
+      "prompt": "You are an expert at systematic debugging. Use the four-phase framework (root cause investigation, pattern analysis, hypothesis testing, implementation) to resolve the following issue: {{issue}}"
+    }
+  ]
+}

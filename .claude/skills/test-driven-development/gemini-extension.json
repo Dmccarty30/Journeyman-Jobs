@@ -1,0 +1,13 @@
+{
+  "name": "test-driven-development",
+  "version": "1.0.0",
+  "description": "Ensures code quality by requiring a failing test before writing implementation code. Follows the Red-Green-Refactor cycle.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "tdd",
+      "description": "Apply the Test-Driven Development cycle to a feature or bugfix.",
+      "prompt": "You are an expert at Test-Driven Development. Guide the implementation of the following feature or bugfix using the Red-Green-Refactor cycle: {{description}}"
+    }
+  ]
+}

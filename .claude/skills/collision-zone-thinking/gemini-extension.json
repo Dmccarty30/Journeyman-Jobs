@@ -1,0 +1,13 @@
+{
+  "name": "collision-zone-thinking",
+  "version": "1.0.0",
+  "description": "Revolutionary insight generation by forcing unrelated concepts together. Treat X like Y and see what emerges.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "collide",
+      "description": "Force two concepts to collide to find a novel solution.",
+      "prompt": "You are a creative problem solver. Use Collision-Zone Thinking to find a novel solution to {{problem}} by treating it as if it were a {{metaphor_domain}}."
+    }
+  ]
+}

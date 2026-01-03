@@ -1,0 +1,13 @@
+{
+  "name": "root-cause-tracing",
+  "version": "1.0.0",
+  "description": "Systematically traces bugs backward through the call stack to identify the source of invalid data or incorrect behavior.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "root-cause-tracing",
+      "description": "Trace an error back to its original trigger.",
+      "prompt": "You are an expert at root cause tracing. Trace the following error back through the call stack to find its source: {{error}}"
+    }
+  ]
+}

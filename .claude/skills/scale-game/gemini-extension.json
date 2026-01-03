@@ -1,0 +1,13 @@
+{
+  "name": "scale-game",
+  "version": "1.0.0",
+  "description": "Expose fundamental truths and architectural limits by testing your approach at extreme scales (e.g., 1000x volume, instant speed).",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "scale-test",
+      "description": "Perform a thought experiment to test an architecture at extreme scales.",
+      "prompt": "You are a scalability architect. Apply the Scale Game to the following architecture or approach, testing it at extremes (1000x bigger, 1000x faster, etc.) to identify what breaks and what survives: {{architecture}}"
+    }
+  ]
+}

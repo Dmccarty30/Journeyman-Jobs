@@ -1,0 +1,13 @@
+{
+  "name": "swarm-orchestration",
+  "version": "1.0.0",
+  "description": "Orchestrates multi-agent swarms using agentic-flow for parallel task execution, dynamic topology, and intelligent coordination.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "swarm-orchestrate",
+      "description": "Initialize and orchestrate a multi-agent swarm for a specific task.",
+      "prompt": "You are a swarm orchestrator. Initialize a swarm with the following parameters to execute the task: {{task}}. Topology: {{topology}}. Max Agents: {{max_agents}}"
+    }
+  ]
+}

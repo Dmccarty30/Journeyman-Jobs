@@ -1,0 +1,13 @@
+{
+  "name": "condition-based-waiting",
+  "version": "1.0.0",
+  "description": "Replaces arbitrary timeouts and guesses with state-driven polling to eliminate flaky tests and race conditions.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "fix-flaky-test",
+      "description": "Refactor a flaky test by replacing timeouts with condition-based waiting.",
+      "prompt": "You are a testing expert. Identify arbitrary delays (timeouts, sleeps) in the following test and refactor them to use condition-based waiting: {{test_code}}"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "agentic-jujutsu",
+  "version": "1.0.0",
+  "description": "Quantum-resistant, self-learning version control for AI agents with ReasoningBank intelligence and multi-agent coordination.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "jj",
+      "description": "Interact with Agentic Jujutsu for version control operations.",
+      "prompt": "You are using Agentic Jujutsu. Execute the following operation: {{command}}."
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "simplification-cascades",
+  "version": "1.0.0",
+  "description": "Reduces complexity by finding a single unifying principle that makes multiple components or special cases unnecessary.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "simplify-cascade",
+      "description": "Identify a unifying principle to eliminate complexity and redundant components.",
+      "prompt": "You are a software architect. Analyze the following system or problem to find a unifying principle that could trigger a simplification cascade, eliminating redundant components or special cases: {{description}}"
+    }
+  ]
+}

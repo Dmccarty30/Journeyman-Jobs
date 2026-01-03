@@ -1,0 +1,13 @@
+{
+  "name": "sequential-thinking",
+  "version": "1.0.0",
+  "description": "Enables structured problem-solving through iterative reasoning with the ability to revise thoughts, branch into alternatives, and adjust scope dynamically.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "think-sequentially",
+      "description": "Perform a step-by-step reasoning process for a complex problem.",
+      "prompt": "You are a logical thinker. Use the sequential thinking skill to decompose and solve the following problem: {{problem}}"
+    }
+  ]
+}

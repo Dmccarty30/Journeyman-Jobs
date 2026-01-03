@@ -1,0 +1,13 @@
+{
+  "name": "verification-before-completion",
+  "version": "1.0.0",
+  "description": "Ensures all claims of completion, success, or correctness are backed by fresh, verified evidence before being stated.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "verify-completion",
+      "description": "Verify the current state of work against requirements and tests.",
+      "prompt": "You are a quality assurance expert. Run all necessary verification commands to provide evidence that the current task is complete and correct. Do not make claims without output evidence."
+    }
+  ]
+}

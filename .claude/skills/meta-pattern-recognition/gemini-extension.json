@@ -1,0 +1,13 @@
+{
+  "name": "meta-pattern-recognition",
+  "version": "1.0.0",
+  "description": "Identifies universal principles by spotting recurring patterns across 3+ different domains or systems.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "recognize-meta-pattern",
+      "description": "Analyze recurring patterns to identify universal principles.",
+      "prompt": "You are a systems thinker. Analyze the following occurrences to extract an abstract meta-pattern and identify its universal principles: {{occurrences}}"
+    }
+  ]
+}

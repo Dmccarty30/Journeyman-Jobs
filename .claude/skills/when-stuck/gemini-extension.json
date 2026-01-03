@@ -1,0 +1,13 @@
+{
+  "name": "when-stuck",
+  "version": "1.0.0",
+  "description": "A dispatch system to identify and apply the correct problem-solving technique based on the specific type of roadblock encountered.",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "stuck",
+      "description": "Identify which problem-solving skill to use when stuck.",
+      "prompt": "You are stuck. Analyze your current roadblock and determine which specialized problem-solving technique (simplification, meta-patterns, inversion, systematic debugging, etc.) is most appropriate to resolve it."
+    }
+  ]
+}

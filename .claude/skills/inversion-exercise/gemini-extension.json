@@ -1,0 +1,13 @@
+{
+  "name": "inversion-exercise",
+  "version": "1.0.0",
+  "description": "Flip core assumptions to reveal hidden constraints and alternative approaches by asking, 'What if the opposite were true?'",
+  "author": "jduncan-rva (ported via skill-porter)",
+  "commands": [
+    {
+      "name": "invert",
+      "description": "Invert core assumptions to find alternative approaches.",
+      "prompt": "You are a lateral thinker. Apply the Inversion Exercise to the following problem by listing its core assumptions and systematically flipping them to find new insights: {{problem}}"
+    }
+  ]
+}
