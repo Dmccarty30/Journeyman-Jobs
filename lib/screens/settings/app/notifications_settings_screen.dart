@@ -5,6 +5,7 @@ import 'package:journeyman_jobs/design_system/components/reusable_components.dar
 import 'package:journeyman_jobs/electrical_components/circuit_board_background.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
+import 'package:journeyman_jobs/design_system/popup_theme.dart';
 import '../../../design_system/app_theme.dart';
 import '../../../design_system/widgets/design_system_widgets.dart';
 import '../../../services/notification_permission_service.dart';
@@ -17,10 +18,11 @@ class NotificationsScreen extends StatefulWidget {
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _NotificationsScreenState extends State<NotificationsScreen> with SingleTickerProviderStateMixin {
+class _NotificationsScreenState extends State<NotificationsScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String _selectedFilter = 'all';
-  
+
   // Settings state
   bool _isLoadingSettings = true;
   bool _notificationsEnabled = false;
@@ -34,7 +36,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
   bool _quietHoursEnabled = false;
   TimeOfDay _quietHoursStart = const TimeOfDay(hour: 22, minute: 0);
   TimeOfDay _quietHoursEnd = const TimeOfDay(hour: 7, minute: 0);
-  
+
   final List<String> _filters = [
     'all',
     'jobs',
@@ -54,16 +56,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     'storm': 'Storm Work',
     'crews': 'Crews',
   };
-  
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _loadSettings();
-    
+
     // Check for tab query parameter
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final uri = Uri.tryParse(GoRouter.of(context).routeInformationProvider.value.uri.toString());
+      final uri = Uri.tryParse(
+          GoRouter.of(context).routeInformationProvider.value.uri.toString());
       if (uri != null) {
         final tab = uri.queryParameters['tab'];
         if (tab == 'settings') {
@@ -72,24 +75,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
       }
     });
   }
-  
+
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
-  
+
   Future<void> _loadSettings() async {
     try {
-      _notificationsEnabled = await NotificationPermissionService.areNotificationsEnabled();
+      _notificationsEnabled =
+          await NotificationPermissionService.areNotificationsEnabled();
       final prefs = await SharedPreferences.getInstance();
-      
+
       setState(() {
         _jobAlertsEnabled = prefs.getBool('job_alerts_enabled') ?? true;
         _unionUpdatesEnabled = prefs.getBool('union_updates_enabled') ?? true;
-        _systemNotificationsEnabled = prefs.getBool('system_notifications_enabled') ?? true;
+        _systemNotificationsEnabled =
+            prefs.getBool('system_notifications_enabled') ?? true;
         _stormWorkEnabled = prefs.getBool('storm_work_enabled') ?? true;
-        _unionRemindersEnabled = prefs.getBool('union_reminders_enabled') ?? true;
+        _unionRemindersEnabled =
+            prefs.getBool('union_reminders_enabled') ?? true;
         _soundEnabled = prefs.getBool('sound_enabled') ?? true;
         _vibrationEnabled = prefs.getBool('vibration_enabled') ?? true;
         _quietHoursEnabled = prefs.getBool('quiet_hours_enabled') ?? false;
@@ -106,7 +112,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
       debugPrint('Error loading notification settings: $e');
     }
   }
-  
+
   Future<void> _savePreference(String key, bool value) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -127,7 +133,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
 
   Future<void> _handleMasterToggle(bool enabled) async {
     if (enabled && !_notificationsEnabled) {
-      final granted = await NotificationPermissionService.handleInitialPermissionFlow(context);
+      final granted =
+          await NotificationPermissionService.handleInitialPermissionFlow(
+              context);
       if (!mounted) return;
 
       setState(() {
@@ -157,54 +165,61 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
   }
 
   Future<bool> _showDisableConfirmationDialog() async {
-    return await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        ),
-        title: Row(
-          children: [
-            Icon(
-              Icons.notifications_off,
-              color: AppTheme.warningYellow,
-              size: AppTheme.iconMd,
-            ),
-            const SizedBox(width: AppTheme.spacingMd),
-            Text(
-              'Disable Notifications?',
-              style: AppTheme.headlineSmall.copyWith(
-                color: AppTheme.primaryNavy,
+    return await context.showThemedDialog<bool>(
+          theme: PopupThemeData.warning(),
+          builder: (context) => Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.notifications_off,
+                    color: AppTheme.warningYellow,
+                    size: AppTheme.iconMd,
+                  ),
+                  const SizedBox(width: AppTheme.spacingMd),
+                  Text(
+                    'Disable Notifications?',
+                    style: AppTheme.headlineSmall.copyWith(
+                      color: AppTheme.primaryNavy,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        content: Text(
-          'You\'ll miss important job alerts and union updates. Are you sure?',
-          style: AppTheme.bodyMedium.copyWith(
-            color: AppTheme.textPrimary,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(
-              'Cancel',
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textSecondary,
+              const SizedBox(height: AppTheme.spacingLg),
+              Text(
+                'You\'ll miss important job alerts and union updates. Are you sure?',
+                style: AppTheme.bodyMedium,
               ),
-            ),
+              const SizedBox(height: AppTheme.spacingXl),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: Text(
+                        'Cancel',
+                        style: AppTheme.bodyMedium.copyWith(
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppTheme.spacingMd),
+                  Expanded(
+                    child: JJPrimaryButton(
+                      text: 'Disable',
+                      onPressed: () => Navigator.of(context).pop(true),
+                      variant: JJButtonVariant.danger,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          JJPrimaryButton(
-            text: 'Disable',
-            onPressed: () => Navigator.of(context).pop(true),
-            width: 100,
-            variant: JJButtonVariant.danger,
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   Future<void> _selectQuietHoursTime(bool isStart) async {
@@ -215,8 +230,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: AppTheme.accentCopper,
-            ),
+                  primary: AppTheme.accentCopper,
+                ),
           ),
           child: child!,
         );
@@ -418,9 +433,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     final createdAt = data['createdAt'] as Timestamp?;
     final notificationData = data['data'] as Map<String, dynamic>? ?? {};
 
-    final timeAgo = createdAt != null
-        ? _formatTimeAgo(createdAt.toDate())
-        : '';
+    final timeAgo = createdAt != null ? _formatTimeAgo(createdAt.toDate()) : '';
 
     return Card(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingSm),
@@ -469,8 +482,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
                           child: Text(
                             title,
                             style: AppTheme.bodyLarge.copyWith(
-                              fontWeight: isRead ? FontWeight.normal : FontWeight.w600,
-                              color: isRead ? AppTheme.textSecondary : AppTheme.textPrimary,
+                              fontWeight:
+                                  isRead ? FontWeight.normal : FontWeight.w600,
+                              color: isRead
+                                  ? AppTheme.textSecondary
+                                  : AppTheme.textPrimary,
                             ),
                           ),
                         ),
@@ -532,7 +548,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      backgroundColor: AppTheme.white, // Changed to transparent
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
           'Notifications',
@@ -564,257 +580,266 @@ class _NotificationsScreenState extends State<NotificationsScreen> with SingleTi
       ),
       body: Stack(
         children: [
-          ElectricalCircuitBackground( // Added background
+          ElectricalCircuitBackground(
+            // Added background
             opacity: 0.35,
             componentDensity: ComponentDensity.high,
           ),
           TabBarView(
             controller: _tabController,
             children: [
-          // Notifications Tab
-          Column(
-            children: [
-              // Filter tabs
-              Container(
-                color: AppTheme.white,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.all(AppTheme.spacingMd),
-                  child: Row(
-                    children: _filters.map((filter) {
-                      final isSelected = filter == _selectedFilter;
-                      return Container(
-                        margin: const EdgeInsets.only(right: AppTheme.spacingSm),
-                        child: JJChip(
-                          label: _filterLabels[filter]!,
-                          isSelected: isSelected,
-                          onTap: () {
-                            setState(() {
-                              _selectedFilter = filter;
-                            });
-                          },
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-              // Mark all as read button
-              Container(
-                color: AppTheme.white,
-                padding: const EdgeInsets.only(
-                  left: AppTheme.spacingMd,
-                  right: AppTheme.spacingMd,
-                  bottom: AppTheme.spacingMd,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton.icon(
-                      onPressed: _markAllAsRead,
-                      icon: const Icon(
-                        Icons.mark_email_read,
-                        size: AppTheme.iconSm,
-                      ),
-                      label: const Text('Mark all as read'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: AppTheme.accentCopper,
+              // Notifications Tab
+              Column(
+                children: [
+                  // Filter tabs
+                  Container(
+                    color: Colors.transparent,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.all(AppTheme.spacingMd),
+                      child: Row(
+                        children: _filters.map((filter) {
+                          final isSelected = filter == _selectedFilter;
+                          return Container(
+                            margin: const EdgeInsets.only(
+                                right: AppTheme.spacingSm),
+                            child: JJChip(
+                              label: _filterLabels[filter]!,
+                              isSelected: isSelected,
+                              onTap: () {
+                                setState(() {
+                                  _selectedFilter = filter;
+                                });
+                              },
+                            ),
+                          );
+                        }).toList(),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              // Notifications list
-              Expanded(
-                child: user == null
-                    ? _buildEmptyState('Please sign in to view notifications')
-                    : StreamBuilder<QuerySnapshot>(
-                        stream: _buildNotificationsStream(user.uid),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError) {
-                            return _buildEmptyState('Error loading notifications');
-                          }
+                  ),
+                  // Mark all as read button
+                  Container(
+                    color: Colors.transparent,
+                    padding: const EdgeInsets.only(
+                      left: AppTheme.spacingMd,
+                      right: AppTheme.spacingMd,
+                      bottom: AppTheme.spacingMd,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton.icon(
+                          onPressed: _markAllAsRead,
+                          icon: const Icon(
+                            Icons.mark_email_read,
+                            size: AppTheme.iconSm,
+                          ),
+                          label: const Text('Mark all as read'),
+                          style: TextButton.styleFrom(
+                            foregroundColor: AppTheme.accentCopper,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Notifications list
+                  Expanded(
+                    child: user == null
+                        ? _buildEmptyState(
+                            'Please sign in to view notifications')
+                        : StreamBuilder<QuerySnapshot>(
+                            stream: _buildNotificationsStream(user.uid),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return _buildEmptyState(
+                                    'Error loading notifications');
+                              }
 
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Center(
-                              child: JJElectricalLoader(
-                                message: 'Loading notifications...',
-                              ),
-                            );
-                          }
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                  child: JJElectricalLoader(
+                                    message: 'Loading notifications...',
+                                  ),
+                                );
+                              }
 
-                          final notifications = snapshot.data?.docs ?? [];
+                              final notifications = snapshot.data?.docs ?? [];
 
-                          if (notifications.isEmpty) {
-                            return _buildEmptyState('No notifications yet');
-                          }
+                              if (notifications.isEmpty) {
+                                return _buildEmptyState('No notifications yet');
+                              }
 
-                          return ListView.builder(
-                            padding: const EdgeInsets.all(AppTheme.spacingMd),
-                            itemCount: notifications.length,
-                            itemBuilder: (context, index) {
-                              final notification = notifications[index];
-                              return _buildNotificationCard(notification);
+                              return ListView.builder(
+                                padding:
+                                    const EdgeInsets.all(AppTheme.spacingMd),
+                                itemCount: notifications.length,
+                                itemBuilder: (context, index) {
+                                  final notification = notifications[index];
+                                  return _buildNotificationCard(notification);
+                                },
+                              );
                             },
-                          );
-                        },
-                      ),
+                          ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          // Settings Tab
-          _isLoadingSettings
-              ? const Center(
-                  child: JJElectricalLoader(
-                    message: 'Loading settings...',
-                  ),
-                )
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppTheme.spacingMd),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Master toggle
-                      _buildMasterToggleCard(),
-
-                      const SizedBox(height: AppTheme.spacingLg),
-                      // Notification types
-                      Text(
-                        'Notification Types',
-                        style: AppTheme.headlineSmall.copyWith(
-                          color: AppTheme.textPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
+              // Settings Tab
+              _isLoadingSettings
+                  ? const Center(
+                      child: JJElectricalLoader(
+                        message: 'Loading settings...',
                       ),
-                      const SizedBox(height: AppTheme.spacingMd),
+                    )
+                  : SingleChildScrollView(
+                      padding: const EdgeInsets.all(AppTheme.spacingMd),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Master toggle
+                          _buildMasterToggleCard(),
 
-                      // Individual notification type cards
-                      _buildSettingCard(
-                        icon: Icons.work_outline,
-                        title: 'Job Alerts',
-                        subtitle: 'Get notified about new job opportunities',
-                        value: _jobAlertsEnabled,
-                        onChanged: (value) {
-                          setState(() {
-                            _jobAlertsEnabled = value;
-                          });
-                          _savePreference('job_alerts_enabled', value);
-                        },
-                        color: AppTheme.accentCopper,
+                          const SizedBox(height: AppTheme.spacingLg),
+                          // Notification types
+                          Text(
+                            'Notification Types',
+                            style: AppTheme.headlineSmall.copyWith(
+                              color: AppTheme.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: AppTheme.spacingMd),
+
+                          // Individual notification type cards
+                          _buildSettingCard(
+                            icon: Icons.work_outline,
+                            title: 'Job Alerts',
+                            subtitle:
+                                'Get notified about new job opportunities',
+                            value: _jobAlertsEnabled,
+                            onChanged: (value) {
+                              setState(() {
+                                _jobAlertsEnabled = value;
+                              });
+                              _savePreference('job_alerts_enabled', value);
+                            },
+                            color: AppTheme.accentCopper,
+                          ),
+
+                          _buildSettingCard(
+                            icon: Icons.group,
+                            title: 'Union Updates',
+                            subtitle: 'Important updates from your union',
+                            value: _unionUpdatesEnabled,
+                            onChanged: (value) {
+                              setState(() {
+                                _unionUpdatesEnabled = value;
+                              });
+                              _savePreference('union_updates_enabled', value);
+                            },
+                            color: AppTheme.primaryNavy,
+                          ),
+
+                          _buildSettingCard(
+                            icon: Icons.settings,
+                            title: 'System Notifications',
+                            subtitle: 'App updates and system messages',
+                            value: _systemNotificationsEnabled,
+                            onChanged: (value) {
+                              setState(() {
+                                _systemNotificationsEnabled = value;
+                              });
+                              _savePreference(
+                                  'system_notifications_enabled', value);
+                            },
+                            color: AppTheme.infoBlue,
+                          ),
+
+                          _buildSettingCard(
+                            icon: Icons.flash_on,
+                            title: 'Storm Work',
+                            subtitle: 'Emergency storm work opportunities',
+                            value: _stormWorkEnabled,
+                            onChanged: (value) {
+                              setState(() {
+                                _stormWorkEnabled = value;
+                              });
+                              _savePreference('storm_work_enabled', value);
+                            },
+                            color: AppTheme.warningYellow,
+                          ),
+
+                          _buildSettingCard(
+                            icon: Icons.event_note,
+                            title: 'Union Reminders',
+                            subtitle:
+                                'Reminders for union events and deadlines',
+                            value: _unionRemindersEnabled,
+                            onChanged: (value) {
+                              setState(() {
+                                _unionRemindersEnabled = value;
+                              });
+                              _savePreference('union_reminders_enabled', value);
+                            },
+                            color: AppTheme.successGreen,
+                          ),
+
+                          const SizedBox(height: AppTheme.spacingLg),
+                          // Sound & Vibration
+                          Text(
+                            'Sound & Vibration',
+                            style: AppTheme.headlineSmall.copyWith(
+                              color: AppTheme.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: AppTheme.spacingMd),
+
+                          // Individual sound and vibration cards
+                          _buildSettingCard(
+                            icon: Icons.volume_up,
+                            title: 'Sound',
+                            subtitle: 'Play sound for notifications',
+                            value: _soundEnabled,
+                            onChanged: (value) {
+                              setState(() {
+                                _soundEnabled = value;
+                              });
+                              _savePreference('sound_enabled', value);
+                            },
+                            color: AppTheme.accentCopper,
+                          ),
+
+                          _buildSettingCard(
+                            icon: Icons.vibration,
+                            title: 'Vibration',
+                            subtitle: 'Vibrate for notifications',
+                            value: _vibrationEnabled,
+                            onChanged: (value) {
+                              setState(() {
+                                _vibrationEnabled = value;
+                              });
+                              _savePreference('vibration_enabled', value);
+                            },
+                            color: AppTheme.primaryNavy,
+                          ),
+
+                          const SizedBox(height: AppTheme.spacingLg),
+                          // Quiet Hours
+                          Text(
+                            'Quiet Hours',
+                            style: AppTheme.headlineSmall.copyWith(
+                              color: AppTheme.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: AppTheme.spacingMd),
+
+                          // Quiet hours card
+                          _buildQuietHoursCard(),
+                        ],
                       ),
-
-                      _buildSettingCard(
-                        icon: Icons.group,
-                        title: 'Union Updates',
-                        subtitle: 'Important updates from your union',
-                        value: _unionUpdatesEnabled,
-                        onChanged: (value) {
-                          setState(() {
-                            _unionUpdatesEnabled = value;
-                          });
-                          _savePreference('union_updates_enabled', value);
-                        },
-                        color: AppTheme.primaryNavy,
-                      ),
-
-                      _buildSettingCard(
-                        icon: Icons.settings,
-                        title: 'System Notifications',
-                        subtitle: 'App updates and system messages',
-                        value: _systemNotificationsEnabled,
-                        onChanged: (value) {
-                          setState(() {
-                            _systemNotificationsEnabled = value;
-                          });
-                          _savePreference('system_notifications_enabled', value);
-                        },
-                        color: AppTheme.infoBlue,
-                      ),
-
-                      _buildSettingCard(
-                        icon: Icons.flash_on,
-                        title: 'Storm Work',
-                        subtitle: 'Emergency storm work opportunities',
-                        value: _stormWorkEnabled,
-                        onChanged: (value) {
-                          setState(() {
-                            _stormWorkEnabled = value;
-                          });
-                          _savePreference('storm_work_enabled', value);
-                        },
-                        color: AppTheme.warningYellow,
-                      ),
-
-                      _buildSettingCard(
-                        icon: Icons.event_note,
-                        title: 'Union Reminders',
-                        subtitle: 'Reminders for union events and deadlines',
-                        value: _unionRemindersEnabled,
-                        onChanged: (value) {
-                          setState(() {
-                            _unionRemindersEnabled = value;
-                          });
-                          _savePreference('union_reminders_enabled', value);
-                        },
-                        color: AppTheme.successGreen,
-                      ),
-
-                      const SizedBox(height: AppTheme.spacingLg),
-                      // Sound & Vibration
-                      Text(
-                        'Sound & Vibration',
-                        style: AppTheme.headlineSmall.copyWith(
-                          color: AppTheme.textPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: AppTheme.spacingMd),
-
-                      // Individual sound and vibration cards
-                      _buildSettingCard(
-                        icon: Icons.volume_up,
-                        title: 'Sound',
-                        subtitle: 'Play sound for notifications',
-                        value: _soundEnabled,
-                        onChanged: (value) {
-                          setState(() {
-                            _soundEnabled = value;
-                          });
-                          _savePreference('sound_enabled', value);
-                        },
-                        color: AppTheme.accentCopper,
-                      ),
-
-                      _buildSettingCard(
-                        icon: Icons.vibration,
-                        title: 'Vibration',
-                        subtitle: 'Vibrate for notifications',
-                        value: _vibrationEnabled,
-                        onChanged: (value) {
-                          setState(() {
-                            _vibrationEnabled = value;
-                          });
-                          _savePreference('vibration_enabled', value);
-                        },
-                        color: AppTheme.primaryNavy,
-                      ),
-
-                      const SizedBox(height: AppTheme.spacingLg),
-                      // Quiet Hours
-                      Text(
-                        'Quiet Hours',
-                        style: AppTheme.headlineSmall.copyWith(
-                          color: AppTheme.textPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: AppTheme.spacingMd),
-
-                      // Quiet hours card
-                      _buildQuietHoursCard(),
-                    ],
-                  ),
-                ),
+                    ),
             ],
           ),
         ],

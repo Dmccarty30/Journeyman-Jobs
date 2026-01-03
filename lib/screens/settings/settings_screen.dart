@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:journeyman_jobs/electrical_components/circuit_board_background.dart';
+import 'package:journeyman_jobs/design_system/popup_theme.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/widgets/design_system_widgets.dart';
 import '../../navigation/app_router.dart';
@@ -33,7 +34,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             .collection('users')
             .doc(user.uid)
             .get();
-        
+
         if (doc.exists && mounted) {
           setState(() {
             _ticketNumber = doc.data()?['ticket_number']?.toString();
@@ -61,7 +62,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    
+
     return Scaffold(
       backgroundColor: Colors.transparent, // Changed to transparent
       appBar: AppBar(
@@ -74,7 +75,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: Stack(
         children: [
-          ElectricalCircuitBackground( // Added background
+          ElectricalCircuitBackground(
+            // Added background
             opacity: 0.35,
             componentDensity: ComponentDensity.high,
           ),
@@ -130,7 +132,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         )
                       else
                         Text(
-                          _ticketNumber != null ? 'Ticket #$_ticketNumber' : 'IBEW Member',
+                          _ticketNumber != null
+                              ? 'Ticket #$_ticketNumber'
+                              : 'IBEW Member',
                           style: AppTheme.bodyMedium.copyWith(
                             color: AppTheme.textSecondary,
                           ),
@@ -161,18 +165,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       subtitle: 'Manage your personal information',
                       onTap: () => context.push(AppRouter.profile),
                     ),
-                                    _MenuOption(
-                                      icon: Icons.badge_outlined,
-                                      title: 'Training & Certificates',
-                                      subtitle: 'Track your professional credentials',
-                                      onTap: () => context.push(AppRouter.training),
-                                    ),
-                                    _MenuOption(
-                                      icon: Icons.work_outline, // Icon for job preferences
-                                      title: 'Job Search Preferences',
-                                      subtitle: 'Manage job search radius, rates, and auto-apply',
-                                      onTap: () => context.push(AppRouter.jobSearchPreferences),
-                                    ),                  ],
+                    _MenuOption(
+                      icon: Icons.badge_outlined,
+                      title: 'Training & Certificates',
+                      subtitle: 'Track your professional credentials',
+                      onTap: () => context.push(AppRouter.training),
+                    ),
+                    _MenuOption(
+                      icon: Icons.work_outline, // Icon for job preferences
+                      title: 'Job Search Preferences',
+                      subtitle:
+                          'Manage job search radius, rates, and auto-apply',
+                      onTap: () => context.push(AppRouter.jobSearchPreferences),
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: AppTheme.spacingLg),
@@ -206,38 +212,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _buildMenuSection(
                   'App',
                   [
-                                    _MenuOption(
-                                      icon: Icons.notifications_outlined,
-                                      title: 'Notifications',
-                                      subtitle: 'Manage notification preferences',
-                                      onTap: () => context.push('${AppRouter.notifications}?tab=settings'),
-                                    ),
-                                                    _MenuOption(
-                                                      icon: Icons.color_lens_outlined, // New icon for Appearance
-                                                      title: 'Appearance & Display',
-                                                      subtitle: 'Theme, font size, and visual effects',
-                                                      onTap: () => context.push(AppRouter.appearanceDisplay),
-                                                    ),
-                                                                    _MenuOption(
-                                                                      icon: Icons.data_usage_outlined, // Icon for Data & Storage
-                                                                      title: 'Data & Storage',
-                                                                      subtitle: 'Manage offline data, downloads, and cache',
-                                                                      onTap: () => context.push(AppRouter.dataStorage),
-                                                                    ),
-                                                                    _MenuOption(
-                                                                      icon: Icons.language_outlined, // Icon for Language & Region
-                                                                      title: 'Language & Region',
-                                                                      subtitle: 'Set language, date, and time formats',
-                                                                      onTap: () => context.push(AppRouter.languageRegion),
-                                                                    ),
-                                                                    _MenuOption(
-                                                                      icon: Icons.security_outlined,
-                                                                      title: 'Privacy & Security',
-                                                                      subtitle: 'Control your data and privacy',
-                                                                      onTap: () {
-                                                                        context.push(AppRouter.privacySecurity);
-                                                                      },
-                                                                    ),                                        _MenuOption(
+                    _MenuOption(
+                      icon: Icons.notifications_outlined,
+                      title: 'Notifications',
+                      subtitle: 'Manage notification preferences',
+                      onTap: () => context
+                          .push('${AppRouter.notifications}?tab=settings'),
+                    ),
+                    _MenuOption(
+                      icon:
+                          Icons.color_lens_outlined, // New icon for Appearance
+                      title: 'Appearance & Display',
+                      subtitle: 'Theme, font size, and visual effects',
+                      onTap: () => context.push(AppRouter.appearanceDisplay),
+                    ),
+                    _MenuOption(
+                      icon:
+                          Icons.data_usage_outlined, // Icon for Data & Storage
+                      title: 'Data & Storage',
+                      subtitle: 'Manage offline data, downloads, and cache',
+                      onTap: () => context.push(AppRouter.dataStorage),
+                    ),
+                    _MenuOption(
+                      icon:
+                          Icons.language_outlined, // Icon for Language & Region
+                      title: 'Language & Region',
+                      subtitle: 'Set language, date, and time formats',
+                      onTap: () => context.push(AppRouter.languageRegion),
+                    ),
+                    _MenuOption(
+                      icon: Icons.security_outlined,
+                      title: 'Privacy & Security',
+                      subtitle: 'Control your data and privacy',
+                      onTap: () {
+                        context.push(AppRouter.privacySecurity);
+                      },
+                    ),
+                    _MenuOption(
                       icon: Icons.info_outline,
                       title: 'About',
                       subtitle: 'App version and information',
@@ -375,56 +386,62 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showAboutDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                gradient: AppTheme.buttonGradient,
-                shape: BoxShape.circle,
+    context.showThemedDialog(
+      theme: PopupThemeData.standard(),
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: AppTheme.buttonGradient,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.electrical_services,
+                  color: AppTheme.white,
+                  size: 20,
+                ),
               ),
-              child: const Icon(
-                Icons.electrical_services,
-                color: AppTheme.white,
-                size: 20,
+              const SizedBox(width: AppTheme.spacingMd),
+              Text(
+                'Journeyman Jobs',
+                style: AppTheme.headlineSmall
+                    .copyWith(color: AppTheme.primaryNavy),
               ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.spacingLg),
+          GestureDetector(
+            onLongPress: _showDebugOptions,
+            child: Text(
+              'Version 1.0.0',
+              style: AppTheme.bodyLarge.copyWith(fontWeight: FontWeight.w600),
             ),
-            const SizedBox(width: AppTheme.spacingMd),
-            const Text('Journeyman Jobs'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onLongPress: _showDebugOptions,
-              child: const Text('Version 1.0.0'),
+          ),
+          const SizedBox(height: AppTheme.spacingSm),
+          Text(
+            'The premier job discovery app for IBEW Journeymen.',
+            style: AppTheme.bodyMedium.copyWith(
+              color: AppTheme.textSecondary,
             ),
-            const SizedBox(height: AppTheme.spacingSm),
-            Text(
-              'The premier job discovery app for IBEW Journeymen.',
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textSecondary,
-              ),
+          ),
+          const SizedBox(height: AppTheme.spacingMd),
+          Text(
+            'Clearing the Books.',
+            style: AppTheme.titleMedium.copyWith(
+              color: AppTheme.accentCopper,
             ),
-            const SizedBox(height: AppTheme.spacingMd),
-            Text(
-              'Clearing the Books.',
-              style: AppTheme.titleMedium.copyWith(
-                color: AppTheme.accentCopper,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
+          ),
+          const SizedBox(height: AppTheme.spacingLg),
+          JJPrimaryButton(
+            text: 'Close',
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            isFullWidth: true,
           ),
         ],
       ),
@@ -433,58 +450,69 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _showDebugOptions() {
     Navigator.pop(context); // Close about dialog first
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(
-              Icons.bug_report,
-              color: AppTheme.warningYellow,
-              size: AppTheme.iconMd,
-            ),
-            const SizedBox(width: AppTheme.spacingSm),
-            Text(
-              'Debug Options',
-              style: AppTheme.headlineSmall.copyWith(
+    context.showThemedDialog(
+      theme: PopupThemeData.warning(),
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.bug_report,
                 color: AppTheme.warningYellow,
+                size: AppTheme.iconMd,
               ),
-            ),
-          ],
-        ),
-        content: Text(
-          'This will reset your onboarding status and force you to complete onboarding again on next app restart.',
-          style: AppTheme.bodyMedium.copyWith(
-            color: AppTheme.textPrimary,
+              const SizedBox(width: AppTheme.spacingSm),
+              Text(
+                'Debug Options',
+                style: AppTheme.headlineSmall.copyWith(
+                  color: AppTheme.warningYellow,
+                ),
+              ),
+            ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancel',
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textSecondary,
-              ),
+          const SizedBox(height: AppTheme.spacingMd),
+          Text(
+            'This will reset your onboarding status and force you to complete onboarding again on next app restart.',
+            style: AppTheme.bodyMedium.copyWith(
+              color: AppTheme.textPrimary,
             ),
           ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              final onboardingService = OnboardingService();
-              await onboardingService.resetOnboarding();
-              if (context.mounted) {
-                JJSnackBar.showSuccess(
-                  context: context,
-                  message: 'Onboarding status reset. Restart app to test.',
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.warningYellow,
-              foregroundColor: AppTheme.white,
-            ),
-            child: const Text('Reset Onboarding'),
+          const SizedBox(height: AppTheme.spacingLg),
+          Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Cancel',
+                    style: AppTheme.bodyMedium.copyWith(
+                      color: AppTheme.textSecondary,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacingMd),
+              Expanded(
+                child: JJPrimaryButton(
+                  text: 'Reset',
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    final onboardingService = OnboardingService();
+                    await onboardingService.resetOnboarding();
+                    if (context.mounted) {
+                      JJSnackBar.showSuccess(
+                        context: context,
+                        message:
+                            'Onboarding status reset. Restart app to test.',
+                      );
+                    }
+                  },
+                  variant: JJButtonVariant.danger,
+                ),
+              ),
+            ],
           ),
         ],
       ),
