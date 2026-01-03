@@ -948,7 +948,7 @@ All collections should be cached locally using:
 ### Legacy Collections to Migrate
 
 | Old Collection | New Location | Migration Strategy |
-| ---------------- | -------------- | ------------------- |
+ | ---------------- | -------------- | ------------------- |
 | `posts` (root) | `crews/{crewId}/posts` | Copy + verify + delete old |
 | `messages` (root) | `crews/{crewId}/messages` or `channels/{id}/messages` | Create channels + migrate |
 | `user_reactions` | Embedded in posts | Merge into post documents |
