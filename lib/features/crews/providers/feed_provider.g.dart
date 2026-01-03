@@ -112,7 +112,7 @@ final class CrewPostsStreamProvider extends $FunctionalProvider<
   }
 }
 
-String _$crewPostsStreamHash() => r'926598cd772566c42593f4f3c05b59a23e842265';
+String _$crewPostsStreamHash() => r'a77354eb471481d0c0642d28a4e86af9002371c8';
 
 /// Stream of posts for a specific crew
 

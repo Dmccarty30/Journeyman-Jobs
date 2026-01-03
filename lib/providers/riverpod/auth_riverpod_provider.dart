@@ -25,7 +25,6 @@ final userModelStreamProvider = StreamProvider.autoDispose<UserModel>((ref) {
 
 /// Authentication state model for Riverpod
 class AuthState {
-
   const AuthState({
     this.user,
     this.isLoading = false,
@@ -82,6 +81,13 @@ User? currentUser(Ref ref) {
   );
 }
 
+/// Provider for the current user's ID only.
+/// This prevents unnecessary rebuilds when other user properties change.
+@riverpod
+String? currentUserId(Ref ref) {
+  return ref.watch(currentUserProvider)?.uid;
+}
+
 /// Auth state notifier for managing authentication operations
 @riverpod
 class AuthNotifier extends _$AuthNotifier {
@@ -92,9 +98,10 @@ class AuthNotifier extends _$AuthNotifier {
   @override
   AuthState build() {
     _operationManager = ConcurrentOperationManager();
-    
+
     // Listen to auth state changes
-    ref.listen(authStateStreamProvider, (AsyncValue<User?>? previous, AsyncValue<User?> next) {
+    ref.listen(authStateStreamProvider,
+        (AsyncValue<User?>? previous, AsyncValue<User?> next) {
       next.when(
         data: (User? user) {
           state = state.copyWith(
@@ -134,15 +141,16 @@ class AuthNotifier extends _$AuthNotifier {
     try {
       await _operationManager.executeOperation(
         type: OperationType.signIn,
-        operation: () => ref.read(authServiceProvider).signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        ),
+        operation: () =>
+            ref.read(authServiceProvider).signInWithEmailAndPassword(
+                  email: email,
+                  password: password,
+                ),
       );
 
       stopwatch.stop();
       _successfulSignIns++;
-      
+
       state = state.copyWith(
         isLoading: false,
         lastSignInDuration: stopwatch.elapsed,
@@ -173,7 +181,7 @@ class AuthNotifier extends _$AuthNotifier {
         type: OperationType.signOut,
         operation: () => ref.read(authServiceProvider).signOut(),
       );
-      
+
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(

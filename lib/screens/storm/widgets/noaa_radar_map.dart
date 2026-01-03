@@ -10,7 +10,7 @@ import '../../../electrical_components/electrical_loader.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// NOAA Weather Radar Map - Official US government weather data
-/// 
+///
 /// Features:
 /// - Real-time NOAA/NWS radar imagery
 /// - Active weather alerts and warnings
@@ -24,7 +24,7 @@ class NoaaRadarMap extends StatefulWidget {
   final bool showAlerts;
   final bool showHurricanes;
   final Function(NoaaAlert)? onAlertTap;
-  
+
   const NoaaRadarMap({
     super.key,
     this.initialLatitude = 39.8283, // US center
@@ -43,7 +43,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
   late final MapController _mapController;
   final NoaaWeatherService _noaaService = NoaaWeatherService();
   final LocationService _locationService = LocationService();
-  
+
   // Map state
   LatLng? _userLocation;
   NoaaRadarStation? _nearestRadar;
@@ -51,45 +51,45 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
   List<TropicalSystem> _tropicalSystems = [];
   bool _isLoading = true;
   String? _error;
-  
+
   // Radar settings
   String _radarProduct = 'N0R'; // Base reflectivity
   bool _showRadarLoop = false;
   Timer? _refreshTimer;
-  
+
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
     _initializeMap();
   }
-  
+
   @override
   void dispose() {
     _refreshTimer?.cancel();
     super.dispose();
   }
-  
+
   Future<void> _initializeMap() async {
     try {
       setState(() {
         _isLoading = true;
         _error = null;
       });
-      
+
       // Get user location
       final position = await _locationService.getCurrentLocation();
       if (position != null && mounted) {
         setState(() {
           _userLocation = LatLng(position.latitude, position.longitude);
         });
-        
+
         // Find nearest radar station
         _nearestRadar = await _noaaService.getNearestRadarStation(
           latitude: position.latitude,
           longitude: position.longitude,
         );
-        
+
         // Get active alerts
         if (widget.showAlerts) {
           _activeAlerts = await _noaaService.getActiveAlerts(
@@ -98,16 +98,16 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
           );
         }
       }
-      
+
       // Get tropical systems
       if (widget.showHurricanes) {
         _tropicalSystems = await _noaaService.getActiveTropicalSystems();
       }
-      
+
       setState(() {
         _isLoading = false;
       });
-      
+
       // Set up refresh timer for radar updates
       _refreshTimer = Timer.periodic(const Duration(minutes: 2), (_) {
         if (mounted) setState(() {}); // Refresh radar image
@@ -119,7 +119,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -145,7 +145,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
         ),
       );
     }
-    
+
     if (_error != null) {
       return Container(
         color: AppTheme.primaryNavy,
@@ -180,7 +180,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
         ),
       );
     }
-    
+
     return Stack(
       children: [
         // Map
@@ -202,7 +202,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
               userAgentPackageName: 'com.journeymanjobs.app',
               tileProvider: NetworkTileProvider(),
             ),
-            
+
             // NOAA Radar overlay (if station available)
             if (_nearestRadar != null)
               Opacity(
@@ -231,50 +231,52 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                   ],
                 ),
               ),
-            
+
             // Hurricane/Tropical system markers
             if (_tropicalSystems.isNotEmpty)
               MarkerLayer(
-                markers: _tropicalSystems.map((system) => Marker(
-                  point: LatLng(system.latitude, system.longitude),
-                  width: 60,
-                  height: 60,
-                  child: GestureDetector(
-                    onTap: () => _showTropicalSystemDetails(system),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _getStormColor(system.classification),
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 3,
-                        ),
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              FontAwesomeIcons.hurricane,
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                            Text(
-                              system.name,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
+                markers: _tropicalSystems
+                    .map((system) => Marker(
+                          point: LatLng(system.latitude, system.longitude),
+                          width: 60,
+                          height: 60,
+                          child: GestureDetector(
+                            onTap: () => _showTropicalSystemDetails(system),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _getStormColor(system.classification),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 3,
+                                ),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      FontAwesomeIcons.hurricane,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
+                                    Text(
+                                      system.name,
+                                      style: AppTheme.labelSmall.copyWith(
+                                        color: AppTheme.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                )).toList(),
+                          ),
+                        ))
+                    .toList(),
               ),
-            
+
             // User location marker
             if (_userLocation != null)
               MarkerLayer(
@@ -303,7 +305,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
               ),
           ],
         ),
-        
+
         // Alert banner
         if (_activeAlerts.isNotEmpty)
           Positioned(
@@ -358,7 +360,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
               ),
             ),
           ),
-        
+
         // Controls
         Positioned(
           right: 16,
@@ -382,12 +384,13 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                       _radarProduct = value;
                     });
                   },
-                  itemBuilder: (context) => NoaaWeatherService.radarProducts.entries
-                      .map((e) => PopupMenuItem(
-                            value: e.key,
-                            child: Text(e.value),
-                          ))
-                      .toList(),
+                  itemBuilder: (context) =>
+                      NoaaWeatherService.radarProducts.entries
+                          .map((e) => PopupMenuItem(
+                                value: e.key,
+                                child: Text(e.value),
+                              ))
+                          .toList(),
                   child: Padding(
                     padding: const EdgeInsets.all(12),
                     child: Icon(
@@ -398,7 +401,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
                 ),
               ),
               const SizedBox(height: 8),
-              
+
               // Animation toggle
               _buildControlButton(
                 icon: _showRadarLoop ? Icons.pause : Icons.play_arrow,
@@ -411,7 +414,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
             ],
           ),
         ),
-        
+
         // Station info
         if (_nearestRadar != null)
           Positioned(
@@ -449,7 +452,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
       ],
     );
   }
-  
+
   Widget _buildControlButton({
     required IconData icon,
     required VoidCallback onPressed,
@@ -472,7 +475,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
       ),
     );
   }
-  
+
   Color _getAlertColor(String severity) {
     switch (severity) {
       case 'Extreme':
@@ -487,7 +490,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
         return AppTheme.infoBlue;
     }
   }
-  
+
   Color _getStormColor(String classification) {
     if (classification.contains('Hurricane')) {
       if (classification.contains('5')) return Color(0xFFD8006D); // Cat 5
@@ -501,7 +504,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
     }
     return Color(0xFF00FA9A); // Tropical Depression
   }
-  
+
   void _showAlertsList() {
     showModalBottomSheet(
       context: context,
@@ -559,7 +562,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
       },
     );
   }
-  
+
   Widget _buildAlertCard(NoaaAlert alert) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
@@ -652,7 +655,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
       ),
     );
   }
-  
+
   void _showTropicalSystemDetails(TropicalSystem system) {
     showDialog(
       context: context,
@@ -679,9 +682,11 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
             ),
             const SizedBox(height: AppTheme.spacingMd),
             _buildStormDetail('Max Winds', '${system.maxWindsMph} mph'),
-            _buildStormDetail('Movement', '${system.movementDirection} at ${system.movementSpeedMph} mph'),
+            _buildStormDetail('Movement',
+                '${system.movementDirection} at ${system.movementSpeedMph} mph'),
             _buildStormDetail('Pressure', '${system.pressure} mb'),
-            _buildStormDetail('Location', '${system.latitude.toStringAsFixed(1)}°N, ${system.longitude.abs().toStringAsFixed(1)}°W'),
+            _buildStormDetail('Location',
+                '${system.latitude.toStringAsFixed(1)}°N, ${system.longitude.abs().toStringAsFixed(1)}°W'),
             const SizedBox(height: AppTheme.spacingSm),
             Text(
               'Last Update: ${_formatDateTime(system.lastUpdate)}',
@@ -701,7 +706,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
       ),
     );
   }
-  
+
   Widget _buildStormDetail(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -721,11 +726,11 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
       ),
     );
   }
-  
+
   String _formatDateTime(DateTime dateTime) {
     final now = DateTime.now();
     final difference = dateTime.difference(now);
-    
+
     if (difference.inHours.abs() < 24) {
       if (difference.isNegative) {
         return '${difference.inHours.abs()} hours ago';
@@ -733,7 +738,7 @@ class _NoaaRadarMapState extends State<NoaaRadarMap> {
         return 'in ${difference.inHours} hours';
       }
     }
-    
+
     return '${dateTime.month}/${dateTime.day} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 }

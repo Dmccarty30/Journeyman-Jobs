@@ -1,5 +1,5 @@
-// lib/features/crews/providers/feed_provider.dart
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:state_notifier/state_notifier.dart';
 
@@ -19,14 +19,13 @@ FeedService feedService(Ref ref) => FeedService();
 /// Stream of posts for a specific crew
 @riverpod
 Stream<List<PostModel>> crewPostsStream(Ref ref, String crewId) {
-  final currentUser = ref.watch(auth_providers.currentUserProvider);
-  if (currentUser == null) return Stream.value([]);
+  final currentUserId = ref.watch(auth_providers.currentUserIdProvider);
+  if (currentUserId == null) return Stream.value([]);
 
   final feedService = ref.watch(feedServiceProvider);
   return feedService.getCrewPosts(crewId: crewId).map((snapshot) {
     return snapshot.docs.map((doc) => PostModel.fromFirestore(doc)).toList();
-  })
-  .distinct();
+  }).distinct();
 }
 
 /// Posts for a specific crew

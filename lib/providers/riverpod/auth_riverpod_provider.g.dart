@@ -137,6 +137,55 @@ final class CurrentUserProvider extends $FunctionalProvider<User?, User?, User?>
 
 String _$currentUserHash() => r'7a7c15dd3ddbe7d5ff4fa9b0c4e9cd832e42c8aa';
 
+/// Provider for the current user's ID only.
+/// This prevents unnecessary rebuilds when other user properties change.
+
+@ProviderFor(currentUserId)
+final currentUserIdProvider = CurrentUserIdProvider._();
+
+/// Provider for the current user's ID only.
+/// This prevents unnecessary rebuilds when other user properties change.
+
+final class CurrentUserIdProvider
+    extends $FunctionalProvider<String?, String?, String?>
+    with $Provider<String?> {
+  /// Provider for the current user's ID only.
+  /// This prevents unnecessary rebuilds when other user properties change.
+  CurrentUserIdProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'currentUserIdProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentUserIdHash();
+
+  @$internal
+  @override
+  $ProviderElement<String?> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String? create(Ref ref) {
+    return currentUserId(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$currentUserIdHash() => r'eee80d9df48af8938bad9a0d45b7cce668dc342c';
+
 /// Auth state notifier for managing authentication operations
 
 @ProviderFor(AuthNotifier)

@@ -42,10 +42,10 @@ CrewService crewService(Ref ref) {
 @riverpod
 Stream<List<Crew>> userCrewsStream(Ref ref) {
   final crewService = ref.watch(crewServiceProvider);
-  final currentUser = ref.watch(currentUserProvider);
+  final userId = ref.watch(currentUserIdProvider);
 
-  if (currentUser == null) return Stream.value([]);
-  return crewService.getUserCrewsStream(currentUser.uid).map((snapshot) {
+  if (userId == null) return Stream.value([]);
+  return crewService.getUserCrewsStream(userId).map((snapshot) {
     return snapshot.docs.map((doc) => Crew.fromFirestore(doc)).toList();
   });
 }
@@ -95,10 +95,10 @@ SelectedCrewNotifier selectedCrewNotifierProvider(Ref ref) {
 /// Provider to check if current user is in a specific crew
 @riverpod
 bool isUserInCrew(Ref ref, String crewId) {
-  final currentUser = ref.watch(currentUserProvider);
+  final userId = ref.watch(currentUserIdProvider);
   final crews = ref.watch(userCrewsProvider);
 
-  if (currentUser == null) return false;
+  if (userId == null) return false;
 
   return crews.any((crew) => crew.id == crewId);
 }
@@ -106,10 +106,10 @@ bool isUserInCrew(Ref ref, String crewId) {
 /// Provider to get user's role in a specific crew
 @riverpod
 MemberRole? userRoleInCrew(Ref ref, String crewId) {
-  final currentUser = ref.watch(currentUserProvider);
+  final userId = ref.watch(currentUserIdProvider);
   final crews = ref.watch(userCrewsProvider);
 
-  if (currentUser == null) return null;
+  if (userId == null) return null;
 
   final crew = crews.firstWhere(
     (crew) => crew.id == crewId,
@@ -130,7 +130,7 @@ MemberRole? userRoleInCrew(Ref ref, String crewId) {
 
   if (crew.id.isEmpty) return null;
 
-  return crew.roles[currentUser.uid];
+  return crew.roles[userId];
 }
 
 /// Provider to check if user has a specific permission in a crew
@@ -182,13 +182,13 @@ List<CrewMember> crewMembers(Ref ref, String crewId) {
 /// Provider to get current user's crew member data
 @riverpod
 CrewMember? currentUserCrewMember(Ref ref, String crewId) {
-  final currentUser = ref.watch(currentUserProvider);
+  final userId = ref.watch(currentUserIdProvider);
   final members = ref.watch(crewMembersProvider(crewId));
 
-  if (currentUser == null) return null;
+  if (userId == null) return null;
 
   return members.firstWhere(
-    (member) => member.userId == currentUser.uid,
+    (member) => member.userId == userId,
     orElse: () => CrewMember(
       userId: '',
       crewId: '',

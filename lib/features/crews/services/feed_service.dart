@@ -30,7 +30,8 @@ class FeedService {
       // Validate input
       if (crewId.isEmpty) throw AppException('Crew ID cannot be empty');
       if (authorId.isEmpty) throw AppException('Author ID cannot be empty');
-      if (content.trim().isEmpty) throw AppException('Post content cannot be empty');
+      if (content.trim().isEmpty)
+        throw AppException('Post content cannot be empty');
 
       final postData = {
         'crewId': crewId,
@@ -47,10 +48,6 @@ class FeedService {
       };
 
       final docRef = await _postsCollection.add(postData);
-
-      if (kDebugMode) {
-        print('📝 Created post ${docRef.id} for crew $crewId');
-      }
 
       return docRef.id;
     } catch (e) {
@@ -82,10 +79,6 @@ class FeedService {
       query = query.startAfterDocument(startAfter);
     }
 
-    if (kDebugMode) {
-      print('📡 Getting posts for crew $crewId (limit: $limit)');
-    }
-
     return query.snapshots();
   }
 
@@ -110,7 +103,8 @@ class FeedService {
   }) async {
     try {
       // Validate input
-      if (content.trim().isEmpty) throw AppException('Post content cannot be empty');
+      if (content.trim().isEmpty)
+        throw AppException('Post content cannot be empty');
 
       final updateData = {
         'content': content.trim(),
@@ -193,7 +187,8 @@ class FeedService {
 
         final data = postDoc.data() as Map<String, dynamic>;
         final reactions = Map<String, int>.from(data['reactions'] ?? {});
-        final userReactions = Map<String, String>.from(data['userReactions'] ?? {});
+        final userReactions =
+            Map<String, String>.from(data['userReactions'] ?? {});
         final likes = List<String>.from(data['likes'] ?? []);
 
         // Update user reactions map
@@ -242,7 +237,8 @@ class FeedService {
 
         final data = postDoc.data() as Map<String, dynamic>;
         final reactions = Map<String, int>.from(data['reactions'] ?? {});
-        final userReactions = Map<String, String>.from(data['userReactions'] ?? {});
+        final userReactions =
+            Map<String, String>.from(data['userReactions'] ?? {});
         final likes = List<String>.from(data['likes'] ?? []);
 
         // Get the emoji that was removed
@@ -292,13 +288,15 @@ class FeedService {
   }
 
   /// Check if a user has reacted to a post with a specific emoji
-  Future<bool> hasUserReacted(String postId, String userId, String emoji) async {
+  Future<bool> hasUserReacted(
+      String postId, String userId, String emoji) async {
     try {
       final doc = await _postsCollection.doc(postId).get();
       if (!doc.exists) return false;
 
       final data = doc.data() as Map<String, dynamic>;
-      final userReactions = Map<String, String>.from(data['userReactions'] ?? {});
+      final userReactions =
+          Map<String, String>.from(data['userReactions'] ?? {});
       return userReactions[userId] == emoji;
     } catch (e) {
       throw AppException('Failed to check user reaction: $e');
@@ -315,7 +313,8 @@ class FeedService {
   }) async {
     try {
       // Validate input
-      if (content.trim().isEmpty) throw AppException('Comment content cannot be empty');
+      if (content.trim().isEmpty)
+        throw AppException('Comment content cannot be empty');
 
       final commentData = {
         'postId': postId,
@@ -382,16 +381,17 @@ class FeedService {
   }) async {
     try {
       // Validate input
-      if (content.trim().isEmpty) throw AppException('Comment content cannot be empty');
+      if (content.trim().isEmpty)
+        throw AppException('Comment content cannot be empty');
 
       await _postsCollection
           .doc(postId)
           .collection('comments')
           .doc(commentId)
           .update({
-            'content': content.trim(),
-            'updatedAt': FieldValue.serverTimestamp(),
-          });
+        'content': content.trim(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
 
       if (kDebugMode) {
         print('✏️ Updated comment $commentId on post $postId');
@@ -412,9 +412,9 @@ class FeedService {
           .collection('comments')
           .doc(commentId)
           .update({
-            'isDeleted': true,
-            'updatedAt': FieldValue.serverTimestamp(),
-          });
+        'isDeleted': true,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
 
       // Update comment count on post
       await _postsCollection.doc(postId).update({
@@ -473,7 +473,8 @@ class FeedService {
         totalPosts++;
         totalLikes += (data['likes'] as List<dynamic>?)?.length ?? 0;
         totalComments += (data['commentCount'] as int?) ?? 0;
-        totalReactions += (data['reactions'] as Map<String, dynamic>?)?.length ?? 0;
+        totalReactions +=
+            (data['reactions'] as Map<String, dynamic>?)?.length ?? 0;
       }
 
       return {
@@ -482,7 +483,8 @@ class FeedService {
         'totalComments': totalComments,
         'totalReactions': totalReactions,
         'averageLikesPerPost': totalPosts > 0 ? totalLikes / totalPosts : 0.0,
-        'averageCommentsPerPost': totalPosts > 0 ? totalComments / totalPosts : 0.0,
+        'averageCommentsPerPost':
+            totalPosts > 0 ? totalComments / totalPosts : 0.0,
       };
     } catch (e) {
       throw AppException('Failed to get crew post stats: $e');
@@ -514,6 +516,4 @@ class FeedService {
   }
 
   // Validation Helpers
-
-
 }

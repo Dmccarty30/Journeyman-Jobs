@@ -209,7 +209,7 @@ class _StormScreenState extends State<StormScreen> {
                       Text(
                         'Current Storm Activity',
                         style: AppTheme.headlineSmall.copyWith(
-                          color: AppTheme.primaryNavy,
+                          color: AppTheme.white,
                         ),
                       ),
                       IconButton(
@@ -285,7 +285,7 @@ class _StormScreenState extends State<StormScreen> {
                     Text(
                       'Major Power Outages by State',
                       style: AppTheme.headlineSmall.copyWith(
-                        color: AppTheme.primaryNavy,
+                        color: AppTheme.white,
                       ),
                     ),
                     const SizedBox(height: AppTheme.spacingMd),
@@ -353,7 +353,7 @@ class _StormScreenState extends State<StormScreen> {
                   Text(
                     'Active Storm Events',
                     style: AppTheme.headlineSmall.copyWith(
-                      color: AppTheme.primaryNavy,
+                      color: AppTheme.white,
                     ),
                   ),
                   const SizedBox(height: AppTheme.spacingMd),
@@ -390,7 +390,7 @@ class _StormScreenState extends State<StormScreen> {
                             Text(
                               'Storm Contractors',
                               style: AppTheme.headlineSmall.copyWith(
-                                color: AppTheme.primaryNavy,
+                                color: AppTheme.textPrimary,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -469,7 +469,7 @@ class _StormScreenState extends State<StormScreen> {
           const SizedBox(height: AppTheme.spacingSm),
           Text(
             value,
-            style: AppTheme.displaySmall.copyWith(color: color),
+            style: AppTheme.displaySmall.copyWith(color: AppTheme.textPrimary),
           ),
           Text(
             title,
@@ -540,7 +540,7 @@ class _StormScreenState extends State<StormScreen> {
                         child: Text(
                           outage.stateName,
                           style: AppTheme.displaySmall.copyWith(
-                            color: AppTheme.primaryNavy,
+                            color: AppTheme.textPrimary,
                           ),
                         ),
                       ),
@@ -675,14 +675,14 @@ class StormEventCard extends StatelessWidget {
                           Text(
                             storm.name,
                             style: AppTheme.headlineSmall.copyWith(
-                              color: AppTheme.primaryNavy,
+                              color: AppTheme.textPrimary,
                             ),
                           ),
                           const SizedBox(height: AppTheme.spacingXs),
                           Text(
                             storm.region,
                             style: AppTheme.bodyMedium.copyWith(
-                              color: AppTheme.accentCopper,
+                              color: AppTheme.textSecondary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -695,7 +695,7 @@ class StormEventCard extends StatelessWidget {
                         Text(
                           '${storm.openPositions} positions',
                           style: AppTheme.headlineMedium.copyWith(
-                            color: AppTheme.successGreen,
+                            color: AppTheme.textPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -727,7 +727,7 @@ class StormEventCard extends StatelessWidget {
                       child: Text(
                         storm.status,
                         style: AppTheme.labelSmall.copyWith(
-                          color: AppTheme.successGreen,
+                          color: AppTheme.textSecondary,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -777,7 +777,7 @@ class StormEventCard extends StatelessWidget {
                       child: Text(
                         storm.payRate,
                         style: AppTheme.labelSmall.copyWith(
-                          color: AppTheme.successGreen,
+                          color: AppTheme.textSecondary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -795,7 +795,7 @@ class StormEventCard extends StatelessWidget {
                       child: Text(
                         'Per diem ${storm.perDiem}',
                         style: AppTheme.labelSmall.copyWith(
-                          color: AppTheme.accentCopper,
+                          color: AppTheme.textSecondary,
                         ),
                       ),
                     ),
@@ -883,14 +883,14 @@ class StormDetailsSheet extends StatelessWidget {
                       Text(
                         storm.name,
                         style: AppTheme.displaySmall.copyWith(
-                          color: AppTheme.primaryNavy,
+                          color: AppTheme.textPrimary,
                         ),
                       ),
                       const SizedBox(height: AppTheme.spacingXs),
                       Text(
                         storm.region,
                         style: AppTheme.headlineSmall.copyWith(
-                          color: AppTheme.accentCopper,
+                          color: AppTheme.textSecondary,
                         ),
                       ),
                     ],
@@ -927,7 +927,7 @@ class StormDetailsSheet extends StatelessWidget {
                         Text(
                           '${storm.openPositions}',
                           style: AppTheme.headlineMedium.copyWith(
-                            color: AppTheme.successGreen,
+                            color: AppTheme.textPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -955,7 +955,7 @@ class StormDetailsSheet extends StatelessWidget {
                         Text(
                           storm.payRate,
                           style: AppTheme.headlineMedium.copyWith(
-                            color: AppTheme.successGreen,
+                            color: AppTheme.textPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
