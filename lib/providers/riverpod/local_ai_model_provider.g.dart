@@ -10,13 +10,13 @@ part of 'local_ai_model_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(localModelService)
-const localModelServiceProvider = LocalModelServiceProvider._();
+final localModelServiceProvider = LocalModelServiceProvider._();
 
 final class LocalModelServiceProvider extends $FunctionalProvider<
     LocalModelService,
     LocalModelService,
     LocalModelService> with $Provider<LocalModelService> {
-  const LocalModelServiceProvider._()
+  LocalModelServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -53,12 +53,12 @@ final class LocalModelServiceProvider extends $FunctionalProvider<
 String _$localModelServiceHash() => r'5990a5d853897d7c8ccf32a269bfdf970b7defb4';
 
 @ProviderFor(modelInitializer)
-const modelInitializerProvider = ModelInitializerProvider._();
+final modelInitializerProvider = ModelInitializerProvider._();
 
 final class ModelInitializerProvider
     extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
-  const ModelInitializerProvider._()
+  ModelInitializerProvider._()
       : super(
           from: null,
           argument: null,

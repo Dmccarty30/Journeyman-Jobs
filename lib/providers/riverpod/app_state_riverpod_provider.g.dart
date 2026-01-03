@@ -11,7 +11,7 @@ part of 'app_state_riverpod_provider.dart';
 /// Connectivity service provider
 
 @ProviderFor(connectivityService)
-const connectivityServiceProvider = ConnectivityServiceProvider._();
+final connectivityServiceProvider = ConnectivityServiceProvider._();
 
 /// Connectivity service provider
 
@@ -20,7 +20,7 @@ final class ConnectivityServiceProvider extends $FunctionalProvider<
     ConnectivityService,
     ConnectivityService> with $Provider<ConnectivityService> {
   /// Connectivity service provider
-  const ConnectivityServiceProvider._()
+  ConnectivityServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -58,13 +58,13 @@ String _$connectivityServiceHash() =>
     r'fe947b36f73c7e039fb04b7b9dd605f6ed10e715';
 
 @ProviderFor(notificationService)
-const notificationServiceProvider = NotificationServiceProvider._();
+final notificationServiceProvider = NotificationServiceProvider._();
 
 final class NotificationServiceProvider extends $FunctionalProvider<
     NotificationServiceAdapter,
     NotificationServiceAdapter,
     NotificationServiceAdapter> with $Provider<NotificationServiceAdapter> {
-  const NotificationServiceProvider._()
+  NotificationServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -102,13 +102,13 @@ String _$notificationServiceHash() =>
     r'fb3c063b7fdea39af2e2b78234bad97723ce172e';
 
 @ProviderFor(analyticsService)
-const analyticsServiceProvider = AnalyticsServiceProvider._();
+final analyticsServiceProvider = AnalyticsServiceProvider._();
 
 final class AnalyticsServiceProvider extends $FunctionalProvider<
     AnalyticsServiceAdapter,
     AnalyticsServiceAdapter,
     AnalyticsServiceAdapter> with $Provider<AnalyticsServiceAdapter> {
-  const AnalyticsServiceProvider._()
+  AnalyticsServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -147,7 +147,7 @@ String _$analyticsServiceHash() => r'4ccdc6ead800c7ff2969519a91583607d65cc34e';
 /// Connectivity state stream
 
 @ProviderFor(connectivityStream)
-const connectivityStreamProvider = ConnectivityStreamProvider._();
+final connectivityStreamProvider = ConnectivityStreamProvider._();
 
 /// Connectivity state stream
 
@@ -155,7 +155,7 @@ final class ConnectivityStreamProvider
     extends $FunctionalProvider<AsyncValue<bool>, bool, Stream<bool>>
     with $FutureModifier<bool>, $StreamProvider<bool> {
   /// Connectivity state stream
-  const ConnectivityStreamProvider._()
+  ConnectivityStreamProvider._()
       : super(
           from: null,
           argument: null,
@@ -186,13 +186,13 @@ String _$connectivityStreamHash() =>
 /// App state notifier
 
 @ProviderFor(AppStateNotifier)
-const appStateProvider = AppStateNotifierProvider._();
+final appStateProvider = AppStateNotifierProvider._();
 
 /// App state notifier
 final class AppStateNotifierProvider
     extends $NotifierProvider<AppStateNotifier, AppState> {
   /// App state notifier
-  const AppStateNotifierProvider._()
+  AppStateNotifierProvider._()
       : super(
           from: null,
           argument: null,
@@ -219,7 +219,7 @@ final class AppStateNotifierProvider
   }
 }
 
-String _$appStateNotifierHash() => r'72962e8d82fc503007d5b5eb2d4f57b0688050cf';
+String _$appStateNotifierHash() => r'ac6b90fec89b92d8ff4eadee9301adca6a0112fb';
 
 /// App state notifier
 
@@ -228,18 +228,17 @@ abstract class _$AppStateNotifier extends $Notifier<AppState> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<AppState, AppState>;
     final element = ref.element as $ClassProviderElement<
         AnyNotifier<AppState, AppState>, AppState, Object?, Object?>;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 /// Combined app status provider
 
 @ProviderFor(appStatus)
-const appStatusProvider = AppStatusProvider._();
+final appStatusProvider = AppStatusProvider._();
 
 /// Combined app status provider
 
@@ -248,7 +247,7 @@ final class AppStatusProvider extends $FunctionalProvider<
     Map<String, dynamic>,
     Map<String, dynamic>> with $Provider<Map<String, dynamic>> {
   /// Combined app status provider
-  const AppStatusProvider._()
+  AppStatusProvider._()
       : super(
           from: null,
           argument: null,
@@ -287,7 +286,7 @@ String _$appStatusHash() => r'2b8a98e1ff7821ac751a47031119ccddc53921bb';
 /// Error aggregation provider
 
 @ProviderFor(allErrors)
-const allErrorsProvider = AllErrorsProvider._();
+final allErrorsProvider = AllErrorsProvider._();
 
 /// Error aggregation provider
 
@@ -295,7 +294,7 @@ final class AllErrorsProvider
     extends $FunctionalProvider<List<String>, List<String>, List<String>>
     with $Provider<List<String>> {
   /// Error aggregation provider
-  const AllErrorsProvider._()
+  AllErrorsProvider._()
       : super(
           from: null,
           argument: null,
@@ -333,14 +332,14 @@ String _$allErrorsHash() => r'db33f9c461727381281fcefbe4d0f919206db04d';
 /// Loading state aggregation provider
 
 @ProviderFor(isAnyLoading)
-const isAnyLoadingProvider = IsAnyLoadingProvider._();
+final isAnyLoadingProvider = IsAnyLoadingProvider._();
 
 /// Loading state aggregation provider
 
 final class IsAnyLoadingProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
   /// Loading state aggregation provider
-  const IsAnyLoadingProvider._()
+  IsAnyLoadingProvider._()
       : super(
           from: null,
           argument: null,

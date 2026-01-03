@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duplicate Widget Analysis - Journeyman Jobs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .duplicate-row { border-left: 4px solid #ef4444; }
+        .similar-row { border-left: 4px solid #f59e0b; }
+        .functionality-row { border-left: 4px solid #10b981; }
+    </style>
+</head>
+<body>
+    <div class="max-w-7xl mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-6">Duplicate Widget Analysis</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow p-4">
+                <h3 class="text-sm font-medium text-gray-600">Exact Duplicates</h3>
+                <p class="text-2xl font-bold text-red-600">2</p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-4">
+                <h3 class="text-sm font-medium text-gray-600">Near Duplicates</h3>
+                <p class="text-2xl font-bold text-yellow-600">5</p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-4">
+                <h3 class="text-sm font-medium text-gray-600">Similar Functionality</h3>
+                <p class="text-2xl font-bold text-blue-600">8</p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-4">
+                <h3 class="text-sm font-medium text-gray-600">Potential Savings</h3>
+                <p class="text-2xl font-bold text-green-600">~15%</p>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Component A</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Component B</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Similarity</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issues</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recommendation</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr class="duplicate-row">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">JobCard</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">JobCardImplementation</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">95%</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">Code duplication, maintenance burden</td>
+                        <td class="px-6 py-4 text-sm font-medium text-red-600">Merge immediately</td>
+                    </tr>
+                    <tr class="duplicate-row">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">JJPrimaryButton</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">JJSecondaryButton</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">85%</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">Shared logic not extracted</td>
+                        <td class="px-6 py-4 text-sm font-medium text-yellow-600">Refactor base class</td>
+                    </tr>
+                    <tr class="similar-row">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">CircuitBoardBackground</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ElectricalCircuitBackground</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">70%</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">Different implementations for same purpose</td>
+                        <td class="px-6 py-4 text-sm font-medium text-blue-600">Standardize implementation</td>
+                    </tr>
+                    <tr class="similar-row">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">JJButton</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">button_variants.dart</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">65%</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">Variant logic duplicated</td>
+                        <td class="px-6 py-4 text-sm font-medium text-blue-600">Extract variant system</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

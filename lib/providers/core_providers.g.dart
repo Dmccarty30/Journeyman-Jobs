@@ -10,13 +10,13 @@ part of 'core_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(connectivityService)
-const connectivityServiceProvider = ConnectivityServiceProvider._();
+final connectivityServiceProvider = ConnectivityServiceProvider._();
 
 final class ConnectivityServiceProvider extends $FunctionalProvider<
     ConnectivityService,
     ConnectivityService,
     ConnectivityService> with $Provider<ConnectivityService> {
-  const ConnectivityServiceProvider._()
+  ConnectivityServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -54,11 +54,11 @@ String _$connectivityServiceHash() =>
     r'727a38c43053e3ab88d851490a50df4cabdeb29e';
 
 @ProviderFor(FeedPostsNotifier)
-const feedPostsProvider = FeedPostsNotifierFamily._();
+final feedPostsProvider = FeedPostsNotifierFamily._();
 
 final class FeedPostsNotifierProvider
     extends $AsyncNotifierProvider<FeedPostsNotifier, List<TailboardPost>> {
-  const FeedPostsNotifierProvider._(
+  FeedPostsNotifierProvider._(
       {required FeedPostsNotifierFamily super.from,
       required String super.argument})
       : super(
@@ -100,7 +100,7 @@ final class FeedPostsNotifierFamily extends $Family
     with
         $ClassFamilyOverride<FeedPostsNotifier, AsyncValue<List<TailboardPost>>,
             List<TailboardPost>, FutureOr<List<TailboardPost>>, String> {
-  const FeedPostsNotifierFamily._()
+  FeedPostsNotifierFamily._()
       : super(
           retry: null,
           name: r'feedPostsProvider',
@@ -128,9 +128,6 @@ abstract class _$FeedPostsNotifier extends $AsyncNotifier<List<TailboardPost>> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(
-      _$args,
-    );
     final ref =
         this.ref as $Ref<AsyncValue<List<TailboardPost>>, List<TailboardPost>>;
     final element = ref.element as $ClassProviderElement<
@@ -138,16 +135,20 @@ abstract class _$FeedPostsNotifier extends $AsyncNotifier<List<TailboardPost>> {
         AsyncValue<List<TailboardPost>>,
         Object?,
         Object?>;
-    element.handleValue(ref, created);
+    element.handleCreate(
+        ref,
+        () => build(
+              _$args,
+            ));
   }
 }
 
 @ProviderFor(JobsNotifier)
-const jobsProvider = JobsNotifierFamily._();
+final jobsProvider = JobsNotifierFamily._();
 
 final class JobsNotifierProvider
     extends $AsyncNotifierProvider<JobsNotifier, List<Job>> {
-  const JobsNotifierProvider._(
+  JobsNotifierProvider._(
       {required JobsNotifierFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -188,7 +189,7 @@ final class JobsNotifierFamily extends $Family
     with
         $ClassFamilyOverride<JobsNotifier, AsyncValue<List<Job>>, List<Job>,
             FutureOr<List<Job>>, String> {
-  const JobsNotifierFamily._()
+  JobsNotifierFamily._()
       : super(
           retry: null,
           name: r'jobsProvider',
@@ -216,15 +217,16 @@ abstract class _$JobsNotifier extends $AsyncNotifier<List<Job>> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(
-      _$args,
-    );
     final ref = this.ref as $Ref<AsyncValue<List<Job>>, List<Job>>;
     final element = ref.element as $ClassProviderElement<
         AnyNotifier<AsyncValue<List<Job>>, List<Job>>,
         AsyncValue<List<Job>>,
         Object?,
         Object?>;
-    element.handleValue(ref, created);
+    element.handleCreate(
+        ref,
+        () => build(
+              _$args,
+            ));
   }
 }

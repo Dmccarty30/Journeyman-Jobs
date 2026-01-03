@@ -11,7 +11,7 @@ part of 'crew_jobs_riverpod_provider.dart';
 /// Crew filtered jobs stream provider - uses JobMatchingService to get jobs filtered by crew preferences
 
 @ProviderFor(crewFilteredJobsStream)
-const crewFilteredJobsStreamProvider = CrewFilteredJobsStreamFamily._();
+final crewFilteredJobsStreamProvider = CrewFilteredJobsStreamFamily._();
 
 /// Crew filtered jobs stream provider - uses JobMatchingService to get jobs filtered by crew preferences
 
@@ -19,7 +19,7 @@ final class CrewFilteredJobsStreamProvider extends $FunctionalProvider<
         AsyncValue<List<Job>>, List<Job>, Stream<List<Job>>>
     with $FutureModifier<List<Job>>, $StreamProvider<List<Job>> {
   /// Crew filtered jobs stream provider - uses JobMatchingService to get jobs filtered by crew preferences
-  const CrewFilteredJobsStreamProvider._(
+  CrewFilteredJobsStreamProvider._(
       {required CrewFilteredJobsStreamFamily super.from,
       required String super.argument})
       : super(
@@ -73,7 +73,7 @@ String _$crewFilteredJobsStreamHash() =>
 
 final class CrewFilteredJobsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Job>>, String> {
-  const CrewFilteredJobsStreamFamily._()
+  CrewFilteredJobsStreamFamily._()
       : super(
           retry: null,
           name: r'crewFilteredJobsStreamProvider',
@@ -96,7 +96,7 @@ final class CrewFilteredJobsStreamFamily extends $Family
 /// Crew filtered jobs - extracts data from AsyncValue
 
 @ProviderFor(crewFilteredJobs)
-const crewFilteredJobsProvider = CrewFilteredJobsFamily._();
+final crewFilteredJobsProvider = CrewFilteredJobsFamily._();
 
 /// Crew filtered jobs - extracts data from AsyncValue
 
@@ -104,7 +104,7 @@ final class CrewFilteredJobsProvider
     extends $FunctionalProvider<List<Job>, List<Job>, List<Job>>
     with $Provider<List<Job>> {
   /// Crew filtered jobs - extracts data from AsyncValue
-  const CrewFilteredJobsProvider._(
+  CrewFilteredJobsProvider._(
       {required CrewFilteredJobsFamily super.from,
       required String super.argument})
       : super(
@@ -164,7 +164,7 @@ String _$crewFilteredJobsHash() => r'2febd448c247fe67444a37e57a3a1ed090cf3b92';
 
 final class CrewFilteredJobsFamily extends $Family
     with $FunctionalFamilyOverride<List<Job>, String> {
-  const CrewFilteredJobsFamily._()
+  CrewFilteredJobsFamily._()
       : super(
           retry: null,
           name: r'crewFilteredJobsProvider',
@@ -187,14 +187,14 @@ final class CrewFilteredJobsFamily extends $Family
 /// Provider to check if crew filtered jobs are loading
 
 @ProviderFor(isCrewJobsLoading)
-const isCrewJobsLoadingProvider = IsCrewJobsLoadingFamily._();
+final isCrewJobsLoadingProvider = IsCrewJobsLoadingFamily._();
 
 /// Provider to check if crew filtered jobs are loading
 
 final class IsCrewJobsLoadingProvider
     extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// Provider to check if crew filtered jobs are loading
-  const IsCrewJobsLoadingProvider._(
+  IsCrewJobsLoadingProvider._(
       {required IsCrewJobsLoadingFamily super.from,
       required String super.argument})
       : super(
@@ -254,7 +254,7 @@ String _$isCrewJobsLoadingHash() => r'72047c801e0524108e71ffc8765d481de9c2dd1d';
 
 final class IsCrewJobsLoadingFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
-  const IsCrewJobsLoadingFamily._()
+  IsCrewJobsLoadingFamily._()
       : super(
           retry: null,
           name: r'isCrewJobsLoadingProvider',
@@ -277,7 +277,7 @@ final class IsCrewJobsLoadingFamily extends $Family
 /// Provider for crew filtered jobs error
 
 @ProviderFor(crewJobsError)
-const crewJobsErrorProvider = CrewJobsErrorFamily._();
+final crewJobsErrorProvider = CrewJobsErrorFamily._();
 
 /// Provider for crew filtered jobs error
 
@@ -285,7 +285,7 @@ final class CrewJobsErrorProvider
     extends $FunctionalProvider<String?, String?, String?>
     with $Provider<String?> {
   /// Provider for crew filtered jobs error
-  const CrewJobsErrorProvider._(
+  CrewJobsErrorProvider._(
       {required CrewJobsErrorFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -344,7 +344,7 @@ String _$crewJobsErrorHash() => r'2ead0efac25794aa79d159f4978293c938905177';
 
 final class CrewJobsErrorFamily extends $Family
     with $FunctionalFamilyOverride<String?, String> {
-  const CrewJobsErrorFamily._()
+  CrewJobsErrorFamily._()
       : super(
           retry: null,
           name: r'crewJobsErrorProvider',

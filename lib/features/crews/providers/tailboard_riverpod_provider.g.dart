@@ -11,7 +11,7 @@ part of 'tailboard_riverpod_provider.dart';
 /// TailboardService provider
 
 @ProviderFor(tailboardService)
-const tailboardServiceProvider = TailboardServiceProvider._();
+final tailboardServiceProvider = TailboardServiceProvider._();
 
 /// TailboardService provider
 
@@ -20,7 +20,7 @@ final class TailboardServiceProvider extends $FunctionalProvider<
     TailboardService,
     TailboardService> with $Provider<TailboardService> {
   /// TailboardService provider
-  const TailboardServiceProvider._()
+  TailboardServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -58,7 +58,7 @@ String _$tailboardServiceHash() => r'a008ee27926f60cfa4901bb94d74ed464864c13b';
 /// Stream of suggested jobs for a specific crew
 
 @ProviderFor(suggestedJobsStream)
-const suggestedJobsStreamProvider = SuggestedJobsStreamFamily._();
+final suggestedJobsStreamProvider = SuggestedJobsStreamFamily._();
 
 /// Stream of suggested jobs for a specific crew
 
@@ -70,7 +70,7 @@ final class SuggestedJobsStreamProvider extends $FunctionalProvider<
         $FutureModifier<List<SuggestedJob>>,
         $StreamProvider<List<SuggestedJob>> {
   /// Stream of suggested jobs for a specific crew
-  const SuggestedJobsStreamProvider._(
+  SuggestedJobsStreamProvider._(
       {required SuggestedJobsStreamFamily super.from,
       required String super.argument})
       : super(
@@ -118,13 +118,13 @@ final class SuggestedJobsStreamProvider extends $FunctionalProvider<
 }
 
 String _$suggestedJobsStreamHash() =>
-    r'efb34b414d0f7334aff624a0338809d3a8204261';
+    r'3045c5a021ea2bcfd7922cf7a9e68554c71d98db';
 
 /// Stream of suggested jobs for a specific crew
 
 final class SuggestedJobsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<SuggestedJob>>, String> {
-  const SuggestedJobsStreamFamily._()
+  SuggestedJobsStreamFamily._()
       : super(
           retry: null,
           name: r'suggestedJobsStreamProvider',
@@ -147,7 +147,7 @@ final class SuggestedJobsStreamFamily extends $Family
 /// Suggested jobs for a specific crew
 
 @ProviderFor(suggestedJobs)
-const suggestedJobsProvider = SuggestedJobsFamily._();
+final suggestedJobsProvider = SuggestedJobsFamily._();
 
 /// Suggested jobs for a specific crew
 
@@ -156,7 +156,7 @@ final class SuggestedJobsProvider extends $FunctionalProvider<
     List<SuggestedJob>,
     List<SuggestedJob>> with $Provider<List<SuggestedJob>> {
   /// Suggested jobs for a specific crew
-  const SuggestedJobsProvider._(
+  SuggestedJobsProvider._(
       {required SuggestedJobsFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -216,7 +216,7 @@ String _$suggestedJobsHash() => r'53a7f5f0d20770a686980ef9c1e3c9716a8b486d';
 
 final class SuggestedJobsFamily extends $Family
     with $FunctionalFamilyOverride<List<SuggestedJob>, String> {
-  const SuggestedJobsFamily._()
+  SuggestedJobsFamily._()
       : super(
           retry: null,
           name: r'suggestedJobsProvider',
@@ -239,7 +239,7 @@ final class SuggestedJobsFamily extends $Family
 /// Stream of activity items for a specific crew
 
 @ProviderFor(activityItemsStream)
-const activityItemsStreamProvider = ActivityItemsStreamFamily._();
+final activityItemsStreamProvider = ActivityItemsStreamFamily._();
 
 /// Stream of activity items for a specific crew
 
@@ -251,7 +251,7 @@ final class ActivityItemsStreamProvider extends $FunctionalProvider<
         $FutureModifier<List<ActivityItem>>,
         $StreamProvider<List<ActivityItem>> {
   /// Stream of activity items for a specific crew
-  const ActivityItemsStreamProvider._(
+  ActivityItemsStreamProvider._(
       {required ActivityItemsStreamFamily super.from,
       required String super.argument})
       : super(
@@ -299,13 +299,13 @@ final class ActivityItemsStreamProvider extends $FunctionalProvider<
 }
 
 String _$activityItemsStreamHash() =>
-    r'4f0b46dfabbe0656f1e29e0011a9a18a27be7b5f';
+    r'0090d86914764688f90560e110a2f58a1cde0ab2';
 
 /// Stream of activity items for a specific crew
 
 final class ActivityItemsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<ActivityItem>>, String> {
-  const ActivityItemsStreamFamily._()
+  ActivityItemsStreamFamily._()
       : super(
           retry: null,
           name: r'activityItemsStreamProvider',
@@ -328,7 +328,7 @@ final class ActivityItemsStreamFamily extends $Family
 /// Activity items for a specific crew
 
 @ProviderFor(activityItems)
-const activityItemsProvider = ActivityItemsFamily._();
+final activityItemsProvider = ActivityItemsFamily._();
 
 /// Activity items for a specific crew
 
@@ -337,7 +337,7 @@ final class ActivityItemsProvider extends $FunctionalProvider<
     List<ActivityItem>,
     List<ActivityItem>> with $Provider<List<ActivityItem>> {
   /// Activity items for a specific crew
-  const ActivityItemsProvider._(
+  ActivityItemsProvider._(
       {required ActivityItemsFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -397,7 +397,7 @@ String _$activityItemsHash() => r'f556562361eb3d8a86ba3c2a25f075aab38f5b7d';
 
 final class ActivityItemsFamily extends $Family
     with $FunctionalFamilyOverride<List<ActivityItem>, String> {
-  const ActivityItemsFamily._()
+  ActivityItemsFamily._()
       : super(
           retry: null,
           name: r'activityItemsProvider',
@@ -420,7 +420,7 @@ final class ActivityItemsFamily extends $Family
 /// Stream of tailboard posts for a specific crew
 
 @ProviderFor(tailboardPostsStream)
-const tailboardPostsStreamProvider = TailboardPostsStreamFamily._();
+final tailboardPostsStreamProvider = TailboardPostsStreamFamily._();
 
 /// Stream of tailboard posts for a specific crew
 
@@ -432,7 +432,7 @@ final class TailboardPostsStreamProvider extends $FunctionalProvider<
         $FutureModifier<List<TailboardPost>>,
         $StreamProvider<List<TailboardPost>> {
   /// Stream of tailboard posts for a specific crew
-  const TailboardPostsStreamProvider._(
+  TailboardPostsStreamProvider._(
       {required TailboardPostsStreamFamily super.from,
       required String super.argument})
       : super(
@@ -486,7 +486,7 @@ String _$tailboardPostsStreamHash() =>
 
 final class TailboardPostsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<TailboardPost>>, String> {
-  const TailboardPostsStreamFamily._()
+  TailboardPostsStreamFamily._()
       : super(
           retry: null,
           name: r'tailboardPostsStreamProvider',
@@ -509,7 +509,7 @@ final class TailboardPostsStreamFamily extends $Family
 /// Tailboard posts for a specific crew
 
 @ProviderFor(tailboardPosts)
-const tailboardPostsProvider = TailboardPostsFamily._();
+final tailboardPostsProvider = TailboardPostsFamily._();
 
 /// Tailboard posts for a specific crew
 
@@ -518,7 +518,7 @@ final class TailboardPostsProvider extends $FunctionalProvider<
     List<TailboardPost>,
     List<TailboardPost>> with $Provider<List<TailboardPost>> {
   /// Tailboard posts for a specific crew
-  const TailboardPostsProvider._(
+  TailboardPostsProvider._(
       {required TailboardPostsFamily super.from,
       required String super.argument})
       : super(
@@ -579,7 +579,7 @@ String _$tailboardPostsHash() => r'529a325af394dc05dcede426137632aedbf55f28';
 
 final class TailboardPostsFamily extends $Family
     with $FunctionalFamilyOverride<List<TailboardPost>, String> {
-  const TailboardPostsFamily._()
+  TailboardPostsFamily._()
       : super(
           retry: null,
           name: r'tailboardPostsProvider',
@@ -602,14 +602,14 @@ final class TailboardPostsFamily extends $Family
 /// Provider to get unread activity items count for current user
 
 @ProviderFor(unreadActivityCount)
-const unreadActivityCountProvider = UnreadActivityCountFamily._();
+final unreadActivityCountProvider = UnreadActivityCountFamily._();
 
 /// Provider to get unread activity items count for current user
 
 final class UnreadActivityCountProvider
     extends $FunctionalProvider<int, int, int> with $Provider<int> {
   /// Provider to get unread activity items count for current user
-  const UnreadActivityCountProvider._(
+  UnreadActivityCountProvider._(
       {required UnreadActivityCountFamily super.from,
       required String super.argument})
       : super(
@@ -670,7 +670,7 @@ String _$unreadActivityCountHash() =>
 
 final class UnreadActivityCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
-  const UnreadActivityCountFamily._()
+  UnreadActivityCountFamily._()
       : super(
           retry: null,
           name: r'unreadActivityCountProvider',
@@ -693,7 +693,7 @@ final class UnreadActivityCountFamily extends $Family
 /// Provider to get pinned posts for a specific crew
 
 @ProviderFor(pinnedPosts)
-const pinnedPostsProvider = PinnedPostsFamily._();
+final pinnedPostsProvider = PinnedPostsFamily._();
 
 /// Provider to get pinned posts for a specific crew
 
@@ -702,7 +702,7 @@ final class PinnedPostsProvider extends $FunctionalProvider<
     List<TailboardPost>,
     List<TailboardPost>> with $Provider<List<TailboardPost>> {
   /// Provider to get pinned posts for a specific crew
-  const PinnedPostsProvider._(
+  PinnedPostsProvider._(
       {required PinnedPostsFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -762,7 +762,7 @@ String _$pinnedPostsHash() => r'336120e1f716c5aa7e15579d9da98744da7959c5';
 
 final class PinnedPostsFamily extends $Family
     with $FunctionalFamilyOverride<List<TailboardPost>, String> {
-  const PinnedPostsFamily._()
+  PinnedPostsFamily._()
       : super(
           retry: null,
           name: r'pinnedPostsProvider',
@@ -785,7 +785,7 @@ final class PinnedPostsFamily extends $Family
 /// Provider to get recent posts (non-pinned) for a specific crew
 
 @ProviderFor(recentPosts)
-const recentPostsProvider = RecentPostsFamily._();
+final recentPostsProvider = RecentPostsFamily._();
 
 /// Provider to get recent posts (non-pinned) for a specific crew
 
@@ -794,7 +794,7 @@ final class RecentPostsProvider extends $FunctionalProvider<
     List<TailboardPost>,
     List<TailboardPost>> with $Provider<List<TailboardPost>> {
   /// Provider to get recent posts (non-pinned) for a specific crew
-  const RecentPostsProvider._(
+  RecentPostsProvider._(
       {required RecentPostsFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -854,7 +854,7 @@ String _$recentPostsHash() => r'c18014a0c38466a58c9485731b0bd79a8d371734';
 
 final class RecentPostsFamily extends $Family
     with $FunctionalFamilyOverride<List<TailboardPost>, String> {
-  const RecentPostsFamily._()
+  RecentPostsFamily._()
       : super(
           retry: null,
           name: r'recentPostsProvider',
@@ -877,7 +877,7 @@ final class RecentPostsFamily extends $Family
 /// Provider to get posts by a specific author
 
 @ProviderFor(postsByAuthor)
-const postsByAuthorProvider = PostsByAuthorFamily._();
+final postsByAuthorProvider = PostsByAuthorFamily._();
 
 /// Provider to get posts by a specific author
 
@@ -886,7 +886,7 @@ final class PostsByAuthorProvider extends $FunctionalProvider<
     List<TailboardPost>,
     List<TailboardPost>> with $Provider<List<TailboardPost>> {
   /// Provider to get posts by a specific author
-  const PostsByAuthorProvider._(
+  PostsByAuthorProvider._(
       {required PostsByAuthorFamily super.from,
       required (
         String,
@@ -961,7 +961,7 @@ final class PostsByAuthorFamily extends $Family
               String,
               String,
             )> {
-  const PostsByAuthorFamily._()
+  PostsByAuthorFamily._()
       : super(
           retry: null,
           name: r'postsByAuthorProvider',
@@ -988,7 +988,7 @@ final class PostsByAuthorFamily extends $Family
 /// Provider to get suggested jobs with high match score (>70)
 
 @ProviderFor(highMatchJobs)
-const highMatchJobsProvider = HighMatchJobsFamily._();
+final highMatchJobsProvider = HighMatchJobsFamily._();
 
 /// Provider to get suggested jobs with high match score (>70)
 
@@ -997,7 +997,7 @@ final class HighMatchJobsProvider extends $FunctionalProvider<
     List<SuggestedJob>,
     List<SuggestedJob>> with $Provider<List<SuggestedJob>> {
   /// Provider to get suggested jobs with high match score (>70)
-  const HighMatchJobsProvider._(
+  HighMatchJobsProvider._(
       {required HighMatchJobsFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -1057,7 +1057,7 @@ String _$highMatchJobsHash() => r'788c29e47c6777d56f85bdb9e02bf5131067ed8a';
 
 final class HighMatchJobsFamily extends $Family
     with $FunctionalFamilyOverride<List<SuggestedJob>, String> {
-  const HighMatchJobsFamily._()
+  HighMatchJobsFamily._()
       : super(
           retry: null,
           name: r'highMatchJobsProvider',
@@ -1080,14 +1080,14 @@ final class HighMatchJobsFamily extends $Family
 /// Provider to get jobs not yet viewed by current user
 
 @ProviderFor(unviewedJobs)
-const unviewedJobsProvider = UnviewedJobsFamily._();
+final unviewedJobsProvider = UnviewedJobsFamily._();
 
 /// Provider to get jobs not yet viewed by current user
 
 final class UnviewedJobsProvider extends $FunctionalProvider<List<SuggestedJob>,
     List<SuggestedJob>, List<SuggestedJob>> with $Provider<List<SuggestedJob>> {
   /// Provider to get jobs not yet viewed by current user
-  const UnviewedJobsProvider._(
+  UnviewedJobsProvider._(
       {required UnviewedJobsFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -1147,7 +1147,7 @@ String _$unviewedJobsHash() => r'7b3e8c51064f6257724e102bc05936e601346a4e';
 
 final class UnviewedJobsFamily extends $Family
     with $FunctionalFamilyOverride<List<SuggestedJob>, String> {
-  const UnviewedJobsFamily._()
+  UnviewedJobsFamily._()
       : super(
           retry: null,
           name: r'unviewedJobsProvider',
@@ -1170,14 +1170,14 @@ final class UnviewedJobsFamily extends $Family
 /// Provider to get jobs applied by crew members
 
 @ProviderFor(appliedJobs)
-const appliedJobsProvider = AppliedJobsFamily._();
+final appliedJobsProvider = AppliedJobsFamily._();
 
 /// Provider to get jobs applied by crew members
 
 final class AppliedJobsProvider extends $FunctionalProvider<List<SuggestedJob>,
     List<SuggestedJob>, List<SuggestedJob>> with $Provider<List<SuggestedJob>> {
   /// Provider to get jobs applied by crew members
-  const AppliedJobsProvider._(
+  AppliedJobsProvider._(
       {required AppliedJobsFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -1237,7 +1237,7 @@ String _$appliedJobsHash() => r'eca87aec178f86e2122d5351e5bdc06a14180fd7';
 
 final class AppliedJobsFamily extends $Family
     with $FunctionalFamilyOverride<List<SuggestedJob>, String> {
-  const AppliedJobsFamily._()
+  AppliedJobsFamily._()
       : super(
           retry: null,
           name: r'appliedJobsProvider',
@@ -1258,7 +1258,7 @@ final class AppliedJobsFamily extends $Family
 }
 
 @ProviderFor(tailboardMetadataStream)
-const tailboardMetadataStreamProvider = TailboardMetadataStreamFamily._();
+final tailboardMetadataStreamProvider = TailboardMetadataStreamFamily._();
 
 final class TailboardMetadataStreamProvider extends $FunctionalProvider<
         AsyncValue<Map<String, dynamic>?>,
@@ -1267,7 +1267,7 @@ final class TailboardMetadataStreamProvider extends $FunctionalProvider<
     with
         $FutureModifier<Map<String, dynamic>?>,
         $StreamProvider<Map<String, dynamic>?> {
-  const TailboardMetadataStreamProvider._(
+  TailboardMetadataStreamProvider._(
       {required TailboardMetadataStreamFamily super.from,
       required String super.argument})
       : super(
@@ -1320,7 +1320,7 @@ String _$tailboardMetadataStreamHash() =>
 
 final class TailboardMetadataStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<Map<String, dynamic>?>, String> {
-  const TailboardMetadataStreamFamily._()
+  TailboardMetadataStreamFamily._()
       : super(
           retry: null,
           name: r'tailboardMetadataStreamProvider',
@@ -1341,7 +1341,7 @@ final class TailboardMetadataStreamFamily extends $Family
 /// Provider to get tailboard analytics from metadata
 
 @ProviderFor(tailboardAnalytics)
-const tailboardAnalyticsProvider = TailboardAnalyticsFamily._();
+final tailboardAnalyticsProvider = TailboardAnalyticsFamily._();
 
 /// Provider to get tailboard analytics from metadata
 
@@ -1350,7 +1350,7 @@ final class TailboardAnalyticsProvider extends $FunctionalProvider<
     TailboardAnalytics?,
     TailboardAnalytics?> with $Provider<TailboardAnalytics?> {
   /// Provider to get tailboard analytics from metadata
-  const TailboardAnalyticsProvider._(
+  TailboardAnalyticsProvider._(
       {required TailboardAnalyticsFamily super.from,
       required String super.argument})
       : super(
@@ -1412,7 +1412,7 @@ String _$tailboardAnalyticsHash() =>
 
 final class TailboardAnalyticsFamily extends $Family
     with $FunctionalFamilyOverride<TailboardAnalytics?, String> {
-  const TailboardAnalyticsFamily._()
+  TailboardAnalyticsFamily._()
       : super(
           retry: null,
           name: r'tailboardAnalyticsProvider',
@@ -1435,14 +1435,14 @@ final class TailboardAnalyticsFamily extends $Family
 /// Provider to get tailboard engagement rate
 
 @ProviderFor(engagementRate)
-const engagementRateProvider = EngagementRateFamily._();
+final engagementRateProvider = EngagementRateFamily._();
 
 /// Provider to get tailboard engagement rate
 
 final class EngagementRateProvider
     extends $FunctionalProvider<double, double, double> with $Provider<double> {
   /// Provider to get tailboard engagement rate
-  const EngagementRateProvider._(
+  EngagementRateProvider._(
       {required EngagementRateFamily super.from,
       required String super.argument})
       : super(
@@ -1502,7 +1502,7 @@ String _$engagementRateHash() => r'e25abfa2815ce7fcbc775eccc2c72cd8c4b11f26';
 
 final class EngagementRateFamily extends $Family
     with $FunctionalFamilyOverride<double, String> {
-  const EngagementRateFamily._()
+  EngagementRateFamily._()
       : super(
           retry: null,
           name: r'engagementRateProvider',
@@ -1525,14 +1525,14 @@ final class EngagementRateFamily extends $Family
 /// Provider to get total posts count
 
 @ProviderFor(totalPostsCount)
-const totalPostsCountProvider = TotalPostsCountFamily._();
+final totalPostsCountProvider = TotalPostsCountFamily._();
 
 /// Provider to get total posts count
 
 final class TotalPostsCountProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
   /// Provider to get total posts count
-  const TotalPostsCountProvider._(
+  TotalPostsCountProvider._(
       {required TotalPostsCountFamily super.from,
       required String super.argument})
       : super(
@@ -1592,7 +1592,7 @@ String _$totalPostsCountHash() => r'517d94ff86cc487db7560fd04565ccac56cae564';
 
 final class TotalPostsCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
-  const TotalPostsCountFamily._()
+  TotalPostsCountFamily._()
       : super(
           retry: null,
           name: r'totalPostsCountProvider',
@@ -1615,14 +1615,14 @@ final class TotalPostsCountFamily extends $Family
 /// Provider to get total activities count
 
 @ProviderFor(totalActivitiesCount)
-const totalActivitiesCountProvider = TotalActivitiesCountFamily._();
+final totalActivitiesCountProvider = TotalActivitiesCountFamily._();
 
 /// Provider to get total activities count
 
 final class TotalActivitiesCountProvider
     extends $FunctionalProvider<int, int, int> with $Provider<int> {
   /// Provider to get total activities count
-  const TotalActivitiesCountProvider._(
+  TotalActivitiesCountProvider._(
       {required TotalActivitiesCountFamily super.from,
       required String super.argument})
       : super(
@@ -1683,7 +1683,7 @@ String _$totalActivitiesCountHash() =>
 
 final class TotalActivitiesCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
-  const TotalActivitiesCountFamily._()
+  TotalActivitiesCountFamily._()
       : super(
           retry: null,
           name: r'totalActivitiesCountProvider',
@@ -1706,14 +1706,14 @@ final class TotalActivitiesCountFamily extends $Family
 /// Provider to get total suggested jobs count
 
 @ProviderFor(totalSuggestedJobsCount)
-const totalSuggestedJobsCountProvider = TotalSuggestedJobsCountFamily._();
+final totalSuggestedJobsCountProvider = TotalSuggestedJobsCountFamily._();
 
 /// Provider to get total suggested jobs count
 
 final class TotalSuggestedJobsCountProvider
     extends $FunctionalProvider<int, int, int> with $Provider<int> {
   /// Provider to get total suggested jobs count
-  const TotalSuggestedJobsCountProvider._(
+  TotalSuggestedJobsCountProvider._(
       {required TotalSuggestedJobsCountFamily super.from,
       required String super.argument})
       : super(
@@ -1775,7 +1775,7 @@ String _$totalSuggestedJobsCountHash() =>
 
 final class TotalSuggestedJobsCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
-  const TotalSuggestedJobsCountFamily._()
+  TotalSuggestedJobsCountFamily._()
       : super(
           retry: null,
           name: r'totalSuggestedJobsCountProvider',
@@ -1798,14 +1798,14 @@ final class TotalSuggestedJobsCountFamily extends $Family
 /// Provider to check if tailboard metadata is loaded
 
 @ProviderFor(isTailboardMetadataLoaded)
-const isTailboardMetadataLoadedProvider = IsTailboardMetadataLoadedFamily._();
+final isTailboardMetadataLoadedProvider = IsTailboardMetadataLoadedFamily._();
 
 /// Provider to check if tailboard metadata is loaded
 
 final class IsTailboardMetadataLoadedProvider
     extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// Provider to check if tailboard metadata is loaded
-  const IsTailboardMetadataLoadedProvider._(
+  IsTailboardMetadataLoadedProvider._(
       {required IsTailboardMetadataLoadedFamily super.from,
       required String super.argument})
       : super(
@@ -1867,7 +1867,7 @@ String _$isTailboardMetadataLoadedHash() =>
 
 final class IsTailboardMetadataLoadedFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
-  const IsTailboardMetadataLoadedFamily._()
+  IsTailboardMetadataLoadedFamily._()
       : super(
           retry: null,
           name: r'isTailboardMetadataLoadedProvider',
@@ -1890,7 +1890,7 @@ final class IsTailboardMetadataLoadedFamily extends $Family
 /// Provider to get last updated timestamp from metadata
 
 @ProviderFor(tailboardLastUpdated)
-const tailboardLastUpdatedProvider = TailboardLastUpdatedFamily._();
+final tailboardLastUpdatedProvider = TailboardLastUpdatedFamily._();
 
 /// Provider to get last updated timestamp from metadata
 
@@ -1898,7 +1898,7 @@ final class TailboardLastUpdatedProvider
     extends $FunctionalProvider<DateTime?, DateTime?, DateTime?>
     with $Provider<DateTime?> {
   /// Provider to get last updated timestamp from metadata
-  const TailboardLastUpdatedProvider._(
+  TailboardLastUpdatedProvider._(
       {required TailboardLastUpdatedFamily super.from,
       required String super.argument})
       : super(
@@ -1959,7 +1959,7 @@ String _$tailboardLastUpdatedHash() =>
 
 final class TailboardLastUpdatedFamily extends $Family
     with $FunctionalFamilyOverride<DateTime?, String> {
-  const TailboardLastUpdatedFamily._()
+  TailboardLastUpdatedFamily._()
       : super(
           retry: null,
           name: r'tailboardLastUpdatedProvider',
@@ -1982,7 +1982,7 @@ final class TailboardLastUpdatedFamily extends $Family
 /// Provider to get crew calendar from metadata
 
 @ProviderFor(crewCalendar)
-const crewCalendarProvider = CrewCalendarFamily._();
+final crewCalendarProvider = CrewCalendarFamily._();
 
 /// Provider to get crew calendar from metadata
 
@@ -1990,7 +1990,7 @@ final class CrewCalendarProvider
     extends $FunctionalProvider<CrewCalendar?, CrewCalendar?, CrewCalendar?>
     with $Provider<CrewCalendar?> {
   /// Provider to get crew calendar from metadata
-  const CrewCalendarProvider._(
+  CrewCalendarProvider._(
       {required CrewCalendarFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -2049,7 +2049,7 @@ String _$crewCalendarHash() => r'49503d1830f5a44c6bc042119af382e7c6930daa';
 
 final class CrewCalendarFamily extends $Family
     with $FunctionalFamilyOverride<CrewCalendar?, String> {
-  const CrewCalendarFamily._()
+  CrewCalendarFamily._()
       : super(
           retry: null,
           name: r'crewCalendarProvider',
@@ -2072,7 +2072,7 @@ final class CrewCalendarFamily extends $Family
 /// Provider to get recent messages (placeholder - implement if needed)
 
 @ProviderFor(recentMessages)
-const recentMessagesProvider = RecentMessagesFamily._();
+final recentMessagesProvider = RecentMessagesFamily._();
 
 /// Provider to get recent messages (placeholder - implement if needed)
 
@@ -2080,7 +2080,7 @@ final class RecentMessagesProvider
     extends $FunctionalProvider<List<String>, List<String>, List<String>>
     with $Provider<List<String>> {
   /// Provider to get recent messages (placeholder - implement if needed)
-  const RecentMessagesProvider._(
+  RecentMessagesProvider._(
       {required RecentMessagesFamily super.from,
       required String super.argument})
       : super(
@@ -2140,7 +2140,7 @@ String _$recentMessagesHash() => r'79f46815cc85c7a975593a94f431add9136bc1b9';
 
 final class RecentMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<String>, String> {
-  const RecentMessagesFamily._()
+  RecentMessagesFamily._()
       : super(
           retry: null,
           name: r'recentMessagesProvider',
@@ -2163,7 +2163,7 @@ final class RecentMessagesFamily extends $Family
 /// Provider to get activity by type
 
 @ProviderFor(activitiesByType)
-const activitiesByTypeProvider = ActivitiesByTypeFamily._();
+final activitiesByTypeProvider = ActivitiesByTypeFamily._();
 
 /// Provider to get activity by type
 
@@ -2172,7 +2172,7 @@ final class ActivitiesByTypeProvider extends $FunctionalProvider<
     List<ActivityItem>,
     List<ActivityItem>> with $Provider<List<ActivityItem>> {
   /// Provider to get activity by type
-  const ActivitiesByTypeProvider._(
+  ActivitiesByTypeProvider._(
       {required ActivitiesByTypeFamily super.from,
       required (
         String,
@@ -2247,7 +2247,7 @@ final class ActivitiesByTypeFamily extends $Family
               String,
               ActivityType,
             )> {
-  const ActivitiesByTypeFamily._()
+  ActivitiesByTypeFamily._()
       : super(
           retry: null,
           name: r'activitiesByTypeProvider',
@@ -2274,7 +2274,7 @@ final class ActivitiesByTypeFamily extends $Family
 /// Provider to get recent activities (last 7 days)
 
 @ProviderFor(recentActivities)
-const recentActivitiesProvider = RecentActivitiesFamily._();
+final recentActivitiesProvider = RecentActivitiesFamily._();
 
 /// Provider to get recent activities (last 7 days)
 
@@ -2283,7 +2283,7 @@ final class RecentActivitiesProvider extends $FunctionalProvider<
     List<ActivityItem>,
     List<ActivityItem>> with $Provider<List<ActivityItem>> {
   /// Provider to get recent activities (last 7 days)
-  const RecentActivitiesProvider._(
+  RecentActivitiesProvider._(
       {required RecentActivitiesFamily super.from,
       required String super.argument})
       : super(
@@ -2344,7 +2344,7 @@ String _$recentActivitiesHash() => r'c82c70514c85fd9e205c2b408559a4eabf901cc4';
 
 final class RecentActivitiesFamily extends $Family
     with $FunctionalFamilyOverride<List<ActivityItem>, String> {
-  const RecentActivitiesFamily._()
+  RecentActivitiesFamily._()
       : super(
           retry: null,
           name: r'recentActivitiesProvider',
@@ -2367,7 +2367,7 @@ final class RecentActivitiesFamily extends $Family
 /// Provider to get activities by actor
 
 @ProviderFor(activitiesByActor)
-const activitiesByActorProvider = ActivitiesByActorFamily._();
+final activitiesByActorProvider = ActivitiesByActorFamily._();
 
 /// Provider to get activities by actor
 
@@ -2376,7 +2376,7 @@ final class ActivitiesByActorProvider extends $FunctionalProvider<
     List<ActivityItem>,
     List<ActivityItem>> with $Provider<List<ActivityItem>> {
   /// Provider to get activities by actor
-  const ActivitiesByActorProvider._(
+  ActivitiesByActorProvider._(
       {required ActivitiesByActorFamily super.from,
       required (
         String,
@@ -2451,7 +2451,7 @@ final class ActivitiesByActorFamily extends $Family
               String,
               String,
             )> {
-  const ActivitiesByActorFamily._()
+  ActivitiesByActorFamily._()
       : super(
           retry: null,
           name: r'activitiesByActorProvider',

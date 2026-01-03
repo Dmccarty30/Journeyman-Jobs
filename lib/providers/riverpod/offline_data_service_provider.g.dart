@@ -10,13 +10,13 @@ part of 'offline_data_service_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(offlineDataService)
-const offlineDataServiceProvider = OfflineDataServiceProvider._();
+final offlineDataServiceProvider = OfflineDataServiceProvider._();
 
 final class OfflineDataServiceProvider extends $FunctionalProvider<
     OfflineDataService,
     OfflineDataService,
     OfflineDataService> with $Provider<OfflineDataService> {
-  const OfflineDataServiceProvider._()
+  OfflineDataServiceProvider._()
       : super(
           from: null,
           argument: null,

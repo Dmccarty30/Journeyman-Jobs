@@ -11,7 +11,7 @@ part of 'global_feed_riverpod_provider.dart';
 /// Stream of global messages
 
 @ProviderFor(globalMessagesStream)
-const globalMessagesStreamProvider = GlobalMessagesStreamProvider._();
+final globalMessagesStreamProvider = GlobalMessagesStreamProvider._();
 
 /// Stream of global messages
 
@@ -19,7 +19,7 @@ final class GlobalMessagesStreamProvider extends $FunctionalProvider<
         AsyncValue<List<Message>>, List<Message>, Stream<List<Message>>>
     with $FutureModifier<List<Message>>, $StreamProvider<List<Message>> {
   /// Stream of global messages
-  const GlobalMessagesStreamProvider._()
+  GlobalMessagesStreamProvider._()
       : super(
           from: null,
           argument: null,
@@ -51,7 +51,7 @@ String _$globalMessagesStreamHash() =>
 /// Global messages
 
 @ProviderFor(globalMessages)
-const globalMessagesProvider = GlobalMessagesProvider._();
+final globalMessagesProvider = GlobalMessagesProvider._();
 
 /// Global messages
 
@@ -59,7 +59,7 @@ final class GlobalMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Global messages
-  const GlobalMessagesProvider._()
+  GlobalMessagesProvider._()
       : super(
           from: null,
           argument: null,
@@ -97,13 +97,13 @@ String _$globalMessagesHash() => r'ab50198c26eb20f5ec83ad064dc16dfca4c80d77';
 /// Provider to send a global message
 
 @ProviderFor(SendGlobalMessageNotifier)
-const sendGlobalMessageProvider = SendGlobalMessageNotifierProvider._();
+final sendGlobalMessageProvider = SendGlobalMessageNotifierProvider._();
 
 /// Provider to send a global message
 final class SendGlobalMessageNotifierProvider
     extends $NotifierProvider<SendGlobalMessageNotifier, void> {
   /// Provider to send a global message
-  const SendGlobalMessageNotifierProvider._()
+  SendGlobalMessageNotifierProvider._()
       : super(
           from: null,
           argument: null,
@@ -140,25 +140,24 @@ abstract class _$SendGlobalMessageNotifier extends $Notifier<void> {
   @$mustCallSuper
   @override
   void runBuild() {
-    build();
     final ref = this.ref as $Ref<void, void>;
     final element = ref.element as $ClassProviderElement<
         AnyNotifier<void, void>, void, Object?, Object?>;
-    element.handleValue(ref, null);
+    element.handleCreate(ref, build);
   }
 }
 
 /// Provider to get unread global messages count
 
 @ProviderFor(unreadGlobalCount)
-const unreadGlobalCountProvider = UnreadGlobalCountProvider._();
+final unreadGlobalCountProvider = UnreadGlobalCountProvider._();
 
 /// Provider to get unread global messages count
 
 final class UnreadGlobalCountProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
   /// Provider to get unread global messages count
-  const UnreadGlobalCountProvider._()
+  UnreadGlobalCountProvider._()
       : super(
           from: null,
           argument: null,

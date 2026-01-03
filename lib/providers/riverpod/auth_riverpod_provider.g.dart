@@ -11,7 +11,7 @@ part of 'auth_riverpod_provider.dart';
 /// AuthService provider
 
 @ProviderFor(authService)
-const authServiceProvider = AuthServiceProvider._();
+final authServiceProvider = AuthServiceProvider._();
 
 /// AuthService provider
 
@@ -19,7 +19,7 @@ final class AuthServiceProvider
     extends $FunctionalProvider<AuthService, AuthService, AuthService>
     with $Provider<AuthService> {
   /// AuthService provider
-  const AuthServiceProvider._()
+  AuthServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -57,7 +57,7 @@ String _$authServiceHash() => r'ed0872794ec8e4cb3f50cb37b9c0b9467eb51ddb';
 /// Auth state stream provider
 
 @ProviderFor(authStateStream)
-const authStateStreamProvider = AuthStateStreamProvider._();
+final authStateStreamProvider = AuthStateStreamProvider._();
 
 /// Auth state stream provider
 
@@ -65,7 +65,7 @@ final class AuthStateStreamProvider
     extends $FunctionalProvider<AsyncValue<User?>, User?, Stream<User?>>
     with $FutureModifier<User?>, $StreamProvider<User?> {
   /// Auth state stream provider
-  const AuthStateStreamProvider._()
+  AuthStateStreamProvider._()
       : super(
           from: null,
           argument: null,
@@ -95,14 +95,14 @@ String _$authStateStreamHash() => r'945c7573a4c44c1e7821e357b4335dfab9831caf';
 /// Current user provider
 
 @ProviderFor(currentUser)
-const currentUserProvider = CurrentUserProvider._();
+final currentUserProvider = CurrentUserProvider._();
 
 /// Current user provider
 
 final class CurrentUserProvider extends $FunctionalProvider<User?, User?, User?>
     with $Provider<User?> {
   /// Current user provider
-  const CurrentUserProvider._()
+  CurrentUserProvider._()
       : super(
           from: null,
           argument: null,
@@ -140,13 +140,13 @@ String _$currentUserHash() => r'7a7c15dd3ddbe7d5ff4fa9b0c4e9cd832e42c8aa';
 /// Auth state notifier for managing authentication operations
 
 @ProviderFor(AuthNotifier)
-const authProvider = AuthNotifierProvider._();
+final authProvider = AuthNotifierProvider._();
 
 /// Auth state notifier for managing authentication operations
 final class AuthNotifierProvider
     extends $NotifierProvider<AuthNotifier, AuthState> {
   /// Auth state notifier for managing authentication operations
-  const AuthNotifierProvider._()
+  AuthNotifierProvider._()
       : super(
           from: null,
           argument: null,
@@ -182,25 +182,24 @@ abstract class _$AuthNotifier extends $Notifier<AuthState> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<AuthState, AuthState>;
     final element = ref.element as $ClassProviderElement<
         AnyNotifier<AuthState, AuthState>, AuthState, Object?, Object?>;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 /// Convenience provider for auth state
 
 @ProviderFor(isAuthenticated)
-const isAuthenticatedProvider = IsAuthenticatedProvider._();
+final isAuthenticatedProvider = IsAuthenticatedProvider._();
 
 /// Convenience provider for auth state
 
 final class IsAuthenticatedProvider
     extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// Convenience provider for auth state
-  const IsAuthenticatedProvider._()
+  IsAuthenticatedProvider._()
       : super(
           from: null,
           argument: null,
@@ -238,14 +237,14 @@ String _$isAuthenticatedHash() => r'ec341d95b490bda54e8278477e26f7b345844931';
 /// Route guard provider
 
 @ProviderFor(isRouteProtected)
-const isRouteProtectedProvider = IsRouteProtectedFamily._();
+final isRouteProtectedProvider = IsRouteProtectedFamily._();
 
 /// Route guard provider
 
 final class IsRouteProtectedProvider
     extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// Route guard provider
-  const IsRouteProtectedProvider._(
+  IsRouteProtectedProvider._(
       {required IsRouteProtectedFamily super.from,
       required String super.argument})
       : super(
@@ -305,7 +304,7 @@ String _$isRouteProtectedHash() => r'dbeddd3719f65e93f561fe1263b1ff94a0ded4ab';
 
 final class IsRouteProtectedFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
-  const IsRouteProtectedFamily._()
+  IsRouteProtectedFamily._()
       : super(
           retry: null,
           name: r'isRouteProtectedProvider',

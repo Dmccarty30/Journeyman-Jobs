@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../design_system/app_theme.dart';
-import '../storm_theme.dart';
 import '../services/power_outage_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -8,33 +7,26 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class PowerOutageCard extends StatelessWidget {
   final PowerOutageState outageData;
   final VoidCallback? onTap;
-  
+
   const PowerOutageCard({
     super.key,
     required this.outageData,
     this.onTap,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     final service = PowerOutageService();
-    final severity = service.getOutageSeverity(outageData);
     final percentage = service.getOutagePercentage(outageData);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-      decoration: StormTheme.stormCardDecoration.copyWith(
+      decoration: BoxDecoration(
         color: AppTheme.white,
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppTheme.white,
-            StormTheme.electricBlue.withValues(alpha: 0.05),
-          ],
-        ),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [AppTheme.shadowSm],
         border: Border.all(
-          color: _getSeverityColor(severity).withValues(alpha: 0.5),
+          color: AppTheme.borderLight,
           width: 1,
         ),
       ),
@@ -56,7 +48,8 @@ class PowerOutageCard extends StatelessWidget {
                       width: 56,
                       height: 56,
                       decoration: BoxDecoration(
-                        color: _getSeverityColor(severity).withAlpha((255 * 0.1).round()),
+                        color: AppTheme.accentCopper
+                            .withAlpha((255 * 0.1).round()),
                         borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                       ),
                       child: Center(
@@ -65,13 +58,13 @@ class PowerOutageCard extends StatelessWidget {
                           children: [
                             Icon(
                               FontAwesomeIcons.bolt,
-                              color: _getSeverityColor(severity),
+                              color: AppTheme.accentCopper,
                               size: 24,
                             ),
                             Text(
                               outageData.stateAbbreviation,
                               style: AppTheme.labelSmall.copyWith(
-                                color: _getSeverityColor(severity),
+                                color: AppTheme.accentCopper,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -80,7 +73,7 @@ class PowerOutageCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: AppTheme.spacingMd),
-                    
+
                     // State info
                     Expanded(
                       child: Column(
@@ -114,33 +107,15 @@ class PowerOutageCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    
-                    // Severity indicator
+
+                    // Percentage indicator
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppTheme.spacingSm,
-                            vertical: AppTheme.spacingXs,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _getSeverityColor(severity),
-                            borderRadius: BorderRadius.circular(AppTheme.radiusXs),
-                          ),
-                          child: Text(
-                            _getSeverityLabel(severity),
-                            style: AppTheme.labelSmall.copyWith(
-                              color: AppTheme.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: AppTheme.spacingXs),
                         Text(
                           '${percentage.toStringAsFixed(1)}%',
                           style: AppTheme.headlineMedium.copyWith(
-                            color: _getSeverityColor(severity),
+                            color: AppTheme.accentCopper,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -148,9 +123,9 @@ class PowerOutageCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: AppTheme.spacingMd),
-                
+
                 // Progress bar
                 Container(
                   height: 8,
@@ -164,14 +139,14 @@ class PowerOutageCard extends StatelessWidget {
                       value: percentage / 100,
                       backgroundColor: Colors.transparent,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        _getSeverityColor(severity),
+                        AppTheme.accentCopper,
                       ),
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: AppTheme.spacingSm),
-                
+
                 // Stats row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -208,64 +183,33 @@ class PowerOutageCard extends StatelessWidget {
       ),
     );
   }
-  
-  Color _getSeverityColor(OutageSeverity severity) {
-    switch (severity) {
-      case OutageSeverity.critical:
-        return StormTheme.dangerRed;
-      case OutageSeverity.severe:
-        return AppTheme.errorRed;
-      case OutageSeverity.moderate:
-        return StormTheme.lightningYellow;
-      case OutageSeverity.minor:
-        return AppTheme.warningOrange;
-      case OutageSeverity.minimal:
-        return StormTheme.rainGrey;
-    }
-  }
-  
-  String _getSeverityLabel(OutageSeverity severity) {
-    switch (severity) {
-      case OutageSeverity.critical:
-        return 'CRITICAL';
-      case OutageSeverity.severe:
-        return 'SEVERE';
-      case OutageSeverity.moderate:
-        return 'MODERATE';
-      case OutageSeverity.minor:
-        return 'MINOR';
-      case OutageSeverity.minimal:
-        return 'MINIMAL';
-    }
-  }
 }
 
 /// Widget to display power outage summary
 class PowerOutageSummary extends StatelessWidget {
   final List<PowerOutageState> outages;
-  
+
   const PowerOutageSummary({
     super.key,
     required this.outages,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     final service = PowerOutageService();
     final totalAffected = service.getSignificantOutagesTotal();
     final stateCount = outages.length;
-    
+
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
-        gradient: StormTheme.dangerGradient,
+        color: AppTheme.errorRed,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         boxShadow: [
-          StormTheme.lightningGlow,
           AppTheme.shadowMd,
         ],
         border: Border.all(
-          color: StormTheme.lightningYellow.withValues(alpha: 0.5),
+          color: AppTheme.white.withValues(alpha: 0.5),
           width: 1,
         ),
       ),
@@ -326,7 +270,7 @@ class PowerOutageSummary extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildStatCard({
     required IconData icon,
     required String value,

@@ -10,13 +10,13 @@ part of 'job_recommendation_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(subscriptionService)
-const subscriptionServiceProvider = SubscriptionServiceProvider._();
+final subscriptionServiceProvider = SubscriptionServiceProvider._();
 
 final class SubscriptionServiceProvider extends $FunctionalProvider<
     SubscriptionService,
     SubscriptionService,
     SubscriptionService> with $Provider<SubscriptionService> {
-  const SubscriptionServiceProvider._()
+  SubscriptionServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -51,10 +51,10 @@ final class SubscriptionServiceProvider extends $FunctionalProvider<
 }
 
 String _$subscriptionServiceHash() =>
-    r'd0fd84bd363f36d2b1ad5d1e32e2b1006fcfdae1';
+    r'08f145933608d07f7d311b22eb1df6ac2cf92f58';
 
 @ProviderFor(jobRecommendations)
-const jobRecommendationsProvider = JobRecommendationsProvider._();
+final jobRecommendationsProvider = JobRecommendationsProvider._();
 
 final class JobRecommendationsProvider extends $FunctionalProvider<
         AsyncValue<List<JobSuggestion>>,
@@ -63,7 +63,7 @@ final class JobRecommendationsProvider extends $FunctionalProvider<
     with
         $FutureModifier<List<JobSuggestion>>,
         $FutureProvider<List<JobSuggestion>> {
-  const JobRecommendationsProvider._()
+  JobRecommendationsProvider._()
       : super(
           from: null,
           argument: null,
@@ -90,4 +90,4 @@ final class JobRecommendationsProvider extends $FunctionalProvider<
 }
 
 String _$jobRecommendationsHash() =>
-    r'fc47bb81ee8b4bd11ffe492457748a2166a6311b';
+    r'ab772d6821e02bd06014ba5eda5c92f0f906e381';

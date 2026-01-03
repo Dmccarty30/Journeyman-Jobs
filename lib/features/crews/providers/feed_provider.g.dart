@@ -11,7 +11,7 @@ part of 'feed_provider.dart';
 /// FeedService provider
 
 @ProviderFor(feedService)
-const feedServiceProvider = FeedServiceProvider._();
+final feedServiceProvider = FeedServiceProvider._();
 
 /// FeedService provider
 
@@ -19,7 +19,7 @@ final class FeedServiceProvider
     extends $FunctionalProvider<FeedService, FeedService, FeedService>
     with $Provider<FeedService> {
   /// FeedService provider
-  const FeedServiceProvider._()
+  FeedServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -57,7 +57,7 @@ String _$feedServiceHash() => r'e4adaf3d0765ea270bafbca76dcd9d0be6570ba1';
 /// Stream of posts for a specific crew
 
 @ProviderFor(crewPostsStream)
-const crewPostsStreamProvider = CrewPostsStreamFamily._();
+final crewPostsStreamProvider = CrewPostsStreamFamily._();
 
 /// Stream of posts for a specific crew
 
@@ -65,7 +65,7 @@ final class CrewPostsStreamProvider extends $FunctionalProvider<
         AsyncValue<List<PostModel>>, List<PostModel>, Stream<List<PostModel>>>
     with $FutureModifier<List<PostModel>>, $StreamProvider<List<PostModel>> {
   /// Stream of posts for a specific crew
-  const CrewPostsStreamProvider._(
+  CrewPostsStreamProvider._(
       {required CrewPostsStreamFamily super.from,
       required String super.argument})
       : super(
@@ -112,13 +112,13 @@ final class CrewPostsStreamProvider extends $FunctionalProvider<
   }
 }
 
-String _$crewPostsStreamHash() => r'45480ebf419161686d8b4db14d3f7b33636c78b0';
+String _$crewPostsStreamHash() => r'926598cd772566c42593f4f3c05b59a23e842265';
 
 /// Stream of posts for a specific crew
 
 final class CrewPostsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<PostModel>>, String> {
-  const CrewPostsStreamFamily._()
+  CrewPostsStreamFamily._()
       : super(
           retry: null,
           name: r'crewPostsStreamProvider',
@@ -141,7 +141,7 @@ final class CrewPostsStreamFamily extends $Family
 /// Posts for a specific crew
 
 @ProviderFor(crewPosts)
-const crewPostsProvider = CrewPostsFamily._();
+final crewPostsProvider = CrewPostsFamily._();
 
 /// Posts for a specific crew
 
@@ -150,7 +150,7 @@ final class CrewPostsProvider extends $FunctionalProvider<
     AsyncValue<List<PostModel>>,
     AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
   /// Posts for a specific crew
-  const CrewPostsProvider._(
+  CrewPostsProvider._(
       {required CrewPostsFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -210,7 +210,7 @@ String _$crewPostsHash() => r'f44cbb6199252a9348cc5d20901665ad28fc53ae';
 
 final class CrewPostsFamily extends $Family
     with $FunctionalFamilyOverride<AsyncValue<List<PostModel>>, String> {
-  const CrewPostsFamily._()
+  CrewPostsFamily._()
       : super(
           retry: null,
           name: r'crewPostsProvider',
@@ -233,7 +233,7 @@ final class CrewPostsFamily extends $Family
 /// Stream of comments for a specific post
 
 @ProviderFor(postCommentsStream)
-const postCommentsStreamProvider = PostCommentsStreamFamily._();
+final postCommentsStreamProvider = PostCommentsStreamFamily._();
 
 /// Stream of comments for a specific post
 
@@ -241,7 +241,7 @@ final class PostCommentsStreamProvider extends $FunctionalProvider<
         AsyncValue<List<Comment>>, List<Comment>, Stream<List<Comment>>>
     with $FutureModifier<List<Comment>>, $StreamProvider<List<Comment>> {
   /// Stream of comments for a specific post
-  const PostCommentsStreamProvider._(
+  PostCommentsStreamProvider._(
       {required PostCommentsStreamFamily super.from,
       required String super.argument})
       : super(
@@ -295,7 +295,7 @@ String _$postCommentsStreamHash() =>
 
 final class PostCommentsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Comment>>, String> {
-  const PostCommentsStreamFamily._()
+  PostCommentsStreamFamily._()
       : super(
           retry: null,
           name: r'postCommentsStreamProvider',
@@ -318,7 +318,7 @@ final class PostCommentsStreamFamily extends $Family
 /// Comments for a specific post
 
 @ProviderFor(postComments)
-const postCommentsProvider = PostCommentsFamily._();
+final postCommentsProvider = PostCommentsFamily._();
 
 /// Comments for a specific post
 
@@ -327,7 +327,7 @@ final class PostCommentsProvider extends $FunctionalProvider<
     AsyncValue<List<Comment>>,
     AsyncValue<List<Comment>>> with $Provider<AsyncValue<List<Comment>>> {
   /// Comments for a specific post
-  const PostCommentsProvider._(
+  PostCommentsProvider._(
       {required PostCommentsFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -387,7 +387,7 @@ String _$postCommentsHash() => r'fd48317b238915a8f95771d8fd7358364759c4c0';
 
 final class PostCommentsFamily extends $Family
     with $FunctionalFamilyOverride<AsyncValue<List<Comment>>, String> {
-  const PostCommentsFamily._()
+  PostCommentsFamily._()
       : super(
           retry: null,
           name: r'postCommentsProvider',
@@ -410,7 +410,7 @@ final class PostCommentsFamily extends $Family
 /// Provider to get posts for selected crew
 
 @ProviderFor(selectedCrewPosts)
-const selectedCrewPostsProvider = SelectedCrewPostsProvider._();
+final selectedCrewPostsProvider = SelectedCrewPostsProvider._();
 
 /// Provider to get posts for selected crew
 
@@ -419,7 +419,7 @@ final class SelectedCrewPostsProvider extends $FunctionalProvider<
     AsyncValue<List<PostModel>>,
     AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
   /// Provider to get posts for selected crew
-  const SelectedCrewPostsProvider._()
+  SelectedCrewPostsProvider._()
       : super(
           from: null,
           argument: null,
@@ -458,7 +458,7 @@ String _$selectedCrewPostsHash() => r'c938e43244517cea199cfaeec3a3492cdde1050c';
 /// Provider to get pinned posts for a crew
 
 @ProviderFor(pinnedPosts)
-const pinnedPostsProvider = PinnedPostsFamily._();
+final pinnedPostsProvider = PinnedPostsFamily._();
 
 /// Provider to get pinned posts for a crew
 
@@ -467,7 +467,7 @@ final class PinnedPostsProvider extends $FunctionalProvider<
     AsyncValue<List<PostModel>>,
     AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
   /// Provider to get pinned posts for a crew
-  const PinnedPostsProvider._(
+  PinnedPostsProvider._(
       {required PinnedPostsFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -527,7 +527,7 @@ String _$pinnedPostsHash() => r'45530e9922de57a2b4135ebcaa3959c9e425e2e0';
 
 final class PinnedPostsFamily extends $Family
     with $FunctionalFamilyOverride<AsyncValue<List<PostModel>>, String> {
-  const PinnedPostsFamily._()
+  PinnedPostsFamily._()
       : super(
           retry: null,
           name: r'pinnedPostsProvider',
@@ -550,7 +550,7 @@ final class PinnedPostsFamily extends $Family
 /// Provider to get recent posts (non-pinned) for a crew
 
 @ProviderFor(recentPosts)
-const recentPostsProvider = RecentPostsFamily._();
+final recentPostsProvider = RecentPostsFamily._();
 
 /// Provider to get recent posts (non-pinned) for a crew
 
@@ -559,7 +559,7 @@ final class RecentPostsProvider extends $FunctionalProvider<
     AsyncValue<List<PostModel>>,
     AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
   /// Provider to get recent posts (non-pinned) for a crew
-  const RecentPostsProvider._(
+  RecentPostsProvider._(
       {required RecentPostsFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -619,7 +619,7 @@ String _$recentPostsHash() => r'396cb352efe2e8153a43836fef7f17a6a51804e6';
 
 final class RecentPostsFamily extends $Family
     with $FunctionalFamilyOverride<AsyncValue<List<PostModel>>, String> {
-  const RecentPostsFamily._()
+  RecentPostsFamily._()
       : super(
           retry: null,
           name: r'recentPostsProvider',
@@ -642,7 +642,7 @@ final class RecentPostsFamily extends $Family
 /// Provider to get posts by a specific author
 
 @ProviderFor(postsByAuthor)
-const postsByAuthorProvider = PostsByAuthorFamily._();
+final postsByAuthorProvider = PostsByAuthorFamily._();
 
 /// Provider to get posts by a specific author
 
@@ -651,7 +651,7 @@ final class PostsByAuthorProvider extends $FunctionalProvider<
     AsyncValue<List<PostModel>>,
     AsyncValue<List<PostModel>>> with $Provider<AsyncValue<List<PostModel>>> {
   /// Provider to get posts by a specific author
-  const PostsByAuthorProvider._(
+  PostsByAuthorProvider._(
       {required PostsByAuthorFamily super.from,
       required (
         String,
@@ -726,7 +726,7 @@ final class PostsByAuthorFamily extends $Family
               String,
               String,
             )> {
-  const PostsByAuthorFamily._()
+  PostsByAuthorFamily._()
       : super(
           retry: null,
           name: r'postsByAuthorProvider',
@@ -753,7 +753,7 @@ final class PostsByAuthorFamily extends $Family
 /// Provider for post creation notifier
 
 @ProviderFor(postCreationNotifier)
-const postCreationProvider = PostCreationNotifierProvider._();
+final postCreationProvider = PostCreationNotifierProvider._();
 
 /// Provider for post creation notifier
 
@@ -762,7 +762,7 @@ final class PostCreationNotifierProvider extends $FunctionalProvider<
     PostCreationNotifier,
     PostCreationNotifier> with $Provider<PostCreationNotifier> {
   /// Provider for post creation notifier
-  const PostCreationNotifierProvider._()
+  PostCreationNotifierProvider._()
       : super(
           from: null,
           argument: null,
@@ -802,7 +802,7 @@ String _$postCreationNotifierHash() =>
 /// Stream of post creation state
 
 @ProviderFor(postCreationState)
-const postCreationStateProvider = PostCreationStateProvider._();
+final postCreationStateProvider = PostCreationStateProvider._();
 
 /// Stream of post creation state
 
@@ -811,7 +811,7 @@ final class PostCreationStateProvider extends $FunctionalProvider<
     AsyncValue<String?>,
     AsyncValue<String?>> with $Provider<AsyncValue<String?>> {
   /// Stream of post creation state
-  const PostCreationStateProvider._()
+  PostCreationStateProvider._()
       : super(
           from: null,
           argument: null,
@@ -850,7 +850,7 @@ String _$postCreationStateHash() => r'211ef6732351f047d73271d5d809fcdc9504dc78';
 /// Provider for post update notifier
 
 @ProviderFor(postUpdateNotifier)
-const postUpdateProvider = PostUpdateNotifierProvider._();
+final postUpdateProvider = PostUpdateNotifierProvider._();
 
 /// Provider for post update notifier
 
@@ -859,7 +859,7 @@ final class PostUpdateNotifierProvider extends $FunctionalProvider<
     PostUpdateNotifier,
     PostUpdateNotifier> with $Provider<PostUpdateNotifier> {
   /// Provider for post update notifier
-  const PostUpdateNotifierProvider._()
+  PostUpdateNotifierProvider._()
       : super(
           from: null,
           argument: null,
@@ -899,7 +899,7 @@ String _$postUpdateNotifierHash() =>
 /// Stream of post update state
 
 @ProviderFor(postUpdateState)
-const postUpdateStateProvider = PostUpdateStateProvider._();
+final postUpdateStateProvider = PostUpdateStateProvider._();
 
 /// Stream of post update state
 
@@ -908,7 +908,7 @@ final class PostUpdateStateProvider extends $FunctionalProvider<
     AsyncValue<void>,
     AsyncValue<void>> with $Provider<AsyncValue<void>> {
   /// Stream of post update state
-  const PostUpdateStateProvider._()
+  PostUpdateStateProvider._()
       : super(
           from: null,
           argument: null,
@@ -946,7 +946,7 @@ String _$postUpdateStateHash() => r'128318e900ff323065834267e844948ea9adce90';
 /// Provider for reaction notifier
 
 @ProviderFor(reactionNotifier)
-const reactionProvider = ReactionNotifierProvider._();
+final reactionProvider = ReactionNotifierProvider._();
 
 /// Provider for reaction notifier
 
@@ -955,7 +955,7 @@ final class ReactionNotifierProvider extends $FunctionalProvider<
     ReactionNotifier,
     ReactionNotifier> with $Provider<ReactionNotifier> {
   /// Provider for reaction notifier
-  const ReactionNotifierProvider._()
+  ReactionNotifierProvider._()
       : super(
           from: null,
           argument: null,
@@ -993,14 +993,14 @@ String _$reactionNotifierHash() => r'82089bf49cb8dd28fa332f32db59bc3568954181';
 /// Stream of reaction state
 
 @ProviderFor(reactionState)
-const reactionStateProvider = ReactionStateProvider._();
+final reactionStateProvider = ReactionStateProvider._();
 
 /// Stream of reaction state
 
 final class ReactionStateProvider extends $FunctionalProvider<AsyncValue<void>,
     AsyncValue<void>, AsyncValue<void>> with $Provider<AsyncValue<void>> {
   /// Stream of reaction state
-  const ReactionStateProvider._()
+  ReactionStateProvider._()
       : super(
           from: null,
           argument: null,
@@ -1038,14 +1038,14 @@ String _$reactionStateHash() => r'26f3c4d1148ddb58a2097fe4c7dcfa390de96923';
 /// Provider for comment notifier
 
 @ProviderFor(commentNotifier)
-const commentProvider = CommentNotifierProvider._();
+final commentProvider = CommentNotifierProvider._();
 
 /// Provider for comment notifier
 
 final class CommentNotifierProvider extends $FunctionalProvider<CommentNotifier,
     CommentNotifier, CommentNotifier> with $Provider<CommentNotifier> {
   /// Provider for comment notifier
-  const CommentNotifierProvider._()
+  CommentNotifierProvider._()
       : super(
           from: null,
           argument: null,
@@ -1083,7 +1083,7 @@ String _$commentNotifierHash() => r'a3c4fdcf94232f02dbb52dc995f0a51b46506e2f';
 /// Stream of comment state
 
 @ProviderFor(commentState)
-const commentStateProvider = CommentStateProvider._();
+final commentStateProvider = CommentStateProvider._();
 
 /// Stream of comment state
 
@@ -1092,7 +1092,7 @@ final class CommentStateProvider extends $FunctionalProvider<
     AsyncValue<String?>,
     AsyncValue<String?>> with $Provider<AsyncValue<String?>> {
   /// Stream of comment state
-  const CommentStateProvider._()
+  CommentStateProvider._()
       : super(
           from: null,
           argument: null,
@@ -1131,7 +1131,7 @@ String _$commentStateHash() => r'fc18eb56484e024ce924a7f06a53cd8294379a84';
 /// Provider to get crew post statistics
 
 @ProviderFor(crewPostStats)
-const crewPostStatsProvider = CrewPostStatsFamily._();
+final crewPostStatsProvider = CrewPostStatsFamily._();
 
 /// Provider to get crew post statistics
 
@@ -1143,7 +1143,7 @@ final class CrewPostStatsProvider extends $FunctionalProvider<
         $FutureModifier<Map<String, dynamic>>,
         $FutureProvider<Map<String, dynamic>> {
   /// Provider to get crew post statistics
-  const CrewPostStatsProvider._(
+  CrewPostStatsProvider._(
       {required CrewPostStatsFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -1195,7 +1195,7 @@ String _$crewPostStatsHash() => r'71ef9f6c8917ec6626f75cd26caf6096bca2a3e7';
 
 final class CrewPostStatsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Map<String, dynamic>>, String> {
-  const CrewPostStatsFamily._()
+  CrewPostStatsFamily._()
       : super(
           retry: null,
           name: r'crewPostStatsProvider',
@@ -1218,7 +1218,7 @@ final class CrewPostStatsFamily extends $Family
 /// Provider to get reaction counts for a post
 
 @ProviderFor(postReactionCounts)
-const postReactionCountsProvider = PostReactionCountsFamily._();
+final postReactionCountsProvider = PostReactionCountsFamily._();
 
 /// Provider to get reaction counts for a post
 
@@ -1230,7 +1230,7 @@ final class PostReactionCountsProvider extends $FunctionalProvider<
         $FutureModifier<Map<ReactionType, int>>,
         $FutureProvider<Map<ReactionType, int>> {
   /// Provider to get reaction counts for a post
-  const PostReactionCountsProvider._(
+  PostReactionCountsProvider._(
       {required PostReactionCountsFamily super.from,
       required String super.argument})
       : super(
@@ -1284,7 +1284,7 @@ String _$postReactionCountsHash() =>
 
 final class PostReactionCountsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Map<ReactionType, int>>, String> {
-  const PostReactionCountsFamily._()
+  PostReactionCountsFamily._()
       : super(
           retry: null,
           name: r'postReactionCountsProvider',
@@ -1307,7 +1307,7 @@ final class PostReactionCountsFamily extends $Family
 /// Provider to check if current user has reacted to a post
 
 @ProviderFor(userReactionToPost)
-const userReactionToPostProvider = UserReactionToPostFamily._();
+final userReactionToPostProvider = UserReactionToPostFamily._();
 
 /// Provider to check if current user has reacted to a post
 
@@ -1315,7 +1315,7 @@ final class UserReactionToPostProvider
     extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
     with $FutureModifier<bool>, $FutureProvider<bool> {
   /// Provider to check if current user has reacted to a post
-  const UserReactionToPostProvider._(
+  UserReactionToPostProvider._(
       {required UserReactionToPostFamily super.from,
       required (
         String,
@@ -1382,7 +1382,7 @@ final class UserReactionToPostFamily extends $Family
               String,
               ReactionType,
             )> {
-  const UserReactionToPostFamily._()
+  UserReactionToPostFamily._()
       : super(
           retry: null,
           name: r'userReactionToPostProvider',

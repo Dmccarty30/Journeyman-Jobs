@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../navigation/app_router.dart';
 import '../../design_system/app_theme.dart';
 import '../../design_system/widgets/design_system_widgets.dart';
-import 'storm_theme.dart';
 import '../../models/storm_event.dart';
+import '../../design_system/popup_theme.dart';
 import 'widgets/noaa_radar_map.dart';
 import 'services/power_outage_service.dart';
 import 'widgets/power_outage_card.dart';
@@ -53,7 +53,6 @@ class _StormScreenState extends State<StormScreen> {
       id: '1',
       name: 'Hurricane Milton Aftermath',
       region: 'Florida',
-      severity: 'Critical',
       affectedUtilities: ['Duke Energy', 'FPL', 'Tampa Electric'],
       estimatedDuration: '14-21 days',
       openPositions: 156,
@@ -68,7 +67,6 @@ class _StormScreenState extends State<StormScreen> {
       id: '2',
       name: 'Texas Ice Storm Recovery',
       region: 'Texas',
-      severity: 'High',
       affectedUtilities: ['Oncor', 'CenterPoint Energy', 'AEP Texas'],
       estimatedDuration: '7-10 days',
       openPositions: 89,
@@ -83,7 +81,6 @@ class _StormScreenState extends State<StormScreen> {
       id: '3',
       name: 'Derecho Damage - Illinois',
       region: 'Midwest',
-      severity: 'Moderate',
       affectedUtilities: ['ComEd', 'Ameren Illinois'],
       estimatedDuration: '5-7 days',
       openPositions: 34,
@@ -164,19 +161,13 @@ class _StormScreenState extends State<StormScreen> {
       backgroundColor: Colors.transparent, // Transparent for circuit background
       appBar: AppBar(
         backgroundColor: AppTheme.primaryNavy,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: StormTheme.stormSurgeGradient,
-          ),
-        ),
         elevation: 0,
         title: Row(
           children: [
             Icon(
               Icons.flash_on,
-              color: StormTheme.lightningYellow,
+              color: AppTheme.warningYellow,
               size: AppTheme.iconMd,
-              shadows: [StormTheme.lightningGlow],
             ),
             const SizedBox(width: AppTheme.spacingSm),
             Text(
@@ -223,7 +214,7 @@ class _StormScreenState extends State<StormScreen> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.radar),
-                        color: StormTheme.electricBlue,
+                        color: AppTheme.infoBlue,
                         tooltip: 'Weather Radar',
                         onPressed: () => _showWeatherRadar(context),
                       ),
@@ -381,7 +372,7 @@ class _StormScreenState extends State<StormScreen> {
                       borderRadius: BorderRadius.circular(AppTheme.radiusLg),
                       boxShadow: [AppTheme.shadowMd],
                       border: Border.all(
-                        color: AppTheme.accentCopper.withValues(alpha: 0.3),
+                        color: AppTheme.borderLight,
                         width: 1,
                       ),
                     ),
@@ -455,16 +446,8 @@ class _StormScreenState extends State<StormScreen> {
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         boxShadow: [AppTheme.shadowSm],
         border: Border.all(
-          color: color.withValues(alpha: 0.2),
+          color: AppTheme.borderLight,
           width: 1,
-        ),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppTheme.white,
-            color.withValues(alpha: 0.05),
-          ],
         ),
       ),
       child: Column(
@@ -477,13 +460,6 @@ class _StormScreenState extends State<StormScreen> {
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
-                  boxShadow: [
-                    BoxShadow(
-                      color: color.withValues(alpha: 0.2),
-                      blurRadius: 8,
-                      spreadRadius: 1,
-                    )
-                  ],
                 ),
                 child: Icon(icon, color: color, size: AppTheme.iconMd),
               ),
@@ -660,17 +636,20 @@ class StormEventCard extends StatelessWidget {
 
   const StormEventCard({super.key, required this.storm});
 
-  Color get _severityColor => storm.severityColor;
-
   String get _timeUntilDeployment => storm.deploymentTimeString;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-      decoration: StormTheme.activeStormCardDecoration.copyWith(
-        border:
-            Border.all(color: _severityColor, width: AppTheme.borderWidthThick),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        boxShadow: [AppTheme.shadowSm],
+        border: Border.all(
+          color: AppTheme.borderLight,
+          width: 1,
+        ),
       ),
       child: Material(
         color: Colors.transparent,
@@ -692,24 +671,6 @@ class StormEventCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppTheme.spacingSm,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _severityColor,
-                              borderRadius:
-                                  BorderRadius.circular(AppTheme.radiusXs),
-                            ),
-                            child: Text(
-                              storm.severity.toUpperCase(),
-                              style: AppTheme.labelSmall.copyWith(
-                                color: AppTheme.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
                           const SizedBox(height: AppTheme.spacingSm),
                           Text(
                             storm.name,
@@ -882,12 +843,16 @@ class StormDetailsSheet extends StatelessWidget {
     required this.scrollController,
   });
 
-  Color get _severityColor => storm.severityColor;
-
   @override
   Widget build(BuildContext context) {
+    final popupTheme = context.popupTheme;
     return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingLg),
+      padding: popupTheme.padding,
+      decoration: BoxDecoration(
+        color: popupTheme.backgroundColor,
+        borderRadius: popupTheme.borderRadius,
+        boxShadow: popupTheme.shadows,
+      ),
       child: SingleChildScrollView(
         controller: scrollController,
         child: Column(
@@ -899,7 +864,7 @@ class StormDetailsSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppTheme.textLight,
+                  color: AppTheme.neutralGray300,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -915,25 +880,6 @@ class StormDetailsSheet extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppTheme.spacingMd,
-                          vertical: AppTheme.spacingSm,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _severityColor,
-                          borderRadius:
-                              BorderRadius.circular(AppTheme.radiusXs),
-                        ),
-                        child: Text(
-                          '${storm.severity.toUpperCase()} PRIORITY',
-                          style: AppTheme.labelMedium.copyWith(
-                            color: AppTheme.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: AppTheme.spacingSm),
                       Text(
                         storm.name,
                         style: AppTheme.displaySmall.copyWith(

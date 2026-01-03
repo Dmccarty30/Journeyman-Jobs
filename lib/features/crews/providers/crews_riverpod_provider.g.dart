@@ -11,7 +11,7 @@ part of 'crews_riverpod_provider.dart';
 /// JobSharingService provider
 
 @ProviderFor(jobSharingService)
-const jobSharingServiceProvider = JobSharingServiceProvider._();
+final jobSharingServiceProvider = JobSharingServiceProvider._();
 
 /// JobSharingService provider
 
@@ -20,7 +20,7 @@ final class JobSharingServiceProvider extends $FunctionalProvider<
     JobSharingService,
     JobSharingService> with $Provider<JobSharingService> {
   /// JobSharingService provider
-  const JobSharingServiceProvider._()
+  JobSharingServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -59,7 +59,7 @@ String _$jobSharingServiceHash() => r'2afec26ba06e06e5154bd86876c1ce2b5956f9bb';
 /// JobMatchingService provider
 
 @ProviderFor(jobMatchingService)
-const jobMatchingServiceProvider = JobMatchingServiceProvider._();
+final jobMatchingServiceProvider = JobMatchingServiceProvider._();
 
 /// JobMatchingService provider
 
@@ -68,7 +68,7 @@ final class JobMatchingServiceProvider extends $FunctionalProvider<
     JobMatchingService,
     JobMatchingService> with $Provider<JobMatchingService> {
   /// JobMatchingService provider
-  const JobMatchingServiceProvider._()
+  JobMatchingServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -108,7 +108,7 @@ String _$jobMatchingServiceHash() =>
 /// CrewService provider
 
 @ProviderFor(crewService)
-const crewServiceProvider = CrewServiceProvider._();
+final crewServiceProvider = CrewServiceProvider._();
 
 /// CrewService provider
 
@@ -116,7 +116,7 @@ final class CrewServiceProvider
     extends $FunctionalProvider<CrewService, CrewService, CrewService>
     with $Provider<CrewService> {
   /// CrewService provider
-  const CrewServiceProvider._()
+  CrewServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -154,7 +154,7 @@ String _$crewServiceHash() => r'9e698e95231d8d3c25fac5543d79e52c3735bf12';
 /// Stream of crews for the current user
 
 @ProviderFor(userCrewsStream)
-const userCrewsStreamProvider = UserCrewsStreamProvider._();
+final userCrewsStreamProvider = UserCrewsStreamProvider._();
 
 /// Stream of crews for the current user
 
@@ -162,7 +162,7 @@ final class UserCrewsStreamProvider extends $FunctionalProvider<
         AsyncValue<List<Crew>>, List<Crew>, Stream<List<Crew>>>
     with $FutureModifier<List<Crew>>, $StreamProvider<List<Crew>> {
   /// Stream of crews for the current user
-  const UserCrewsStreamProvider._()
+  UserCrewsStreamProvider._()
       : super(
           from: null,
           argument: null,
@@ -192,7 +192,7 @@ String _$userCrewsStreamHash() => r'45f76110109b34977a0bde860b878521bca0bb90';
 /// Current user's crews provider
 
 @ProviderFor(userCrews)
-const userCrewsProvider = UserCrewsProvider._();
+final userCrewsProvider = UserCrewsProvider._();
 
 /// Current user's crews provider
 
@@ -200,7 +200,7 @@ final class UserCrewsProvider
     extends $FunctionalProvider<List<Crew>, List<Crew>, List<Crew>>
     with $Provider<List<Crew>> {
   /// Current user's crews provider
-  const UserCrewsProvider._()
+  UserCrewsProvider._()
       : super(
           from: null,
           argument: null,
@@ -238,14 +238,14 @@ String _$userCrewsHash() => r'298a533caa58a465d0e6ec46cdf1ad03ccc12df8';
 /// Selected crew provider
 
 @ProviderFor(selectedCrew)
-const selectedCrewProvider = SelectedCrewProvider._();
+final selectedCrewProvider = SelectedCrewProvider._();
 
 /// Selected crew provider
 
 final class SelectedCrewProvider
     extends $FunctionalProvider<Crew?, Crew?, Crew?> with $Provider<Crew?> {
   /// Selected crew provider
-  const SelectedCrewProvider._()
+  SelectedCrewProvider._()
       : super(
           from: null,
           argument: null,
@@ -283,7 +283,7 @@ String _$selectedCrewHash() => r'7da0b10ed7a33ed8b2da2d60178785710934bea5';
 /// Selected crew notifier provider
 
 @ProviderFor(selectedCrewNotifierProvider)
-const selectedCrewNotifierProviderProvider =
+final selectedCrewNotifierProviderProvider =
     SelectedCrewNotifierProviderProvider._();
 
 /// Selected crew notifier provider
@@ -293,7 +293,7 @@ final class SelectedCrewNotifierProviderProvider extends $FunctionalProvider<
     SelectedCrewNotifier,
     SelectedCrewNotifier> with $Provider<SelectedCrewNotifier> {
   /// Selected crew notifier provider
-  const SelectedCrewNotifierProviderProvider._()
+  SelectedCrewNotifierProviderProvider._()
       : super(
           from: null,
           argument: null,
@@ -333,14 +333,14 @@ String _$selectedCrewNotifierProviderHash() =>
 /// Provider to check if current user is in a specific crew
 
 @ProviderFor(isUserInCrew)
-const isUserInCrewProvider = IsUserInCrewFamily._();
+final isUserInCrewProvider = IsUserInCrewFamily._();
 
 /// Provider to check if current user is in a specific crew
 
 final class IsUserInCrewProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
   /// Provider to check if current user is in a specific crew
-  const IsUserInCrewProvider._(
+  IsUserInCrewProvider._(
       {required IsUserInCrewFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -399,7 +399,7 @@ String _$isUserInCrewHash() => r'9970cb00a5cf099249f6331ecb0616b399961691';
 
 final class IsUserInCrewFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
-  const IsUserInCrewFamily._()
+  IsUserInCrewFamily._()
       : super(
           retry: null,
           name: r'isUserInCrewProvider',
@@ -422,7 +422,7 @@ final class IsUserInCrewFamily extends $Family
 /// Provider to get user's role in a specific crew
 
 @ProviderFor(userRoleInCrew)
-const userRoleInCrewProvider = UserRoleInCrewFamily._();
+final userRoleInCrewProvider = UserRoleInCrewFamily._();
 
 /// Provider to get user's role in a specific crew
 
@@ -430,7 +430,7 @@ final class UserRoleInCrewProvider
     extends $FunctionalProvider<MemberRole?, MemberRole?, MemberRole?>
     with $Provider<MemberRole?> {
   /// Provider to get user's role in a specific crew
-  const UserRoleInCrewProvider._(
+  UserRoleInCrewProvider._(
       {required UserRoleInCrewFamily super.from,
       required String super.argument})
       : super(
@@ -490,7 +490,7 @@ String _$userRoleInCrewHash() => r'a73e143d932db2f300825a10ea2d348ba37c098d';
 
 final class UserRoleInCrewFamily extends $Family
     with $FunctionalFamilyOverride<MemberRole?, String> {
-  const UserRoleInCrewFamily._()
+  UserRoleInCrewFamily._()
       : super(
           retry: null,
           name: r'userRoleInCrewProvider',
@@ -513,14 +513,14 @@ final class UserRoleInCrewFamily extends $Family
 /// Provider to check if user has a specific permission in a crew
 
 @ProviderFor(hasCrewPermission)
-const hasCrewPermissionProvider = HasCrewPermissionFamily._();
+final hasCrewPermissionProvider = HasCrewPermissionFamily._();
 
 /// Provider to check if user has a specific permission in a crew
 
 final class HasCrewPermissionProvider
     extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// Provider to check if user has a specific permission in a crew
-  const HasCrewPermissionProvider._(
+  HasCrewPermissionProvider._(
       {required HasCrewPermissionFamily super.from,
       required (
         String,
@@ -594,7 +594,7 @@ final class HasCrewPermissionFamily extends $Family
               String,
               String,
             )> {
-  const HasCrewPermissionFamily._()
+  HasCrewPermissionFamily._()
       : super(
           retry: null,
           name: r'hasCrewPermissionProvider',
@@ -621,7 +621,7 @@ final class HasCrewPermissionFamily extends $Family
 /// Provider to get crew members stream
 
 @ProviderFor(crewMembersStream)
-const crewMembersStreamProvider = CrewMembersStreamFamily._();
+final crewMembersStreamProvider = CrewMembersStreamFamily._();
 
 /// Provider to get crew members stream
 
@@ -631,7 +631,7 @@ final class CrewMembersStreamProvider extends $FunctionalProvider<
         Stream<List<CrewMember>>>
     with $FutureModifier<List<CrewMember>>, $StreamProvider<List<CrewMember>> {
   /// Provider to get crew members stream
-  const CrewMembersStreamProvider._(
+  CrewMembersStreamProvider._(
       {required CrewMembersStreamFamily super.from,
       required String super.argument})
       : super(
@@ -684,7 +684,7 @@ String _$crewMembersStreamHash() => r'7896f7dcc34e70f8fdfafa4b6c264514baa05da0';
 
 final class CrewMembersStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<CrewMember>>, String> {
-  const CrewMembersStreamFamily._()
+  CrewMembersStreamFamily._()
       : super(
           retry: null,
           name: r'crewMembersStreamProvider',
@@ -707,14 +707,14 @@ final class CrewMembersStreamFamily extends $Family
 /// Provider to get crew members
 
 @ProviderFor(crewMembers)
-const crewMembersProvider = CrewMembersFamily._();
+final crewMembersProvider = CrewMembersFamily._();
 
 /// Provider to get crew members
 
 final class CrewMembersProvider extends $FunctionalProvider<List<CrewMember>,
     List<CrewMember>, List<CrewMember>> with $Provider<List<CrewMember>> {
   /// Provider to get crew members
-  const CrewMembersProvider._(
+  CrewMembersProvider._(
       {required CrewMembersFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -773,7 +773,7 @@ String _$crewMembersHash() => r'd9e381c26118c59f15f2aac0e69305358bf47118';
 
 final class CrewMembersFamily extends $Family
     with $FunctionalFamilyOverride<List<CrewMember>, String> {
-  const CrewMembersFamily._()
+  CrewMembersFamily._()
       : super(
           retry: null,
           name: r'crewMembersProvider',
@@ -796,7 +796,7 @@ final class CrewMembersFamily extends $Family
 /// Provider to get current user's crew member data
 
 @ProviderFor(currentUserCrewMember)
-const currentUserCrewMemberProvider = CurrentUserCrewMemberFamily._();
+final currentUserCrewMemberProvider = CurrentUserCrewMemberFamily._();
 
 /// Provider to get current user's crew member data
 
@@ -804,7 +804,7 @@ final class CurrentUserCrewMemberProvider
     extends $FunctionalProvider<CrewMember?, CrewMember?, CrewMember?>
     with $Provider<CrewMember?> {
   /// Provider to get current user's crew member data
-  const CurrentUserCrewMemberProvider._(
+  CurrentUserCrewMemberProvider._(
       {required CurrentUserCrewMemberFamily super.from,
       required String super.argument})
       : super(
@@ -865,7 +865,7 @@ String _$currentUserCrewMemberHash() =>
 
 final class CurrentUserCrewMemberFamily extends $Family
     with $FunctionalFamilyOverride<CrewMember?, String> {
-  const CurrentUserCrewMemberFamily._()
+  CurrentUserCrewMemberFamily._()
       : super(
           retry: null,
           name: r'currentUserCrewMemberProvider',
@@ -888,14 +888,14 @@ final class CurrentUserCrewMemberFamily extends $Family
 /// Provider to check if current user is crew foreman
 
 @ProviderFor(isCrewForeman)
-const isCrewForemanProvider = IsCrewForemanFamily._();
+final isCrewForemanProvider = IsCrewForemanFamily._();
 
 /// Provider to check if current user is crew foreman
 
 final class IsCrewForemanProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
   /// Provider to check if current user is crew foreman
-  const IsCrewForemanProvider._(
+  IsCrewForemanProvider._(
       {required IsCrewForemanFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -954,7 +954,7 @@ String _$isCrewForemanHash() => r'70ef9c7fb287fefa817e033cecb943cabd92d8f4';
 
 final class IsCrewForemanFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
-  const IsCrewForemanFamily._()
+  IsCrewForemanFamily._()
       : super(
           retry: null,
           name: r'isCrewForemanProvider',
@@ -977,14 +977,14 @@ final class IsCrewForemanFamily extends $Family
 /// Provider to get crew by ID
 
 @ProviderFor(crewById)
-const crewByIdProvider = CrewByIdFamily._();
+final crewByIdProvider = CrewByIdFamily._();
 
 /// Provider to get crew by ID
 
 final class CrewByIdProvider extends $FunctionalProvider<Crew?, Crew?, Crew?>
     with $Provider<Crew?> {
   /// Provider to get crew by ID
-  const CrewByIdProvider._(
+  CrewByIdProvider._(
       {required CrewByIdFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -1043,7 +1043,7 @@ String _$crewByIdHash() => r'7dfbdb4f0e6292ccf36f0ee068b316295f6de322';
 
 final class CrewByIdFamily extends $Family
     with $FunctionalFamilyOverride<Crew?, String> {
-  const CrewByIdFamily._()
+  CrewByIdFamily._()
       : super(
           retry: null,
           name: r'crewByIdProvider',
@@ -1066,7 +1066,7 @@ final class CrewByIdFamily extends $Family
 /// Provider to get active crews only
 
 @ProviderFor(activeCrews)
-const activeCrewsProvider = ActiveCrewsProvider._();
+final activeCrewsProvider = ActiveCrewsProvider._();
 
 /// Provider to get active crews only
 
@@ -1074,7 +1074,7 @@ final class ActiveCrewsProvider
     extends $FunctionalProvider<List<Crew>, List<Crew>, List<Crew>>
     with $Provider<List<Crew>> {
   /// Provider to get active crews only
-  const ActiveCrewsProvider._()
+  ActiveCrewsProvider._()
       : super(
           from: null,
           argument: null,
@@ -1112,14 +1112,14 @@ String _$activeCrewsHash() => r'9febda40cc21b48e35eab819410bad95a5bb9bf9';
 /// Provider to get crew count
 
 @ProviderFor(crewCount)
-const crewCountProvider = CrewCountProvider._();
+final crewCountProvider = CrewCountProvider._();
 
 /// Provider to get crew count
 
 final class CrewCountProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
   /// Provider to get crew count
-  const CrewCountProvider._()
+  CrewCountProvider._()
       : super(
           from: null,
           argument: null,
@@ -1157,14 +1157,14 @@ String _$crewCountHash() => r'9b15b161e49cf5addd99dfe18147b5e7b967ce39';
 /// Provider to check if user can create crews
 
 @ProviderFor(canCreateCrews)
-const canCreateCrewsProvider = CanCreateCrewsProvider._();
+final canCreateCrewsProvider = CanCreateCrewsProvider._();
 
 /// Provider to check if user can create crews
 
 final class CanCreateCrewsProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
   /// Provider to check if user can create crews
-  const CanCreateCrewsProvider._()
+  CanCreateCrewsProvider._()
       : super(
           from: null,
           argument: null,
@@ -1202,14 +1202,14 @@ String _$canCreateCrewsHash() => r'1e8e4048d5f5d997806596894d6dc4da6f32fa28';
 /// Provider to get crew creation limit
 
 @ProviderFor(crewCreationLimit)
-const crewCreationLimitProvider = CrewCreationLimitProvider._();
+final crewCreationLimitProvider = CrewCreationLimitProvider._();
 
 /// Provider to get crew creation limit
 
 final class CrewCreationLimitProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
   /// Provider to get crew creation limit
-  const CrewCreationLimitProvider._()
+  CrewCreationLimitProvider._()
       : super(
           from: null,
           argument: null,
@@ -1247,14 +1247,14 @@ String _$crewCreationLimitHash() => r'aade676a47e107b5301e6dbabc86eb13059c9742';
 /// Provider to check if user has reached crew creation limit
 
 @ProviderFor(hasReachedCrewLimit)
-const hasReachedCrewLimitProvider = HasReachedCrewLimitProvider._();
+final hasReachedCrewLimitProvider = HasReachedCrewLimitProvider._();
 
 /// Provider to check if user has reached crew creation limit
 
 final class HasReachedCrewLimitProvider
     extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// Provider to check if user has reached crew creation limit
-  const HasReachedCrewLimitProvider._()
+  HasReachedCrewLimitProvider._()
       : super(
           from: null,
           argument: null,
@@ -1293,7 +1293,7 @@ String _$hasReachedCrewLimitHash() =>
 /// Provider for crew creation notifier
 
 @ProviderFor(crewCreationNotifier)
-const crewCreationProvider = CrewCreationNotifierProvider._();
+final crewCreationProvider = CrewCreationNotifierProvider._();
 
 /// Provider for crew creation notifier
 
@@ -1302,7 +1302,7 @@ final class CrewCreationNotifierProvider extends $FunctionalProvider<
     CrewCreationNotifier,
     CrewCreationNotifier> with $Provider<CrewCreationNotifier> {
   /// Provider for crew creation notifier
-  const CrewCreationNotifierProvider._()
+  CrewCreationNotifierProvider._()
       : super(
           from: null,
           argument: null,
@@ -1342,7 +1342,7 @@ String _$crewCreationNotifierHash() =>
 /// Stream of crew creation state
 
 @ProviderFor(crewCreationState)
-const crewCreationStateProvider = CrewCreationStateProvider._();
+final crewCreationStateProvider = CrewCreationStateProvider._();
 
 /// Stream of crew creation state
 
@@ -1351,7 +1351,7 @@ final class CrewCreationStateProvider extends $FunctionalProvider<
     AsyncValue<void>,
     AsyncValue<void>> with $Provider<AsyncValue<void>> {
   /// Stream of crew creation state
-  const CrewCreationStateProvider._()
+  CrewCreationStateProvider._()
       : super(
           from: null,
           argument: null,

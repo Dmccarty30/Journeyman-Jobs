@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Dependency Map - Journeyman Jobs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .node { padding: 0.5rem 1rem; border-radius: 6px; margin: 0.25rem; display: inline-block; }
+        .node-primary { background: #dbeafe; color: #1e40af; }
+        .node-secondary { background: #e5e7eb; color: #374151; }
+        .node-danger { background: #fee2e2; color: #991b1b; }
+        .dependency-line { stroke: #cbd5e1; stroke-width: 2; }
+    </style>
+</head>
+<body>
+    <div class="max-w-7xl mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-6">Import Dependency Map</h1>
+        
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4">Key Findings</h2>
+            <ul class="list-disc list-inside space-y-2 text-sm">
+                <li><strong>Core Dependency:</strong> 45 widgets import from <code class="bg-gray-100 px-1 rounded">app_theme.dart</code></li>
+                <li><strong>Button Ecosystem:</strong> 8 button variants create complex dependency web</li>
+                <li><strong>Redundant Imports:</strong> 3 widgets duplicate import paths</li>
+                <li><strong>Circular Risk:</strong> 2 potential circular dependencies detected</li>
+            </ul>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Dependency Analysis</h2>
+            <div id="dependency-diagram" class="h-96">
+                <svg width="100%" height="100%" viewBox="0 0 800 400">
+                    <!-- Central node: app_theme.dart -->
+                    <circle cx="400" cy="200" r="40" fill="#2563eb" />
+                    <text x="400" y="205" text-anchor="middle" fill="white" font-size="12">app_theme.dart</text>
+                    
+                    <!-- Primary dependencies -->
+                    <rect x="100" y="80" width="100" height="40" rx="20" class="node-primary" />
+                    <text x="150" y="105" text-anchor="middle" font-size="10">JobCard (x12)</text>
+                    
+                    <rect x="250" y="80" width="100" height="40" rx="20" class="node-primary" />
+                    <text x="300" y="105" text-anchor="middle" font-size="10">JJButton (x8)</text>
+                    
+                    <rect x="450" y="80" width="100" height="40" rx="20" class="node-primary" />
+                    <text x="500" y="105" text-anchor="middle" font-size="10">JJCircuitBreaker (x6)</text>
+                    
+                    <!-- Secondary dependencies -->
+                    <rect x="50" y="280" width="100" height="40" rx="20" class="node-secondary" />
+                    <text x="100" y="305" text-anchor="middle" font-size="10">button_variants.dart</text>
+                    
+                    <rect x="200" y="280" width="100" height="40" rx="20" class="node-secondary" />
+                    <text x="250" y="305" text-anchor="middle" font-size="10">design_system_widgets</text>
+                    
+                    <rect x="350" y="280" width="100" height="40" rx="20" class="node-secondary" />
+                    <text x="400" y="305" text-anchor="middle" font-size="10">reusable_components</text>
+                    
+                    <rect x="500" y="280" width="100" height="40" rx="20" class="node-danger" />
+                    <text x="550" y="305" text-anchor="middle" font-size="10">job_card_implementation</text>
+                    
+                    <rect x="650" y="280" width="100" height="40" rx="20" class="node-danger" />
+                    <text x="700" y="305" text-anchor="middle" font-size="10">electrical_components</text>
+                    
+                    <!-- Dependency lines -->
+                    <line x1="400" y1="160" x2="150" y2="120" class="dependency-line" />
+                    <line x1="400" y1="160" x2="300" y2="120" class="dependency-line" />
+                    <line x1="400" y1="160" x2="500" y2="120" class="dependency-line" />
+                    
+                    <line x1="400" y1="240" x2="100" y2="280" class="dependency-line" />
+                    <line x1="400" y1="240" x2="250" y2="280" class="dependency-line" />
+                    <line x1="400" y1="240" x2="400" y2="280" class="dependency-line" />
+                    <line x1="400" y1="240" x2="550" y2="280" class="dependency-line" stroke="#ef4444" stroke-dasharray="5,5" />
+                    <line x1="400" y1="240" x2="700" y2="280" class="dependency-line" stroke="#ef4444" stroke-dasharray="5,5" />
+                </svg>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -11,13 +11,13 @@ part of 'feed_filter_provider.dart';
 /// Feed filter notifier with persistence (using Riverpod 3.0 pattern)
 
 @ProviderFor(FeedFilterNotifier)
-const feedFilterProvider = FeedFilterNotifierProvider._();
+final feedFilterProvider = FeedFilterNotifierProvider._();
 
 /// Feed filter notifier with persistence (using Riverpod 3.0 pattern)
 final class FeedFilterNotifierProvider
     extends $NotifierProvider<FeedFilterNotifier, FeedFilter> {
   /// Feed filter notifier with persistence (using Riverpod 3.0 pattern)
-  const FeedFilterNotifierProvider._()
+  FeedFilterNotifierProvider._()
       : super(
           from: null,
           argument: null,
@@ -54,10 +54,9 @@ abstract class _$FeedFilterNotifier extends $Notifier<FeedFilter> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<FeedFilter, FeedFilter>;
     final element = ref.element as $ClassProviderElement<
         AnyNotifier<FeedFilter, FeedFilter>, FeedFilter, Object?, Object?>;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

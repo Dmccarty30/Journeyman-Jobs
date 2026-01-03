@@ -10,14 +10,14 @@ part of 'pro_action_verification_service.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(proActionVerificationService)
-const proActionVerificationServiceProvider =
+final proActionVerificationServiceProvider =
     ProActionVerificationServiceProvider._();
 
 final class ProActionVerificationServiceProvider extends $FunctionalProvider<
     ProActionVerificationService,
     ProActionVerificationService,
     ProActionVerificationService> with $Provider<ProActionVerificationService> {
-  const ProActionVerificationServiceProvider._()
+  ProActionVerificationServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -52,4 +52,4 @@ final class ProActionVerificationServiceProvider extends $FunctionalProvider<
 }
 
 String _$proActionVerificationServiceHash() =>
-    r'a412631f47c7540c1e4fc247a8b47bfa009ad7d0';
+    r'2586ad35bb4f389e4dbe09d80e7a967e303e450b';

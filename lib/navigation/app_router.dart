@@ -30,7 +30,7 @@ import '../screens/tools/electrical_calculators_screen.dart';
 import '../screens/tools/transformer_reference_screen.dart';
 import '../screens/tools/transformer_workbench_screen.dart';
 import '../screens/tools/transformer_bank_screen.dart';
-import '../screens/tools/electrical_components_showcase_screen.dart';
+
 import '../models/transformer_models.dart';
 import '../screens/settings/app/notifications_settings_screen.dart';
 import '../screens/settings/app/app_settings_screen.dart';
@@ -53,7 +53,8 @@ class AppRouter {
   static const String crews = '/crews'; // Route for TailboardScreen
   static const String createCrew = '/crews/create'; // Kept for onboarding
   static const String joinCrew = '/crews/join'; // Kept for onboarding
-  static const String crewOnboarding = '/crews/onboarding'; // New route for Crew Onboarding
+  static const String crewOnboarding =
+      '/crews/onboarding'; // New route for Crew Onboarding
   static const String settings = '/settings';
   static const String profile = '/profile';
   static const String help = '/help';
@@ -64,15 +65,20 @@ class AppRouter {
   static const String transformerReference = '/tools/transformer-reference';
   static const String transformerWorkbench = '/tools/transformer-workbench';
   static const String transformerBank = '/tools/transformer-bank';
-  static const String electricalShowcase = '/tools/electrical-showcase';
+
   static const String notifications = '/notifications';
   static const String notificationSettings = '/notification-settings';
   static const String appSettings = '/settings/app';
-  static const String privacySecurity = '/settings/privacy-security'; // New route constant
-  static const String appearanceDisplay = '/settings/appearance-display'; // New route constant
-  static const String jobSearchPreferences = '/settings/job-search-preferences'; // New route constant
-  static const String dataStorage = '/settings/data-storage'; // New route constant
-  static const String languageRegion = '/settings/language-region'; // New route constant
+  static const String privacySecurity =
+      '/settings/privacy-security'; // New route constant
+  static const String appearanceDisplay =
+      '/settings/appearance-display'; // New route constant
+  static const String jobSearchPreferences =
+      '/settings/job-search-preferences'; // New route constant
+  static const String dataStorage =
+      '/settings/data-storage'; // New route constant
+  static const String languageRegion =
+      '/settings/language-region'; // New route constant
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -180,7 +186,7 @@ class AppRouter {
         path: training,
         name: 'training',
         builder: (context, state) => const TrainingCertificatesScreen(),
-      ), 
+      ),
       GoRoute(
         path: feedback,
         name: 'feedback',
@@ -210,11 +216,7 @@ class AppRouter {
         name: 'transformer-bank',
         builder: (context, state) => const TransformerBankScreen(),
       ),
-      GoRoute(
-        path: electricalShowcase,
-        name: 'electrical-showcase',
-        builder: (context, state) => const ElectricalComponentsShowcaseScreen(),
-      ),
+
       GoRoute(
         path: notifications,
         name: 'notifications',
@@ -286,10 +288,10 @@ class AppRouter {
   static String? _redirect(BuildContext context, GoRouterState state) {
     final user = FirebaseAuth.instance.currentUser;
     final isAuthenticated = user != null;
-    
+
     // Get the current location
     final location = state.matchedLocation;
-    
+
     // Define public routes that don't require authentication
     final publicRoutes = [
       splash,
@@ -297,16 +299,16 @@ class AppRouter {
       auth,
       forgotPassword,
     ];
-    
+
     // If user is not authenticated and trying to access protected route
     if (!isAuthenticated && !publicRoutes.contains(location)) {
       return welcome;
     }
-    
+
     // If user is authenticated, we need to check onboarding status
     // Since redirect is synchronous, we'll handle this at the screen level
     // For now, just allow navigation and let screens handle onboarding checks
-    
+
     // No redirection needed - let screens handle onboarding logic
     return null;
   }

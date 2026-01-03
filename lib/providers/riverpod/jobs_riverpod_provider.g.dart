@@ -11,7 +11,7 @@ part of 'jobs_riverpod_provider.dart';
 /// Firestore service provider
 
 @ProviderFor(firestoreService)
-const firestoreServiceProvider = FirestoreServiceProvider._();
+final firestoreServiceProvider = FirestoreServiceProvider._();
 
 /// Firestore service provider
 
@@ -20,7 +20,7 @@ final class FirestoreServiceProvider extends $FunctionalProvider<
     ResilientFirestoreService,
     ResilientFirestoreService> with $Provider<ResilientFirestoreService> {
   /// Firestore service provider
-  const FirestoreServiceProvider._()
+  FirestoreServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -59,14 +59,14 @@ String _$firestoreServiceHash() => r'665e0c40804f3306f3afbce70fab7d9fc5247907';
 /// Feedback service provider
 
 @ProviderFor(feedbackService)
-const feedbackServiceProvider = FeedbackServiceProvider._();
+final feedbackServiceProvider = FeedbackServiceProvider._();
 
 /// Feedback service provider
 
 final class FeedbackServiceProvider extends $FunctionalProvider<FeedbackService,
     FeedbackService, FeedbackService> with $Provider<FeedbackService> {
   /// Feedback service provider
-  const FeedbackServiceProvider._()
+  FeedbackServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -104,7 +104,7 @@ String _$feedbackServiceHash() => r'e3a2aa2c2ed5ebd1eea084b6f68c0bef3a68b8e7';
 /// User Preference Service provider
 
 @ProviderFor(userPreferenceService)
-const userPreferenceServiceProvider = UserPreferenceServiceProvider._();
+final userPreferenceServiceProvider = UserPreferenceServiceProvider._();
 
 /// User Preference Service provider
 
@@ -113,7 +113,7 @@ final class UserPreferenceServiceProvider extends $FunctionalProvider<
     UserPreferenceService,
     UserPreferenceService> with $Provider<UserPreferenceService> {
   /// User Preference Service provider
-  const UserPreferenceServiceProvider._()
+  UserPreferenceServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -153,7 +153,7 @@ String _$userPreferenceServiceHash() =>
 /// Local AI Model Service provider
 
 @ProviderFor(localModelServicePod)
-const localModelServicePodProvider = LocalModelServicePodProvider._();
+final localModelServicePodProvider = LocalModelServicePodProvider._();
 
 /// Local AI Model Service provider
 
@@ -162,7 +162,7 @@ final class LocalModelServicePodProvider extends $FunctionalProvider<
     LocalModelService,
     LocalModelService> with $Provider<LocalModelService> {
   /// Local AI Model Service provider
-  const LocalModelServicePodProvider._()
+  LocalModelServicePodProvider._()
       : super(
           from: null,
           argument: null,
@@ -202,13 +202,13 @@ String _$localModelServicePodHash() =>
 /// Jobs notifier for managing job data and operations
 
 @ProviderFor(JobsNotifier)
-const jobsProvider = JobsNotifierProvider._();
+final jobsProvider = JobsNotifierProvider._();
 
 /// Jobs notifier for managing job data and operations
 final class JobsNotifierProvider
     extends $NotifierProvider<JobsNotifier, JobsState> {
   /// Jobs notifier for managing job data and operations
-  const JobsNotifierProvider._()
+  JobsNotifierProvider._()
       : super(
           from: null,
           argument: null,
@@ -235,7 +235,7 @@ final class JobsNotifierProvider
   }
 }
 
-String _$jobsNotifierHash() => r'd974d74edc1dac5d763609a3322bdccea8e423b6';
+String _$jobsNotifierHash() => r'8ca79f824c99c26619040d418121349e49c93e3b';
 
 /// Jobs notifier for managing job data and operations
 
@@ -244,18 +244,17 @@ abstract class _$JobsNotifier extends $Notifier<JobsState> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<JobsState, JobsState>;
     final element = ref.element as $ClassProviderElement<
         AnyNotifier<JobsState, JobsState>, JobsState, Object?, Object?>;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 /// Filtered jobs provider using family for auto-dispose
 
 @ProviderFor(filteredJobs)
-const filteredJobsProvider = FilteredJobsFamily._();
+final filteredJobsProvider = FilteredJobsFamily._();
 
 /// Filtered jobs provider using family for auto-dispose
 
@@ -263,7 +262,7 @@ final class FilteredJobsProvider extends $FunctionalProvider<
         AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
   /// Filtered jobs provider using family for auto-dispose
-  const FilteredJobsProvider._(
+  FilteredJobsProvider._(
       {required FilteredJobsFamily super.from,
       required JobFilterCriteria super.argument})
       : super(
@@ -315,7 +314,7 @@ String _$filteredJobsHash() => r'f34109b3e9daa3e8f76eee9badfa2c7817cc0ada';
 
 final class FilteredJobsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<Job>>, JobFilterCriteria> {
-  const FilteredJobsFamily._()
+  FilteredJobsFamily._()
       : super(
           retry: null,
           name: r'filteredJobsProvider',
@@ -338,7 +337,7 @@ final class FilteredJobsFamily extends $Family
 /// Auto-dispose provider for job search
 
 @ProviderFor(searchJobs)
-const searchJobsProvider = SearchJobsFamily._();
+final searchJobsProvider = SearchJobsFamily._();
 
 /// Auto-dispose provider for job search
 
@@ -346,7 +345,7 @@ final class SearchJobsProvider extends $FunctionalProvider<
         AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
   /// Auto-dispose provider for job search
-  const SearchJobsProvider._(
+  SearchJobsProvider._(
       {required SearchJobsFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -397,7 +396,7 @@ String _$searchJobsHash() => r'ddc3acadff3d73c6ab9b471f80bdbc3b95ee5097';
 
 final class SearchJobsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<Job>>, String> {
-  const SearchJobsFamily._()
+  SearchJobsFamily._()
       : super(
           retry: null,
           name: r'searchJobsProvider',
@@ -420,7 +419,7 @@ final class SearchJobsFamily extends $Family
 /// Job by ID provider
 
 @ProviderFor(jobById)
-const jobByIdProvider = JobByIdFamily._();
+final jobByIdProvider = JobByIdFamily._();
 
 /// Job by ID provider
 
@@ -428,7 +427,7 @@ final class JobByIdProvider
     extends $FunctionalProvider<AsyncValue<Job?>, Job?, FutureOr<Job?>>
     with $FutureModifier<Job?>, $FutureProvider<Job?> {
   /// Job by ID provider
-  const JobByIdProvider._(
+  JobByIdProvider._(
       {required JobByIdFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -479,7 +478,7 @@ String _$jobByIdHash() => r'fe0b6ad481434b99b4f2dd06952e724f38be0922';
 
 final class JobByIdFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Job?>, String> {
-  const JobByIdFamily._()
+  JobByIdFamily._()
       : super(
           retry: null,
           name: r'jobByIdProvider',
@@ -502,7 +501,7 @@ final class JobByIdFamily extends $Family
 /// Recent jobs provider
 
 @ProviderFor(recentJobs)
-const recentJobsProvider = RecentJobsProvider._();
+final recentJobsProvider = RecentJobsProvider._();
 
 /// Recent jobs provider
 
@@ -510,7 +509,7 @@ final class RecentJobsProvider extends $FunctionalProvider<
         AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
   /// Recent jobs provider
-  const RecentJobsProvider._()
+  RecentJobsProvider._()
       : super(
           from: null,
           argument: null,
@@ -540,7 +539,7 @@ String _$recentJobsHash() => r'8341fc7b0b1a2cdd2a579f40045cde688c655cb9';
 /// Storm jobs provider (high priority jobs)
 
 @ProviderFor(stormJobs)
-const stormJobsProvider = StormJobsProvider._();
+final stormJobsProvider = StormJobsProvider._();
 
 /// Storm jobs provider (high priority jobs)
 
@@ -548,7 +547,7 @@ final class StormJobsProvider extends $FunctionalProvider<AsyncValue<List<Job>>,
         List<Job>, FutureOr<List<Job>>>
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
   /// Storm jobs provider (high priority jobs)
-  const StormJobsProvider._()
+  StormJobsProvider._()
       : super(
           from: null,
           argument: null,

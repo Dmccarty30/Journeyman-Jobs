@@ -16,7 +16,9 @@ TailboardService tailboardService(Ref ref) => TailboardService();
 @riverpod
 Stream<List<SuggestedJob>> suggestedJobsStream(Ref ref, String crewId) {
   final tailboardService = ref.watch(tailboardServiceProvider);
-  return tailboardService.getJobFeedStream(crewId);
+  return tailboardService
+      .getJobFeedStream(crewId)
+      .distinct(); // Only this line needed!
 }
 
 /// Suggested jobs for a specific crew
@@ -34,8 +36,10 @@ List<SuggestedJob> suggestedJobs(Ref ref, String crewId) {
 /// Stream of activity items for a specific crew
 @riverpod
 Stream<List<ActivityItem>> activityItemsStream(Ref ref, String crewId) {
-  final tailboardService = ref.watch(tailboardServiceProvider);
-  return tailboardService.getActivityStream(crewId);
+  return ref
+      .watch(tailboardServiceProvider)
+      .getActivityStream(crewId)
+      .distinct();
 }
 
 /// Activity items for a specific crew

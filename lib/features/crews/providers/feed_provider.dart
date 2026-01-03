@@ -25,7 +25,8 @@ Stream<List<PostModel>> crewPostsStream(Ref ref, String crewId) {
   final feedService = ref.watch(feedServiceProvider);
   return feedService.getCrewPosts(crewId: crewId).map((snapshot) {
     return snapshot.docs.map((doc) => PostModel.fromFirestore(doc)).toList();
-  });
+  })
+  .distinct();
 }
 
 /// Posts for a specific crew

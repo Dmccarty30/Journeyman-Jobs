@@ -11,7 +11,7 @@ part of 'job_filter_riverpod_provider.dart';
 /// SharedPreferences provider
 
 @ProviderFor(sharedPreferences)
-const sharedPreferencesProvider = SharedPreferencesProvider._();
+final sharedPreferencesProvider = SharedPreferencesProvider._();
 
 /// SharedPreferences provider
 
@@ -23,7 +23,7 @@ final class SharedPreferencesProvider extends $FunctionalProvider<
         $FutureModifier<SharedPreferences>,
         $FutureProvider<SharedPreferences> {
   /// SharedPreferences provider
-  const SharedPreferencesProvider._()
+  SharedPreferencesProvider._()
       : super(
           from: null,
           argument: null,
@@ -54,13 +54,13 @@ String _$sharedPreferencesHash() => r'9b38b0605ab233f33b0ff939edd1100331a746fa';
 /// Job filter notifier for managing filter state and presets
 
 @ProviderFor(JobFilterNotifier)
-const jobFilterProvider = JobFilterNotifierProvider._();
+final jobFilterProvider = JobFilterNotifierProvider._();
 
 /// Job filter notifier for managing filter state and presets
 final class JobFilterNotifierProvider
     extends $NotifierProvider<JobFilterNotifier, JobFilterState> {
   /// Job filter notifier for managing filter state and presets
-  const JobFilterNotifierProvider._()
+  JobFilterNotifierProvider._()
       : super(
           from: null,
           argument: null,
@@ -87,7 +87,7 @@ final class JobFilterNotifierProvider
   }
 }
 
-String _$jobFilterNotifierHash() => r'bfe3930ec059c5e501b207fef38099ec8f0ab757';
+String _$jobFilterNotifierHash() => r'eb14ec0919fa755a9591b5bc907f04497d08e099';
 
 /// Job filter notifier for managing filter state and presets
 
@@ -96,21 +96,20 @@ abstract class _$JobFilterNotifier extends $Notifier<JobFilterState> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<JobFilterState, JobFilterState>;
     final element = ref.element as $ClassProviderElement<
         AnyNotifier<JobFilterState, JobFilterState>,
         JobFilterState,
         Object?,
         Object?>;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 /// Current filter provider (computed from state)
 
 @ProviderFor(currentJobFilter)
-const currentJobFilterProvider = CurrentJobFilterProvider._();
+final currentJobFilterProvider = CurrentJobFilterProvider._();
 
 /// Current filter provider (computed from state)
 
@@ -119,7 +118,7 @@ final class CurrentJobFilterProvider extends $FunctionalProvider<
     JobFilterCriteria,
     JobFilterCriteria> with $Provider<JobFilterCriteria> {
   /// Current filter provider (computed from state)
-  const CurrentJobFilterProvider._()
+  CurrentJobFilterProvider._()
       : super(
           from: null,
           argument: null,
@@ -158,7 +157,7 @@ String _$currentJobFilterHash() => r'f8738d257f89b7eec21e2586b5457c5b053c0a29';
 /// Presets provider (computed from state)
 
 @ProviderFor(filterPresets)
-const filterPresetsProvider = FilterPresetsProvider._();
+final filterPresetsProvider = FilterPresetsProvider._();
 
 /// Presets provider (computed from state)
 
@@ -167,7 +166,7 @@ final class FilterPresetsProvider extends $FunctionalProvider<
     List<FilterPreset>,
     List<FilterPreset>> with $Provider<List<FilterPreset>> {
   /// Presets provider (computed from state)
-  const FilterPresetsProvider._()
+  FilterPresetsProvider._()
       : super(
           from: null,
           argument: null,
@@ -206,7 +205,7 @@ String _$filterPresetsHash() => r'f18ad7b508207d059adb0d4c04a639bacadb1664';
 /// Recent searches provider (computed from state)
 
 @ProviderFor(recentSearches)
-const recentSearchesProvider = RecentSearchesProvider._();
+final recentSearchesProvider = RecentSearchesProvider._();
 
 /// Recent searches provider (computed from state)
 
@@ -214,7 +213,7 @@ final class RecentSearchesProvider
     extends $FunctionalProvider<List<String>, List<String>, List<String>>
     with $Provider<List<String>> {
   /// Recent searches provider (computed from state)
-  const RecentSearchesProvider._()
+  RecentSearchesProvider._()
       : super(
           from: null,
           argument: null,
@@ -252,7 +251,7 @@ String _$recentSearchesHash() => r'0f72621c7736b425b45f6e78ceadfa3fc2997a77';
 /// Pinned presets provider (computed from state)
 
 @ProviderFor(pinnedPresets)
-const pinnedPresetsProvider = PinnedPresetsProvider._();
+final pinnedPresetsProvider = PinnedPresetsProvider._();
 
 /// Pinned presets provider (computed from state)
 
@@ -261,7 +260,7 @@ final class PinnedPresetsProvider extends $FunctionalProvider<
     List<FilterPreset>,
     List<FilterPreset>> with $Provider<List<FilterPreset>> {
   /// Pinned presets provider (computed from state)
-  const PinnedPresetsProvider._()
+  PinnedPresetsProvider._()
       : super(
           from: null,
           argument: null,
@@ -300,7 +299,7 @@ String _$pinnedPresetsHash() => r'3705eb9bf7814819aa048d4ad2ccc36b3905a206';
 /// Recent presets provider (computed from state)
 
 @ProviderFor(recentPresets)
-const recentPresetsProvider = RecentPresetsProvider._();
+final recentPresetsProvider = RecentPresetsProvider._();
 
 /// Recent presets provider (computed from state)
 
@@ -309,7 +308,7 @@ final class RecentPresetsProvider extends $FunctionalProvider<
     List<FilterPreset>,
     List<FilterPreset>> with $Provider<List<FilterPreset>> {
   /// Recent presets provider (computed from state)
-  const RecentPresetsProvider._()
+  RecentPresetsProvider._()
       : super(
           from: null,
           argument: null,
@@ -348,14 +347,14 @@ String _$recentPresetsHash() => r'34c106d504e42873398edeef789a972a9c391f74';
 /// Active filters status provider (computed from state)
 
 @ProviderFor(hasActiveFilters)
-const hasActiveFiltersProvider = HasActiveFiltersProvider._();
+final hasActiveFiltersProvider = HasActiveFiltersProvider._();
 
 /// Active filters status provider (computed from state)
 
 final class HasActiveFiltersProvider
     extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// Active filters status provider (computed from state)
-  const HasActiveFiltersProvider._()
+  HasActiveFiltersProvider._()
       : super(
           from: null,
           argument: null,
@@ -393,14 +392,14 @@ String _$hasActiveFiltersHash() => r'c7f34079f57d66daeed486953e9c8f46abf84527';
 /// Active filter count provider (computed from state)
 
 @ProviderFor(activeFilterCount)
-const activeFilterCountProvider = ActiveFilterCountProvider._();
+final activeFilterCountProvider = ActiveFilterCountProvider._();
 
 /// Active filter count provider (computed from state)
 
 final class ActiveFilterCountProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
   /// Active filter count provider (computed from state)
-  const ActiveFilterCountProvider._()
+  ActiveFilterCountProvider._()
       : super(
           from: null,
           argument: null,
@@ -438,7 +437,7 @@ String _$activeFilterCountHash() => r'2a42a31577a4f9a8b463d950818ccb2d45157215';
 /// Quick filter suggestions provider (computed from state)
 
 @ProviderFor(quickFilterSuggestions)
-const quickFilterSuggestionsProvider = QuickFilterSuggestionsProvider._();
+final quickFilterSuggestionsProvider = QuickFilterSuggestionsProvider._();
 
 /// Quick filter suggestions provider (computed from state)
 
@@ -447,7 +446,7 @@ final class QuickFilterSuggestionsProvider extends $FunctionalProvider<
     List<QuickFilterSuggestion>,
     List<QuickFilterSuggestion>> with $Provider<List<QuickFilterSuggestion>> {
   /// Quick filter suggestions provider (computed from state)
-  const QuickFilterSuggestionsProvider._()
+  QuickFilterSuggestionsProvider._()
       : super(
           from: null,
           argument: null,

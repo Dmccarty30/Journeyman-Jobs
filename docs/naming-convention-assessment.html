@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naming Convention Assessment - Journeyman Jobs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .convention-card { transition: all 0.3s ease; }
+        .convention-card:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <div class="max-w-7xl mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-6">Naming Convention Assessment</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="convention-card bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
+                <h3 class="text-lg font-semibold text-green-700 mb-2">Following Standards</h3>
+                <p class="text-3xl font-bold text-green-600">78%</p>
+                <p class="text-sm text-gray-600 mt-2">Most widgets follow Flutter naming conventions</p>
+            </div>
+            
+            <div class="convention-card bg-white rounded-lg shadow p-6 border-l-4 border-yellow-500">
+                <h3 class="text-lg font-semibold text-yellow-700 mb-2">Inconsistent Patterns</h3>
+                <p class="text-3xl font-bold text-yellow-600">15%</p>
+                <p class="text-sm text-gray-600 mt-2">Mixed naming styles within components</p>
+            </div>
+            
+            <div class="convention-card bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
+                <h3 class="text-lg font-semibold text-red-700 mb-2">Needs Attention</h3>
+                <p class="text-3xl font-bold text-red-600">7%</p>
+                <p class="text-sm text-gray-600 mt-2">Significant naming violations</p>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4">Naming Patterns Found</h2>
+            <div class="space-y-4">
+                <div>
+                    <h3 class="font-medium text-gray-900 flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        PascalCase for Widgets - Good
+                    </h3>
+                    <p class="text-sm text-gray-600 ml-6">JobCard, JJButton, JJCircuitBreakerSwitch</p>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium text-gray-900 flex items-center">
+                        <i class="fas fa-exclamation-circle text-yellow-500 mr-2"></i>
+                        Inconsistent Prefix Usage - Warning
+                    </h3>
+                    <p class="text-sm text-gray-600 ml-6">Mix of 'JJ' prefix (consistent) and no prefix</p>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium text-gray-900 flex items-center">
+                        <i class="fas fa-times-circle text-red-500 mr-2"></i>
+                        Underscore in Names - Critical
+                    </h3>
+                    <p class="text-sm text-gray-600 ml-6">job_card_implementation.dart should be JobCardImplementation</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-4">Files Requiring Renaming</h2>
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b">
+                        <th class="text-left py-2 px-4 text-sm font-medium text-gray-700">Current Name</th>
+                        <th class="text-left py-2 px-4 text-sm font-medium text-gray-700">Suggested Name</th>
+                        <th class="text-left py-2 px-4 text-sm font-medium text-gray-700">Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b">
+                        <td class="py-2 px-4 text-sm">job_card_implementation.dart</td>
+                        <td class="py-2 px-4 text-sm font-medium">JobCardImplementation.dart</td>
+                        <td class="py-2 px-4 text-sm text-gray-600">PascalCase convention</td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-2 px-4 text-sm">jj_electrical_interactive_widgets.dart</td>
+                        <td class="py-2 px-4 text-sm font-medium">ElectricalInteractiveWidgets.dart</td>
+                        <td class="py-2 px-4 text-sm text-gray-600">Remove unnecessary prefix</td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-2 px-4 text-sm">button_variants.dart</td>
+                        <td class="py-2 px-4 text-sm font-medium">ButtonVariants.dart</td>
+                        <td class="py-2 px-4 text-sm text-gray-600">Consistent with naming pattern</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

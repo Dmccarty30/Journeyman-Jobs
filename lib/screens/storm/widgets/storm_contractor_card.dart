@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../design_system/app_theme.dart';
-import '../storm_theme.dart';
 
 class StormContractorCard extends StatelessWidget {
   final Map<String, dynamic> contractor;
@@ -51,16 +50,8 @@ class StormContractorCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         boxShadow: [AppTheme.shadowSm],
         border: Border.all(
-          color: StormTheme.electricBlue.withValues(alpha: 0.3),
+          color: AppTheme.borderLight,
           width: 1,
-        ),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppTheme.white,
-            StormTheme.electricBlue.withValues(alpha: 0.05),
-          ],
         ),
       ),
       child: Column(
@@ -91,14 +82,14 @@ class StormContractorCard extends StatelessWidget {
                   icon: Icons.public,
                   label: 'Website',
                   onPressed: () => _launchUrl(website),
-                  color: StormTheme.electricBlue,
+                  color: AppTheme.infoBlue,
                 ),
               if (phoneNumber != null && phoneNumber.isNotEmpty)
                 _buildActionButton(
                   icon: Icons.phone,
                   label: 'Call',
                   onPressed: () => _makePhoneCall(phoneNumber),
-                  color: StormTheme.deepStorm,
+                  color: AppTheme.primaryNavy,
                 ),
               if (email != null && email.isNotEmpty)
                 _buildActionButton(
@@ -128,7 +119,8 @@ class StormContractorCard extends StatelessWidget {
         ),
         Text(
           label,
-          style: AppTheme.labelSmall.copyWith(color: color.withValues(alpha: 0.8)),
+          style:
+              AppTheme.labelSmall.copyWith(color: color.withValues(alpha: 0.8)),
         ),
       ],
     );

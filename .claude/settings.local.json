@@ -46,7 +46,10 @@
       "Bash(python3 -c \"import subprocess; subprocess.run([''/mnt/c/flutter/flutter/bin/flutter.bat'', ''analyze'', ''--no-fatal-infos'', ''--no-fatal-warnings''], cwd=''/mnt/d/worktrees/tailboard-modernization'')\")",
       "Bash(docs/final-analyze-status.txt)",
       "Bash(cmd.exe /c \"flutter analyze --no-fatal-infos --no-fatal-warnings\")",
-      "Bash(cmd.exe /c \"flutter test --coverage\")"
+      "Bash(cmd.exe /c \"flutter test --coverage\")",
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(xargs:*)"
     ],
     "deny": []
   },

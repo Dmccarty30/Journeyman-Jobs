@@ -10,11 +10,11 @@ part of 'theme_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(AppThemeNotifier)
-const appThemeProvider = AppThemeNotifierProvider._();
+final appThemeProvider = AppThemeNotifierProvider._();
 
 final class AppThemeNotifierProvider
     extends $AsyncNotifierProvider<AppThemeNotifier, ThemeModePreference> {
-  const AppThemeNotifierProvider._()
+  AppThemeNotifierProvider._()
       : super(
           from: null,
           argument: null,
@@ -40,7 +40,6 @@ abstract class _$AppThemeNotifier extends $AsyncNotifier<ThemeModePreference> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref =
         this.ref as $Ref<AsyncValue<ThemeModePreference>, ThemeModePreference>;
     final element = ref.element as $ClassProviderElement<
@@ -48,6 +47,6 @@ abstract class _$AppThemeNotifier extends $AsyncNotifier<ThemeModePreference> {
         AsyncValue<ThemeModePreference>,
         Object?,
         Object?>;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

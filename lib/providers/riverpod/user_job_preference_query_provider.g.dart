@@ -10,13 +10,13 @@ part of 'user_job_preference_query_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(userPreferenceService)
-const userPreferenceServiceProvider = UserPreferenceServiceProvider._();
+final userPreferenceServiceProvider = UserPreferenceServiceProvider._();
 
 final class UserPreferenceServiceProvider extends $FunctionalProvider<
     UserPreferenceService,
     UserPreferenceService,
     UserPreferenceService> with $Provider<UserPreferenceService> {
-  const UserPreferenceServiceProvider._()
+  UserPreferenceServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -51,16 +51,16 @@ final class UserPreferenceServiceProvider extends $FunctionalProvider<
 }
 
 String _$userPreferenceServiceHash() =>
-    r'a3c54d242c92dccfe16fbd595ee3e488f872bd43';
+    r'bf6ee94d25ddb4c5eee685c208a24a008aaf1ca0';
 
 @ProviderFor(firestoreService)
-const firestoreServiceProvider = FirestoreServiceProvider._();
+final firestoreServiceProvider = FirestoreServiceProvider._();
 
 final class FirestoreServiceProvider extends $FunctionalProvider<
     ResilientFirestoreService,
     ResilientFirestoreService,
     ResilientFirestoreService> with $Provider<ResilientFirestoreService> {
-  const FirestoreServiceProvider._()
+  FirestoreServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -94,10 +94,10 @@ final class FirestoreServiceProvider extends $FunctionalProvider<
   }
 }
 
-String _$firestoreServiceHash() => r'46e745ea8c8e666283f2656685cd1c439659b1ee';
+String _$firestoreServiceHash() => r'c0a202938a21d2841685ee5eb2f0045d9baa2511';
 
 @ProviderFor(userJobFilterCriteria)
-const userJobFilterCriteriaProvider = UserJobFilterCriteriaProvider._();
+final userJobFilterCriteriaProvider = UserJobFilterCriteriaProvider._();
 
 final class UserJobFilterCriteriaProvider extends $FunctionalProvider<
         AsyncValue<JobFilterCriteria>,
@@ -106,7 +106,7 @@ final class UserJobFilterCriteriaProvider extends $FunctionalProvider<
     with
         $FutureModifier<JobFilterCriteria>,
         $FutureProvider<JobFilterCriteria> {
-  const UserJobFilterCriteriaProvider._()
+  UserJobFilterCriteriaProvider._()
       : super(
           from: null,
           argument: null,
@@ -133,15 +133,15 @@ final class UserJobFilterCriteriaProvider extends $FunctionalProvider<
 }
 
 String _$userJobFilterCriteriaHash() =>
-    r'100c1b8c152d179630ba27d32daa3fec71910059';
+    r'0e3681801678578c910ee7220859e2fe534d6391';
 
 @ProviderFor(userPreferredJobs)
-const userPreferredJobsProvider = UserPreferredJobsProvider._();
+final userPreferredJobsProvider = UserPreferredJobsProvider._();
 
 final class UserPreferredJobsProvider extends $FunctionalProvider<
         AsyncValue<List<Job>>, List<Job>, FutureOr<List<Job>>>
     with $FutureModifier<List<Job>>, $FutureProvider<List<Job>> {
-  const UserPreferredJobsProvider._()
+  UserPreferredJobsProvider._()
       : super(
           from: null,
           argument: null,
@@ -166,4 +166,4 @@ final class UserPreferredJobsProvider extends $FunctionalProvider<
   }
 }
 
-String _$userPreferredJobsHash() => r'4c05bc682eaf5a7299310caefc293500b45157ab';
+String _$userPreferredJobsHash() => r'4adfafba749f87a995197a1ab1fa4915250fe9ab';

@@ -14,7 +14,8 @@ class _FoxWeatherWidgetState extends State<FoxWeatherWidget> {
   // Using a recent Fox Weather video ID or live stream ID.
   // Note: Live stream IDs change. This is a placeholder or a specific video.
   // User can update this ID to the current live stream ID.
-  final String _videoId = 'EfK-Wxk9M6o'; // Example ID, might need updating
+  final String _videoId =
+      'wt6SIE7BXS8'; // Current working Fox Weather live stream ID
 
   @override
   void initState() {

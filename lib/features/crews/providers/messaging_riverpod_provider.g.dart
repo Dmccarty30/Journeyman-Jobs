@@ -11,7 +11,7 @@ part of 'messaging_riverpod_provider.dart';
 /// MessageService provider
 
 @ProviderFor(messageService)
-const messageServiceProvider = MessageServiceProvider._();
+final messageServiceProvider = MessageServiceProvider._();
 
 /// MessageService provider
 
@@ -19,7 +19,7 @@ final class MessageServiceProvider
     extends $FunctionalProvider<MessageService, MessageService, MessageService>
     with $Provider<MessageService> {
   /// MessageService provider
-  const MessageServiceProvider._()
+  MessageServiceProvider._()
       : super(
           from: null,
           argument: null,
@@ -57,7 +57,7 @@ String _$messageServiceHash() => r'd0c924722f972d18522e390071877fc71dc7770b';
 /// Stream of crew messages
 
 @ProviderFor(crewMessagesStream)
-const crewMessagesStreamProvider = CrewMessagesStreamFamily._();
+final crewMessagesStreamProvider = CrewMessagesStreamFamily._();
 
 /// Stream of crew messages
 
@@ -65,7 +65,7 @@ final class CrewMessagesStreamProvider extends $FunctionalProvider<
         AsyncValue<List<Message>>, List<Message>, Stream<List<Message>>>
     with $FutureModifier<List<Message>>, $StreamProvider<List<Message>> {
   /// Stream of crew messages
-  const CrewMessagesStreamProvider._(
+  CrewMessagesStreamProvider._(
       {required CrewMessagesStreamFamily super.from,
       required String super.argument})
       : super(
@@ -119,7 +119,7 @@ String _$crewMessagesStreamHash() =>
 
 final class CrewMessagesStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Message>>, String> {
-  const CrewMessagesStreamFamily._()
+  CrewMessagesStreamFamily._()
       : super(
           retry: null,
           name: r'crewMessagesStreamProvider',
@@ -142,7 +142,7 @@ final class CrewMessagesStreamFamily extends $Family
 /// Crew messages
 
 @ProviderFor(crewMessages)
-const crewMessagesProvider = CrewMessagesFamily._();
+final crewMessagesProvider = CrewMessagesFamily._();
 
 /// Crew messages
 
@@ -150,7 +150,7 @@ final class CrewMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Crew messages
-  const CrewMessagesProvider._(
+  CrewMessagesProvider._(
       {required CrewMessagesFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -209,7 +209,7 @@ String _$crewMessagesHash() => r'2b788980c72654ed115942ed3c16728af4ac8403';
 
 final class CrewMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
-  const CrewMessagesFamily._()
+  CrewMessagesFamily._()
       : super(
           retry: null,
           name: r'crewMessagesProvider',
@@ -232,7 +232,7 @@ final class CrewMessagesFamily extends $Family
 /// Stream of direct messages between two users
 
 @ProviderFor(directMessagesStream)
-const directMessagesStreamProvider = DirectMessagesStreamFamily._();
+final directMessagesStreamProvider = DirectMessagesStreamFamily._();
 
 /// Stream of direct messages between two users
 
@@ -240,7 +240,7 @@ final class DirectMessagesStreamProvider extends $FunctionalProvider<
         AsyncValue<List<Message>>, List<Message>, Stream<List<Message>>>
     with $FutureModifier<List<Message>>, $StreamProvider<List<Message>> {
   /// Stream of direct messages between two users
-  const DirectMessagesStreamProvider._(
+  DirectMessagesStreamProvider._(
       {required DirectMessagesStreamFamily super.from,
       required (
         String,
@@ -308,7 +308,7 @@ final class DirectMessagesStreamFamily extends $Family
               String,
               String,
             )> {
-  const DirectMessagesStreamFamily._()
+  DirectMessagesStreamFamily._()
       : super(
           retry: null,
           name: r'directMessagesStreamProvider',
@@ -335,7 +335,7 @@ final class DirectMessagesStreamFamily extends $Family
 /// Direct messages between two users
 
 @ProviderFor(directMessages)
-const directMessagesProvider = DirectMessagesFamily._();
+final directMessagesProvider = DirectMessagesFamily._();
 
 /// Direct messages between two users
 
@@ -343,7 +343,7 @@ final class DirectMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Direct messages between two users
-  const DirectMessagesProvider._(
+  DirectMessagesProvider._(
       {required DirectMessagesFamily super.from,
       required (
         String,
@@ -417,7 +417,7 @@ final class DirectMessagesFamily extends $Family
               String,
               String,
             )> {
-  const DirectMessagesFamily._()
+  DirectMessagesFamily._()
       : super(
           retry: null,
           name: r'directMessagesProvider',
@@ -444,14 +444,14 @@ final class DirectMessagesFamily extends $Family
 /// Provider to get unread crew messages count for current user
 
 @ProviderFor(unreadCrewMessagesCount)
-const unreadCrewMessagesCountProvider = UnreadCrewMessagesCountFamily._();
+final unreadCrewMessagesCountProvider = UnreadCrewMessagesCountFamily._();
 
 /// Provider to get unread crew messages count for current user
 
 final class UnreadCrewMessagesCountProvider
     extends $FunctionalProvider<int, int, int> with $Provider<int> {
   /// Provider to get unread crew messages count for current user
-  const UnreadCrewMessagesCountProvider._(
+  UnreadCrewMessagesCountProvider._(
       {required UnreadCrewMessagesCountFamily super.from,
       required String super.argument})
       : super(
@@ -513,7 +513,7 @@ String _$unreadCrewMessagesCountHash() =>
 
 final class UnreadCrewMessagesCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
-  const UnreadCrewMessagesCountFamily._()
+  UnreadCrewMessagesCountFamily._()
       : super(
           retry: null,
           name: r'unreadCrewMessagesCountProvider',
@@ -536,14 +536,14 @@ final class UnreadCrewMessagesCountFamily extends $Family
 /// Provider to get unread direct messages count for current user
 
 @ProviderFor(unreadDirectMessagesCount)
-const unreadDirectMessagesCountProvider = UnreadDirectMessagesCountFamily._();
+final unreadDirectMessagesCountProvider = UnreadDirectMessagesCountFamily._();
 
 /// Provider to get unread direct messages count for current user
 
 final class UnreadDirectMessagesCountProvider
     extends $FunctionalProvider<int, int, int> with $Provider<int> {
   /// Provider to get unread direct messages count for current user
-  const UnreadDirectMessagesCountProvider._(
+  UnreadDirectMessagesCountProvider._(
       {required UnreadDirectMessagesCountFamily super.from,
       required String super.argument})
       : super(
@@ -605,7 +605,7 @@ String _$unreadDirectMessagesCountHash() =>
 
 final class UnreadDirectMessagesCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
-  const UnreadDirectMessagesCountFamily._()
+  UnreadDirectMessagesCountFamily._()
       : super(
           retry: null,
           name: r'unreadDirectMessagesCountProvider',
@@ -628,14 +628,14 @@ final class UnreadDirectMessagesCountFamily extends $Family
 /// Provider to get total unread messages count for current user across all crews
 
 @ProviderFor(totalUnreadMessages)
-const totalUnreadMessagesProvider = TotalUnreadMessagesProvider._();
+final totalUnreadMessagesProvider = TotalUnreadMessagesProvider._();
 
 /// Provider to get total unread messages count for current user across all crews
 
 final class TotalUnreadMessagesProvider
     extends $FunctionalProvider<int, int, int> with $Provider<int> {
   /// Provider to get total unread messages count for current user across all crews
-  const TotalUnreadMessagesProvider._()
+  TotalUnreadMessagesProvider._()
       : super(
           from: null,
           argument: null,
@@ -674,7 +674,7 @@ String _$totalUnreadMessagesHash() =>
 /// Provider to get recent messages (last 24 hours)
 
 @ProviderFor(recentMessages)
-const recentMessagesProvider = RecentMessagesFamily._();
+final recentMessagesProvider = RecentMessagesFamily._();
 
 /// Provider to get recent messages (last 24 hours)
 
@@ -682,7 +682,7 @@ final class RecentMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get recent messages (last 24 hours)
-  const RecentMessagesProvider._(
+  RecentMessagesProvider._(
       {required RecentMessagesFamily super.from,
       required String super.argument})
       : super(
@@ -742,7 +742,7 @@ String _$recentMessagesHash() => r'd93c6f22000cc902144e74a18af6c4c817c755ec';
 
 final class RecentMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
-  const RecentMessagesFamily._()
+  RecentMessagesFamily._()
       : super(
           retry: null,
           name: r'recentMessagesProvider',
@@ -765,7 +765,7 @@ final class RecentMessagesFamily extends $Family
 /// Provider to get messages by sender
 
 @ProviderFor(messagesBySender)
-const messagesBySenderProvider = MessagesBySenderFamily._();
+final messagesBySenderProvider = MessagesBySenderFamily._();
 
 /// Provider to get messages by sender
 
@@ -773,7 +773,7 @@ final class MessagesBySenderProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get messages by sender
-  const MessagesBySenderProvider._(
+  MessagesBySenderProvider._(
       {required MessagesBySenderFamily super.from,
       required (
         String,
@@ -847,7 +847,7 @@ final class MessagesBySenderFamily extends $Family
               String,
               String,
             )> {
-  const MessagesBySenderFamily._()
+  MessagesBySenderFamily._()
       : super(
           retry: null,
           name: r'messagesBySenderProvider',
@@ -874,7 +874,7 @@ final class MessagesBySenderFamily extends $Family
 /// Provider to get messages with attachments
 
 @ProviderFor(messagesWithAttachments)
-const messagesWithAttachmentsProvider = MessagesWithAttachmentsFamily._();
+final messagesWithAttachmentsProvider = MessagesWithAttachmentsFamily._();
 
 /// Provider to get messages with attachments
 
@@ -882,7 +882,7 @@ final class MessagesWithAttachmentsProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get messages with attachments
-  const MessagesWithAttachmentsProvider._(
+  MessagesWithAttachmentsProvider._(
       {required MessagesWithAttachmentsFamily super.from,
       required String super.argument})
       : super(
@@ -944,7 +944,7 @@ String _$messagesWithAttachmentsHash() =>
 
 final class MessagesWithAttachmentsFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
-  const MessagesWithAttachmentsFamily._()
+  MessagesWithAttachmentsFamily._()
       : super(
           retry: null,
           name: r'messagesWithAttachmentsProvider',
@@ -967,7 +967,7 @@ final class MessagesWithAttachmentsFamily extends $Family
 /// Provider to get latest message in a crew
 
 @ProviderFor(latestMessage)
-const latestMessageProvider = LatestMessageFamily._();
+final latestMessageProvider = LatestMessageFamily._();
 
 /// Provider to get latest message in a crew
 
@@ -975,7 +975,7 @@ final class LatestMessageProvider
     extends $FunctionalProvider<Message?, Message?, Message?>
     with $Provider<Message?> {
   /// Provider to get latest message in a crew
-  const LatestMessageProvider._(
+  LatestMessageProvider._(
       {required LatestMessageFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -1034,7 +1034,7 @@ String _$latestMessageHash() => r'fcdf1c416b555afe0614a24e3462911627e0e210';
 
 final class LatestMessageFamily extends $Family
     with $FunctionalFamilyOverride<Message?, String> {
-  const LatestMessageFamily._()
+  LatestMessageFamily._()
       : super(
           retry: null,
           name: r'latestMessageProvider',
@@ -1057,7 +1057,7 @@ final class LatestMessageFamily extends $Family
 /// Provider to get last message timestamp
 
 @ProviderFor(lastMessageTimestamp)
-const lastMessageTimestampProvider = LastMessageTimestampFamily._();
+final lastMessageTimestampProvider = LastMessageTimestampFamily._();
 
 /// Provider to get last message timestamp
 
@@ -1065,7 +1065,7 @@ final class LastMessageTimestampProvider
     extends $FunctionalProvider<DateTime?, DateTime?, DateTime?>
     with $Provider<DateTime?> {
   /// Provider to get last message timestamp
-  const LastMessageTimestampProvider._(
+  LastMessageTimestampProvider._(
       {required LastMessageTimestampFamily super.from,
       required String super.argument})
       : super(
@@ -1126,7 +1126,7 @@ String _$lastMessageTimestampHash() =>
 
 final class LastMessageTimestampFamily extends $Family
     with $FunctionalFamilyOverride<DateTime?, String> {
-  const LastMessageTimestampFamily._()
+  LastMessageTimestampFamily._()
       : super(
           retry: null,
           name: r'lastMessageTimestampProvider',
@@ -1149,14 +1149,14 @@ final class LastMessageTimestampFamily extends $Family
 /// Provider to check if crew has unread messages
 
 @ProviderFor(hasUnreadCrewMessages)
-const hasUnreadCrewMessagesProvider = HasUnreadCrewMessagesFamily._();
+final hasUnreadCrewMessagesProvider = HasUnreadCrewMessagesFamily._();
 
 /// Provider to check if crew has unread messages
 
 final class HasUnreadCrewMessagesProvider
     extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// Provider to check if crew has unread messages
-  const HasUnreadCrewMessagesProvider._(
+  HasUnreadCrewMessagesProvider._(
       {required HasUnreadCrewMessagesFamily super.from,
       required String super.argument})
       : super(
@@ -1217,7 +1217,7 @@ String _$hasUnreadCrewMessagesHash() =>
 
 final class HasUnreadCrewMessagesFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
-  const HasUnreadCrewMessagesFamily._()
+  HasUnreadCrewMessagesFamily._()
       : super(
           retry: null,
           name: r'hasUnreadCrewMessagesProvider',
@@ -1240,7 +1240,7 @@ final class HasUnreadCrewMessagesFamily extends $Family
 /// Provider to get message by ID
 
 @ProviderFor(messageById)
-const messageByIdProvider = MessageByIdFamily._();
+final messageByIdProvider = MessageByIdFamily._();
 
 /// Provider to get message by ID
 
@@ -1248,7 +1248,7 @@ final class MessageByIdProvider
     extends $FunctionalProvider<Message?, Message?, Message?>
     with $Provider<Message?> {
   /// Provider to get message by ID
-  const MessageByIdProvider._(
+  MessageByIdProvider._(
       {required MessageByIdFamily super.from,
       required (
         String,
@@ -1322,7 +1322,7 @@ final class MessageByIdFamily extends $Family
               String,
               String,
             )> {
-  const MessageByIdFamily._()
+  MessageByIdFamily._()
       : super(
           retry: null,
           name: r'messageByIdProvider',
@@ -1349,7 +1349,7 @@ final class MessageByIdFamily extends $Family
 /// Provider to get read receipts for a message
 
 @ProviderFor(messageReadReceipts)
-const messageReadReceiptsProvider = MessageReadReceiptsFamily._();
+final messageReadReceiptsProvider = MessageReadReceiptsFamily._();
 
 /// Provider to get read receipts for a message
 
@@ -1358,7 +1358,7 @@ final class MessageReadReceiptsProvider extends $FunctionalProvider<
     Map<String, DateTime>,
     Map<String, DateTime>> with $Provider<Map<String, DateTime>> {
   /// Provider to get read receipts for a message
-  const MessageReadReceiptsProvider._(
+  MessageReadReceiptsProvider._(
       {required MessageReadReceiptsFamily super.from,
       required (
         String,
@@ -1434,7 +1434,7 @@ final class MessageReadReceiptsFamily extends $Family
               String,
               String,
             )> {
-  const MessageReadReceiptsFamily._()
+  MessageReadReceiptsFamily._()
       : super(
           retry: null,
           name: r'messageReadReceiptsProvider',
@@ -1461,14 +1461,14 @@ final class MessageReadReceiptsFamily extends $Family
 /// Provider to get read receipt count for a message
 
 @ProviderFor(messageReadReceiptCount)
-const messageReadReceiptCountProvider = MessageReadReceiptCountFamily._();
+final messageReadReceiptCountProvider = MessageReadReceiptCountFamily._();
 
 /// Provider to get read receipt count for a message
 
 final class MessageReadReceiptCountProvider
     extends $FunctionalProvider<int, int, int> with $Provider<int> {
   /// Provider to get read receipt count for a message
-  const MessageReadReceiptCountProvider._(
+  MessageReadReceiptCountProvider._(
       {required MessageReadReceiptCountFamily super.from,
       required (
         String,
@@ -1544,7 +1544,7 @@ final class MessageReadReceiptCountFamily extends $Family
               String,
               String,
             )> {
-  const MessageReadReceiptCountFamily._()
+  MessageReadReceiptCountFamily._()
       : super(
           retry: null,
           name: r'messageReadReceiptCountProvider',
@@ -1571,14 +1571,14 @@ final class MessageReadReceiptCountFamily extends $Family
 /// Provider to check if message has been read by specific user
 
 @ProviderFor(isMessageReadBy)
-const isMessageReadByProvider = IsMessageReadByFamily._();
+final isMessageReadByProvider = IsMessageReadByFamily._();
 
 /// Provider to check if message has been read by specific user
 
 final class IsMessageReadByProvider
     extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// Provider to check if message has been read by specific user
-  const IsMessageReadByProvider._(
+  IsMessageReadByProvider._(
       {required IsMessageReadByFamily super.from,
       required (
         String,
@@ -1656,7 +1656,7 @@ final class IsMessageReadByFamily extends $Family
               String,
               String,
             )> {
-  const IsMessageReadByFamily._()
+  IsMessageReadByFamily._()
       : super(
           retry: null,
           name: r'isMessageReadByProvider',
@@ -1685,7 +1685,7 @@ final class IsMessageReadByFamily extends $Family
 /// Provider to get messages in chronological order
 
 @ProviderFor(chronologicalMessages)
-const chronologicalMessagesProvider = ChronologicalMessagesFamily._();
+final chronologicalMessagesProvider = ChronologicalMessagesFamily._();
 
 /// Provider to get messages in chronological order
 
@@ -1693,7 +1693,7 @@ final class ChronologicalMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get messages in chronological order
-  const ChronologicalMessagesProvider._(
+  ChronologicalMessagesProvider._(
       {required ChronologicalMessagesFamily super.from,
       required String super.argument})
       : super(
@@ -1754,7 +1754,7 @@ String _$chronologicalMessagesHash() =>
 
 final class ChronologicalMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
-  const ChronologicalMessagesFamily._()
+  ChronologicalMessagesFamily._()
       : super(
           retry: null,
           name: r'chronologicalMessagesProvider',
@@ -1777,7 +1777,7 @@ final class ChronologicalMessagesFamily extends $Family
 /// Provider to get messages in reverse chronological order
 
 @ProviderFor(reverseChronologicalMessages)
-const reverseChronologicalMessagesProvider =
+final reverseChronologicalMessagesProvider =
     ReverseChronologicalMessagesFamily._();
 
 /// Provider to get messages in reverse chronological order
@@ -1786,7 +1786,7 @@ final class ReverseChronologicalMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get messages in reverse chronological order
-  const ReverseChronologicalMessagesProvider._(
+  ReverseChronologicalMessagesProvider._(
       {required ReverseChronologicalMessagesFamily super.from,
       required String super.argument})
       : super(
@@ -1848,7 +1848,7 @@ String _$reverseChronologicalMessagesHash() =>
 
 final class ReverseChronologicalMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
-  const ReverseChronologicalMessagesFamily._()
+  ReverseChronologicalMessagesFamily._()
       : super(
           retry: null,
           name: r'reverseChronologicalMessagesProvider',
@@ -1871,7 +1871,7 @@ final class ReverseChronologicalMessagesFamily extends $Family
 /// Provider to get text messages only
 
 @ProviderFor(textMessages)
-const textMessagesProvider = TextMessagesFamily._();
+final textMessagesProvider = TextMessagesFamily._();
 
 /// Provider to get text messages only
 
@@ -1879,7 +1879,7 @@ final class TextMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get text messages only
-  const TextMessagesProvider._(
+  TextMessagesProvider._(
       {required TextMessagesFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -1938,7 +1938,7 @@ String _$textMessagesHash() => r'b30bb47ea6d7e8d97696a722de17d55ff2996cbc';
 
 final class TextMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
-  const TextMessagesFamily._()
+  TextMessagesFamily._()
       : super(
           retry: null,
           name: r'textMessagesProvider',
@@ -1961,7 +1961,7 @@ final class TextMessagesFamily extends $Family
 /// Provider to get messages with job shares
 
 @ProviderFor(jobShareMessages)
-const jobShareMessagesProvider = JobShareMessagesFamily._();
+final jobShareMessagesProvider = JobShareMessagesFamily._();
 
 /// Provider to get messages with job shares
 
@@ -1969,7 +1969,7 @@ final class JobShareMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get messages with job shares
-  const JobShareMessagesProvider._(
+  JobShareMessagesProvider._(
       {required JobShareMessagesFamily super.from,
       required String super.argument})
       : super(
@@ -2029,7 +2029,7 @@ String _$jobShareMessagesHash() => r'514a17dc6ed89176a2409b98534ab0361bb56e88';
 
 final class JobShareMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
-  const JobShareMessagesFamily._()
+  JobShareMessagesFamily._()
       : super(
           retry: null,
           name: r'jobShareMessagesProvider',
@@ -2052,7 +2052,7 @@ final class JobShareMessagesFamily extends $Family
 /// Provider to get system notification messages
 
 @ProviderFor(systemNotificationMessages)
-const systemNotificationMessagesProvider = SystemNotificationMessagesFamily._();
+final systemNotificationMessagesProvider = SystemNotificationMessagesFamily._();
 
 /// Provider to get system notification messages
 
@@ -2060,7 +2060,7 @@ final class SystemNotificationMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get system notification messages
-  const SystemNotificationMessagesProvider._(
+  SystemNotificationMessagesProvider._(
       {required SystemNotificationMessagesFamily super.from,
       required String super.argument})
       : super(
@@ -2122,7 +2122,7 @@ String _$systemNotificationMessagesHash() =>
 
 final class SystemNotificationMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
-  const SystemNotificationMessagesFamily._()
+  SystemNotificationMessagesFamily._()
       : super(
           retry: null,
           name: r'systemNotificationMessagesProvider',
@@ -2145,14 +2145,14 @@ final class SystemNotificationMessagesFamily extends $Family
 /// Provider to get message count for a crew
 
 @ProviderFor(messageCount)
-const messageCountProvider = MessageCountFamily._();
+final messageCountProvider = MessageCountFamily._();
 
 /// Provider to get message count for a crew
 
 final class MessageCountProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
   /// Provider to get message count for a crew
-  const MessageCountProvider._(
+  MessageCountProvider._(
       {required MessageCountFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -2211,7 +2211,7 @@ String _$messageCountHash() => r'392355a811a0e713908945c2e23a0a6fb807d4ca';
 
 final class MessageCountFamily extends $Family
     with $FunctionalFamilyOverride<int, String> {
-  const MessageCountFamily._()
+  MessageCountFamily._()
       : super(
           retry: null,
           name: r'messageCountProvider',
@@ -2234,7 +2234,7 @@ final class MessageCountFamily extends $Family
 /// Provider to get today's messages
 
 @ProviderFor(todaysMessages)
-const todaysMessagesProvider = TodaysMessagesFamily._();
+final todaysMessagesProvider = TodaysMessagesFamily._();
 
 /// Provider to get today's messages
 
@@ -2242,7 +2242,7 @@ final class TodaysMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get today's messages
-  const TodaysMessagesProvider._(
+  TodaysMessagesProvider._(
       {required TodaysMessagesFamily super.from,
       required String super.argument})
       : super(
@@ -2302,7 +2302,7 @@ String _$todaysMessagesHash() => r'a9cf9ed2c6402b15b3362ca2cc3d88b58f8fb4cf';
 
 final class TodaysMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
-  const TodaysMessagesFamily._()
+  TodaysMessagesFamily._()
       : super(
           retry: null,
           name: r'todaysMessagesProvider',
@@ -2325,7 +2325,7 @@ final class TodaysMessagesFamily extends $Family
 /// Provider to get messages from last week
 
 @ProviderFor(lastWeekMessages)
-const lastWeekMessagesProvider = LastWeekMessagesFamily._();
+final lastWeekMessagesProvider = LastWeekMessagesFamily._();
 
 /// Provider to get messages from last week
 
@@ -2333,7 +2333,7 @@ final class LastWeekMessagesProvider
     extends $FunctionalProvider<List<Message>, List<Message>, List<Message>>
     with $Provider<List<Message>> {
   /// Provider to get messages from last week
-  const LastWeekMessagesProvider._(
+  LastWeekMessagesProvider._(
       {required LastWeekMessagesFamily super.from,
       required String super.argument})
       : super(
@@ -2393,7 +2393,7 @@ String _$lastWeekMessagesHash() => r'1b44f5704cadd7ed136f72e5bd556173df62a8ce';
 
 final class LastWeekMessagesFamily extends $Family
     with $FunctionalFamilyOverride<List<Message>, String> {
-  const LastWeekMessagesFamily._()
+  LastWeekMessagesFamily._()
       : super(
           retry: null,
           name: r'lastWeekMessagesProvider',

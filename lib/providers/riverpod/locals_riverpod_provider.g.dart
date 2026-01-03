@@ -11,13 +11,13 @@ part of 'locals_riverpod_provider.dart';
 /// Riverpod notifier that manages loading and searching of locals.
 
 @ProviderFor(LocalsNotifier)
-const localsProvider = LocalsNotifierProvider._();
+final localsProvider = LocalsNotifierProvider._();
 
 /// Riverpod notifier that manages loading and searching of locals.
 final class LocalsNotifierProvider
     extends $NotifierProvider<LocalsNotifier, LocalsState> {
   /// Riverpod notifier that manages loading and searching of locals.
-  const LocalsNotifierProvider._()
+  LocalsNotifierProvider._()
       : super(
           from: null,
           argument: null,
@@ -53,18 +53,17 @@ abstract class _$LocalsNotifier extends $Notifier<LocalsState> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<LocalsState, LocalsState>;
     final element = ref.element as $ClassProviderElement<
         AnyNotifier<LocalsState, LocalsState>, LocalsState, Object?, Object?>;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 /// Riverpod provider that fetches a single local by ID.
 
 @ProviderFor(localById)
-const localByIdProvider = LocalByIdFamily._();
+final localByIdProvider = LocalByIdFamily._();
 
 /// Riverpod provider that fetches a single local by ID.
 
@@ -72,7 +71,7 @@ final class LocalByIdProvider extends $FunctionalProvider<
         AsyncValue<LocalsRecord?>, LocalsRecord?, FutureOr<LocalsRecord?>>
     with $FutureModifier<LocalsRecord?>, $FutureProvider<LocalsRecord?> {
   /// Riverpod provider that fetches a single local by ID.
-  const LocalByIdProvider._(
+  LocalByIdProvider._(
       {required LocalByIdFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -124,7 +123,7 @@ String _$localByIdHash() => r'88f2d158c643afb9ad2a961579c6fb1160605970';
 
 final class LocalByIdFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<LocalsRecord?>, String> {
-  const LocalByIdFamily._()
+  LocalByIdFamily._()
       : super(
           retry: null,
           name: r'localByIdProvider',
@@ -147,7 +146,7 @@ final class LocalByIdFamily extends $Family
 /// Riverpod provider that returns locals filtered by state.
 
 @ProviderFor(localsByState)
-const localsByStateProvider = LocalsByStateFamily._();
+final localsByStateProvider = LocalsByStateFamily._();
 
 /// Riverpod provider that returns locals filtered by state.
 
@@ -156,7 +155,7 @@ final class LocalsByStateProvider extends $FunctionalProvider<
     List<LocalsRecord>,
     List<LocalsRecord>> with $Provider<List<LocalsRecord>> {
   /// Riverpod provider that returns locals filtered by state.
-  const LocalsByStateProvider._(
+  LocalsByStateProvider._(
       {required LocalsByStateFamily super.from, required String super.argument})
       : super(
           retry: null,
@@ -216,7 +215,7 @@ String _$localsByStateHash() => r'679e8b7e0e7069491671ec211f9e635dcec9fb8d';
 
 final class LocalsByStateFamily extends $Family
     with $FunctionalFamilyOverride<List<LocalsRecord>, String> {
-  const LocalsByStateFamily._()
+  LocalsByStateFamily._()
       : super(
           retry: null,
           name: r'localsByStateProvider',
@@ -239,7 +238,7 @@ final class LocalsByStateFamily extends $Family
 /// Riverpod provider that returns locals filtered by classification.
 
 @ProviderFor(localsByClassification)
-const localsByClassificationProvider = LocalsByClassificationFamily._();
+final localsByClassificationProvider = LocalsByClassificationFamily._();
 
 /// Riverpod provider that returns locals filtered by classification.
 
@@ -248,7 +247,7 @@ final class LocalsByClassificationProvider extends $FunctionalProvider<
     List<LocalsRecord>,
     List<LocalsRecord>> with $Provider<List<LocalsRecord>> {
   /// Riverpod provider that returns locals filtered by classification.
-  const LocalsByClassificationProvider._(
+  LocalsByClassificationProvider._(
       {required LocalsByClassificationFamily super.from,
       required String super.argument})
       : super(
@@ -311,7 +310,7 @@ String _$localsByClassificationHash() =>
 
 final class LocalsByClassificationFamily extends $Family
     with $FunctionalFamilyOverride<List<LocalsRecord>, String> {
-  const LocalsByClassificationFamily._()
+  LocalsByClassificationFamily._()
       : super(
           retry: null,
           name: r'localsByClassificationProvider',
@@ -334,7 +333,7 @@ final class LocalsByClassificationFamily extends $Family
 /// Riverpod provider that returns locals matching a search term.
 
 @ProviderFor(searchedLocals)
-const searchedLocalsProvider = SearchedLocalsFamily._();
+final searchedLocalsProvider = SearchedLocalsFamily._();
 
 /// Riverpod provider that returns locals matching a search term.
 
@@ -343,7 +342,7 @@ final class SearchedLocalsProvider extends $FunctionalProvider<
     List<LocalsRecord>,
     List<LocalsRecord>> with $Provider<List<LocalsRecord>> {
   /// Riverpod provider that returns locals matching a search term.
-  const SearchedLocalsProvider._(
+  SearchedLocalsProvider._(
       {required SearchedLocalsFamily super.from,
       required String super.argument})
       : super(
@@ -404,7 +403,7 @@ String _$searchedLocalsHash() => r'397212ab6ddf6dbd11529d013bb6d808812e04a4';
 
 final class SearchedLocalsFamily extends $Family
     with $FunctionalFamilyOverride<List<LocalsRecord>, String> {
-  const SearchedLocalsFamily._()
+  SearchedLocalsFamily._()
       : super(
           retry: null,
           name: r'searchedLocalsProvider',
@@ -425,12 +424,12 @@ final class SearchedLocalsFamily extends $Family
 }
 
 @ProviderFor(allStates)
-const allStatesProvider = AllStatesProvider._();
+final allStatesProvider = AllStatesProvider._();
 
 final class AllStatesProvider
     extends $FunctionalProvider<List<String>, List<String>, List<String>>
     with $Provider<List<String>> {
-  const AllStatesProvider._()
+  AllStatesProvider._()
       : super(
           from: null,
           argument: null,
@@ -466,12 +465,12 @@ final class AllStatesProvider
 String _$allStatesHash() => r'53d536680dc1bfd63e1afdac1ec7298565533bd5';
 
 @ProviderFor(allClassifications)
-const allClassificationsProvider = AllClassificationsProvider._();
+final allClassificationsProvider = AllClassificationsProvider._();
 
 final class AllClassificationsProvider
     extends $FunctionalProvider<List<String>, List<String>, List<String>>
     with $Provider<List<String>> {
-  const AllClassificationsProvider._()
+  AllClassificationsProvider._()
       : super(
           from: null,
           argument: null,
